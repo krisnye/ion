@@ -235,3 +235,12 @@ if typeof module is 'undefined'
 else
 	#	nodejs module
 	module.exports = ion
+
+	if require.main is module
+		fs = require 'fs'
+		args = process.argv.slice 2
+		if args.length is 0
+			return console.log 'Usage: ion file.ion'
+		content = fs.readFileSync args[0], 'utf8'
+		object = ion.parse content
+		console.log JSON.stringify object, null, '    '

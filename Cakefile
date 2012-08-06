@@ -18,9 +18,10 @@ task 'test', 'tests the ion parser', ->
 	object = ion.parse text
 	console.log JSON.stringify object, null, '    '
 
+out = "lib/ion.js"
+min = "lib/ion-min.js"
+
 task 'build', 'builds the ion parser', ->
-	exec 'coffee -c ion-parser.coffee', ->
-		exec 'coffee -c ion.coffee', ->
-			exec 'node ion-parser package.ion > package.json', ->
-				exec 'uglifyjs ion.js > ion-min.js', ->
-					fs.unlinkSync 'ion.js'
+	exec "coffee -p -c ion.coffee > #{out}", ->
+		exec "coffee ion package.ion > package.json", ->
+			exec "uglifyjs #{out} > #{min}"
