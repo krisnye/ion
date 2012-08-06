@@ -5,7 +5,7 @@ meta:
 	description: Indented Object Notation = JSON Optimized for humans, not machines.
 	keywords: ion, JSON, YAML, Coffee, Coffeescript
 	html:
-		<div class=ion>
+		<div class="ion">
 			Html does not have to be escaped.
 		</div>
 people:

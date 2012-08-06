@@ -3,7 +3,7 @@ ion
 
 Indented Object Notation
 
-### package.ion
+### sample.ion (538 bytes)
 
 	name: ion
 	version: 0.2.1
@@ -25,7 +25,7 @@ Indented Object Notation
 
 is equivalent to the following json
 
-### package.json
+### sample.json (1048 bytes)
 
 	{
 	   "name": "ion",
@@ -40,7 +40,7 @@ is equivalent to the following json
 	         "Coffee",
 	         "Coffeescript"
 	      ],
-	      "html": "<div class=ion>\n\tHtml does not have to be escaped.\n</div>"
+	      "html": "<div class=\"ion\">\n\tHtml does not have to be escaped.\n</div>"
 	   },
 	   "people": [
 	      {
