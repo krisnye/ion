@@ -1,7 +1,7 @@
 name: ion
 preferGlobal: false
-version: "0.2.1"
-created: 2012-08-06		# ISO 8601 dates are instantiated as new Date objects
+version: 0.2.1
+created: 2012-08-06
 author: Kris Nye <krisnye@gmail.com>
 description:
 	Indented Object Notation parser.

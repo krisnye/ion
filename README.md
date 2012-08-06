@@ -6,75 +6,69 @@ Indented Object Notation
 ### package.ion
 
 	name: ion
-	preferGlobal: false
-	version: "0.2.1"
-	created: 2012-08-06		# ISO 8601 dates are instantiated as new Date objects
-	author: Kris Nye <krisnye@gmail.com>
-	description:
-		Indented Object Notation parser.
-		Simple JSON like object notation inspired by Coffeescript and YAML.
-		Optimized for human authoring and reading.
-	contributors:
-		name: Kris Nye
-		email: krisnye@gmail.com
-		name: John Weiss
-		email: bitweiss@gmail.com
-	bin: {}
-	scripts:
-		glass: node ./parser.js
-	main: ./ion
-	repository:
-		type: git
-		url: https://github.com/krisnye/ion.git
-	keywords: ion, JSON, YAML, Coffee, Coffeescript
-	#dependencies: {}
-	noAnalyze: true
-	bundleDependencies: []
-	license: MIT
-	engine:
-		node: >=0.4
+	version: 0.2.1
+	created: 2012-08-06
+	meta:
+		description: Indented Object Notation = JSON Optimized for humans, not machines.
+		keywords: ion, JSON, YAML, Coffee, Coffeescript
+		html:
+			<div class=ion>
+				Html does not have to be escaped.
+			</div>
+	people:
+		name             birth day   age  sex  grade
+		--------------------------------------------
+		Sadera Michelle  1996-03-08  16   f    11
+		Orion Darwin     1998-06-13  14   m    9
+		Phoenix Nilsen   2006-07-01  6    m    1
+		Galileo Zyler    2010-03-23  2    m
 
 is equivalent to the following json
 
 ### package.json
 
 	{
-	    "name": "ion",
-	    "preferGlobal": true,
-	    "version": "0.2.1",
-	    "created": "2012-08-06T00:00:00.000Z",
-	    "author": "Kris Nye <krisnye@gmail.com>",
-	    "description": "Indented Object Notation parser.\nSimple JSON like object notation inspired by Coffeescript and YAML.\nOptimized for human authoring and reading.",
-	    "contributors": [
-	        {
-	            "name": "Kris Nye",
-	            "email": "krisnye@gmail.com"
-	        },
-	        {
-	            "name": "John Weiss",
-	            "email": "bitweiss@gmail.com"
-	        }
-	    ],
-	    "bin": {},
-	    "scripts": {
-	        "glass": "node ./parser.js"
-	    },
-	    "main": "./ion",
-	    "repository": {
-	        "type": "git",
-	        "url": "https://github.com/krisnye/ion.git"
-	    },
-	    "keywords": [
-	        "ion",
-	        "JSON",
-	        "YAML",
-	        "Coffee",
-	        "Coffeescript"
-	    ],
-	    "noAnalyze": true,
-	    "bundleDependencies": [],
-	    "license": "MIT",
-	    "engine": {
-        "node": ">=0.4"
-    }
-}
+	   "name": "ion",
+	   "version": "0.2.1",
+	   "created": "2012-08-06T00:00:00.000Z",
+	   "meta": {
+	      "description": "Indented Object Notation = JSON Optimized for humans, not machines.",
+	      "keywords": [
+	         "ion",
+	         "JSON",
+	         "YAML",
+	         "Coffee",
+	         "Coffeescript"
+	      ],
+	      "html": "<div class=ion>\n\tHtml does not have to be escaped.\n</div>"
+	   },
+	   "people": [
+	      {
+	         "name": "Sadera Michelle",
+	         "birth day": "1996-03-08T00:00:00.000Z",
+	         "age": 16,
+	         "sex": "f",
+	         "grade": 11
+	      },
+	      {
+	         "name": "Orion Darwin",
+	         "birth day": "1998-06-13T00:00:00.000Z",
+	         "age": 14,
+	         "sex": "m",
+	         "grade": 9
+	      },
+	      {
+	         "name": "Phoenix Nilsen",
+	         "birth day": "2006-07-01T00:00:00.000Z",
+	         "age": 6,
+	         "sex": "m",
+	         "grade": 1
+	      },
+	      {
+	         "name": "Galileo Zyler",
+	         "birth day": "2010-03-23T00:00:00.000Z",
+	         "age": 2,
+	         "sex": "m"
+	      }
+	   ]
+	}

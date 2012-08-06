@@ -4,14 +4,6 @@ class Token
 	toJSON: -> if @symbol then @type else @value
 	toString: -> @text
 
-unquoted = (text) ->
-	if text.match /^\s*null\s*$/ then return null
-	if text.match /^\s*(true|false)\s*$/ then return Boolean text.trim()
-	if text.match /^\s*[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?\s*$/ then return Number text.trim()
-	if text.match /^\s*\d\d\d\d-\d\d-\d\d(T\d\d:\d\d(:\d\d(\.\d{1,3})?)?(Z|([+-]\d\d:\d\d))?)?\s*$/ then return new Date text.trim()
-	if text.match /^\s*{}\s*$/ then return {}
-	return text.trim()
-
 tokentypes = [
 	[/^\s*#.*/, (x) -> null]
 	[/^\s*\[/, (x) -> new Token true, '[', x]
@@ -19,7 +11,7 @@ tokentypes = [
 	[/^\s*:/,  (x) -> new Token true, ':', x]
 	[/^\s*,/,  (x) -> new Token true, ',', x]
 	[/^\s*"([^"\\]|(\\([\/'"\\bfnrt]|(u[a-fA-F0-9]{4}))))*"/, (x) -> new Token false, 'quoted', x, JSON.parse x]
-	[/^[^,:\[\]#]+/, (x) -> new Token false, 'unquoted', x, unquoted x]
+	[/^[^,:\[\]#]+/, (x) -> new Token false, 'unquoted', x, x.trim()]
 ]
 
 parseTokens = (line) ->
@@ -44,7 +36,7 @@ parseTokens = (line) ->
 	return tokens
 
 class Node
-	constructor: (@lineNumber, @line, @indent) ->
+	constructor: (@line, @lineNumber, @indent) ->
 		if line?
 			@tokens = parseTokens line
 			@isText = isText @tokens
@@ -62,10 +54,11 @@ class Node
 				lines.push child.line.substring indent
 				child.getAllDescendantLines lines, indent
 		return lines
-	getComplexType: ->
+	getComplexType: (options) ->
 		#	see if we have an explicit type
 		explicitType = if @tokens?.length >= 3 then @tokens?.slice(2).join('').trim()
 		if explicitType?
+			options.explicit = true
 			return explicitType
 		nonEmptyChildCount = 0
 		keyCount = 0
@@ -86,7 +79,7 @@ class Node
 		if keyCount is nonEmptyChildCount
 			return '{}'
 		throw @error 'Inconsistent child keyCount'
-	getSimpleValue: ->
+	getSimpleValue: (options) ->
 		tokens = @tokens
 		return undefined if tokens.length is 0
 		if @key
@@ -101,7 +94,10 @@ class Node
 		if not @isText
 			#	single value
 			if tokens.length is 1
-				return tokens[0].value
+				token = tokens[0]
+				if token.type is 'quoted'
+					options.explicit = true
+				return token.value
 			#	implicit array
 			return value if value = getArray tokens
 		#	string
@@ -110,8 +106,8 @@ class Node
 		for child in @children when child.key?
 			return true
 		return false
-	getComplexValue: ->
-		type = @getComplexType()
+	getComplexValue: (options) ->
+		type = @getComplexType options
 		if type is '""'
 			value = @getAllDescendantLines().join '\n'
 		else if type is '[]'
@@ -133,13 +129,25 @@ class Node
 				value[child.key] = child.getValue()
 		return value
 	getValue: ->
+		options = {}
 		if @children?
 			if @isText
 				throw @children[0].error 'Children not expected'
-			value = @getComplexValue()
+			value = @getComplexValue options
 		else
-			value = @getSimpleValue()
+			value = @getSimpleValue options
+
+		if typeof value is 'string' and not options.explicit
+			value = processUnquoted value
+
 		return value
+
+processUnquoted = (text) ->
+	for processor in ion.processors
+		result = processor text
+		if result isnt undefined
+			return result
+	return text
 
 isText = (tokens) ->
 	if tokens
@@ -180,12 +188,46 @@ ion =
 		nodes = []
 		for line, index in text.split '\r\n' when line.trim()[0] isnt '#'
 			indent = (if line.trim().length is 0 then indent else indent = line.match(/^\s*/)?[0]?.length) ? 0
-			nodes.push new Node index + 1, line, indent
+			nodes.push new Node line, index + 1, indent
 		#	nest the lines as children of a root node
 		root = nest nodes
 		#	now get the root value
 		value = root.getValue()
 		return value
+	#	extensible ion processors for converting unquoted text to other values
+	processors: [
+		(text) -> if text.match /^\s*null\s*$/ then return null
+		(text) -> if text.match /^\s*(true|false)\s*$/ then return Boolean text.trim()
+		(text) -> if text.match /^\s*[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?\s*$/ then return Number text.trim()
+		(text) -> if text.match /^\s*\d\d\d\d-\d\d-\d\d(T\d\d:\d\d(:\d\d(\.\d{1,3})?)?(Z|([+-]\d\d:\d\d))?)?\s*$/ then return new Date text.trim()
+		(text) -> if text.match /^\s*{}\s*$/ then return {}
+		(text) ->
+			#	this attempts to match a table format and convert it to an array of objects
+			#	header     values    separated    by two spaces    at least
+			#   -----------------------------------------------------------
+			lines = text.split '\n'
+			if lines.length > 3
+				if lines[1].match /^-+$/
+					headers = []
+					regex = /(\S+(\s\S+)*)/g
+					while match = regex.exec lines[0]
+						headers.push [new Node(match[1]).getValue(), match.index]
+					if headers.length >= 2
+						array = []
+						for i in [2...lines.length]
+							line = lines[i]
+							array.push item = {}
+							for header, index in headers
+								key = header[0]
+								start = header[1]
+								end = headers[index+1]?[1]
+								cell = line.substring start, end
+								if cell.trim().length
+									value = new Node(cell).getValue()
+									item[key] = value
+						return array
+			return
+	]
 
 if typeof module is 'undefined'
 	#	global.ion
