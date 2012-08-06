@@ -31,6 +31,5 @@ Kris Nye:
 	# 		</body>
 	# 	</html>
 	todo: []
-		Support errors if explicit object type and some children don't have keys.
+		Support partial line comments
 		Support grid.
-		Support array with objects as children.
