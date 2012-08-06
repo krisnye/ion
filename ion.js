@@ -100,9 +100,7 @@
         }
       }
       if (!matched) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-        tokens.push(line);
-        break;
+        throw new Error(line);
       }
     }
     return tokens;
