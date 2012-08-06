@@ -1,0 +1,36 @@
+Kris Nye:
+	spouse: Lianna Nye
+	# friends: null, Robin Houghton, "Joe:Bob"
+	# emptyArray: []
+	# emptyObject: {}
+	# bio:
+	# 	Dear Family,
+
+	# 		I regret to inform you that this is my last sentence.
+	# table: ""
+	# 	name:	age:
+	# 	Kris,	40
+	# 	Lianna,	36
+	# 	Sadera,	16
+	# # arrayofobjects:
+	# 	# name: Kris
+	# 	# age: 40
+	# 	# name: Lianna
+	# 	# age: 36
+	# 	# name: Sadera
+	# 	# age: 16
+	# array: [42]
+	# "my \"hobbies\"":
+	# 	Coding
+	# 	Gaming
+	# birth day: 1996-03-08
+	# html:
+	# 	<html>
+	# 		<body>
+	# 		Hello World
+	# 		</body>
+	# 	</html>
+	todo: []
+		Support errors if explicit object type and some children don't have keys.
+		Support grid.
+		Support array with objects as children.
