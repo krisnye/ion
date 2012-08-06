@@ -16,7 +16,7 @@ print = (args = arguments) ->
 task 'test', 'tests the ion parser', ->
 	text = fs.readFileSync 'sample.ion', 'utf8'
 	object = ion.parse text
-	console.log JSON.stringify object, null, '   '
+	console.log JSON.stringify object, null, '    '
 
 task 'build', 'builds the ion parser', ->
 	exec 'coffee -c ion-parser.coffee', ->
