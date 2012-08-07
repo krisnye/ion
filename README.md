@@ -16,8 +16,7 @@ Indented Object Notation
 				Html does not have to be escaped.
 			</div>
 	people:
-		name             birth day   age  sex  grade
-		--------------------------------------------
+		name:            birth day:  age: sex: grade:
 		Sadera Michelle  1996-03-08  16   f    11
 		Orion Darwin     1998-06-13  14   m    9
 		Phoenix Nilsen   2006-07-01  6    m    1
