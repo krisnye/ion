@@ -1,7 +1,7 @@
 ion
 ===
 
-Indented Object Notation is a JSON compatible object serialization format that is optimized for human authoring and readability.
+Indented Object Notation is a YAML inspired, JSON compatible object serialization format that is optimized for human authoring and readability.
 Whenever possible, quotes, brackets and escape characters are not required and structure is implied by indentation.
 
 It is especially well suited for [configuration](/krisnye/ion/blob/master/package.ion) files that might otherwise be written in [JSON](/krisnye/ion/blob/master/package.json).
