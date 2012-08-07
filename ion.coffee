@@ -35,6 +35,12 @@ parseTokens = (line) ->
 			throw new Error line
 	return tokens
 
+min = (a, b) ->
+	return a unless b?
+	return b unless a?
+	return a if a <= b
+	return b
+
 class Node
 	constructor: (@line, @lineNumber, @indent) ->
 		if line?
@@ -48,7 +54,15 @@ class Node
 		error.lineNumber = @lineNumber
 		error.line = @line
 		error
-	getAllDescendantLines: (lines = [], indent = @indent + 1) ->
+	getSmallestDescendantIndent: ->
+		smallest = null
+		if @children?
+			for child in @children
+				smallest = min smallest, child.indent
+				smallest = min smallest, child.getSmallestDescendantIndent()
+		smallest
+	getAllDescendantLines: (lines = [], indent) ->
+		indent ?= @getSmallestDescendantIndent()
 		if @children?
 			for child in @children
 				lines.push child.line.substring indent

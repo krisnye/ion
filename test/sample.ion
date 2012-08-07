@@ -8,43 +8,43 @@ unquoted: We don't need no stinking quotes.
 date: 2006-12-09           # Date, ISO 8601 format
 time: 2006-12-09T12:30     # Date, ISO 8601 format
 object:                    # same as YAML or Coffeescript
-	property one: true
-	"quoted property": 10
+    property one: true
+    "quoted property": 10
 inline list: alpha, beta, null, 12, true
 array with single item: [alpha]
 empty array: []
 empty object: {}
 multiline array:
-	alpha
-	bravo
-	charlie
+    alpha
+    bravo
+    charlie
 matrix:                     # array of arrays
-	1, 0, 0, 0
-	0, 1, 0, 0
-	0, 0, 1, 0
-	0, 0, 0, 1
+    1, 0, 0, 0
+    0, 1, 0, 0
+    0, 0, 1, 0
+    0, 0, 0, 1
 matrix as string: ""
-	1, 0, 0, 0
-	0, 1, 0, 0
-	0, 0, 1, 0
-	0, 0, 0, 1
+    1, 0, 0, 0
+    0, 1, 0, 0
+    0, 0, 1, 0
+    0, 0, 0, 1
 html:
-	<html>
-		<head>
-			<title>Yes, please.</title>
-		</head>
-		<body>
-			Html requires no escaping either.
-		</body>
-	</html>
-array of objects:	# recognized as array of objects because of duplicated keys
-	name: Kris Nye
-	email: kris@gmail.com
-	name: John White
-	email: bitwhite@gmail.com
+    <html>
+        <head>
+            <title>Yes, please.</title>
+        </head>
+        <body>
+            Html requires no escaping either.
+        </body>
+    </html>
+array of objects:   # recognized as array of objects because of duplicated keys
+    name: Kris Nye
+    email: kris@gmail.com
+    name: John White
+    email: bitwhite@gmail.com
 array of objects as table:         # array of objects
-	name:            birth day:  age: sex: grade:
-	Sadera Michelle  1996-03-08  16   f    11
-	Orion Darwin     1998-06-13  14   m    9
-	Phoenix Nilsen   2006-07-01  6    m    1
-	Galileo Zyler    2010-03-23  2    m		
+    name:            birth day:  age: sex: grade:
+    Sadera Michelle  1996-03-08  16   f    11
+    Orion Darwin     1998-06-13  14   m    9
+    Phoenix Nilsen   2006-07-01  6    m    1
+    Galileo Zyler    2010-03-23  2    m     

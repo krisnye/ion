@@ -55,7 +55,7 @@
         ]
     ],
     "matrix as string": "1, 0, 0, 0\n0, 1, 0, 0\n0, 0, 1, 0\n0, 0, 0, 1",
-    "html": "<html>\n\t<head>\n\t\t<title>Yes, please.</title>\n\t</head>\n\t<body>\n\t\tHtml requires no escaping either.\n\t</body>\n</html>",
+    "html": "<html>\n    <head>\n        <title>Yes, please.</title>\n    </head>\n    <body>\n        Html requires no escaping either.\n    </body>\n</html>",
     "array of objects": [
         {
             "name": "Kris Nye",
