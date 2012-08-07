@@ -203,18 +203,17 @@ ion =
 		(text) -> if text.match /^\s*{}\s*$/ then return {}
 		(text) ->
 			#	this attempts to match a table format and convert it to an array of objects
-			#	header     values    separated    by two spaces    at least
-			#   -----------------------------------------------------------
+			#	header:     values:    separated:    space:
 			lines = text.split '\n'
 			if lines.length > 3
-				if lines[1].match /^-+$/
+				if lines[0].match /^([^: ]+( [^: ]+)*:( +|$)){2,}$/
 					headers = []
-					regex = /(\S+(\s\S+)*)/g
+					regex = /[^: ]+( [^: ]+)*/g
 					while match = regex.exec lines[0]
-						headers.push [new Node(match[1]).getValue(), match.index]
+						headers.push [new Node(match[0]).getValue(), match.index]
 					if headers.length >= 2
 						array = []
-						for i in [2...lines.length]
+						for i in [1...lines.length]
 							line = lines[i]
 							array.push item = {}
 							for header, index in headers
