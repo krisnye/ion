@@ -1,12 +1,10 @@
 ion
 ===
 
-## Summary
-
 Indented Object Notation is a form of JSON designed for human authoring and readability.
 Whenever possible, quotes, brackets and escaping special characters or markup is not required.
 
-## Installation
+### Installation
 
 	npm install ion
 
