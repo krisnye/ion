@@ -1,8 +1,11 @@
 ion
 ===
 
-Indented Object Notation is a form of JSON designed for human authoring and readability.
-Whenever possible, quotes, brackets and escaping special characters or markup is not required.
+Indented Object Notation is a JSON compatible object serialization format that is designed for human authoring and readability.
+Whenever possible, quotes, brackets and escape characters are not required.
+
+It is especially well suited for hand authored configuration files that might otherwise be written in JSON.
+
 
 ### Installation
 
