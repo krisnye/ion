@@ -1,0 +1,103 @@
+{
+    function e(op, args) {
+       return args != null ? {op:op,args:args} : {op:op};
+    }
+    function f(array) {
+        return array.reduce(function(a,b){
+            if (Array.isArray(a)) a = f(a);
+            if (Array.isArray(b)) b = f(b);
+            return a.concat(b);
+        }, '')
+    }
+    function joinLeft(head, tail) {
+        var result = head;
+        for (var i = 0; i < tail.length; i++) {
+            var step = tail[i];
+            step.args.unshift(result);
+            result = step;
+        }
+        return result;
+    }
+}
+
+//  statements
+start = statement
+statement
+  = indent a:(variableSet / propertySet / for / if / elseif / else / list / e) { return a }
+indent = s
+list = a:e b:(s ',' s c:e { return c })+ { b.unshift(a); return op("list", b) }
+variableSet = id:id s "=" s a:e { return e("=", [id,a]) }
+propertySet = id:id s ":" s a:e { return e(":", [id,a]) }
+for = "for" s "(" s a:e s ")" { return e("for", [a]) }
+if = "if" s "(" s a:e s ")" { return e("if", [a]) }
+elseif = "else if" s "(" s a:e s ")"  { return e("elseif", [a]) }
+else = "else"  { return e("else") }
+
+// expressions
+e "expression" = conditional
+group = '(' s a:e s ')' { return a }
+primary = path / group / literal
+path = a:firstStep b:step* { return joinLeft(a, b) }
+firstStep = ref / group / literal
+step = children / propertyGet / predicate / propertyIndexer / functionCall
+predicate = "{" s a:e s "}" { return e("predicate", [a]) }
+propertyGet = "." a:id { return e("get", [a]) }
+propertyIndexer = "[" s a:e s "]" { return e("get", [a]) }
+children = "." s "*" { return e("children", []) }
+functionCall = a:args { return e("call", [a]) }
+args = "(" s ")" { return [] }
+     / "(" a:e ")" { return [a] }
+     / "(" a:list ")" { return a }
+
+//  ops
+conditional
+  = a:or s "?" s b:conditional s ":" s c:conditional { return e("?", [a,b,c]) }
+  / a:or s op:"?" s b:conditional  { return e(op, [a,b]) }
+  / or
+or
+  = left:and s op:"||" s right:or { return e(op, [left,right]) }
+  / and
+and
+  = left:equality s op:"&&" s right:and { return e(op, [left,right]) }
+  / equality
+equality
+  = left:relational s op:("==" / "!=") s right:equality { return e(op, [left,right]) }
+  / relational
+relational
+  = left:additive s op:("<=" / ">=" / "<" / ">") s right:relational { return e(op, [left,right]) }
+  / additive
+additive
+  = left:multiplicative s op:("+" / "-") s right:additive { return e(op, [left,right]) }
+  / multiplicative
+multiplicative
+  = left:unary s op:("*" / "/" / "%") s right:multiplicative { return e(op, [left,right]) }
+  / unary
+unary
+  = op:("!" / "-") s right:primary
+  / primary
+
+//  references
+ref = global / root / ancestor / idref
+global = '$' break { return e("global") }
+root = ('@' / 'this') break { return e("root") }
+ancestor = a:('.'+) { return e("ancestor", [f(a).length]) }
+idref = a:id { return e("ref", [a]) }
+id = a:([a-zA-Z_][a-zA-Z_0-9]*) { return f(a) }
+
+//  literals
+literal = number / boolean / string
+d "digit" = [0-9]
+number = a:([+-]? d+ ([eE] [+-]? d+)?) break { return parseFloat(f(a)) }
+boolean = "true" break { return true } / "false" break { return false }
+h "hex" = [0-9a-fA-F]
+string = string1 / string2
+string1 = '"' chars:(('\\' (["\\\/bfnrt] / ('u' h h h h))) / [^"\\\r\n])+ '"'
+        { return eval('"' + f(chars) + '"') }
+string2 = "'" chars:(('\\' (['\\\/bfnrt] / ('u' h h h h))) / [^'\\\r\n])+ "'"
+        { return eval("'" + f(chars) + "'") }
+
+//  breaks
+s "space" = [\t ]*
+break = ![0-9a-zA-Z]
+eol "end of line" = s ("\r\n" / "\r" / "\n" / eof)
+eof "end of file" = !.
