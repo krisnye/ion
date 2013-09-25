@@ -1,0 +1,12 @@
+[
+  "require.js",
+  "ion/Context.js",
+  "ion/Operation.js",
+  "ion/Template.js",
+  "ion/core.js",
+  "ion/index.js",
+  "ion/parser.js",
+  "ion/preprocessor.js",
+  "ion/test/parseTests.js",
+  "ion/test/renderTests.js"
+]

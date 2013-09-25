@@ -1,8 +1,11 @@
 {
     function e(op, args) {
-       if (args == null)
-           args = [];
-       return {op:op,args:args};
+        if (args == null)
+          args = [];
+        operation = ops[op];
+        if (operation == null)
+            throw new Error("operation not found: " + op);
+        return {op:operation,args:args};
     }
     function f(array) {
         return array.reduce(function(a,b){
@@ -20,28 +23,43 @@
         }
         return result;
     }
+    var core = require('./core');
+    var ops = require('./Operation');
 }
 
-//  statements
-start = statement
-statement
-  = a:(variableSet / propertySet / for / if / elseif / else / list / e)
-  { return a }
-list = a:e b:(s ',' s c:e { return c })+ { b.unshift(a); return op("list", b) }
-variableSet = id:id s "=" s a:e { return e("=", [id,a]) }
-propertySet = id:key s ":" s a:e { return e(":", [id,a]) }
-            / id:key s ":" { return e(":", [id]) }
-for = "for" s "(" s a:e s ")" { return e("for", [a]) }
-if = "if" s "(" s a:e s ")" { return e("if", [a]) }
-elseif = "else if" s "(" s a:e s ")"  { return e("elseif", [a]) }
-else = "else"  { return e("else") }
+//  new code
+start = eol eof { return [] }
+      / newScopeStatements
 
-// expressions
-e "expression" = conditional
+definition = s a:id s "=" s b:lineExpression { return e("=", [a,b]) }
+statement = if / for / assignment / lineExpression
+if = s "if" break s a:singleLineExpression indent b:statement+ outdent c:else?
+    { return e("if", isEmpty(c) ? [a,b] : [a,b,c]) }
+else = s "else" break s a:(singleLineExpression / eol { return "" }) indent b:statement+ outdent
+    { return isEmpty(a) ? b : e("if", [a,b]) }
+for = s "for" break s a:singleLineExpression indent b:newScopeStatements outdent { return e("for", [a,b]) }
+assignment = s id:key s ":" s a:lineExpression { return e(":", [id,a]) }
+lineExpression = multiLineExpression / singleLineExpression
+multiLineExpression = multilineString / multilineObject
+multilineObject = type:(singleLineExpression / eol {return null}) indent s:statement+ outdent
+{
+    return e("object", [type,s])
+}
+singleLineExpression = a:(list / e) eol { return a }
+newScopeStatements = eol* a:definition* b:statement+ { return a.concat(b) }
+e "expression" = s a:conditional s { return a }
+
+//  statements
+list = a:e b:(s ',' s c:e { return c })+ { b.unshift(a); return e("list", b) }
+
+//  multi line strings
+multilineString = "\"\"" eol content:multilineStringContent { return core.unindent(f(content)) }
+multilineStringLine = !indent !outdent (!eol .)* eol
+multilineStringContent = indent content:(multilineStringLine / multilineStringContent)* outdent { return content }
 
 //  path
 path = a:firstStep b:step* { return joinLeft(a, b) }
-firstStep = ref / group / literal
+firstStep = literal / ref / group
 step = children / propertyGet / predicate / propertyIndexer / functionCall
 predicate = "{" s a:e s "}" { return e("predicate", [a]) }
 propertyGet = "." a:id { return e("get", [a]) }
@@ -51,6 +69,21 @@ functionCall = a:args { return e("call", [a]) }
 args = "(" s ")" { return [] }
      / "(" a:e ")" { return [a] }
      / "(" a:list ")" { return a }
+
+//  objects and arrays
+object = id? eol indent assignment+ outdent
+indent "INDENT" = s token:"{{{{" eol
+{
+  if (token != core.indentToken)
+    throw new Error(token + " != " + core.indentToken);
+  return token;
+}
+outdent "OUTDENT" = s token:"}}}}" eol
+{
+  if (token != core.outdentToken)
+    throw new Error(token + " != " + core.outdentToken);
+  return token;
+}
 
 //  ops
 conditional
@@ -82,7 +115,8 @@ primary = path / group / literal
 group = '(' s a:e s ')' { return a }
 
 //  references
-ref = global / root / ancestor / idref
+ref = null / global / root / ancestor / idref
+null = "null" break { return null }
 global = '$' break { return e("global") }
 root = ('@' / 'this') break { return e("root") }
 ancestor = a:('.'+) { return e("ancestor", [f(a).length]) }
@@ -94,17 +128,18 @@ key = id / string
 literal = number / boolean / string
 d "digit" = [0-9]
 number = a:([+-]? d+ ([eE] [+-]? d+)?) break { return parseFloat(f(a)) }
+integer = a:([+-]? d+) break { return parseInt(f(a)) }
 boolean = "true" break { return true } / "false" break { return false }
 h "hex" = [0-9a-fA-F]
 string = string1 / string2
-string1 = '"' chars:(('\\' (["\\\/bfnrt] / ('u' h h h h))) / [^"\\\r\n])+ '"'
+string1 = '"' chars:(('\\' (["\\\/bfnrt] / ('u' h h h h))) / [^"\\\r\n])* '"'
         { return eval('"' + f(chars) + '"') }
-string2 = "'" chars:(('\\' (['\\\/bfnrt] / ('u' h h h h))) / [^'\\\r\n])+ "'"
+string2 = "'" chars:(('\\' (['\\\/bfnrt] / ('u' h h h h))) / [^'\\\r\n])* "'"
         { return eval("'" + f(chars) + "'") }
 raw = chars:(!eol .)* { return e("raw", [f(chars)]) }
 
 //  breaks
 s "space" = " "*
 break = ![0-9a-zA-Z]
-eol "end of line" = s ("\r\n" / "\r" / "\n" / eof)
+eol "end of line" = s eof / (s ("\r\n" / "\r" / "\n"))+
 eof "end of file" = !.

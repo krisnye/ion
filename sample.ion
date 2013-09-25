@@ -1,5 +1,0 @@
-Component
-  alpha: MyType
-    name: a
-  list: alpha, beta
-
