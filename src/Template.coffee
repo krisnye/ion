@@ -1,4 +1,4 @@
-require 'sugar'
+require './core'
 Context = require './Context'
 
 module.exports = class Template

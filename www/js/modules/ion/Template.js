@@ -2,7 +2,7 @@
 (function() {
   var Context, Template;
 
-  require('sugar');
+  require('./core');
 
   Context = require('./Context');
 

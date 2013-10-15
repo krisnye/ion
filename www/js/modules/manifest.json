@@ -7,6 +7,11 @@
   "ion/index.js",
   "ion/parser.js",
   "ion/preprocessor.js",
+  "ion/reactive/DynamicExpression.js",
+  "ion/reactive/Expression.js",
+  "ion/reactive/ExpressionList.js",
+  "ion/reactive/OperationExpression.js",
+  "ion/reactive/StaticExpression.js",
   "ion/test/parseTests.js",
   "ion/test/renderTests.js"
 ]

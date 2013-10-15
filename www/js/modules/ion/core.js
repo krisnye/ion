@@ -2,6 +2,8 @@
 (function() {
   var getIndent, isEmpty, joinLines, lineDelimiter, splitLines, unindent;
 
+  require('sugar');
+
   lineDelimiter = "\n";
 
   isEmpty = function _isEmpty(s) {

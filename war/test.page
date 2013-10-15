@@ -1,5 +1,0 @@
-{{
-    glassTest = require 'glass-test'
-    moduleIds = require.getModuleIds()
-    glassTest.runTests(moduleIds);
-}}

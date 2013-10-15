@@ -28,7 +28,7 @@
 }
 
 //  new code
-start = eol eof { return [] }
+start = eof { return [] }
       / newScopeStatements
 
 definition = s a:id s "=" s b:lineExpression { return e("=", [a,b]) }

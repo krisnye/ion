@@ -7,15 +7,6 @@ module.exports = class Operation
     toString: -> @op
     toJSON: -> @op
 
-Operation.isOp = isOp = (value) -> value?.op?.constructor is Operation
-Operation.evaluate = evaluate = (context, operation) ->
-    op = operation.op
-    if op?.constructor is Operation
-        args = operation.args
-    else
-        op = Operation.value
-        args = [operation]
-    op.evaluate.apply context, args
 ops =
     "value":
         evaluate: (value) ->
@@ -41,11 +32,26 @@ ops =
     "ref": {}
     "get": {}
     "object": {}
-    "*": {}
-    "/": {}
-    "+": {}
-    "-": {}
+    "*":
+        evaluate: (left, right) -> left * right
+    "/":
+        evaluate: (left, right) -> left / right
+    "%":
+        evaluate: (left, right) -> left % right
+    "+":
+        evaluate: (left, right) -> left + right
+    "-":
+        evaluate: (left, right) -> left - right
+    "&&":
+        evaluate: (left, right) -> left && right
+    "||":
+        evaluate: (left, right) -> left || right
 
 for key, properties of ops
     properties.op = key
     Operation[key] = new Operation properties
+
+Operation.getOperation = (op) ->
+    operation = Operation[op]
+    throw new Error "Operation not found #{op}" unless operation?
+    return operation
