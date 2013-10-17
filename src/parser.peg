@@ -31,8 +31,8 @@
 start = eof { return [] }
       / newScopeStatements
 
-definition = s a:id s "=" s b:lineExpression { return e("=", [a,b]) }
-statement = if / for / assignment / lineExpression
+definition = eol? s a:id s "=" s b:lineExpression eol? { return e("=", [a,b]) }
+statement = eol? a:(if / for / assignment / lineExpression) eol? { return a }
 if = s "if" break s a:singleLineExpression indent b:statement+ outdent c:else?
     { return e("if", isEmpty(c) ? [a,b] : [a,b,c]) }
 else = s "else" break s a:(singleLineExpression / eol { return "" }) indent b:statement+ outdent
@@ -46,7 +46,7 @@ multilineObject = type:(singleLineExpression / eol {return null}) indent s:state
     return e("object", [type,s])
 }
 singleLineExpression = a:(list / e) eol { return a }
-newScopeStatements = eol* a:definition* b:statement+ { return a.concat(b) }
+newScopeStatements = a:definition* b:statement+ { return a.concat(b) }
 e "expression" = s a:conditional s { return a }
 
 //  statements

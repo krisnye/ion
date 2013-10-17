@@ -3,15 +3,15 @@ Expression = require './Expression'
 DynamicExpression = require './DynamicExpression'
 
 module.exports = class ExpressionList extends DynamicExpression
-    constructor: (@context, @args) ->
-        throw new Error "args is required" unless @args?
+    constructor: (@context, @items) ->
+        throw new Error "items is required" unless @items?
     setArgumentValue: (index, value) ->
         @argumentValues[index] = value
         if @isActive
             @notify()
     activate: ->
         unless @argumentValues?
-            @expressions = Expression.createExpressions @context, @args
+            @expressions = Expression.createExpressions @context, @items
             @argumentValues = []
             @expressionWatchers = []
             for index in [0..@expressions.length]

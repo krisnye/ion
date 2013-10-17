@@ -5,14 +5,14 @@
   ion = require('../');
 
   parseTests = {
-    "12": [12],
-    "foo": [
+    "    12": [12],
+    "    foo": [
       {
         op: 'ref',
         args: ['foo']
       }
     ],
-    "foo.bar": [
+    "    foo.bar": [
       {
         "op": "get",
         "args": [
@@ -25,9 +25,9 @@
     ],
     "": [],
     "": [],
-    "\"foo\"": ["foo"],
-    "\"\"\n    indented string\n        here.": ["indented string\n    here."],
-    "Person\n    name: \"Kris\"": [
+    "    \"foo\"": ["foo"],
+    "    \"\"\n        indented string\n            here.\n": ["indented string\n    here."],
+    "    Person\n        name: \"Kris\"": [
       {
         "op": "object",
         "args": [
@@ -43,7 +43,18 @@
         ]
       }
     ],
-    "Person\n    name: \"Kris\"\n    poem: \"\"\n        There once was a doctor from Mactus\n        who liked operating on cactus.\n        He had ants on his pants\n        after doing transplants\n        and finally got sued for malpractice.": [
+    "    foo * 2": [
+      {
+        "op": "*",
+        "args": [
+          {
+            "op": "ref",
+            "args": ["foo"]
+          }, 2
+        ]
+      }
+    ],
+    "    Person\n        name: \"Kris\"\n        poem: \"\"\n            There once was a doctor from Mactus\n            who liked operating on cactus.\n            He had ants on his pants\n            after doing transplants\n            and finally got sued for malpractice.\n": [
       {
         "op": "object",
         "args": [
@@ -59,17 +70,6 @@
               "args": ["poem", "There once was a doctor from Mactus\nwho liked operating on cactus.\nHe had ants on his pants\nafter doing transplants\nand finally got sued for malpractice."]
             }
           ]
-        ]
-      }
-    ],
-    "foo * 2": [
-      {
-        "op": "*",
-        "args": [
-          {
-            "op": "ref",
-            "args": ["foo"]
-          }, 2
         ]
       }
     ]

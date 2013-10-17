@@ -14,7 +14,7 @@ unindent = (s) ->
     for line, i in lines
         trim = if isEmpty(line) then getIndent(line) else minIndent
         lines[i] = line.substring(trim)
-    return joinLines lines
+    return joinLines(lines).trim()
 
 module.exports =
     indentToken: "{{{{"

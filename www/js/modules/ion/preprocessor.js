@@ -14,7 +14,7 @@
   };
 
   exports.preprocess = preprocess = function _preprocess(source, lineMapping) {
-    var indent, indentStack, index, inputLine, line, lines, outdent, output, totalIndent, writeLine, _i, _len;
+    var comment, indent, indentStack, index, inputLine, isEmpty, line, lines, outdent, output, totalIndent, writeLine, _i, _len;
     totalIndent = 0;
     indentStack = [];
     lines = core.splitLines(source);
@@ -26,33 +26,43 @@
     outdent = function _outdent() {
       indentStack.pop();
       totalIndent = indentStack[indentStack.length - 1];
-      return writeLine(getSpace(totalIndent) + core.outdentToken);
+      if (totalIndent > 0) {
+        return writeLine(getSpace(totalIndent) + core.outdentToken);
+      }
     };
     output = [];
     for (index = _i = 0, _len = lines.length; _i < _len; index = ++_i) {
       line = lines[index];
       inputLine = index;
       indent = core.getIndent(line);
-      if (indent > totalIndent) {
-        writeLine(getSpace(totalIndent) + core.indentToken);
-        totalIndent = indent;
-        indentStack.push(indent);
-      } else {
-        while (indent < totalIndent) {
-          outdent();
+      isEmpty = line.trim().length === 0;
+      if (!isEmpty) {
+        if (indent > totalIndent) {
+          if (totalIndent > 0) {
+            writeLine(getSpace(totalIndent) + core.indentToken);
+          }
+          totalIndent = indent;
+          indentStack.push(indent);
+        } else {
+          while (indent < totalIndent) {
+            outdent();
+          }
         }
       }
-      writeLine(line);
+      comment = indent === 0 && !isEmpty;
+      if (!comment) {
+        writeLine(line);
+      }
     }
     while (totalIndent > 0) {
       outdent();
     }
-    return core.joinLines(output);
+    return core.unindent(core.joinLines(output));
   };
 
-  sample = "Person\n    name: \"Alpha\"\n    age: 40\n    children:\n        Person\n            name: \"Beta\"\n            age: 1\n        Person\n            name: \"Charlie\"\n            age: 2\n            description: \"\"\n                    This is just a\n                sample indented multiline\n                string literal.";
+  sample = "\nThis is a comment.\nAnything left justified is a comment.\n\n    Person\n        name: \"Alpha\"\n        age: 40\n        children:\n            Person\n                name: \"Beta\"\n                age: 1\n            Person\n\n                name: \"Charlie\"\n\n                age: 2\n                description: \"\"\n                        This is just a\n                    sample indented multiline\n                    string literal.";
 
-  expectedResult = "Person\n{{{{\n    name: \"Alpha\"\n    age: 40\n    children:\n    {{{{\n        Person\n        {{{{\n            name: \"Beta\"\n            age: 1\n        }}}}\n        Person\n        {{{{\n            name: \"Charlie\"\n            age: 2\n            description: \"\"\n            {{{{\n                    This is just a\n            }}}}\n                sample indented multiline\n            {{{{\n                string literal.\n            }}}}\n        }}}}\n    }}}}\n}}}}";
+  expectedResult = "Person\n{{{{\n    name: \"Alpha\"\n    age: 40\n    children:\n    {{{{\n        Person\n        {{{{\n            name: \"Beta\"\n            age: 1\n        }}}}\n        Person\n\n        {{{{\n            name: \"Charlie\"\n\n            age: 2\n            description: \"\"\n            {{{{\n                    This is just a\n            }}}}\n                sample indented multiline\n            {{{{\n                string literal.\n            }}}}\n        }}}}\n    }}}}\n}}}}";
 
   exports.test = function _test() {
     var lineMapping, result;
@@ -63,7 +73,7 @@
       console.log(JSON.stringify(expectedResult));
       throw new Error("Preprocessor result not expected result.");
     }
-    if (JSON.stringify(lineMapping) !== "[0,1,1,2,3,4,4,5,5,6,7,7,8,8,9,10,11,11,12,12,13,13,13,13,13,13]") {
+    if (JSON.stringify(lineMapping) !== "[0,3,4,5,5,6,7,8,8,9,9,10,11,11,12,13,13,14,15,16,17,17,18,18,19,19,19,19,19,19]") {
       throw new Error("Unexpected line mapping: " + JSON.stringify(lineMapping));
     }
   };

@@ -11,11 +11,11 @@
   module.exports = ExpressionList = (function(_super) {
     __extends(ExpressionList, _super);
 
-    function ExpressionList(context, args) {
+    function ExpressionList(context, items) {
       this.context = context;
-      this.args = args;
-      if (this.args == null) {
-        throw new Error("args is required");
+      this.items = items;
+      if (this.items == null) {
+        throw new Error("items is required");
       }
     }
 
@@ -29,7 +29,7 @@
     ExpressionList.prototype.activate = function _activate() {
       var expression, index, _i, _j, _len, _ref, _ref1;
       if (this.argumentValues == null) {
-        this.expressions = Expression.createExpressions(this.context, this.args);
+        this.expressions = Expression.createExpressions(this.context, this.items);
         this.argumentValues = [];
         this.expressionWatchers = [];
         for (index = _i = 0, _ref = this.expressions.length; 0 <= _ref ? _i <= _ref : _i >= _ref; index = 0 <= _ref ? ++_i : --_i) {
