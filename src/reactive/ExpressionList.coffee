@@ -1,5 +1,5 @@
 
-Expression = require './Expression'
+Operation = require './Operation'
 DynamicExpression = require './DynamicExpression'
 
 module.exports = class ExpressionList extends DynamicExpression
@@ -11,7 +11,7 @@ module.exports = class ExpressionList extends DynamicExpression
             @notify()
     activate: ->
         unless @argumentValues?
-            @expressions = Expression.createExpressions @context, @items
+            @expressions = Operation.createRuntimes @context, @items
             @argumentValues = []
             @expressionWatchers = []
             for index in [0..@expressions.length]

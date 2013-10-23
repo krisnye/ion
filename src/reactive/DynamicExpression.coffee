@@ -2,8 +2,6 @@
 Expression = require './Expression'
 
 module.exports = class DynamicExpression extends Expression
-    constructor: (properties) ->
-        super properties
     isActive: false
     activate: ->
         # called when we have watchers

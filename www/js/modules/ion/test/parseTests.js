@@ -12,9 +12,20 @@
         args: ['foo']
       }
     ],
+    "    foo['bar']": [
+      {
+        "op": "member",
+        "args": [
+          {
+            "op": "ref",
+            "args": ["foo"]
+          }, "bar"
+        ]
+      }
+    ],
     "    foo.bar": [
       {
-        "op": "get",
+        "op": "member",
         "args": [
           {
             "op": "ref",
@@ -34,12 +45,10 @@
           {
             "op": "ref",
             "args": ["Person"]
-          }, [
-            {
-              "op": ":",
-              "args": ["name", "Kris"]
-            }
-          ]
+          }, {
+            "op": ":",
+            "args": ["name", "Kris"]
+          }
         ]
       }
     ],
@@ -61,15 +70,18 @@
           {
             "op": "ref",
             "args": ["Person"]
-          }, [
-            {
-              "op": ":",
-              "args": ["name", "Kris"]
-            }, {
-              "op": ":",
-              "args": ["poem", "There once was a doctor from Mactus\nwho liked operating on cactus.\nHe had ants on his pants\nafter doing transplants\nand finally got sued for malpractice."]
-            }
-          ]
+          }, {
+            op: "block",
+            args: [
+              {
+                "op": ":",
+                "args": ["name", "Kris"]
+              }, {
+                "op": ":",
+                "args": ["poem", "There once was a doctor from Mactus\nwho liked operating on cactus.\nHe had ants on his pants\nafter doing transplants\nand finally got sued for malpractice."]
+              }
+            ]
+          }
         ]
       }
     ]
@@ -89,7 +101,7 @@
           console.log("-----------------Expected--------------");
           console.log(JSON.stringify(expected));
           console.log("---------------------------------------");
-          throw new Error(JSON.stringify(result) + " != " + JSON.stringify(expected));
+          throw new Error(JSON.stringify(result, null, '  ') + "\n!=\n" + JSON.stringify(expected, null, '  '));
         }
       }
     }

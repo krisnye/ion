@@ -4,7 +4,7 @@
 
   require('./core');
 
-  Context = require('./Context');
+  Context = require('./reactive/Context');
 
   module.exports = Template = (function() {
     function Template(statements, name) {

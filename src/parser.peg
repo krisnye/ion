@@ -2,10 +2,7 @@
     function e(op, args) {
         if (args == null)
           args = [];
-        operation = ops[op];
-        if (operation == null)
-            throw new Error("operation not found: " + op);
-        return {op:operation,args:args};
+        return {op:op,args:args};
     }
     function f(array) {
         return array.reduce(function(a,b){
@@ -24,7 +21,6 @@
         return result;
     }
     var core = require('./core');
-    var ops = require('./Operation');
 }
 
 //  new code
@@ -33,20 +29,21 @@ start = eof { return [] }
 
 definition = eol? s a:id s "=" s b:lineExpression eol? { return e("=", [a,b]) }
 statement = eol? a:(if / for / assignment / lineExpression) eol? { return a }
-if = s "if" break s a:singleLineExpression indent b:statement+ outdent c:else?
+if = s "if" break s a:singleLineExpression indent b:blockStatement outdent c:else?
     { return e("if", isEmpty(c) ? [a,b] : [a,b,c]) }
-else = s "else" break s a:(singleLineExpression / eol { return "" }) indent b:statement+ outdent
+else = s "else" break s a:(singleLineExpression / eol { return "" }) indent b:blockStatement outdent
     { return isEmpty(a) ? b : e("if", [a,b]) }
 for = s "for" break s a:singleLineExpression indent b:newScopeStatements outdent { return e("for", [a,b]) }
 assignment = s id:key s ":" s a:lineExpression { return e(":", [id,a]) }
 lineExpression = multiLineExpression / singleLineExpression
 multiLineExpression = multilineString / multilineObject
-multilineObject = type:(singleLineExpression / eol {return null}) indent s:statement+ outdent
+multilineObject = type:(singleLineExpression / eol {return null}) indent s:blockStatement outdent
 {
     return e("object", [type,s])
 }
+blockStatement = a:statement+ { return a.length == 1 ? a[0] : e("block", a) }
 singleLineExpression = a:(list / e) eol { return a }
-newScopeStatements = a:definition* b:statement+ { return a.concat(b) }
+newScopeStatements = a:definition* b:blockStatement { return a.concat(b) }
 e "expression" = s a:conditional s { return a }
 
 //  statements
@@ -62,8 +59,8 @@ path = a:firstStep b:step* { return joinLeft(a, b) }
 firstStep = literal / ref / group
 step = children / propertyGet / predicate / propertyIndexer / functionCall
 predicate = "{" s a:e s "}" { return e("predicate", [a]) }
-propertyGet = "." a:id { return e("get", [a]) }
-propertyIndexer = "[" s a:e s "]" { return e("get", [a]) }
+propertyGet = "." a:id { return e("member", [a]) }
+propertyIndexer = "[" s a:e s "]" { return e("member", [a]) }
 children = "." s "*" { return e("children", []) }
 functionCall = a:args { return e("call", [a]) }
 args = "(" s ")" { return [] }
@@ -119,7 +116,7 @@ ref = null / global / root / ancestor / idref
 null = "null" break { return null }
 global = '$' break { return e("global") }
 root = ('@' / 'this') break { return e("root") }
-ancestor = a:('.'+) { return e("ancestor", [f(a).length]) }
+ancestor = a:('.'+) { return e("ancestor", [f(a).length - 1]) }
 idref = a:id { return e("ref", [a]) }
 id = a:([a-zA-Z_][a-zA-Z_0-9]*) { return f(a) }
 key = id / string

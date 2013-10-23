@@ -47,6 +47,7 @@
         "lineExpression": parse_lineExpression,
         "multiLineExpression": parse_multiLineExpression,
         "multilineObject": parse_multilineObject,
+        "blockStatement": parse_blockStatement,
         "singleLineExpression": parse_singleLineExpression,
         "newScopeStatements": parse_newScopeStatements,
         "e": parse_e,
@@ -316,16 +317,7 @@
                 if (result4 !== null) {
                   result5 = parse_indent();
                   if (result5 !== null) {
-                    result7 = parse_statement();
-                    if (result7 !== null) {
-                      result6 = [];
-                      while (result7 !== null) {
-                        result6.push(result7);
-                        result7 = parse_statement();
-                      }
-                    } else {
-                      result6 = null;
-                    }
+                    result6 = parse_blockStatement();
                     if (result6 !== null) {
                       result7 = parse_outdent();
                       if (result7 !== null) {
@@ -414,16 +406,7 @@
                 if (result4 !== null) {
                   result5 = parse_indent();
                   if (result5 !== null) {
-                    result7 = parse_statement();
-                    if (result7 !== null) {
-                      result6 = [];
-                      while (result7 !== null) {
-                        result6.push(result7);
-                        result7 = parse_statement();
-                      }
-                    } else {
-                      result6 = null;
-                    }
+                    result6 = parse_blockStatement();
                     if (result6 !== null) {
                       result7 = parse_outdent();
                       if (result7 !== null) {
@@ -641,16 +624,7 @@
         if (result0 !== null) {
           result1 = parse_indent();
           if (result1 !== null) {
-            result3 = parse_statement();
-            if (result3 !== null) {
-              result2 = [];
-              while (result3 !== null) {
-                result2.push(result3);
-                result3 = parse_statement();
-              }
-            } else {
-              result2 = null;
-            }
+            result2 = parse_blockStatement();
             if (result2 !== null) {
               result3 = parse_outdent();
               if (result3 !== null) {
@@ -675,6 +649,30 @@
           result0 = (function(offset, type, s) {
             return e("object", [type,s])
         })(pos0, result0[0], result0[2]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_blockStatement() {
+        var result0, result1;
+        var pos0;
+        
+        pos0 = pos;
+        result1 = parse_statement();
+        if (result1 !== null) {
+          result0 = [];
+          while (result1 !== null) {
+            result0.push(result1);
+            result1 = parse_statement();
+          }
+        } else {
+          result0 = null;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, a) { return a.length == 1 ? a[0] : e("block", a) })(pos0, result0);
         }
         if (result0 === null) {
           pos = pos0;
@@ -714,7 +712,7 @@
       }
       
       function parse_newScopeStatements() {
-        var result0, result1, result2;
+        var result0, result1;
         var pos0, pos1;
         
         pos0 = pos;
@@ -726,16 +724,7 @@
           result1 = parse_definition();
         }
         if (result0 !== null) {
-          result2 = parse_statement();
-          if (result2 !== null) {
-            result1 = [];
-            while (result2 !== null) {
-              result1.push(result2);
-              result2 = parse_statement();
-            }
-          } else {
-            result1 = null;
-          }
+          result1 = parse_blockStatement();
           if (result1 !== null) {
             result0 = [result0, result1];
           } else {
@@ -1269,7 +1258,7 @@
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, a) { return e("get", [a]) })(pos0, result0[1]);
+          result0 = (function(offset, a) { return e("member", [a]) })(pos0, result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -1331,7 +1320,7 @@
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, a) { return e("get", [a]) })(pos0, result0[2]);
+          result0 = (function(offset, a) { return e("member", [a]) })(pos0, result0[2]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -2546,7 +2535,7 @@
           result0 = null;
         }
         if (result0 !== null) {
-          result0 = (function(offset, a) { return e("ancestor", [f(a).length]) })(pos0, result0);
+          result0 = (function(offset, a) { return e("ancestor", [f(a).length - 1]) })(pos0, result0);
         }
         if (result0 === null) {
           pos = pos0;
@@ -3716,10 +3705,7 @@
           function e(op, args) {
               if (args == null)
                 args = [];
-              operation = ops[op];
-              if (operation == null)
-                  throw new Error("operation not found: " + op);
-              return {op:operation,args:args};
+              return {op:op,args:args};
           }
           function f(array) {
               return array.reduce(function(a,b){
@@ -3738,7 +3724,6 @@
               return result;
           }
           var core = require('./core');
-          var ops = require('./Operation');
       
       
       var result = parseFunctions[startRule]();
