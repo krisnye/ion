@@ -29,23 +29,46 @@
       }
       this.leftExpression.watch(this.leftWatcher != null ? this.leftWatcher : this.leftWatcher = function _leftWatcher(leftValue) {
         _this.leftValue = leftValue;
-        return _this.assign();
+        return _this._assign();
       });
       return this.rightExpression.watch(this.rightWatcher != null ? this.rightWatcher : this.rightWatcher = function _rightWatcher(rightValue) {
         _this.rightValue = rightValue;
-        return _this.assign();
+        return _this._assign();
       });
     };
 
-    AssignmentStatement.prototype.deactivate = function _deactivate() {
-      AssignmentStatement.__super__.deactivate.call(this);
-      this.leftExpression.unwatch(this.leftWatcher);
-      return this.rightExpression.unwatch(this.rightWatcher);
+    AssignmentStatement.prototype._assign = function __assign() {
+      if ((this.leftValue != null) && this.rightValue !== void 0) {
+        if (this.original == null) {
+          this.original = {};
+        }
+        if (!this.original.hasOwnProperty(this.leftValue)) {
+          this.original[this.leftValue] = this.context["this"].hasOwnProperty(this.leftValue) ? this.context["this"][this.leftValue] : void 0;
+        }
+        return this.context["this"][this.leftValue] = this.rightValue;
+      }
     };
 
-    AssignmentStatement.prototype.assign = function _assign() {
-      if ((this.leftValue != null) && this.rightValue !== void 0) {
-        return this.context["this"][this.leftValue] = this.rightValue;
+    AssignmentStatement.prototype.deactivate = function _deactivate(revert) {
+      var key, value, _ref1, _results;
+      if (revert == null) {
+        revert = true;
+      }
+      AssignmentStatement.__super__.deactivate.call(this);
+      this.leftExpression.unwatch(this.leftWatcher);
+      this.rightExpression.unwatch(this.rightWatcher);
+      if (revert && (this.original != null)) {
+        _ref1 = this.original;
+        _results = [];
+        for (key in _ref1) {
+          value = _ref1[key];
+          if (value === void 0) {
+            _results.push(delete this.context["this"][key]);
+          } else {
+            _results.push(this.context["this"][key] = value);
+          }
+        }
+        return _results;
       }
     };
 
@@ -66,7 +89,8 @@
     var a, context, object;
     object = {
       x: 1,
-      y: 2
+      y: 2,
+      z: -1
     };
     context = new Context(object);
     a = Operation.createRuntime(context, {
@@ -98,13 +122,16 @@
     });
     a.activate();
     if (object.z !== 3) {
-      throw "result != 3";
+      throw "object.z != 3";
     }
     a.deactivate();
+    if (object.z !== -1) {
+      throw "object.z != -1";
+    }
     object.x = 10;
     a.activate();
     if (object.z !== 12) {
-      throw "result != 12";
+      throw "object.z != 12";
     }
     Object.observe(object, function(changes) {
       if (object.z === 22) {

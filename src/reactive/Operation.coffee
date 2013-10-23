@@ -20,7 +20,7 @@ ops =
     ":":
         runtime: './AssignmentStatement'
     "if":
-        statement: true
+        runtime: './IfStatement'
     "for":
         statement: true
     "=":

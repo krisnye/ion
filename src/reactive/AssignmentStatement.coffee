@@ -7,22 +7,38 @@ module.exports = class AssignmentStatement extends Statement
         super()
         @leftExpression ?= Operation.createRuntime @context, @args[0]
         @rightExpression ?= Operation.createRuntime @context, @args[1]
-        @leftExpression.watch @leftWatcher ?= (@leftValue) => @assign()
-        @rightExpression.watch @rightWatcher ?= (@rightValue) => @assign()
-    deactivate: ->
+        @leftExpression.watch @leftWatcher ?= (@leftValue) => @_assign()
+        @rightExpression.watch @rightWatcher ?= (@rightValue) => @_assign()
+    _assign: ->
+        if @leftValue? and @rightValue isnt undefined
+            # store original values so we can revert them
+            @original ?= {}
+            if not @original.hasOwnProperty @leftValue
+                @original[@leftValue] =
+                    if @context.this.hasOwnProperty @leftValue
+                        @context.this[@leftValue]
+                    else
+                        undefined
+            # set the new value on this property
+            @context.this[@leftValue] = @rightValue
+    deactivate: (revert = true) ->
         super()
         @leftExpression.unwatch @leftWatcher
         @rightExpression.unwatch @rightWatcher
-    assign: ->
-        if @leftValue? and @rightValue isnt undefined
-            @context.this[@leftValue] = @rightValue
+        if revert and @original?
+            # restore original values
+            for key, value of @original
+                if value is undefined
+                    delete @context.this[key]
+                else
+                    @context.this[key] = value
     dispose: ->
         super()
         @leftExpression?.dispose()
         @rightExpression?.dispose()
 
 module.exports.test = (done) ->
-    object = { x: 1, y: 2}
+    object = { x: 1, y: 2, z: -1}
     context = new Context object
     a = Operation.createRuntime context, {op:':', args:["z", {op:"+", args:[
             {op:'member',args:[{op:'ancestor',args:[0]}, "x"]}
@@ -31,13 +47,15 @@ module.exports.test = (done) ->
 
     # activate this statement.
     a.activate()
-    throw "result != 3" unless object.z is 3
+    throw "object.z != 3" unless object.z is 3
     # deactivate and change x
     a.deactivate()
+    # make sure the object was reverted to previous state.
+    throw "object.z != -1" unless object.z is -1
     object.x = 10
     # upon reactivation the result should immediately be 12
     a.activate()
-    throw "result != 12" unless object.z is 12
+    throw "object.z != 12" unless object.z is 12
 
     # now we will dynamically wait for the result to be 22
     Object.observe object, (changes) ->
