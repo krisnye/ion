@@ -94,7 +94,7 @@
     };
     context = new Context(object);
     a = Operation.createRuntime(context, {
-      op: ':',
+      op: 'set',
       args: [
         "z", {
           op: "+",

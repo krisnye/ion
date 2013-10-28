@@ -13,17 +13,18 @@ module.exports = class Operation
         return new type {operation:@, context:context, args:args}
 
 ops =
-    "value":
-        statement: true
+    "add":
+        addIndex: true
+        runtime: './AddStatement'
     "block":
         runtime: './BlockStatement'
-    ":":
+    "set":
         runtime: './AssignmentStatement'
     "if":
         runtime: './IfStatement'
     "for":
         statement: true
-    "=":
+    "var":
         # variable declaration
         statement: true
     "ref": {}
@@ -33,16 +34,16 @@ ops =
     "array": {}
     "object": {}
     "predicate":
-        newContext: true
+        newInputContext: true
         runtime: './NewContextExpression'
         evaluate: (left, right) -> if right then left else undefined
     "local":
-        newContext: true
+        newInputContext: true
         # a local expression, usually of the format alpha.(x+y)
         runtime: './NewContextExpression'
         evaluate: (left, right) -> right
     "member":
-        newContext: true
+        newInputContext: true
         runtime: './NewContextExpression'
         observeLeftValue: true
         evaluate: (left, right) ->
@@ -78,11 +79,14 @@ for key, properties of ops
     properties.op = key
     Operation[key] = new Operation properties
 
+Operation.getOperation = getOperation = (op) ->
+    operation = Operation[op]
+    throw new Error "Operation not found #{op}" unless operation?
+    return operation
 Operation.createRuntimes = (context, astArray) ->
     astArray.map (arg) -> Operation.createRuntime context, arg
 Operation.createRuntime = (context, ast) ->
     op = ast?.op
     return new (require './StaticExpression') {value:ast} unless op?
-    operation = Operation[op]
-    throw new Error "Operation not found #{op}" unless operation?
+    operation = getOperation op
     return operation.createRuntime context, ast.args

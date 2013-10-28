@@ -30,8 +30,8 @@ module.exports.test = (done) ->
     a = Operation.createRuntime context,
             {op:'if', args:[
                 {op:'member',args:[{op:'ancestor',args:[0]}, "a"]}
-                {op:':', args:["z1", true]}
-                {op:':', args:["z2", false]}
+                {op:'set', args:["z1", true]}
+                {op:'set', args:["z2", false]}
             ]}
 
     a.activate()

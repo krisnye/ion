@@ -84,10 +84,10 @@
             }, "a"
           ]
         }, {
-          op: ':',
+          op: 'set',
           args: ["z1", true]
         }, {
-          op: ':',
+          op: 'set',
           args: ["z2", false]
         }
       ]

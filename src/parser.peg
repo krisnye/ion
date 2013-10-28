@@ -1,4 +1,7 @@
 {
+    function isEmpty(a) {
+      return a == null || a.length == 0;
+    }
     function e(op, args) {
         if (args == null)
           args = [];
@@ -20,6 +23,9 @@
         }
         return result;
     }
+    function block(a) {
+      return a.length == 1 ? a[0] : e("block", a);
+    }
     var core = require('./core');
 }
 
@@ -27,23 +33,24 @@
 start = eof { return [] }
       / newScopeStatements
 
-definition = eol? s a:id s "=" s b:lineExpression eol? { return e("=", [a,b]) }
-statement = eol? a:(if / for / assignment / lineExpression) eol? { return a }
+definition = eol? s a:id s "=" s b:lineExpression eol? { return e("var", [a,b]) }
+statement = eol? a:(if / for / set / add) eol? { return a }
 if = s "if" break s a:singleLineExpression indent b:blockStatement outdent c:else?
     { return e("if", isEmpty(c) ? [a,b] : [a,b,c]) }
 else = s "else" break s a:(singleLineExpression / eol { return "" }) indent b:blockStatement outdent
     { return isEmpty(a) ? b : e("if", [a,b]) }
 for = s "for" break s a:singleLineExpression indent b:newScopeStatements outdent { return e("for", [a,b]) }
-assignment = s id:key s ":" s a:lineExpression { return e(":", [id,a]) }
+add = s a:lineExpression { return e("add", [a]) }
+set = s id:key s ":" s a:lineExpression { return e("set", [id,a]) }
 lineExpression = multiLineExpression / singleLineExpression
+singleLineExpression = a:(list / e) eol { return a }
 multiLineExpression = multilineString / multilineObject
 multilineObject = type:(singleLineExpression / eol {return null}) indent s:blockStatement outdent
 {
     return e("object", [type,s])
 }
-blockStatement = a:statement+ { return a.length == 1 ? a[0] : e("block", a) }
-singleLineExpression = a:(list / e) eol { return a }
-newScopeStatements = a:definition* b:blockStatement { return a.concat(b) }
+blockStatement = a:statement+ { return block(a) }
+newScopeStatements = a:definition* b:statement+ { return block(a.concat(b)) }
 e "expression" = s a:conditional s { return a }
 
 //  statements
@@ -68,7 +75,7 @@ args = "(" s ")" { return [] }
      / "(" a:list ")" { return a }
 
 //  objects and arrays
-object = id? eol indent assignment+ outdent
+object = id? eol indent set+ outdent
 indent "INDENT" = s token:"{{{{" eol
 {
   if (token != core.indentToken)

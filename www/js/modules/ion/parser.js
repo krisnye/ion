@@ -43,12 +43,13 @@
         "if": parse_if,
         "else": parse_else,
         "for": parse_for,
-        "assignment": parse_assignment,
+        "add": parse_add,
+        "set": parse_set,
         "lineExpression": parse_lineExpression,
+        "singleLineExpression": parse_singleLineExpression,
         "multiLineExpression": parse_multiLineExpression,
         "multilineObject": parse_multilineObject,
         "blockStatement": parse_blockStatement,
-        "singleLineExpression": parse_singleLineExpression,
         "newScopeStatements": parse_newScopeStatements,
         "e": parse_e,
         "list": parse_list,
@@ -238,7 +239,7 @@
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, a, b) { return e("=", [a,b]) })(pos0, result0[2], result0[6]);
+          result0 = (function(offset, a, b) { return e("var", [a,b]) })(pos0, result0[2], result0[6]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -259,9 +260,9 @@
           if (result1 === null) {
             result1 = parse_for();
             if (result1 === null) {
-              result1 = parse_assignment();
+              result1 = parse_set();
               if (result1 === null) {
-                result1 = parse_lineExpression();
+                result1 = parse_add();
               }
             }
           }
@@ -524,7 +525,35 @@
         return result0;
       }
       
-      function parse_assignment() {
+      function parse_add() {
+        var result0, result1;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_s();
+        if (result0 !== null) {
+          result1 = parse_lineExpression();
+          if (result1 !== null) {
+            result0 = [result0, result1];
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, a) { return e("add", [a]) })(pos0, result0[1]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_set() {
         var result0, result1, result2, result3, result4, result5;
         var pos0, pos1;
         
@@ -576,7 +605,7 @@
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, id, a) { return e(":", [id,a]) })(pos0, result0[1], result0[5]);
+          result0 = (function(offset, id, a) { return e("set", [id,a]) })(pos0, result0[1], result0[5]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -590,6 +619,37 @@
         result0 = parse_multiLineExpression();
         if (result0 === null) {
           result0 = parse_singleLineExpression();
+        }
+        return result0;
+      }
+      
+      function parse_singleLineExpression() {
+        var result0, result1;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_list();
+        if (result0 === null) {
+          result0 = parse_e();
+        }
+        if (result0 !== null) {
+          result1 = parse_eol();
+          if (result1 !== null) {
+            result0 = [result0, result1];
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, a) { return a })(pos0, result0[0]);
+        }
+        if (result0 === null) {
+          pos = pos0;
         }
         return result0;
       }
@@ -672,38 +732,7 @@
           result0 = null;
         }
         if (result0 !== null) {
-          result0 = (function(offset, a) { return a.length == 1 ? a[0] : e("block", a) })(pos0, result0);
-        }
-        if (result0 === null) {
-          pos = pos0;
-        }
-        return result0;
-      }
-      
-      function parse_singleLineExpression() {
-        var result0, result1;
-        var pos0, pos1;
-        
-        pos0 = pos;
-        pos1 = pos;
-        result0 = parse_list();
-        if (result0 === null) {
-          result0 = parse_e();
-        }
-        if (result0 !== null) {
-          result1 = parse_eol();
-          if (result1 !== null) {
-            result0 = [result0, result1];
-          } else {
-            result0 = null;
-            pos = pos1;
-          }
-        } else {
-          result0 = null;
-          pos = pos1;
-        }
-        if (result0 !== null) {
-          result0 = (function(offset, a) { return a })(pos0, result0[0]);
+          result0 = (function(offset, a) { return block(a) })(pos0, result0);
         }
         if (result0 === null) {
           pos = pos0;
@@ -712,7 +741,7 @@
       }
       
       function parse_newScopeStatements() {
-        var result0, result1;
+        var result0, result1, result2;
         var pos0, pos1;
         
         pos0 = pos;
@@ -724,7 +753,16 @@
           result1 = parse_definition();
         }
         if (result0 !== null) {
-          result1 = parse_blockStatement();
+          result2 = parse_statement();
+          if (result2 !== null) {
+            result1 = [];
+            while (result2 !== null) {
+              result1.push(result2);
+              result2 = parse_statement();
+            }
+          } else {
+            result1 = null;
+          }
           if (result1 !== null) {
             result0 = [result0, result1];
           } else {
@@ -736,7 +774,7 @@
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, a, b) { return a.concat(b) })(pos0, result0[0], result0[1]);
+          result0 = (function(offset, a, b) { return block(a.concat(b)) })(pos0, result0[0], result0[1]);
         }
         if (result0 === null) {
           pos = pos0;
@@ -1545,12 +1583,12 @@
           if (result1 !== null) {
             result2 = parse_indent();
             if (result2 !== null) {
-              result4 = parse_assignment();
+              result4 = parse_set();
               if (result4 !== null) {
                 result3 = [];
                 while (result4 !== null) {
                   result3.push(result4);
-                  result4 = parse_assignment();
+                  result4 = parse_set();
                 }
               } else {
                 result3 = null;
@@ -3702,6 +3740,9 @@
       }
       
       
+          function isEmpty(a) {
+            return a == null || a.length == 0;
+          }
           function e(op, args) {
               if (args == null)
                 args = [];
@@ -3722,6 +3763,9 @@
                   result = step;
               }
               return result;
+          }
+          function block(a) {
+            return a.length == 1 ? a[0] : e("block", a);
           }
           var core = require('./core');
       
