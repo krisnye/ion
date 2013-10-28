@@ -17,14 +17,20 @@
         index = depthStack[depthStack.length - 1]++;
         node.args.push(index);
       }
-    }
-    if ((node != null ? node.args : void 0) != null) {
-      _ref = node.args;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        child = _ref[_i];
-        if (child != null) {
-          assignAddIndexes(child, depthStack);
+      if (operation.newOutputContext) {
+        depthStack.push([0]);
+      }
+      if ((node != null ? node.args : void 0) != null) {
+        _ref = node.args;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          child = _ref[_i];
+          if (child != null) {
+            assignAddIndexes(child, depthStack);
+          }
         }
+      }
+      if (operation.newOutputContext) {
+        depthStack.pop();
       }
     }
   };

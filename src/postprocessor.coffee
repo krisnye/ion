@@ -8,9 +8,13 @@ assignAddIndexes = (node, depthStack = [0]) ->
             index = depthStack[depthStack.length - 1]++
             # push this index value into the operation args
             node.args.push index
-    if node?.args?
-        for child in node.args when child?
-            assignAddIndexes child, depthStack
+        if operation.newOutputContext
+            depthStack.push [0]
+        if node?.args?
+            for child in node.args when child?
+                assignAddIndexes child, depthStack
+        if operation.newOutputContext
+            depthStack.pop()
     return
 
 exports.postprocess = postprocess = (ast) ->

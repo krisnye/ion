@@ -19,6 +19,7 @@ ops =
     "block":
         runtime: './BlockStatement'
     "set":
+        newOutputContext: true
         runtime: './AssignmentStatement'
     "if":
         runtime: './IfStatement'
@@ -66,14 +67,20 @@ ops =
     "||":
         evaluate: (left, right) -> left || right
     "root":
-        evaluate: -> @parent?.this ? @this
+        evaluate: do ->
+            getRoot = (context) ->
+                if context.parent?
+                    getRoot(context.parent)
+                else
+                    context.input
+            return -> getRoot @
     "ancestor":
         evaluate: (delta) ->
             context = @
             while delta > 0 and context?
                 context = context.parent
                 delta--
-            return context.this
+            return context.input
 
 for key, properties of ops
     properties.op = key

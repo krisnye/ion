@@ -29,7 +29,7 @@ module.exports = class NewContextExpression extends DynamicExpression
                         core.observe @leftValue, @leftObserver
 
                     # create a new context using the left value
-                    @leftContext = new Context @leftValue, @context
+                    @leftContext = new Context @leftValue, @context.output, @context
                     @rightWatcher ?= (value) =>
                         @rightValue = value
                         @evaluate()

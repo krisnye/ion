@@ -15,12 +15,12 @@ module.exports = class AssignmentStatement extends Statement
             @original ?= {}
             if not @original.hasOwnProperty @leftValue
                 @original[@leftValue] =
-                    if @context.this.hasOwnProperty @leftValue
-                        @context.this[@leftValue]
+                    if @context.output.hasOwnProperty @leftValue
+                        @context.output[@leftValue]
                     else
                         undefined
             # set the new value on this property
-            @context.this[@leftValue] = @rightValue
+            @context.output[@leftValue] = @rightValue
     deactivate: (revert = true) ->
         super()
         @leftExpression.unwatch @leftWatcher
@@ -29,9 +29,9 @@ module.exports = class AssignmentStatement extends Statement
             # restore original values
             for key, value of @original
                 if value is undefined
-                    delete @context.this[key]
+                    delete @context.output[key]
                 else
-                    @context.this[key] = value
+                    @context.output[key] = value
     dispose: ->
         super()
         @leftExpression?.dispose()

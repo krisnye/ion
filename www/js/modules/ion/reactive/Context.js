@@ -3,15 +3,23 @@
   var Context;
 
   module.exports = Context = (function() {
-    function Context(_this, parent) {
-      this["this"] = _this;
-      this.parent = parent;
+    function Context(input, output, parent, additions) {
       this.variables = {};
+      this.input = input;
+      this.output = output != null ? output : input;
+      this.parent = parent;
+      this.additions = additions != null ? additions : parent != null ? parent.additions : void 0;
     }
+
+    Context.prototype.input = null;
+
+    Context.prototype.output = null;
 
     Context.prototype.parent = null;
 
     Context.prototype.variables = null;
+
+    Context.prototype.additions = null;
 
     return Context;
 

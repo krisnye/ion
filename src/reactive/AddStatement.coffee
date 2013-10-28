@@ -17,11 +17,11 @@ module.exports = class AddStatement extends Statement
             @_remove()
     _add: ->
         if @_addedValue is undefined
-            ion.add @context.this, @value
+            ion.add @context.output, @value
             @_addedValue = @value
     _remove: ->
         if @_addedValue isnt undefined
-            ion.remove @context.this, @_addedValue
+            ion.remove @context.output, @_addedValue
             @_addedValue = undefined
     deactivate: ->
         super()

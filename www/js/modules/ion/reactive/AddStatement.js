@@ -46,14 +46,14 @@
 
     AddStatement.prototype._add = function __add() {
       if (this._addedValue === void 0) {
-        ion.add(this.context["this"], this.value);
+        ion.add(this.context.output, this.value);
         return this._addedValue = this.value;
       }
     };
 
     AddStatement.prototype._remove = function __remove() {
       if (this._addedValue !== void 0) {
-        ion.remove(this.context["this"], this._addedValue);
+        ion.remove(this.context.output, this._addedValue);
         return this._addedValue = void 0;
       }
     };
