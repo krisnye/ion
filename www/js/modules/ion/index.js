@@ -29,7 +29,18 @@
 
   exports.template = template;
 
-  exports.add = function _add(container, item) {
+  exports.count = function _count(container) {
+    var _ref;
+    return (_ref = container.length) != null ? _ref : 0;
+  };
+
+  exports.add = function _add(container, item, index, context) {
+    if (index != null) {
+      if (container.splice != null) {
+        container.splice(index, 0, item);
+        return;
+      }
+    }
     return container.add(item);
   };
 

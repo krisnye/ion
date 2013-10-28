@@ -1,11 +1,21 @@
+ion = require '../'
 
 module.exports = class Context
-    constructor: (input, output, parent, additions) ->
+    constructor: (input = global, output, parent, additions) ->
         @variables = {}
         @input = input
         @output = output ? input
         @parent = parent
-        @additions = additions ? parent?.additions
+        @additions = additions ? parent?.additions ? [ion.count @output]
+    getInsertionIndex: (addIndex) ->
+        insertionIndex = 0
+        for i in [0..addIndex]
+            count = @additions[i]
+            if count?
+                insertionIndex += count
+        return insertionIndex
+    setAdditionCount: (addIndex, count) ->
+        @additions[addIndex] = count
     # the input object that values are read from
     input: null
     # the output object that values are written to

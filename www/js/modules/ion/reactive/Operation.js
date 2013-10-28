@@ -21,6 +21,9 @@
 
     Operation.prototype.createRuntime = function _createRuntime(context, args) {
       var type;
+      if (context == null) {
+        throw new Error("_----------------- " + args);
+      }
       type = require(this.runtime);
       return new type({
         operation: this,

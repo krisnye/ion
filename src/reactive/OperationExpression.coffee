@@ -3,6 +3,7 @@ Operation = require './Operation'
 Expression = require './Expression'
 DynamicExpression = require './DynamicExpression'
 ExpressionList = require './ExpressionList'
+Context = require './Context'
 
 module.exports = class OperationExpression extends DynamicExpression
     constructor: (properties) ->
@@ -22,7 +23,7 @@ module.exports = class OperationExpression extends DynamicExpression
         @setValue value
 
 module.exports.test = ->
-    e = Operation.createRuntime null, {op:'+', args:[1, 2]}
+    e = Operation.createRuntime new Context(), {op:'+', args:[1, 2]}
     result = undefined
     watcher = (value) ->
         result = value

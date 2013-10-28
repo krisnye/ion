@@ -9,6 +9,8 @@ module.exports = class Operation
     # creates a runtime construct from this operation
     # with the specified context and AST arguments
     createRuntime: (context, args) ->
+        if not context?
+            throw new Error "_----------------- " + args
         type = require @runtime
         return new type {operation:@, context:context, args:args}
 

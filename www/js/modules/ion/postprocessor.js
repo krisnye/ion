@@ -14,7 +14,7 @@
     if ((node != null ? node.op : void 0) != null) {
       operation = Operation.getOperation(node.op);
       if (operation.addIndex) {
-        index = depthStack[depthStack.length - 1]++;
+        index = ++depthStack[depthStack.length - 1];
         node.args.push(index);
       }
       if (operation.newOutputContext) {

@@ -5,7 +5,7 @@ assignAddIndexes = (node, depthStack = [0]) ->
     if node?.op?
         operation = Operation.getOperation node.op
         if operation.addIndex
-            index = depthStack[depthStack.length - 1]++
+            index = ++depthStack[depthStack.length - 1]
             # push this index value into the operation args
             node.args.push index
         if operation.newOutputContext

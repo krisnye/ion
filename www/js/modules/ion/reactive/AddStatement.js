@@ -14,6 +14,8 @@
 
   ion = require('../');
 
+  require('sugar');
+
   module.exports = AddStatement = (function(_super) {
     __extends(AddStatement, _super);
 
@@ -44,17 +46,28 @@
       }
     };
 
+    AddStatement.prototype._getAddIndex = function __getAddIndex() {
+      return this.args[1];
+    };
+
     AddStatement.prototype._add = function __add() {
+      var addIndex, insertIndex;
       if (this._addedValue === void 0) {
-        ion.add(this.context.output, this.value);
-        return this._addedValue = this.value;
+        addIndex = this._getAddIndex();
+        insertIndex = this.context.getInsertionIndex(addIndex);
+        ion.add(this.context.output, this.value, insertIndex, this.context);
+        this._addedValue = this.value;
+        return this.context.setAdditionCount(addIndex, 1);
       }
     };
 
     AddStatement.prototype._remove = function __remove() {
+      var addIndex;
       if (this._addedValue !== void 0) {
+        addIndex = this._getAddIndex();
         ion.remove(this.context.output, this._addedValue);
-        return this._addedValue = void 0;
+        this._addedValue = void 0;
+        return this.context.setAdditionCount(addIndex, 0);
       }
     };
 
@@ -67,7 +80,7 @@
 
   })(Statement);
 
-  module.exports.test = function _test() {
+  module.exports.test = function _test(done) {
     var context, object, s;
     object = [false];
     context = new Context(object);
@@ -76,7 +89,7 @@
       args: [
         {
           op: 'add',
-          args: [1]
+          args: [1, 1]
         }, {
           op: 'if',
           args: [
@@ -90,25 +103,25 @@
               ]
             }, {
               op: 'add',
-              args: [2]
+              args: [2, 2]
             }
           ]
         }, {
           op: 'add',
-          args: [3]
+          args: [3, 3]
         }, {
           op: 'add',
-          args: [4]
+          args: [4, 4]
         }
       ]
     });
     s.activate();
-    console.log(JSON.stringify(object));
     Object.observe(object, function(changes) {
-      return console.log(JSON.stringify(object));
+      if (Object.equal(object, [true, 1, 2, 3, 4])) {
+        return done();
+      }
     });
-    object[0] = true;
-    return "AddStatement";
+    return object[0] = true;
   };
 
 }).call(this);
