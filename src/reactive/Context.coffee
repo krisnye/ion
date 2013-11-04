@@ -9,13 +9,18 @@ module.exports = class Context
         @additions = additions ? parent?.additions ? [ion.count @output]
     getInsertionIndex: (addIndex) ->
         insertionIndex = 0
-        for i in [0..addIndex]
+        # we include our own index in the insertionIndex
+        # this is because for-loops need to add after any of their
+        # own previous insertions.
+        for i in [0...addIndex]
             count = @additions[i]
             if count?
                 insertionIndex += count
         return insertionIndex
-    setAdditionCount: (addIndex, count) ->
-        @additions[addIndex] = count
+    incrementAdditionCount: (addIndex) ->
+        @additions[addIndex] = (@additions[addIndex] ? 0) + 1
+    decrementAdditionCount: (addIndex) ->
+        @additions[addIndex] = (@additions[addIndex] ? 0) - 1
     # the input object that values are read from
     input: null
     # the output object that values are written to

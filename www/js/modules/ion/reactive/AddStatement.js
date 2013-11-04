@@ -57,7 +57,7 @@
         insertIndex = this.context.getInsertionIndex(addIndex);
         ion.add(this.context.output, this.value, insertIndex, this.context);
         this._addedValue = this.value;
-        return this.context.setAdditionCount(addIndex, 1);
+        return this.context.incrementAdditionCount(addIndex);
       }
     };
 
@@ -67,7 +67,7 @@
         addIndex = this._getAddIndex();
         ion.remove(this.context.output, this._addedValue);
         this._addedValue = void 0;
-        return this.context.setAdditionCount(addIndex, 0);
+        return this.context.decrementAdditionCount(addIndex);
       }
     };
 
@@ -116,6 +116,9 @@
       ]
     });
     s.activate();
+    if (!Object.equal(object, [false, 1, 3, 4])) {
+      return done(JSON.stringify(object)(" should be [false,1,3,4]"));
+    }
     Object.observe(object, function(changes) {
       if (Object.equal(object, [true, 1, 2, 3, 4])) {
         return done();

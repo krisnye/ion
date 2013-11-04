@@ -23,13 +23,13 @@ module.exports = class AddStatement extends Statement
             insertIndex = @context.getInsertionIndex addIndex
             ion.add @context.output, @value, insertIndex, @context
             @_addedValue = @value
-            @context.setAdditionCount addIndex, 1
+            @context.incrementAdditionCount addIndex
     _remove: ->
         if @_addedValue isnt undefined
             addIndex = @_getAddIndex()
             ion.remove @context.output, @_addedValue
             @_addedValue = undefined
-            @context.setAdditionCount addIndex, 0
+            @context.decrementAdditionCount addIndex
     deactivate: ->
         super()
         @expression.unwatch @watcher
@@ -49,6 +49,8 @@ module.exports.test = (done) ->
     s.activate()
 
     # console.log JSON.stringify object
+    unless Object.equal object, [false, 1, 3, 4]
+        return done(JSON.stringify(object) " should be [false,1,3,4]")
 
     # now changing object[0] to true should cause a 2 to be inserted into the array
     Object.observe object, (changes) ->
