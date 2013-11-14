@@ -24,16 +24,24 @@ ops =
     "if":
         runtime: './IfStatement'
     "for":
+        # for loop children do not use add indexes
+        # because otherwise they would all try to insert at zero.
+        addIndexesEnabled: false
         runtime: './ForStatement'
-    "var":
-        # variable declaration
-        statement: true
-    "ref": {}
-        # variable reference
-    "children": {}
     "call": {}
-    "array": {}
-    "object": {}
+    "object":
+        addIndexesEnabled: true
+        runtime: './ObjectExpression'
+    "var":
+        runtime: './VariableDefinition'
+    "ref":
+        createRuntime: (context, args) ->
+            name = args[0]
+            while context?
+                variable = context.variables[name]
+                return variable if variable?
+                context = context.parent
+            throw new Error "Variable not found: #{@name}"
     "predicate":
         newInputContext: true
         runtime: './NewContextExpression'
@@ -66,6 +74,8 @@ ops =
         evaluate: (left, right) -> left && right
     "||":
         evaluate: (left, right) -> left || right
+    "global":
+        evaluate: -> global
     "root":
         evaluate: do ->
             getRoot = (context) ->

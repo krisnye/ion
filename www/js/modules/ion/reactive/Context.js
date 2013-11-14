@@ -19,6 +19,9 @@
 
     Context.prototype.getInsertionIndex = function _getInsertionIndex(addIndex) {
       var count, i, insertionIndex, _i;
+      if (addIndex == null) {
+        return;
+      }
       insertionIndex = 0;
       for (i = _i = 0; 0 <= addIndex ? _i < addIndex : _i > addIndex; i = 0 <= addIndex ? ++_i : --_i) {
         count = this.additions[i];
@@ -31,11 +34,17 @@
 
     Context.prototype.incrementAdditionCount = function _incrementAdditionCount(addIndex) {
       var _ref;
+      if (addIndex == null) {
+        return;
+      }
       return this.additions[addIndex] = ((_ref = this.additions[addIndex]) != null ? _ref : 0) + 1;
     };
 
     Context.prototype.decrementAdditionCount = function _decrementAdditionCount(addIndex) {
       var _ref;
+      if (addIndex == null) {
+        return;
+      }
       return this.additions[addIndex] = ((_ref = this.additions[addIndex]) != null ? _ref : 0) - 1;
     };
 

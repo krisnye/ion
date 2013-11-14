@@ -8,6 +8,7 @@ module.exports = class Context
         @parent = parent
         @additions = additions ? parent?.additions ? [ion.count @output]
     getInsertionIndex: (addIndex) ->
+        return unless addIndex?
         insertionIndex = 0
         # we include our own index in the insertionIndex
         # this is because for-loops need to add after any of their
@@ -18,8 +19,10 @@ module.exports = class Context
                 insertionIndex += count
         return insertionIndex
     incrementAdditionCount: (addIndex) ->
+        return unless addIndex?
         @additions[addIndex] = (@additions[addIndex] ? 0) + 1
     decrementAdditionCount: (addIndex) ->
+        return unless addIndex?
         @additions[addIndex] = (@additions[addIndex] ? 0) - 1
     # the input object that values are read from
     input: null

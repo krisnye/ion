@@ -6,16 +6,22 @@
 
   Operation = require('./reactive/Operation');
 
-  assignAddIndexes = function _assignAddIndexes(node, depthStack) {
+  assignAddIndexes = function _assignAddIndexes(node, depthStack, addIndexesEnabled) {
     var child, index, operation, _i, _len, _ref;
     if (depthStack == null) {
       depthStack = [0];
     }
+    if (addIndexesEnabled == null) {
+      addIndexesEnabled = true;
+    }
     if ((node != null ? node.op : void 0) != null) {
       operation = Operation.getOperation(node.op);
-      if (operation.addIndex) {
+      if (operation.addIndex && addIndexesEnabled) {
         index = ++depthStack[depthStack.length - 1];
         node.args.push(index);
+      }
+      if (operation.addIndexesEnabled != null) {
+        addIndexesEnabled = operation.addIndexesEnabled;
       }
       if (operation.newOutputContext) {
         depthStack.push([0]);
@@ -25,7 +31,7 @@
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           child = _ref[_i];
           if (child != null) {
-            assignAddIndexes(child, depthStack);
+            assignAddIndexes(child, depthStack, addIndexesEnabled);
           }
         }
       }

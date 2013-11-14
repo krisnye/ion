@@ -68,12 +68,12 @@
     };
 
     DynamicExpression.prototype.getValue = function _getValue() {
-      return this._value;
+      return this.value;
     };
 
     DynamicExpression.prototype.setValue = function _setValue(value) {
-      if (value !== this._value) {
-        this._value = value;
+      if (value !== this.value) {
+        this.value = value;
         this.notify();
       }
     };

@@ -40,11 +40,7 @@ module.exports = class AssignmentStatement extends Statement
 module.exports.test = (done) ->
     object = { x: 1, y: 2, z: -1}
     context = new Context object
-    a = Operation.createRuntime context, {op:'set', args:["z", {op:"+", args:[
-            {op:'member',args:[{op:'ancestor',args:[0]}, "x"]}
-            {op:'member',args:[{op:'ancestor',args:[0]}, "y"]}
-        ]}]}
-
+    a = Operation.createRuntime context, ast = require('../').parseStatement "z: @x + @y"
     # activate this statement.
     a.activate()
     throw "object.z != 3" unless object.z is 3

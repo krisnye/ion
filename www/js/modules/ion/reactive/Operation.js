@@ -49,16 +49,31 @@
       runtime: './IfStatement'
     },
     "for": {
+      addIndexesEnabled: false,
       runtime: './ForStatement'
     },
-    "var": {
-      statement: true
-    },
-    "ref": {},
-    "children": {},
     "call": {},
-    "array": {},
-    "object": {},
+    "object": {
+      addIndexesEnabled: true,
+      runtime: './ObjectExpression'
+    },
+    "var": {
+      runtime: './VariableDefinition'
+    },
+    "ref": {
+      createRuntime : function _createRuntime(context, args) {
+        var name, variable;
+        name = args[0];
+        while (context != null) {
+          variable = context.variables[name];
+          if (variable != null) {
+            return variable;
+          }
+          context = context.parent;
+        }
+        throw new Error("Variable not found: " + this.name);
+      }
+    },
     "predicate": {
       newInputContext: true,
       runtime: './NewContextExpression',
@@ -123,6 +138,11 @@
     "||": {
       evaluate : function _evaluate(left, right) {
         return left || right;
+      }
+    },
+    "global": {
+      evaluate : function _evaluate() {
+        return global;
       }
     },
     "root": {

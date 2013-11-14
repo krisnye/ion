@@ -23,7 +23,8 @@ module.exports = class OperationExpression extends DynamicExpression
         @setValue value
 
 module.exports.test = ->
-    e = Operation.createRuntime new Context(), {op:'+', args:[1, 2]}
+    context = new Context
+    e = Operation.createRuntime context, ast = require('../').parseExpression "1 + 2"
     result = undefined
     watcher = (value) ->
         result = value

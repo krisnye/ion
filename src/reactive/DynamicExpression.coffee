@@ -33,10 +33,10 @@ module.exports = class DynamicExpression extends Expression
             for watcher in @_watchers
                 @_notifyWatcher watcher, value
         return
-    getValue: -> @_value
+    getValue: -> @value
     setValue: (value) ->
-        if value isnt @_value
-            @_value = value
+        if value isnt @value
+            @value = value
             @notify()
         return
 

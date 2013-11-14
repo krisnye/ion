@@ -37,15 +37,13 @@ module.exports = class AddStatement extends Statement
 module.exports.test = (done) ->
     object = [false]
     context = new Context object
-    s = Operation.createRuntime context, {op:"block",args:[
-            {op:'add',args:[1,1]}
-            {op:'if',args:[
-                {op:'member',args:[{op:'ancestor',args:[0]},0]}
-                {op:'add',args:[2,2]}
-            ]}
-            {op:'add',args:[3,3]}
-            {op:'add',args:[4,4]}
-        ]}
+    s = Operation.createRuntime context, ast = require('../').parseStatement """
+        1
+        if @[0]
+            2
+        3
+        4
+        """
     s.activate()
 
     # console.log JSON.stringify object

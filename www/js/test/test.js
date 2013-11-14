@@ -14,4 +14,7 @@ catch (e){
 var isWindows = process.platform == 'win32'
 var ext = isWindows ? ".cmd" : "";
 args = args.map(function(x){return np.normalize('./') + np.relative(np.dirname(glassTestModuleId), x);});
-cp.spawn("node" + ext, [glassTestModuleId].concat(args), {stdio:'inherit'});
+child = cp.spawn("node" + ext, [glassTestModuleId].concat(args), {stdio:'inherit'});
+child.on('error', function(error) { console.log("Error running test: " + "node" + ext + ' ' + [glassTestModuleId].concat(args).join(' ') ); });
+
+

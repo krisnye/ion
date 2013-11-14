@@ -49,11 +49,9 @@
   })(DynamicExpression);
 
   module.exports.test = function _test() {
-    var e, result, watcher;
-    e = Operation.createRuntime(new Context(), {
-      op: '+',
-      args: [1, 2]
-    });
+    var ast, context, e, result, watcher;
+    context = new Context;
+    e = Operation.createRuntime(context, ast = require('../').parseExpression("1 + 2"));
     result = void 0;
     watcher = function _watcher(value) {
       return result = value;

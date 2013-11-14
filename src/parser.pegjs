@@ -30,8 +30,7 @@
 }
 
 //  new code
-start = eof { return [] }
-      / newScopeStatements
+start = newScopeStatements
 
 definition = eol? s a:id s "=" s b:lineExpression eol? { return e("var", [a,b]) }
 statement = eol? a:(if / for / set / add) eol? { return a }
@@ -39,14 +38,21 @@ if = s "if" break s a:singleLineExpression indent b:blockStatement outdent c:els
     { return e("if", isEmpty(c) ? [a,b] : [a,b,c]) }
 else = s "else" break s a:(singleLineExpression / eol { return "" }) indent b:blockStatement outdent
     { return isEmpty(a) ? b : e("if", [a,b]) }
-for = s "for" break s a:singleLineExpression indent b:newScopeStatements outdent { return e("for", [a,b]) }
+for = s "for" break s a:(singleLineExpression / eol) indent b:newScopeStatements outdent
+{
+  if (isEmpty(a))
+    a = e("ancestor", [0])
+  return e("for", [a,b])
+}
 add = s a:lineExpression { return e("add", [a]) }
 set = s id:key s ":" s a:lineExpression { return e("set", [id,a]) }
 lineExpression = multiLineExpression / singleLineExpression
 singleLineExpression = a:(list / e) eol { return a }
 multiLineExpression = multilineString / multilineObject
-multilineObject = type:(singleLineExpression / eol {return null}) indent s:blockStatement outdent
+multilineObject = type:("{}" eol / singleLineExpression / eol {return null}) indent s:blockStatement outdent
 {
+    if (type[0] == "{}")
+      type = null;
     return e("object", [type,s])
 }
 blockStatement = a:statement+ { return block(a) }
@@ -75,7 +81,7 @@ args = "(" s ")" { return [] }
      / "(" a:list ")" { return a }
 
 //  objects and arrays
-object = id? eol indent set+ outdent
+object = type:e? eol indent statements:set+ outdent { return e("object", [type,statements]) }
 indent "INDENT" = s token:"{{{{" eol
 {
   if (token != core.indentToken)
@@ -120,13 +126,22 @@ group = '(' s a:e s ')' { return a }
 
 //  references
 ref = null / global / root / ancestor / idref
-null = "null" break { return null }
+null = 'null' break { return null }
 global = '$' break { return e("global") }
-root = ('@' / 'this') break { return e("root") }
-ancestor = a:('.'+) { return e("ancestor", [f(a).length - 1]) }
-idref = a:id { return e("ref", [a]) }
+       / '$' a:id { return e("member", [e("global"), a])}
+root = '@' break { return e("root") }
+    / '@' a:id { return e("member", [e("root"), a])}
+ancestor = a:('.'+) b:id?
+{
+  result = e("ancestor", [f(a).length - 1])
+  if (!isEmpty(b))
+    result = e("member", [result, b])
+  return result
+}
+idref = a:id { return e("ref", [a]) /* we postprocess to determine if this is a variable or global reference */ }
 id = a:([a-zA-Z_][a-zA-Z_0-9]*) { return f(a) }
 key = id / string
+
 
 //  literals
 literal = number / boolean / string

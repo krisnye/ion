@@ -65,33 +65,14 @@
   })(Statement);
 
   module.exports.test = function _test(done) {
-    var a, context, object;
+    var a, ast, context, object;
     object = {
       a: true,
       x: 1,
       y: 2
     };
     context = new Context(object);
-    a = Operation.createRuntime(context, {
-      op: 'if',
-      args: [
-        {
-          op: 'member',
-          args: [
-            {
-              op: 'ancestor',
-              args: [0]
-            }, "a"
-          ]
-        }, {
-          op: 'set',
-          args: ["z1", true]
-        }, {
-          op: 'set',
-          args: ["z2", false]
-        }
-      ]
-    });
+    a = Operation.createRuntime(context, ast = require('../').parseStatement("if @a\n    z1: true\nelse\n    z2: false"));
     a.activate();
     if (object.z1 !== true) {
       throw new "object.z1 != true";

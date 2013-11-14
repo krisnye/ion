@@ -51,6 +51,10 @@ module.exports.test = (done) ->
     try
         object = {x:1,y:2}
         context = new Context object
+        # TODO: support parsing local expressions
+        # e = Operation.createRuntime context, ast = require('../').parseExpression """
+        #         .(.x + .y)
+        #     """
         e = Operation.createRuntime context, {op:'local',args:[
                 {op:'root',args:[]}
                 {op:'+',args:[

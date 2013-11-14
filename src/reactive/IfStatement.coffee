@@ -27,12 +27,12 @@ module.exports = class IfStatement extends Statement
 module.exports.test = (done) ->
     object = { a:true, x: 1, y: 2 }
     context = new Context object
-    a = Operation.createRuntime context,
-            {op:'if', args:[
-                {op:'member',args:[{op:'ancestor',args:[0]}, "a"]}
-                {op:'set', args:["z1", true]}
-                {op:'set', args:["z2", false]}
-            ]}
+    a = Operation.createRuntime context, ast = require('../').parseStatement """
+        if @a
+            z1: true
+        else
+            z2: false
+        """
 
     a.activate()
     throw new "object.z1 != true" unless object.z1 is true

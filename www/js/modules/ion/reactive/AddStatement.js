@@ -81,40 +81,10 @@
   })(Statement);
 
   module.exports.test = function _test(done) {
-    var context, object, s;
+    var ast, context, object, s;
     object = [false];
     context = new Context(object);
-    s = Operation.createRuntime(context, {
-      op: "block",
-      args: [
-        {
-          op: 'add',
-          args: [1, 1]
-        }, {
-          op: 'if',
-          args: [
-            {
-              op: 'member',
-              args: [
-                {
-                  op: 'ancestor',
-                  args: [0]
-                }, 0
-              ]
-            }, {
-              op: 'add',
-              args: [2, 2]
-            }
-          ]
-        }, {
-          op: 'add',
-          args: [3, 3]
-        }, {
-          op: 'add',
-          args: [4, 4]
-        }
-      ]
-    });
+    s = Operation.createRuntime(context, ast = require('../').parseStatement("1\nif @[0]\n    2\n3\n4"));
     s.activate();
     if (!Object.equal(object, [false, 1, 3, 4])) {
       return done(JSON.stringify(object)(" should be [false,1,3,4]"));

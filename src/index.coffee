@@ -12,20 +12,24 @@ parse = (input) ->
     postprocessed = postprocessor.postprocess ast
     return postprocessed
 
-template = (input, name) -> new Template parse(input), name
-
-exports._parse = parse
-exports.template = template
+exports.parseStatement = parse
+exports.parseExpression = (input) ->
+    ast = parse input
+    # the only statement should be a single add statement
+    throw new Error "Expected a single expression:\n#{input}" unless ast.op is 'add'
+    return ast.args[0]
 
 exports.count = (container) -> container.length ? 0
 exports.add = (container, item, index, context) ->
-    if index?
-        # array.splice?
-        if container.splice?
-            container.splice index, 0, item
-            return
-
-    container.add item
+    if index? and container.splice?
+        container.splice index, 0, item
+    else
+        container.add item
 exports.remove = (container, item) ->
     container.remove item
-
+exports.is = (instance, type) ->
+    return false unless instance?
+    return true unless type?
+    if typeof instance.is is 'function'
+        return instance.is type
+    return instance instanceof type

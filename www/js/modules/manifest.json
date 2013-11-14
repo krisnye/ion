@@ -1,12 +1,12 @@
 [
   "require.js",
+  "ion/ForEachMap.js",
   "ion/Template.js",
   "ion/core.js",
   "ion/index.js",
   "ion/parser.js",
   "ion/postprocessor.js",
   "ion/preprocessor.js",
-  "ion/polymer/observe.js",
   "ion/reactive/AddStatement.js",
   "ion/reactive/AssignmentStatement.js",
   "ion/reactive/BlockStatement.js",
@@ -18,10 +18,12 @@
   "ion/reactive/ForStatement.js",
   "ion/reactive/IfStatement.js",
   "ion/reactive/NewContextExpression.js",
+  "ion/reactive/ObjectExpression.js",
   "ion/reactive/Operation.js",
   "ion/reactive/OperationExpression.js",
   "ion/reactive/Statement.js",
   "ion/reactive/StaticExpression.js",
+  "ion/reactive/VariableDefinition.js",
   "ion/test/parseTests.js",
   "ion/test/renderTests.js"
 ]
