@@ -74,6 +74,22 @@ ops =
         evaluate: (left, right) -> left && right
     "||":
         evaluate: (left, right) -> left || right
+    "&":
+        evaluate: (left, right) -> left & right
+    "|":
+        evaluate: (left, right) -> left | right
+    "==":
+        evaluate: (left, right) -> left == right
+    "!=":
+        evaluate: (left, right) -> left != right
+    "<":
+        evaluate: (left, right) -> left < right
+    ">":
+        evaluate: (left, right) -> left > right
+    "<=":
+        evaluate: (left, right) -> left <= right
+    ">=":
+        evaluate: (left, right) -> left >= right
     "global":
         evaluate: -> global
     "root":

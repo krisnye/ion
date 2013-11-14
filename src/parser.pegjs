@@ -49,9 +49,11 @@ set = s id:key s ":" s a:lineExpression { return e("set", [id,a]) }
 lineExpression = multiLineExpression / singleLineExpression
 singleLineExpression = a:(list / e) eol { return a }
 multiLineExpression = multilineString / multilineObject
-multilineObject = type:("{}" eol / singleLineExpression / eol {return null}) indent s:blockStatement outdent
+multilineObject = type:(("{}" / "[]") eol / singleLineExpression / eol) indent s:blockStatement outdent
 {
-    if (type[0] == "{}")
+    if (type[0] == "[]")
+      type = e("member", [e("global"), "Array"])
+    if (type[0] == "{}" || Array.isArray(type) && isEmpty(f(type).trim()))
       type = null;
     return e("object", [type,s])
 }
@@ -101,10 +103,10 @@ conditional
   / a:or s op:"?" s b:conditional  { return e(op, [a,b]) }
   / or
 or
-  = left:and s op:"||" s right:or { return e(op, [left,right]) }
+  = left:and s op:("||" / "|") s right:or { return e(op, [left,right]) }
   / and
 and
-  = left:equality s op:"&&" s right:and { return e(op, [left,right]) }
+  = left:equality s op:("&&" / "&") s right:and { return e(op, [left,right]) }
   / equality
 equality
   = left:relational s op:("==" / "!=") s right:equality { return e(op, [left,right]) }
@@ -140,7 +142,7 @@ ancestor = a:('.'+) b:id?
 }
 idref = a:id { return e("ref", [a]) /* we postprocess to determine if this is a variable or global reference */ }
 id = a:([a-zA-Z_][a-zA-Z_0-9]*) { return f(a) }
-key = id / string
+key = id / string / group
 
 
 //  literals

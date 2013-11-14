@@ -19,6 +19,13 @@ exports.parseExpression = (input) ->
     throw new Error "Expected a single expression:\n#{input}" unless ast.op is 'add'
     return ast.args[0]
 
+Context = require './runtime/Context'
+Operation = require './runtime/Operation'
+exports.createRuntime = (ast, input, output, options) ->
+    context = new Context input, output
+    runtime = Operation.createRuntime context, ast
+    return runtime
+
 exports.count = (container) -> container.length ? 0
 exports.add = (container, item, index, context) ->
     if index? and container.splice?

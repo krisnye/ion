@@ -9,24 +9,32 @@ module.exports = class ForStatement extends Statement
     activate: ->
         super()
         @statementMap ?= new Map
-        for key, value of @context.input
-            @addItem value
 
-        core.observe @context.input, @applyChanges.bind @
+        @collectionExpression = Operation.createRuntime @context, @args[0] ? @context.input
+        @collectionExpression.watch @collectionWatcher ?= (collection) =>
+            if @collection != collection
+                if @collection?
+                    for key, item of @collection
+                        @removeItem item
+                    core.unobserve collection, @collectionObserver
+                @collection = collection
+                for key, item of collection
+                    @addItem item
+                core.observe collection, @collectionObserver ?= @applyChanges.bind @
     applyChanges: (changes) ->
         # O(n) operation.
         # because we have to make a new set of the items, this is a linear time operation.
         # WE ONLY have to do this for Arrays since they suck.
-        # we can optimize this later to use O(1) time if the @context.input is not an array.
+        # we can optimize this later to use O(1) time if the @collection is not an array.
         current = new Set
-        for key, value of @context.input
+        for key, value of @collection
             current.add value
 
         maybeRemove = new Map
         for change in changes when change.name isnt 'length'
             if change.oldValue?
                 maybeRemove.set change.oldValue, change.oldValue
-            newValue = @context.input[change.name]
+            newValue = @collection[change.name]
             if newValue?
                 @addItem newValue
 
@@ -56,18 +64,18 @@ module.exports = class ForStatement extends Statement
         super()
 
 module.exports.test = (done) ->
-    input = [1,2,3,4]
+    input = {numbers:[1,2,3,4]}
     output = []
     context = new Context input, output
     ast = require('../').parseStatement """
-        for
+        for .numbers
             . * 2
         """
     a = Operation.createRuntime context, ast
     a.activate()
 
-    input.remove 2
-    input.add 5
+    input.numbers.remove 2
+    input.numbers.add 5
 
     Object.observe output, (changes) ->
         if Object.equal output, [2,6,8,10]

@@ -1,5 +1,5 @@
 core = require './core'
-Operation = require './reactive/Operation'
+Operation = require './runtime/Operation'
 
 assignAddIndexes = (node, depthStack = [0], addIndexesEnabled = true) ->
     if node?.op?

@@ -4,7 +4,7 @@
 
   core = require('./core');
 
-  Operation = require('./reactive/Operation');
+  Operation = require('./runtime/Operation');
 
   assignAddIndexes = function _assignAddIndexes(node, depthStack, addIndexesEnabled) {
     var child, index, operation, _i, _len, _ref;

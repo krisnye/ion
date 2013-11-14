@@ -1,5 +1,5 @@
 require './core'
-Context = require './reactive/Context'
+Context = require './runtime/Context'
 
 module.exports = class Template
     constructor: (@statements, @name = "template") ->

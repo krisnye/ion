@@ -668,6 +668,17 @@
             matchFailed("\"{}\"");
           }
         }
+        if (result0 === null) {
+          if (input.substr(pos, 2) === "[]") {
+            result0 = "[]";
+            pos += 2;
+          } else {
+            result0 = null;
+            if (reportFailures === 0) {
+              matchFailed("\"[]\"");
+            }
+          }
+        }
         if (result0 !== null) {
           result1 = parse_eol();
           if (result1 !== null) {
@@ -683,14 +694,7 @@
         if (result0 === null) {
           result0 = parse_singleLineExpression();
           if (result0 === null) {
-            pos2 = pos;
             result0 = parse_eol();
-            if (result0 !== null) {
-              result0 = (function(offset) {return null})(pos2);
-            }
-            if (result0 === null) {
-              pos = pos2;
-            }
           }
         }
         if (result0 !== null) {
@@ -719,7 +723,9 @@
         }
         if (result0 !== null) {
           result0 = (function(offset, type, s) {
-            if (type[0] == "{}")
+            if (type[0] == "[]")
+              type = e("member", [e("global"), "Array"])
+            if (type[0] == "{}" || Array.isArray(type) && isEmpty(f(type).trim()))
               type = null;
             return e("object", [type,s])
         })(pos0, result0[0], result0[2]);
@@ -1900,6 +1906,17 @@
                 matchFailed("\"||\"");
               }
             }
+            if (result2 === null) {
+              if (input.charCodeAt(pos) === 124) {
+                result2 = "|";
+                pos++;
+              } else {
+                result2 = null;
+                if (reportFailures === 0) {
+                  matchFailed("\"|\"");
+                }
+              }
+            }
             if (result2 !== null) {
               result3 = parse_s();
               if (result3 !== null) {
@@ -1955,6 +1972,17 @@
               result2 = null;
               if (reportFailures === 0) {
                 matchFailed("\"&&\"");
+              }
+            }
+            if (result2 === null) {
+              if (input.charCodeAt(pos) === 38) {
+                result2 = "&";
+                pos++;
+              } else {
+                result2 = null;
+                if (reportFailures === 0) {
+                  matchFailed("\"&\"");
+                }
               }
             }
             if (result2 !== null) {
@@ -2750,6 +2778,9 @@
         result0 = parse_id();
         if (result0 === null) {
           result0 = parse_string();
+          if (result0 === null) {
+            result0 = parse_group();
+          }
         }
         return result0;
       }
