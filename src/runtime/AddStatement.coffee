@@ -39,7 +39,7 @@ module.exports.test = (done) ->
     context = new Context object
     s = Operation.createRuntime context, ast = require('../').parseStatement """
         1
-        if @[0]
+        if $[0]
             2
         3
         4

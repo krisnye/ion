@@ -24,6 +24,15 @@ module.exports = class Context
     decrementAdditionCount: (addIndex) ->
         return unless addIndex?
         @additions[addIndex] = (@additions[addIndex] ? 0) - 1
+    _getAncestorProperty: (name, delta = -1) ->
+        context = @
+        while delta != 0 and context.parent?
+            if context.parent[name] isnt context[name]
+                delta--
+            context = context.parent
+        return context[name]
+    getInput: (delta) -> @_getAncestorProperty "input", delta
+    getOutput: (delta) -> @_getAncestorProperty "output", delta
     # the input object that values are read from
     input: null
     # the output object that values are written to

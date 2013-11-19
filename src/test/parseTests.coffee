@@ -22,6 +22,20 @@ parseTests =
     "foo * 2": {"op":"add","args":[{"op":"*","args":[{"op":"ref","args":["foo"]},2]},1]}
     "Person\n    name: \"Kris\"\n    poem: \"\"\n        There once was a doctor from Mactus\n        who liked operating on cactus.\n        He had ants on his pants\n        after doing transplants\n        and finally got sued for malpractice.\n":
             {"op":"add","args":[{"op":"object","args":[{"op":"ref","args":["Person"]},{op:"block",args:[{"op":"set","args":["name","Kris"]},{"op":"set","args":["poem","There once was a doctor from Mactus\nwho liked operating on cactus.\nHe had ants on his pants\nafter doing transplants\nand finally got sued for malpractice."]}]}]},1]}
+    ".*": {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"input","args":[0]},{"op":"add","args":[{"op":"input","args":[0]}]}]}]},1]}
+    "..*": {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"input","args":[1]},{"op":"add","args":[{"op":"input","args":[0]}]}]}]},1]}
+    "...*": {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"input","args":[2]},{"op":"add","args":[{"op":"input","args":[0]}]}]}]},1]}
+    "*{true}": {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"input","args":[0]},{"op":"add","args":[{"op":"predicate","args":[{"op":"input","args":[0]},true]}]}]}]},1]}
+    """
+    []
+        for .
+            .name
+    """: longForm = {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"input","args":[0]},{"op":"add","args":[{"op":"member","args":[{"op":"input","args":[0]},"name"]}]}]}]},1]}
+    "*.name": longForm
+    "foo := 5": {"op":"block","args":[{"op":"var","args":["foo",5]},{"op":"set","args":["foo",{"op":"ref","args":["foo"]}]}]}
+    "foo.(.x + .y)": {"op":"add","args":[{"op":"local","args":[{"op":"ref","args":["foo"]},{"op":"+","args":[{"op":"member","args":[{"op":"input","args":[0]},"x"]},{"op":"member","args":[{"op":"input","args":[0]},"y"]}]}]},1]}
+    # "foo.*.(a)": null
+    # ".*.name": null
 exports.test =
     parse: ->
         for text, expected of parseTests
@@ -36,3 +50,8 @@ exports.test =
                 console.log "---------------------------------------"
                 throw new Error JSON.stringify(result, null, '  ') + "\n!=\n" + JSON.stringify(expected, null, '  ')
         return
+# .*.name
+# equivalent to
+# []
+#     for .
+#         .name

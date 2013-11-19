@@ -28,7 +28,6 @@ ops =
         # because otherwise they would all try to insert at zero.
         addIndexesEnabled: false
         runtime: './ForStatement'
-    "call": {}
     "object":
         addIndexesEnabled: true
         runtime: './ObjectExpression'
@@ -41,7 +40,14 @@ ops =
                 variable = context.variables[name]
                 return variable if variable?
                 context = context.parent
-            throw new Error "Variable not found: #{@name}"
+            # if the variable is not defined by us then it is probably a global variable.
+            # we do however require that it be a globally defined variable, otherwise we throw an error.
+            value = global[name]
+            if value is undefined
+                throw new Error "Variable not found: '#{name}'" if value is undefined
+            # global values are considered to be constants.
+            return new (require './StaticExpression') {value:value}
+
     "predicate":
         newInputContext: true
         runtime: './NewContextExpression'
@@ -51,6 +57,8 @@ ops =
         # a local expression, usually of the format alpha.(x+y)
         runtime: './NewContextExpression'
         evaluate: (left, right) -> right
+    "call":
+        evaluate: (fn, args...) -> fn?(args...)
     "member":
         newInputContext: true
         runtime: './NewContextExpression'
@@ -60,6 +68,10 @@ ops =
             if typeof value is 'function'
                 value = value.bind left
             return value
+    "children":
+        evaluate: (left, right) -> left
+    "?:":
+        evaluate: (condition, a, b) -> if condition then a else b
     "*":
         evaluate: (left, right) -> left * right
     "/":
@@ -92,21 +104,10 @@ ops =
         evaluate: (left, right) -> left >= right
     "global":
         evaluate: -> global
-    "root":
-        evaluate: do ->
-            getRoot = (context) ->
-                if context.parent?
-                    getRoot(context.parent)
-                else
-                    context.input
-            return -> getRoot @
-    "ancestor":
-        evaluate: (delta) ->
-            context = @
-            while delta > 0 and context?
-                context = context.parent
-                delta--
-            return context.input
+    "input":
+        evaluate: (delta) -> @getInput delta
+    "output":
+        evaluate: (delta) -> @getOutput delta
 
 for key, properties of ops
     properties.op = key

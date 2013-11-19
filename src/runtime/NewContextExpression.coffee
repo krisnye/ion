@@ -49,19 +49,9 @@ module.exports = class NewContextExpression extends DynamicExpression
 
 module.exports.test = (done) ->
     try
-        object = {x:1,y:2}
+        object = {alpha:{x:1,y:2}}
         context = new Context object
-        # TODO: support parsing local expressions
-        # e = Operation.createRuntime context, ast = require('../').parseExpression """
-        #         .(.x + .y)
-        #     """
-        e = Operation.createRuntime context, {op:'local',args:[
-                {op:'root',args:[]}
-                {op:'+',args:[
-                    {op:'member',args:[{op:'ancestor',args:[0]}, "x"]}
-                    {op:'member',args:[{op:'ancestor',args:[0]}, "y"]}
-                ]}
-            ]}
+        e = Operation.createRuntime context, ast = require('../').parseExpression "$.alpha.(.x + .y)"
         result = undefined
         watcher = (value) ->
             result = value
@@ -71,7 +61,7 @@ module.exports.test = (done) ->
         # we should actually get an immediate result
         throw "result != 3" unless result is 3
         # now change the x value
-        object.x = 10
+        object.alpha.x = 10
         # the watcher should be called with 12 which will pass this test
     catch error
         done error

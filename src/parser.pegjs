@@ -14,55 +14,87 @@
             return a.concat(b);
         }, '')
     }
-    function joinLeft(head, tail) {
-        var result = head;
-        for (var i = 0; i < tail.length; i++) {
-            var step = tail[i];
+    function joinLeft(steps) {
+        var result = steps[0];
+        for (var i = 1; i < steps.length; i++) {
+            var step = steps[i];
             step.args.unshift(result);
             result = step;
         }
         return result;
     }
+    function joinRight(steps) {
+        var current = steps[0];
+        for (var i = 1; i < steps.length; i++) {
+            var step = steps[i];
+            current.args.push(step);
+            current = step;
+        }
+        return steps[0];
+    }
     function block(a) {
-      return a.length == 1 ? a[0] : e("block", a);
+      if (a.length == 1)
+        return a[0];
+      var statements = [];
+      for (var i = 0; i < a.length; i++) {
+        var statement = a[i];
+        if (statement.op === "block")
+          statements.push.apply(statements, statement.args);
+        else
+          statements.push(statement);
+      }
+      return e("block", statements);
+    }
+    function incrementOutputExpressions(e) {
+      if (e != null && e.op != null) {
+        if (e.op == "output") {
+          e.args[0]++
+        }
+
+        for (var i = 0; i < e.args.length; i++)
+          incrementOutputExpressions(e.args[i])
+      }
     }
     var core = require('./core');
+    function arrayType() {
+      return {"op":"member","args":[{"op":"global","args":[]},"Array"]};
+    }
 }
 
 //  new code
-start = newScopeStatements
+start = statements
 
-definition = eol? s a:id s "=" s b:lineExpression eol? { return e("var", [a,b]) }
-statement = eol? a:(if / for / set / add) eol? { return a }
-if = s "if" break s a:singleLineExpression indent b:blockStatement outdent c:else?
+statement = eol? a:(if / for / set / add / definition / setAndDefinition) eol? { return a }
+definition = eol? s id:id s "=" s a:lineExpression eol? { return e("var", [id,a]) }
+setAndDefinition = eol? s id:id s ":=" s a:lineExpression eol?
+{
+  return block([e("var", [id, a]),e("set", [id, e("ref", [id])])])
+}
+if = s "if" break s a:singleLineExpression indent b:statements outdent c:else?
     { return e("if", isEmpty(c) ? [a,b] : [a,b,c]) }
-else = s "else" break s a:(singleLineExpression / eol { return "" }) indent b:blockStatement outdent
+else = s "else" break s a:(singleLineExpression / eol { return "" }) indent b:statements outdent
     { return isEmpty(a) ? b : e("if", [a,b]) }
-for = s "for" break s a:(singleLineExpression / eol) indent b:newScopeStatements outdent
+for = s "for" break s a:(singleLineExpression / eol) indent b:statements outdent
 {
   if (isEmpty(a))
-    a = e("ancestor", [0])
+    a = e("input", [0])
   return e("for", [a,b])
 }
 add = s a:lineExpression { return e("add", [a]) }
 set = s id:key s ":" s a:lineExpression { return e("set", [id,a]) }
 lineExpression = multiLineExpression / singleLineExpression
-singleLineExpression = a:(list / e) eol { return a }
+singleLineExpression = a:e eol { return a }
 multiLineExpression = multilineString / multilineObject
-multilineObject = type:(("{}" / "[]") eol / singleLineExpression / eol) indent s:blockStatement outdent
+multilineObject = type:(("{}" / "[]") eol / singleLineExpression / eol) indent s:statements? outdent
 {
     if (type[0] == "[]")
-      type = e("member", [e("global"), "Array"])
+      type = arrayType()
     if (type[0] == "{}" || Array.isArray(type) && isEmpty(f(type).trim()))
       type = null;
-    return e("object", [type,s])
+    return e("object", [type,isEmpty(s) ? null : s])
 }
-blockStatement = a:statement+ { return block(a) }
-newScopeStatements = a:definition* b:statement+ { return block(a.concat(b)) }
+statements = a:statement+ { return block(a) }
 e "expression" = s a:conditional s { return a }
-
-//  statements
-list = a:e b:(s ',' s c:e { return c })+ { b.unshift(a); return e("list", b) }
 
 //  multi line strings
 multilineString = "\"\"" eol content:multilineStringContent { return core.unindent(f(content)) }
@@ -70,17 +102,24 @@ multilineStringLine = !indent !outdent (!eol .)* eol
 multilineStringContent = indent content:(multilineStringLine / multilineStringContent)* outdent { return content }
 
 //  path
-path = a:firstStep b:step* { return joinLeft(a, b) }
+path = a:firstStep b:step* { return joinLeft([a].concat(b)) }
 firstStep = literal / ref / group
-step = children / propertyGet / predicate / propertyIndexer / functionCall
-predicate = "{" s a:e s "}" { return e("predicate", [a]) }
-propertyGet = "." a:id { return e("member", [a]) }
+step = propertyGet / propertyIndexer / predicate / functionCall / localExpression
+steps = a:step* { return joinLeft(a); }
+localExpression = "." a:group { return e("local", [a]) }
+propertyGet = "."? a:id { return e("member", [a]) }
 propertyIndexer = "[" s a:e s "]" { return e("member", [a]) }
-children = "." s "*" { return e("children", []) }
-functionCall = a:args { return e("call", [a]) }
+// children consume steps to the right, since we need to be able to evaluate them in a new context
+//children = "."? "*" a:step* {
+  //  convert this into an equivalent for loop that outputs an array.
+  // return e("object", [arrayType(), [e("for", [e("add",[joinLeft(a)])])]])
+//  return e("children", [joinLeft(a)])
+//}
+functionCall = a:args { return e("call", a) }
 args = "(" s ")" { return [] }
      / "(" a:e ")" { return [a] }
      / "(" a:list ")" { return a }
+list = a:e b:(s ',' s c:e { return c })+ { b.unshift(a); return b }
 
 //  objects and arrays
 object = type:e? eol indent statements:set+ outdent { return e("object", [type,statements]) }
@@ -99,7 +138,7 @@ outdent "OUTDENT" = s token:"}}}}" eol
 
 //  ops
 conditional
-  = a:or s "?" s b:conditional s ":" s c:conditional { return e("?", [a,b,c]) }
+  = a:or s "?" s b:conditional s ":" s c:conditional { return e("?:", [a,b,c]) }
   / a:or s op:"?" s b:conditional  { return e(op, [a,b]) }
   / or
 or
@@ -121,32 +160,47 @@ multiplicative
   = left:unary s op:("*" / "/" / "%") s right:multiplicative { return e(op, [left,right]) }
   / unary
 unary
-  = op:("!" / "-") s right:primary
+  = op:("!" / "-") s right:expansion
+  / expansion
+expansion
+  = left:primary? "."? "*" right:step* {
+    //  convert this into an equivalent for loop that outputs an array.
+    if (isEmpty(left)) {
+      left = e("input",[0])
+    }
+    else {
+      // when the left expression is pushed nested into the "object" expression beneath it will
+      // make the output context one level removed, so we must correct for that here by
+      // referencing an ancestor one more level removed from us.
+      incrementOutputExpressions(left);
+    }
+
+    if (isEmpty(right))
+      right = e("input",[0])
+    else
+      right = joinLeft([e("input",[0])].concat(right))
+
+    return e("object", [arrayType(), e("for", [left, e("add",[right])])])
+  }
   / primary
-primary = path / group / literal
+primary = path / group / literal / predicate
 group = '(' s a:e s ')' { return a }
+predicate = "{" s a:e s "}" { return e("predicate", [a]) }
 
 //  references
-ref = null / global / root / ancestor / idref
-null = 'null' break { return null }
-global = '$' break { return e("global") }
-       / '$' a:id { return e("member", [e("global"), a])}
-root = '@' break { return e("root") }
-    / '@' a:id { return e("member", [e("root"), a])}
-ancestor = a:('.'+) b:id?
-{
-  result = e("ancestor", [f(a).length - 1])
-  if (!isEmpty(b))
-    result = e("member", [result, b])
-  return result
-}
-idref = a:id { return e("ref", [a]) /* we postprocess to determine if this is a variable or global reference */ }
+ref = inputRef / outputRef / idRef
+outputRef = a:('@'+) { return e("output", [a.length - 1]) }
+inputRef = '$' { return e("input") }
+         / a:('.'+) { return e("input", [a.length - 1]) }
+idRef = a:id { return e("ref", [a]) /* we postprocess to determine if this is a variable or global reference */ }
 id = a:([a-zA-Z_][a-zA-Z_0-9]*) { return f(a) }
 key = id / string / group
 
-
 //  literals
-literal = number / boolean / string
+literal = null / number / boolean / string / literalObject / literalArray
+literalObject = "{}" { return e("object", [null]) }
+literalArray = "[]" { return e("object", [arrayType()]) }
+null = 'null' break { return null }
 d "digit" = [0-9]
 number = a:([+-]? d+ ([eE] [+-]? d+)?) break { return parseFloat(f(a)) }
 integer = a:([+-]? d+) break { return parseInt(f(a)) }

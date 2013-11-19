@@ -1,10 +1,11 @@
 [
   "require.js",
-  "ion/ForEachMap.js",
   "ion/Template.js",
   "ion/core.js",
+  "ion/harmonyCollections.js",
   "ion/index.js",
   "ion/parser.js",
+  "ion/patch.js",
   "ion/postprocessor.js",
   "ion/preprocessor.js",
   "ion/runtime/AddStatement.js",
@@ -24,6 +25,7 @@
   "ion/runtime/Statement.js",
   "ion/runtime/StaticExpression.js",
   "ion/runtime/VariableDefinition.js",
+  "ion/test/dynamicTests.js",
   "ion/test/parseTests.js",
   "ion/test/renderTests.js"
 ]

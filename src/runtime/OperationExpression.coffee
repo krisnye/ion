@@ -19,6 +19,8 @@ module.exports = class OperationExpression extends DynamicExpression
         super()
         @expressionList.unwatch @watcher
     evaluate: ->
+        if not @operation.evaluate?
+            throw new Error "evaluate method not defined for operation: " + @operation.op
         value = @operation.evaluate.apply @context, @argumentValues
         @setValue value
 

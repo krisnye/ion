@@ -3,7 +3,7 @@ Statement = require './Statement'
 Context = require './Context'
 core = require '../core'
 # hack for chrome missing Map iterator
-Map = require '../ForEachMap'
+{Map,Set} = require '../harmonyCollections'
 
 module.exports = class ForStatement extends Statement
     activate: ->
@@ -21,39 +21,41 @@ module.exports = class ForStatement extends Statement
                 for key, item of collection
                     @addItem item
                 core.observe collection, @collectionObserver ?= @applyChanges.bind @
+    ignoreProperty: (name) ->
+        if not name?
+            return true
+        if name[0] is '_'
+            return true
+        if name is 'length' and Array.isArray @collection
+            return true
+        return false
     applyChanges: (changes) ->
-        # O(n) operation.
-        # because we have to make a new set of the items, this is a linear time operation.
-        # WE ONLY have to do this for Arrays since they suck.
-        # we can optimize this later to use O(1) time if the @collection is not an array.
-        current = new Set
-        for key, value of @collection
-            current.add value
-
-        maybeRemove = new Map
-        for change in changes when change.name isnt 'length'
-            if change.oldValue?
-                maybeRemove.set change.oldValue, change.oldValue
+        oldValues = new Set
+        newValues = new Set
+        for change in changes when not @ignoreProperty change.name
+            oldValue = change.oldValue
             newValue = @collection[change.name]
-            if newValue?
-                @addItem newValue
-
-        maybeRemove.forEach (key, value) =>
-            if not current.has value
+            oldValues.add oldValue if oldValue isnt undefined
+            newValues.add newValue if newValue isnt undefined
+        oldValues.forEach (key, value) =>
+            if not newValues.has key
                 @removeItem value
-
+        newValues.forEach (key, value) =>
+            if not oldValues.has key
+                @addItem value
     addItem: (item) ->
-        if not @statementMap.has item
+        if item isnt undefined and not @statementMap.has item
             newContext = new Context item, @context.output, @context, @context.additions
             statement = Operation.createRuntime newContext, @args[1]
             # store the created statement
             @statementMap.set item, statement
             statement.activate()
     removeItem: (item) ->
-        statement = @statementMap.get item
-        if statement?
-            statement.deactivate()
-            @statementMap.delete item
+        if item isnt undefined
+            statement = @statementMap.get item
+            if statement?
+                statement.deactivate()
+                @statementMap.delete item
     deactivate: ->
         super()
         # deactivate all statements

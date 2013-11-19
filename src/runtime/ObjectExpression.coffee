@@ -20,7 +20,7 @@ module.exports = class ObjectExpression extends DynamicExpression
                 # a default value could have been passed in
                 value = @value
 
-            if value? and not @statements?
+            if value? and not @statements? and @args[1]?
                 newContext = new Context @context.input, value, @context
                 @statements = Operation.createRuntime newContext, @args[1]
                 @statements.activate()
