@@ -50,8 +50,3 @@ exports.test =
                 console.log "---------------------------------------"
                 throw new Error JSON.stringify(result, null, '  ') + "\n!=\n" + JSON.stringify(expected, null, '  ')
         return
-# .*.name
-# equivalent to
-# []
-#     for .
-#         .name

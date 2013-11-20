@@ -41,13 +41,13 @@
   };
 
   observe = function _observe(object, observer) {
-    if ((Object.observe != null) && typeof object === 'object') {
+    if ((object != null) && (Object.observe != null) && typeof object === 'object') {
       return Object.observe(object, observer);
     }
   };
 
   unobserve = function _unobserve(object, observer) {
-    if ((Object.unobserve != null) && typeof object === 'object') {
+    if ((object != null) && (Object.unobserve != null) && typeof object === 'object') {
       return Object.unobserve(object, observer);
     }
   };

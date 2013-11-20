@@ -1,14 +1,26 @@
 
 Operation = require './Operation'
 DynamicExpression = require './DynamicExpression'
+core = require '../core'
 
 module.exports = class ExpressionList extends DynamicExpression
     constructor: (@context, @items) ->
         throw new Error "items is required" unless @items?
-    setArgumentValue: (index, value) ->
-        @argumentValues[index] = value
+    observeItems: false
+    notifyIfActive: ->
         if @isActive
             @notify()
+    setArgumentValue: (index, value) ->
+        if @argumentValues[index] isnt value
+            if @observeItems
+                core.unobserve @argumentValues[index], @itemObserver
+            @argumentValues[index] = value
+            if @observeItems
+                # console.log "observe items=============" + JSON.stringify value
+                core.observe value, @itemObserver ?= =>
+                    # console.log '=========observed========' + JSON.stringify(value)
+                    @notifyIfActive()
+            @notifyIfActive()
     activate: ->
         unless @argumentValues?
             @expressions = Operation.createRuntimes @context, @items

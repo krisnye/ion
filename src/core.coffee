@@ -16,10 +16,10 @@ unindent = (s) ->
         lines[i] = line.substring(trim)
     return joinLines(lines).trim()
 observe = (object, observer) ->
-    if Object.observe? and typeof object is 'object'
+    if object? and Object.observe? and typeof object is 'object'
         Object.observe object, observer
 unobserve = (object, observer) ->
-    if Object.unobserve? and typeof object is 'object'
+    if object? and Object.unobserve? and typeof object is 'object'
         Object.unobserve object, observer
 
 module.exports =

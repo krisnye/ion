@@ -9,26 +9,26 @@ module.exports = class AddStatement extends Statement
     activate: ->
         super()
         @expression ?= Operation.createRuntime @context, @args[0]
-        @expression.watch @watcher ?= (@value) => @_update()
-    _addedValue: undefined
-    _update: ->
-        if @value != undefined
-            @_add()
-        else
-            @_remove()
+        @expression.watch @watcher ?= (value) => @_updateNewValue(value)
+    value: undefined
+    _updateNewValue: (value) ->
+        if value isnt @value
+            @_remove @value
+            @_add value
+            @value = value
     _getAddIndex: -> @args[1]
-    _add: ->
-        if @_addedValue is undefined
+    _add: (value) ->
+        if value isnt undefined
+            # console.log "**AddStatement.add: " + JSON.stringify(value)
             addIndex = @_getAddIndex()
             insertIndex = @context.getInsertionIndex addIndex
-            ion.add @context.output, @value, insertIndex, @context
-            @_addedValue = @value
+            ion.add @context.output, value, insertIndex, @context
             @context.incrementAdditionCount addIndex
-    _remove: ->
-        if @_addedValue isnt undefined
+    _remove: (value) ->
+        if value isnt undefined
+            # console.log "**AddStatement.remove: " + JSON.stringify(value)
             addIndex = @_getAddIndex()
-            ion.remove @context.output, @_addedValue
-            @_addedValue = undefined
+            ion.remove @context.output, value
             @context.decrementAdditionCount addIndex
     deactivate: ->
         super()

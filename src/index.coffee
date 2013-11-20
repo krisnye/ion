@@ -30,10 +30,17 @@ exports.count = (container) -> container.length ? 0
 exports.add = (container, item, index, context) ->
     if index? and container.splice?
         container.splice index, 0, item
+    else if container.push?
+        container.push item
     else
         container.add item
 exports.remove = (container, item) ->
-    container.remove item
+    if container.lastIndexOf? and container.removeAt?
+        index = container.lastIndexOf item
+        if index >= 0
+            container.removeAt index
+    else
+        container.remove item
 exports.is = (instance, type) ->
     return false unless instance?
     return true unless type?

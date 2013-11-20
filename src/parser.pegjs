@@ -104,22 +104,10 @@ multilineStringContent = indent content:(multilineStringLine / multilineStringCo
 //  path
 path = a:firstStep b:step* { return joinLeft([a].concat(b)) }
 firstStep = literal / ref / group
-step = propertyGet / propertyIndexer / predicate / functionCall / localExpression
-steps = a:step* { return joinLeft(a); }
+step = member / predicate / localExpression
 localExpression = "." a:group { return e("local", [a]) }
-propertyGet = "."? a:id { return e("member", [a]) }
-propertyIndexer = "[" s a:e s "]" { return e("member", [a]) }
-// children consume steps to the right, since we need to be able to evaluate them in a new context
-//children = "."? "*" a:step* {
-  //  convert this into an equivalent for loop that outputs an array.
-  // return e("object", [arrayType(), [e("for", [e("add",[joinLeft(a)])])]])
-//  return e("children", [joinLeft(a)])
-//}
-functionCall = a:args { return e("call", a) }
-args = "(" s ")" { return [] }
-     / "(" a:e ")" { return [a] }
-     / "(" a:list ")" { return a }
-list = a:e b:(s ',' s c:e { return c })+ { b.unshift(a); return b }
+member = "."? a:id { return e("member", [a]) }
+       / "[" s a:e s "]" { return e("member", [a]) }
 
 //  objects and arrays
 object = type:e? eol indent statements:set+ outdent { return e("object", [type,statements]) }
@@ -160,8 +148,22 @@ multiplicative
   = left:unary s op:("*" / "/" / "%") s right:multiplicative { return e(op, [left,right]) }
   / unary
 unary
-  = op:("!" / "-") s right:expansion
+  = op:("!" / "-") s right:call
+  / call
+call
+  = left:expansion s "(" s args:list? s ")"
+    {
+      if (isEmpty(args))
+        args = []
+      thisArg = null
+      if (left.op == "member")
+        thisArg = left.args[0]
+      return e("call", [thisArg, left].concat(args))
+    }
   / expansion
+list = a:e b:(s ',' s c:e { return c })* { b.unshift(a); return b }
+
+
 expansion
   = left:primary? "."? "*" right:step* {
     //  convert this into an equivalent for loop that outputs an array.

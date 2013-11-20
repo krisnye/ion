@@ -47,10 +47,12 @@ module.exports = class ForStatement extends Statement
         if item isnt undefined and not @statementMap.has item
             newContext = new Context item, @context.output, @context, @context.additions
             statement = Operation.createRuntime newContext, @args[1]
+            # console.log "**for.addItem: " + JSON.stringify(item) + " " + JSON.stringify(@args[1])
             # store the created statement
             @statementMap.set item, statement
             statement.activate()
     removeItem: (item) ->
+        # console.log "**for.removeItem: " + JSON.stringify item
         if item isnt undefined
             statement = @statementMap.get item
             if statement?

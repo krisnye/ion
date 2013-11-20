@@ -57,17 +57,14 @@ ops =
         # a local expression, usually of the format alpha.(x+y)
         runtime: './NewContextExpression'
         evaluate: (left, right) -> right
-    "call":
-        evaluate: (fn, args...) -> fn?(args...)
     "member":
         newInputContext: true
         runtime: './NewContextExpression'
         observeLeftValue: true
-        evaluate: (left, right) ->
-            value = left?[right]
-            if typeof value is 'function'
-                value = value.bind left
-            return value
+        evaluate: (left, right) -> left?[right]
+    "call":
+        observe: 1
+        evaluate: (thisArg, fn, args...) -> fn?.apply thisArg, args
     "children":
         evaluate: (left, right) -> left
     "?:":

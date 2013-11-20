@@ -9,6 +9,8 @@ module.exports = class OperationExpression extends DynamicExpression
     constructor: (properties) ->
         super properties
         @expressionList = new ExpressionList @context, @args
+        if @operation.observe
+            @expressionList.observeItems = true
     args: null
     activate: ->
         super()
