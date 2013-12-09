@@ -1,33 +1,29 @@
-Operation = require './Operation'
 Statement = require './Statement'
 Context = require './Context'
 
 module.exports = class IfStatement extends Statement
     activate: ->
         super()
-        @conditionExpression ?= Operation.createRuntime @context, @args[0]
+        @conditionExpression ?= @context.createRuntime @args[0]
         @conditionExpression.watch @conditionWatcher ?= (@conditionValue) => @_choose()
     deactivate: ->
         super()
         @conditionExpression.unwatch @conditionWatcher
     _choose: ->
         if @conditionValue
-            @trueStatement ?= Operation.createRuntime @context, @args[1]
+            @trueStatement ?= @context.createRuntime @args[1]
             @trueStatement.activate()
             @falseStatement?.deactivate()
         else
             if @args[2]?
-                @falseStatement ?= Operation.createRuntime @context, @args[2]
+                @falseStatement ?= @context.createRuntime @args[2]
                 @falseStatement.activate()
             @trueStatement?.deactivate()
-    dispose: ->
-        super()
-        @conditionExpression?.dispose()
 
 module.exports.test = (done) ->
     object = { a:true, x: 1, y: 2 }
     context = new Context object
-    a = Operation.createRuntime context, ast = require('../').parseStatement """
+    a = context.createRuntime ast = require('../').parseStatement """
         if .a
             z1: true
         else

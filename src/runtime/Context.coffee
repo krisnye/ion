@@ -1,4 +1,4 @@
-ion = require '../'
+core = require './core'
 
 module.exports = class Context
     constructor: (input = global, output, parent, additions) ->
@@ -6,7 +6,13 @@ module.exports = class Context
         @input = input
         @output = output ? input
         @parent = parent
-        @additions = additions ? parent?.additions ? [ion.count @output]
+        @additions = additions ? parent?.additions ? [core.count @output]
+    createRuntime: (ast) ->
+        op = ast?.op
+        return new (require './StaticExpression') {value:ast} unless op?
+        operation = (require './Operation').getOperation op
+        return operation.createRuntime @, ast.args
+    toString: -> "Context"
     getInsertionIndex: (addIndex) ->
         return unless addIndex?
         insertionIndex = 0
@@ -33,6 +39,21 @@ module.exports = class Context
         return context[name]
     getInput: (delta) -> @_getAncestorProperty "input", delta
     getOutput: (delta) -> @_getAncestorProperty "output", delta
+    setVariable: (name, ast) -> @variables[name] = @createRuntime ast
+    getVariableExpression: (name, allowGlobals = true) ->
+        context = @
+        while context?
+            variable = context.variables[name]
+            return variable if variable?
+            context = context.parent
+        # if the variable is not defined by us then it is probably a global variable.
+        # we do however require that it be a globally defined variable, otherwise we throw an error.
+        if allowGlobals
+            value = global[name]
+        if value is undefined
+            throw new Error "Variable not found: '#{name}'" if value is undefined
+        # global values are considered to be constants.
+        return new (require './StaticExpression') {value:value}
     # the input object that values are read from
     input: null
     # the output object that values are written to

@@ -1,7 +1,8 @@
-ion = require '../'
+index = require '../'
 
 parseTests =
     "12": {"op":"add","args":[12,1]}
+    # "foo bar": {"op":"add","args":[{"op":"call","args":[null,{"op":"ref","args":["foo"]},{"op":"ref","args":["bar"]}]},1]}
     "1\n2\n": {op:"block", args:[{"op":"add","args":[1,1]}, {"op":"add","args":[2,2]}]}
     "if true\n    1\nelse\n    2\n": {
             "op": "if",
@@ -25,21 +26,29 @@ parseTests =
     ".*": {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"input","args":[0]},{"op":"add","args":[{"op":"input","args":[0]}]}]}]},1]}
     "..*": {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"input","args":[1]},{"op":"add","args":[{"op":"input","args":[0]}]}]}]},1]}
     "...*": {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"input","args":[2]},{"op":"add","args":[{"op":"input","args":[0]}]}]}]},1]}
-    "*{true}": {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"input","args":[0]},{"op":"add","args":[{"op":"predicate","args":[{"op":"input","args":[0]},true]}]}]}]},1]}
     """
     []
         for .
             .name
     """: longForm = {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"input","args":[0]},{"op":"add","args":[{"op":"member","args":[{"op":"input","args":[0]},"name"]}]}]}]},1]}
-    "*.name": longForm
     "foo := 5": {"op":"block","args":[{"op":"var","args":["foo",5]},{"op":"set","args":["foo",{"op":"ref","args":["foo"]}]}]}
     "foo.(.x + .y)": {"op":"add","args":[{"op":"local","args":[{"op":"ref","args":["foo"]},{"op":"+","args":[{"op":"member","args":[{"op":"input","args":[0]},"x"]},{"op":"member","args":[{"op":"input","args":[0]},"y"]}]}]},1]}
-    # "foo.*.(a)": null
-    # ".*.name": null
+    """
+    subtemplate = ()
+        x: 1
+        y: 2
+    (subtemplate)
+    """: {"op":"block","args":[{"op":"var","args":["subtemplate",{"op":"templateDef","args":[{"op":"block","args":[{"op":"set","args":["x",1]},{"op":"set","args":["y",2]}]}]}]},{"op":"templateApply","args":["subtemplate"]}]}
+    # """
+    # x = 1
+    # y = 2
+    # key = 3
+    # """: null
+
 exports.test =
     parse: ->
         for text, expected of parseTests
-            result = ion.parseStatement text
+            result = index.parseStatement text
             if JSON.stringify(result) != JSON.stringify(expected)
                 console.log "-----------------Parsing---------------"
                 console.log text

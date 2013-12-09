@@ -1,35 +1,39 @@
-Operation = require './Operation'
 DynamicExpression = require './DynamicExpression'
 Statement = require './Statement'
 Context = require './Context'
 require 'sugar'
-ion = require '../'
+core = require './core'
 
 module.exports = class ObjectExpression extends DynamicExpression
+    # this is called by an AssignmentStatement to let us know the current left hand value.
+    setAssignmentCurrentValue: (value) ->
+        @value = value
+        return
     activate: ->
         super()
-        @typeExpression ?= Operation.createRuntime @context, @args[0]
+        @typeExpression ?= @context.createRuntime @args[0]
         @typeExpression.watch @typeWatcher ?= (type) =>
             if type is undefined
                 value = undefined
-            else if not ion.is @value, type
+            else if not core.is @value, type
                 @statements?.deactivate()
                 @statements = null
-                value = new (type ? Object)
+                if type? and typeof type is 'object'
+                    # the type is actually an instance to use.
+                    value = type
+                else
+                    # otherwise the type is a function to use as our constructor.
+                    value = new (type ? Object)
             else
                 # a default value could have been passed in
                 value = @value
 
             if value? and not @statements? and @args[1]?
                 newContext = new Context @context.input, value, @context
-                @statements = Operation.createRuntime newContext, @args[1]
+                @statements = newContext.createRuntime @args[1]
                 @statements.activate()
 
             @setValue value
-    deactivate: ->
-        super()
-        @typeExpression.unwatch @typeWatcher
-
 
 module.exports.test = (done) ->
     input = { x: 1, y: 2, z: -1}
@@ -41,7 +45,7 @@ module.exports.test = (done) ->
             y: .y
             z: .x + .y
         """
-    a = Operation.createRuntime context, ast
+    a = context.createRuntime ast
 
     a.watch watcher = (output) ->
         if output?

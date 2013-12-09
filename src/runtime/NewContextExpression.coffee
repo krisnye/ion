@@ -1,7 +1,6 @@
-core = require '../core'
-Operation = require './Operation'
 DynamicExpression = require './DynamicExpression'
 Context = require './Context'
+core = require './core'
 
 left = 0
 right = 1
@@ -10,7 +9,7 @@ right = 1
 module.exports = class NewContextExpression extends DynamicExpression
     constructor: (properties) ->
         super properties
-        @leftExpression = Operation.createRuntime @context, @args[left]
+        @leftExpression = @context.createRuntime @args[left]
     activate: ->
         super()
         @leftExpression.watch @leftWatcher ?= (value) =>
@@ -34,7 +33,7 @@ module.exports = class NewContextExpression extends DynamicExpression
                         @rightValue = value
                         @evaluate()
                     # create right expression with this new context
-                    @rightExpression = Operation.createRuntime @leftContext, @args[right]
+                    @rightExpression = @leftContext.createRuntime @args[right]
                     @rightExpression.watch @rightWatcher
                 else
                     @leftContext = null
@@ -46,12 +45,16 @@ module.exports = class NewContextExpression extends DynamicExpression
     evaluate: ->
         value = @operation.evaluate.call @context, @leftValue, @rightValue
         @setValue value
+    dispose: ->
+        super()
+        if @leftObserver?
+            core.unobserve @leftValue, @leftObserver
 
 module.exports.test = (done) ->
     try
         object = {alpha:{x:1,y:2}}
         context = new Context object
-        e = Operation.createRuntime context, ast = require('../').parseExpression "$.alpha.(.x + .y)"
+        e = context.createRuntime ast = require('../').parseExpression "$.alpha.(.x + .y)"
         result = undefined
         watcher = (value) ->
             result = value

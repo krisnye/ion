@@ -1,25 +1,25 @@
-Operation = require './Operation'
 Statement = require './Statement'
 Context = require './Context'
-core = require '../core'
+core = require './core'
 # hack for chrome missing Map iterator
-{Map,Set} = require '../harmonyCollections'
+{Map,Set} = require './harmonyCollections'
 
 module.exports = class ForStatement extends Statement
     activate: ->
         super()
         @statementMap ?= new Map
 
-        @collectionExpression = Operation.createRuntime @context, @args[0] ? @context.input
+        @collectionExpression = @context.createRuntime @args[0] ? @context.input
         @collectionExpression.watch @collectionWatcher ?= (collection) =>
             if @collection != collection
+                # console.log '---collection changed: ' + collection
                 if @collection?
                     for key, item of @collection
                         @removeItem item
                     core.unobserve collection, @collectionObserver
                 @collection = collection
                 for key, item of collection
-                    @addItem item
+                    @addItem key, item
                 core.observe collection, @collectionObserver ?= @applyChanges.bind @
     ignoreProperty: (name) ->
         if not name?
@@ -30,61 +30,87 @@ module.exports = class ForStatement extends Statement
             return true
         return false
     applyChanges: (changes) ->
-        oldValues = new Set
-        newValues = new Set
+        # this will be an N performance algorithm for ARRAY insertions/deletions.
         for change in changes when not @ignoreProperty change.name
+            key = change.name
             oldValue = change.oldValue
             newValue = @collection[change.name]
-            oldValues.add oldValue if oldValue isnt undefined
-            newValues.add newValue if newValue isnt undefined
-        oldValues.forEach (key, value) =>
-            if not newValues.has key
-                @removeItem value
-        newValues.forEach (key, value) =>
-            if not oldValues.has key
-                @addItem value
-    addItem: (item) ->
-        if item isnt undefined and not @statementMap.has item
-            newContext = new Context item, @context.output, @context, @context.additions
-            statement = Operation.createRuntime newContext, @args[1]
+            # console.log '---apply changes--- ', change
+            @removeItem key, oldValue if oldValue isnt undefined
+            @addItem key, newValue if newValue isnt undefined
+    addItem: (key, value) ->
+        if value isnt undefined and not @statementMap.has key
+            # console.log '---addItem ' + key
+            newContext = new Context value, @context.output, @context, @context.additions
+            # add a key variable to the new context
+            newContext.setVariable "key", key
+            statement = newContext.createRuntime @args[1]
             # console.log "**for.addItem: " + JSON.stringify(item) + " " + JSON.stringify(@args[1])
             # store the created statement
-            @statementMap.set item, statement
+            @statementMap.set key, statement
             statement.activate()
-    removeItem: (item) ->
-        # console.log "**for.removeItem: " + JSON.stringify item
-        if item isnt undefined
-            statement = @statementMap.get item
+    removeItem: (key) ->
+        # console.log "**for.removeItem: " + JSON.stringify key
+        if key isnt undefined
+            # console.log '---removeItem ' + key
+            statement = @statementMap.get key
             if statement?
                 statement.deactivate()
-                @statementMap.delete item
+                @statementMap.delete key
     deactivate: ->
         super()
         # deactivate all statements
-        @statementMap.forEach (item, statement) =>
-            @removeItem item
+        # console.log '-----FOR deactivate'
+        @statementMap.forEach (key, statement) =>
+            @removeItem key
         @statementMap.clear()
-    dispose: ->
-        super()
 
-module.exports.test = (done) ->
-    input = {numbers:[1,2,3,4]}
-    output = []
-    context = new Context input, output
-    ast = require('../').parseStatement """
-        for .numbers
-            . * 2
-        """
-    a = Operation.createRuntime context, ast
-    a.activate()
+module.exports.test =
+    values: (done) ->
+        input = {numbers:[1,2,3,4]}
+        output = []
+        context = new Context input, output
+        ast = require('../').parseStatement """
+            for .numbers
+                . * 2
+            """
+        a = context.createRuntime ast
+        a.activate()
 
-    input.numbers.remove 2
-    input.numbers.add 5
+        input.numbers.remove 2
+        input.numbers.add 5
 
-    Object.observe output, (changes) ->
-        if Object.equal output, [2,6,8,10]
-            a.deactivate()
-            if not output.length is 0
-                done "output should have been empty: #{JSON.stringify output}"
-            else
-                done()
+        core.observe output, (changes) ->
+            if Object.equal output, expected = [2,6,8,10]
+                a.deactivate()
+                if not output.length is 0
+                    done "#{JSON.stringify output} should have been #{JSON.stringify expected}"
+                else
+                    done()
+    keys: (done) ->
+        input = {a:1,b:2,c:3}
+        output = {}
+        context = new Context input, output
+        ast = require('../').parseStatement """
+            for .
+                (key): . * 2
+            """
+        a = context.createRuntime ast
+        a.activate()
+        expected = {a:2,b:4,c:6}
+        if not Object.equal output, expected
+            done "#{JSON.stringify output} should have been #{JSON.stringify expected}"
+        # effectively move the value
+        delete input.b
+        input.d = 2
+
+        # console.log JSON.stringify output
+        # now change the values.
+        core.observe output, (changes) ->
+            if Object.equal output, expected = {a:2,c:6,d:4}
+                a.deactivate()
+                if not output.length is 0
+                    done "#{JSON.stringify output} should have been #{JSON.stringify expected}"
+                else
+                    done()
+

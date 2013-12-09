@@ -11,3 +11,4 @@ module.exports = class Construct
             json[key] = value
         return json
     dispose: ->
+        value.dispose() for own key, value of @ when typeof value?.dispose is 'function'

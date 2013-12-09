@@ -1,14 +1,12 @@
-Operation = require './Operation'
 Expression = require './Expression'
 Statement = require './Statement'
 Context = require './Context'
-ion = require '../'
 require 'sugar'
 
 module.exports = class VariableDefinition extends Statement
     constructor: (properties) ->
         super properties
-        @context.variables[@args[0]] = Operation.createRuntime @context, @args[1]
+        @context.setVariable @args[0], @args[1]
     activate: ->
         super()
     deactivate: ->
@@ -16,8 +14,8 @@ module.exports = class VariableDefinition extends Statement
 
 module.exports.test = (done) ->
     c = new Context()
-    c.variables.foo = Operation.createRuntime c, 12
-    e = Operation.createRuntime c, {op:'ref', args:["foo"]}
+    c.variables.foo = c.createRuntime 12
+    e = c.createRuntime {op:'ref', args:["foo"]}
     result = undefined
     watcher = (value) ->
         result = value

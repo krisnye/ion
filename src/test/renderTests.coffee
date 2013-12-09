@@ -1,4 +1,4 @@
-ion = require '../'
+index = require '../'
 
 expressionTests = [
     ["12", {}, 12]
@@ -6,6 +6,14 @@ expressionTests = [
     [". == 2", {}, false]
     [". == 2", 2, true]
     [".foo.bar", {foo:{bar:3}}, 3]
+    ["[1,2,2+2]", {}, [1,2,4]]
+    ["/foo/g", {}, /foo/g]
+    ["""
+    {}
+        double = (x) -> x * 2
+        foo: double .x
+        bar: double .y
+    """, {x:10,y:20}, {foo:20,bar:40}]
     ["""
     {}
         foo: 1
@@ -109,14 +117,57 @@ expressionTests = [
             "total": 6.69
         }
     ]
+    # test subtemplates
+    ["""
+    {}
+        double = ()
+            . * 2
+        a: []
+            for $numbers
+                (double)
+    """, {numbers:[1,2,3,4,5,6]}, {a:[2,4,6,8,10,12]}]
+    # recursive subtemplates
+    ["""
+    {}
+        age = ()
+            name: .name
+            age: .age + 1
+            if .kids
+                kids: []
+                    for .kids
+                        {}
+                            (age)
+        (age)
+    """, {name:"Kris",age:41,kids:[{name:"Sadera",age:17,kids:[{name:"Nope",age:0}]},{name:"Orion",age:15}]}, {"name":"Kris","age":42,"kids":[{"name":"Sadera","age":18,"kids":[{"name":"Nope","age":1}]},{"name":"Orion","age":16}]}]
+    # recursive subtemplates with unknown keys
+    ["""
+    {}
+        double = ()
+            for .
+                if .constructor == Object
+                    (key): {}
+                        (double)
+                else
+                    (key): . * 2
+        (double)
+    """, {a:1,b:{c:2,d:{e:3,f:4}}}, {a:2,b:{c:4,d:{e:6,f:8}}}]
+    [
+        """
+        []
+            with $a
+                .
+        """
+        , {a:1}, [1]]
+    ["'alphabet'.replace('a','b')", {}, "blphabet"]
+    [".*.name.replace('a','b')", {one:{name:"andy"},two:{name:"dan"}}, ["bndy","dbn"]]
 ]
 
 # we test result expressions when the template is executed immmediately.
 exports.test =
     parse: ->
         for [source, input, expected] in expressionTests
-            ast = ion.parseExpression source
-            e = ion.createRuntime ast, input
+            ast = index.parseExpression source
+            e = index.createRuntime ast, input
             result = null
             watcher = (value) -> result = value
             e.watch watcher
@@ -125,11 +176,11 @@ exports.test =
                 console.log "-----------------Template--------------"
                 console.log source
                 console.log "-----------------Result----------------"
-                console.log JSON.stringify result, null, '  '
+                console.log JSON.stringify result
                 console.log "-----------------Expected--------------"
                 console.log JSON.stringify expected
-                # console.log "-----------------AST-------------------"
-                # console.log JSON.stringify ast, null, "    "
+                console.log "-----------------AST-------------------"
+                console.log JSON.stringify ast, null, "    "
                 console.log "---------------------------------------"
                 throw new Error JSON.stringify(result) + " != " + JSON.stringify(expected)
             e.unwatch watcher

@@ -1,9 +1,9 @@
-ion = require '../'
-core = require '../core'
+index = require '../'
+require 'sugar'
 
 expressionTests = [
     ["x + y", "$x + $y", {x:1,y:2}, {x:10}, 12]
-    ["numbers.sum", "(@numbers.*).sum()", {numbers:[1,2,3]},{numbers:{"1":4}},8]
+    ["numbers.sum", "@numbers.sum()", {numbers:[1,2,3]},{numbers:{"1":4}},8]
     [".*.sum()", "(.*.x).sum()", [{x:1,y:2},{x:3,y:4}],{"0":{x:2}},5]
     [
         # test name
@@ -87,8 +87,8 @@ exports.test = tests = {}
 for [name, source, input, patch, expected] in expressionTests
     do ->
         tests[name] = (done) ->
-            ast = ion.parseExpression source
-            e = ion.createRuntime ast, input
+            ast = index.parseExpression source
+            e = index.createRuntime ast, input
             currentValue = null
             patchUnwatcher = null
             checkForMatch = ->
@@ -107,11 +107,8 @@ for [name, source, input, patch, expected] in expressionTests
                     patchUnwatcher?()
                     currentValue = value
                     checkForMatch()
-                    # core.observe currentValue, (changes) ->
-                    #     console.log "changes---------------------------------"
-                    #     console.log JSON.stringify value
                     if currentValue? and typeof currentValue is 'object'
-                        patchUnwatcher = require('../patch').watch value, (patch) ->
+                        patchUnwatcher = require('./patch').watch value, (patch) ->
                             # console.log 'patch---------------------------------'
                             # console.log JSON.stringify value
                             checkForMatch()

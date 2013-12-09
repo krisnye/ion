@@ -1,14 +1,13 @@
-Operation = require './Operation'
 Expression = require './Expression'
 Statement = require './Statement'
 Context = require './Context'
-ion = require '../'
+core = require './core'
 require 'sugar'
 
 module.exports = class AddStatement extends Statement
     activate: ->
         super()
-        @expression ?= Operation.createRuntime @context, @args[0]
+        @expression ?= @context.createRuntime @args[0]
         @expression.watch @watcher ?= (value) => @_updateNewValue(value)
     value: undefined
     _updateNewValue: (value) ->
@@ -22,13 +21,13 @@ module.exports = class AddStatement extends Statement
             # console.log "**AddStatement.add: " + JSON.stringify(value)
             addIndex = @_getAddIndex()
             insertIndex = @context.getInsertionIndex addIndex
-            ion.add @context.output, value, insertIndex, @context
+            core.add @context.output, value, insertIndex, @context
             @context.incrementAdditionCount addIndex
     _remove: (value) ->
         if value isnt undefined
             # console.log "**AddStatement.remove: " + JSON.stringify(value)
             addIndex = @_getAddIndex()
-            ion.remove @context.output, value
+            core.remove @context.output, value
             @context.decrementAdditionCount addIndex
     deactivate: ->
         super()
@@ -37,7 +36,7 @@ module.exports = class AddStatement extends Statement
 module.exports.test = (done) ->
     object = [false]
     context = new Context object
-    s = Operation.createRuntime context, ast = require('../').parseStatement """
+    s = context.createRuntime ast = require('../').parseStatement """
         1
         if $[0]
             2

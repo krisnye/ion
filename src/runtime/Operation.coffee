@@ -1,4 +1,3 @@
-Construct = require './Construct'
 
 module.exports = class Operation
     constructor: (properties) ->
@@ -28,26 +27,37 @@ ops =
         # because otherwise they would all try to insert at zero.
         addIndexesEnabled: false
         runtime: './ForStatement'
+    "with":
+        runtime: './WithStatement'
     "object":
         addIndexesEnabled: true
         runtime: './ObjectExpression'
     "var":
         runtime: './VariableDefinition'
+    "function":
+        evaluate: (text) ->
+            # we are calling eval which is sort of bad.
+            # let's at least check that the text looks like a function definition
+            # we can fix this by extracting the arguments and body in the parser
+            # and calling the Function constructor explicitly here.
+            if /^\(?function\(/.test text
+                eval text
+            else
+                throw new Error "Invalid Function: #{text}"
+    "templateDef":
+        addIndexesEnabled: false
+        # a template definition just returns an expression equivalent to the template AST.
+        # the context where the template is defined is irrelevant.
+        createRuntime: (context, args) -> new (require './StaticExpression') value:args[0]
+    "templateApply":
+        createRuntime: (context, args) ->
+            templateVar = context.getVariableExpression name = args[0]
+            templateAst = templateVar?.value
+            throw new Error "Invalid template: #{name}" unless templateAst?
+            return context.createRuntime templateAst
     "ref":
         createRuntime: (context, args) ->
-            name = args[0]
-            while context?
-                variable = context.variables[name]
-                return variable if variable?
-                context = context.parent
-            # if the variable is not defined by us then it is probably a global variable.
-            # we do however require that it be a globally defined variable, otherwise we throw an error.
-            value = global[name]
-            if value is undefined
-                throw new Error "Variable not found: '#{name}'" if value is undefined
-            # global values are considered to be constants.
-            return new (require './StaticExpression') {value:value}
-
+            context.getVariableExpression args[0]
     "predicate":
         newInputContext: true
         runtime: './NewContextExpression'
@@ -62,11 +72,32 @@ ops =
         runtime: './NewContextExpression'
         observeLeftValue: true
         evaluate: (left, right) -> left?[right]
+    "null":
+        evaluate: -> null
     "call":
         observe: 1
-        evaluate: (thisArg, fn, args...) -> fn?.apply thisArg, args
+        evaluate: (thisArg, fn, args...) ->
+            # on nodejs these errors are not logged anywhere if we don't log them
+            # process.on 'uncaughtException' doesn't seem to work either
+            try
+                fn?.apply thisArg, args
+            catch e
+                console.error e
+    "new":
+        evaluate: (constructor, args...) ->
+            # console.log 'NEW', constructor.name, args
+            try
+                new constructor args...
+            catch e
+                console.error e
     "children":
         evaluate: (left, right) -> left
+    "regex":
+        evaluate: (text, options) ->
+            if text?
+                new RegExp text, options
+            else
+                undefined
     "?:":
         evaluate: (condition, a, b) -> if condition then a else b
     "*":
@@ -114,10 +145,3 @@ Operation.getOperation = getOperation = (op) ->
     operation = Operation[op]
     throw new Error "Operation not found #{op}" unless operation?
     return operation
-Operation.createRuntimes = (context, astArray) ->
-    astArray.map (arg) -> Operation.createRuntime context, arg
-Operation.createRuntime = (context, ast) ->
-    op = ast?.op
-    return new (require './StaticExpression') {value:ast} unless op?
-    operation = getOperation op
-    return operation.createRuntime context, ast.args

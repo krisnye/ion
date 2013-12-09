@@ -1,25 +1,31 @@
-fs = require 'fs'
-peg = require 'pegjs'
-require 'sugar'
-
 config =
-    node:
-        directory: lib = 'lib'
-    source:
-        directory: 'src'
-    browser:
-        input:
-            "ion": lib
-        output:
-            directory: 'www/js'
-            webroot: 'www'
-            test: 'glass-test'
+    input: 'src'
+    output: 'lib'
 
-builder = require 'glass-build'
+task 'rebuild', 'builds the project with external compilers', ->
+    cp = require 'child_process'
+    # build the coffee files
+    cp.exec "coffee -c -o #{config.output} #{config.input}", (error, stdout, stderr) ->
+        console.error error if error?
+        console.log stdout if stdout?
+        console.error stderr if stderr?
+        # now build the parser
+        File = require './lib/builder/File'
+        parserInput = new File(config.input + "/compiler/parser.pegjs")
+        parserOutput = new File(config.output + "/compiler/parser.js")
+        parserOutput.write require('./lib/builder').compilePegjs parserInput, parserOutput
 
-task 'build', 'rebuilds the entire project', ->
-    builder.build config
-task 'watch', 'builds the project, runs the server and watches for changes', ->
-    builder.watch config
-task 'test', 'runs the command line unit tests', ->
-    builder.test config
+build = (exitImmediately) ->
+    try
+        builder = require './lib/builder'
+    catch e
+        console.error "builder module not found, try using 'cake rebuild'"
+        return
+    builder.runTemplate './build.riot', config, exitImmediately
+    # there is probably a watch leak in the file/directory, otherwise this shouldn't be necessary
+    # TODO: fix it.
+    if exitImmediately
+        process.exit()
+
+task 'build', 'builds the project with itself', -> build true
+task 'watch', 'builds the project reactively', -> build false

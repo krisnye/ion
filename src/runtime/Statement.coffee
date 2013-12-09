@@ -15,7 +15,3 @@ module.exports = class Statement extends Construct
     deactivate: ->
         @isActive = false
         return
-    dispose: ->
-        super()
-        if @isActive
-            deactivate()

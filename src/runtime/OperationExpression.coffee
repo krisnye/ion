@@ -1,5 +1,3 @@
-
-Operation = require './Operation'
 Expression = require './Expression'
 DynamicExpression = require './DynamicExpression'
 ExpressionList = require './ExpressionList'
@@ -28,7 +26,7 @@ module.exports = class OperationExpression extends DynamicExpression
 
 module.exports.test = ->
     context = new Context
-    e = Operation.createRuntime context, ast = require('../').parseExpression "1 + 2"
+    e = context.createRuntime ast = require('../').parseExpression "1 + 2"
     result = undefined
     watcher = (value) ->
         result = value
