@@ -102,7 +102,7 @@ templateApply = s "(" s id:id s a:e? s ")" eol
 }
 functionExpression = text:(functionArgs? s "->" (eol multilineStringContent / multilineStringLine))
 {
-  var text = require('coffee-script').compile(f(text), {bare:true});
+  var text = require('coffee-script').compile(f(text), {bare:true}).trim();
   return e("function", [text])
 }
 functionArgs = "(" s ")"

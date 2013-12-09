@@ -39,9 +39,10 @@ module.exports = exports =
             message = e.message = helpers.prettyErrorMessage e, filename || '[stdin]', input, true
             beep = '\x07'
             console.error message + beep
-            throw e
+            return undefined
 
     buildTemplate: buildTemplate = (sourceFile, templateModuleId, forceBuild = true) ->
+        # templateModuleId ?= np.relative np.join(process.cwd(), sourceFile), require('../runtime/Template').moduleId
         compiler = require '../compiler'
         sourceModified = utility.getModified(sourceFile)
         if sourceModified is 0

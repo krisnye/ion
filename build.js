@@ -1,4 +1,4 @@
-var Template = require("C:\\Projects\\riot\\lib\\runtime\\Template.js");
+var Template = require("C:\\NewProjects\\ion\\lib\\runtime\\Template.js");
 var ast = {
     "op": "block",
     "args": [
