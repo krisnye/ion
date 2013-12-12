@@ -47,7 +47,7 @@ watch = (object, handler, callInitial = true) ->
         for change in changes
             pendingPatch[change.name] = object[change.name]
         processPatch pendingPatch
-        process.nextTick ->
+        nextTick ->
             handler pendingPatch
             pendingPatch = null
     # call process patch on the object to watch children
@@ -59,6 +59,8 @@ watch = (object, handler, callInitial = true) ->
         # unwatch subWatchers
         for key, value of subWatchers
             value()
+
+nextTick = process?.nextTick ? (x) -> setTimeout x, 0
 
 diff = (oldValue, newValue) ->
     # returns a patch which can convert from the oldValue to the newValue
@@ -117,7 +119,6 @@ exports.test =
         Object.equal undefined, diff {a:{b:2}}, {a:{b:2}}
         return
     observe: (done) ->
-        return done null, null unless global.window?
         return done null, "Object.observe missing." unless Object.observe?
         source =
             name: 'Kris'
@@ -130,6 +131,7 @@ exports.test =
                 Orion: {}
         target = Object.clone source
         unwatch = watch source, (patch) ->
+            # console.log 'watch---------------', patch
             target = apply target, patch
             # test that source and target are equivalent
             assert Object.equal source, target

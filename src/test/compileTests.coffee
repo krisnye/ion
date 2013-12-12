@@ -1,3 +1,5 @@
+return if global.window
+
 index = require '../'
 np = require 'path'
 fs = require 'fs'

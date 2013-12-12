@@ -20,12 +20,14 @@ module.exports = class DynamicExpression extends Expression
             @_notifyWatcher watcher, value
     unwatch: (watcher) ->
         @_watchers?.remove watcher
-        if @_watchers.length is 0
-            @deactivate()
         # notify watcher immediately if we have a defined value
         value = @getValue()
         if value isnt undefined
             @_notifyWatcher watcher, undefined
+        # this must happen AFTER we notify the watcher,
+        # otherwise it changes the value and the watcher may not be notified.
+        if @_watchers.length is 0
+            @deactivate()
     _notifyWatcher: (watcher, value) -> watcher.call @, value
     notify: ->
         if @_watchers?

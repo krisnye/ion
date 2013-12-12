@@ -74,15 +74,15 @@ exports.runTests = runTests = (moduleIds, callback) ->
             warning = "Platform missing setTimeout"
             timeout()
 
-exports.createCallback = (options) ->
+exports.createCallback = (options, html = global.window?) ->
     options ?=
-        if global.java?
+        if html
             red:   '<span style="color:red">'
             green: '<span style="color:green">'
             blue:  '<span style="color:blue">'
             plain:  '<span>'
             endColor: '</span>'
-            log: write
+            log: (x) -> document.writeln x
             beep: ''
             endLine: '<br>'
         else
@@ -93,7 +93,7 @@ exports.createCallback = (options) ->
     endColor = options.endColor ? '\u001b[0m'
     plain = options.plain ? ''
     beep  = options.beep ? '\u0007'
-    log = options.log ? console.log
+    log = options.log ? (x) -> console.log x
     endLine = options.endLine ? ''
     tests = 0
     fails = 0

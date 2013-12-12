@@ -1,3 +1,5 @@
+return if global.window
+
 utility = require './utility'
 fs = require 'fs'
 np = require 'path'
@@ -9,37 +11,72 @@ process.on 'uncaughtException', (e) ->
 module.exports = exports =
     removeExtension: utility.removeExtension
     changeExtension: utility.changeExtension
-
+    normalizePath: normalizePath = (path) -> path.replace /\\/g,"\/"
     runTests: (manifestFile) ->
         # convert the files to a name, moduleId map
         require('./tester').spawnTests manifestFile
 
-    # this compiles a pegjs parser and returns the result.  Does not write to the target file.
-    compilePegjs: (source, target) ->
-        return undefined if source.modified < target.modified
+    buildScriptIncludeFile: (files, base = '') ->
+        files.map((x) -> "document.writeln(\"<script type='text/javascript' src='#{base}#{normalizePath x}'></script>\");").join('\n')
 
-        peg = require 'pegjs'
-        input = source.read()
-        parser = peg.buildParser input, {cache:true,trackLineAndColumn:true}
-        source = "module.exports = " + parser.toSource()
-        return source
+    # this compiles a pegjs parser and returns the result.  Does not write to the target file.
+    compilePegjs: compilePegjs = (source, target, moduleId, packageFile) ->
+        try
+            # return undefined if source.modified < target.modified and (packageFile?.modified ? 0) <= target.modified
+
+            peg = require 'pegjs'
+            input = source.read()
+            parser = peg.buildParser input, {cache:true,trackLineAndColumn:true}
+            source = "module.exports = " + parser.toSource()
+            source = addBrowserShim source, moduleId
+
+            return source
+        catch e
+            console.error e
+
+    copyJavascript: copyJavascript = (source, target, moduleId, packageFile) ->
+        return undefined if source.modified < target.modified and (packageFile?.modified ? 0) < target.modified
+        return addBrowserShim source.read(), moduleId
+
+    addBrowserShim: addBrowserShim = (sourceText, moduleId) ->
+        if moduleId?
+            safeId = "_" + moduleId.replace(/\//g, '_') + "_"
+            sourceText =
+                """
+                (function(){var #{safeId} = function(module,exports,require){#{sourceText}
+                  }
+                  if (typeof require === 'function') {
+                    if (require.register)
+                      require.register('#{moduleId}',#{safeId});
+                    else
+                      #{safeId}.call(this, module, exports, require);
+                  }
+                  else {
+                    #{safeId}.call(this);
+                  }
+                }).call(this)
+                """
+        return sourceText
 
     # this compiles coffeescript if needed, but does not actually write the result.
-    compileCoffeeScript: (source, target) ->
-        return undefined if source.modified < target.modified
+    compileCoffeeScript: compileCoffeeScript = (sourceFile, targetFile, moduleId, packageFile) ->
+        return undefined if sourceFile.modified < targetFile.modified and (packageFile?.modified ? 0) < targetFile.modified
 
-        input = source.read()
-        filename = source.path
+        input = sourceFile.read()
+        filename = sourceFile.path
 
         cs = require 'coffee-script'
         try
-            return cs.compile input
+            console.log "Compile: #{filename}"
+            compiled = cs.compile input, {bare: true}
+            compiled = addBrowserShim compiled, moduleId
+            return compiled
         catch e
             helpers = require 'coffee-script/lib/coffee-script/helpers'
             message = e.message = helpers.prettyErrorMessage e, filename || '[stdin]', input, true
             beep = '\x07'
             console.error message + beep
-            throw e
+            return
 
     buildTemplate: buildTemplate = (sourceFile, templateModuleId, forceBuild = true) ->
         compiler = require '../compiler'

@@ -1,8 +1,9 @@
 index = require '../'
-require 'sugar'
+require '../sugar'
 
 expressionTests = [
     ["x + y", "$x + $y", {x:1,y:2}, {x:10}, 12]
+    ["@foo.*.name", "@foo.*.name", {foo:{a:{name:'a'},b:{name:'b'}}}, {foo:{b:null}}, ['a']]
     ["numbers.sum", "@numbers.sum()", {numbers:[1,2,3]},{numbers:{"1":4}},8]
     [".*.sum()", "(.*.x).sum()", [{x:1,y:2},{x:3,y:4}],{"0":{x:2}},5]
     [
@@ -92,7 +93,9 @@ for [name, source, input, patch, expected] in expressionTests
             currentValue = null
             patchUnwatcher = null
             checkForMatch = ->
+                # console.log 'checkForMatch', currentValue, expected
                 if Object.equal currentValue, expected
+                    # console.log 'equals!!!!!!!!!', currentValue, expected
                     patchUnwatcher?()
                     e.unwatch watcher
                     done()
@@ -108,6 +111,7 @@ for [name, source, input, patch, expected] in expressionTests
                     currentValue = value
                     checkForMatch()
                     if currentValue? and typeof currentValue is 'object'
+                        # console.log 'patchWatch', currentValue
                         patchUnwatcher = require('./patch').watch value, (patch) ->
                             # console.log 'patch---------------------------------'
                             # console.log JSON.stringify value
@@ -115,7 +119,7 @@ for [name, source, input, patch, expected] in expressionTests
             # watch it which causes initial rendering.
             e.watch watcher
             # then patch it
-            Object.merge input, patch, true
+            require('./patch').apply input, patch
             # console.log "after patch: ------------------------"
             # console.log JSON.stringify input
             # now the watcher will wait for the changes to propagate

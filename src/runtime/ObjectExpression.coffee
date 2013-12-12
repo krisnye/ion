@@ -1,7 +1,6 @@
 DynamicExpression = require './DynamicExpression'
 Statement = require './Statement'
 Context = require './Context'
-require 'sugar'
 core = require './core'
 
 module.exports = class ObjectExpression extends DynamicExpression

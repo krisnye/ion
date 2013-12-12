@@ -31,12 +31,31 @@ checkForReservedWords = (node) ->
     if (node.op is "var" && reservedVarWords[node.args[0]])
         throw new ParseError "'#{node.args[0]}' is a reserved word.", node.line, node.column
 
-addThisArgToFunctionCalls = (node) ->
+getNewInternalVariableName = (variables, assignValue) ->
+    count = 0
+    while true
+        count++
+        name = "% #{count}"
+        if variables.hasOwnProperty name
+            continue
+        if assignValue?
+            variables[name] = assignValue
+        return name
+        variables
+
+addThisArgToFunctionCalls = (node, stack, variables, siblings, index) ->
     if node.op is "call"
         left = node.args[0]
-        thisArg = if left?.op is "member" then left.args[0] else null
-        # insert the thisArg first
-        node.args.unshift thisArg
+        if left?.op is "member"
+            thisArg = left.args[0]
+            if thisArg?.op isnt "var"
+                thisVarName = getNewInternalVariableName variables, thisArg
+                # change left arg into a variable definition
+                left.args[0] = {op:"var",args:[thisVarName,left.args[0]]}
+                # then make the function call thisArg just reference it.
+                node.args[1] ?= {op:"ref",args:[thisVarName]}
+            else
+                node.args[1] ?= thisArg
 
 # checkForTemplateCalls = (node, stack, variables) ->
 #     if node.op is 'call' and node.args[1]?.op is 'ref'
@@ -52,17 +71,17 @@ addThisArgToFunctionCalls = (node) ->
 #             console.log 'template call-------- ' + name
 
 module.exports =
-    foreachNode: foreachNode = (node, callback, stack = [], variables = {}) ->
+    foreachNode: foreachNode = (node, callback, stack = [], variables = {}, siblings, index) ->
         if node?
             if node.op?
                 if node.op is 'var'
                     variables[node.args[0]] = node.args[1]
                 stack.push node
-                callback node, stack, variables
+                callback node, stack, variables, siblings, index
                 children = if Array.isArray node then node else node.args
                 if children?
-                    for child in children
-                        foreachNode child, callback, stack, variables
+                    for child, index in children
+                        foreachNode child, callback, stack, variables, children, index
                 stack.pop()
         return
     postprocess: postprocess = (ast) ->

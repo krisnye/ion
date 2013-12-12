@@ -13,7 +13,8 @@ module.exports = class AssignmentStatement extends Statement
                 if currentValue?
                     @rightExpression.setAssignmentCurrentValue?(currentValue)
             @_assign()
-        @rightExpression.watch @rightWatcher ?= (@rightValue) =>
+        @rightExpression.watch @rightWatcher ?= (rightValue) =>
+            @rightValue = rightValue
             @_assign()
     _assign: ->
         if @leftValue? and @rightValue isnt undefined

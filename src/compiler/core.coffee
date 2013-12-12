@@ -1,4 +1,4 @@
-require 'sugar'
+require '../sugar'
 
 lineDelimiter = "\n"
 isEmpty = (s) -> not s? or s.length is 0 or (s.trim? and s.trim().length is 0)

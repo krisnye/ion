@@ -207,7 +207,7 @@ member = "."? a:id { return e("member", [a], line, column) }
 group = '(' s a:e s ')' { return a }
 predicate = "{" s a:e s "}" { return e("predicate", [a], line, column) }
 new = "new" break s left:constructorPath args:args { return e("new", [left].concat(args), line, column) }
-call = args:args { return e("call", args, line, column) }
+call = args:args { return e("call", [null].concat(args), line, column) }
 args = "(" s a:list? s ")" { return isEmpty(a) ? [] : a }
      / " " s a:list { return a }
 list = a:e b:(s ',' s c:e { return c })* { b.unshift(a); return b }
@@ -219,7 +219,7 @@ inputRef = '$' { return e("input", [], line, column) }
          / a:('.'+) { return e("input", [a.length - 1], line, column) }
 idRef = a:id { return e("ref", [a]) /* we postprocess to determine if this is a variable or global reference */ }
 id = a:([a-zA-Z_][a-zA-Z_0-9]*) { return f(a) }
-key = id / string / group
+key = id / string / '[' s a:e s ']' { return a }
 
 //  literals
 literal = null / number / boolean / string / literalObject / literalArray / regex

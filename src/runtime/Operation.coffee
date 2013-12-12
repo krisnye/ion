@@ -71,18 +71,20 @@ ops =
         newInputContext: true
         runtime: './NewContextExpression'
         observeLeftValue: true
+        # quit trying to change this to a bound value
+        # that will completely fuck up constructors.
         evaluate: (left, right) -> left?[right]
     "null":
         evaluate: -> null
     "call":
         observe: 1
-        evaluate: (thisArg, fn, args...) ->
+        evaluate: (fn, thisArg, args...) ->
             # on nodejs these errors are not logged anywhere if we don't log them
             # process.on 'uncaughtException' doesn't seem to work either
             try
                 fn?.apply thisArg, args
             catch e
-                console.error e
+                console.error e.stack ? e
     "new":
         evaluate: (constructor, args...) ->
             # console.log 'NEW', constructor.name, args

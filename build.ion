@@ -1,0 +1,41 @@
+
+Get our input and output directories from template input
+
+    packageFile = @getFile("package.json")
+    package = JSON.parse packageFile.read()
+    input = @getDirectory $input
+    output = @getDirectory $output
+
+Compile coffeescript and add browser module boilerplate
+
+    for input.search ".coffee"
+        source = .
+        target = output.getFile changeExtension key, ".js"
+        moduleId = normalizePath package.name + "/" + changeExtension key, ""
+        [target.path]: compileCoffeeScript source, target, moduleId, packageFile
+
+Compile any pegjs grammars
+
+    for input.search ".pegjs"
+        source = .
+        target = output.getFile changeExtension key, ".js"
+        moduleId = normalizePath package.name + "/" + changeExtension key, ""
+        [target.path]: compilePegjs source, target, moduleId, packageFile
+
+Copy any plain javascript and add browser module boilerplate
+
+    for input.search ".js"
+        source = .
+        target = output.getFile key
+        moduleId = normalizePath package.name + "/" + changeExtension key, ""
+        [target.path]: copyJavascript source, target, moduleId, packageFile
+
+Write a manifest.json file listing all of our modules
+
+    outputFiles = output.search(".js")
+    manifest = output.getFile "manifest.json"
+    [manifest.path]: JSON.stringify outputFiles.*.(key.replace(/\\/g,"/")), null, '    '
+
+Run tests on all of our output modules
+
+    runTests manifest, outputFiles.*.modified

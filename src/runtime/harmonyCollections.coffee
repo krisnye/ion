@@ -1,5 +1,5 @@
 
-require 'sugar'
+require './core'
 
 exports.Map = class ForEachMap
 	constructor: ->

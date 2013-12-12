@@ -2,7 +2,6 @@ Expression = require './Expression'
 Statement = require './Statement'
 Context = require './Context'
 core = require './core'
-require 'sugar'
 
 module.exports = class AddStatement extends Statement
     activate: ->
@@ -11,6 +10,7 @@ module.exports = class AddStatement extends Statement
         @expression.watch @watcher ?= (value) => @_updateNewValue(value)
     value: undefined
     _updateNewValue: (value) ->
+        # console.log '**AddStatement.updateNewValue', value
         if value isnt @value
             @_remove @value
             @_add value

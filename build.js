@@ -1,7 +1,107 @@
-var Template = require("C:\\Projects\\riot\\lib\\runtime\\Template.js");
+var Template = require("C:\\Projects\\ion\\lib\\runtime\\Template.js");
 var ast = {
     "op": "block",
     "args": [
+        {
+            "op": "var",
+            "args": [
+                "packageFile",
+                {
+                    "op": "call",
+                    "args": [
+                        {
+                            "op": "member",
+                            "args": [
+                                {
+                                    "op": "var",
+                                    "args": [
+                                        "% 1",
+                                        {
+                                            "op": "output",
+                                            "args": [
+                                                0
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "getFile"
+                            ]
+                        },
+                        {
+                            "op": "ref",
+                            "args": [
+                                "% 1"
+                            ]
+                        },
+                        "package.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "op": "var",
+            "args": [
+                "package",
+                {
+                    "op": "call",
+                    "args": [
+                        {
+                            "op": "member",
+                            "args": [
+                                {
+                                    "op": "var",
+                                    "args": [
+                                        "% 2",
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "JSON"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "parse"
+                            ]
+                        },
+                        {
+                            "op": "ref",
+                            "args": [
+                                "% 2"
+                            ]
+                        },
+                        {
+                            "op": "call",
+                            "args": [
+                                {
+                                    "op": "member",
+                                    "args": [
+                                        {
+                                            "op": "var",
+                                            "args": [
+                                                "% 3",
+                                                {
+                                                    "op": "ref",
+                                                    "args": [
+                                                        "packageFile"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "read"
+                                    ]
+                                },
+                                {
+                                    "op": "ref",
+                                    "args": [
+                                        "% 3"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
         {
             "op": "var",
             "args": [
@@ -10,21 +110,27 @@ var ast = {
                     "op": "call",
                     "args": [
                         {
-                            "op": "output",
-                            "args": [
-                                0
-                            ]
-                        },
-                        {
                             "op": "member",
                             "args": [
                                 {
-                                    "op": "output",
+                                    "op": "var",
                                     "args": [
-                                        0
+                                        "% 4",
+                                        {
+                                            "op": "output",
+                                            "args": [
+                                                0
+                                            ]
+                                        }
                                     ]
                                 },
                                 "getDirectory"
+                            ]
+                        },
+                        {
+                            "op": "ref",
+                            "args": [
+                                "% 4"
                             ]
                         },
                         {
@@ -49,21 +155,27 @@ var ast = {
                     "op": "call",
                     "args": [
                         {
-                            "op": "output",
-                            "args": [
-                                0
-                            ]
-                        },
-                        {
                             "op": "member",
                             "args": [
                                 {
-                                    "op": "output",
+                                    "op": "var",
                                     "args": [
-                                        0
+                                        "% 5",
+                                        {
+                                            "op": "output",
+                                            "args": [
+                                                0
+                                            ]
+                                        }
                                     ]
                                 },
                                 "getDirectory"
+                            ]
+                        },
+                        {
+                            "op": "ref",
+                            "args": [
+                                "% 5"
                             ]
                         },
                         {
@@ -87,21 +199,27 @@ var ast = {
                     "op": "call",
                     "args": [
                         {
-                            "op": "ref",
-                            "args": [
-                                "input"
-                            ]
-                        },
-                        {
                             "op": "member",
                             "args": [
                                 {
-                                    "op": "ref",
+                                    "op": "var",
                                     "args": [
-                                        "input"
+                                        "% 6",
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "input"
+                                            ]
+                                        }
                                     ]
                                 },
                                 "search"
+                            ]
+                        },
+                        {
+                            "op": "ref",
+                            "args": [
+                                "% 6"
                             ]
                         },
                         ".coffee"
@@ -130,33 +248,39 @@ var ast = {
                                     "op": "call",
                                     "args": [
                                         {
-                                            "op": "ref",
-                                            "args": [
-                                                "output"
-                                            ]
-                                        },
-                                        {
                                             "op": "member",
                                             "args": [
                                                 {
-                                                    "op": "ref",
+                                                    "op": "var",
                                                     "args": [
-                                                        "output"
+                                                        "% 7",
+                                                        {
+                                                            "op": "ref",
+                                                            "args": [
+                                                                "output"
+                                                            ]
+                                                        }
                                                     ]
                                                 },
                                                 "getFile"
                                             ]
                                         },
                                         {
+                                            "op": "ref",
+                                            "args": [
+                                                "% 7"
+                                            ]
+                                        },
+                                        {
                                             "op": "call",
                                             "args": [
-                                                null,
                                                 {
                                                     "op": "ref",
                                                     "args": [
                                                         "changeExtension"
                                                     ]
                                                 },
+                                                null,
                                                 {
                                                     "op": "ref",
                                                     "args": [
@@ -164,6 +288,66 @@ var ast = {
                                                     ]
                                                 },
                                                 ".js"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "op": "var",
+                            "args": [
+                                "moduleId",
+                                {
+                                    "op": "call",
+                                    "args": [
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "normalizePath"
+                                            ]
+                                        },
+                                        null,
+                                        {
+                                            "op": "+",
+                                            "args": [
+                                                {
+                                                    "op": "member",
+                                                    "args": [
+                                                        {
+                                                            "op": "ref",
+                                                            "args": [
+                                                                "package"
+                                                            ]
+                                                        },
+                                                        "name"
+                                                    ]
+                                                },
+                                                {
+                                                    "op": "+",
+                                                    "args": [
+                                                        "/",
+                                                        {
+                                                            "op": "call",
+                                                            "args": [
+                                                                {
+                                                                    "op": "ref",
+                                                                    "args": [
+                                                                        "changeExtension"
+                                                                    ]
+                                                                },
+                                                                null,
+                                                                {
+                                                                    "op": "ref",
+                                                                    "args": [
+                                                                        "key"
+                                                                    ]
+                                                                },
+                                                                ""
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
                                             ]
                                         }
                                     ]
@@ -188,13 +372,13 @@ var ast = {
                                 {
                                     "op": "call",
                                     "args": [
-                                        null,
                                         {
                                             "op": "ref",
                                             "args": [
                                                 "compileCoffeeScript"
                                             ]
                                         },
+                                        null,
                                         {
                                             "op": "ref",
                                             "args": [
@@ -205,6 +389,18 @@ var ast = {
                                             "op": "ref",
                                             "args": [
                                                 "target"
+                                            ]
+                                        },
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "moduleId"
+                                            ]
+                                        },
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "packageFile"
                                             ]
                                         }
                                     ]
@@ -222,21 +418,27 @@ var ast = {
                     "op": "call",
                     "args": [
                         {
-                            "op": "ref",
-                            "args": [
-                                "input"
-                            ]
-                        },
-                        {
                             "op": "member",
                             "args": [
                                 {
-                                    "op": "ref",
+                                    "op": "var",
                                     "args": [
-                                        "input"
+                                        "% 8",
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "input"
+                                            ]
+                                        }
                                     ]
                                 },
                                 "search"
+                            ]
+                        },
+                        {
+                            "op": "ref",
+                            "args": [
+                                "% 8"
                             ]
                         },
                         ".pegjs"
@@ -265,33 +467,39 @@ var ast = {
                                     "op": "call",
                                     "args": [
                                         {
-                                            "op": "ref",
-                                            "args": [
-                                                "output"
-                                            ]
-                                        },
-                                        {
                                             "op": "member",
                                             "args": [
                                                 {
-                                                    "op": "ref",
+                                                    "op": "var",
                                                     "args": [
-                                                        "output"
+                                                        "% 9",
+                                                        {
+                                                            "op": "ref",
+                                                            "args": [
+                                                                "output"
+                                                            ]
+                                                        }
                                                     ]
                                                 },
                                                 "getFile"
                                             ]
                                         },
                                         {
+                                            "op": "ref",
+                                            "args": [
+                                                "% 9"
+                                            ]
+                                        },
+                                        {
                                             "op": "call",
                                             "args": [
-                                                null,
                                                 {
                                                     "op": "ref",
                                                     "args": [
                                                         "changeExtension"
                                                     ]
                                                 },
+                                                null,
                                                 {
                                                     "op": "ref",
                                                     "args": [
@@ -299,6 +507,66 @@ var ast = {
                                                     ]
                                                 },
                                                 ".js"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "op": "var",
+                            "args": [
+                                "moduleId",
+                                {
+                                    "op": "call",
+                                    "args": [
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "normalizePath"
+                                            ]
+                                        },
+                                        null,
+                                        {
+                                            "op": "+",
+                                            "args": [
+                                                {
+                                                    "op": "member",
+                                                    "args": [
+                                                        {
+                                                            "op": "ref",
+                                                            "args": [
+                                                                "package"
+                                                            ]
+                                                        },
+                                                        "name"
+                                                    ]
+                                                },
+                                                {
+                                                    "op": "+",
+                                                    "args": [
+                                                        "/",
+                                                        {
+                                                            "op": "call",
+                                                            "args": [
+                                                                {
+                                                                    "op": "ref",
+                                                                    "args": [
+                                                                        "changeExtension"
+                                                                    ]
+                                                                },
+                                                                null,
+                                                                {
+                                                                    "op": "ref",
+                                                                    "args": [
+                                                                        "key"
+                                                                    ]
+                                                                },
+                                                                ""
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
                                             ]
                                         }
                                     ]
@@ -323,13 +591,13 @@ var ast = {
                                 {
                                     "op": "call",
                                     "args": [
-                                        null,
                                         {
                                             "op": "ref",
                                             "args": [
                                                 "compilePegjs"
                                             ]
                                         },
+                                        null,
                                         {
                                             "op": "ref",
                                             "args": [
@@ -340,6 +608,224 @@ var ast = {
                                             "op": "ref",
                                             "args": [
                                                 "target"
+                                            ]
+                                        },
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "moduleId"
+                                            ]
+                                        },
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "packageFile"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "op": "for",
+            "args": [
+                {
+                    "op": "call",
+                    "args": [
+                        {
+                            "op": "member",
+                            "args": [
+                                {
+                                    "op": "var",
+                                    "args": [
+                                        "% 10",
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "input"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "search"
+                            ]
+                        },
+                        {
+                            "op": "ref",
+                            "args": [
+                                "% 10"
+                            ]
+                        },
+                        ".js"
+                    ]
+                },
+                {
+                    "op": "block",
+                    "args": [
+                        {
+                            "op": "var",
+                            "args": [
+                                "source",
+                                {
+                                    "op": "input",
+                                    "args": [
+                                        0
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "op": "var",
+                            "args": [
+                                "target",
+                                {
+                                    "op": "call",
+                                    "args": [
+                                        {
+                                            "op": "member",
+                                            "args": [
+                                                {
+                                                    "op": "var",
+                                                    "args": [
+                                                        "% 11",
+                                                        {
+                                                            "op": "ref",
+                                                            "args": [
+                                                                "output"
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                "getFile"
+                                            ]
+                                        },
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "% 11"
+                                            ]
+                                        },
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "key"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "op": "var",
+                            "args": [
+                                "moduleId",
+                                {
+                                    "op": "call",
+                                    "args": [
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "normalizePath"
+                                            ]
+                                        },
+                                        null,
+                                        {
+                                            "op": "+",
+                                            "args": [
+                                                {
+                                                    "op": "member",
+                                                    "args": [
+                                                        {
+                                                            "op": "ref",
+                                                            "args": [
+                                                                "package"
+                                                            ]
+                                                        },
+                                                        "name"
+                                                    ]
+                                                },
+                                                {
+                                                    "op": "+",
+                                                    "args": [
+                                                        "/",
+                                                        {
+                                                            "op": "call",
+                                                            "args": [
+                                                                {
+                                                                    "op": "ref",
+                                                                    "args": [
+                                                                        "changeExtension"
+                                                                    ]
+                                                                },
+                                                                null,
+                                                                {
+                                                                    "op": "ref",
+                                                                    "args": [
+                                                                        "key"
+                                                                    ]
+                                                                },
+                                                                ""
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "op": "set",
+                            "args": [
+                                {
+                                    "op": "member",
+                                    "args": [
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "target"
+                                            ]
+                                        },
+                                        "path"
+                                    ]
+                                },
+                                {
+                                    "op": "call",
+                                    "args": [
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "copyJavascript"
+                                            ]
+                                        },
+                                        null,
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "source"
+                                            ]
+                                        },
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "target"
+                                            ]
+                                        },
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "moduleId"
+                                            ]
+                                        },
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "packageFile"
                                             ]
                                         }
                                     ]
@@ -358,21 +844,27 @@ var ast = {
                     "op": "call",
                     "args": [
                         {
-                            "op": "ref",
-                            "args": [
-                                "output"
-                            ]
-                        },
-                        {
                             "op": "member",
                             "args": [
                                 {
-                                    "op": "ref",
+                                    "op": "var",
                                     "args": [
-                                        "output"
+                                        "% 12",
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "output"
+                                            ]
+                                        }
                                     ]
                                 },
                                 "search"
+                            ]
+                        },
+                        {
+                            "op": "ref",
+                            "args": [
+                                "% 12"
                             ]
                         },
                         ".js"
@@ -388,21 +880,27 @@ var ast = {
                     "op": "call",
                     "args": [
                         {
-                            "op": "ref",
-                            "args": [
-                                "output"
-                            ]
-                        },
-                        {
                             "op": "member",
                             "args": [
                                 {
-                                    "op": "ref",
+                                    "op": "var",
                                     "args": [
-                                        "output"
+                                        "% 13",
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "output"
+                                            ]
+                                        }
                                     ]
                                 },
                                 "getFile"
+                            ]
+                        },
+                        {
+                            "op": "ref",
+                            "args": [
+                                "% 13"
                             ]
                         },
                         "manifest.json"
@@ -429,21 +927,27 @@ var ast = {
                     "op": "call",
                     "args": [
                         {
-                            "op": "ref",
-                            "args": [
-                                "JSON"
-                            ]
-                        },
-                        {
                             "op": "member",
                             "args": [
                                 {
-                                    "op": "ref",
+                                    "op": "var",
                                     "args": [
-                                        "JSON"
+                                        "% 14",
+                                        {
+                                            "op": "ref",
+                                            "args": [
+                                                "JSON"
+                                            ]
+                                        }
                                     ]
                                 },
                                 "stringify"
+                            ]
+                        },
+                        {
+                            "op": "ref",
+                            "args": [
+                                "% 14"
                             ]
                         },
                         {
@@ -484,21 +988,27 @@ var ast = {
                                                             "op": "call",
                                                             "args": [
                                                                 {
-                                                                    "op": "ref",
-                                                                    "args": [
-                                                                        "key"
-                                                                    ]
-                                                                },
-                                                                {
                                                                     "op": "member",
                                                                     "args": [
                                                                         {
-                                                                            "op": "ref",
+                                                                            "op": "var",
                                                                             "args": [
-                                                                                "key"
+                                                                                "% 15",
+                                                                                {
+                                                                                    "op": "ref",
+                                                                                    "args": [
+                                                                                        "key"
+                                                                                    ]
+                                                                                }
                                                                             ]
                                                                         },
                                                                         "replace"
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "op": "ref",
+                                                                    "args": [
+                                                                        "% 15"
                                                                     ]
                                                                 },
                                                                 {
@@ -534,13 +1044,13 @@ var ast = {
                 {
                     "op": "call",
                     "args": [
-                        null,
                         {
                             "op": "ref",
                             "args": [
                                 "runTests"
                             ]
                         },
+                        null,
                         {
                             "op": "ref",
                             "args": [
@@ -596,7 +1106,7 @@ var ast = {
             ]
         }
     ],
-    "id": "./build.riot"
+    "id": "./build.ion"
 };
 module.exports = function(input, output, variables) {
     if (variables == null) variables = {};

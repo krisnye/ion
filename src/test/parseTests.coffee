@@ -2,7 +2,8 @@ index = require '../'
 
 parseTests =
     "12": {"op":"add","args":[12,1]}
-    # "foo bar": {"op":"add","args":[{"op":"call","args":[null,{"op":"ref","args":["foo"]},{"op":"ref","args":["bar"]}]},1]}
+    # "new $MyType().getCount()": null
+    "foo bar": {"op":"add","args":[{"op":"call","args":[{"op":"ref","args":["foo"]},null,{"op":"ref","args":["bar"]}]},1]}
     "1\n2\n": {op:"block", args:[{"op":"add","args":[1,1]}, {"op":"add","args":[2,2]}]}
     "if true\n    1\nelse\n    2\n": {
             "op": "if",
@@ -39,11 +40,6 @@ parseTests =
         y: 2
     (subtemplate)
     """: {"op":"block","args":[{"op":"var","args":["subtemplate",{"op":"templateDef","args":[{"op":"block","args":[{"op":"set","args":["x",1]},{"op":"set","args":["y",2]}]}]}]},{"op":"templateApply","args":["subtemplate"]}]}
-    # """
-    # x = 1
-    # y = 2
-    # key = 3
-    # """: null
 
 exports.test =
     parse: ->

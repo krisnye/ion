@@ -1,10 +1,10 @@
 {
-    "name": "riot",
+    "name": "ion",
     "version": "0.0.0",
     "dependencies": {
-        "sugar": "1.4.x"
     },
     "devDependencies": {
-        "pegjs": "0.7.x"
+        "pegjs": "0.7.x",
+        "http-server": "0.6.x"
     }
 }

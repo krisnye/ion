@@ -1,4 +1,3 @@
-require 'sugar'
 Context = require './Context'
 core = require './core'
 

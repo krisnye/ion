@@ -1,4 +1,6 @@
-require 'sugar'
+return if global.window
+
+require '../sugar'
 fs = require 'fs'
 np = require 'path'
 util = require './utility'

@@ -1,6 +1,7 @@
+return if global.window
+
 fs = require 'fs'
 np = require 'path'
-require 'sugar'
 utility = require './utility'
 watcher = require './watcher'
 File = require './File'

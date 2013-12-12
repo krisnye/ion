@@ -1,4 +1,4 @@
-require 'sugar'
+require '../sugar'
 
 module.exports =
     observe: (object, observer) ->

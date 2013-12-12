@@ -1,5 +1,12 @@
 index = require '../'
 
+MyTypeCount = 0
+MyType = ->
+    @count = ++MyTypeCount
+    return @
+MyType.prototype.getCount = -> @count
+MyType.prototype.getTotalCount = -> MyTypeCount
+
 expressionTests = [
     ["12", {}, 12]
     ["12 + 5", {}, 17]
@@ -8,12 +15,6 @@ expressionTests = [
     [".foo.bar", {foo:{bar:3}}, 3]
     ["[1,2,2+2]", {}, [1,2,4]]
     ["/foo/g", {}, /foo/g]
-    ["""
-    {}
-        double = (x) -> x * 2
-        foo: double .x
-        bar: double .y
-    """, {x:10,y:20}, {foo:20,bar:40}]
     ["""
     {}
         foo: 1
@@ -145,10 +146,10 @@ expressionTests = [
         double = ()
             for .
                 if .constructor == Object
-                    (key): {}
+                    [key]: {}
                         (double)
                 else
-                    (key): . * 2
+                    [key]: . * 2
         (double)
     """, {a:1,b:{c:2,d:{e:3,f:4}}}, {a:2,b:{c:4,d:{e:6,f:8}}}]
     [
@@ -160,7 +161,23 @@ expressionTests = [
         , {a:1}, [1]]
     ["'alphabet'.replace('a','b')", {}, "blphabet"]
     [".*.name.replace('a','b')", {one:{name:"andy"},two:{name:"dan"}}, ["bndy","dbn"]]
+    ["new $MyType().getTotalCount()", {MyType:MyType}, 1]
+    ["""
+    {}
+        mine = new $MyType()
+        count: mine.getCount()
+
+    """, {MyType:MyType}, {count:2}]
 ]
+
+# we don't test function definitions on the client side because we ususally don't have a coffescript compiler there.
+if not global.window?
+    expressionTests.push ["""
+        {}
+            double = (x) -> x * 2
+            foo: double .x
+            bar: double .y
+        """, {x:10,y:20}, {foo:20,bar:40}]
 
 # we test result expressions when the template is executed immmediately.
 exports.test =

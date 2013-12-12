@@ -45,7 +45,7 @@ module.exports = class ForStatement extends Statement
             # add a key variable to the new context
             newContext.setVariable "key", key
             statement = newContext.createRuntime @args[1]
-            # console.log "**for.addItem: " + JSON.stringify(item) + " " + JSON.stringify(@args[1])
+            # console.log "**for.addItem: " + JSON.stringify(key) + " " + JSON.stringify(value)
             # store the created statement
             @statementMap.set key, statement
             statement.activate()
@@ -93,7 +93,7 @@ module.exports.test =
         context = new Context input, output
         ast = require('../').parseStatement """
             for .
-                (key): . * 2
+                [key]: . * 2
             """
         a = context.createRuntime ast
         a.activate()
