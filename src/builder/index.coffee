@@ -79,6 +79,7 @@ module.exports = exports =
             return
 
     buildTemplate: buildTemplate = (sourceFile, templateModuleId, forceBuild = true) ->
+        # templateModuleId ?= np.relative np.join(process.cwd(), sourceFile), require('../runtime/Template').moduleId
         compiler = require '../compiler'
         sourceModified = utility.getModified(sourceFile)
         if sourceModified is 0
