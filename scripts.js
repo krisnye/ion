@@ -1,5 +1,5 @@
+document.writeln("<script type='text/javascript' src='lib/require.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/browser/html.js'></script>");
-document.writeln("<script type='text/javascript' src='lib/browser/require.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/builder/Directory.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/builder/File.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/builder/index.js'></script>");

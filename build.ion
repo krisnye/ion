@@ -27,16 +27,17 @@ Copy any plain javascript and add browser module boilerplate
         target = output.getFile key
         [target.path]: shimJavascript source, package
 
-Write a manifest.json file listing all of our modules
+Write a manifest.json file listing all of our modules with require.js at the top
 
     outputFiles = output.search(".js")
     manifest = output.getFile "manifest.json"
-    [manifest.path]: JSON.stringify outputFiles.*.(normalizePath key), null, '    '
+    sortedFiles = ['require.js'].concat((outputFiles.*{key != 'require.js'}.(normalizePath key)))
+    [manifest.path]: JSON.stringify sortedFiles, null, '    '
 
 Write a scripts.js file to contain browser includes of our modules
 
-    "scripts.js": buildScriptIncludeFile outputFiles.*.path
+    "scripts.js": buildScriptIncludeFile sortedFiles, package.directories.lib + '/'
 
 Run tests on all of our output modules
 
-    runTests manifest, outputFiles.*.modified
+    runTests.debounce(100) manifest, outputFiles.*.modified

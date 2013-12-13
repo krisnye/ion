@@ -60,6 +60,11 @@ require.loadAll = ->
 
 require.getModuleIds = -> Object.keys modules
 
+require.runTests = ->
+    setTimeout (->
+        require("ion/builder/tester").runTests(require.getModuleIds())
+        ), 0
+
 if typeof module is "undefined"
     @require = require
 else

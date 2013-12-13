@@ -91,7 +91,8 @@ module.exports = exports =
             ast = compiler.parseStatement source, source
             compiled = compiler.compileTemplate ast, templateModuleId
             utility.write compiledFile, compiled
-        return compiledFile
+        modulePath = if compiledFile[0] isnt '.' then './' + compiledFile else compiledFile
+        return modulePath
 
     runTemplate: runTemplate = (path, input, thenExitImmediately) ->
         # use the main module to require this path

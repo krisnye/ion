@@ -20,7 +20,6 @@ module.exports = class File
 			if fs.existsSync @path
 				watcher = fs.watch @path, => @modified = utility.getModified @path
 			return -> watcher?.close()
-
 	read: ->
 		if fs.existsSync @path
 			utility.read @path

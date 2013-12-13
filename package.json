@@ -2,13 +2,12 @@
     "name": "ion",
     "version": "0.0.0",
     "directories": {
-    	"lib": "lib",
-    	"src": "src"
+        "lib": "lib",
+        "src": "src"
     },
     "dependencies": {
     },
     "devDependencies": {
-        "pegjs": "0.7.x",
-        "http-server": "0.6.x"
+        "pegjs": "0.7.x"
     }
 }
