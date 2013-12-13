@@ -87,11 +87,12 @@ ops =
                 console.error e.stack ? e
     "new":
         evaluate: (constructor, args...) ->
+            return undefined unless constructor?
             # console.log 'NEW', constructor.name, args
             try
-                new constructor args...
+                return new constructor args...
             catch e
-                console.error e
+                console.error e.stack ? e
     "children":
         evaluate: (left, right) -> left
     "regex":

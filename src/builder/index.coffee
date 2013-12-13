@@ -6,7 +6,7 @@ np = require 'path'
 
 # this doesn't seem to work with Object.observe callbacks
 process.on 'uncaughtException', (e) ->
-    console.error e
+    console.error e.stack ? e
 
 module.exports = exports =
     removeExtension: removeExtension = utility.removeExtension

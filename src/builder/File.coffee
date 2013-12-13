@@ -21,6 +21,10 @@ module.exports = class File
 				watcher = fs.watch @path, => @modified = utility.getModified @path
 			return -> watcher?.close()
 
-	read: -> utility.read @path
+	read: ->
+		if fs.existsSync @path
+			utility.read @path
+		else
+			null
 	write: (content) -> utility.write @path, content
 	toString: -> @path

@@ -33,6 +33,10 @@ Write a manifest.json file listing all of our modules
     manifest = output.getFile "manifest.json"
     [manifest.path]: JSON.stringify outputFiles.*.(normalizePath key), null, '    '
 
+Write a scripts.js file to contain browser includes of our modules
+
+    "scripts.js": buildScriptIncludeFile outputFiles.*.path
+
 Run tests on all of our output modules
 
     runTests manifest, outputFiles.*.modified
