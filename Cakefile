@@ -1,22 +1,22 @@
-config =
-    input: 'src'
-    output: 'lib'
 
 task 'rebuild', 'builds the project with external compilers', ->
     cp = require 'child_process'
     fs = require 'fs'
+    packageObject = JSON.parse fs.readFileSync "package.json", "utf8"
+    input = packageObject.directories.src
+    output = packageObject.directories.lib
     # build the coffee files
-    cp.exec "coffee -c -o #{config.output} #{config.input}", (error, stdout, stderr) ->
+    cp.exec "coffee -c -o #{output} #{input}", (error, stdout, stderr) ->
         console.error error if error?
         console.log stdout if stdout?
         console.error stderr if stderr?
         # copy the sugar.js file
-        fs.writeFileSync(config.output + "/sugar.js", fs.readFileSync(config.input + "/sugar.js"))
+        fs.writeFileSync(output + "/sugar.js", fs.readFileSync(input + "/sugar.js"))
         # now build the parser
         File = require './lib/builder/File'
-        parserInput = new File(config.input + "/compiler/parser.pegjs")
-        parserOutput = new File(config.output + "/compiler/parser.js")
-        parserOutput.write require('./lib/builder').compilePegjs parserInput, parserOutput
+        parserInput = new File(input + "/compiler/parser.pegjs")
+        parserOutput = new File(output + "/compiler/parser.js")
+        parserOutput.write require('./lib/builder').compilePegjs parserInput, packageObject
 
 build = (exitImmediately) ->
     try
@@ -24,7 +24,7 @@ build = (exitImmediately) ->
     catch e
         console.error "builder module not found, try using 'cake rebuild'"
         return
-    builder.runTemplate './build.ion', config, exitImmediately
+    builder.runTemplate './build.ion', {}, exitImmediately
     # there is probably a watch leak in the file/directory, otherwise this shouldn't be necessary
     # TODO: fix it.
     if exitImmediately

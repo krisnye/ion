@@ -26,7 +26,7 @@
 #             input = new Directory($input)
 #             files: new Directory($output)
 #                 for input.search(".test")
-#                     (key.substring(0, key.length - ".test".length) + ".output"): parseInt(.read()) * 2
+#                     [key.substring(0, key.length - ".test".length) + ".output"]: parseInt(.read()) * 2
 #             """
 #         config =
 #             input: "src/test/input"

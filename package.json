@@ -1,6 +1,10 @@
 {
     "name": "ion",
     "version": "0.0.0",
+    "directories": {
+    	"lib": "lib",
+    	"src": "src"
+    },
     "dependencies": {
     },
     "devDependencies": {

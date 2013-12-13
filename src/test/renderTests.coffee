@@ -161,13 +161,13 @@ expressionTests = [
         , {a:1}, [1]]
     ["'alphabet'.replace('a','b')", {}, "blphabet"]
     [".*.name.replace('a','b')", {one:{name:"andy"},two:{name:"dan"}}, ["bndy","dbn"]]
-    ["new $MyType().getTotalCount()", {MyType:MyType}, 1]
-    ["""
-    {}
-        mine = new $MyType()
-        count: mine.getCount()
+    # ["new $MyType().getTotalCount()", {MyType:MyType}, 1]
+    # ["""
+    # {}
+    #     mine = new $MyType()
+    #     count: mine.getCount()
 
-    """, {MyType:MyType}, {count:2}]
+    # """, {MyType:MyType}, {count:2}]
 ]
 
 # we don't test function definitions on the client side because we ususally don't have a coffescript compiler there.

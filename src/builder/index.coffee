@@ -9,8 +9,8 @@ process.on 'uncaughtException', (e) ->
     console.error e
 
 module.exports = exports =
-    removeExtension: utility.removeExtension
-    changeExtension: utility.changeExtension
+    removeExtension: removeExtension = utility.removeExtension
+    changeExtension: changeExtension = utility.changeExtension
     normalizePath: normalizePath = (path) -> path.replace /\\/g,"\/"
     runTests: (manifestFile) ->
         # convert the files to a name, moduleId map
@@ -19,23 +19,44 @@ module.exports = exports =
     buildScriptIncludeFile: (files, base = '') ->
         files.map((x) -> "document.writeln(\"<script type='text/javascript' src='#{base}#{normalizePath x}'></script>\");").join('\n')
 
-    # this compiles a pegjs parser and returns the result.  Does not write to the target file.
-    compilePegjs: compilePegjs = (source, target, moduleId, packageFile) ->
-        try
-            # return undefined if source.modified < target.modified and (packageFile?.modified ? 0) <= target.modified
+    getModuleId: getModuleId = (source, packageObject) ->
+        normalizePath removeExtension np.join packageObject.name, np.relative packageObject.directories.src, source.path
 
+    # this compiles coffeescript if needed, but does not actually write the result.
+    compileCoffeeScript: compileCoffeeScript = (source, packageObject) ->
+        moduleId = getModuleId source, packageObject
+
+        input = source.read()
+        filename = source.path
+
+        cs = require 'coffee-script'
+        try
+            console.log "Compile: #{filename}"
+            compiled = cs.compile input, {bare: true}
+            compiled = addBrowserShim compiled, moduleId
+            return compiled
+        catch e
+            helpers = require 'coffee-script/lib/coffee-script/helpers'
+            message = e.message = helpers.prettyErrorMessage e, filename || '[stdin]', input, true
+            beep = '\x07'
+            console.error message + beep
+            return
+
+    # this compiles a pegjs parser and returns the result.  Does not write to the target file.
+    compilePegjs: compilePegjs = (source, packageObject) ->
+        moduleId = getModuleId source, packageObject
+        try
             peg = require 'pegjs'
             input = source.read()
             parser = peg.buildParser input, {cache:true,trackLineAndColumn:true}
             source = "module.exports = " + parser.toSource()
             source = addBrowserShim source, moduleId
-
             return source
         catch e
             console.error e
 
-    copyJavascript: copyJavascript = (source, target, moduleId, packageFile) ->
-        return undefined if source.modified < target.modified and (packageFile?.modified ? 0) < target.modified
+    shimJavascript: shimJavascript = (source, packageObject) ->
+        moduleId = getModuleId source, packageObject
         return addBrowserShim source.read(), moduleId
 
     addBrowserShim: addBrowserShim = (sourceText, moduleId) ->
@@ -58,36 +79,16 @@ module.exports = exports =
                 """
         return sourceText
 
-    # this compiles coffeescript if needed, but does not actually write the result.
-    compileCoffeeScript: compileCoffeeScript = (sourceFile, targetFile, moduleId, packageFile) ->
-        return undefined if sourceFile.modified < targetFile.modified and (packageFile?.modified ? 0) < targetFile.modified
-
-        input = sourceFile.read()
-        filename = sourceFile.path
-
-        cs = require 'coffee-script'
-        try
-            console.log "Compile: #{filename}"
-            compiled = cs.compile input, {bare: true}
-            compiled = addBrowserShim compiled, moduleId
-            return compiled
-        catch e
-            helpers = require 'coffee-script/lib/coffee-script/helpers'
-            message = e.message = helpers.prettyErrorMessage e, filename || '[stdin]', input, true
-            beep = '\x07'
-            console.error message + beep
-            return
-
-    buildTemplate: buildTemplate = (sourceFile, templateModuleId, forceBuild = true) ->
-        # templateModuleId ?= np.relative np.join(process.cwd(), sourceFile), require('../runtime/Template').moduleId
+    buildTemplate: buildTemplate = (source, templateModuleId, forceBuild = true) ->
+        # templateModuleId ?= np.relative np.join(process.cwd(), source), require('../runtime/Template').moduleId
         compiler = require '../compiler'
-        sourceModified = utility.getModified(sourceFile)
+        sourceModified = utility.getModified(source)
         if sourceModified is 0
-            throw new Error "Template file not found: #{sourceFile}"
-        compiledFile = utility.changeExtension sourceFile, ".js"
+            throw new Error "Template file not found: #{source}"
+        compiledFile = utility.changeExtension source, ".js"
         if forceBuild or utility.getModified(compiledFile) < sourceModified
-            source = utility.read sourceFile
-            ast = compiler.parseStatement source, sourceFile
+            source = utility.read source
+            ast = compiler.parseStatement source, source
             compiled = compiler.compileTemplate ast, templateModuleId
             utility.write compiledFile, compiled
         return compiledFile
