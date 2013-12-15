@@ -1,5 +1,4 @@
 lib
-build.js
 src/test/input
 src/test/output
 node_modules

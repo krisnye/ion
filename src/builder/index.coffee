@@ -20,7 +20,10 @@ module.exports = exports =
         files.map((x) -> "document.writeln(\"<script type='text/javascript' src='#{base}#{normalizePath x}'></script>\");").join('\n')
 
     getModuleId: getModuleId = (source, packageObject) ->
-        normalizePath removeExtension np.join packageObject.name, np.relative packageObject.directories.src, source.path
+        if packageObject?
+            return normalizePath removeExtension np.join packageObject.name, np.relative packageObject.directories.src, source.path
+        else
+            return null
 
     # this compiles coffeescript if needed, but does not actually write the result.
     compileCoffeeScript: compileCoffeeScript = (source, packageObject) ->
@@ -99,7 +102,12 @@ module.exports = exports =
         Directory = require './Directory'
         File = require './File'
 
-        TemplateClass = require.main.require buildTemplate path
+        # build the template and write to file
+        templatePath = buildTemplate path
+        # load template
+        TemplateClass = require.main.require templatePath
+        # after loading immediately delete the generated .js
+        fs.unlinkSync templatePath
         input ?= {}
         output = new Directory '.'
         output.add = (x) -> console.log x
