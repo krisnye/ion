@@ -64,7 +64,7 @@ module.exports = exports =
 
     addBrowserShim: addBrowserShim = (sourceText, moduleId) ->
         if moduleId?
-            safeId = "_" + moduleId.replace(/\//g, '_') + "_"
+            safeId = "_" + moduleId.replace(/[^a-zA-Z0-9]/g, '_') + "_"
             sourceText =
                 """
                 (function(){var #{safeId} = function(module,exports,require){#{sourceText}
@@ -82,20 +82,14 @@ module.exports = exports =
                 """
         return sourceText
 
-    buildTemplate: buildTemplate = (source, templateModuleId, forceBuild = true) ->
-        # templateModuleId ?= np.relative np.join(process.cwd(), source), require('../runtime/Template').moduleId
+    # this compiles a pegjs parser and returns the result.  Does not write to the target file.
+    compileTemplate: compileTemplate = (source, packageObject, templateModuleId = "ion/runtime/Template") ->
+        moduleId = getModuleId source, packageObject
         compiler = require '../compiler'
-        sourceModified = utility.getModified(source)
-        if sourceModified is 0
-            throw new Error "Template file not found: #{source}"
-        compiledFile = utility.changeExtension source, ".js"
-        if forceBuild or utility.getModified(compiledFile) < sourceModified
-            source = utility.read source
-            ast = compiler.parseStatement source, source
-            compiled = compiler.compileTemplate ast, templateModuleId
-            utility.write compiledFile, compiled
-        modulePath = if compiledFile[0] isnt '.' then './' + compiledFile else compiledFile
-        return modulePath
+        ast = compiler.parseStatement source.read(), source.path
+        template = compiler.compileTemplate ast, templateModuleId
+        template = addBrowserShim template, moduleId
+        return template
 
     runTemplate: runTemplate = (path, input, thenExitImmediately) ->
         # use the main module to require this path
@@ -103,7 +97,10 @@ module.exports = exports =
         File = require './File'
 
         # build the template and write to file
-        templatePath = buildTemplate path
+        compiled = compileTemplate new File(path), null, require('../runtime/Template').id
+        compiledFile = utility.changeExtension path, ".js"
+        utility.write compiledFile, compiled
+        templatePath = if compiledFile[0] isnt '.' then './' + compiledFile else compiledFile
         # load template
         TemplateClass = require.main.require templatePath
         # after loading immediately delete the generated .js

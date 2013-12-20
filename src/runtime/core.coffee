@@ -1,14 +1,16 @@
 require '../sugar'
 
 module.exports =
-    observe: (object, observer) ->
+    # property is optional
+    observe: (object, observer, property) ->
         if object? and Object.observe? and typeof object is 'object'
             Object.observe object, observer
-        object?.onObserved?(observer)
-    unobserve: (object, observer) ->
+        object?.onObserved?(observer, property)
+    # property is optional
+    unobserve: (object, observer, property) ->
         if object? and Object.unobserve? and typeof object is 'object'
             Object.unobserve object, observer
-        object?.onUnobserved?(observer)
+        object?.onUnobserved?(observer, property)
     count: (container) -> container.length ? 0
     add: (container, item, index, context) ->
         if index? and container.splice?

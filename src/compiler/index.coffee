@@ -42,7 +42,7 @@ module.exports = exports =
         return ast.args[0]
 
     compileTemplate: compileTemplate = (ast, templateModuleId) ->
-        templateModuleId ?= require('../runtime/Template').moduleId
+        throw new Error "templateModuleId is required" unless templateModuleId?
         return """
         var Template = require(#{JSON.stringify templateModuleId});
         var ast = #{JSON.stringify ast, null, '    '};
