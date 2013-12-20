@@ -25,6 +25,7 @@ document.writeln("<script type='text/javascript' src='lib/runtime/ForStatement.j
 document.writeln("<script type='text/javascript' src='lib/runtime/harmonyCollections.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/runtime/IfStatement.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/runtime/index.js'></script>");
+document.writeln("<script type='text/javascript' src='lib/runtime/MemberExpression.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/runtime/NewContextExpression.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/runtime/ObjectExpression.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/runtime/Operation.js'></script>");

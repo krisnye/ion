@@ -63,17 +63,12 @@ ops =
         runtime: './NewContextExpression'
         evaluate: (left, right) -> if right then left else undefined
     "local":
-        newInputContext: true
         # a local expression, usually of the format alpha.(x+y)
+        newInputContext: true
         runtime: './NewContextExpression'
         evaluate: (left, right) -> right
     "member":
-        newInputContext: true
-        runtime: './NewContextExpression'
-        observeLeftValue: true
-        # quit trying to change this to a bound value
-        # that will completely fuck up constructors.
-        evaluate: (left, right) -> left?[right]
+        runtime: './MemberExpression'
     "null":
         evaluate: -> null
     "call":
@@ -93,8 +88,6 @@ ops =
                 return new constructor args...
             catch e
                 console.error e.stack ? e
-    "children":
-        evaluate: (left, right) -> left
     "regex":
         evaluate: (text, options) ->
             if text?
