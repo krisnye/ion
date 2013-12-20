@@ -97,7 +97,7 @@ module.exports = exports =
         File = require './File'
 
         # build the template and write to file
-        compiled = compileTemplate new File(path), null, require('../runtime/Template').id
+        compiled = compileTemplate new File(path), null, require('../runtime/Template').moduleId
         compiledFile = utility.changeExtension path, ".js"
         utility.write compiledFile, compiled
         templatePath = if compiledFile[0] isnt '.' then './' + compiledFile else compiledFile
