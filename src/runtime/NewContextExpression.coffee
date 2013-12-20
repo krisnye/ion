@@ -13,29 +13,18 @@ module.exports = class NewContextExpression extends DynamicExpression
     activate: ->
         super()
         @leftExpression.watch @leftWatcher ?= (value) =>
-            # this is used by Member expressions to notify the leftObserver of what property is being watched.
-            @watchedProperty = if typeof @args[right] is 'string' then @args[right] else undefined
-
             if @leftValue isnt value
                 # unwatch any previous right expression
                 @rightExpression?.unwatch @rightWatcher
-                if @leftObserver?
-                    core.unobserve @leftValue, @leftObserver, @watchedProperty
                 # store the new left value
                 @leftValue = value
                 # now create the right value and watch it
                 if @leftValue?
-                    # we may need to also Observe the leftValue for any property changes
-                    if @operation.observeLeftValue
-                        @leftObserver ?= (changes) => @evaluate()
-                        core.observe @leftValue, @leftObserver, @watchedProperty
-
                     # create a new context using the left value
                     @leftContext = new Context @leftValue, @context.output, @context
                     @rightWatcher ?= (value) =>
                         @rightValue = value
                         @evaluate()
-
                     # create right expression with this new context
                     @rightExpression = @leftContext.createRuntime @args[right]
                     @rightExpression.watch @rightWatcher
@@ -49,10 +38,6 @@ module.exports = class NewContextExpression extends DynamicExpression
     evaluate: ->
         value = @operation.evaluate.call @context, @leftValue, @rightValue
         @setValue value
-    dispose: ->
-        super()
-        if @leftObserver?
-            core.unobserve @leftValue, @leftObserver
 
 module.exports.test = (done) ->
     try
