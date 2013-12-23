@@ -9,9 +9,9 @@ right = 1
 module.exports = class NewContextExpression extends DynamicExpression
     constructor: (properties) ->
         super properties
-        @leftExpression = @context.createRuntime @args[left]
     activate: ->
         super()
+        @leftExpression ?= @context.createRuntime @args[left]
         @leftExpression.watch @leftWatcher ?= (value) =>
             if @leftValue isnt value
                 # unwatch any previous right expression

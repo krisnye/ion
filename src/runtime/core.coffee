@@ -12,14 +12,14 @@ module.exports =
             Object.unobserve object, observer
         object?.onUnobserved?(observer, property)
     count: (container) -> container.length ? 0
-    add: (container, item, index, context) ->
+    add: (container, item, index) ->
         if index? and container.splice?
             container.splice index, 0, item
         else if container.push?
             container.push item
         else
             container.add item
-        item.onAdded?(container, context)
+        item.onAdded?(container)
     remove: (container, item) ->
         if container.lastIndexOf? and container.removeAt?
             index = container.lastIndexOf item

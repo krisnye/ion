@@ -7,7 +7,7 @@ fs = require 'fs'
 templates =
     "Hello": [
         """
-            "Hello " + .name
+            "Hello " + $name
         """
         {name: "Alpha"}
         ["Hello Alpha"]
@@ -23,7 +23,8 @@ templates =
         """
             Hello = require('./Hello.module')
             for .children
-                new Hello()
+                Hello
+                    name: .name
         """
         {children:[{name: "Alpha"},{name:"Beta"}]}
         [null,"Hello Alpha",null,"Hello Beta"]

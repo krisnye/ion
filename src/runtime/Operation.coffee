@@ -96,6 +96,8 @@ ops =
                 undefined
     "?:":
         evaluate: (condition, a, b) -> if condition then a else b
+    "?":
+        evaluate: (a, b) -> a ? b
     "*":
         evaluate: (left, right) -> left * right
     "/":

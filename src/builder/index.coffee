@@ -20,6 +20,12 @@ module.exports = exports =
         files.map((x) -> "document.writeln(\"<script type='text/javascript' src='#{base}#{normalizePath x}'></script>\");").join('\n')
 
     getModuleId: getModuleId = (source, packageObject) ->
+        # new getModuleId behavior
+        if typeof source is 'string'
+            root = source
+            path = packageObject
+            return normalizePath removeExtension np.join root, path
+        # old getModuleId behavior
         if packageObject?
             return normalizePath removeExtension np.join packageObject.name, np.relative packageObject.directories.src, source.path
         else
@@ -27,7 +33,7 @@ module.exports = exports =
 
     # this compiles coffeescript if needed, but does not actually write the result.
     compileCoffeeScript: compileCoffeeScript = (source, packageObject) ->
-        moduleId = getModuleId source, packageObject
+        moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
 
         input = source.read()
         filename = source.path
@@ -35,7 +41,8 @@ module.exports = exports =
         cs = require 'coffee-script'
         try
             console.log "Compile: #{filename}"
-            compiled = cs.compile input, {bare: true}
+            compiled = cs.compile input, options = {bare: true}
+            # console.log 'sourceMap: ' + typeof options.sourceMap
             compiled = addBrowserShim compiled, moduleId
             return compiled
         catch e
@@ -47,7 +54,7 @@ module.exports = exports =
 
     # this compiles a pegjs parser and returns the result.  Does not write to the target file.
     compilePegjs: compilePegjs = (source, packageObject) ->
-        moduleId = getModuleId source, packageObject
+        moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
         try
             peg = require 'pegjs'
             input = source.read()
@@ -59,7 +66,7 @@ module.exports = exports =
             console.error e
 
     shimJavascript: shimJavascript = (source, packageObject) ->
-        moduleId = getModuleId source, packageObject
+        moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
         return addBrowserShim source.read(), moduleId
 
     addBrowserShim: addBrowserShim = (sourceText, moduleId) ->
@@ -84,7 +91,7 @@ module.exports = exports =
 
     # this compiles a pegjs parser and returns the result.  Does not write to the target file.
     compileTemplate: compileTemplate = (source, packageObject, templateModuleId = "ion/runtime/Template") ->
-        moduleId = getModuleId source, packageObject
+        moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
         compiler = require '../compiler'
         ast = compiler.parseStatement source.read(), source.path
         template = compiler.compileTemplate ast, templateModuleId
@@ -107,7 +114,7 @@ module.exports = exports =
         fs.unlinkSync templatePath
         input ?= {}
         output = new Directory '.'
-        output.add = (x) -> console.log x
+        output.add = ->
         output.remove = ->
         variables = Object.clone(module.exports)
         instance = new TemplateClass input, output, variables

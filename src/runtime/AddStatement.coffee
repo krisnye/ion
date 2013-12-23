@@ -21,7 +21,7 @@ module.exports = class AddStatement extends Statement
             # console.log "**AddStatement.add: " + JSON.stringify(value)
             addIndex = @_getAddIndex()
             insertIndex = @context.getInsertionIndex addIndex
-            core.add @context.output, value, insertIndex, @context
+            core.add @context.output, value, insertIndex
             @context.incrementAdditionCount addIndex
     _remove: (value) ->
         if value isnt undefined

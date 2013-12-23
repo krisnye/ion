@@ -3,6 +3,7 @@ document.writeln("<script type='text/javascript' src='lib/browser/html.js'></scr
 document.writeln("<script type='text/javascript' src='lib/builder/Directory.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/builder/File.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/builder/index.js'></script>");
+document.writeln("<script type='text/javascript' src='lib/builder/ModuleBuilder.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/builder/tester.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/builder/utility.js'></script>");
 document.writeln("<script type='text/javascript' src='lib/builder/watcher.js'></script>");

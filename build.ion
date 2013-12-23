@@ -1,43 +1,16 @@
 
-Get our input and output directories from template input
+Read the package.json
 
-    packageFile = @getFile("package.json")
-    package = JSON.parse packageFile.read()
-    input = @getDirectory package.directories.src
-    output = @getDirectory package.directories.lib
+    package = JSON.parse @getFile("package.json").read()
 
-Compile coffeescript and add browser module boilerplate
+Use the ModuleBuilder template
 
-    for input.search ".coffee"
-        source = .
-        target = output.getFile changeExtension key, ".js"
-        [target.path]: compileCoffeeScript source, package
-
-Compile any pegjs grammars
-
-    for input.search ".pegjs"
-        source = .
-        target = output.getFile changeExtension key, ".js"
-        [target.path]: compilePegjs source, package
-
-Copy any plain javascript and add browser module boilerplate
-
-    for input.search ".js"
-        source = .
-        target = output.getFile key
-        [target.path]: shimJavascript source, package
-
-Write a manifest.json file listing all of our modules with require.js at the top
-
-    outputFiles = output.search(".js")
-    manifest = output.getFile "manifest.json"
-    sortedFiles = ['require.js'].concat((outputFiles.*{key != 'require.js'}.(normalizePath key)))
-    [manifest.path]: JSON.stringify sortedFiles, null, '    '
-
-Write a scripts.js file to contain browser includes of our modules
-
-    "scripts.js": buildScriptIncludeFile sortedFiles, package.directories.lib + '/'
-
-Run tests on all of our output modules
-
-    runTests.debounce(100) manifest, outputFiles.*.modified
+    require "./lib/builder/ModuleBuilder"
+        name: package.name
+        input: package.directories.src
+        output: package.directories.lib
+        test: true
+        manifest: ['require.js']
+        browser:
+            output: "all.js"
+            compress: false

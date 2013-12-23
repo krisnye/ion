@@ -1,0 +1,73 @@
+
+Load dependencies.
+
+    File = require './File'
+    Directory = require './Directory'
+    builder = require './'
+    input = new Directory $input
+    output = new Directory $output
+
+Compile coffeescript and add browser module boilerplate
+
+    for input.search ".coffee"
+        source = .
+        target = output.getFile builder.changeExtension key, ".js"
+        moduleId = builder.getModuleId $name, key
+        [target.path]: builder.compileCoffeeScript source, moduleId
+
+Compile any pegjs grammars
+
+    for input.search ".pegjs"
+        source = .
+        target = output.getFile builder.changeExtension key, ".js"
+        moduleId = builder.getModuleId $name, key
+        [target.path]: builder.compilePegjs source, moduleId
+
+Copy any plain javascript and add browser module boilerplate
+
+    for input.search ".js"
+        source = .
+        target = output.getFile key
+        moduleId = builder.getModuleId $name, key
+        [target.path]: builder.shimJavascript source, moduleId
+
+Compile any ion templates
+
+    templateModuleId = "../runtime/Template"
+    for input.search ".ion"
+        source = .
+        target = output.getFile builder.changeExtension key, ".js"
+        moduleId = builder.getModuleId $name, key
+        [target.path]: builder.compileTemplate source, moduleId, templateModuleId
+
+Write a manifest.json file listing all of our modules with require.js at the top
+
+    outputFiles = output.search(".js")
+    lastModified = (outputFiles.*.modified).max()
+    manifest = output.getFile "manifest.json"
+    top = $manifest ? $manifest : []
+    sortedFiles = top.concat((outputFiles.*{ top.indexOf(key) < 0 }.(builder.normalizePath key)))
+    [manifest.path]: JSON.stringify sortedFiles, null, '    '
+
+Build a merged uglified single file
+
+    if $browser
+        allName = $uglify.output ? "all.js"
+        uglyOptions =
+            mangle: $uglify.compress ? false
+            compress: $uglify.compress ? false
+            outSourceMap: allName + ".map"
+            sourceRoot: "."
+            forceRebuild: lastModified
+        all = new File allName
+        map = new File uglyOptions.outSourceMap
+        files = sortedFiles.*.(output.getFile(.).path)
+        result = require('uglify-js').minify files, uglyOptions
+        [all.path]: "if (this.window == null) return;" + result.code + "//# sourceMappingURL=" + uglyOptions.outSourceMap
+        [map.path]: result.map
+
+Run tests on all of our output modules
+
+    if $test
+        builder.runTests.debounce(100) manifest, lastModified
+
