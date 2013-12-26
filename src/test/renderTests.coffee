@@ -13,6 +13,7 @@ expressionTests = [
     [". == 2", {}, false]
     [". == 2", 2, true]
     [".foo.bar", {foo:{bar:3}}, 3]
+    ["!(1 == 2)", {}, true]
     ["null ? 2", {}, 2]
     ["2 ? null", {}, 2]
     ["false ? 2", {}, false]

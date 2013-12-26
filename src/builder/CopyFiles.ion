@@ -1,0 +1,11 @@
+
+Copies files from source to target
+
+    Directory = require './Directory'
+
+    input = new Directory $input
+    output = new Directory $output
+
+    for input.search $include, $exclude
+        target = output.getFile key
+        [target.path]: .read()

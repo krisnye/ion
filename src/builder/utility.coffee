@@ -64,7 +64,12 @@ module.exports = exports =
         value = value.split(/[\/\\]/g).pop()
         return defaultValue unless match?
         return match value if 'function' is typeof match
-        return match.indexOf(value) >= 0 if Array.isArray match
+        if Array.isArray match
+            # see if it matches any subitem in the array
+            for item in match
+                if isMatch value, item
+                    return true
+            return false
         return value.substring(value.length-match.length) is match if typeof match is 'string'
         return match.test value
     defaultFileExclude: ["node_modules","www"]
@@ -91,13 +96,14 @@ module.exports = exports =
     list: list = (dir, options={}, files=[]) ->
         exclude = options.exclude ? exports.defaultFileExclude
         recursive = options.recursive ? true
-        for file in fs.readdirSync(dir)
-            file = np.join dir, file
-            if not isMatch file, exclude, false
-                if isFile file
-                    files.push file if isMatch file, options.include, true
-                else if recursive
-                    list file, options, files
+        if fs.existsSync dir
+            for file in fs.readdirSync(dir)
+                file = np.join dir, file
+                if not isMatch file, exclude, false
+                    if isFile file
+                        files.push file if isMatch file, options.include, true
+                    else if recursive
+                        list file, options, files
         files
     makeDirectories: makeDirectories = (dir) ->
         if not Object.isString dir
@@ -109,12 +115,16 @@ module.exports = exports =
             fs.mkdirSync dir
     makeParentDirectories: makeParentDirectories = (file) ->
         makeDirectories np.dirname file
-    read: read = (file) ->
-        fs.readFileSync(file, 'utf8')
-    write: write = (file, content) ->
+    read: read = (file, encoding) ->
+        if encoding == undefined
+            encoding = 'utf8'
+        fs.readFileSync(file, encoding)
+    write: write = (file, content, encoding) ->
         makeParentDirectories file
         if content?
-            fs.writeFileSync(file, content, 'utf8')
+            if encoding == undefined
+                encoding = 'utf8'
+            fs.writeFileSync(file, content, encoding)
         else
             fs.unlinkSync(file)
     # copies files or folders
@@ -124,7 +134,7 @@ module.exports = exports =
             if isMatch(source, include, true)
                 content = read source
                 write target, content
-                console.log "Copied #{np.normalize target}"
+                console.log "Copied: #{np.normalize target}"
         else if isDirectory source
             files = fs.readdirSync source
             for file in files

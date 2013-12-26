@@ -11,7 +11,28 @@ process.on 'uncaughtException', (e) ->
 module.exports = exports =
     removeExtension: removeExtension = utility.removeExtension
     changeExtension: changeExtension = utility.changeExtension
-    normalizePath: normalizePath = (path) -> path.replace /\\/g,"\/"
+    normalizePath: normalizePath = (path) -> path?.replace /\\/g,"\/"
+    isPrivate: isPrivate = (path) ->
+        return false unless path?
+        path = normalizePath path
+        result = path[0] is '_' or path.indexOf('/_') >= 0
+        return result
+    link: (object) ->
+        # EXISTING_FILE : SYMBOLIC_LINK
+        for key, value of object
+            if not fs.existsSync key
+                console.error "link source not found: #{key}"
+                continue
+            isDirectory = utility.isDirectory key
+            # existing file path needs to be relative to the link path
+            existingPath = np.relative value, key
+            console.log "link EXISTING: #{existing}  LINK: #{value}"
+
+
+    # fs.symlinkSync "../../ion/lib", "node_modules/ion", "dir" if not fs.existsSync "node_modules/ion"
+
+        # each key is an existing file, each value 
+        # object contains, from to linkings.
     runTests: (manifestFile) ->
         # convert the files to a name, moduleId map
         require('./tester').spawnTests manifestFile
@@ -70,6 +91,7 @@ module.exports = exports =
         return addBrowserShim source.read(), moduleId
 
     addBrowserShim: addBrowserShim = (sourceText, moduleId) ->
+        # make sure the javascript isn't already shimmed, so we don't shim it twice.
         if moduleId?
             safeId = "_" + moduleId.replace(/[^a-zA-Z0-9]/g, '_') + "_"
             sourceText =

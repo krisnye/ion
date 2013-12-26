@@ -16,7 +16,11 @@ task 'rebuild', 'builds the project with external compilers', ->
         File = require './lib/builder/File'
         parserInput = new File(input + "/compiler/parser.pegjs")
         parserOutput = new File(output + "/compiler/parser.js")
-        parserOutput.write require('./lib/builder').compilePegjs parserInput, packageObject
+        parserOutput.write require('./lib/builder').compilePegjs parserInput
+        # now build the ModuleBuilder template
+        templateInput = new File(input + "/builder/ModuleBuilder.ion")
+        templateOutput = new File(output + "/builder/ModuleBuilder.js")
+        templateOutput.write require('./lib/builder').compileTemplate templateInput, null, "../runtime/Template"
 
 build = (exitImmediately) ->
     try

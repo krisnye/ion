@@ -167,7 +167,7 @@ multiplicative
   = left:unary s op:("*" / "/" / "%") s right:multiplicative { return e(op, [left,right], line, column) }
   / unary
 unary
-  = op:("!" / "-") right:expansion
+  = op:("!" / "-") right:expansion { return e(op, [right], line, column) }
   / expansion
 
 expansion

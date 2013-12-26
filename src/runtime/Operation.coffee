@@ -98,6 +98,8 @@ ops =
         evaluate: (condition, a, b) -> if condition then a else b
     "?":
         evaluate: (a, b) -> a ? b
+    "!":
+        evaluate: (a) -> !a
     "*":
         evaluate: (left, right) -> left * right
     "/":

@@ -12,5 +12,4 @@ Use the ModuleBuilder template
         test: true
         manifest: ['require.js']
         browser:
-            output: "all.js"
             compress: false

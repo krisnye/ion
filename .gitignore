@@ -1,5 +1,4 @@
 lib
-all.js*
 src/test/input
 src/test/output
 node_modules
