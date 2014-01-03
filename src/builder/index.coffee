@@ -11,7 +11,18 @@ process.on 'uncaughtException', (e) ->
 module.exports = exports =
     removeExtension: removeExtension = utility.removeExtension
     changeExtension: changeExtension = utility.changeExtension
-    normalizePath: normalizePath = (path) -> path?.replace /\\/g,"\/"
+    normalizePath: normalizePath = utility.normalizePath
+    minify: minify = (root, files, options) ->
+        # we change cwd so uglify maps file names to sources correctly.
+        cwd = process.cwd()
+        process.chdir root
+        try
+            return require('uglify-js').minify files, options
+        catch e
+            throw e
+        finally
+            process.chdir cwd
+
     isPrivate: isPrivate = (path) ->
         return false unless path?
         path = normalizePath path
@@ -35,7 +46,7 @@ module.exports = exports =
         # object contains, from to linkings.
     runTests: (manifestFile) ->
         # convert the files to a name, moduleId map
-        require('./tester').spawnTests manifestFile
+        require('../browser/tester').spawnTests manifestFile
 
     buildScriptIncludeFile: (files, base = '') ->
         files.map((x) -> "document.writeln(\"<script type='text/javascript' src='#{base}#{normalizePath x}'></script>\");").join('\n')
@@ -54,6 +65,7 @@ module.exports = exports =
 
     # this compiles coffeescript if needed, but does not actually write the result.
     compileCoffeeScript: compileCoffeeScript = (source, packageObject) ->
+        return if source.modified is 0
         moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
 
         input = source.read()
@@ -75,6 +87,7 @@ module.exports = exports =
 
     # this compiles a pegjs parser and returns the result.  Does not write to the target file.
     compilePegjs: compilePegjs = (source, packageObject) ->
+        return if source.modified is 0
         moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
         try
             peg = require 'pegjs'
@@ -87,6 +100,7 @@ module.exports = exports =
             console.error e
 
     shimJavascript: shimJavascript = (source, packageObject) ->
+        return if source.modified is 0
         moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
         return addBrowserShim source.read(), moduleId
 
@@ -113,6 +127,7 @@ module.exports = exports =
 
     # this compiles a pegjs parser and returns the result.  Does not write to the target file.
     compileTemplate: compileTemplate = (source, packageObject, templateModuleId = "ion/runtime/Template") ->
+        return if source.modified is 0
         moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
         compiler = require '../compiler'
         ast = compiler.parseStatement source.read(), source.path

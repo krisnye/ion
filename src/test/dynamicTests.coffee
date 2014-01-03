@@ -1,5 +1,14 @@
-index = require '../'
-require '../sugar'
+# target value should never include reference types from values
+apply = (target, values, deleteNull = true) ->
+    return Object.clone(values, true) unless values?.constructor is Object
+    target = {} unless typeof target is 'object'
+    for key, value of values
+        patchedValue = apply target[key], value, deleteNull
+        if deleteNull and not value?
+            delete target[key]
+        else
+            target[key] = patchedValue
+    return target
 
 expressionTests = [
     ["x + y", "$x + $y", {x:1,y:2}, {x:10}, 12]
@@ -85,11 +94,15 @@ expressionTests = [
 # we test result expressions when the template is executed immmediately.
 # we will generate the tests
 exports.test = tests = {}
+runtime = require '../runtime'
+core = require '../runtime/core'
+compiler = require '../compiler'
+
 for [name, source, input, patch, expected] in expressionTests
     do ->
         tests[name] = (done) ->
-            ast = index.parseExpression source
-            e = index.createRuntime ast, input
+            ast = compiler.parseExpression source
+            e = runtime.createRuntime ast, input
             currentValue = null
             patchUnwatcher = null
             checkForMatch = ->
@@ -107,19 +120,19 @@ for [name, source, input, patch, expected] in expressionTests
                 # console.log 'watcher---------------------------------'
                 # console.log JSON.stringify value
                 if value isnt currentValue
+                    core.unobserve currentValue, observer
                     patchUnwatcher?()
                     currentValue = value
                     checkForMatch()
                     if currentValue? and typeof currentValue is 'object'
-                        # console.log 'patchWatch', currentValue
-                        patchUnwatcher = require('./patch').watch value, (patch) ->
+                        core.observe currentValue, observer = (changes) ->
                             # console.log 'patch---------------------------------'
                             # console.log JSON.stringify value
                             checkForMatch()
             # watch it which causes initial rendering.
             e.watch watcher
             # then patch it
-            require('./patch').apply input, patch
+            apply input, patch
             # console.log "after patch: ------------------------"
             # console.log JSON.stringify input
             # now the watcher will wait for the changes to propagate

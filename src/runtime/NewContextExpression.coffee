@@ -39,6 +39,7 @@ module.exports = class NewContextExpression extends DynamicExpression
         value = @operation.evaluate.call @context, @leftValue, @rightValue
         @setValue value
 
+return if @java or @window
 module.exports.test = (done) ->
     try
         object = {alpha:{x:1,y:2}}

@@ -10,6 +10,6 @@ Use the ModuleBuilder template
         input: package.directories.src
         output: package.directories.lib
         test: true
-        manifest: ['require.js']
+        templateModuleId: "../runtime/Template"
         browser:
             compress: false

@@ -3,8 +3,7 @@ require './core'
 
 exports.Map = class ForEachMap
 	constructor: ->
-		@map = new Map
-		@keys = []
+		@clear()
 	get: (key) -> @map.get key
 	set: (key, value) ->
 		if not @has key
@@ -16,8 +15,8 @@ exports.Map = class ForEachMap
 			@keys.remove key
 		@map.delete key
 	clear: ->
-		@map.clear()
-		@keys.length = 0
+		@map = new Map
+		@keys = []
 	getKeys: -> @keys
 	forEach: (callback) ->
 		for key in @keys by -1
@@ -29,12 +28,11 @@ exports.Set = class ForEachSet extends ForEachMap
 
 # add size property to Map
 Object.defineProperty ForEachMap.prototype, "size",
-	get: -> @map.size
+	get: -> @keys.length
 
 # add size property to Set
 Object.defineProperty ForEachSet.prototype, "size",
-	get: -> @map.size
-
+	get: -> @keys.length
 
 module.exports.test =
 	map: ->

@@ -34,7 +34,7 @@ Copy any plain javascript and add browser module boilerplate
 
 Compile any ion templates
 
-    templateModuleId = "../runtime/Template"
+    templateModuleId = $templateModuleId ? "ion/runtime/Template"
     for input.search ".ion"
         source = .
         target = output.getFile builder.changeExtension key, ".js"
@@ -44,31 +44,35 @@ Compile any ion templates
 Write a manifest.json file listing all of our modules with require.js at the top
 
     outputFiles = output.search(".js")
-    lastModified = (outputFiles.*.modified).max()
-    manifest = output.getFile "manifest.json"
-    top = $manifest ? $manifest : []
-    sortedFiles = top.concat((outputFiles.*{ !builder.isPrivate(key) && top.indexOf(key) < 0 }.(builder.normalizePath key)))
+    filter = (name) -> name.endsWith 'require.js'
+    top = Object.keys(outputFiles).filter filter
+    sortedFiles = top.concat((outputFiles.*{ !builder.isPrivate(key) && top.indexOf(key) < 0 }.(key)))
+    manifest =
+        modified: (outputFiles.*.modified).max()
+        files: sortedFiles.map(builder.normalizePath)
+    manifestFile = output.getFile "manifest.json"
     if sortedFiles.length > 0
-        [manifest.path]: JSON.stringify sortedFiles, null, '    '
+        [manifestFile]: JSON.stringify manifest, null, '    '
 
 Build a merged uglified single file
 
     if $browser
-        allName = $uglify.name ? "_browser.js"
+        allName = $browser.name ? "_browser.js"
         uglyOptions =
-            mangle: $uglify.compress ? false
-            compress: $uglify.compress ? false
+            mangle: $browser.compress ? false
+            compress: $browser.compress ? false
             outSourceMap: allName + ".map"
-            forceRebuild: lastModified
+            forceRebuild: manifestFile.modified
         all = output.getFile allName
         map = output.getFile uglyOptions.outSourceMap
-        files = sortedFiles.*.(output.getFile(.).path)
-        result = require('uglify-js').minify files, uglyOptions
+        files = JSON.parse(manifestFile.read()).files
+        result = builder.minify output.path, files, uglyOptions
         [all.path]: "if (this.window == null) return;" + result.code + "//# sourceMappingURL=" + uglyOptions.outSourceMap
-        [map.path]: result.map.replace new RegExp('"' + output.path + "\\\\\\\\", "g"), '"'
+        if result.map
+            [map.path]: result.map.replace new RegExp('"' + output.path + "\\\\\\\\", "g"), '"'
 
 Run tests on all of our output modules
 
     if $test
-        builder.runTests.debounce(100) manifest, lastModified
+        builder.runTests.debounce(100).throttle(3000) manifestFile, manifestFile.modified
 

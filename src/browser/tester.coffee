@@ -21,7 +21,7 @@ runTest = (name, test, callback) ->
 
 exports.spawnTests = spawnTests = (manifestFile) ->
     command = "node#{if process.platform is 'win32' then '.cmd' else ''} #{__filename} #{manifestFile}"
-    require('./utility').spawn command
+    require('../builder/utility').spawn command
     return
 
 exports.runTests = runTests = (moduleIds, callback) ->
@@ -77,9 +77,9 @@ exports.runTests = runTests = (moduleIds, callback) ->
 exports.createCallback = (options, html = global.window?) ->
     options ?=
         if html
-            red:   '<span style="color:red">'
-            green: '<span style="color:green">'
-            blue:  '<span style="color:blue">'
+            red:   '<span style="color:red;white-space:pre">'
+            green: '<span style="color:green;white-space:pre">'
+            blue:  '<span style="color:blue;white-space:pre">'
             plain:  '<span>'
             endColor: '</span>'
             log: (x) -> document.writeln x
@@ -118,7 +118,9 @@ exports.createCallback = (options, html = global.window?) ->
             passed = tests - fails
             log(endLine)
             color = if passed is tests then green else red + beep
-            log color + "#{passed}/#{tests} Passed (#{time} ms)." + endColor + endLine
+            log color + (title = "#{passed}/#{tests} Passed (#{time} ms).") + endColor + endLine
+            if global.document
+                document.title = title
             log(endLine)
 
 # unit test ourselves!
@@ -152,12 +154,12 @@ if require.main is module
         return
 
     manifestFile = args[0]
-    utility = require './utility'
+    utility = require '../builder/utility'
     manifest = JSON.parse utility.read manifestFile
 
     # create a moduleid to name object
     modules = {}
-    for file in manifest
+    for file in manifest.files
         moduleId = np.join process.cwd(), np.dirname(manifestFile), file
         modules[file] = moduleId
     console.log "------------------------------------------------------"

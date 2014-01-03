@@ -24,6 +24,7 @@ module.exports = class OperationExpression extends DynamicExpression
         value = @operation.evaluate.apply @context, @argumentValues
         @setValue value
 
+return if @java or @window
 module.exports.test = ->
     context = new Context
     e = context.createRuntime ast = require('../').parseExpression "1 + 2"

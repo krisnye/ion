@@ -60,10 +60,12 @@ require.loadAll = ->
 
 require.getModuleIds = -> Object.keys modules
 
-require.runTests = ->
-    setTimeout (->
-        require("ion/builder/tester").runTests(require.getModuleIds())
-        ), 0
+require.runTests = (callback) ->
+    fn = -> require("ion/browser/tester").runTests(require.getModuleIds(), callback)
+    if global.setTimeout?
+        setTimeout fn, 0
+    else
+        fn()
 
 if typeof module is "undefined"
     @require = require

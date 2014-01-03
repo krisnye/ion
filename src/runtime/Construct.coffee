@@ -1,4 +1,4 @@
-require '../sugar'
+require './core'
 
 # base class for reactive language statements and expressions
 module.exports = class Construct

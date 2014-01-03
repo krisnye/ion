@@ -1,33 +1,46 @@
-require '../sugar'
+require './sugar'
+require './harmony-collections-shim'
 
 module.exports =
     # property is optional
     observe: (object, observer, property) ->
-        if object? and Object.observe? and typeof object is 'object'
+        if object? and observer? and Object.observe? and typeof object is 'object'
             Object.observe object, observer
         object?.onObserved?(observer, property)
     # property is optional
     unobserve: (object, observer, property) ->
-        if object? and Object.unobserve? and typeof object is 'object'
+        if object? and observer? and Object.unobserve? and typeof object is 'object'
             Object.unobserve object, observer
         object?.onUnobserved?(observer, property)
     count: (container) -> container.length ? 0
     add: (container, item, index) ->
-        if index? and container.splice?
+        if container.nodeType is 1
+            if typeof item is 'string'
+                item = document.createTextNode item
+            insertBefore = null
+            if index?
+                insertBefore = container.childNodes[index]
+            container.insertBefore item, insertBefore
+        else if index? and container.splice?
             container.splice index, 0, item
         else if container.push?
             container.push item
         else
             container.add item
+
         item.onAdded?(container)
-    remove: (container, item) ->
-        if container.lastIndexOf? and container.removeAt?
-            index = container.lastIndexOf item
-            if index >= 0
-                container.removeAt index
-        else
-            container.remove item
-        item.onRemoved?(container)
+
+        # returns a function which can be used to remove the item
+        return ->
+            if container.nodeType is 1
+                container.removeChild item
+            else if container.lastIndexOf? and container.removeAt?
+                index = container.lastIndexOf item
+                if index >= 0
+                    container.removeAt index
+            else
+                container.remove item
+            item.onRemoved?(container)
     get: (object, property) ->
         return undefined unless object? and property?
         if typeof object.get is 'function'

@@ -31,17 +31,8 @@ checkForReservedWords = (node) ->
     if (node.op is "var" && reservedVarWords[node.args[0]])
         throw new ParseError "'#{node.args[0]}' is a reserved word.", node.line, node.column
 
-getNewInternalVariableName = (variables, assignValue) ->
-    count = 0
-    while true
-        count++
-        name = "% #{count}"
-        if variables.hasOwnProperty name
-            continue
-        if assignValue?
-            variables[name] = assignValue
-        return name
-        variables
+_internalVariableCount = 0
+getNewInternalVariableName = -> "% #{++_internalVariableCount}"
 
 addThisArgToFunctionCalls = (node, stack, variables, siblings, index) ->
     if node.op is "call"
@@ -49,7 +40,8 @@ addThisArgToFunctionCalls = (node, stack, variables, siblings, index) ->
         if left?.op is "member"
             thisArg = left.args[0]
             if thisArg?.op isnt "var"
-                thisVarName = getNewInternalVariableName variables, thisArg
+                thisVarName = getNewInternalVariableName()
+                variables[thisVarName] = thisArg
                 # change left arg into a variable definition
                 left.args[0] = {op:"var",args:[thisVarName,left.args[0]]}
                 # then make the function call thisArg just reference it.

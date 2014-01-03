@@ -1,6 +1,6 @@
 return if global.window
 
-require '../sugar'
+require '../runtime/sugar'
 fs = require 'fs'
 np = require 'path'
 util = require './utility'

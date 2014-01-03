@@ -21,6 +21,12 @@ expressionTests = [
     ["/foo/g", {}, /foo/g]
     ["""
     {}
+        {a,b} = .
+        c: a
+        d: b
+    """, {a:1,b:2}, {c:1,d:2}]
+    ["""
+    {}
         foo: 1
         bar: 2
         baz: .x + .y

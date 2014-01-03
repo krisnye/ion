@@ -61,6 +61,10 @@
           incrementOutputExpressions(e.args[i])
       }
     }
+    var _internalVariableCount = 0;
+    function getNewInternalVariableName() {
+      return "% -" + (++_internalVariableCount);
+    }
     function arrayType() {
       return {"op":"member","args":[{"op":"global","args":[]},"Array"]};
     }
@@ -70,9 +74,23 @@
 //  new code
 start = statements
 
-statement = eol? a:(if / for / with / set / templateDef / templateApply / add / variableDef / setAndDef) eol? { return a }
+statement = eol? a:(if / for / with / set / templateDef / templateApply / add / variableDef / destructuringDef / setAndDef) eol? { return a }
 //  we should check this after parsing so we can throw an exception.
 variableDef = eol? s id:id s "=" s a:lineExpression eol? { return e("var", [id,a], line, column) }
+destructuringDef = eol? s ids:(destructuringObject / destructuringArray) s "=" s a:lineExpression eol?
+{
+  var varName = getNewInternalVariableName()
+  var statements = [e("var",[varName,a], line, column)]
+  for (var i = 0; i < ids.length; i++) {
+    var idName = ids[i][0]
+    var propertyName = ids[i][1]
+    statements.push(e("var",[idName,e("member", [e("ref", [varName]), propertyName])]))
+  }
+  return e("block", statements, line, column)
+}
+destructuringObject = "{" s args: destructuringArgs s "}" { return args.map(function(x){ return [x,x] }) }
+destructuringArray = "[" s args: destructuringArgs s "]" { return args.map(function(x,i){ return [x,i] }) }
+destructuringArgs = a:id b:(s "," s c:id {return c})+ { return [a].concat(b) }
 setAndDef = eol? s id:id s ":=" s a:lineExpression eol?
 {
   return block([e("var", [id, a]),e("set", [id, e("ref", [id])])], line, column)

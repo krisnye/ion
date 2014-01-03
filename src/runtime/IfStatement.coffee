@@ -1,5 +1,6 @@
 Statement = require './Statement'
 Context = require './Context'
+core = require './core'
 
 module.exports = class IfStatement extends Statement
     activate: ->
@@ -20,6 +21,7 @@ module.exports = class IfStatement extends Statement
                 @falseStatement.activate()
             @trueStatement?.deactivate()
 
+return if @java or @window
 module.exports.test = (done) ->
     object = { a:true, x: 1, y: 2 }
     context = new Context object
@@ -41,7 +43,7 @@ module.exports.test = (done) ->
 
     # now do dynamic watch
     # now we will dynamically wait for z1 to be written
-    Object.observe object, (changes) ->
+    core.observe object, (changes) ->
         if object.z1 is true
             # also make sure that z2 has been deleted.
             throw new "object.hasOwnProperty('z2')" if object.hasOwnProperty('z2')

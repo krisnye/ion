@@ -50,7 +50,11 @@ module.exports = class Directory
                 if fs.existsSync filename
                     if not results[path]?
                         results[path] = new File filename
+                        # console.log '======================== adding: ' + path
+                    else
+                        # console.log '======================== nochange: ' + path
                 else
+                    # console.log '========================= deleting: ' + path
                     delete results[path]
             return unwatch
         files = utility.list @path, options

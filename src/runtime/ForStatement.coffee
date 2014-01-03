@@ -2,7 +2,7 @@ Statement = require './Statement'
 Context = require './Context'
 core = require './core'
 # hack for chrome missing Map iterator
-{Map,Set} = require './harmonyCollections'
+{Map,Set} = require './iterableCollections'
 
 module.exports = class ForStatement extends Statement
     activate: ->
@@ -40,7 +40,7 @@ module.exports = class ForStatement extends Statement
             @addItem key, newValue if newValue isnt undefined
     addItem: (key, value) ->
         if value isnt undefined and not @statementMap.has key
-            # console.log '---addItem ' + key
+            # console.log '+++addItem ' + key, value?.toString()
             newContext = new Context value, @context.output, @context, @context.additions
             # add a key variable to the new context
             newContext.setVariable "key", key
@@ -49,12 +49,12 @@ module.exports = class ForStatement extends Statement
             # store the created statement
             @statementMap.set key, statement
             statement.activate()
-    removeItem: (key) ->
+    removeItem: (key, oldValue) ->
         # console.log "**for.removeItem: " + JSON.stringify key
         if key isnt undefined
-            # console.log '---removeItem ' + key
             statement = @statementMap.get key
             if statement?
+                # console.log '---removeItem ' + key, oldValue?.toString()
                 statement.deactivate()
                 @statementMap.delete key
     deactivate: ->
@@ -65,6 +65,7 @@ module.exports = class ForStatement extends Statement
             @removeItem key
         @statementMap.clear()
 
+return if @java or @window
 module.exports.test =
     values: (done) ->
         input = {numbers:[1,2,3,4]}

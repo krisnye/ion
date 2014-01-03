@@ -21,19 +21,21 @@ module.exports = class AddStatement extends Statement
             # console.log "**AddStatement.add: " + JSON.stringify(value)
             addIndex = @_getAddIndex()
             insertIndex = @context.getInsertionIndex addIndex
-            core.add @context.output, value, insertIndex
+            @_removeFunction = core.add @context.output, value, insertIndex
             @context.incrementAdditionCount addIndex
     _remove: (value) ->
         if value isnt undefined
             # console.log "**AddStatement.remove: " + JSON.stringify(value)
             addIndex = @_getAddIndex()
-            core.remove @context.output, value
+            @_removeFunction?()
             @context.decrementAdditionCount addIndex
     deactivate: ->
         super()
         @expression.unwatch @watcher
 
+return if @java or @window
 module.exports.test = (done) ->
+
     object = [false]
     context = new Context object
     s = context.createRuntime ast = require('../').parseStatement """
@@ -50,7 +52,7 @@ module.exports.test = (done) ->
         return done(JSON.stringify(object) " should be [false,1,3,4]")
 
     # now changing object[0] to true should cause a 2 to be inserted into the array
-    Object.observe object, (changes) ->
+    core.observe object, (changes) ->
         # console.log JSON.stringify object
         if Object.equal object, [true, 1, 2, 3, 4]
             done()

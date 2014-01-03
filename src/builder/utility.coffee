@@ -1,6 +1,6 @@
 return if global.window
 
-require '../sugar'
+require '../runtime/sugar'
 fs = require 'fs'
 np = require 'path'
 cp = require 'child_process'
@@ -61,7 +61,6 @@ module.exports = exports =
     watchCoffee: watchCoffee = (input, output) ->
         spawn "coffee.cmd -w -c -o #{output} #{input}"
     isMatch: isMatch = (value, match, defaultValue=false) ->
-        value = value.split(/[\/\\]/g).pop()
         return defaultValue unless match?
         return match value if 'function' is typeof match
         if Array.isArray match
@@ -70,7 +69,9 @@ module.exports = exports =
                 if isMatch value, item
                     return true
             return false
+        value = normalizePath value
         return value.substring(value.length-match.length) is match if typeof match is 'string'
+        value = value.split(/[\/\\]/g).pop()
         return match.test value
     defaultFileExclude: ["node_modules","www"]
     removeExtension: removeExtension = (file) ->
@@ -122,7 +123,7 @@ module.exports = exports =
     write: write = (file, content, encoding) ->
         makeParentDirectories file
         if content?
-            if encoding == undefined
+            if encoding == undefined and typeof content is 'string'
                 encoding = 'utf8'
             fs.writeFileSync(file, content, encoding)
         else
@@ -139,6 +140,7 @@ module.exports = exports =
             files = fs.readdirSync source
             for file in files
                 copy np.join(source, file), np.join(target, file), include
+    normalizePath: normalizePath = (path) -> path?.replace /\\/g,"\/"
     watchCopy: (input, output, include) ->
         watcher = require './watcher'
         watcher.watchDirectory input, {include:include}, (inputFile) ->

@@ -31,7 +31,9 @@ module.exports = class AssignmentStatement extends Statement
         @leftExpression.unwatch @leftWatcher
         @rightExpression.unwatch @rightWatcher
 
+return if @java or @window
 module.exports.test = (done) ->
+
     object = { x: 1, y: 2, z: -1, w: { a: 1 }}
     context = new Context object
     a = context.createRuntime ast = require('../').parseStatement """
@@ -51,7 +53,7 @@ module.exports.test = (done) ->
     # the w.a property should not have been changed, indicating we patched the output without rewriting the w property
 
     # now we will dynamically wait for the result to be 22
-    Object.observe object, (changes) ->
+    core.observe object, (changes) ->
         if object.z is 22
             a.deactivate()
             done()

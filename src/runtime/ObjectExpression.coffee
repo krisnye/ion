@@ -34,6 +34,7 @@ module.exports = class ObjectExpression extends DynamicExpression
 
             @setValue value
 
+return if @java or @window
 module.exports.test = (done) ->
     input = { x: 1, y: 2, z: -1}
     output = []

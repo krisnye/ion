@@ -74,12 +74,15 @@ ops =
     "call":
         observe: 1
         evaluate: (fn, thisArg, args...) ->
-            # on nodejs these errors are not logged anywhere if we don't log them
-            # process.on 'uncaughtException' doesn't seem to work either
-            try
+            if global.process?.platform?
+                try
+                    # on nodejs these errors are not logged anywhere if we don't log them
+                    # process.on 'uncaughtException' doesn't seem to work either
+                    fn?.apply thisArg, args
+                catch e
+                    console.error e
+            else
                 fn?.apply thisArg, args
-            catch e
-                console.error e.stack ? e
     "new":
         evaluate: (constructor, args...) ->
             return undefined unless constructor?
