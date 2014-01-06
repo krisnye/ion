@@ -43,7 +43,10 @@ module.exports = class ForStatement extends Statement
             # console.log '+++addItem ' + key, value?.toString()
             newContext = new Context value, @context.output, @context, @context.additions
             # add a key variable to the new context
-            newContext.setVariable "key", key
+            newContext.setVariable (@args[2] ? "key"), key
+            # optionally add a value variable to the new context
+            if @args[3]?
+                newContext.setVariable @args[3], value
             statement = newContext.createRuntime @args[1]
             # console.log "**for.addItem: " + JSON.stringify(key) + " " + JSON.stringify(value)
             # store the created statement

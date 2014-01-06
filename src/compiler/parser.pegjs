@@ -101,11 +101,20 @@ if = s "if" break s a:singleLineExpression indent b:statements outdent c:else?
 else = s "else" break s eol indent b:statements outdent { return b }
      / s "else" break s b:if { return b }
 
-for = s "for" break s a:(singleLineExpression / eol) indent b:statements outdent
+for = s "for" break s names:(key:id s value:("," s value:id {return value})? s type:("of" / "in") {return {key:key,value:value,type:type} })?
+      s collection:e s when:("when" break s when:e {return when})? eol indent statement:statements outdent
 {
-  if (isEmpty(a))
-    a = e("input", [0], line, column)
-  return e("for", [a,b], line, column)
+  // swap key, value if we use "in" syntax
+  if (names.type == "in") {
+    var temp = names.key
+    names.key = names.value
+    names.value = temp
+  }
+  // add a conditional to the statement if when is specified
+  if (!isEmpty(when)) {
+    statement = e("if", [when, statement])
+  }
+  return e("for", [collection, statement, names.key, names.value], line, column)
 }
 with = s "with" break s a:singleLineExpression indent b:statements outdent { return e("with", [a,b], line, column) }
 add = s a:lineExpression { return e("add", [a], line, column) }
@@ -124,8 +133,9 @@ functionExpression = text:(functionArgs? s "->" (eol multilineStringContent / mu
   return e("function", [text])
 }
 functionArgs = "(" s ")"
-              / "(" s idList s ")"
-idList = id (s ',' s id)*
+              / "(" s functionArgList s ")"
+functionArgList = id (s ',' s id)*
+
 lineExpression = multiLineExpression / singleLineExpression / functionExpression
 singleLineExpression = a:e eol { return a }
 multiLineExpression = multilineString / multilineObject
@@ -236,7 +246,8 @@ outputRef = a:('@'+) { return e("output", [a.length - 1], line, column) }
 inputRef = '$' { return e("input", [], line, column) }
          / a:('.'+) { return e("input", [a.length - 1], line, column) }
 idRef = a:id { return e("ref", [a]) /* we postprocess to determine if this is a variable or global reference */ }
-id = a:([a-zA-Z_][a-zA-Z_0-9]*) { return f(a) }
+id = !reserved a:([a-zA-Z_][a-zA-Z_0-9]*) break { return f(a) }
+reserved = ("if" / "for" / "when" / "class" / "else" / "and" / "or" / "not") break
 key = id / string / '[' s a:e s ']' { return a }
 
 //  literals

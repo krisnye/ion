@@ -33,7 +33,7 @@ parseTests =
     []
         for .
             .name
-    """: longForm = {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"input","args":[0]},{"op":"add","args":[{"op":"member","args":[{"op":"input","args":[0]},"name"]}]}]}]},1]}
+    """: {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"input","args":[0]},{"op":"add","args":[{"op":"member","args":[{"op":"input","args":[0]},"name"]}]},null,null]}]},1]}
     "foo := 5": {"op":"block","args":[{"op":"var","args":["foo",5]},{"op":"set","args":["foo",{"op":"ref","args":["foo"]}]}]}
     "foo.(.x + .y)": {"op":"add","args":[{"op":"local","args":[{"op":"ref","args":["foo"]},{"op":"+","args":[{"op":"member","args":[{"op":"input","args":[0]},"x"]},{"op":"member","args":[{"op":"input","args":[0]},"y"]}]}]},1]}
     """

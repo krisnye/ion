@@ -41,13 +41,11 @@ expressionTests = [
     ["""
     {}
         even: []
-            for .numbers
-                if (. & 1) == 0
-                    .
+            for number in .numbers when (. & 1) == 0
+                number
         odd: []
-            for .numbers
-                if (. & 1) == 1
-                    .
+            for number in .numbers when (. & 1) == 1
+                number
     """, {numbers:[1,2,3,4,5,6]}, {even:[2,4,6],odd:[1,3,5]}]
     ["""
     {}
