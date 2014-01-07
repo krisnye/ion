@@ -5,6 +5,8 @@
     function e(op, args, line, column) {
         if (args == null)
           args = [];
+        if (aliases[op] != null)
+          op = aliases[op];
         var x = {op:op,args:args};
         if (line != null && column != null)
         {
@@ -69,6 +71,13 @@
       return {"op":"member","args":[{"op":"global","args":[]},"Array"]};
     }
     var core = require('./core');
+    var aliases = {
+      "and": "&&",
+      "or": "||",
+      "not": "!",
+      "is": "==",
+      "isnt": "!="
+    };
 }
 
 //  new code
@@ -102,7 +111,7 @@ else = s "else" break s eol indent b:statements outdent { return b }
      / s "else" break s b:if { return b }
 
 for = s "for" break s names:(key:id s value:("," s value:id {return value})? s type:("of" / "in") {return {key:key,value:value,type:type} })?
-      s collection:e s when:("when" break s when:e {return when})? eol indent statement:statements outdent
+      s collection:e s when:("if" break s when:e {return when})? eol indent statement:statements outdent
 {
   // swap key, value if we use "in" syntax
   if (names.type == "in") {
@@ -177,13 +186,13 @@ conditional
   / a:or s op:"?" s b:conditional  { return e(op, [a,b], line, column) }
   / or
 or
-  = left:and s op:("||" / "|") s right:or { return e(op, [left,right], line, column) }
+  = left:and s op:("||" / "|" /"or") s right:or { return e(op, [left,right], line, column) }
   / and
 and
-  = left:equality s op:("&&" / "&") s right:and { return e(op, [left,right], line, column) }
+  = left:equality s op:("&&" / "&" / "and") s right:and { return e(op, [left,right], line, column) }
   / equality
 equality
-  = left:relational s op:("==" / "!=") s right:equality { return e(op, [left,right], line, column) }
+  = left:relational s op:("==" / "!=" / "is" / "isnt") s right:equality { return e(op, [left,right], line, column) }
   / relational
 relational
   = left:additive s op:("<=" / ">=" / "<" / ">") s right:relational { return e(op, [left,right], line, column) }
@@ -195,7 +204,7 @@ multiplicative
   = left:unary s op:("*" / "/" / "%") s right:multiplicative { return e(op, [left,right], line, column) }
   / unary
 unary
-  = op:("!" / "-") right:expansion { return e(op, [right], line, column) }
+  = op:("!" / "-" / "not") s right:expansion { return e(op, [right], line, column) }
   / expansion
 
 expansion
@@ -247,7 +256,7 @@ inputRef = '$' { return e("input", [], line, column) }
          / a:('.'+) { return e("input", [a.length - 1], line, column) }
 idRef = a:id { return e("ref", [a]) /* we postprocess to determine if this is a variable or global reference */ }
 id = !reserved a:([a-zA-Z_][a-zA-Z_0-9]*) break { return f(a) }
-reserved = ("if" / "for" / "when" / "class" / "else" / "and" / "or" / "not") break
+reserved = ("if" / "for" / "when" / "class" / "else" / "and" / "or" / "not" / "is" / "isnt") break
 key = id / string / '[' s a:e s ']' { return a }
 
 //  literals

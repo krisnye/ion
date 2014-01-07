@@ -14,6 +14,7 @@ expressionTests = [
     [". == 2", 2, true]
     [".foo.bar", {foo:{bar:3}}, 3]
     ["!(1 == 2)", {}, true]
+    ["not (1 is 2)", {}, true]
     ["null ? 2", {}, 2]
     ["2 ? null", {}, 2]
     ["false ? 2", {}, false]
@@ -41,16 +42,16 @@ expressionTests = [
     ["""
     {}
         even: []
-            for number in .numbers when (. & 1) == 0
+            for number in .numbers if (number & 1) is 0
                 number
         odd: []
-            for number in .numbers when (. & 1) == 1
+            for number in .numbers if (number & 1) is 1
                 number
     """, {numbers:[1,2,3,4,5,6]}, {even:[2,4,6],odd:[1,3,5]}]
     ["""
     {}
-        even: .numbers.*{(. & 1) == 0}
-        odd: .numbers.*{(. & 1) == 1}
+        even: .numbers.*{(. & 1) is 0}
+        odd: .numbers.*{(. & 1) is 1}
     """, {numbers:[1,2,3,4,5,6]}, {even:[2,4,6],odd:[1,3,5]}]
     ["""
     {}
@@ -71,10 +72,10 @@ expressionTests = [
     {}
         name: $order.name
         items: []
-            for $order.items
+            for item in $order.items
                 {}
-                    name: .[0]
-                    quantity: .[1]
+                    name: item[0]
+                    quantity: item[1]
                     unitPrice: $store.items[@name].price
                     extendedPrice: @unitPrice * @quantity
                     tax: $store.items[@name].taxable ? $store.tax.rate * @extendedPrice : 0
