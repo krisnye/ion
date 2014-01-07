@@ -72,10 +72,10 @@ expressionTests = [
     {}
         name: $order.name
         items: []
-            for item in $order.items
+            for [name,quantity] in $order.items
                 {}
-                    name: item[0]
-                    quantity: item[1]
+                    name: name
+                    quantity: quantity
                     unitPrice: $store.items[@name].price
                     extendedPrice: @unitPrice * @quantity
                     tax: $store.items[@name].taxable ? $store.tax.rate * @extendedPrice : 0

@@ -70,6 +70,20 @@
     function arrayType() {
       return {"op":"member","args":[{"op":"global","args":[]},"Array"]};
     }
+    function createAssignmentExpression(lhe, rhe, line, column) {
+      //  single variable assignment
+      if (typeof lhe == 'string')
+        return e("var",[lhe,rhe], line, column);
+      //  multiple destructuring assignment
+      var varName = getNewInternalVariableName()
+      var statements = [e("var",[varName,rhe], line, column)]
+      for (var i = 0; i < lhe.length; i++) {
+        var idName = lhe[i][0]
+        var propertyName = lhe[i][1]
+        statements.push(e("var",[idName,e("member", [e("ref", [varName]), propertyName])]))
+      }
+      return e("block", statements, line, column)
+    }
     var core = require('./core');
     var aliases = {
       "and": "&&",
@@ -83,23 +97,17 @@
 //  new code
 start = statements
 
-statement = eol? a:(if / for / with / set / templateDef / templateApply / add / variableDef / destructuringDef / setAndDef) eol? { return a }
+statement = eol? a:(if / for / with / set / templateDef / templateApply / add / variableDef / setAndDef) eol? { return a }
 //  we should check this after parsing so we can throw an exception.
-variableDef = eol? s id:id s "=" s a:lineExpression eol? { return e("var", [id,a], line, column) }
-destructuringDef = eol? s ids:(destructuringObject / destructuringArray) s "=" s a:lineExpression eol?
+variableDef = eol? s left:leftHandExpression s "=" s right:lineExpression eol?
 {
-  var varName = getNewInternalVariableName()
-  var statements = [e("var",[varName,a], line, column)]
-  for (var i = 0; i < ids.length; i++) {
-    var idName = ids[i][0]
-    var propertyName = ids[i][1]
-    statements.push(e("var",[idName,e("member", [e("ref", [varName]), propertyName])]))
-  }
-  return e("block", statements, line, column)
+  return createAssignmentExpression(left, right, line, column);
 }
+destructuringExpression = destructuringObject / destructuringArray
 destructuringObject = "{" s args: destructuringArgs s "}" { return args.map(function(x){ return [x,x] }) }
 destructuringArray = "[" s args: destructuringArgs s "]" { return args.map(function(x,i){ return [x,i] }) }
 destructuringArgs = a:id b:(s "," s c:id {return c})+ { return [a].concat(b) }
+leftHandExpression = id / destructuringExpression
 setAndDef = eol? s id:id s ":=" s a:lineExpression eol?
 {
   return block([e("var", [id, a]),e("set", [id, e("ref", [id])])], line, column)
@@ -110,20 +118,22 @@ if = s "if" break s a:singleLineExpression indent b:statements outdent c:else?
 else = s "else" break s eol indent b:statements outdent { return b }
      / s "else" break s b:if { return b }
 
-for = s "for" break s names:(key:id s value:("," s value:id {return value})? s type:("of" / "in") {return {key:key,value:value,type:type} })?
-      s collection:e s when:("if" break s when:e {return when})? eol indent statement:statements outdent
+forLeft = value:id s key:("," s a:id {return a})? s "in" break s { return {key:key,value:value} }
+        / key:id s value:("," s a:id {return a})? s "of" break s { return {key:key,value:value} }
+        / lhe:destructuringExpression s "in" break s { return {statement:createAssignmentExpression(lhe, e("input", [0]), line, column)} }
+for = s "for" break s left:forLeft? collection:e s when:("if" break s when:e {return when})? eol indent statement:statements outdent
 {
-  // swap key, value if we use "in" syntax
-  if (names.type == "in") {
-    var temp = names.key
-    names.key = names.value
-    names.value = temp
+  if (isEmpty(left)){
+    left = {}
   }
   // add a conditional to the statement if when is specified
   if (!isEmpty(when)) {
     statement = e("if", [when, statement])
   }
-  return e("for", [collection, statement, names.key, names.value], line, column)
+  if (left.statement != null) {
+    statement = block([left.statement, statement])
+  }
+  return e("for", [collection, statement, left.key, left.value], line, column)
 }
 with = s "with" break s a:singleLineExpression indent b:statements outdent { return e("with", [a,b], line, column) }
 add = s a:lineExpression { return e("add", [a], line, column) }
