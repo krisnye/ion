@@ -97,7 +97,7 @@ module.exports.test =
         context = new Context input, output
         ast = require('../').parseStatement """
             for .
-                [key]: . * 2
+                (key): . * 2
             """
         a = context.createRuntime ast
         a.activate()

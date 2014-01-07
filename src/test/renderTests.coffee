@@ -155,10 +155,10 @@ expressionTests = [
         double = ()
             for .
                 if .constructor == Object
-                    [key]: {}
+                    (key): {}
                         (double)
                 else
-                    [key]: . * 2
+                    (key): . * 2
         (double)
     """, {a:1,b:{c:2,d:{e:3,f:4}}}, {a:2,b:{c:4,d:{e:6,f:8}}}]
     [

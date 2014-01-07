@@ -8,4 +8,4 @@ Copies files from source to target
 
     for input.search $include, $exclude
         target = output.getFile key
-        [target.path]: .read(null)
+        (target.path): .read(null)

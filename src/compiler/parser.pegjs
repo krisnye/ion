@@ -267,7 +267,7 @@ inputRef = '$' { return e("input", [], line, column) }
 idRef = a:id { return e("ref", [a]) /* we postprocess to determine if this is a variable or global reference */ }
 id = !reserved a:([a-zA-Z_][a-zA-Z_0-9]*) break { return f(a) }
 reserved = ("if" / "for" / "when" / "class" / "else" / "and" / "or" / "not" / "is" / "isnt") break
-key = id / string / '[' s a:e s ']' { return a }
+key = id / string / '(' s a:e s ')' { return a }
 
 //  literals
 literal = null / number / boolean / string / literalObject / literalArray / regex
