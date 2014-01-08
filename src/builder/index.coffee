@@ -22,7 +22,6 @@ module.exports = exports =
             throw e
         finally
             process.chdir cwd
-
     isPrivate: isPrivate = (path) ->
         return false unless path?
         path = normalizePath path
@@ -38,12 +37,13 @@ module.exports = exports =
             # existing file path needs to be relative to the link path
             existingPath = np.relative value, key
             console.log "link EXISTING: #{existing}  LINK: #{value}"
-
-
-    # fs.symlinkSync "../../ion/lib", "node_modules/ion", "dir" if not fs.existsSync "node_modules/ion"
-
-        # each key is an existing file, each value 
-        # object contains, from to linkings.
+    compileIonExpressions: compileIonExpressions = (source, id = source) ->
+        find = /\bion\((("([^"\\]|\\["\\bnfrt\/]|\\u[0-9a-zA-Z]{4})*")|('([^'\\]|\\['\\bnfrt\/]|\\u[0-9a-zA-Z]{4})*'))\)/g
+        return source.replace find, (match, stringLiteral) ->
+            string = eval stringLiteral
+            compiler = require '../compiler'
+            ast = compiler.parseExpression string, id
+            return JSON.stringify ast
     runTests: (manifestFile) ->
         # convert the files to a name, moduleId map
         require('../browser/tester').spawnTests manifestFile
@@ -75,6 +75,8 @@ module.exports = exports =
         try
             console.log "Compile: #{filename}"
             compiled = cs.compile input, options = {bare: true}
+            # now compile inline ion expressions
+            compiled = compileIonExpressions compiled, source.path
             # console.log 'sourceMap: ' + typeof options.sourceMap
             compiled = addBrowserShim compiled, moduleId
             return compiled
@@ -158,3 +160,9 @@ module.exports = exports =
         instance.activate()
         if thenExitImmediately
             instance.dispose()
+
+module.exports.test = ->
+    # we break up the expression to prevent it from being replaced by our own compiler.
+    result = compileIonExpressions "do(ion" + "('@foo'));"
+    if result != expected = 'do({"op":"member","args":[{"op":"output","args":[0]},"foo"]});'
+        throw new Error "#{result} != #{expected}"
