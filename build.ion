@@ -1,7 +1,7 @@
 
 Read the package.json
 
-    package = JSON.parse @getFile("package.json").read()
+    package = JSON.parse $getFile("package.json").read()
 
 Use the ModuleBuilder template
 

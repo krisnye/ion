@@ -1,5 +1,8 @@
 require './sugar'
-require './harmony-collections-shim'
+try
+    require './harmony-collections-shim'
+catch e
+    console.warn e
 
 module.exports =
     # property is optional

@@ -11,7 +11,8 @@ task 'rebuild', 'builds the project with external compilers', ->
         console.log stdout if stdout?
         console.error stderr if stderr?
         # copy the sugar.js file
-        fs.writeFileSync(output + "/runtime/sugar.js", fs.readFileSync(input + "/runtime/sugar.js"))
+        for file in ["sugar.js", "harmony-collections-shim.js"]
+            fs.writeFileSync(output + "/runtime/#{file}", fs.readFileSync(input + "/runtime/#{file}"))
         # now build the parser
         File = require './lib/builder/File'
         parserInput = new File(input + "/compiler/parser.pegjs")

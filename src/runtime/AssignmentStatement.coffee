@@ -37,7 +37,7 @@ module.exports.test = (done) ->
     object = { x: 1, y: 2, z: -1, w: { a: 1 }}
     context = new Context object
     a = context.createRuntime ast = require('../').parseStatement """
-        z: .x + .y
+        z: @x + @y
         w:
             b: 2
         """

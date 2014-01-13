@@ -163,6 +163,6 @@ module.exports = exports =
 
 module.exports.test = ->
     # we break up the expression to prevent it from being replaced by our own compiler.
-    result = compileIonExpressions "do(ion" + "('@foo'));"
+    result = compileIonExpressions "do(ion" + "('$foo'));"
     if result != expected = 'do({"op":"member","args":[{"op":"output","args":[0]},"foo"]});'
         throw new Error "#{result} != #{expected}"

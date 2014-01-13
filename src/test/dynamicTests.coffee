@@ -11,9 +11,9 @@ apply = (target, values, deleteNull = true) ->
     return target
 
 expressionTests = [
-    ["x + y", "$x + $y", {x:1,y:2}, {x:10}, 12]
-    ["@foo.*.name", "@foo.*.name", {foo:{a:{name:'a'},b:{name:'b'}}}, {foo:{b:null}}, ['a']]
-    ["numbers.sum", "@numbers.sum()", {numbers:[1,2,3]},{numbers:{"1":4}},8]
+    ["x + y", "@x + @y", {x:1,y:2}, {x:10}, 12]
+    ["$foo.*.name", "$foo.*.name", {foo:{a:{name:'a'},b:{name:'b'}}}, {foo:{b:null}}, ['a']]
+    ["numbers.sum", "$numbers.sum()", {numbers:[1,2,3]},{numbers:{"1":4}},8]
     [".*.sum()", "(.*.x).sum()", [{x:1,y:2},{x:3,y:4}],{"0":{x:2}},5]
     [
         # test name
@@ -21,18 +21,18 @@ expressionTests = [
         # template
         """
         {}
-            name: $order.name
+            name: @order.name
             items: []
-                for $order.items
+                for [name, quantity] in @order.items
                     {}
-                        name: .[0]
-                        quantity: .[1]
-                        unitPrice: $store.items[@name].price
-                        extendedPrice: @unitPrice * @quantity
-                        tax: $store.items[@name].taxable ? $store.tax.rate * @extendedPrice : 0
-            subtotal: (@items.*.extendedPrice).sum()
-            tax: (@items.*.tax).sum()
-            total: @subtotal + @tax
+                        name: name
+                        quantity: quantity
+                        unitPrice: @store.items[$name].price
+                        extendedPrice: $unitPrice * $quantity
+                        tax: @store.items[$name].taxable ? @store.tax.rate * $extendedPrice : 0
+            subtotal: ($items.*.extendedPrice).sum()
+            tax: ($items.*.tax).sum()
+            total: $subtotal + $tax
         """
         # input
         {

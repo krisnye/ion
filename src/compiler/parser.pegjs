@@ -5,8 +5,6 @@
     function e(op, args, line, column) {
         if (args == null)
           args = [];
-        if (aliases[op] != null)
-          op = aliases[op];
         var x = {op:op,args:args};
         if (line != null && column != null)
         {
@@ -70,10 +68,26 @@
     function arrayType() {
       return {"op":"member","args":[{"op":"global","args":[]},"Array"]};
     }
+    function createForStatement(forHead, forBodyStatement, line, column) {
+      // add a conditional to the statement if when is specified
+      if (!isEmpty(forHead.when)) {
+        forBodyStatement = e("if", [forHead.when, forBodyStatement])
+      }
+      if (forHead.forVariables.statement != null) {
+        forBodyStatement = block([forHead.forVariables.statement, forBodyStatement])
+      }
+      var key = forHead.forVariables.key
+      var value = forHead.forVariables.value
+      if (isEmpty(key))
+        key = null
+      if (isEmpty(value))
+        value = null
+      return e("for", [forHead.collection, forBodyStatement, key, value], line, column)
+    }
     function createAssignmentExpression(lhe, rhe, line, column) {
       //  single variable assignment
       if (typeof lhe == 'string')
-        return e("var",[lhe,rhe], line, column);
+        return e("var",[lhe,rhe], line, column)
       //  multiple destructuring assignment
       var varName = getNewInternalVariableName()
       var statements = [e("var",[varName,rhe], line, column)]
@@ -85,19 +99,12 @@
       return e("block", statements, line, column)
     }
     var core = require('./core');
-    var aliases = {
-      "and": "&&",
-      "or": "||",
-      "not": "!",
-      "is": "==",
-      "isnt": "!="
-    };
 }
 
 //  new code
 start = statements
 
-statement = eol? a:(if / for / with / set / templateDef / templateApply / add / variableDef / setAndDef) eol? { return a }
+statement = eol? a:(if / for / set / templateDef / templateApply / add / variableDef) eol? { return a }
 //  we should check this after parsing so we can throw an exception.
 variableDef = eol? s left:leftHandExpression s "=" s right:lineExpression eol?
 {
@@ -108,43 +115,31 @@ destructuringObject = "{" s args: destructuringArgs s "}" { return args.map(func
 destructuringArray = "[" s args: destructuringArgs s "]" { return args.map(function(x,i){ return [x,i] }) }
 destructuringArgs = a:id b:(s "," s c:id {return c})+ { return [a].concat(b) }
 leftHandExpression = id / destructuringExpression
-setAndDef = eol? s id:id s ":=" s a:lineExpression eol?
-{
-  return block([e("var", [id, a]),e("set", [id, e("ref", [id])])], line, column)
-}
 if = s "if" break s a:singleLineExpression indent b:statements outdent c:else?
     { return e("if", isEmpty(c) ? [a,b] : [a,b,c], line, column) }
 
 else = s "else" break s eol indent b:statements outdent { return b }
      / s "else" break s b:if { return b }
 
-forLeft = value:id s key:("," s a:id {return a})? s "in" break s { return {key:key,value:value} }
+forVariables = value:id s key:("," s a:id {return a})? s "in" break s { return {key:key,value:value} }
         / key:id s value:("," s a:id {return a})? s "of" break s { return {key:key,value:value} }
         / lhe:destructuringExpression s "in" break s { return {statement:createAssignmentExpression(lhe, e("input", [0]), line, column)} }
-for = s "for" break s left:forLeft? collection:e s when:("if" break s when:e {return when})? eol indent statement:statements outdent
+forHead = s "for" break s forVariables:forVariables collection:e s when:("if" break s when:e {return when})?
 {
-  if (isEmpty(left)){
-    left = {}
-  }
-  // add a conditional to the statement if when is specified
-  if (!isEmpty(when)) {
-    statement = e("if", [when, statement])
-  }
-  if (left.statement != null) {
-    statement = block([left.statement, statement])
-  }
-  return e("for", [collection, statement, left.key, left.value], line, column)
+  return {forVariables:forVariables,collection:collection,when:when}
 }
-with = s "with" break s a:singleLineExpression indent b:statements outdent { return e("with", [a,b], line, column) }
+for = forHead:forHead eol indent statement:statements outdent { return createForStatement(forHead, statement, line, column) }
+arrayComprehension = s "[" s value:e forHead:forHead s "]"
+{
+  var forStatement = createForStatement(forHead, e("add", [value], line, column), line, column)
+  return e("object", [arrayType(),forStatement], line, column)
+}
 add = s a:lineExpression { return e("add", [a], line, column) }
 set = s id:key s ":" s a:lineExpression { return e("set", [id,a], line, column) }
 templateDef = eol? s id:id s "=" s "()" eol indent s:statements outdent { return e("var", [id,e("templateDef", [s])], line, column) }
-templateApply = s "(" s id:id s a:e? s ")" eol
+templateApply = s "(" s id:id s a:e s ")" eol
 {
-  var op = e("templateApply", [id], line, column)
-  if (!isEmpty(a))
-    op = e("with", [a, op], line, column)
-  return op
+  return e("templateApply", [id], line, column)
 }
 functionExpression = text:(functionArgs? s "->" (eol multilineStringContent / multilineStringLine))
 {
@@ -196,13 +191,13 @@ conditional
   / a:or s op:"?" s b:conditional  { return e(op, [a,b], line, column) }
   / or
 or
-  = left:and s op:("||" / "|" /"or") s right:or { return e(op, [left,right], line, column) }
+  = left:and s op:("||" / "|") s right:or { return e(op, [left,right], line, column) }
   / and
 and
-  = left:equality s op:("&&" / "&" / "and") s right:and { return e(op, [left,right], line, column) }
+  = left:equality s op:("&&" / "&") s right:and { return e(op, [left,right], line, column) }
   / equality
 equality
-  = left:relational s op:("==" / "!=" / "is" / "isnt") s right:equality { return e(op, [left,right], line, column) }
+  = left:relational s op:("==" / "!=") s right:equality { return e(op, [left,right], line, column) }
   / relational
 relational
   = left:additive s op:("<=" / ">=" / "<" / ">") s right:relational { return e(op, [left,right], line, column) }
@@ -214,7 +209,7 @@ multiplicative
   = left:unary s op:("*" / "/" / "%") s right:multiplicative { return e(op, [left,right], line, column) }
   / unary
 unary
-  = op:("!" / "-" / "not") s right:expansion { return e(op, [right], line, column) }
+  = op:("!" / "-") s right:expansion { return e(op, [right], line, column) }
   / expansion
 
 expansion
@@ -245,14 +240,11 @@ path =
   b:step*
   { return joinLeft([a].concat(b)) }
 firstStep = new / literal / ref / group
-step = member / predicate / localExpression / call
-constructorPath = a:(ref / group) b:(member)*
-  { return joinLeft([a].concat(b)) }
-localExpression = "." a:group { return e("local", [a], line, column) }
+step = member / call
+constructorPath = a:(ref / group) b:(member)* { return joinLeft([a].concat(b)) }
 member = "."? a:id { return e("member", [a], line, column) }
        / "[" s a:e s "]" { return e("member", [a], line, column) }
 group = '(' s a:e s ')' { return a }
-predicate = "{" s a:e s "}" { return e("predicate", [a], line, column) }
 new = "new" break s left:constructorPath args:args { return e("new", [left].concat(args), line, column) }
 call = args:args { return e("call", [null].concat(args), line, column) }
 args = "(" s a:list? s ")" { return isEmpty(a) ? [] : a }
@@ -261,16 +253,15 @@ list = a:e b:(s ',' s c:e { return c })* { b.unshift(a); return b }
 
 //  references
 ref = inputRef / outputRef / idRef
-outputRef = a:('@'+) { return e("output", [a.length - 1], line, column) }
-inputRef = '$' { return e("input", [], line, column) }
-         / a:('.'+) { return e("input", [a.length - 1], line, column) }
+outputRef = '$' { return e("output", [0], line, column) }
+inputRef = '@' { return e("input", [], line, column) }
 idRef = a:id { return e("ref", [a]) /* we postprocess to determine if this is a variable or global reference */ }
 id = !reserved a:([a-zA-Z_][a-zA-Z_0-9]*) break { return f(a) }
-reserved = ("if" / "for" / "when" / "class" / "else" / "and" / "or" / "not" / "is" / "isnt") break
+reserved = ("if" / "for" / "else" / "class") break
 key = id / string / '(' s a:e s ')' { return a }
 
 //  literals
-literal = null / number / boolean / string / literalObject / literalArray / regex
+literal = null / number / boolean / string / literalObject / arrayComprehension / literalArray / regex
 literalObject = "{}" { return e("object", [null], line, column) }
 literalArray = "[" s "]"
              { return e("object", [arrayType()], line, column) }

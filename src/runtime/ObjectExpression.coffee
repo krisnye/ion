@@ -41,9 +41,9 @@ module.exports.test = (done) ->
     context = new Context input, output
     ast = require('../').parseExpression """
         {}
-            x: .x
-            y: .y
-            z: .x + .y
+            x: @x
+            y: @y
+            z: $x + $y
         """
     a = context.createRuntime ast
 

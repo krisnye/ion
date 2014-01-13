@@ -4,39 +4,35 @@ Load dependencies.
     File = require './File'
     Directory = require './Directory'
     builder = require './'
-    name = $name ? ''
-    input = new Directory $input
-    output = new Directory $output
+    name = @name ? ''
+    input = new Directory @input
+    output = new Directory @output
 
 Compile coffeescript and add browser module boilerplate
 
-    for input.search ".coffee"
-        source = .
+    for key, source of input.search ".coffee"
         target = output.getFile builder.changeExtension key, ".js"
         moduleId = builder.getModuleId name, key
         (target.path): builder.compileCoffeeScript source, moduleId
 
 Compile any pegjs grammars
 
-    for input.search ".pegjs"
-        source = .
+    for key, source of input.search ".pegjs"
         target = output.getFile builder.changeExtension key, ".js"
         moduleId = builder.getModuleId name, key
         (target.path): builder.compilePegjs source, moduleId
 
 Copy any plain javascript and add browser module boilerplate
 
-    for input.search ".js"
-        source = .
+    for key, source of input.search ".js"
         target = output.getFile key
         moduleId = builder.getModuleId name, key
         (target.path): builder.shimJavascript source, moduleId
 
 Compile any ion templates
 
-    templateModuleId = $templateModuleId ? "ion/runtime/Template"
-    for input.search ".ion"
-        source = .
+    templateModuleId = @templateModuleId ? "ion/runtime/Template"
+    for key, source of input.search ".ion"
         target = output.getFile builder.changeExtension key, ".js"
         moduleId = builder.getModuleId name, key
         (target.path): builder.compileTemplate source, moduleId, templateModuleId
@@ -44,9 +40,8 @@ Compile any ion templates
 Write a manifest.json file listing all of our modules with require.js at the top
 
     outputFiles = output.search(".js")
-    filter = (name) -> name.endsWith 'require.js'
-    top = Object.keys(outputFiles).filter filter
-    sortedFiles = top.concat((outputFiles.*{ !builder.isPrivate(key) && top.indexOf(key) < 0 }.(key)))
+    top = [key for key of outputFiles if key.endsWith 'require.js']
+    sortedFiles = top.concat [key for key of outputFiles if !builder.isPrivate(key) && top.indexOf(key) < 0]
     manifest =
         modified: (outputFiles.*.modified).max()
         files: sortedFiles.map(builder.normalizePath)
@@ -56,11 +51,11 @@ Write a manifest.json file listing all of our modules with require.js at the top
 
 Build a merged uglified single file
 
-    if $browser
-        allName = $browser.name ? "_browser.js"
+    if @browser
+        allName = @browser.name ? "_browser.js"
         uglyOptions =
-            mangle: $browser.compress ? false
-            compress: $browser.compress ? false
+            mangle: @browser.compress ? false
+            compress: @browser.compress ? false
             outSourceMap: allName + ".map"
             forceRebuild: manifestFile.modified
         all = output.getFile allName
@@ -73,6 +68,6 @@ Build a merged uglified single file
 
 Run tests on all of our output modules
 
-    if $test
+    if @test
         builder.runTests.debounce(100).throttle(3000) manifestFile, manifestFile.modified
 

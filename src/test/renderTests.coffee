@@ -10,11 +10,11 @@ MyType.prototype.getTotalCount = -> MyTypeCount
 expressionTests = [
     ["12", {}, 12]
     ["12 + 5", {}, 17]
-    [". == 2", {}, false]
-    [". == 2", 2, true]
-    [".foo.bar", {foo:{bar:3}}, 3]
+    ["[x * 2 for x in [1,2,3] if x >= 2]", {}, [4,6]]
+    ["@ == 2", {}, false]
+    ["@ == 2", 2, true]
+    ["@foo.bar", {foo:{bar:3}}, 3]
     ["!(1 == 2)", {}, true]
-    ["not (1 is 2)", {}, true]
     ["null ? 2", {}, 2]
     ["2 ? null", {}, 2]
     ["false ? 2", {}, false]
@@ -22,7 +22,7 @@ expressionTests = [
     ["/foo/g", {}, /foo/g]
     ["""
     {}
-        {a,b} = .
+        {a,b} = @
         c: a
         d: b
     """, {a:1,b:2}, {c:1,d:2}]
@@ -30,7 +30,7 @@ expressionTests = [
     {}
         foo: 1
         bar: 2
-        baz: .x + .y
+        baz: @x + @y
     """, {x:10,y:20}, {foo:1,bar:2,baz:30}]
     ["""
     {}
@@ -41,47 +41,38 @@ expressionTests = [
     """, {x:10,y:20}, {name:"Alpha", children: {Beta: 1, Charlie: 2}}]
     ["""
     {}
-        even: []
-            for number in .numbers if (number & 1) is 0
-                number
-        odd: []
-            for number in .numbers if (number & 1) is 1
-                number
+        even: [n for n in @numbers if (n & 1) == 0]
+        odd: [n for n in @numbers if (n & 1) == 1]
     """, {numbers:[1,2,3,4,5,6]}, {even:[2,4,6],odd:[1,3,5]}]
     ["""
     {}
-        even: .numbers.*{(. & 1) is 0}
-        odd: .numbers.*{(. & 1) is 1}
+        even: [n for n in @numbers if (n & 1) == 0]
+        odd: [n for n in @numbers if (n & 1) == 1]
     """, {numbers:[1,2,3,4,5,6]}, {even:[2,4,6],odd:[1,3,5]}]
     ["""
     {}
-        alpha:= 1
-        beta: alpha
-    """, {}, {alpha:1,beta:1}]
-    ["""
-    {}
-        a: $numbers.*{. < 4}
-        b: @a.*
+        a: [n for n in @numbers if n < 4]
+        b: $a.*
     """, {numbers:[1,2,3,4,5,6]}, {a:[1,2,3],b:[1,2,3]}]
     ["""
     {}
-        c: $b.sum($a, 2)
+        c: @b.sum(@a, 2)
     """, {a:1,b:{sum:((a, b) -> a + b + @c),c:10}}, {c:13}]
     ["Math.min(2,1)", null, 1]
     ["""
     {}
-        name: $order.name
+        name: @order.name
         items: []
-            for [name,quantity] in $order.items
+            for [name,quantity] in @order.items
                 {}
                     name: name
                     quantity: quantity
-                    unitPrice: $store.items[@name].price
-                    extendedPrice: @unitPrice * @quantity
-                    tax: $store.items[@name].taxable ? $store.tax.rate * @extendedPrice : 0
-        subtotal: (@items.*.extendedPrice).sum()
-        tax: (@items.*.tax).sum()
-        total: @subtotal + @tax
+                    unitPrice: @store.items[$name].price
+                    extendedPrice: $unitPrice * $quantity
+                    tax: @store.items[$name].taxable ? @store.tax.rate * $extendedPrice : 0
+        subtotal: ($items.*.extendedPrice).sum()
+        tax: ($items.*.tax).sum()
+        total: $subtotal + $tax
     """, {
             store:
                 items:
@@ -127,66 +118,59 @@ expressionTests = [
             "total": 6.69
         }
     ]
-    # test subtemplates
-    ["""
-    {}
-        double = ()
-            . * 2
-        a: []
-            for $numbers
-                (double)
-    """, {numbers:[1,2,3,4,5,6]}, {a:[2,4,6,8,10,12]}]
-    # recursive subtemplates
-    ["""
-    {}
-        age = ()
-            name: .name
-            age: .age + 1
-            if .kids
-                kids: []
-                    for .kids
-                        {}
-                            (age)
-        (age)
-    """, {name:"Kris",age:41,kids:[{name:"Sadera",age:17,kids:[{name:"Nope",age:0}]},{name:"Orion",age:15}]}, {"name":"Kris","age":42,"kids":[{"name":"Sadera","age":18,"kids":[{"name":"Nope","age":1}]},{"name":"Orion","age":16}]}]
-    # recursive subtemplates with unknown keys
-    ["""
-    {}
-        double = ()
-            for .
-                if .constructor == Object
-                    (key): {}
-                        (double)
-                else
-                    (key): . * 2
-        (double)
-    """, {a:1,b:{c:2,d:{e:3,f:4}}}, {a:2,b:{c:4,d:{e:6,f:8}}}]
-    [
-        """
-        []
-            with $a
-                .
-        """
-        , {a:1}, [1]]
+    # # test subtemplates
+    # ["""
+    # {}
+    #     double = ()
+    #         . * 2
+    #     a: []
+    #         for @numbers
+    #             (double .)
+    # """, {numbers:[1,2,3,4,5,6]}, {a:[2,4,6,8,10,12]}]
+    # # recursive subtemplates
+    # ["""
+    # {}
+    #     age = ()
+    #         name: .name
+    #         age: .age + 1
+    #         if .kids
+    #             kids: []
+    #                 for .kids
+    #                     {}
+    #                         (age .)
+    #     (age .)
+    # """, {name:"Kris",age:41,kids:[{name:"Sadera",age:17,kids:[{name:"Nope",age:0}]},{name:"Orion",age:15}]}, {"name":"Kris","age":42,"kids":[{"name":"Sadera","age":18,"kids":[{"name":"Nope","age":1}]},{"name":"Orion","age":16}]}]
+    # # recursive subtemplates with unknown keys
+    # ["""
+    # {}
+    #     double = ()
+    #         for .
+    #             if .constructor == Object
+    #                 (key): {}
+    #                     (double .)
+    #             else
+    #                 (key): . * 2
+    #     (double .)
+    # """, {a:1,b:{c:2,d:{e:3,f:4}}}, {a:2,b:{c:4,d:{e:6,f:8}}}]
     ["'alphabet'.replace('a','b')", {}, "blphabet"]
-    [".*.name.replace('a','b')", {one:{name:"andy"},two:{name:"dan"}}, ["bndy","dbn"]]
-    ["new $MyType().getCount()", {MyType:MyType}, 1]
+    ["@.*.name.replace('a','b')", {one:{name:"andy"},two:{name:"dan"}}, ["bndy","dbn"]]
+    ["new @MyType().getCount()", {MyType:MyType}, 1]
     ["""
     {}
-        mine = new $MyType()
+        mine = new @MyType()
         count: mine.getCount()
 
     """, {MyType:MyType}, {count:2}]
 ]
 
-# we don't test function definitions on the client side because we ususally don't have a coffescript compiler there.
-if not global.window?
-    expressionTests.push ["""
-        {}
-            double = (x) -> x * 2
-            foo: double .x
-            bar: double .y
-        """, {x:10,y:20}, {foo:20,bar:40}]
+# # we don't test function definitions on the client side because we ususally don't have a coffescript compiler there.
+# if not global.window?
+#     expressionTests.push ["""
+#         {}
+#             double = (x) -> x * 2
+#             foo: double .x
+#             bar: double .y
+#         """, {x:10,y:20}, {foo:20,bar:40}]
 
 # we test result expressions when the template is executed immmediately.
 exports.test =

@@ -27,8 +27,6 @@ ops =
         # because otherwise they would all try to insert at zero.
         addIndexesEnabled: false
         runtime: './ForStatement'
-    "with":
-        runtime: './WithStatement'
     "object":
         addIndexesEnabled: true
         runtime: './ObjectExpression'
@@ -58,15 +56,6 @@ ops =
     "ref":
         createRuntime: (context, args) ->
             context.getVariableExpression args[0]
-    "predicate":
-        newInputContext: true
-        runtime: './NewContextExpression'
-        evaluate: (left, right) -> if right then left else undefined
-    "local":
-        # a local expression, usually of the format alpha.(x+y)
-        newInputContext: true
-        runtime: './NewContextExpression'
-        evaluate: (left, right) -> right
     "member":
         runtime: './MemberExpression'
     "null":

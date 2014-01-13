@@ -75,8 +75,8 @@ module.exports.test =
         output = []
         context = new Context input, output
         ast = require('../').parseStatement """
-            for .numbers
-                . * 2
+            for n in @numbers
+                n * 2
             """
         a = context.createRuntime ast
         a.activate()
@@ -96,8 +96,8 @@ module.exports.test =
         output = {}
         context = new Context input, output
         ast = require('../').parseStatement """
-            for .
-                (key): . * 2
+            for n in @
+                (key): n * 2
             """
         a = context.createRuntime ast
         a.activate()

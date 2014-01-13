@@ -1,4 +1,4 @@
-"WeakMap" in this || (function (module) {"use strict";
+(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){(function(){var _src_runtime_harmony_collections_shim_ = function(module,exports,require){"WeakMap" in this || (function (module) {"use strict";
 
   //!(C) WebReflection - Mit Style License
   // size and performances oriented polyfill for ES6
@@ -265,3 +265,234 @@
   this,
   typeof exports
 ));
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('src/runtime/harmony-collections-shim',_src_runtime_harmony_collections_shim_);
+    else
+      _src_runtime_harmony_collections_shim_.call(this, module, exports, require);
+  }
+  else {
+    _src_runtime_harmony_collections_shim_.call(this);
+  }
+}).call(this)

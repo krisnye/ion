@@ -26,7 +26,7 @@ module.exports.test = (done) ->
     object = { a:true, x: 1, y: 2 }
     context = new Context object
     a = context.createRuntime ast = require('../').parseStatement """
-        if .a
+        if @a
             z1: true
         else
             z2: false
