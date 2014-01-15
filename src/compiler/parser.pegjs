@@ -89,12 +89,20 @@
       if (typeof lhe == 'string')
         return e("var",[lhe,rhe], line, column)
       //  multiple destructuring assignment
-      var varName = getNewInternalVariableName()
-      var statements = [e("var",[varName,rhe], line, column)]
+      var tempVarName = getNewInternalVariableName()
+      var statements = [e("var",[tempVarName,rhe], line, column)]
       for (var i = 0; i < lhe.length; i++) {
-        var idName = lhe[i][0]
-        var propertyName = lhe[i][1]
-        statements.push(e("var",[idName,e("member", [e("ref", [varName]), propertyName])]))
+        var lheItem = lhe[i]
+        // handle recursive destructuring
+        var propertyName = lheItem[0]
+        var varName = lheItem[1]
+        var propertyExpression = e("member", [e("ref", [tempVarName]), propertyName])
+        if (Array.isArray(varName)) {
+          statements.push(createAssignmentExpression(varName, propertyExpression, line, column))
+        }
+        else {
+          statements.push(e("var",[varName,propertyExpression], line, column))
+        }
       }
       return e("block", statements, line, column)
     }
@@ -104,19 +112,32 @@
 //  new code
 start = statements
 
-statement = eol? a:(if / for / set / templateDef / templateApply / add / variableDef) eol? { return a }
+statement = eol? a:(if / for / set / add / variableDef) eol? { return a }
 //  we should check this after parsing so we can throw an exception.
-variableDef = eol? s left:leftHandExpression s "=" s right:lineExpression eol?
+variableDef = eol? s left:leftHandVarExpression s "=" s right:lineExpression eol?
 {
   return createAssignmentExpression(left, right, line, column);
 }
 destructuringExpression = destructuringObject / destructuringArray
-destructuringObject = "{" s args: destructuringArgs s "}" { return args.map(function(x){ return [x,x] }) }
-destructuringArray = "[" s args: destructuringArgs s "]" { return args.map(function(x,i){ return [x,i] }) }
-destructuringArgs = a:id b:(s "," s c:id {return c})+ { return [a].concat(b) }
-leftHandExpression = id / destructuringExpression
+destructuringObject = "{" s args:destructuringObjectArgs s "}" { return args }
+destructuringObjectArg = a:id b:(s ":" s b:leftHandVarExpression {return b})? { if (isEmpty(b)) b = a; return [a,b] }
+destructuringObjectArgs = a:destructuringObjectArg b:(s "," s b:destructuringObjectArg {return b})* { return [a].concat(b) }
+destructuringArray = "[" s a:leftHandVarExpression? b:(s "," s c:leftHandVarExpression? {return c})* s "]"
+{
+  args = [a].concat(b)
+  var result = []
+  for (var i = 0; i < args.length; i++) {
+    var arg = args[i]
+    if (!isEmpty(arg))
+      result.push([i, arg])
+  }
+  return result
+}
+leftHandVarExpression = id / destructuringExpression
 if = s "if" break s a:singleLineExpression indent b:statements outdent c:else?
-    { return e("if", isEmpty(c) ? [a,b] : [a,b,c], line, column) }
+{
+  return e("if", isEmpty(c) ? [a,b] : [a,b,c], line, column)
+}
 
 else = s "else" break s eol indent b:statements outdent { return b }
      / s "else" break s b:if { return b }
@@ -129,13 +150,29 @@ forHead = s "for" break s forVariables:forVariables collection:e s when:("if" br
   return {forVariables:forVariables,collection:collection,when:when}
 }
 for = forHead:forHead eol indent statement:statements outdent { return createForStatement(forHead, statement, line, column) }
-arrayComprehension = s "[" s value:e forHead:forHead s "]"
+arrayComprehension = s "[" s value:e forHeads:forHead+ s "]"
 {
-  var forStatement = createForStatement(forHead, e("add", [value], line, column), line, column)
+  // if there are multiple forHeads
+  var forStatement = null;
+  for (var i = forHeads.length - 1; i >= 0; i--) {
+    var forHead = forHeads[i]
+    var forBody = forStatement ? forStatement : e("add", [value], line, column)
+    forStatement = createForStatement(forHead, forBody, line, column)
+  }
   return e("object", [arrayType(),forStatement], line, column)
 }
 add = s a:lineExpression { return e("add", [a], line, column) }
-set = s id:key s ":" s a:lineExpression { return e("set", [id,a], line, column) }
+set = s ids:(memberName+) s ":" s c:lineExpression
+{
+  var statement = null;
+  for (var i = ids.length - 1; i >= 0; i--) {
+    var id = ids[i];
+    var valueExpression = statement == null ? c : e("object", [null,statement], line, column)
+    statement = e("set", [id, valueExpression], line, column)
+  }
+  return statement;
+}
+
 templateDef = eol? s id:id s "=" s "()" eol indent s:statements outdent { return e("var", [id,e("templateDef", [s])], line, column) }
 templateApply = s "(" s id:id s a:e s ")" eol
 {
@@ -240,10 +277,11 @@ path =
   b:step*
   { return joinLeft([a].concat(b)) }
 firstStep = new / literal / ref / group
-step = member / call
+step = call
+    / member
 constructorPath = a:(ref / group) b:(member)* { return joinLeft([a].concat(b)) }
-member = "."? a:id { return e("member", [a], line, column) }
-       / "[" s a:e s "]" { return e("member", [a], line, column) }
+member = a:memberName { return e("member", [a], line, column) }
+memberName = indexer / "."? a:(memberId / string) { return a }
 group = '(' s a:e s ')' { return a }
 new = "new" break s left:constructorPath args:args { return e("new", [left].concat(args), line, column) }
 call = args:args { return e("call", [null].concat(args), line, column) }
@@ -257,16 +295,20 @@ outputRef = '$' { return e("output", [0], line, column) }
 inputRef = '@' { return e("input", [], line, column) }
 idRef = a:id { return e("ref", [a]) /* we postprocess to determine if this is a variable or global reference */ }
 id = !reserved a:([a-zA-Z_][a-zA-Z_0-9]*) break { return f(a) }
+memberId = a:([a-zA-Z_0-9]+) break { return f(a) } // more flexible than a normal id
 reserved = ("if" / "for" / "else" / "class") break
-key = id / string / '(' s a:e s ')' { return a }
+key = id / string / indexer
+indexer = '[' s a:e s ']' { return a }
+        / '(' s a:e s ')' { return a } // deprecated
 
 //  literals
-literal = null / number / boolean / string / literalObject / arrayComprehension / literalArray / regex
+literal = null / number / boolean / string / literalObject / literalArray / regex
 literalObject = "{}" { return e("object", [null], line, column) }
 literalArray = "[" s "]"
              { return e("object", [arrayType()], line, column) }
              / "[" s a:list s "]"
              { return e("object", [arrayType(), e("block",a.map(function(x){return e("add", [x])}))], line, column) }
+             / arrayComprehension
 null = 'null' break { return e("null") }
 d "digit" = [0-9]
 number = a:([+-]? d+ ([eE] [+-]? d+)?) break { return parseFloat(f(a)) }
@@ -279,7 +321,6 @@ string1 = '"' chars:(('\\' (["\\\/bfnrt] / ('u' h h h h))) / [^"\\\r\n])* '"'
         { return eval('"' + f(chars) + '"') }
 string2 = "'" chars:(('\\' (['\\\/bfnrt] / ('u' h h h h))) / [^'\\\r\n])* "'"
         { return eval("'" + f(chars) + "'") }
-raw = chars:(!eol .)* { return e("raw", [f(chars)]) }
 
 //  breaks
 s "space" = " "*
