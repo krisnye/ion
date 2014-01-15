@@ -13,21 +13,21 @@ Compile coffeescript and add browser module boilerplate
     for key, source of input.search ".coffee"
         target = output.getFile builder.changeExtension key, ".js"
         moduleId = builder.getModuleId name, key
-        (target.path): builder.compileCoffeeScript source, moduleId
+        [target.path]: builder.compileCoffeeScript source, moduleId
 
 Compile any pegjs grammars
 
     for key, source of input.search ".pegjs"
         target = output.getFile builder.changeExtension key, ".js"
         moduleId = builder.getModuleId name, key
-        (target.path): builder.compilePegjs source, moduleId
+        [target.path]: builder.compilePegjs source, moduleId
 
 Copy any plain javascript and add browser module boilerplate
 
     for key, source of input.search ".js"
         target = output.getFile key
         moduleId = builder.getModuleId name, key
-        (target.path): builder.shimJavascript source, moduleId
+        [target.path]: builder.shimJavascript source, moduleId
 
 Compile any ion templates
 
@@ -35,7 +35,7 @@ Compile any ion templates
     for key, source of input.search ".ion"
         target = output.getFile builder.changeExtension key, ".js"
         moduleId = builder.getModuleId name, key
-        (target.path): builder.compileTemplate source, moduleId, templateModuleId
+        [target.path]: builder.compileTemplate source, moduleId, templateModuleId
 
 Write a manifest.json file listing all of our modules with require.js at the top
 
@@ -47,7 +47,7 @@ Write a manifest.json file listing all of our modules with require.js at the top
         files: sortedFiles.map(builder.normalizePath)
     manifestFile = output.getFile "manifest.json"
     if sortedFiles.length > 0
-        (manifestFile): JSON.stringify manifest, null, '    '
+        [manifestFile]: JSON.stringify manifest, null, '    '
 
 Build a merged uglified single file
 
@@ -62,9 +62,9 @@ Build a merged uglified single file
         map = output.getFile uglyOptions.outSourceMap
         files = JSON.parse(manifestFile.read()).files
         result = builder.minify output.path, files, uglyOptions
-        (all.path): "if (this.window == null) return;" + result.code + "//# sourceMappingURL=" + uglyOptions.outSourceMap
+        [all.path]: "if (this.window == null) return;" + result.code + "//# sourceMappingURL=" + uglyOptions.outSourceMap
         if result.map
-            (map.path): result.map.replace new RegExp('"' + output.path + "\\\\\\\\", "g"), '"'
+            [map.path]: result.map.replace new RegExp('"' + output.path + "\\\\\\\\", "g"), '"'
 
 Run tests on all of our output modules
 

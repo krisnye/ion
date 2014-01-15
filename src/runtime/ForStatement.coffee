@@ -42,8 +42,9 @@ module.exports = class ForStatement extends Statement
         if value isnt undefined and not @statementMap.has key
             # console.log '+++addItem ' + key, value?.toString()
             newContext = new Context value, @context.output, @context, @context.additions
-            # add a key variable to the new context
-            newContext.setVariable (@args[2] ? "key"), key
+            # optionally add a the key variable to the new context
+            if @args[2]?
+                newContext.setVariable @args[2], key
             # optionally add a value variable to the new context
             if @args[3]?
                 newContext.setVariable @args[3], value
@@ -96,8 +97,8 @@ module.exports.test =
         output = {}
         context = new Context input, output
         ast = require('../').parseStatement """
-            for n in @
-                (key): n * 2
+            for key, n of @
+                [key]: n * 2
             """
         a = context.createRuntime ast
         a.activate()

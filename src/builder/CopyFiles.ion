@@ -6,6 +6,6 @@ Copies files from source to target
     input = new Directory @input
     output = new Directory @output
 
-    for input.search @include, @exclude
+    for key, source of input.search @include, @exclude
         target = output.getFile key
-        (target.path): .read(null)
+        [target.path]: source.read(null)

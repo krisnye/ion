@@ -299,7 +299,6 @@ memberId = a:([a-zA-Z_0-9]+) break { return f(a) } // more flexible than a norma
 reserved = ("if" / "for" / "else" / "class") break
 key = id / string / indexer
 indexer = '[' s a:e s ']' { return a }
-        / '(' s a:e s ')' { return a } // deprecated
 
 //  literals
 literal = null / number / boolean / string / literalObject / literalArray / regex
