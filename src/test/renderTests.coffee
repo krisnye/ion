@@ -13,6 +13,7 @@ expressionTests = [
     ["[x * 2 for x in [1,2,3] if x >= 2]", {}, [4,6]]
     ["@ == 2", {}, false]
     ["@ == 2", 2, true]
+    ["{a:1,[@a]:2,[@missing]:2,'c':3,12:9,if:false}", {a:"alpha"}, {"12":9,"a":1,"alpha":2,"c":3,"if":false}]
     ["@foo.bar", {foo:{bar:3}}, 3]
     ["!(1 == 2)", {}, true]
     ["null ? 2", {}, 2]

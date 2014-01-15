@@ -302,7 +302,13 @@ indexer = '[' s a:e s ']' { return a }
 
 //  literals
 literal = null / number / boolean / string / literalObject / literalArray / regex
-literalObject = "{}" { return e("object", [null], line, column) }
+literalObject = "{" s "}" { return e("object", [null], line, column) }
+              / "{" a:literalObjectProperty b:(s "," b:literalObjectProperty {return b})*  "}" {
+                var statements = [a].concat(b)
+                return e("object", [null, block(statements)], line, column)
+              }
+literalObjectProperty = s !"." a:memberName s ":" s b:e { return e("set", [a, b], line, column) }
+
 literalArray = "[" s "]"
              { return e("object", [arrayType()], line, column) }
              / "[" s a:list s "]"
