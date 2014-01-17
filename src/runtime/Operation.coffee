@@ -90,6 +90,8 @@ ops =
         evaluate: (condition, a, b) -> if condition then a else b
     "?":
         evaluate: (a, b) -> a ? b
+    "exists":
+        evaluate: (a) -> a?
     "!":
         evaluate: (a) -> !a
     "*":

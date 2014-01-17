@@ -6,8 +6,7 @@
         if (args == null)
           args = [];
         var x = {op:op,args:args};
-        if (line != null && column != null)
-        {
+        if (line != null && column != null) {
           x.line = line;
           x.column = column;
         }
@@ -162,13 +161,17 @@ arrayComprehension = s "[" s value:e forHeads:forHead+ s "]"
   return e("object", [arrayType(),forStatement], line, column)
 }
 add = s a:lineExpression { return e("add", [a], line, column) }
-set = s ids:(memberName+) s ":" s c:lineExpression
+set = s ids:(memberName+) s ":" bi:":"? s c:lineExpression
 {
+  var bidirectional = !isEmpty(bi)
   var statement = null;
   for (var i = ids.length - 1; i >= 0; i--) {
     var id = ids[i];
     var valueExpression = statement == null ? c : e("object", [null,statement], line, column)
-    statement = e("set", [id, valueExpression], line, column)
+    var args = [id, valueExpression]
+    if (bidirectional)
+      args.push(true)
+    statement = e("set", args, line, column)
   }
   return statement;
 }
@@ -226,6 +229,7 @@ outdent "OUTDENT" = s token:"}}}}" eol
 conditional
   = a:or s "?" s b:conditional s ":" s c:conditional { return e("?:", [a,b,c], line, column) }
   / a:or s op:"?" s b:conditional  { return e(op, [a,b], line, column) }
+  / a:or s op:"?"  { return e("exists", [a], line, column) }
   / or
 or
   = left:and s op:("||" / "|") s right:or { return e(op, [left,right], line, column) }

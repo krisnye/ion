@@ -11,6 +11,8 @@ expressionTests = [
     ["12", {}, 12]
     ["12 + 5", {}, 17]
     ["[x * 2 for x in [1,2,3] if x >= 2]", {}, [4,6]]
+    ["true?", {}, true]
+    ["null?", {}, false]
     ["@ == 2", {}, false]
     ["@ == 2", 2, true]
     ["{a:1,[@a]:2,[@missing]:2,'c':3,12:9,if:false}", {a:"alpha"}, {"12":9,"a":1,"alpha":2,"c":3,"if":false}]
@@ -34,6 +36,10 @@ expressionTests = [
         d: d
         e: f
     """, {a:1,b:{c:[1,2,5]},e:[6]}, {c:1,d:5,e:6}]
+    ["""
+    {}
+        value:: @value
+    """, {value:1}, {value:1}]
     ["""
     {}
         [a,,{b}] = @

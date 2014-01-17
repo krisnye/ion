@@ -4,20 +4,27 @@ try
 catch e
     console.warn e
 
+isElement = (object) -> object?.nodeType is 1
+
 module.exports =
     # property is optional
     observe: (object, observer, property) ->
+        # console.log 'observe', object, property
         if object? and observer? and Object.observe? and typeof object is 'object'
             Object.observe object, observer
+            # watch change on dom elements
+            object.addEventListener?('change', observer)
         object?.onObserved?(observer, property)
     # property is optional
     unobserve: (object, observer, property) ->
         if object? and observer? and Object.unobserve? and typeof object is 'object'
             Object.unobserve object, observer
-        object?.onUnobserved?(observer, property)
+            # unwatch change on dom elements
+            object.removeEventListener?('change', observer)
+        object?.unObserved?(observer, property)
     count: (container) -> container.length ? 0
     add: (container, item, index) ->
-        if container.nodeType is 1
+        if isElement container
             if typeof item is 'string'
                 item = document.createTextNode item
             insertBefore = null

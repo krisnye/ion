@@ -19,7 +19,7 @@ module.exports =
                     observeCount++
                     if observeCount is 1
                         deactivate = activate.call object
-            onUnobserved:
+            unObserved:
                 value: ->
                     observeCount--
                     if observeCount is 0

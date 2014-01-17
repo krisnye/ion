@@ -7,6 +7,7 @@ module.exports = class AssignmentStatement extends Statement
         super()
         @leftExpression ?= @context.createRuntime @args[0]
         @rightExpression ?= @context.createRuntime  @args[1]
+        @bidirectional = @args[2] is true and @rightExpression.setMemberValue?
         @leftExpression.watch @leftWatcher ?= (@leftValue) =>
             if @rightExpression.setAssignmentCurrentValue?
                 currentValue = core.get @context.output, leftValue
@@ -16,13 +17,19 @@ module.exports = class AssignmentStatement extends Statement
         @rightExpression.watch @rightWatcher ?= (rightValue) =>
             @rightValue = rightValue
             @_assign()
+
+        if @bidirectional
+            # then we need to observe the context output object for changes to the leftValue property.
+            @contextObserver ?= =>
+                if @leftValue?
+                    value = core.get @context.output, @leftValue, @rightValue
+                    if value isnt undefined
+                        @rightExpression.setMemberValue value
+            core.observe @context.output, @contextObserver, @leftValue
     _assign: ->
         if @leftValue? and @rightValue isnt undefined
-            # store original values so we can revert them
             currentValue = core.get @context.output, @leftValue
             if currentValue isnt @rightValue
-                @original ?= {}
-                @original[@leftValue] = currentValue
                 core.set @context.output, @leftValue, @rightValue
     deactivate: (revert = true) ->
         super()
@@ -30,6 +37,8 @@ module.exports = class AssignmentStatement extends Statement
             core.set @context.output, @leftValue, undefined
         @leftExpression.unwatch @leftWatcher
         @rightExpression.unwatch @rightWatcher
+        # unobserve if this is a bi-directional assignment
+        core.unobserve @context.output, @contextObserver
 
 return if @java or @window
 module.exports.test = (done) ->

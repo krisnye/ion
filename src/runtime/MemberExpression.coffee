@@ -24,7 +24,12 @@ module.exports = class MemberExpression extends DynamicExpression
         @leftExpression?.unwatch @leftWatcher
         @rightExpression?.unwatch @rightWatcher
     evaluate: ->
-        @setValue @leftValue?[@rightValue]
+        value = core.get @leftValue, @rightValue
+        @setValue value
+    # sets the actual value on the underlying object property.
+    setMemberValue: (value) ->
+        if @leftValue? and @rightValue?
+            core.set @leftValue, @rightValue, value
     dispose: ->
         super()
         @leftValue = undefined

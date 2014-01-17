@@ -14,7 +14,13 @@ expressionTests = [
     ["x + y", "@x + @y", {x:1,y:2}, {x:10}, 12]
     ["$foo.*.name", "$foo.*.name", {foo:{a:{name:'a'},b:{name:'b'}}}, {foo:{b:null}}, ['a']]
     ["numbers.sum", "$numbers.sum()", {numbers:[1,2,3]},{numbers:{"1":4}},8]
-    [".*.sum()", "(.*.x).sum()", [{x:1,y:2},{x:3,y:4}],{"0":{x:2}},5]
+    ["@*.sum()", "(@*.x).sum()", [{x:1,y:2},{x:3,y:4}],{"0":{x:2}},5]
+    # bi-directional test
+    ["bidirectional :: test", """
+    {}
+        value:: @value
+        copy: @value
+    """, {value:1}, {}, {value:2,copy:2}, {value:2}]
     [
         # test name
         "shopping cart"
@@ -98,8 +104,8 @@ runtime = require '../runtime'
 core = require '../runtime/core'
 compiler = require '../compiler'
 
-for [name, source, input, patch, expected] in expressionTests
-    do ->
+for [name, source, input, patch, expected, outputPatch] in expressionTests
+    do (name, source, input, patch, expected, outputPatch) ->
         tests[name] = (done) ->
             ast = compiler.parseExpression source
             e = runtime.createRuntime ast, input
@@ -129,10 +135,14 @@ for [name, source, input, patch, expected] in expressionTests
                             # console.log 'patch---------------------------------'
                             # console.log JSON.stringify value
                             checkForMatch()
+
             # watch it which causes initial rendering.
             e.watch watcher
             # then patch it
             apply input, patch
+
+            if outputPatch?
+                apply currentValue, outputPatch
             # console.log "after patch: ------------------------"
             # console.log JSON.stringify input
             # now the watcher will wait for the changes to propagate
