@@ -13,17 +13,28 @@ expressionTests = [
     ["[x * 2 for x in [1,2,3] if x >= 2]", {}, [4,6]]
     ["true?", {}, true]
     ["null?", {}, false]
-    ["@ == 2", {}, false]
-    ["@ == 2", 2, true]
+    ["@ is 2", {}, false]
+    ["@ is 2", 2, true]
     ["{a:1,[@a]:2,[@missing]:2,'c':3,12:9,if:false}", {a:"alpha"}, {"12":9,"a":1,"alpha":2,"c":3,"if":false}]
     ["@foo.bar", {foo:{bar:3}}, 3]
-    ["!(1 == 2)", {}, true]
+    ["not (1 is 2)", {}, true]
     ["null ? 2", {}, 2]
     ["2 ? null", {}, 2]
     ["false ? 2", {}, false]
     ["[1,2,2+2]", {}, [1,2,4]]
     ["[x * y for x in [1,2,3] for y in [1,2,3]]", {}, [1,2,3,2,4,6,3,6,9]]
     ["/foo/g", {}, /foo/g]
+    ["""
+
+    Comment here
+
+        {}
+
+            foo: true
+
+            bar: false
+
+    """, {}, {foo:true,bar:false}]
     ["""
     {}
         a['b'].c.d: 1
@@ -61,13 +72,13 @@ expressionTests = [
     """, {x:10,y:20}, {name:"Alpha", children: {Beta: 1, Charlie: 2}}]
     ["""
     {}
-        even: [n for n in @numbers if (n & 1) == 0]
-        odd: [n for n in @numbers if (n & 1) == 1]
+        even: [n for n in @numbers if (n & 1) is 0]
+        odd: [n for n in @numbers if (n & 1) is 1]
     """, {numbers:[1,2,3,4,5,6]}, {even:[2,4,6],odd:[1,3,5]}]
     ["""
     {}
-        even: [n for n in @numbers if (n & 1) == 0]
-        odd: [n for n in @numbers if (n & 1) == 1]
+        even: [n for n in @numbers if (n & 1) is 0]
+        odd: [n for n in @numbers if (n & 1) is 1]
     """, {numbers:[1,2,3,4,5,6]}, {even:[2,4,6],odd:[1,3,5]}]
     ["""
     {}
@@ -165,7 +176,7 @@ expressionTests = [
     # {}
     #     double = ()
     #         for .
-    #             if .constructor == Object
+    #             if .constructor is Object
     #                 (key): {}
     #                     (double .)
     #             else

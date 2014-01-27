@@ -3,8 +3,6 @@ index = require '../'
 parseTests =
     "12": {"op":"add","args":[12,1]}
     "[x for x in y]": {"op":"add","args":[{"op":"object","args":[{"op":"member","args":[{"op":"global","args":[]},"Array"]},{"op":"for","args":[{"op":"ref","args":["y"]},{"op":"add","args":[{"op":"ref","args":["x"]}]},null,"x"]}]},1]}
-    "{a,b} = c": {"op":"block","args":[{"op":"var","args":["% -1",{"op":"ref","args":["c"]}]},{"op":"var","args":["a",{"op":"member","args":[{"op":"ref","args":["% -1"]},"a"]}]},{"op":"var","args":["b",{"op":"member","args":[{"op":"ref","args":["% -1"]},"b"]}]}]}
-    "[a,b] = c": {"op":"block","args":[{"op":"var","args":["% -1",{"op":"ref","args":["c"]}]},{"op":"var","args":["a",{"op":"member","args":[{"op":"ref","args":["% -1"]},0]}]},{"op":"var","args":["b",{"op":"member","args":[{"op":"ref","args":["% -1"]},1]}]}]}
     # "new $MyType().getCount()": null
     "foo bar": {"op":"add","args":[{"op":"call","args":[{"op":"ref","args":["foo"]},null,{"op":"ref","args":["bar"]}]},1]}
     "1\n2\n": {op:"block", args:[{"op":"add","args":[1,1]}, {"op":"add","args":[2,2]}]}

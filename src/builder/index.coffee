@@ -63,10 +63,47 @@ module.exports = exports =
         else
             return null
 
+    showPrettyError: showPrettyError = (e, filename, input) ->
+        message = e.message = syntaxErrorToString e, filename, input
+        beep = '\x07'
+        console.error message + beep
+
+    syntaxErrorToString: syntaxErrorToString = (e, filename, code) ->
+        return e.toString() unless e.location?
+        # lifted from https://github.com/jashkenas/coffee-script/blob/master/src/helpers.coffee
+        repeat = (str, n) ->
+            # Use clever algorithm to have O(log(n)) string concatenation operations.
+            res = ''
+            while n > 0
+                res += str if n & 1
+                n >>>= 1
+                str += str
+            res
+        {first_line, first_column, last_line, last_column} = e.location
+        last_line ?= first_line
+        last_column ?= first_column
+
+        codeLine = code.split('\n')[first_line]
+
+        start    = first_column
+        end      = if first_line is last_line then last_column + 1 else codeLine.length
+        marker   = repeat(' ', start) + repeat('^', end - start)
+
+        colorize = (str) -> "\x1B[1;31m#{str}\x1B[0m"
+        codeLine = codeLine[...start] + colorize(codeLine[start...end]) + codeLine[end..]
+        marker   = colorize marker
+
+        """
+        #{filename}:#{first_line + 1}:#{first_column + 1}: error: #{e.originalMessage ? e.message}
+
+        #{codeLine}
+        #{marker}
+        """
+
     # this compiles coffeescript if needed, but does not actually write the result.
     compileCoffeeScript: compileCoffeeScript = (source, packageObject) ->
         return if source.modified is 0
-        moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
+        moduleId = if typeof packageObject is 'string' then packageObject else getModuleId source, packageObject
 
         input = source.read()
         filename = source.path
@@ -81,10 +118,7 @@ module.exports = exports =
             compiled = addBrowserShim compiled, moduleId
             return compiled
         catch e
-            helpers = require 'coffee-script/lib/coffee-script/helpers'
-            message = e.message = helpers.prettyErrorMessage e, filename || '[stdin]', input, true
-            beep = '\x07'
-            console.error message + beep
+            showPrettyError e, filename, input
             return
 
     # this compiles a pegjs parser and returns the result.  Does not write to the target file.
@@ -94,8 +128,8 @@ module.exports = exports =
         try
             peg = require 'pegjs'
             input = source.read()
-            parser = peg.buildParser input, {cache:true,trackLineAndColumn:true}
-            source = "module.exports = " + parser.toSource()
+            parser = peg.buildParser input, {cache:true,output:"source"}
+            source = "module.exports = " + parser
             source = addBrowserShim source, moduleId
             return source
         catch e
@@ -132,10 +166,15 @@ module.exports = exports =
         return if source.modified is 0
         moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
         compiler = require '../compiler'
-        ast = compiler.parseStatement source.read(), source.path
-        template = compiler.compileTemplate ast, templateModuleId
-        template = addBrowserShim template, moduleId
-        return template
+        input = source.read()
+        try
+            ast = compiler.parseStatement input, source.path
+            template = compiler.compileTemplate ast, templateModuleId
+            template = addBrowserShim template, moduleId
+            return template
+        catch e
+            showPrettyError e, source.path, input
+            return
 
     runTemplate: runTemplate = (path, input, thenExitImmediately) ->
         # use the main module to require this path

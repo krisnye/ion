@@ -3,6 +3,12 @@ DynamicExpression = require './DynamicExpression'
 ExpressionList = require './ExpressionList'
 Context = require './Context'
 
+toString = (value, options) ->
+    if value?
+        value.toString options
+    else
+        String value
+
 module.exports = class OperationExpression extends DynamicExpression
     constructor: (properties) ->
         super properties
@@ -23,6 +29,12 @@ module.exports = class OperationExpression extends DynamicExpression
             throw new Error "evaluate method not defined for operation: " + @operation.op
         value = @operation.evaluate.apply @context, @argumentValues
         @setValue value
+    toString: (options) ->
+        format = (x) -> if x? then x.toString options else x
+        if @operation.hasOwnProperty 'toString'
+            return @operation.toString options, @args.map(format)...
+        else
+            return "(#{format(@args[0])} #{@operation.op} #{format(@args[1])})"
 
 return if @java or @window
 module.exports.test = ->

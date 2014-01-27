@@ -9,6 +9,6 @@
     },
     "devDependencies": {
         "uglify-js": "2.4.x",
-        "pegjs": "0.7.x"
+        "pegjs": "0.8.x"
     }
 }

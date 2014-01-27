@@ -42,17 +42,17 @@ ops =
                 eval text
             else
                 throw new Error "Invalid Function: #{text}"
-    "templateDef":
-        addIndexesEnabled: false
-        # a template definition just returns an expression equivalent to the template AST.
-        # the context where the template is defined is irrelevant.
-        createRuntime: (context, args) -> new (require './StaticExpression') value:args[0]
-    "templateApply":
-        createRuntime: (context, args) ->
-            templateVar = context.getVariableExpression name = args[0]
-            templateAst = templateVar?.value
-            throw new Error "Invalid template: #{name}" unless templateAst?
-            return context.createRuntime templateAst
+    # "templateDef":
+    #     addIndexesEnabled: false
+    #     # a template definition just returns an expression equivalent to the template AST.
+    #     # the context where the template is defined is irrelevant.
+    #     createRuntime: (context, args) -> new (require './StaticExpression') value:args[0]
+    # "templateApply":
+    #     createRuntime: (context, args) ->
+    #         templateVar = context.getVariableExpression name = args[0]
+    #         templateAst = templateVar?.value
+    #         throw new Error "Invalid template: #{name}" unless templateAst?
+    #         return context.createRuntime templateAst
     "ref":
         createRuntime: (context, args) ->
             context.getVariableExpression args[0]
@@ -87,13 +87,21 @@ ops =
             else
                 undefined
     "?:":
+        # note that both conditions are evaluated.
+        # since the declarative mode has no side-effects, it shouldn't matter.
         evaluate: (condition, a, b) -> if condition then a else b
     "?":
         evaluate: (a, b) -> a ? b
     "exists":
         evaluate: (a) -> a?
+        toString: (options, a) ->
+            if options?
+                "#(({a}) != null)"
+            else
+                "#{a}?"
     "!":
-        evaluate: (a) -> !a
+        evaluate: (a) -> not a
+        toString: (options, a) -> "#!({a})"
     "*":
         evaluate: (left, right) -> left * right
     "/":
@@ -126,10 +134,13 @@ ops =
         evaluate: (left, right) -> left >= right
     "global":
         evaluate: -> global
+        toString: -> "global"
     "input":
         evaluate: (delta) -> @getInput delta
+        toString: (options, delta) -> "@(#{delta})"
     "output":
         evaluate: (delta) -> @getOutput delta
+        toString: (options, delta) -> "$(#{delta})"
 
 for key, properties of ops
     properties.op = key

@@ -15,7 +15,7 @@ stripLineColumnNumbers = (ast) ->
 module.exports = exports =
     parseStatement: parseStatement = (source, id) ->
         try
-            lineMapping = []
+            lineMapping = {}
             preprocessed = preprocessor.preprocess source, lineMapping
             # console.log preprocessed
             ast = parser.parse preprocessed
@@ -24,14 +24,22 @@ module.exports = exports =
             stripLineColumnNumbers postprocessed
             return postprocessed
         catch e
-            # TODO: actually use the lineMapping to send correct line numbers
-            # improve error message by adding source location to message
             if typeof e.line is 'number' and typeof e.column is 'number' and e.line > 0 and e.column > 0
+                # fix line and column with lineMapping
+                e.line = lineMapping[e.line - 1] + 1
+                e.column += lineMapping.columnOffset ? 0
+                # set location on error in a manner consistent with coffeescript compile errors
+                e.location =
+                    first_line: e.line - 1
+                    last_line: e.line - 1
+                    first_column: e.column - 1
+                    last_column: e.column - 1
                 line = source.split('\n')[e.line - 1]
                 caret = "^"
                 for i in [2..e.column] by 1
                     caret = " " + caret
                 newMessage = "#{if id? then id + ':' else ''}#{e.line}:#{e.column}\n#{e.message}\n#{line}\n#{caret}"
+                e.originalMessage = e.message
                 e.message = newMessage
             throw e
 

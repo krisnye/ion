@@ -9,7 +9,7 @@ module.exports =
     splitLines: splitLines = (s) -> s.split lineDelimiter
     joinLines: joinLines = (array) -> array.join lineDelimiter
     getIndent: getIndent = (s) -> /^[ ]*/.exec(s)[0].length
-    unindent: unindent = unindent = (s) ->
+    unindent: unindent = unindent = (s, sourceMapping) ->
         lines = splitLines s.trimRight()
         minIndent = Number.MAX_VALUE
         for line in lines
@@ -18,4 +18,5 @@ module.exports =
         for line, i in lines
             trim = if isEmpty(line) then getIndent(line) else minIndent
             lines[i] = line.substring(trim)
-        return joinLines(lines).trim()
+        sourceMapping?.columnOffset = minIndent
+        return joinLines lines
