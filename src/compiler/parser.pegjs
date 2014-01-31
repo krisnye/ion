@@ -208,13 +208,13 @@ multilineStringContent = indent content:(multilineStringLine / multilineStringCo
 
 //  objects and arrays
 object = type:expression? eol indent statements:statement+ outdent { return e("object", [type,statements], line(), column()) }
-indent "INDENT" = s token:"{{{{" eol
+indent 'INDENT' = s token:"{{{{" eol
 {
   if (token != core.indentToken)
     throw new Error(token + " != " + core.indentToken);
   return token;
 }
-outdent "OUTDENT" = s token:"}}}}" eol
+outdent 'OUTDENT' = s token:"}}}}" eol
 {
   if (token != core.outdentToken)
     throw new Error(token + " != " + core.outdentToken);
