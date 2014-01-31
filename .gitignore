@@ -1,0 +1,11 @@
+lib
+src/test/input
+src/test/output
+node_modules
+npm-debug.log
+war/js
+war/WEB-INF/js
+war/WEB-INF/classes
+war/WEB-INF/lib
+war/WEB-INF/pages
+www/js
