@@ -2,11 +2,11 @@
 preprocessor = require './preprocessor'
 parser = require './parser'
 
-exports.parseExpression = (content, options) ->
+exports.parse = (content, options) ->
     sourceMapping = {}
     preprocessed = preprocessor.preprocess content, sourceMapping
     try
-        parsed = parser.parse preprocessed, options
+        parsed = parser.parse preprocessed, options ? {}
     catch e
         console.log '-Preprocessed--------------------------------------------'
         console.log preprocessed

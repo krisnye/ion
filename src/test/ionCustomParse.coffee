@@ -429,7 +429,7 @@ exports.test = ->
     options = {loc:false}
 
     for text, expected of tests
-        ionResult = ion.parseExpression text, options
+        ionResult = ion.parse text, options
         if JSON.stringify(expected) isnt JSON.stringify(ionResult)
             console.log '-Expected--------------------------------------------'
             console.log JSON.stringify expected, null, '    '
