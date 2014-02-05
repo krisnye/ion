@@ -45,25 +45,30 @@
 Program = start:start body:statementList end:end { return node("Program", {body:body}, start, end) }
 
 Statement = eol? _ a:(VariableDeclaration / IterationStatement / IfStatement / ExpressionStatement) { return a }
-ExpressionStatement = start:start expression:Expression end:end { return node("ExpressionStatement", {expression:expression}, start, end) }
-IfStatement = start:start if _ test:Expression consequent:BlockStatement alternate:(_ else _ a:(IfStatement / BlockStatement) {return a})? end:end { return node("IfStatement", {test:test, consequent:consequent, alternate:alternate}, start, end) }
+ExpressionStatement = start:start expression:InlineExpression end:end { return node("ExpressionStatement", {expression:expression}, start, end) }
+IfStatement = start:start if _ test:InlineExpression consequent:BlockStatement alternate:(_ else _ a:(IfStatement / BlockStatement) {return a})? end:end
+    { return node("IfStatement", {test:test, consequent:consequent, alternate:alternate}, start, end) }
 IterationStatement = WhileStatement / ForInStatement / ForOfStatement
-WhileStatement = start:start while _ test:Expression body:BlockStatement end:end { return node("WhileStatement", {test:test, body:body}, start, end)}
-ForInStatement = start:start for _ value:Pattern index:(_ "," _ i:Identifier {return i})? _ in _ right:Expression body:BlockStatement end:end { return node("ForOfStatement", {left:value, index:index, right:right, body:body}, start, end) }
-ForOfStatement = start:start for _ key:Identifier value:(_ "," _ i:Pattern {return i})? _ of _ right:Expression body:BlockStatement end:end { return node("ForInStatement", {left:key, value:value, right:right, body:body}, start, end) }
+WhileStatement = start:start while _ test:InlineExpression body:BlockStatement end:end { return node("WhileStatement", {test:test, body:body}, start, end)}
+ForInStatement = start:start for _ value:Pattern index:(_ "," _ i:Identifier {return i})? _ in _ right:InlineExpression body:BlockStatement end:end { return node("ForOfStatement", {left:value, index:index, right:right, body:body}, start, end) }
+ForOfStatement = start:start for _ key:Identifier value:(_ "," _ i:Pattern {return i})? _ of _ right:InlineExpression body:BlockStatement end:end { return node("ForInStatement", {left:key, value:value, right:right, body:body}, start, end) }
 BlockStatement = indent start:start statements:statementList end:end outdent { return statements.length == 1 ? statements[0] : node("BlockStatement", {body:statements}, start, end) }
 statementList = head:Statement tail:(eol a:Statement {return a})* { return [head].concat(tail) }
+PropertyStatement
+    = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:MultilineExpression end:end { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
 VariableDeclaration = start:start kind:(var / const) _ declarations:variableDeclaratorList end:end { return node("VariableDeclaration", {declarations:declarations, kind:kind}, start, end) }
 variableDeclaratorList = head:VariableDeclarator tail:(_ "," _ a:VariableDeclarator {return a})* { return [head].concat(tail) }
-VariableDeclarator = start:start pattern:Pattern init:(_ "=" _ a:AssignmentExpression {return a})? end:end { return node("VariableDeclarator", {id:pattern,init:init}, start, end) }
+VariableDeclarator = start:start pattern:Pattern _ init:variableInitializer? end:end { return node("VariableDeclarator", {id:pattern,init:init}, start, end) }
+variableInitializer = "=" _ a:MultilineExpression { return a }
 Pattern = Identifier / ObjectPattern / ArrayPattern
 ObjectPattern = pattern:ObjectLiteral { pattern.type = "ObjectPattern"; return pattern }
 ArrayPattern = pattern:ArrayLiteral { pattern.type = "ArrayPattern"; return pattern }
 
 //  Expressions
 //  We use javascript terms where available. http://www.ecma-international.org/ecma-262/5.1/#sec-A.3
-Expression = AssignmentExpression
-AssignmentExpression = start:start left:ConditionalExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=") _ right:AssignmentExpression end:end { return binaryExpression(op, left, right, start, end) }
+MultilineExpression = TypedObjectExpression / InlineExpression
+InlineExpression = AssignmentExpression
+AssignmentExpression = start:start left:ConditionalExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=") _ right:InlineExpression end:end { return binaryExpression(op, left, right, start, end) }
     / ConditionalExpression
 ConditionalExpression = start:start test:LogicalOrExpression _ "?" _ consequent:ConditionalExpression _ ":" _ alternate:ConditionalExpression end:end { return node('ConditionalExpression', {test:test,consequent:consequent,alternate:alternate}, start, end) }
     / LogicalOrExpression
@@ -87,23 +92,39 @@ UpdateExpression
 LeftHandSideExpression = CallExpression / NewExpressionWithoutArgs
 CallExpression = start:start head:MemberExpression tail:(tailCall / tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 tailCall   = _ args:arguments end:end { return ["callee", node("CallExpression", {callee:null, arguments:args}), end] }
-tailMember = _ "[" _ property:Expression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property}), end] }
+tailMember = _ "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property}), end] }
            / _ "." _ property:Identifier end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property}), end] }
 arguments = "(" a:argumentList? ")" { return a ? a : [] }
-argumentList = a:AssignmentExpression b:(_ "," _ c:AssignmentExpression {return c})* { return [a].concat(b) }
+argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
 NewExpressionWithoutArgs = start:start new _ callee:NewExpressionWithoutArgs end:end { return node("NewExpression", {callee:callee,arguments:[]}, start, end) }
 NewExpressionWithArgs = start:start new _ callee:MemberExpression args:arguments end:end { return node("NewExpression", {callee:callee,arguments:args}, start, end) }
 MemberExpression = start:start head:(PrimaryExpression / FunctionExpression / NewExpressionWithArgs) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
-FunctionExpression = &{ return false }
-PrimaryExpression 'primaryExpression' = ThisExpression / Identifier / Literal /  ArrayLiteral /  ObjectLiteral / GroupExpression
+FunctionExpression = start:start params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:functionBody end:end
+    {
+        if (params == null) params = []
+        paramPatterns = params.map(function(x) { return x[0] })
+        paramDefaults = params.map(function(x) { return x[1] })
+        return node("Function", {id:null, params:paramPatterns, defaults:paramDefaults, body:body.body, expression:body.expression, bound:bound}, start, end)
+    }
+functionBody
+    = expression:InlineExpression { return {body:expression,expression:true} }
+    / statement:BlockStatement { return {body:statement,expression:false} }
+formalParameterList = "(" _ params:formalParameters? _ ")" { return params != null ? params : [] }
+formalParameters = head:formalParameter tail:(_ "," _ a:formalParameter { return a })* { return [head].concat(tail) }
+formalParameter = param:Pattern _ init:formalParameterInitializer? { return [param,init] }
+formalParameterInitializer = "=" _ a:InlineExpression { return a }
+
+PrimaryExpression 'primaryExpression' = ThisExpression / Identifier / Literal / ArrayLiteral / ObjectLiteral / GroupExpression
 ArrayLiteral = start:start "[" _ elements:elementList?  _ "]" end:end { return node("ArrayExpression", {elements:elements || []}, start, end) }
-elementList = head:AssignmentExpression tail:(_ "," _ item:AssignmentExpression {return item})* { return [head].concat(tail) }
+elementList = head:InlineExpression tail:(_ "," _ item:InlineExpression {return item})* { return [head].concat(tail) }
 ObjectLiteral = start:start "{" _ assignments:propertyAssignmentList? _ "}" end:end { return node("ObjectExpression", {properties:assignments || []}, start, end) }
 propertyAssignmentList = head:propertyAssignment tail:(_ "," _ item:propertyAssignment {return item})* { return [head].concat(tail) }
 propertyAssignment
-    = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:AssignmentExpression end:end { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
+    = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:InlineExpression end:end { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
     / start:start key:IdentifierName end:end { return node("Property", { key: key, value:clone(key), kind: 'init'}, start, end) }
-GroupExpression 'group' = "(" _ expression:Expression _ ")" { return expression }
+TypedObjectExpression = start:start type:InlineExpression? body:BlockStatement end:end
+    { return node("TypedObjectExpression", {type:type,body:body}, start, end) }
+GroupExpression 'group' = "(" _ expression:InlineExpression _ ")" { return expression }
 Identifier = !reserved value:IdentifierName { return value }
 IdentifierName = start:start name:identifierName end:end { return node("Identifier", {name:name}, start, end) }
 ThisExpression 'this' = start:start this end:end { return node("ThisExpression", null, start, end) }
@@ -139,8 +160,8 @@ hexDigit = [0-9a-fA-F]
 
 //  identifiers
 //  http://www.ecma-international.org/ecma-262/5.1/
-identifier 'identifier' = !reserved identifierName { return text() }
-identifierName = $(identifierStart identifierPart*)
+identifier 'identifier' = $ (!reserved identifierName)
+identifierName 'identifierName' = $(identifierStart identifierPart*)
 identifierStart = unicodeLetter / [$_] / unicodeEscapeSequence
 identifierPart = identifierStart / unicodeCombiningMark / unicodeDigit / unicodeConnectorPunctuation / zwnj / zwj
 unicodeEscapeSequence = "\\u" h0:hexDigit h1:hexDigit h2:hexDigit h3:hexDigit { return String.fromCharCode(parseInt(h0 + h1 + h2 + h3, 16)); }
@@ -178,8 +199,8 @@ if = a:"if" !identifierPart { return a }
 else = a:"else" !identifierPart { return a }
 
 //  white space
-indent 'INDENT' = _ eol? "{{{{" eol
-outdent 'OUTDENT' = _ eol? "}}}}" eol
+indent 'INDENT' = eol _ "{{{{" eol
+outdent 'OUTDENT' = eol? _ "}}}}" eol
 _ 'space' = " "*
-eol 'end of line' = _ eof / (_ ("\r\n" / "\r" / "\n"))+
+eol 'end of line' = _ (eof / ("\r\n" / "\r" / "\n")+)
 eof 'end of file' = !.

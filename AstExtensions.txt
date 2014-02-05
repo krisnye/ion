@@ -1,0 +1,10 @@
+
+ForOfStatement  // ion for in
+    index: Identifier
+ForInStatement  // ion "for of"
+    value: Pattern
+Function
+    bound: true | false
+TypedObjectExpression
+    type: InlineExpression
+    body: BlockStatement

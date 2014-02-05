@@ -422,6 +422,228 @@ tests =
                 }
             ]
         }
+    """
+    var two = () -> 2
+    """:
+        {
+            "type": "Program",
+            "body": [
+                {
+                    "type": "VariableDeclaration",
+                    "declarations": [
+                        {
+                            "type": "VariableDeclarator",
+                            "id": {
+                                "type": "Identifier",
+                                "name": "two"
+                            },
+                            "init": {
+                                "type": "Function",
+                                "id": null,
+                                "params": [],
+                                "defaults": [],
+                                "body": {
+                                    "type": "Literal",
+                                    "value": 2
+                                },
+                                "expression": true,
+                                "bound": false
+                            }
+                        }
+                    ],
+                    "kind": "let"
+                }
+            ]
+        }
+    """
+    var pow = (x, y) => Math.pow(x, y)
+    """:
+        {
+            "type": "Program",
+            "body": [
+                {
+                    "type": "VariableDeclaration",
+                    "declarations": [
+                        {
+                            "type": "VariableDeclarator",
+                            "id": {
+                                "type": "Identifier",
+                                "name": "pow"
+                            },
+                            "init": {
+                                "type": "Function",
+                                "id": null,
+                                "params": [
+                                    {
+                                        "type": "Identifier",
+                                        "name": "x"
+                                    },
+                                    {
+                                        "type": "Identifier",
+                                        "name": "y"
+                                    }
+                                ],
+                                "defaults": [
+                                    null,
+                                    null
+                                ],
+                                "body": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                        "type": "MemberExpression",
+                                        "computed": false,
+                                        "object": {
+                                            "type": "Identifier",
+                                            "name": "Math"
+                                        },
+                                        "property": {
+                                            "type": "Identifier",
+                                            "name": "pow"
+                                        }
+                                    },
+                                    "arguments": [
+                                        {
+                                            "type": "Identifier",
+                                            "name": "x"
+                                        },
+                                        {
+                                            "type": "Identifier",
+                                            "name": "y"
+                                        }
+                                    ]
+                                },
+                                "expression": true,
+                                "bound": true
+                            }
+                        }
+                    ],
+                    "kind": "let"
+                }
+            ]
+        }
+    """
+    var foo = ({x,y}, z) -> x * y * z
+    """:
+        {
+            "type": "Program",
+            "body": [
+                {
+                    "type": "VariableDeclaration",
+                    "declarations": [
+                        {
+                            "type": "VariableDeclarator",
+                            "id": {
+                                "type": "Identifier",
+                                "name": "foo"
+                            },
+                            "init": {
+                                "type": "Function",
+                                "id": null,
+                                "params": [
+                                    {
+                                        "type": "ObjectPattern",
+                                        "properties": [
+                                            {
+                                                "type": "Property",
+                                                "key": {
+                                                    "type": "Identifier",
+                                                    "name": "x"
+                                                },
+                                                "value": {
+                                                    "type": "Identifier",
+                                                    "name": "x"
+                                                },
+                                                "kind": "init"
+                                            },
+                                            {
+                                                "type": "Property",
+                                                "key": {
+                                                    "type": "Identifier",
+                                                    "name": "y"
+                                                },
+                                                "value": {
+                                                    "type": "Identifier",
+                                                    "name": "y"
+                                                },
+                                                "kind": "init"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Identifier",
+                                        "name": "z"
+                                    }
+                                ],
+                                "defaults": [
+                                    null,
+                                    null
+                                ],
+                                "body": {
+                                    "type": "BinaryExpression",
+                                    "operator": "*",
+                                    "left": {
+                                        "type": "BinaryExpression",
+                                        "operator": "*",
+                                        "left": {
+                                            "type": "Identifier",
+                                            "name": "x"
+                                        },
+                                        "right": {
+                                            "type": "Identifier",
+                                            "name": "y"
+                                        }
+                                    },
+                                    "right": {
+                                        "type": "Identifier",
+                                        "name": "z"
+                                    }
+                                },
+                                "expression": true,
+                                "bound": false
+                            }
+                        }
+                    ],
+                    "kind": "let"
+                }
+            ]
+        }
+    """
+    if a
+        if b
+            c()
+    """:
+        {
+            "type": "Program",
+            "body": [
+                {
+                    "type": "IfStatement",
+                    "test": {
+                        "type": "Identifier",
+                        "name": "a"
+                    },
+                    "consequent": {
+                        "type": "IfStatement",
+                        "test": {
+                            "type": "Identifier",
+                            "name": "b"
+                        },
+                        "consequent": {
+                            "type": "ExpressionStatement",
+                            "expression": {
+                                "type": "CallExpression",
+                                "callee": {
+                                    "type": "Identifier",
+                                    "name": "c"
+                                },
+                                "arguments": []
+                            }
+                        },
+                        "alternate": null
+                    },
+                    "alternate": null
+                }
+            ]
+        }
 
 exports.test = ->
     ion = require '../compiler'

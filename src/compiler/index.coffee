@@ -1,16 +1,24 @@
 
-preprocessor = require './preprocessor'
-parser = require './parser'
-
-exports.parse = (content, options) ->
-    sourceMapping = {}
-    preprocessed = preprocessor.preprocess content, sourceMapping
+exports.parse = parse = (content, options) ->
+    preprocessor = require './preprocessor'
+    parser = require './parser'
     try
+        sourceMapping = {}
+        preprocessed = preprocessor.preprocess content, sourceMapping
         parsed = parser.parse preprocessed, options ? {}
+        fixed = preprocessor.fixSourceLocations parsed, sourceMapping
     catch e
         console.log '-Preprocessed--------------------------------------------'
         console.log preprocessed
         console.log '-Error---------------------------------------------------'
-        console.log JSON.stringify e, null, '    '
+        console.log "line: " + e.line + ", column: " + e.column
         throw e
-    return parsed
+    return fixed
+
+exports.compile = compile = (content, options) ->
+    postprocessor = require './postprocessor'
+    escodegen = require 'escodegen'
+    program = parse content, options
+    program = postprocessor.postprocess program
+    javascript = escodegen.generate program
+    return javascript

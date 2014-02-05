@@ -6,6 +6,8 @@ getSpace = (size) ->
     result.join ""
 
 exports.isMarkdownCommented = (source) -> /(\n|^)[^\s\n][^\n]*\n(\s*\n)+\s+[^\s\n]/.test source
+exports.fixSourceLocations = fixSourceLocations = (program, sourceMapping) ->
+    return program
 exports.preprocess = preprocess = (source, sourceMapping) ->
     isMarkdownCommented = exports.isMarkdownCommented source
     baseIndent = if isMarkdownCommented then 1 else 0

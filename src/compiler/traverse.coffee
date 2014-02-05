@@ -1,5 +1,5 @@
 
-exports.traverse = (graph, callback) ->
+exports.traverse = (graph, enterCallback, exitCallback) ->
     result = graph
     skip = false
     context =
@@ -27,20 +27,20 @@ exports.traverse = (graph, callback) ->
                 return result
     traverseNode = (node) ->
         if node? and typeof node is 'object'
-            callback node, context
+            enterCallback?(node, context)
             if skip
                 skip = false
-                return
-            # node may have been changed, in which case we have to get the new value
-            node = context.current()
-            if node? and typeof node is 'object'
-                context.ancestors.push node
-                for key, value of node
-                    context.path.push key
-                    traverseNode value
-                    context.path.pop()
-                context.ancestors.pop()
-
+            else
+                # node may have been changed, in which case we have to get the new value
+                node = context.current()
+                if node? and typeof node is 'object'
+                    context.ancestors.push node
+                    for key, value of node
+                        context.path.push key
+                        traverseNode value
+                        context.path.pop()
+                    context.ancestors.pop()
+            exitCallback?(node, context)
     traverseNode graph
     return result
 
