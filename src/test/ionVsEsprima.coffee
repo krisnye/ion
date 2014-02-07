@@ -42,6 +42,7 @@ tests = [
     else
         z()
     """
+    "({x:1,y:2})"
 ]
 
 exports.test = ->

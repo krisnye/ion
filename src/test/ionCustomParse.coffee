@@ -127,10 +127,19 @@ tests =
                 {
                     "type": "ForInStatement",
                     "left": {
-                        "type": "Identifier",
-                        "name": "x"
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "x"
+                                },
+                                "init": null
+                            }
+                        ],
+                        "kind": "let"
                     },
-                    "value": null,
                     "right": {
                         "type": "Identifier",
                         "name": "foo"
@@ -164,37 +173,51 @@ tests =
                 {
                     "type": "ForInStatement",
                     "left": {
-                        "type": "Identifier",
-                        "name": "x"
-                    },
-                    "value": {
-                        "type": "ObjectPattern",
-                        "properties": [
+                        "type": "VariableDeclaration",
+                        "declarations": [
                             {
-                                "type": "Property",
-                                "key": {
+                                "type": "VariableDeclarator",
+                                "id": {
                                     "type": "Identifier",
-                                    "name": "y"
+                                    "name": "x"
                                 },
-                                "value": {
-                                    "type": "Identifier",
-                                    "name": "y"
-                                },
-                                "kind": "init"
+                                "init": null
                             },
                             {
-                                "type": "Property",
-                                "key": {
-                                    "type": "Identifier",
-                                    "name": "z"
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "ObjectPattern",
+                                    "properties": [
+                                        {
+                                            "type": "Property",
+                                            "key": {
+                                                "type": "Identifier",
+                                                "name": "y"
+                                            },
+                                            "value": {
+                                                "type": "Identifier",
+                                                "name": "y"
+                                            },
+                                            "kind": "init"
+                                        },
+                                        {
+                                            "type": "Property",
+                                            "key": {
+                                                "type": "Identifier",
+                                                "name": "z"
+                                            },
+                                            "value": {
+                                                "type": "Identifier",
+                                                "name": "z"
+                                            },
+                                            "kind": "init"
+                                        }
+                                    ]
                                 },
-                                "value": {
-                                    "type": "Identifier",
-                                    "name": "z"
-                                },
-                                "kind": "init"
+                                "init": null
                             }
-                        ]
+                        ],
+                        "kind": "let"
                     },
                     "right": {
                         "type": "Identifier",
@@ -237,35 +260,44 @@ tests =
                 {
                     "type": "ForOfStatement",
                     "left": {
-                        "type": "ObjectPattern",
-                        "properties": [
+                        "type": "VariableDeclaration",
+                        "declarations": [
                             {
-                                "type": "Property",
-                                "key": {
-                                    "type": "Identifier",
-                                    "name": "x"
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "ObjectPattern",
+                                    "properties": [
+                                        {
+                                            "type": "Property",
+                                            "key": {
+                                                "type": "Identifier",
+                                                "name": "x"
+                                            },
+                                            "value": {
+                                                "type": "Identifier",
+                                                "name": "x"
+                                            },
+                                            "kind": "init"
+                                        },
+                                        {
+                                            "type": "Property",
+                                            "key": {
+                                                "type": "Identifier",
+                                                "name": "y"
+                                            },
+                                            "value": {
+                                                "type": "Identifier",
+                                                "name": "y"
+                                            },
+                                            "kind": "init"
+                                        }
+                                    ]
                                 },
-                                "value": {
-                                    "type": "Identifier",
-                                    "name": "x"
-                                },
-                                "kind": "init"
-                            },
-                            {
-                                "type": "Property",
-                                "key": {
-                                    "type": "Identifier",
-                                    "name": "y"
-                                },
-                                "value": {
-                                    "type": "Identifier",
-                                    "name": "y"
-                                },
-                                "kind": "init"
+                                "init": null
                             }
-                        ]
+                        ],
+                        "kind": "let"
                     },
-                    "index": null,
                     "right": {
                         "type": "Identifier",
                         "name": "foo"
@@ -294,7 +326,7 @@ tests =
             ]
         }
     """
-    for {x,y}, i in foo
+    for var {x,y}, i in foo
         log(x, y)
     """:
         {
@@ -303,37 +335,51 @@ tests =
                 {
                     "type": "ForOfStatement",
                     "left": {
-                        "type": "ObjectPattern",
-                        "properties": [
+                        "type": "VariableDeclaration",
+                        "declarations": [
                             {
-                                "type": "Property",
-                                "key": {
-                                    "type": "Identifier",
-                                    "name": "x"
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "ObjectPattern",
+                                    "properties": [
+                                        {
+                                            "type": "Property",
+                                            "key": {
+                                                "type": "Identifier",
+                                                "name": "x"
+                                            },
+                                            "value": {
+                                                "type": "Identifier",
+                                                "name": "x"
+                                            },
+                                            "kind": "init"
+                                        },
+                                        {
+                                            "type": "Property",
+                                            "key": {
+                                                "type": "Identifier",
+                                                "name": "y"
+                                            },
+                                            "value": {
+                                                "type": "Identifier",
+                                                "name": "y"
+                                            },
+                                            "kind": "init"
+                                        }
+                                    ]
                                 },
-                                "value": {
-                                    "type": "Identifier",
-                                    "name": "x"
-                                },
-                                "kind": "init"
+                                "init": null
                             },
                             {
-                                "type": "Property",
-                                "key": {
+                                "type": "VariableDeclarator",
+                                "id": {
                                     "type": "Identifier",
-                                    "name": "y"
+                                    "name": "i"
                                 },
-                                "value": {
-                                    "type": "Identifier",
-                                    "name": "y"
-                                },
-                                "kind": "init"
+                                "init": null
                             }
-                        ]
-                    },
-                    "index": {
-                        "type": "Identifier",
-                        "name": "i"
+                        ],
+                        "kind": "let"
                     },
                     "right": {
                         "type": "Identifier",
@@ -438,7 +484,7 @@ tests =
                                 "name": "two"
                             },
                             "init": {
-                                "type": "Function",
+                                "type": "FunctionExpression",
                                 "id": null,
                                 "params": [],
                                 "defaults": [],
@@ -471,7 +517,7 @@ tests =
                                 "name": "pow"
                             },
                             "init": {
-                                "type": "Function",
+                                "type": "FunctionExpression",
                                 "id": null,
                                 "params": [
                                     {
@@ -537,7 +583,7 @@ tests =
                                 "name": "foo"
                             },
                             "init": {
-                                "type": "Function",
+                                "type": "FunctionExpression",
                                 "id": null,
                                 "params": [
                                     {
@@ -652,6 +698,12 @@ exports.test = ->
 
     for text, expected of tests
         ionResult = ion.parse text, options
+        if expected is null
+            console.log '-Ion-------------------------------------------------'
+            console.log JSON.stringify ionResult, null, '    '
+            console.log '-Compiled--------------------------------------------'
+            console.log ion.compile text, options
+            continue
         if JSON.stringify(expected) isnt JSON.stringify(ionResult)
             console.log '-Expected--------------------------------------------'
             console.log JSON.stringify expected, null, '    '

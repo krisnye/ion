@@ -19,6 +19,6 @@ exports.compile = compile = (content, options) ->
     postprocessor = require './postprocessor'
     escodegen = require 'escodegen'
     program = parse content, options
-    program = postprocessor.postprocess program
+    program = postprocessor.postprocess program, options
     javascript = escodegen.generate program
     return javascript

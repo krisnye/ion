@@ -44,7 +44,7 @@ exports.preprocess = preprocess = (source, sourceMapping) ->
     while indentStack.length > 0
         outdent()
 
-    return common.unindent common.joinLines(output), sourceMapping
+    return common.unindentString common.joinLines(output), sourceMapping
 
 sample = """
 

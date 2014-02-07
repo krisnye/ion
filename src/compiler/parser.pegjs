@@ -1,4 +1,5 @@
 {
+    var common = require("./common");
     function clone(object) {
         return JSON.parse(JSON.stringify(object));
     }
@@ -40,23 +41,109 @@
         }
         return result
     }
+    function unindent(content) {
+        //  content consists of strings and/or Expressions
+        //  strings that start lines should start with \n
+        var minIndent = common.getMinIndent(content, /\n([ ]+)/)
+        var replacement = "\n"
+        var find = replacement
+        var i, line;
+        for (i = 0; i < minIndent; i++) {
+            find += " "
+        }
+        for (i = 0; i < content.length; i++) {
+            line = content[i]
+            if (typeof line === 'string')
+                content[i] = line.replace(find, replacement)
+        }
+
+        //  trim the starting /n
+        if (typeof content[0] === 'string' && content[0][0] === '\n')
+            content[0] = content[0].substring(1)
+
+        // console.log('===============================================')
+        // console.log(content)
+        // console.log('===============================================')
+
+        joinAdjacentStrings(content)
+
+        // console.log(content)
+        // console.log('===============================================')
+        return content
+    }
+    function joinAdjacentStrings(content) {
+        for (var i = 1; i < content.length;) {
+            var left = content[i - 1]
+            var right = content[i]
+            if (typeof left === 'string' && typeof right === 'string')
+                content.splice(i - 1, 2, left + right)
+            else
+                i++
+        }
+    }
+    function toNode(value) {
+        return value.type != null ? value : node("Literal", {value:value})
+    }
+    function concatenate(content) {
+        if (typeof content[0] !== 'string')
+            content.unshift("")
+        var result = toNode(content.shift())
+        while (content.length > 0) {
+            var right = toNode(content.shift())
+            result = node("BinaryExpression", {operator:"+", left:result, right:right})
+        }
+        return result
+    }
 }
 
-Program = start:start body:statementList end:end { return node("Program", {body:body}, start, end) }
+Program = start:start body:Statement* end:end { return node("Program", {body:body}, start, end) }
 
-Statement = eol? _ a:(VariableDeclaration / IterationStatement / IfStatement / ExpressionStatement) { return a }
-ExpressionStatement = start:start expression:InlineExpression end:end { return node("ExpressionStatement", {expression:expression}, start, end) }
-IfStatement = start:start if _ test:InlineExpression consequent:BlockStatement alternate:(_ else _ a:(IfStatement / BlockStatement) {return a})? end:end
+Statement = eol? _ a:(VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement) { return a }
+ReturnStatement = start:start return _ argument:MultilineExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
+ThrowStatement = start:start throw _ argument:MultilineExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
+BreakStatement = start:start break end:end { return node("BreakStatement", {}, start, end) }
+ContinueStatement = start:start continue end:end { return node("ContinueStatement", {}, start, end) }
+ExpressionStatement = start:start expression:MultilineExpression end:end { return node("ExpressionStatement", {expression:expression}, start, end) }
+IfStatement =
+    start:start
+    if _ test:InlineExpression
+        consequent:BlockOrSingleStatement
+    alternate:(
+    _ else _ a:(IfStatement / BlockOrSingleStatement) {return a}
+    )?
+    end:end
     { return node("IfStatement", {test:test, consequent:consequent, alternate:alternate}, start, end) }
-IterationStatement = WhileStatement / ForInStatement / ForOfStatement
-WhileStatement = start:start while _ test:InlineExpression body:BlockStatement end:end { return node("WhileStatement", {test:test, body:body}, start, end)}
-ForInStatement = start:start for _ value:Pattern index:(_ "," _ i:Identifier {return i})? _ in _ right:InlineExpression body:BlockStatement end:end { return node("ForOfStatement", {left:value, index:index, right:right, body:body}, start, end) }
-ForOfStatement = start:start for _ key:Identifier value:(_ "," _ i:Pattern {return i})? _ of _ right:InlineExpression body:BlockStatement end:end { return node("ForInStatement", {left:key, value:value, right:right, body:body}, start, end) }
-BlockStatement = indent start:start statements:statementList end:end outdent { return statements.length == 1 ? statements[0] : node("BlockStatement", {body:statements}, start, end) }
-statementList = head:Statement tail:(eol a:Statement {return a})* { return [head].concat(tail) }
-PropertyStatement
-    = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:MultilineExpression end:end { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
-VariableDeclaration = start:start kind:(var / const) _ declarations:variableDeclaratorList end:end { return node("VariableDeclaration", {declarations:declarations, kind:kind}, start, end) }
+TryStatement =
+    start:start
+        try
+            block:BlockStatement
+        handler:CatchClause?
+        finalizer:(
+        finally
+            a: BlockStatement { return a }
+        )?
+    end:end
+    { return node("TryStatement", {block:block, handler:handler, finalizer:finalizer}, start, end) }
+CatchClause =
+    start: start
+    catch _ param:Identifier
+        body:BlockStatement
+    end:end
+    { return node("CatchClause", {param:param, guard:null, body:body}, start, end) }
+IterationStatement = WhileStatement / ForStatement
+WhileStatement = start:start while _ test:InlineExpression body:BlockOrSingleStatement end:end { return node("WhileStatement", {test:test, body:body}, start, end)}
+ForStatement = start:start for _ left:VariableDeclarationKindOptional _ type:(in { return "ForOfStatement" } / of { return "ForInStatement" }) _ right:InlineExpression body:BlockOrSingleStatement end:end
+    { return node(type, {left:left, right:right, body:body}, start, end) }
+
+BlockOrSingleStatement = block:BlockStatement
+    { return block.body.length == 1 ? block.body[0] : block }
+BlockStatement = indent eol start:start body:Statement+ end:end outdent eol
+    { return node("BlockStatement", {body:body}, start, end) }
+PropertyDeclaration
+    = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:MultilineExpression end:end
+    { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
+VariableDeclaration = &(var / const) a:VariableDeclarationKindOptional { return a }
+VariableDeclarationKindOptional = start:start kind:(var / const)? _ declarations:variableDeclaratorList end:end { return node("VariableDeclaration", {declarations:declarations, kind:kind != null ? kind : "let"}, start, end) }
 variableDeclaratorList = head:VariableDeclarator tail:(_ "," _ a:VariableDeclarator {return a})* { return [head].concat(tail) }
 VariableDeclarator = start:start pattern:Pattern _ init:variableInitializer? end:end { return node("VariableDeclarator", {id:pattern,init:init}, start, end) }
 variableInitializer = "=" _ a:MultilineExpression { return a }
@@ -66,7 +153,7 @@ ArrayPattern = pattern:ArrayLiteral { pattern.type = "ArrayPattern"; return patt
 
 //  Expressions
 //  We use javascript terms where available. http://www.ecma-international.org/ecma-262/5.1/#sec-A.3
-MultilineExpression = TypedObjectExpression / InlineExpression
+MultilineExpression = MultilineStringTemplate / MultilineStringLiteral / MultilineObjectExpression / InlineExpression
 InlineExpression = AssignmentExpression
 AssignmentExpression = start:start left:ConditionalExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=") _ right:InlineExpression end:end { return binaryExpression(op, left, right, start, end) }
     / ConditionalExpression
@@ -104,11 +191,12 @@ FunctionExpression = start:start params:formalParameterList? _ bound:("->" { ret
         if (params == null) params = []
         paramPatterns = params.map(function(x) { return x[0] })
         paramDefaults = params.map(function(x) { return x[1] })
-        return node("Function", {id:null, params:paramPatterns, defaults:paramDefaults, body:body.body, expression:body.expression, bound:bound}, start, end)
+        return node("FunctionExpression", {id:null, params:paramPatterns, defaults:paramDefaults, body:body, expression:body.type != "BlockStatement", bound:bound}, start, end)
     }
 functionBody
-    = expression:InlineExpression { return {body:expression,expression:true} }
-    / statement:BlockStatement { return {body:statement,expression:false} }
+    = InlineExpression
+    / statement:BlockStatement
+    { return statement }
 formalParameterList = "(" _ params:formalParameters? _ ")" { return params != null ? params : [] }
 formalParameters = head:formalParameter tail:(_ "," _ a:formalParameter { return a })* { return [head].concat(tail) }
 formalParameter = param:Pattern _ init:formalParameterInitializer? { return [param,init] }
@@ -122,18 +210,20 @@ propertyAssignmentList = head:propertyAssignment tail:(_ "," _ item:propertyAssi
 propertyAssignment
     = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:InlineExpression end:end { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
     / start:start key:IdentifierName end:end { return node("Property", { key: key, value:clone(key), kind: 'init'}, start, end) }
-TypedObjectExpression = start:start type:InlineExpression? body:BlockStatement end:end
-    { return node("TypedObjectExpression", {type:type,body:body}, start, end) }
+MultilineObjectExpression = start:start type:InlineExpression? properties:BlockStatement end:end
+    { return node("ObjectExpression", {objectType:type,properties:properties.body}, start, end) }
+
 GroupExpression 'group' = "(" _ expression:InlineExpression _ ")" { return expression }
 Identifier = !reserved value:IdentifierName { return value }
 IdentifierName = start:start name:identifierName end:end { return node("Identifier", {name:name}, start, end) }
 ThisExpression 'this' = start:start this end:end { return node("ThisExpression", null, start, end) }
-StringOrNumberLiteral = &(string / number) value:Literal { return value }
+StringOrNumberLiteral = &(simpleString / number) value:Literal { return value }
 Literal 'literal'
-    = start:start value:(number / string / boolean / regex / null) end:end
+    = start:start value:(number / simpleString / boolean / regex / null) end:end
         { return node('Literal', {value:value}, start, end) }
     / start:start undefined end:end
         { return node('UnaryExpression', {operator:'void', prefix:true, argument:node('Literal', {value:0}, start, end)}, start, end) }
+    / StringTemplate
 
 //  source positions
 start = &{return true} { return {line:line(),column:column()-1} }
@@ -144,9 +234,20 @@ boolean = true / false
 regex = '/' a:regexBody '/' b:regexOptions { return new RegExp(a, b).toString() }
 regexBody = $ ('\\' . / [^\/])*
 regexOptions = $ [gimy]*
-string = (string1 / string2) { return eval(text()) }
-string1 = '"' ('\\' (["\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / [^"\\\r\n])* '"'
-string2 = "'" ('\\' (['\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / [^'\\\r\n])* "'"
+simpleString = "'" ('\\' (['\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / [^'\\\r\n])* "'"  { return eval(text()) }
+MultilineStringTemplate = start:start "\"\"" eol content:multilineStringTemplateContent eol end:end
+    { return concatenate(unindent(content)) }
+multilineStringTemplateContent = indent a:(multilineStringTemplateLine / multilineStringTemplateContent)* outdent { return Array.prototype.concat.apply([], a) }
+multilineStringTemplateLine = !indent !outdent a:(stringInterpolation / multilineStringTemplatePart) { return a }
+multilineStringTemplatePart = eol? (!"{{" !eol .)+ { return text() }
+MultilineStringLiteral = start:start "''" eol content:multilineStringLiteralContent eol end:end
+    { return concatenate(unindent(content)) }
+multilineStringLiteralContent = indent a:(multilineStringLiteralLine / multilineStringLiteralContent)* outdent { return Array.prototype.concat.apply([], a) }
+multilineStringLiteralLine = !indent !outdent eol? (!eol .)+ { return text() }
+stringInterpolation = "{{" _ expression:InlineExpression _ "}}" { return expression }
+StringTemplate = '"' a:(stringTemplateChars / stringInterpolation)* '"' { return concatenate(a) }
+stringTemplateChars = stringTemplateChar+ { return eval('"' + text() + '"') }
+stringTemplateChar = ('\\' ["\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / !"{{" [^"\\\r\n]
 
 //  numerics
 number = decimal / hexInteger
@@ -173,7 +274,7 @@ zwnj = "\u200C"
 zwj = "\u200D"
 
 //  reserved words
-reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else
+reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue
 true = "true" !identifierPart { return true }
 false = "false" !identifierPart { return false }
 new = "new" !identifierPart
@@ -197,10 +298,17 @@ in = a:"in" !identifierPart { return a }
 of = a:"of" !identifierPart { return a }
 if = a:"if" !identifierPart { return a }
 else = a:"else" !identifierPart { return a }
+return = a:"return" !identifierPart { return a }
+try = a:"try" !identifierPart { return a }
+catch = a:"catch" !identifierPart { return a }
+finally = a:"finally" !identifierPart { return a }
+throw = a:"throw" !identifierPart { return a }
+break = a:"break" !identifierPart { return a }
+continue = a:"continue" !identifierPart { return a }
 
 //  white space
-indent 'INDENT' = eol _ "{{{{" eol
-outdent 'OUTDENT' = eol? _ "}}}}" eol
+indent 'INDENT' = eol? _ "{{{{"
+outdent 'OUTDENT' = eol? _ "}}}}"
 _ 'space' = " "*
 eol 'end of line' = _ (eof / ("\r\n" / "\r" / "\n")+)
 eof 'end of file' = !.

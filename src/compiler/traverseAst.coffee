@@ -4,9 +4,9 @@ nodes = require './nodes'
 trackVariables = (context, nodes) ->
     scope = context.scope()
     trackVariable = (kind, id, init, sourceNode, shadow) ->
-        if scope.variables[id]?
-            # todo: this needs to be a strongly typed SyntaxError
-            throw new Error "Cannot redefine: " + id
+        # if scope.variables[id]?
+        #     # todo: this needs to be a strongly typed SyntaxError
+        #     throw new Error "Cannot redefine: " + id
         scope.variables[id] =
             kind: kind
             id: id
@@ -39,12 +39,19 @@ exports.traverse = (program, enterCallback, exitCallback) ->
         context.scopeStack ?= []
         context.scope ?= -> @scopeStack[@scopeStack.length - 1]
         context.getVariableInfo ?= (id) -> @scope().variables[id]
+        context.getNewInternalIdentifier ?= (prefix = '_ref') ->
+            i = 1
+            while true
+                check = prefix + (if i is 1 then "" else i)
+                if @getVariableInfo(check) is undefined
+                    return {type:'Identifier',name:check}
         context.addVariable ?= (pattern, init, kind = 'let') ->
+            pattern ?= @getNewInternalIdentifier()
             sourceNode = @scope().sourceNode
             nodeInfo = nodes[sourceNode.type]
             # handle patterns.
             if pattern.name?
-                nodeInfo.addStatement sourceNode,
+                variable =
                     type: "VariableDeclaration"
                     declarations: [{
                         type: "VariableDeclarator"
@@ -52,6 +59,10 @@ exports.traverse = (program, enterCallback, exitCallback) ->
                         init: init
                     }]
                     kind: kind
+                nodeInfo.addStatement sourceNode, variable
+                trackVariables context, [variable]
+            return pattern
+
         if node.type?
             nodeInfo = nodes[node.type]
             if nodeInfo?.newScope
@@ -87,7 +98,7 @@ exports.test = ->
                 var d = 4
                 log(d)
         """
-    expected = ["enter",1,["double"],"Program","enter",2,["double"],"Function","enter",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["foo","a","b","e","f","g","h","double"],"Function","exit",4,["foo","a","b","e","f","g","h","double"],"Function","enter",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",2,["double"],"Function","exit",1,["double"],"Program"]
+    expected = ["enter",1,["double"],"Program","enter",2,["double"],"FunctionExpression","enter",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["foo","a","b","e","f","g","h","double"],"FunctionExpression","exit",4,["foo","a","b","e","f","g","h","double"],"FunctionExpression","enter",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",2,["double"],"FunctionExpression","exit",1,["double"],"Program"]
     actual = []
     enter = (node, context) ->
         keys = (key for key of context.scope().variables)

@@ -1,10 +1,18 @@
 
-ForOfStatement  // ion for in
-    index: Identifier
-ForInStatement  // ion "for of"
-    value: Pattern
-Function
-    bound: true | false
-TypedObjectExpression
-    type: InlineExpression
-    body: BlockStatement
+X   ForOfStatement  // ion for in
+        left: VariableDeclaration can have 2 declarations, second is index
+X   ForInStatement  // ion "for of"
+        left: VariableDeclaration can have 2 declarations, second is value
+    Function
+        +bound: true / false
+
+    ObjectExpression
+        +objectType: Expression
+        properties: property / Statement
+
+    +Property     // compatible with ObjectExpression.properties type
+        key: Literal / Identifier / Expression
+        value: Expression
+        kind: "init"
+        +computed: true / false
+
