@@ -89,11 +89,68 @@ convertObjectExpressionToArrayExpression = (node, context) ->
         node.elements = node.properties.map (x) -> x.expression
         delete node.properties
 
+nodejsModules = (node, context) ->
+    # convert ImportExpression{name} into require(name)
+    if node.type is 'ImportExpression'
+        node.type = 'CallExpression'
+        node.callee =
+            type: 'Identifier'
+            name: 'require'
+        node.arguments = [node.name]
+        delete node.name
+    else if node.type is 'ExportStatement'
+        if node.value.type is 'VariableDeclaration'
+            # variable export
+            context.exports = true
+            # replace this node with the VariableDeclaration
+            context.replace node.value
+            # then add an export statements after this
+            for declarator in node.value.declarations by -1
+                if not declarator.init?
+                    throw new Error "Export variables must have an init value"
+                context.addStatement
+                    type: 'ExpressionStatement'
+                    expression:
+                        type: 'AssignmentExpression'
+                        operator: '='
+                        left:
+                            type: 'MemberExpression'
+                            object:
+                                type: 'Identifier'
+                                name: 'exports'
+                            property: declarator.id
+                        right: declarator.id
+        else
+            # default export
+            console.log 'default------------------- ' + context.exports
+            if context.exports
+                throw new Error "default export must be first"
+            context.replace
+                type: 'ExpressionStatement'
+                expression:
+                    type: 'AssignmentExpression'
+                    operator: '='
+                    left:
+                        type: 'MemberExpression'
+                        object:
+                            type: 'Identifier'
+                            name: 'module'
+                        property:
+                            type: 'Identifier'
+                            name: 'exports'
+                    right:
+                        type: 'AssignmentExpression'
+                        operator: '='
+                        left:
+                            type: 'Identifier'
+                            name: 'exports'
+                        right: node.value
+
 exports.postprocess = (program, options) ->
     steps = [
         [extractForLoopRightVariable, callFunctionBindForFatArrows]
         [createForInLoopValueVariable, convertForInToForLength]
-        [convertObjectExpressionToArrayExpression]
+        [convertObjectExpressionToArrayExpression, nodejsModules]
     ]
     for traversal in steps
         traverse program, (node, context) ->

@@ -213,14 +213,62 @@ tests =
     """:"""
     return '<html>\\n    <head><title>{{ title }}</title></head>\\n    <body>\\n    {{ body }}\\n    </body>\\n</html>';
     """
+    """
+    do -> x
+    """: """
+    (function () {
+        return x;
+    }());
+    """
+    """
+    do (x, y) => x + y
+    """: """
+    (function (x, y) {
+        return x + y;
+    }.bind(this)(x, y));
+    """
+    """
+    const ion = import "ion"
+    """: """
+    const ion = require('ion');
+    """
+    """
+    export
+        secret: 97542
+    """: """
+    module.exports = exports = { secret: 97542 };
+    """
+    """
+    export var x = 1, y = 2
+    """: """
+    let x = 1, y = 2;
+    exports.x = x;
+    exports.y = y;
+    """
+    """
+    export const
+        x = 1
+        y = 2
+        z = 3
+    """: """
+    const x = 1, y = 2, z = 3;
+    exports.x = x;
+    exports.y = y;
+    exports.z = z;
+    """
 
 exports.test = ->
     for input, expected of tests
         if expected is null
             console.log '---------------------------------------------------'
             console.log JSON.stringify index.parse(input), null, '  '
+            console.log '-Postprocessed------------------------------------'
+            console.log JSON.stringify index.compile(input, {generate:false}), null, '  '
             console.log '---------------------------------------------------'
-            console.log index.compile input
+            try
+                console.log index.compile input
+            catch e
+                console.log e.message
         else
             try
                 output = index.compile input

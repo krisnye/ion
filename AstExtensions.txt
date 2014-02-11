@@ -16,3 +16,10 @@ X   ForInStatement  // ion "for of"
         kind: "init"
         +computed: true / false
 
+    +ExportDeclaration
+        name: null / Expression
+        value: Variable / Expression
+
+    +ImportExpression
+        name: Expression
+

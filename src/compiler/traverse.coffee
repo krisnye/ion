@@ -35,10 +35,19 @@ exports.traverse = (graph, enterCallback, exitCallback) ->
                 node = context.current()
                 if node? and typeof node is 'object'
                     context.ancestors.push node
-                    for key, value of node
-                        context.path.push key
-                        traverseNode value
-                        context.path.pop()
+                    if Array.isArray node
+                        index = 0
+                        while index < node.length
+                            value = node[index]
+                            context.path.push index
+                            traverseNode value
+                            context.path.pop()
+                            index++
+                    else
+                        for key, value of node
+                            context.path.push key
+                            traverseNode value
+                            context.path.pop()
                     context.ancestors.pop()
             exitCallback?(node, context)
     traverseNode graph

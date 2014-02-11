@@ -1,5 +1,6 @@
 basicTraverse = require './traverse'
 nodes = require './nodes'
+{addStatement} = require "./astFunctions"
 
 trackVariables = (context, nodes) ->
     scope = context.scope()
@@ -38,6 +39,8 @@ exports.traverse = (program, enterCallback, exitCallback) ->
     ourEnter = (node, context) ->
         context.scopeStack ?= []
         context.scope ?= -> @scopeStack[@scopeStack.length - 1]
+        context.ancestorNodes ?= []
+        context.parentNode ?= -> @ancestorNodes[@ancestorNodes.length - 1]
         context.getVariableInfo ?= (id) -> @scope().variables[id]
         context.getNewInternalIdentifier ?= (prefix = '_ref') ->
             i = 1
@@ -45,6 +48,8 @@ exports.traverse = (program, enterCallback, exitCallback) ->
                 check = prefix + (if i is 1 then "" else i)
                 if @getVariableInfo(check) is undefined
                     return {type:'Identifier',name:check}
+        context.addStatement ?= (statement, offset) ->
+            addStatement @parentNode(), statement, @current(), offset
         context.addVariable ?= (pattern, init, kind = 'let') ->
             pattern ?= @getNewInternalIdentifier()
             sourceNode = @scope().sourceNode
@@ -59,7 +64,7 @@ exports.traverse = (program, enterCallback, exitCallback) ->
                         init: init
                     }]
                     kind: kind
-                nodeInfo.addStatement sourceNode, variable
+                addStatement sourceNode, variable
                 trackVariables context, [variable]
             return pattern
 
@@ -72,9 +77,11 @@ exports.traverse = (program, enterCallback, exitCallback) ->
             if nodeInfo?.getVariables?
                 trackVariables context, nodeInfo.getVariables node
             enterCallback?(node, context)
+            context.ancestorNodes.push node
     ourExit = (node, context) ->
         if node.type?
             nodeInfo = nodes[node.type]
+            context.ancestorNodes.pop()
             exitCallback?(node, context)
             if nodeInfo?.newScope
                 context.scopeStack.pop()
@@ -98,7 +105,7 @@ exports.test = ->
                 var d = 4
                 log(d)
         """
-    expected = ["enter",1,["double"],"Program","enter",2,["double"],"FunctionExpression","enter",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["foo","a","b","e","f","g","h","double"],"FunctionExpression","exit",4,["foo","a","b","e","f","g","h","double"],"FunctionExpression","enter",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",2,["double"],"FunctionExpression","exit",1,["double"],"Program"]
+    expected = ["enter",1,["double"],"Program","enter",2,["double"],"FunctionExpression","enter",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["foo","a","b","e","f","g","h","double"],"FunctionExpression","enter",5,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",5,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["foo","a","b","e","f","g","h","double"],"FunctionExpression","enter",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",2,["double"],"FunctionExpression","exit",1,["double"],"Program"]
     actual = []
     enter = (node, context) ->
         keys = (key for key of context.scope().variables)

@@ -1,7 +1,15 @@
 {
     var common = require("./common");
+    var primitive = {string:true,number:true,boolean:true,function:true}
     function clone(object) {
-        return JSON.parse(JSON.stringify(object));
+        if (object === undefined || object === null || object.constructor === RegExp || primitive[typeof object])
+            return object
+        var copy = Array.isArray(object) ? [] : {}
+        for (key in object) {
+            var value = object[key]
+            copy[key] = clone(value)
+        }
+        return copy
     }
     function node(type, properties, start, end) {
         var node = {type:type}
@@ -98,7 +106,8 @@
 
 Program = start:start body:Statement* end:end { return node("Program", {body:body}, start, end) }
 
-Statement = eol? _ a:(VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement) { return a }
+Statement = eol? _ a:(ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement) { return a }
+ExportStatement = start:start export _ value:(VariableDeclaration / MultilineExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
 ReturnStatement = start:start return _ argument:MultilineExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
 ThrowStatement = start:start throw _ argument:MultilineExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
 BreakStatement = start:start break end:end { return node("BreakStatement", {}, start, end) }
@@ -143,8 +152,11 @@ PropertyDeclaration
     = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:MultilineExpression end:end
     { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
 VariableDeclaration = &(var / const) a:VariableDeclarationKindOptional { return a }
-VariableDeclarationKindOptional = start:start kind:(var / const)? _ declarations:variableDeclaratorList end:end { return node("VariableDeclaration", {declarations:declarations, kind:kind != null ? kind : "let"}, start, end) }
-variableDeclaratorList = head:VariableDeclarator tail:(_ "," _ a:VariableDeclarator {return a})* { return [head].concat(tail) }
+VariableDeclarationKindOptional = start:start kind:(var / const)? _ declarations:variableDeclaratorList end:end
+    { return node("VariableDeclaration", {declarations:declarations, kind:kind != null ? kind : "let"}, start, end) }
+variableDeclaratorList = multilineVariableDeclaratorList / inlineVariableDeclaratorList
+inlineVariableDeclaratorList = head:VariableDeclarator tail:(_ "," _ a:VariableDeclarator {return a})* { return [head].concat(tail) }
+multilineVariableDeclaratorList = indent eol declarations:(_ a:VariableDeclarator eol { return a })+ outdent eol { return declarations }
 VariableDeclarator = start:start pattern:Pattern _ init:variableInitializer? end:end { return node("VariableDeclarator", {id:pattern,init:init}, start, end) }
 variableInitializer = "=" _ a:MultilineExpression { return a }
 Pattern = Identifier / ObjectPattern / ArrayPattern
@@ -185,13 +197,22 @@ arguments = "(" a:argumentList? ")" { return a ? a : [] }
 argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
 NewExpressionWithoutArgs = start:start new _ callee:NewExpressionWithoutArgs end:end { return node("NewExpression", {callee:callee,arguments:[]}, start, end) }
 NewExpressionWithArgs = start:start new _ callee:MemberExpression args:arguments end:end { return node("NewExpression", {callee:callee,arguments:args}, start, end) }
-MemberExpression = start:start head:(PrimaryExpression / FunctionExpression / NewExpressionWithArgs) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
+MemberExpression = start:start head:(PrimaryExpression / DoExpression / ImportExpression / FunctionExpression / NewExpressionWithArgs) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
+ImportExpression = start:start import _ name:InlineExpression end:end { return node('ImportExpression', {name:name}, start, end) }
+DoExpression = start:start do _ f:FunctionExpression end:end
+    {
+        var args = f.params.map(function(x){ return x.name != null ? clone(x) : error("do parameters must be Identifiers") })
+        return node("CallExpression", {callee:f,arguments:args}, start, end)
+    }
 FunctionExpression = start:start params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:functionBody end:end
     {
         if (params == null) params = []
         paramPatterns = params.map(function(x) { return x[0] })
         paramDefaults = params.map(function(x) { return x[1] })
-        return node("FunctionExpression", {id:null, params:paramPatterns, defaults:paramDefaults, body:body, expression:body.type != "BlockStatement", bound:bound}, start, end)
+        // convert expression closures to return statements in a block
+        if (body.type !== "BlockStatement")
+            body = node("BlockStatement", {body:[node("ReturnStatement", {argument:body})]})
+        return node("FunctionExpression", {id:null, params:paramPatterns, defaults:paramDefaults, body:body, bound:bound}, start, end)
     }
 functionBody
     = InlineExpression
@@ -274,7 +295,7 @@ zwnj = "\u200C"
 zwj = "\u200D"
 
 //  reserved words
-reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue
+reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue / do / import / export
 true = "true" !identifierPart { return true }
 false = "false" !identifierPart { return false }
 new = "new" !identifierPart
@@ -305,6 +326,9 @@ finally = a:"finally" !identifierPart { return a }
 throw = a:"throw" !identifierPart { return a }
 break = a:"break" !identifierPart { return a }
 continue = a:"continue" !identifierPart { return a }
+do = a:"do" !identifierPart { return a }
+import = a:"import" !identifierPart { return a }
+export = a:"export" !identifierPart { return a }
 
 //  white space
 indent 'INDENT' = eol? _ "{{{{"
