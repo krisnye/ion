@@ -1,5 +1,6 @@
 {traverse} = require './traverseAst'
-{addStatement} = require "./astFunctions"
+{addStatement} = require './astFunctions'
+nodes = require './nodes'
 
 extractForLoopRightVariable = (node, context) ->
     if node.type is 'ForOfStatement' or node.type is 'ForInStatement' and node.left.declarations.length > 1
@@ -104,22 +105,20 @@ nodejsModules = (node, context) ->
             context.exports = true
             # replace this node with the VariableDeclaration
             context.replace node.value
-            # then add an export statements after this
+            # then make each init also assign to it's export variable.
             for declarator in node.value.declarations by -1
                 if not declarator.init?
                     throw new Error "Export variables must have an init value"
-                context.addStatement
-                    type: 'ExpressionStatement'
-                    expression:
-                        type: 'AssignmentExpression'
-                        operator: '='
-                        left:
-                            type: 'MemberExpression'
-                            object:
-                                type: 'Identifier'
-                                name: 'exports'
-                            property: declarator.id
-                        right: declarator.id
+                declarator.init =
+                    type: 'AssignmentExpression'
+                    operator: '='
+                    left:
+                        type: 'MemberExpression'
+                        object:
+                            type: 'Identifier'
+                            name: 'exports'
+                        property: declarator.id
+                    right: declarator.init
         else
             # default export
             console.log 'default------------------- ' + context.exports
@@ -146,11 +145,59 @@ nodejsModules = (node, context) ->
                             name: 'exports'
                         right: node.value
 
+separateAllVariableDeclarations = (node, context) ->
+    if node.type is 'VariableDeclaration' and context.isParentBlock()
+        while node.declarations.length > 1
+            declaration = node.declarations.pop()
+            context.addStatement
+                type: node.type
+                declarations: [declaration]
+                kind: node.kind
+
+deconstructingAssignments = (node, context) ->
+    if node.type is 'VariableDeclaration' and (context.isParentBlock() or node.type is 'ForOfStatement')
+        createVariables = (pattern, expression) ->
+            console.log '------createVariables ' + JSON.stringify(pattern)
+            if pattern.type is 'Identifier'
+                context.addStatement
+                    type: 'VariableDeclaration'
+                    declarations: [{
+                        type: 'VariableDeclarator'
+                        id: pattern
+                        init: expression
+                    }]
+                    kind: 'let'
+            else if pattern.properties?
+                for {key,value} in pattern.properties by -1
+                    createVariables value,
+                        type: 'MemberExpression'
+                        object: expression
+                        property: key
+                        computed: key.type isnt 'Identifier'
+            else if pattern.elements?
+                for value, index in pattern.elements by -1
+                    createVariables value,
+                        type: 'MemberExpression'
+                        object: expression
+                        property:
+                            type: 'Literal'
+                            value: index
+                        computed: true
+
+            # ObjectPattern or ArrayPattern
+        for declarator in node.declarations when declarator.id.type isnt 'Identifier'
+            # replace pattern with identifier
+            pattern = declarator.id
+            tempId = context.getNewInternalIdentifier()
+            declarator.id = tempId
+            createVariables pattern, tempId
+
 exports.postprocess = (program, options) ->
     steps = [
         [extractForLoopRightVariable, callFunctionBindForFatArrows]
         [createForInLoopValueVariable, convertForInToForLength]
         [convertObjectExpressionToArrayExpression, nodejsModules]
+        [separateAllVariableDeclarations, deconstructingAssignments]
     ]
     for traversal in steps
         traverse program, (node, context) ->

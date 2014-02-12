@@ -41,6 +41,7 @@ exports.traverse = (program, enterCallback, exitCallback) ->
         context.scope ?= -> @scopeStack[@scopeStack.length - 1]
         context.ancestorNodes ?= []
         context.parentNode ?= -> @ancestorNodes[@ancestorNodes.length - 1]
+        context.isParentBlock ?= -> nodes[@parentNode()?.type]?.isBlock ? false
         context.getVariableInfo ?= (id) -> @scope().variables[id]
         context.getNewInternalIdentifier ?= (prefix = '_ref') ->
             i = 1
@@ -55,17 +56,16 @@ exports.traverse = (program, enterCallback, exitCallback) ->
             sourceNode = @scope().sourceNode
             nodeInfo = nodes[sourceNode.type]
             # handle patterns.
-            if pattern.name?
-                variable =
-                    type: "VariableDeclaration"
-                    declarations: [{
-                        type: "VariableDeclarator"
-                        id: pattern
-                        init: init
-                    }]
-                    kind: kind
-                addStatement sourceNode, variable
-                trackVariables context, [variable]
+            variable =
+                type: "VariableDeclaration"
+                declarations: [{
+                    type: "VariableDeclarator"
+                    id: pattern
+                    init: init
+                }]
+                kind: kind
+            addStatement sourceNode, variable
+            trackVariables context, [variable]
             return pattern
 
         if node.type?

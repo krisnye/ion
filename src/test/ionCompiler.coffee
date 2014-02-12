@@ -241,9 +241,8 @@ tests =
     """
     export var x = 1, y = 2
     """: """
-    let x = 1, y = 2;
-    exports.x = x;
-    exports.y = y;
+    let x = exports.x = 1;
+    let y = exports.y = 2;
     """
     """
     export const
@@ -251,10 +250,31 @@ tests =
         y = 2
         z = 3
     """: """
-    const x = 1, y = 2, z = 3;
-    exports.x = x;
-    exports.y = y;
-    exports.z = z;
+    const x = exports.x = 1;
+    const y = exports.y = 2;
+    const z = exports.z = 3;
+    """
+    """
+    var {x,y} = {x:1,y:2}
+    """: """
+    let _ref = {
+            x: 1,
+            y: 2
+        };
+    let x = _ref.x;
+    let y = _ref.y;
+    """
+    """
+    for key, {x:[a,b],y:{c:d}} of points
+        console.log(x, y)
+    """: """
+    for (let key in points) {
+        let _ref = points[key];
+        let a = _ref.x[0];
+        let b = _ref.x[1];
+        let d = _ref.y.c;
+        console.log(x, y);
+    }
     """
 
 exports.test = ->

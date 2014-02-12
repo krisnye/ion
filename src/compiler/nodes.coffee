@@ -6,6 +6,7 @@ getVariablesFromStatements = (statements) ->
 
 module.exports =
     BlockStatement: blockStatement =
+        isBlock: true
         newScope: true
         getVariables: (node) -> getVariablesFromStatements node.body
     Program: blockStatement
