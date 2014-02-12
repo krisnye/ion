@@ -276,6 +276,18 @@ tests =
         console.log(x, y);
     }
     """
+    """
+    for {x:[a,b],y:{c:d}}, index in points
+        console.log(x, y)
+    """: """
+    for (let index = 0; index < points.length; index++) {
+        let _ref = points[index];
+        let a = _ref.x[0];
+        let b = _ref.x[1];
+        let d = _ref.y.c;
+        console.log(x, y);
+    }
+    """
 
 exports.test = ->
     for input, expected of tests

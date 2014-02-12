@@ -121,7 +121,6 @@ nodejsModules = (node, context) ->
                     right: declarator.init
         else
             # default export
-            console.log 'default------------------- ' + context.exports
             if context.exports
                 throw new Error "default export must be first"
             context.replace
@@ -157,7 +156,6 @@ separateAllVariableDeclarations = (node, context) ->
 deconstructingAssignments = (node, context) ->
     if node.type is 'VariableDeclaration' and (context.isParentBlock() or node.type is 'ForOfStatement')
         createVariables = (pattern, expression) ->
-            console.log '------createVariables ' + JSON.stringify(pattern)
             if pattern.type is 'Identifier'
                 context.addStatement
                     type: 'VariableDeclaration'
