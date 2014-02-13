@@ -7,7 +7,7 @@ tests =
                 {
                     "type": "ExpressionStatement",
                     "expression": {
-                        "type": "BinaryExpression",
+                        "type": "AssignmentExpression",
                         "operator": "=",
                         "left": {
                             "type": "ObjectExpression",

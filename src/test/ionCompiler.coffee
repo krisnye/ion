@@ -53,8 +53,9 @@ tests =
                 'b',
                 'c'
             ];
-        for (let index = 0; index < _ref.length; index++) {
-            let name = _ref[index];
+        for (let _i = 0; _i < _ref.length; _i++) {
+            let index = _i;
+            let name = _ref[_i];
             console.log(name);
         }
     }
@@ -280,13 +281,65 @@ tests =
     for {x:[a,b],y:{c:d}}, index in points
         console.log(x, y)
     """: """
-    for (let index = 0; index < points.length; index++) {
-        let _ref = points[index];
+    for (let _i = 0; _i < points.length; _i++) {
+        let index = _i;
+        let _ref = points[_i];
         let a = _ref.x[0];
         let b = _ref.x[1];
         let d = _ref.y.c;
         console.log(x, y);
     }
+    """
+    """
+    foo ? bar
+    """: """
+    foo != null ? foo : bar;
+    """
+    """
+    foo ?? bar
+    """: """
+    foo != void 0 ? foo : bar;
+    """
+    """
+    x ?= y
+    """: """
+    x = x != null ? x : y;
+    """
+    """
+    x ??= y
+    """: """
+    x = x != void 0 ? x : y;
+    """
+    """
+    for const x, index in foo
+        log(x)
+    """: """
+    for (let _i = 0; _i < foo.length; _i++) {
+        const index = _i;
+        const x = foo[_i];
+        log(x);
+    }
+    """
+    """
+    [x,y] = [y,x]
+    """: """
+    const _ref = [
+            y,
+            x
+        ];
+    x = _ref[0];
+    y = _ref[1];
+    """
+    """
+    a?.b
+    """: """
+    a != null ? a.b : void 0;
+    """
+    """
+    a?.b.c?.d
+    """: """
+    let _vol;
+    a != null ? (_vol = a.b.c) != null ? _vol.d : void 0 : void 0;
     """
 
 exports.test = ->

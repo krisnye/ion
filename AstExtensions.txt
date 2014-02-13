@@ -6,6 +6,9 @@ X   ForInStatement  // ion "for of"
     Function
         +bound: true / false
 
+    MemberExpression
+        +existential: true / undefined
+
     ObjectExpression
         +objectType: Expression
         properties: property / Statement

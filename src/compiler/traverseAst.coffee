@@ -4,19 +4,21 @@ nodes = require './nodes'
 
 trackVariables = (context, nodes) ->
     scope = context.scope()
-    trackVariable = (kind, id, init, sourceNode, shadow) ->
+    trackVariable = (kind, name, init, sourceNode, shadow) ->
         # if scope.variables[id]?
         #     # todo: this needs to be a strongly typed SyntaxError
         #     throw new Error "Cannot redefine: " + id
-        scope.variables[id] =
+        scope.variables[name] =
             kind: kind
-            id: id
+            id:
+                type: 'Identifier'
+                name: name
             init: init
             sourceNode: sourceNode
 
     for node in nodes
         if node.type is "Identifier"
-            trackVariable "let", node.name, null, node
+            trackVariable "let", node, null, node
         if node.type is "VariableDeclaration"
             for declarator in node.declarations
                 idpattern = declarator.id
@@ -41,33 +43,52 @@ exports.traverse = (program, enterCallback, exitCallback) ->
         context.scope ?= -> @scopeStack[@scopeStack.length - 1]
         context.ancestorNodes ?= []
         context.parentNode ?= -> @ancestorNodes[@ancestorNodes.length - 1]
+        context.getAncestorBlock ?= ->
+            for ancestor in @ancestorNodes by -1
+                if nodes[ancestor.type]?.isBlock
+                    return ancestor
+            return undefined
         context.isParentBlock ?= -> nodes[@parentNode()?.type]?.isBlock ? false
         context.getVariableInfo ?= (id) -> @scope().variables[id]
         context.getNewInternalIdentifier ?= (prefix = '_ref') ->
-            i = 1
-            while true
+            i = 0
+            while ++i
                 check = prefix + (if i is 1 then "" else i)
                 if @getVariableInfo(check) is undefined
                     return {type:'Identifier',name:check}
-        context.addStatement ?= (statement, offset) ->
-            addStatement @parentNode(), statement, @current(), offset
-        context.addVariable ?= (pattern, init, kind = 'let') ->
-            pattern ?= @getNewInternalIdentifier()
-            sourceNode = @scope().sourceNode
-            nodeInfo = nodes[sourceNode.type]
+        context.getAncestorChildOf ?= (ancestor) ->
+            index = @ancestorNodes.indexOf ancestor
+            return if index >= 0 then @ancestorNodes[index + 1] ? @current() else undefined
+        context.getVolatileVariableId ?= ->
+            name = '_vol'
+            return @getVariableInfo(name)?.id ? @addVariable({id:name,offset:Number.MIN_VALUE})
+        context.addStatement ?= (statement, offset, addToNode) ->
+            addToNode ?= @scope().sourceNode
+            if statement.type is 'VariableDeclaration'
+                trackVariables context, [statement]
+            addStatement addToNode, statement, @getAncestorChildOf(addToNode), offset
+        context.addVariable ?= (options) ->
+            variable = @getVariable options
+            @addStatement variable, options.offset
+            return variable.declarations[0].id
+        context.getVariable ?= (options) ->
+            options ?= {}
+            if typeof options.id is 'string'
+                options.id =
+                    type: 'Identifier'
+                    name: options.id
+            options.id ?= @getNewInternalIdentifier()
+            options.kind ?= 'let'
             # handle patterns.
             variable =
                 type: "VariableDeclaration"
                 declarations: [{
                     type: "VariableDeclarator"
-                    id: pattern
-                    init: init
+                    id: options.id
+                    init: options.init
                 }]
-                kind: kind
-            addStatement sourceNode, variable
-            trackVariables context, [variable]
-            return pattern
-
+                kind: options.kind
+            return variable
         if node.type?
             nodeInfo = nodes[node.type]
             if nodeInfo?.newScope

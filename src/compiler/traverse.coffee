@@ -14,7 +14,11 @@ exports.traverse = (graph, enterCallback, exitCallback) ->
             parent = @parent()
             if parent?
                 if value is undefined
-                    delete parent[@key()]
+                    if Array.isArray parent
+                        index = parent.indexOf value
+                        parent.splice index, 1
+                    else
+                        delete parent[@key()]
                 else
                     parent[@key()] = value
             else

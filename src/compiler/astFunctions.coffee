@@ -14,3 +14,28 @@ exports.addStatement = (node, statement, index, offset) ->
         index = body.indexOf(index) + (offset ? 1)
     index = Math.max(0, Math.min(index, body.length))
     body.splice index, 0, statement
+
+# traverses the pattern and finds every destructuring assignment
+# the first callback argument is the identifier to assign to
+# the second callback argument is the expression used to extract the value
+exports.forEachDestructuringAssignment = forEachDestructuringAssignment = (pattern, expression, callback) ->
+    if pattern.type is 'Identifier'
+        callback pattern, expression
+    else if pattern.properties?
+        for {key,value} in pattern.properties by -1
+            forEachDestructuringAssignment value, {
+                type: 'MemberExpression'
+                object: expression
+                property: key
+                computed: key.type isnt 'Identifier'
+                }, callback
+    else if pattern.elements?
+        for value, index in pattern.elements by -1
+            forEachDestructuringAssignment value, {
+                type: 'MemberExpression'
+                object: expression
+                property:
+                    type: 'Literal'
+                    value: index
+                computed: true
+                }, callback

@@ -167,9 +167,12 @@ ArrayPattern = pattern:ArrayLiteral { pattern.type = "ArrayPattern"; return patt
 //  We use javascript terms where available. http://www.ecma-international.org/ecma-262/5.1/#sec-A.3
 MultilineExpression = MultilineStringTemplate / MultilineStringLiteral / MultilineObjectExpression / InlineExpression
 InlineExpression = AssignmentExpression
-AssignmentExpression = start:start left:ConditionalExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=") _ right:InlineExpression end:end { return binaryExpression(op, left, right, start, end) }
-    / ConditionalExpression
-ConditionalExpression = start:start test:LogicalOrExpression _ "?" _ consequent:ConditionalExpression _ ":" _ alternate:ConditionalExpression end:end { return node('ConditionalExpression', {test:test,consequent:consequent,alternate:alternate}, start, end) }
+AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=") _ right:InlineExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
+    / ConditionalOrDefaultExpression
+ConditionalOrDefaultExpression
+    = start:start test:LogicalOrExpression _ "?" _ consequent:ConditionalOrDefaultExpression _ ":" _ alternate:ConditionalOrDefaultExpression end:end
+        { return node('ConditionalExpression', {test:test,consequent:consequent,alternate:alternate}, start, end) }
+    / start:start head:LogicalOrExpression tail:( _ ("??" / "?") _ LogicalOrExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
     / LogicalOrExpression
 LogicalOrExpression = start:start head:LogicalAndExpression tail:( _ (or) _ LogicalAndExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
 LogicalAndExpression = start:start head:BitwiseOrExpression tail:( _ (and) _ BitwiseOrExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
@@ -191,8 +194,8 @@ UpdateExpression
 LeftHandSideExpression = CallExpression / NewExpressionWithoutArgs
 CallExpression = start:start head:MemberExpression tail:(tailCall / tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 tailCall   = _ args:arguments end:end { return ["callee", node("CallExpression", {callee:null, arguments:args}), end] }
-tailMember = _ "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property}), end] }
-           / _ "." _ property:Identifier end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property}), end] }
+tailMember = _ existential:("?" {return true})? "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] }
+           / _ existential:("?" {return true})? "." _ property:Identifier end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] }
 arguments = "(" a:argumentList? ")" { return a ? a : [] }
 argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
 NewExpressionWithoutArgs = start:start new _ callee:NewExpressionWithoutArgs end:end { return node("NewExpression", {callee:callee,arguments:[]}, start, end) }
