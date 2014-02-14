@@ -59,8 +59,7 @@ exports.traverse = (program, enterCallback, exitCallback) ->
         context.getAncestorChildOf ?= (ancestor) ->
             index = @ancestorNodes.indexOf ancestor
             return if index >= 0 then @ancestorNodes[index + 1] ? @current() else undefined
-        context.getVolatileVariableId ?= ->
-            name = '_vol'
+        context.getSharedVariableId ?= (name) ->
             return @getVariableInfo(name)?.id ? @addVariable({id:name,offset:Number.MIN_VALUE})
         context.addStatement ?= (statement, offset, addToNode) ->
             addToNode ?= @scope().sourceNode

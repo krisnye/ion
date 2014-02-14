@@ -244,61 +244,33 @@ defaultAssignmentsToDefaultOperators = (node, context) ->
             right: node.right
         node.operator = '='
 
-existentialOperator = (node, context) ->
+existentialExpression = (node, context) ->
+    # this could be more efficient by caching the left values
+    # especially when the left side involves existential CallExpressions
     # should only apply within an imperative context
-    if node.type is 'MemberExpression'
+    if node.type is 'MemberExpression' or node.type is 'CallExpression'
         # search descendant objects for deepest existential child
         getExistentialDescendantObject = (check) ->
             result = null
-            if check.type is 'MemberExpression'
-                result = getExistentialDescendantObject check.object
+            if check.type is 'MemberExpression' or check.type is 'CallExpression'
+                result = getExistentialDescendantObject check.object ? check.callee
                 if check.existential
                     result ?= check
             return result
         # create temp ref variable
-        # tempId = context.addVariable({offset:Number.MIN_VALUE})
-        # a?.b --> (temp = a) != null ? temp.b : undefined
-        existentialChild = getExistentialDescendantObject node
+        # a?.b --> a != null ? a.b : undefined
+        existentialChild  = getExistentialDescendantObject node
         if existentialChild?
-            existentialChildObject = existentialChild.object
-            tempId = null
-            left = null
-            if existentialChildObject.type isnt 'Identifier'
-                # if the left side isnt a simple identifier
-                # then we copy it's value to a temp variable
-                # and use it as the object after the check
-                tempId = context.getVolatileVariableId()
-                existentialChild.object = tempId
-                left = 
-                    type: 'AssignmentExpression'
-                    operator: '='
-                    left: tempId
-                    right: existentialChildObject
-            else
-                left = existentialChildObject
+            existentialChildObject = existentialChild.object ? existentialChild.callee
             delete existentialChild.existential
             context.replace
                 type: 'ConditionalExpression'
                 test:
                     type: 'BinaryExpression'
                     operator: '!='
-                    left: left
+                    left: existentialChildObject
                     right: nullExpression
                 consequent: node
-                alternate: undefinedExpression
-        else if node.existential is true
-            context.replace
-                type: 'ConditionalExpression'
-                test:
-                    type: 'BinaryExpression'
-                    operator: '!='
-                    left: node.object
-                    right: nullExpression
-                consequent:
-                    type: 'MemberExpression'
-                    object: node.object
-                    property: node.property
-                    computed: false
                 alternate: undefinedExpression
 
 exports.postprocess = (program, options) ->
@@ -306,7 +278,7 @@ exports.postprocess = (program, options) ->
         [extractForLoopRightVariable, callFunctionBindForFatArrows, defaultAssignmentsToDefaultOperators]
         [createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules]
         [separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals]
-        [existentialOperator]
+        [existentialExpression]
     ]
     for traversal in steps
         traverse program, (node, context) ->

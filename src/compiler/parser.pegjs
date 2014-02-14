@@ -193,7 +193,7 @@ UpdateExpression
     / LeftHandSideExpression
 LeftHandSideExpression = CallExpression / NewExpressionWithoutArgs
 CallExpression = start:start head:MemberExpression tail:(tailCall / tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
-tailCall   = _ args:arguments end:end { return ["callee", node("CallExpression", {callee:null, arguments:args}), end] }
+tailCall   = _ existential:("?" {return true})? args:arguments end:end { return ["callee", node("CallExpression", {callee:null, arguments:args, existential:existential || undefined}), end] }
 tailMember = _ existential:("?" {return true})? "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] }
            / _ existential:("?" {return true})? "." _ property:Identifier end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] }
 arguments = "(" a:argumentList? ")" { return a ? a : [] }

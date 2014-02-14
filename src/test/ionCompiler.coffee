@@ -338,8 +338,22 @@ tests =
     """
     a?.b.c?.d
     """: """
-    let _vol;
-    a != null ? (_vol = a.b.c) != null ? _vol.d : void 0 : void 0;
+    a != null ? a.b.c != null ? a.b.c.d : void 0 : void 0;
+    """
+    """
+    a?()
+    """: """
+    a != null ? a() : void 0;
+    """
+    """
+    a?.b?.c?()
+    """: """
+    a != null ? a.b != null ? a.b.c != null ? a.b.c() : void 0 : void 0 : void 0;
+    """
+    """
+    a?.b().c?()
+    """: """
+    a != null ? a.b().c != null ? a.b().c() : void 0 : void 0;
     """
 
 exports.test = ->
