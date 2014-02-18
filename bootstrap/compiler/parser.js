@@ -203,7 +203,7 @@
         peg$c155 = function(start, value, end) { return node('Literal', {value:value}, start, end) },
         peg$c156 = function(start, end) { return node('UnaryExpression', {operator:'void', prefix:true, argument:node('Literal', {value:0}, start, end)}, start, end) },
         peg$c157 = function() { return {line:line(),column:column()-1} },
-        peg$c158 = function(a, b) { return new RegExp(a, b).toString() },
+        peg$c158 = function(a, b) { return new RegExp(a, b) },
         peg$c159 = "\\",
         peg$c160 = { type: "literal", value: "\\", description: "\"\\\\\"" },
         peg$c161 = { type: "any", description: "any character" },

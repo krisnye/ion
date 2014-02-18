@@ -257,7 +257,7 @@ end = start
 
 //  primitives
 boolean = true / false
-regex = '/' a:regexBody '/' b:regexOptions { return new RegExp(a, b).toString() }
+regex = '/' a:regexBody '/' b:regexOptions { return new RegExp(a, b) }
 regexBody = $ ('\\' . / [^\/])*
 regexOptions = $ [gimy]*
 simpleString = "'" ('\\' (['\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / [^'\\\r\n])* "'"  { return eval(text()) }
@@ -339,5 +339,7 @@ export = a:"export" !identifierPart { return a }
 indent 'INDENT' = eol? _ "{{{{"
 outdent 'OUTDENT' = eol? _ "}}}}"
 _ 'space' = " "*
-eol 'end of line' = _ (eof / ("\r\n" / "\r" / "\n")+)
+
+comment = _ '#' (!"\n" .)+
+eol 'end of line' = _ comment? (eof / ("\r"? "\n" comment?)+)
 eof 'end of file' = !.

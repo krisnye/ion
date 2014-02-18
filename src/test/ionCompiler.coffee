@@ -438,9 +438,11 @@ tests =
     """
     """
     input:
+        # ignore this comment
         x: 10
         y: 20
         z:
+            # also ignore this one
             a: 1
             b: 2
         w: Point
@@ -455,6 +457,13 @@ tests =
     input.w = new Point();
     input.w.x = 0;
     input.w.y = 0;
+    """
+    """
+    # also test comments
+    var regex = /foo/
+    """: """
+    'use strict';
+    let regex = /foo/;
     """
 
 exports.test = ->
@@ -480,4 +489,5 @@ exports.test = ->
                 console.log '-Error----------------------------------------------'
                 console.log JSON.stringify e
                 throw e
+
     return
