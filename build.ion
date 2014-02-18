@@ -3,21 +3,45 @@ Read the package.json
 
     package = JSON.parse $getFile("package.json").read()
     Directory = require 'ionold/builder/Directory'
-
-Use the ModuleBuilder template
-
-    require "ionold/builder/ModuleBuilder"
-        name: package.name
-        input: package.directories.src
-        output: package.directories.lib
-        test: true
-
+    name = package.name
     input = new Directory(package.directories.src)
     output = new Directory(package.directories.lib)
     builder = require 'ionold/builder'
     newCompiler = require './bootstrap'
 
-    for path, file of input.search('.ionlang')
+Compile coffeescript
+
+    for key, source of input.search(".coffee")
+        var target = output.getFile(builder.changeExtension(key, ".js"))
+        var moduleId = builder.getModuleId(name, key)
+        [target.path]: builder.compileCoffeeScript(source, moduleId)
+
+Compile any pegjs grammars
+
+    for key, source of input.search(".pegjs")
+        var target = output.getFile(builder.changeExtension(key, ".js"))
+        var moduleId = builder.getModuleId(name, key)
+        [target.path]: builder.compilePegjs(source, moduleId)
+
+Compile ion files
+
+    for path, file of input.search('.ion')
         target = output.getFile(builder.changeExtension(path, ".js"))
-        console.log path + ' ' + file.modified
         [target.path]: newCompiler.compile file.read()
+
+Write a manifest.json file listing all of our modules with require.js at the top
+
+    outputFiles = output.search(".js")
+    top = [key for key of outputFiles if key.endsWith 'require.js']
+    sortedFiles = top.concat [key for key of outputFiles if not builder.isPrivate(key) and top.indexOf(key) < 0]
+    manifest =
+        modified: (outputFiles.*.modified).max()
+        files: sortedFiles.map(builder.normalizePath)
+    manifestFile = output.getFile "manifest.json"
+    if sortedFiles.length > 0
+        [manifestFile]: JSON.stringify manifest, null, '    '
+
+Run tests on all of our output modules
+
+    builder.runTests.debounce(100).throttle(1000) manifestFile, manifestFile.modified
+

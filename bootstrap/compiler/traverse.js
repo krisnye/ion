@@ -46,7 +46,7 @@
     }
   };
   traverseNode = function(node) {
-    var index, key, value;
+    var index, key, newNode, value;
     if ((node != null) && typeof node === 'object') {
       if (typeof enterCallback === "function") {
         enterCallback(node, context);
@@ -54,7 +54,18 @@
       if (skip) {
         skip = false;
       } else {
-        node = context.current();
+        newNode = context.current();
+        if (newNode !== node) {
+          if (typeof exitCallback === "function") {
+            exitCallback(node, context);
+          }
+          node = newNode;
+          if (node != null) {
+            if (typeof enterCallback === "function") {
+              enterCallback(node, context);
+            }
+          }
+        }
         if ((node != null) && typeof node === 'object') {
           context.ancestors.push(node);
           if (Array.isArray(node)) {
@@ -77,7 +88,9 @@
           context.ancestors.pop();
         }
       }
-      return typeof exitCallback === "function" ? exitCallback(node, context) : void 0;
+      if (node != null) {
+        return typeof exitCallback === "function" ? exitCallback(node, context) : void 0;
+      }
     }
   };
   traverseNode(graph);
@@ -85,7 +98,7 @@
 };
 
 exports.test = function() {
-  var expected, graph, result;
+  var graph;
   graph = {
     id: 'root',
     alpha: 1,
@@ -106,30 +119,6 @@ exports.test = function() {
     return context.replace(2);
   })) {
     throw new Error("traverse should have returned 2");
-  }
-  result = [];
-  exports.traverse(graph, function(node, context) {
-    var _ref;
-    result.push(node.id);
-    result.push(context.key());
-    result.push((_ref = context.parent()) != null ? _ref.id : void 0);
-    if (node.id === 'beta') {
-      return context.replace({
-        id: 'foo',
-        bar: {
-          id: 'baz',
-          skipMe: {
-            value: 1
-          }
-        }
-      });
-    } else if (node.id === 'baz') {
-      return context.skip();
-    }
-  });
-  expected = ["root", void 0, void 0, "beta", "beta", "root", "baz", "bar", "foo", "echo", "echo", "root"];
-  if (JSON.stringify(result) !== JSON.stringify(expected)) {
-    throw new Error("" + result + " != " + expected);
   }
 };
 

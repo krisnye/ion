@@ -1,13 +1,14 @@
-(function(){var _ion_index_ = function(module,exports,require){exports.compile = require('./compiler').compile;
-
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('ion/index',_ion_index_);
-    else
-      _ion_index_.call(this, module, exports, require);
-  }
-  else {
-    _ion_index_.call(this);
-  }
-}).call(this)
+'use strict';
+const compile = exports.compile = require('./compiler').compile;
+const create = exports.create = function (type, properties) {
+        if (typeof type === 'function')
+            instance = new type();
+        else
+            instance = type;
+        if (instance != null && properties != null)
+            for (let key in properties) {
+                let value = properties[key];
+                instance[key] = value;
+            }
+        return instance;
+    };

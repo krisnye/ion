@@ -409,6 +409,16 @@ tests =
     s != null;
     """
     """
+    origin = Point
+        x: 0
+        y: 0
+    """: """
+    'use strict';
+    origin = new Point();
+    origin.x = 0;
+    origin.y = 0;
+    """
+    """
     origin = Line
         a: Point
             x: 0
@@ -418,16 +428,13 @@ tests =
             y: 20
     """: """
     'use strict';
-    let _ref = new Line();
-    let _ref2 = new Point();
-    _ref2.x = 0;
-    _ref2.y = 0;
-    _ref.a = _ref2;
-    let _ref3 = new Point();
-    _ref3.x = 10;
-    _ref3.y = 20;
-    _ref.b = _ref3;
-    origin = _ref;
+    origin = new Line();
+    origin.a = new Point();
+    origin.a.x = 0;
+    origin.a.y = 0;
+    origin.b = new Point();
+    origin.b.x = 10;
+    origin.b.y = 20;
     """
     """
     input:
@@ -445,10 +452,9 @@ tests =
     input.y = 20;
     input.z.a = 1;
     input.z.b = 2;
-    let _ref = new Point();
-    _ref.x = 0;
-    _ref.y = 0;
-    input.w = _ref;
+    input.w = new Point();
+    input.w.x = 0;
+    input.w.y = 0;
     """
 
 exports.test = ->

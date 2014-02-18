@@ -192,16 +192,15 @@ UpdateExpression
     / start:start _ arg:LeftHandSideExpression op:("++" / "--") end:end { return node('UpdateExpression', {operator:op, argument:arg, prefix:false}, start, end) }
     / start:start _ arg:LeftHandSideExpression op:("?") !"." end:end { return node('UnaryExpression', {operator:op, argument:arg}, start, end) }
     / LeftHandSideExpression
-LeftHandSideExpression = CallExpression / NewExpressionWithoutArgs
+LeftHandSideExpression = CallExpression
 CallExpression = start:start head:MemberExpression tail:(tailCall / tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 tailCall   = _ existential:("?" {return true})? args:arguments end:end { return ["callee", node("CallExpression", {callee:null, arguments:args, existential:existential || undefined}), end] }
 tailMember = _ existential:("?" {return true})? "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] }
            / _ existential:("?" {return true})? "." _ property:Identifier end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] }
 arguments = "(" a:argumentList? ")" { return a ? a : [] }
 argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
-NewExpressionWithoutArgs = start:start new _ callee:NewExpressionWithoutArgs end:end { return node("NewExpression", {callee:callee,arguments:[]}, start, end) }
-NewExpressionWithArgs = start:start new _ callee:MemberExpression args:arguments end:end { return node("NewExpression", {callee:callee,arguments:args}, start, end) }
-MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpressionWithArgs / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
+NewExpression = start:start new _ callee:MemberExpression args:arguments? end:end { return node("NewExpression", {callee:callee,arguments:args || []}, start, end) }
+MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 ImportExpression = start:start import _ name:InlineExpression end:end { return node('ImportExpression', {name:name}, start, end) }
 DoExpression = start:start do _ f:FunctionExpression end:end
     {

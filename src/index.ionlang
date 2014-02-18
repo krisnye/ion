@@ -1,8 +1,0 @@
-
-export const
-    compile = require('./compiler').compile
-    setProperties = (object, properties) ->
-        if object? and properties?
-            for key, value of properties
-                object[key] = value
-        return object

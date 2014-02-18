@@ -41,7 +41,10 @@ tests = {
   "a?.b?.c?()": "'use strict';\na != null ? a.b != null ? a.b.c != null ? a.b.c() : void 0 : void 0 : void 0;",
   "a?.b().c?()": "'use strict';\na != null ? a.b().c != null ? a.b().c() : void 0 : void 0;",
   "(x) -> 2": "'use strict';\n(function (x) {\n    return 2;\n});",
-  "s?": "'use strict';\ns != null;"
+  "s?": "'use strict';\ns != null;",
+  "origin = Point\n    x: 0\n    y: 0": "'use strict';\norigin = new Point();\norigin.x = 0;\norigin.y = 0;",
+  "origin = Line\n    a: Point\n        x: 0\n        y: 0\n    b: Point\n        x: 10\n        y: 20": "'use strict';\norigin = new Line();\norigin.a = new Point();\norigin.a.x = 0;\norigin.a.y = 0;\norigin.b = new Point();\norigin.b.x = 10;\norigin.b.y = 20;",
+  "input:\n    x: 10\n    y: 20\n    z:\n        a: 1\n        b: 2\n    w: Point\n        x: 0\n        y: 0": "'use strict';\ninput.x = 10;\ninput.y = 20;\ninput.z.a = 1;\ninput.z.b = 2;\ninput.w = new Point();\ninput.w.x = 0;\ninput.w.y = 0;"
 };
 
 exports.test = function() {

@@ -302,11 +302,20 @@ typedObjectExpressions = (node, context) ->
                 type: 'NewExpression'
                 callee: node.objectType
                 arguments: []
-        tempId = context.addVariable
-            offset: 0
-            init: value
+
+        parentNode = context.parentNode()
+        if parentNode.type is 'AssignmentExpression'
+            objectId = parentNode.left
+            context.replace value
+        else
+            objectId = context.addVariable
+                offset: 0
+                init: value
+            # replace this node with a reference to the temp id
+            context.replace objectId
+
         delete node.objectType
-        for {key,value} in node.properties
+        for {key,value} in node.properties by -1
             context.addStatement {
                 type: 'ExpressionStatement'
                 expression:
@@ -314,12 +323,10 @@ typedObjectExpressions = (node, context) ->
                     operator: '='
                     left:
                         type: 'MemberExpression'
-                        object: tempId
+                        object: objectId
                         property: key
                     right: value
-                }, 0
-        # finally, replace this node with a reference to the temp id
-        context.replace tempId
+                }, 1
 
 propertyStatements = (node, context) ->
     parent = context.parentNode()

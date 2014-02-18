@@ -1,0 +1,8 @@
+
+export const
+    create = (type, properties) ->
+        var instance = typeof type is 'function' ? new type : type
+        if instance? and properties?
+            for key, value of properties
+                instance[key] = value
+        return instance

@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrict, basicTraverse, callFunctionBindForFatArrows, convertForInToForLength, convertObjectExpressionToArrayExpression, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, existentialExpression, extractForLoopRightVariable, forEachDestructuringAssignment, nodejsModules, nodes, nullExpression, separateAllVariableDeclarations, traverse, undefinedExpression, _ref;
+(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrict, basicTraverse, callFunctionBindForFatArrows, convertForInToForLength, convertObjectExpressionToArrayExpression, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, existentialExpression, extractForLoopRightVariable, forEachDestructuringAssignment, nodejsModules, nodes, nullExpression, propertyStatements, separateAllVariableDeclarations, traverse, typedObjectExpressions, undefinedExpression, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -408,9 +408,99 @@ addUseStrict = function(node, context) {
   }
 };
 
+typedObjectExpressions = function(node, context) {
+  var key, objectId, parentNode, value, _i, _ref1, _ref2, _results;
+  if (node.type === 'ObjectExpression' && (node.objectType != null)) {
+    if (node.objectType.type === 'ObjectExpression' && node.objectType.properties.length === 0) {
+      delete node.objectType;
+      return;
+    }
+    if (node.objectType.type === 'ArrayExpression' || node.objectType.type === 'NewExpression') {
+      value = node.objectType;
+    } else {
+      value = {
+        type: 'NewExpression',
+        callee: node.objectType,
+        "arguments": []
+      };
+    }
+    parentNode = context.parentNode();
+    if (parentNode.type === 'AssignmentExpression') {
+      objectId = parentNode.left;
+      context.replace(value);
+    } else {
+      objectId = context.addVariable({
+        offset: 0,
+        init: value
+      });
+      context.replace(objectId);
+    }
+    delete node.objectType;
+    _ref1 = node.properties;
+    _results = [];
+    for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
+      _ref2 = _ref1[_i], key = _ref2.key, value = _ref2.value;
+      _results.push(context.addStatement({
+        type: 'ExpressionStatement',
+        expression: {
+          type: 'AssignmentExpression',
+          operator: '=',
+          left: {
+            type: 'MemberExpression',
+            object: objectId,
+            property: key
+          },
+          right: value
+        }
+      }, 1));
+    }
+    return _results;
+  }
+};
+
+propertyStatements = function(node, context) {
+  var createAssignments, parent;
+  parent = context.parentNode();
+  if (node.type === 'Property' && !(parent.type === 'ObjectExpression' || parent.type === 'ObjectPattern')) {
+    if (node.objectType != null) {
+      throw new Error("Cannot use a typed object on a property declaration statement");
+    }
+    createAssignments = function(path, value) {
+      var newPath, property, _i, _ref1, _results;
+      if (value.type === 'ObjectExpression' && (value.objectType == null)) {
+        _ref1 = value.properties;
+        _results = [];
+        for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
+          property = _ref1[_i];
+          newPath = {
+            type: 'MemberExpression',
+            object: path,
+            property: property.key,
+            computed: property.key.type !== 'Identifier'
+          };
+          _results.push(createAssignments(newPath, property.value));
+        }
+        return _results;
+      } else {
+        return context.addStatement({
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            operator: '=',
+            left: path,
+            right: value
+          }
+        }, 0);
+      }
+    };
+    createAssignments(node.key, node.value);
+    return context.remove();
+  }
+};
+
 exports.postprocess = function(program, options) {
   var steps, traversal, _i, _len;
-  steps = [[extractForLoopRightVariable, callFunctionBindForFatArrows, defaultAssignmentsToDefaultOperators], [createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules], [separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals], [existentialExpression, addUseStrict]];
+  steps = [[extractForLoopRightVariable, callFunctionBindForFatArrows, defaultAssignmentsToDefaultOperators], [createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules], [propertyStatements, separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals], [existentialExpression, addUseStrict, typedObjectExpressions]];
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
     traverse(program, function(node, context) {
