@@ -112,3 +112,4 @@ exports.test = ->
         throw new Error "Preprocessor result not expected result."
     if JSON.stringify(sourceMapping) != '{"0":0,"1":3,"2":4,"3":5,"4":5,"5":6,"6":7,"7":8,"8":8,"9":9,"10":9,"11":10,"12":11,"13":11,"14":12,"15":13,"16":13,"17":14,"18":15,"19":16,"20":17,"21":17,"22":18,"23":18,"24":19,"25":19,"columnOffset":4}'
         throw new Error "Unexpected line mapping: " + JSON.stringify sourceMapping
+

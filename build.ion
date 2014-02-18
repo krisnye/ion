@@ -2,11 +2,22 @@
 Read the package.json
 
     package = JSON.parse $getFile("package.json").read()
+    Directory = require 'ionold/builder/Directory'
 
 Use the ModuleBuilder template
 
-    require "ion/builder/ModuleBuilder"
+    require "ionold/builder/ModuleBuilder"
         name: package.name
         input: package.directories.src
         output: package.directories.lib
         test: true
+
+    input = new Directory(package.directories.src)
+    output = new Directory(package.directories.lib)
+    builder = require 'ionold/builder'
+    newCompiler = require './bootstrap'
+
+    for path, file of input.search('.ionlang')
+        target = output.getFile(builder.changeExtension(path, ".js"))
+        console.log path + ' ' + file.modified
+        [target.path]: newCompiler.compile file.read()

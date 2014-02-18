@@ -1,11 +1,15 @@
 index = require '../compiler'
 
 tests =
-    "var x = 10": "let x = 10;"
+    "var x = 10": """
+    'use strict';
+    let x = 10;
+    """
     """
     for name, value of foo
         console.log(name + value)
     """: """
+    'use strict';
     for (let name in foo) {
         let value = foo[name];
         console.log(name + value);
@@ -15,6 +19,7 @@ tests =
     for var name, value of {a:1,b:2,c:3}
         console.log(name + value)
     """: """
+    'use strict';
     {
         let _ref = {
                 a: 1,
@@ -31,6 +36,7 @@ tests =
     for var name in ["a","b","c"]
         console.log(name)
     """: """
+    'use strict';
     {
         let _ref = [
                 'a',
@@ -47,6 +53,7 @@ tests =
     for name, index in ["a","b","c"]
         console.log(name)
     """: """
+    'use strict';
     {
         let _ref = [
                 'a',
@@ -66,7 +73,8 @@ tests =
         y: 2
         foo:
             z: 3
-    """:"""
+    """: """
+    'use strict';
     let object = {
             x: 1,
             y: 2,
@@ -78,7 +86,8 @@ tests =
         1
         2
         3
-    """:"""
+    """: """
+    'use strict';
     let array = [
             1,
             2,
@@ -93,7 +102,8 @@ tests =
         {}
             name: "Beta"
             age: 8
-    """:"""
+    """: """
+    'use strict';
     let kids = [
             {
                 name: 'Alpha',
@@ -110,7 +120,8 @@ tests =
         doSomething(1)
     catch e
         log(e)
-    """:"""
+    """: """
+    'use strict';
     try {
         doSomething(1);
     } catch (e) {
@@ -122,7 +133,8 @@ tests =
         doSomething(1)
     finally
         log(e)
-    """:"""
+    """: """
+    'use strict';
     try {
         doSomething(1);
     } finally {
@@ -136,7 +148,8 @@ tests =
         console.error(e)
     finally
         log(e)
-    """:"""
+    """: """
+    'use strict';
     try {
         doSomething(1);
     } catch (e) {
@@ -159,7 +172,8 @@ tests =
             return
                 x: 1
                 y: 2
-    """:"""
+    """: """
+    'use strict';
     for (let key in foo) {
         let name = foo[key];
         if (name === 'a')
@@ -179,17 +193,20 @@ tests =
     """
     """
     console.log("Hello {{name}}")
-    """:"""
+    """: """
+    'use strict';
     console.log('Hello ' + name);
     """
     """
     console.log("{{name}}")
-    """:"""
+    """: """
+    'use strict';
     console.log('' + name);
     """
     """
     console.log("{{ 1 }}{{ 2 }}")
-    """:"""
+    """: """
+    'use strict';
     console.log('' + 1 + 2);
     """
     """
@@ -200,7 +217,8 @@ tests =
             {{ body }}
             </body>
         </html>
-    """:"""
+    """: """
+    'use strict';
     return '<html>\\n    <head><title>' + title + '</title></head>\\n    <body>\\n    ' + body + '\\n    </body>\\n</html>';
     """
     """
@@ -211,12 +229,14 @@ tests =
             {{ body }}
             </body>
         </html>
-    """:"""
+    """: """
+    'use strict';
     return '<html>\\n    <head><title>{{ title }}</title></head>\\n    <body>\\n    {{ body }}\\n    </body>\\n</html>';
     """
     """
     do -> x
     """: """
+    'use strict';
     (function () {
         return x;
     }());
@@ -224,6 +244,7 @@ tests =
     """
     do (x, y) => x + y
     """: """
+    'use strict';
     (function (x, y) {
         return x + y;
     }.bind(this)(x, y));
@@ -231,17 +252,20 @@ tests =
     """
     const ion = import "ion"
     """: """
+    'use strict';
     const ion = require('ion');
     """
     """
     export
         secret: 97542
     """: """
+    'use strict';
     module.exports = exports = { secret: 97542 };
     """
     """
     export var x = 1, y = 2
     """: """
+    'use strict';
     let x = exports.x = 1;
     let y = exports.y = 2;
     """
@@ -251,6 +275,7 @@ tests =
         y = 2
         z = 3
     """: """
+    'use strict';
     const x = exports.x = 1;
     const y = exports.y = 2;
     const z = exports.z = 3;
@@ -258,6 +283,7 @@ tests =
     """
     var {x,y} = {x:1,y:2}
     """: """
+    'use strict';
     let _ref = {
             x: 1,
             y: 2
@@ -269,6 +295,7 @@ tests =
     for key, {x:[a,b],y:{c:d}} of points
         console.log(x, y)
     """: """
+    'use strict';
     for (let key in points) {
         let _ref = points[key];
         let a = _ref.x[0];
@@ -281,6 +308,7 @@ tests =
     for {x:[a,b],y:{c:d}}, index in points
         console.log(x, y)
     """: """
+    'use strict';
     for (let _i = 0; _i < points.length; _i++) {
         let index = _i;
         let _ref = points[_i];
@@ -293,27 +321,32 @@ tests =
     """
     foo ? bar
     """: """
+    'use strict';
     foo != null ? foo : bar;
     """
     """
     foo ?? bar
     """: """
+    'use strict';
     foo != void 0 ? foo : bar;
     """
     """
     x ?= y
     """: """
+    'use strict';
     x = x != null ? x : y;
     """
     """
     x ??= y
     """: """
+    'use strict';
     x = x != void 0 ? x : y;
     """
     """
     for const x, index in foo
         log(x)
     """: """
+    'use strict';
     for (let _i = 0; _i < foo.length; _i++) {
         const index = _i;
         const x = foo[_i];
@@ -323,6 +356,7 @@ tests =
     """
     [x,y] = [y,x]
     """: """
+    'use strict';
     const _ref = [
             y,
             x
@@ -333,27 +367,88 @@ tests =
     """
     a?.b
     """: """
+    'use strict';
     a != null ? a.b : void 0;
     """
     """
     a?.b.c?.d
     """: """
+    'use strict';
     a != null ? a.b.c != null ? a.b.c.d : void 0 : void 0;
     """
     """
     a?()
     """: """
+    'use strict';
     a != null ? a() : void 0;
     """
     """
     a?.b?.c?()
     """: """
+    'use strict';
     a != null ? a.b != null ? a.b.c != null ? a.b.c() : void 0 : void 0 : void 0;
     """
     """
     a?.b().c?()
     """: """
+    'use strict';
     a != null ? a.b().c != null ? a.b().c() : void 0 : void 0;
+    """
+    """
+    (x) -> 2
+    """: """
+    'use strict';
+    (function (x) {
+        return 2;
+    });
+    """
+    """
+    s?
+    """: """
+    'use strict';
+    s != null;
+    """
+    """
+    origin = Line
+        a: Point
+            x: 0
+            y: 0
+        b: Point
+            x: 10
+            y: 20
+    """: """
+    'use strict';
+    let _ref = new Line();
+    let _ref2 = new Point();
+    _ref2.x = 0;
+    _ref2.y = 0;
+    _ref.a = _ref2;
+    let _ref3 = new Point();
+    _ref3.x = 10;
+    _ref3.y = 20;
+    _ref.b = _ref3;
+    origin = _ref;
+    """
+    """
+    input:
+        x: 10
+        y: 20
+        z:
+            a: 1
+            b: 2
+        w: Point
+            x: 0
+            y: 0
+    """: """
+    'use strict';
+    input.x = 10;
+    input.y = 20;
+    input.z.a = 1;
+    input.z.b = 2;
+    let _ref = new Point();
+    _ref.x = 0;
+    _ref.y = 0;
+    input.w = _ref;
     """
 
 exports.test = ->

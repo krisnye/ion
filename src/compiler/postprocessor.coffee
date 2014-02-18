@@ -125,9 +125,7 @@ nodejsModules = (node, context) ->
         node.arguments = [node.name]
         delete node.name
     else if node.type is 'ExportStatement'
-        console.log '----------------- export statement'
         if node.value.type is 'VariableDeclaration'
-            console.log '----------------- variable declaration'
             # variable export
             context.exports = true
             # replace this node with the VariableDeclaration
@@ -245,6 +243,14 @@ defaultAssignmentsToDefaultOperators = (node, context) ->
         node.operator = '='
 
 existentialExpression = (node, context) ->
+
+    if node.type is 'UnaryExpression' and node.operator is '?'
+        context.replace
+            type: 'BinaryExpression'
+            operator: '!='
+            left: node.argument
+            right: nullExpression
+
     # this could be more efficient by caching the left values
     # especially when the left side involves existential CallExpressions
     # should only apply within an imperative context
@@ -273,12 +279,80 @@ existentialExpression = (node, context) ->
                 consequent: node
                 alternate: undefinedExpression
 
+addUseStrict = (node, context) ->
+    if node.type is 'Program'
+        node.body.unshift
+            type: 'ExpressionStatement'
+            expression:
+                type: 'Literal'
+                value: 'use strict'
+
+# only for imperative code
+typedObjectExpressions = (node, context) ->
+    if node.type is 'ObjectExpression' and node.objectType?
+        if node.objectType.type is 'ObjectExpression' and node.objectType.properties.length is 0
+            delete node.objectType
+            return
+
+        if node.objectType.type is 'ArrayExpression' or node.objectType.type is 'NewExpression'
+            value =
+                node.objectType
+        else
+            value =
+                type: 'NewExpression'
+                callee: node.objectType
+                arguments: []
+        tempId = context.addVariable
+            offset: 0
+            init: value
+        delete node.objectType
+        for {key,value} in node.properties
+            context.addStatement {
+                type: 'ExpressionStatement'
+                expression:
+                    type: 'AssignmentExpression'
+                    operator: '='
+                    left:
+                        type: 'MemberExpression'
+                        object: tempId
+                        property: key
+                    right: value
+                }, 0
+        # finally, replace this node with a reference to the temp id
+        context.replace tempId
+
+propertyStatements = (node, context) ->
+    parent = context.parentNode()
+    if node.type is 'Property' and not (parent.type is 'ObjectExpression' or parent.type is 'ObjectPattern')
+        if node.objectType?
+            throw new Error "Cannot use a typed object on a property declaration statement"
+        createAssignments = (path, value) ->
+            if value.type is 'ObjectExpression' and not value.objectType?
+                for property in value.properties by -1
+                    newPath =
+                        type: 'MemberExpression'
+                        object: path
+                        property: property.key
+                        computed: property.key.type isnt 'Identifier'
+                    createAssignments newPath, property.value
+            else
+                context.addStatement {
+                    type: 'ExpressionStatement'
+                    expression:
+                        type: 'AssignmentExpression'
+                        operator: '='
+                        left: path
+                        right: value
+                }, 0
+        createAssignments node.key, node.value
+        context.remove()
+
 exports.postprocess = (program, options) ->
     steps = [
         [extractForLoopRightVariable, callFunctionBindForFatArrows, defaultAssignmentsToDefaultOperators]
         [createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules]
-        [separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals]
-        [existentialExpression]
+        [propertyStatements, separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals]
+        [existentialExpression, addUseStrict, typedObjectExpressions]
     ]
     for traversal in steps
         traverse program, (node, context) ->

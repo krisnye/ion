@@ -106,7 +106,7 @@
 
 Program = start:start body:Statement* end:end { return node("Program", {body:body}, start, end) }
 
-Statement = eol? _ a:(ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement) { return a }
+Statement = eol? _ a:(ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement) eol { return a }
 ExportStatement = start:start export _ value:(VariableDeclaration / MultilineExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
 ReturnStatement = start:start return _ argument:MultilineExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
 ThrowStatement = start:start throw _ argument:MultilineExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
@@ -118,7 +118,7 @@ IfStatement =
     if _ test:InlineExpression
         consequent:BlockOrSingleStatement
     alternate:(
-    _ else _ a:(IfStatement / BlockOrSingleStatement) {return a}
+    eol _ else _ a:(IfStatement / BlockOrSingleStatement) {return a}
     )?
     end:end
     { return node("IfStatement", {test:test, consequent:consequent, alternate:alternate}, start, end) }
@@ -128,14 +128,14 @@ TryStatement =
             block:BlockStatement
         handler:CatchClause?
         finalizer:(
-        finally
+        eol finally
             a: BlockStatement { return a }
         )?
     end:end
     { return node("TryStatement", {block:block, handler:handler, finalizer:finalizer}, start, end) }
 CatchClause =
     start: start
-    catch _ param:Identifier
+    eol catch _ param:Identifier
         body:BlockStatement
     end:end
     { return node("CatchClause", {param:param, guard:null, body:body}, start, end) }
@@ -146,7 +146,7 @@ ForStatement = start:start for _ left:VariableDeclarationKindOptional _ type:(in
 
 BlockOrSingleStatement = block:BlockStatement
     { return block.body.length == 1 ? block.body[0] : block }
-BlockStatement = indent eol start:start body:Statement+ end:end outdent eol
+BlockStatement = indent eol start:start body:Statement+ end:end outdent
     { return node("BlockStatement", {body:body}, start, end) }
 PropertyDeclaration
     = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:MultilineExpression end:end
@@ -156,18 +156,18 @@ VariableDeclarationKindOptional = start:start kind:(var / const)? _ declarations
     { return node("VariableDeclaration", {declarations:declarations, kind:kind != null ? kind : "let"}, start, end) }
 variableDeclaratorList = multilineVariableDeclaratorList / inlineVariableDeclaratorList
 inlineVariableDeclaratorList = head:VariableDeclarator tail:(_ "," _ a:VariableDeclarator {return a})* { return [head].concat(tail) }
-multilineVariableDeclaratorList = indent eol declarations:(_ a:VariableDeclarator eol { return a })+ outdent eol { return declarations }
+multilineVariableDeclaratorList = indent eol declarations:(_ a:VariableDeclarator eol? { return a })+ outdent { return declarations }
 VariableDeclarator = start:start pattern:Pattern _ init:variableInitializer? end:end { return node("VariableDeclarator", {id:pattern,init:init}, start, end) }
 variableInitializer = "=" _ a:MultilineExpression { return a }
 Pattern = Identifier / ObjectPattern / ArrayPattern
-ObjectPattern = pattern:ObjectLiteral { pattern.type = "ObjectPattern"; return pattern }
-ArrayPattern = pattern:ArrayLiteral { pattern.type = "ArrayPattern"; return pattern }
+ObjectPattern = pattern:ObjectLiteral { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ObjectPattern"; return pattern }
+ArrayPattern = pattern:ArrayLiteral { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ArrayPattern"; return pattern }
 
 //  Expressions
 //  We use javascript terms where available. http://www.ecma-international.org/ecma-262/5.1/#sec-A.3
 MultilineExpression = MultilineStringTemplate / MultilineStringLiteral / MultilineObjectExpression / InlineExpression
 InlineExpression = AssignmentExpression
-AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=") _ right:InlineExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
+AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=") _ right:MultilineExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
     / ConditionalOrDefaultExpression
 ConditionalOrDefaultExpression
     = start:start test:LogicalOrExpression _ "?" _ consequent:ConditionalOrDefaultExpression _ ":" _ alternate:ConditionalOrDefaultExpression end:end
@@ -184,12 +184,13 @@ RelationalExpression = start:start head:BitwiseShiftExpression tail:( _ ("<=" / 
 BitwiseShiftExpression = start:start head:AdditiveExpression tail:( _ (">>>" / ">>" / "<<") _ AdditiveExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
 AdditiveExpression = start:start head:MultiplicativeExpression tail:( _ ("+" / "-") _ MultiplicativeExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
 MultiplicativeExpression = start:start head:UnaryExpression tail:( _ ("*" / "/" / "%") _ UnaryExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
-UnaryExpression = start:start op:unaryOperator _ arg:UpdateExpression end:end { return node('UnaryExpression', {operator:op, argument:arg, prefix:true}, start, end) }
+UnaryExpression = start:start op:unaryOperator _ arg:UpdateExpression end:end { return node('UnaryExpression', {operator:op, argument:arg}, start, end) }
     / UpdateExpression
 unaryOperator 'unaryOperator' = not / "-" / "+" / "~" / typeof / void / delete
 UpdateExpression
     = start:start op:("++" / "--") _ arg:LeftHandSideExpression end:end { return node('UpdateExpression', {operator:op, argument:arg, prefix:true}, start, end) }
     / start:start _ arg:LeftHandSideExpression op:("++" / "--") end:end { return node('UpdateExpression', {operator:op, argument:arg, prefix:false}, start, end) }
+    / start:start _ arg:LeftHandSideExpression op:("?") !"." end:end { return node('UnaryExpression', {operator:op, argument:arg}, start, end) }
     / LeftHandSideExpression
 LeftHandSideExpression = CallExpression / NewExpressionWithoutArgs
 CallExpression = start:start head:MemberExpression tail:(tailCall / tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
@@ -200,20 +201,22 @@ arguments = "(" a:argumentList? ")" { return a ? a : [] }
 argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
 NewExpressionWithoutArgs = start:start new _ callee:NewExpressionWithoutArgs end:end { return node("NewExpression", {callee:callee,arguments:[]}, start, end) }
 NewExpressionWithArgs = start:start new _ callee:MemberExpression args:arguments end:end { return node("NewExpression", {callee:callee,arguments:args}, start, end) }
-MemberExpression = start:start head:(PrimaryExpression / DoExpression / ImportExpression / FunctionExpression / NewExpressionWithArgs) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
+MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpressionWithArgs / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 ImportExpression = start:start import _ name:InlineExpression end:end { return node('ImportExpression', {name:name}, start, end) }
 DoExpression = start:start do _ f:FunctionExpression end:end
     {
         var args = f.params.map(function(x){ return x.name != null ? clone(x) : error("do parameters must be Identifiers") })
         return node("CallExpression", {callee:f,arguments:args}, start, end)
     }
-FunctionExpression = start:start params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:functionBody end:end
+FunctionExpression = start:start params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:functionBody? end:end
     {
         if (params == null) params = []
         paramPatterns = params.map(function(x) { return x[0] })
         paramDefaults = params.map(function(x) { return x[1] })
         // convert expression closures to return statements in a block
-        if (body.type !== "BlockStatement")
+        if (body == null)
+            body = node("BlockStatement", {body:[]})
+        else if (body.type !== "BlockStatement")
             body = node("BlockStatement", {body:[node("ReturnStatement", {argument:body})]})
         return node("FunctionExpression", {id:null, params:paramPatterns, defaults:paramDefaults, body:body, bound:bound}, start, end)
     }
@@ -264,7 +267,7 @@ MultilineStringTemplate = start:start "\"\"" eol content:multilineStringTemplate
 multilineStringTemplateContent = indent a:(multilineStringTemplateLine / multilineStringTemplateContent)* outdent { return Array.prototype.concat.apply([], a) }
 multilineStringTemplateLine = !indent !outdent a:(stringInterpolation / multilineStringTemplatePart) { return a }
 multilineStringTemplatePart = eol? (!"{{" !eol .)+ { return text() }
-MultilineStringLiteral = start:start "''" eol content:multilineStringLiteralContent eol end:end
+MultilineStringLiteral = start:start "''" eol content:multilineStringLiteralContent end:end
     { return concatenate(unindent(content)) }
 multilineStringLiteralContent = indent a:(multilineStringLiteralLine / multilineStringLiteralContent)* outdent { return Array.prototype.concat.apply([], a) }
 multilineStringLiteralLine = !indent !outdent eol? (!eol .)+ { return text() }

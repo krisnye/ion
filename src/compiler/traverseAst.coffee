@@ -108,34 +108,34 @@ exports.traverse = (program, enterCallback, exitCallback) ->
 
     basicTraverse.traverse program, ourEnter, ourExit
 
-exports.test = ->
-    index = require './index'
-    ast = index.parse """
-        var double = ->
-            var foo = -> 2
-            var a = 1
-            var b = 2
-            var {e,f} = bar, [g,[h]] = baz
-            if a is b
-                var c = 3
-                if c
-                    log(c)
-            else
-                var c = 5
-                var d = 4
-                log(d)
-        """
-    expected = ["enter",1,["double"],"Program","enter",2,["double"],"FunctionExpression","enter",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["foo","a","b","e","f","g","h","double"],"FunctionExpression","enter",5,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",5,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["foo","a","b","e","f","g","h","double"],"FunctionExpression","enter",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",2,["double"],"FunctionExpression","exit",1,["double"],"Program"]
-    actual = []
-    enter = (node, context) ->
-        keys = (key for key of context.scope().variables)
-        if nodes[node.type]?.newScope
-            actual.push "enter", context.scopeStack.length, keys, node.type
-    exit = (node, context) ->
-        keys = (key for key of context.scope().variables)
-        if nodes[node.type]?.newScope
-            actual.push "exit", context.scopeStack.length, keys, node.type
-    exports.traverse ast, enter, exit
-    if JSON.stringify(actual) isnt JSON.stringify(expected)
-        throw new Error "#{actual} isnt #{expected}"
-    return
+# exports.test = ->
+#     index = require './index'
+#     ast = index.parse """
+#         var double = ->
+#             var foo = -> 2
+#             var a = 1
+#             var b = 2
+#             var {e,f} = bar, [g,[h]] = baz
+#             if a is b
+#                 var c = 3
+#                 if c
+#                     log(c)
+#             else
+#                 var c = 5
+#                 var d = 4
+#                 log(d)
+#         """
+#     expected = ["enter",1,["double"],"Program","enter",2,["double"],"FunctionExpression","enter",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["foo","a","b","e","f","g","h","double"],"FunctionExpression","enter",5,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",5,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["foo","a","b","e","f","g","h","double"],"FunctionExpression","enter",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",2,["double"],"FunctionExpression","exit",1,["double"],"Program"]
+#     actual = []
+#     enter = (node, context) ->
+#         keys = (key for key of context.scope().variables)
+#         if nodes[node.type]?.newScope
+#             actual.push "enter", context.scopeStack.length, keys, node.type
+#     exit = (node, context) ->
+#         keys = (key for key of context.scope().variables)
+#         if nodes[node.type]?.newScope
+#             actual.push "exit", context.scopeStack.length, keys, node.type
+#     exports.traverse ast, enter, exit
+#     if JSON.stringify(actual) isnt JSON.stringify(expected)
+#         throw new Error "#{actual} isnt #{expected}"
+#     return

@@ -1,0 +1,31 @@
+
+const
+    lineDelimiter = '\n'
+    isEmpty = (s) -> not s? or s.length is 0 or (s.trim? and s.trim().length is 0)
+
+export const
+    indentToken = '{{{{'
+    outdentToken = '}}}}'
+    splitLines = (s) -> s.split(lineDelimiter)
+    joinLines = (array) -> array.join(lineDelimiter)
+    getIndent = (s, regex) ->
+        regex ?= /^([ ]*)/
+        return regex.exec(s)?[1].length ? Number.MAX_VALUE
+    unindentString = (s, sourceMapping) ->
+        var lines = splitLines(s.trimRight())
+        var minIndent = unindentLines(lines)
+        if sourceMapping?
+            sourceMapping.columnOffset = minIndent
+        return joinLines(lines)
+    getMinIndent = (lines, regex) ->
+        var minIndent = Number.MAX_VALUE
+        for line in lines
+            if typeof line is 'string' and not isEmpty(line)
+                minIndent = Math.min(minIndent, getIndent(line, regex))
+        return minIndent
+    unindentLines = (lines) ->
+        var minIndent = getMinIndent(lines)
+        for line, i in lines
+            if typeof line is 'string'
+                lines[i] = isEmpty(line) ? '' : line.substring(minIndent)
+        return minIndent
