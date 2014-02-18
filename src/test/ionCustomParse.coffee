@@ -509,7 +509,7 @@ tests =
 exports.test = ->
     ion = require '../compiler'
 
-    options = {loc:false}
+    options = {loc:false,postprocess:false}
 
     for text, expected of tests
         ionResult = ion.parse text, options

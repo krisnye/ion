@@ -49,10 +49,9 @@ exports.test = ->
     esprima = require 'esprima'
     ion = require '../compiler'
 
-
     for test, index in tests
         # we don't compare location information on multiline
-        options = {loc:test.indexOf('\n') < 0,raw:false}
+        options = {loc:test.indexOf('\n') < 0,raw:false,postprocess:false}
         esprimaResult = esprima.parse(test, options)
         ionResult = ion.parse test, options
         if JSON.stringify(esprimaResult) isnt JSON.stringify(ionResult)

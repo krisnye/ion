@@ -22,13 +22,13 @@ exports.addStatement = function(node, statement, index, offset) {
 };
 
 exports.forEachDestructuringAssignment = forEachDestructuringAssignment = function(pattern, expression, callback) {
-  var index, key, value, _i, _j, _ref, _ref1, _ref2, _results, _results1;
+  var index, key, value, _i, _j, _len, _len1, _ref, _ref1, _ref2, _results, _results1;
   if (pattern.type === 'Identifier') {
     return callback(pattern, expression);
   } else if (pattern.properties != null) {
     _ref = pattern.properties;
     _results = [];
-    for (_i = _ref.length - 1; _i >= 0; _i += -1) {
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       _ref1 = _ref[_i], key = _ref1.key, value = _ref1.value;
       _results.push(forEachDestructuringAssignment(value, {
         type: 'MemberExpression',
@@ -41,7 +41,7 @@ exports.forEachDestructuringAssignment = forEachDestructuringAssignment = functi
   } else if (pattern.elements != null) {
     _ref2 = pattern.elements;
     _results1 = [];
-    for (index = _j = _ref2.length - 1; _j >= 0; index = _j += -1) {
+    for (index = _j = 0, _len1 = _ref2.length; _j < _len1; index = ++_j) {
       value = _ref2[index];
       _results1.push(forEachDestructuringAssignment(value, {
         type: 'MemberExpression',

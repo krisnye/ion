@@ -44,8 +44,8 @@ tests = {
   "s?": "'use strict';\ns != null;",
   "origin = Point\n    x: 0\n    y: 0": "'use strict';\norigin = new Point();\norigin.x = 0;\norigin.y = 0;",
   "origin = Line\n    a: Point\n        x: 0\n        y: 0\n    b: Point\n        x: 10\n        y: 20": "'use strict';\norigin = new Line();\norigin.a = new Point();\norigin.a.x = 0;\norigin.a.y = 0;\norigin.b = new Point();\norigin.b.x = 10;\norigin.b.y = 20;",
-  "input:\n    x: 10\n    y: 20\n    z:\n        a: 1\n        b: 2\n    w: Point\n        x: 0\n        y: 0": "'use strict';\ninput.x = 10;\ninput.y = 20;\ninput.z.a = 1;\ninput.z.b = 2;\ninput.w = new Point();\ninput.w.x = 0;\ninput.w.y = 0;",
-  "var regex = /foo/": null
+  "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: Point\n        x: 0\n        y: 0": "'use strict';\ninput.x = 10;\ninput.y = 20;\ninput.z.a = 1;\ninput.z.b = 2;\ninput.w = new Point();\ninput.w.x = 0;\ninput.w.y = 0;",
+  "# also test comments\nvar regex = /foo/": "'use strict';\nlet regex = /foo/;"
 };
 
 exports.test = function() {
@@ -54,7 +54,9 @@ exports.test = function() {
     expected = tests[input];
     if (expected === null) {
       console.log('---------------------------------------------------');
-      console.log(JSON.stringify(index.parse(input), null, '  '));
+      console.log(JSON.stringify(index.compile(input, {
+        postprocess: false
+      }), null, '  '));
       console.log('-Postprocessed------------------------------------');
       console.log(JSON.stringify(index.compile(input, {
         generate: false

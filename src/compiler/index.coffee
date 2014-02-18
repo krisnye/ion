@@ -1,25 +1,38 @@
 
+makePrettyError = (e, source) ->
+    if typeof e.line is 'number' and typeof e.column is 'number' and e.line > 0 and e.column > 0
+        line = source.split('\n')[e.line - 1]
+        caret = "^"
+        for i in [2..e.column] by 1
+            caret = " " + caret
+        newMessage = "#{if id? then id + ':' else ''}#{e.line}:#{e.column}\n#{e.message}\n#{line}\n#{caret}"
+        e.originalMessage = e.message
+        e.message = newMessage
+
 exports.parse = parse = (content, options) ->
-    preprocessor = require './preprocessor'
-    parser = require './parser'
-    try
-        sourceMapping = {}
-        preprocessed = preprocessor.preprocess content, sourceMapping
-        parsed = parser.parse preprocessed, options ? {}
-        fixed = preprocessor.fixSourceLocations parsed, sourceMapping
-    catch e
-        console.log '-Preprocessed--------------------------------------------'
-        console.log preprocessed
-        console.log '-Error---------------------------------------------------'
-        console.log "line: " + e.line + ", column: " + e.column
-        throw e
-    return fixed
+    options ?= {}
+    options.generate = false
+    return compile content, options
 
 exports.compile = compile = (content, options) ->
+    options ?= {}
+    preprocessor = require './preprocessor'
+    parser = require './parser'
     postprocessor = require './postprocessor'
     escodegen = require 'escodegen'
-    program = parse content, options
-    program = postprocessor.postprocess program, options
-    return program if options?.generate is false
-    javascript = escodegen.generate program
-    return javascript
+    sourceMapping = {}
+    result = preprocessed = preprocessor.preprocess content, sourceMapping
+    try
+        result = parser.parse result, options ? {}
+        result = preprocessor.fixSourceLocations result, sourceMapping
+        if options.postprocess isnt false
+            result = postprocessor.postprocess result, options
+            if options?.generate isnt false
+                result = escodegen.generate result
+    catch e
+        preprocessor.fixSourceLocation e, sourceMapping
+        # console.log '-Preprocessed--------------------------------------------'
+        # console.log preprocessed
+        makePrettyError e, content
+        throw e
+    return result

@@ -1,36 +1,56 @@
-(function(){var _ion_compiler_index_ = function(module,exports,require){var compile, parse;
+(function(){var _ion_compiler_index_ = function(module,exports,require){var compile, makePrettyError, parse;
+
+makePrettyError = function(e, source) {
+  var caret, i, line, newMessage, _i, _ref;
+  if (typeof e.line === 'number' && typeof e.column === 'number' && e.line > 0 && e.column > 0) {
+    line = source.split('\n')[e.line - 1];
+    caret = "^";
+    for (i = _i = 2, _ref = e.column; _i <= _ref; i = _i += 1) {
+      caret = " " + caret;
+    }
+    newMessage = "" + (typeof id !== "undefined" && id !== null ? id + ':' : '') + e.line + ":" + e.column + "\n" + e.message + "\n" + line + "\n" + caret;
+    e.originalMessage = e.message;
+    return e.message = newMessage;
+  }
+};
 
 exports.parse = parse = function(content, options) {
-  var e, fixed, parsed, parser, preprocessed, preprocessor, sourceMapping;
-  preprocessor = require('./preprocessor');
-  parser = require('./parser');
-  try {
-    sourceMapping = {};
-    preprocessed = preprocessor.preprocess(content, sourceMapping);
-    parsed = parser.parse(preprocessed, options != null ? options : {});
-    fixed = preprocessor.fixSourceLocations(parsed, sourceMapping);
-  } catch (_error) {
-    e = _error;
-    console.log('-Preprocessed--------------------------------------------');
-    console.log(preprocessed);
-    console.log('-Error---------------------------------------------------');
-    console.log("line: " + e.line + ", column: " + e.column);
-    throw e;
+  if (options == null) {
+    options = {};
   }
-  return fixed;
+  options.generate = false;
+  return compile(content, options);
 };
 
 exports.compile = compile = function(content, options) {
-  var escodegen, javascript, postprocessor, program;
+  var e, escodegen, parser, postprocessor, preprocessed, preprocessor, result, sourceMapping;
+  if (options == null) {
+    options = {};
+  }
+  preprocessor = require('./preprocessor');
+  parser = require('./parser');
   postprocessor = require('./postprocessor');
   escodegen = require('escodegen');
-  program = parse(content, options);
-  program = postprocessor.postprocess(program, options);
-  if ((options != null ? options.generate : void 0) === false) {
-    return program;
+  sourceMapping = {};
+  result = preprocessed = preprocessor.preprocess(content, sourceMapping);
+  try {
+    result = parser.parse(result, options != null ? options : {});
+    result = preprocessor.fixSourceLocations(result, sourceMapping);
+    if (options.postprocess !== false) {
+      result = postprocessor.postprocess(result, options);
+      if ((options != null ? options.generate : void 0) !== false) {
+        result = escodegen.generate(result);
+      }
+    }
+  } catch (_error) {
+    e = _error;
+    preprocessor.fixSourceLocation(e, sourceMapping);
+    console.log('-Preprocessed--------------------------------------------');
+    console.log(preprocessed);
+    makePrettyError(e, content);
+    throw e;
   }
-  javascript = escodegen.generate(program);
-  return javascript;
+  return result;
 };
 
   }

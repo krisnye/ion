@@ -22,7 +22,7 @@ exports.forEachDestructuringAssignment = forEachDestructuringAssignment = (patte
     if pattern.type is 'Identifier'
         callback pattern, expression
     else if pattern.properties?
-        for {key,value} in pattern.properties by -1
+        for {key,value} in pattern.properties
             forEachDestructuringAssignment value, {
                 type: 'MemberExpression'
                 object: expression
@@ -30,7 +30,7 @@ exports.forEachDestructuringAssignment = forEachDestructuringAssignment = (patte
                 computed: key.type isnt 'Identifier'
                 }, callback
     else if pattern.elements?
-        for value, index in pattern.elements by -1
+        for value, index in pattern.elements
             forEachDestructuringAssignment value, {
                 type: 'MemberExpression'
                 object: expression

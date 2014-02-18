@@ -10,7 +10,8 @@ exports.test = function() {
     test = tests[index];
     options = {
       loc: test.indexOf('\n') < 0,
-      raw: false
+      raw: false,
+      postprocess: false
     };
     esprimaResult = esprima.parse(test, options);
     ionResult = ion.parse(test, options);

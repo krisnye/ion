@@ -186,15 +186,17 @@ destructuringAssignments = (node, context) ->
             pattern = declarator.id
             tempId = context.getNewInternalIdentifier()
             declarator.id = tempId
+            count = 0
             forEachDestructuringAssignment pattern, tempId, (id, expression) ->
-                context.addStatement
-                    type: 'VariableDeclaration'
-                    declarations: [{
-                        type: 'VariableDeclarator'
-                        id: id
-                        init: expression
-                    }]
-                    kind: 'let'
+                context.addStatement {
+                        type: 'VariableDeclaration'
+                        declarations: [{
+                            type: 'VariableDeclarator'
+                            id: id
+                            init: expression
+                        }]
+                        kind: 'let'
+                    }, ++count
 
     # other assignments
     if node.type is 'ExpressionStatement' and node.expression.operator is '='
@@ -211,14 +213,16 @@ destructuringAssignments = (node, context) ->
                 }]
                 kind: 'const'
 
+            count = 0
             forEachDestructuringAssignment pattern, tempId, (id, expression) ->
-                context.addStatement
-                    type: 'ExpressionStatement'
-                    expression:
-                        type: 'AssignmentExpression'
-                        operator: '='
-                        left: id
-                        right: expression
+                context.addStatement {
+                        type: 'ExpressionStatement'
+                        expression:
+                            type: 'AssignmentExpression'
+                            operator: '='
+                            left: id
+                            right: expression
+                    }, ++count
 
 defaultOperatorsToConditionals = (node, context) ->
     if node.type is 'BinaryExpression' and (node.operator is '??' or node.operator is '?')

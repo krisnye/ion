@@ -466,7 +466,8 @@ exports.test = function() {
   var expected, ion, ionResult, options, text;
   ion = require('../compiler');
   options = {
-    loc: false
+    loc: false,
+    postprocess: false
   };
   for (text in tests) {
     expected = tests[text];

@@ -6,7 +6,16 @@ getSpace = (size) ->
     result.join ""
 
 exports.isMarkdownCommented = (source) -> /(\n|^)[^\s\n][^\n]*\n(\s*\n)+\s+[^\s\n]/.test source
+
+exports.fixSourceLocation = fixSourceLocation = (location, sourceMapping) ->
+    location.line = sourceMapping[location.line - 1] + 1
+    location.column += sourceMapping.columnOffset ? 0
 exports.fixSourceLocations = fixSourceLocations = (program, sourceMapping) ->
+    require('./traverseAst').traverse program, (node) ->
+        if node.loc?.start?
+            fixSourceLocation node.loc.start, sourceMapping
+        if node.loc?.end?
+            fixSourceLocation node.loc.end, sourceMapping
     return program
 exports.preprocess = preprocess = (source, sourceMapping) ->
     isMarkdownCommented = exports.isMarkdownCommented source

@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_preprocessor_ = function(module,exports,require){var common, expectedResult, fixSourceLocations, getSpace, preprocess, sample;
+(function(){var _ion_compiler_preprocessor_ = function(module,exports,require){var common, expectedResult, fixSourceLocation, fixSourceLocations, getSpace, preprocess, sample;
 
 common = require('./common');
 
@@ -15,7 +15,22 @@ exports.isMarkdownCommented = function(source) {
   return /(\n|^)[^\s\n][^\n]*\n(\s*\n)+\s+[^\s\n]/.test(source);
 };
 
+exports.fixSourceLocation = fixSourceLocation = function(location, sourceMapping) {
+  var _ref;
+  location.line = sourceMapping[location.line - 1] + 1;
+  return location.column += (_ref = sourceMapping.columnOffset) != null ? _ref : 0;
+};
+
 exports.fixSourceLocations = fixSourceLocations = function(program, sourceMapping) {
+  require('./traverseAst').traverse(program, function(node) {
+    var _ref, _ref1;
+    if (((_ref = node.loc) != null ? _ref.start : void 0) != null) {
+      fixSourceLocation(node.loc.start, sourceMapping);
+    }
+    if (((_ref1 = node.loc) != null ? _ref1.end : void 0) != null) {
+      return fixSourceLocation(node.loc.end, sourceMapping);
+    }
+  });
   return program;
 };
 

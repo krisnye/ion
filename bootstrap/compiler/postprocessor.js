@@ -265,7 +265,7 @@ separateAllVariableDeclarations = function(node, context) {
 };
 
 destructuringAssignments = function(node, context) {
-  var declarator, expression, isPattern, pattern, tempId, _i, _len, _ref1;
+  var count, declarator, expression, isPattern, pattern, tempId, _i, _len, _ref1;
   isPattern = function(node) {
     return (node.properties != null) || (node.elements != null);
   };
@@ -279,6 +279,7 @@ destructuringAssignments = function(node, context) {
       pattern = declarator.id;
       tempId = context.getNewInternalIdentifier();
       declarator.id = tempId;
+      count = 0;
       forEachDestructuringAssignment(pattern, tempId, function(id, expression) {
         return context.addStatement({
           type: 'VariableDeclaration',
@@ -290,7 +291,7 @@ destructuringAssignments = function(node, context) {
             }
           ],
           kind: 'let'
-        });
+        }, ++count);
       });
     }
   }
@@ -310,6 +311,7 @@ destructuringAssignments = function(node, context) {
         ],
         kind: 'const'
       });
+      count = 0;
       return forEachDestructuringAssignment(pattern, tempId, function(id, expression) {
         return context.addStatement({
           type: 'ExpressionStatement',
@@ -319,7 +321,7 @@ destructuringAssignments = function(node, context) {
             left: id,
             right: expression
           }
-        });
+        }, ++count);
       });
     }
   }
