@@ -465,6 +465,14 @@ tests =
     'use strict';
     let regex = /foo/;
     """
+    """
+    for var i = 0; i < 10; i++
+        console.log(i)
+    """: """
+    'use strict';
+    for (let i = 0; i < 10; i++)
+        console.log(i);
+    """
 
 exports.test = ->
     for input, expected of tests
@@ -479,15 +487,10 @@ exports.test = ->
             catch e
                 console.log e.message
         else
-            try
-                output = index.compile input
-                if output.trim() isnt expected.trim()
-                    console.log '-Output---------------------------------------------'
-                    console.log output
-                    throw new Error "\n#{output}\n!=\n#{expected}"
-            catch e
-                console.log '-Error----------------------------------------------'
-                console.log JSON.stringify e
-                throw e
+            output = index.compile input
+            if output.trim() isnt expected.trim()
+                console.log '-Output---------------------------------------------'
+                console.log output
+                throw new Error "\n#{output}\n!=\n#{expected}"
 
     return
