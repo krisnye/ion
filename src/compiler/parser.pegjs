@@ -122,20 +122,15 @@ IfStatement =
     )?
     end:end
     { return node("IfStatement", {test:test, consequent:consequent, alternate:alternate}, start, end) }
-TryStatement =
-    start:start
-        try
-            block:BlockStatement
-        handler:CatchClause?
-        finalizer:(
-        eol finally
-            a: BlockStatement { return a }
-        )?
-    end:end
-    { return node("TryStatement", {block:block, handler:handler, finalizer:finalizer}, start, end) }
-CatchClause =
+TryStatement
+    = start:start try block:BlockStatement handler:catchClause finalizer:finallyClause? end:end
+        { return node("TryStatement", {block:block, handler:handler, finalizer:finalizer}, start, end) }
+    / start:start try block:BlockStatement finalizer:finallyClause end:end
+        { return node("TryStatement", {block:block, finalizer:finalizer}, start, end) }
+finallyClause = eol _ finally a: BlockStatement { return a }
+catchClause =
     start: start
-    eol catch _ param:Identifier
+    eol _ catch _ param:Identifier
         body:BlockStatement
     end:end
     { return node("CatchClause", {param:param, guard:null, body:body}, start, end) }

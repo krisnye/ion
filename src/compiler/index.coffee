@@ -1,5 +1,5 @@
 
-makePrettyError = (e, source) ->
+makePrettyError = (e, source, id) ->
     if typeof e.line is 'number' and typeof e.column is 'number' and e.line > 0 and e.column > 0
         line = source.split('\n')[e.line - 1]
         caret = "^"
@@ -31,8 +31,8 @@ exports.compile = compile = (content, options) ->
                 result = escodegen.generate result
     catch e
         preprocessor.fixSourceLocation e, sourceMapping
-        # console.log '-Preprocessed--------------------------------------------'
-        # console.log preprocessed
+        console.log '-Preprocessed--------------------------------------------'
+        console.log preprocessed
         makePrettyError e, content
         throw e
     return result

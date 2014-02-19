@@ -509,6 +509,24 @@ tests =
         y: 2
     });
     """
+    """
+    var x = ->
+        try
+            foo
+            bar
+        catch e
+            baz
+    """: """
+    'use strict';
+    let x = function () {
+        try {
+            foo;
+            bar;
+        } catch (e) {
+            baz;
+        }
+    };
+    """
 
 exports.test = ->
     for input, expected of tests
