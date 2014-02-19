@@ -6,7 +6,7 @@ X   ForInStatement  // ion "for of"
 X   ForOfStatement / ForInStatement
         if: Expression / null
         next: ForOfStatement / ForInStatement
-X   ArrayExpression
+X   ArrayExpression  // Could have used Mozilla structure "ComprehensionExpression"
         +comprehension: ForInStatement/ForOfStatement // no body
         +value:Expression
 X   Function
