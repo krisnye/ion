@@ -1,0 +1,43 @@
+
+const
+    makePrettyError = (e, source, id) ->
+        if typeof e.line is 'number' and typeof e.column is 'number' and e.line > 0 and e.column > 0
+            var line = source.split('\n')[e.line - 1]
+            var caret = '^'
+            for var i = 2; i < e.column; i++
+                caret = ' ' + caret
+            var newMessage = "{{id ? id + ':' : ''}}{{e.line}}:{{e.column}}\n{{e.message}}\n{{line}}\n{{caret}}"
+            e.originalMessage = e.message
+            e.message = newMessage
+
+export const
+    parse = (content, options) ->
+        options ?= {}
+        options.generate = false
+        return compile(content, options)
+
+    compile = (content, options) ->
+        const
+            preprocessor = import './preprocessor'
+            parser = import './parser'
+            postprocessor = import './postprocessor'
+            escodegen = import 'escodegen'
+        options ?= {}
+        var
+            sourceMapping = {}
+            result = preprocessor.preprocess(content, sourceMapping)
+            preprocessed = result
+        try
+            result = parser.parse(result, options ? {})
+            result = preprocessor.fixSourceLocations(result, sourceMapping)
+            if options.postprocess isnt false
+                result = postprocessor.postprocess(result, options)
+                if options?.generate isnt false
+                    result = escodegen.generate(result)
+        catch e
+            preprocessor.fixSourceLocation(e, sourceMapping)
+            console.log('-Preprocessed--------------------------------------------')
+            console.log(preprocessed)
+            makePrettyError(e, content, options.id)
+            throw e
+        return result
