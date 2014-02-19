@@ -24,29 +24,27 @@ const forEachDestructuringAssignment = exports.forEachDestructuringAssignment = 
                 let _ref2 = _ref[_i];
                 let key = _ref2.key;
                 let value = _ref2.value;
-                let subExpression = {
-                        type: 'MemberExpression',
-                        object: expression,
-                        property: key,
-                        computed: key.type !== 'Identifier'
-                    };
-                forEachDestructuringAssignment(value, subExpression, callback);
+                forEachDestructuringAssignment(value, {
+                    type: 'MemberExpression',
+                    object: expression,
+                    property: key,
+                    computed: key.type !== 'Identifier'
+                }, callback);
             }
         } else if (pattern.elements != null) {
             let _ref = pattern.elements;
             for (let _i = 0; _i < _ref.length; _i++) {
                 let index = _i;
                 let value = _ref[_i];
-                let subExpression = {
-                        type: 'MemberExpression',
-                        object: expression,
-                        property: {
-                            type: 'Literal',
-                            value: index
-                        },
-                        computed: true
-                    };
-                forEachDestructuringAssignment(value, subExpression, callback);
+                forEachDestructuringAssignment(value, {
+                    type: 'MemberExpression',
+                    object: expression,
+                    property: {
+                        type: 'Literal',
+                        value: index
+                    },
+                    computed: true
+                }, callback);
             }
         }
     };

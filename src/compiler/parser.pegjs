@@ -182,17 +182,9 @@ ArrayPattern = pattern:ArrayLiteral { /* due to packrat parsing, you MUST clone 
 //  Expressions
 //  We use javascript terms where available. http://www.ecma-international.org/ecma-262/5.1/#sec-A.3
 MultilineExpression = MultilineStringTemplate / MultilineStringLiteral / MultilineObjectExpression / MultilineCallExpression / InlineExpression
-MultilineCallExpression = start:start callee:GroupExpression indent eol args:Statement+ end:end outdent
-    {
-        return node("CallExpression", {
-            callee: callee,
-            arguments: args.map(function(x) {
-                if (x.expression == null)
-                    expected("call expression to only contain arguments")
-                return x.expression
-            })
-        }, start, end)
-    }
+multilineCallArguments = (_ arg:MultilineExpression eol { return arg })+
+MultilineCallExpression = start:start callee:GroupExpression indent eol args:multilineCallArguments end:end outdent
+    { return node("CallExpression", {callee: callee, arguments: args}, start, end) }
 InlineExpression = AssignmentExpression
 AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=") _ right:MultilineExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
     / ConditionalOrDefaultExpression
@@ -265,11 +257,7 @@ propertyAssignment
     = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:InlineExpression end:end { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
     / start:start key:IdentifierName end:end { return node("Property", { key: key, value:clone(key), kind: 'init'}, start, end) }
 MultilineObjectExpression = start:start !"(" type:InlineExpression? properties:BlockStatement end:end
-    {
-        // if (type != null && type.type === 'CallExpression')
-        //     return expected('Type should not be a call expression')
-        return node("ObjectExpression", {objectType:type,properties:properties.body}, start, end)
-    }
+    { return node("ObjectExpression", {objectType:type,properties:properties.body}, start, end) }
 
 GroupExpression 'group' = "(" _ expression:InlineExpression _ ")" { return expression }
 Identifier = !reserved value:IdentifierName { return value }
