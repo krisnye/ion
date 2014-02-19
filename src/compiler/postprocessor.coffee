@@ -371,9 +371,32 @@ extractForLoopsInnerAndTest = (node, context) ->
                 consequent: node.body
             delete node.test
 
+arrayComprehensionsToES5 = (node, context) ->
+    if node.type is 'ArrayExpression' and node.value? and node.comprehension?
+        # add a statement
+        tempId = context.addVariable
+            offset: 0
+            init:
+                type: 'ArrayExpression'
+                elements: []
+        forStatement = node.comprehension
+        forStatement.body =
+            type: 'ExpressionStatement'
+            expression:
+                type: 'CallExpression'
+                callee:
+                    type: 'MemberExpression'
+                    object: tempId
+                    property:
+                        type: 'Identifier'
+                        name: 'push'
+                arguments: [node.value]
+        context.addStatement 0, forStatement
+        context.replace tempId
+
 exports.postprocess = (program, options) ->
     steps = [
-        [extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows, defaultAssignmentsToDefaultOperators]
+        [arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows, defaultAssignmentsToDefaultOperators]
         [createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules]
         [propertyStatements, separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals]
         [existentialExpression, addUseStrict, typedObjectExpressions]
@@ -381,5 +404,6 @@ exports.postprocess = (program, options) ->
     for traversal in steps
         traverse program, (node, context) ->
             for step in traversal
+                node = context.current() # might have been changed by a previous step
                 step node, context, options
     program

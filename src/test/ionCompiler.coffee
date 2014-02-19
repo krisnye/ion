@@ -485,6 +485,16 @@ tests =
                 console.log(c);
             }
     """
+    """
+    console.log([key for key of object if key is cool])
+    """: """
+    'use strict';
+    let _ref = [];
+    for (let key in object)
+        if (key === cool)
+            _ref.push(key);
+    console.log(_ref);
+    """
 
 exports.test = ->
     for input, expected of tests

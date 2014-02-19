@@ -3,29 +3,27 @@ X   ForOfStatement
         left: VariableDeclaration can have 2 declarations, second is index
 X   ForInStatement  // ion "for of"
         left: VariableDeclaration can have 2 declarations, second is value
-    ForOfStatement / ForInStatement
+X   ForOfStatement / ForInStatement
         if: Expression / null
         next: ForOfStatement / ForInStatement
-    Function
+X   ArrayExpression
+        +comprehension: ForInStatement/ForOfStatement // no body
+        +value:Expression
+X   Function
         +bound: true / false
-
-    MemberExpression
+X   MemberExpression
         +existential: true / undefined
-
-    ObjectExpression
+X   ObjectExpression
         +objectType: Expression
         properties: property / Statement
-
-    +Property     // compatible with ObjectExpression.properties type
+X   +Property     // compatible with ObjectExpression.properties type
         key: Literal / Identifier / Expression
         value: Expression
         kind: "init"
         +computed: true / false
-
-    +ExportDeclaration
+X   +ExportDeclaration
         name: null / Expression
         value: Variable / Expression
-
-    +ImportExpression
+X   +ImportExpression
         name: Expression
 

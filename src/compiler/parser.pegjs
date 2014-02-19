@@ -157,6 +157,9 @@ ForInOfStatement = start:start head:ForInOfHead body:BlockOrSingleStatement end:
     }
 ForStatement = start:start for _ init:(VariableDeclaration / InlineExpression)? _ ";" _ test:InlineExpression? _ ";" _ update:InlineExpression? body:BlockOrSingleStatement end:end
     { return node("ForStatement", {init:init, test:test, update:update, body:body}, start, end) }
+//arrayComprehension = s "[" s value:expression forHeads:forHead+ s "]"
+ArrayComprehension = start:start "[" _ value:InlineExpression _ comprehension:ForInOfHead _ "]" end:end
+    { return node("ArrayExpression", {value:value, comprehension:comprehension}, start, end) }
 
 BlockOrSingleStatement = block:BlockStatement
     { return block.body.length == 1 ? block.body[0] : block }
@@ -242,7 +245,7 @@ formalParameters = head:formalParameter tail:(_ "," _ a:formalParameter { return
 formalParameter = param:Pattern _ init:formalParameterInitializer? { return [param,init] }
 formalParameterInitializer = "=" _ a:InlineExpression { return a }
 
-PrimaryExpression 'primaryExpression' = ThisExpression / Identifier / Literal / ArrayLiteral / ObjectLiteral / GroupExpression
+PrimaryExpression 'primaryExpression' = ThisExpression / Identifier / Literal / ArrayLiteral / ArrayComprehension / ObjectLiteral / GroupExpression
 ArrayLiteral = start:start "[" _ elements:elementList?  _ "]" end:end { return node("ArrayExpression", {elements:elements || []}, start, end) }
 elementList = head:InlineExpression tail:(_ "," _ item:InlineExpression {return item})* { return [head].concat(tail) }
 ObjectLiteral = start:start "{" _ assignments:propertyAssignmentList? _ "}" end:end { return node("ObjectExpression", {properties:assignments || []}, start, end) }

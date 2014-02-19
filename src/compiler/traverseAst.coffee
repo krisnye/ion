@@ -62,6 +62,8 @@ exports.traverse = (program, enterCallback, exitCallback) ->
         context.getSharedVariableId ?= (name) ->
             return @getVariableInfo(name)?.id ? @addVariable({id:name,offset:Number.MIN_VALUE})
         context.addStatement ?= (statement, offset, addToNode) ->
+            if typeof statement is 'number'
+                [statement, offset] = [offset, statement]
             addToNode ?= @scope().sourceNode
             if statement.type is 'VariableDeclaration'
                 trackVariables context, [statement]
