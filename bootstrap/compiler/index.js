@@ -45,8 +45,6 @@ exports.compile = compile = function(content, options) {
   } catch (_error) {
     e = _error;
     preprocessor.fixSourceLocation(e, sourceMapping);
-    console.log('-Preprocessed--------------------------------------------');
-    console.log(preprocessed);
     makePrettyError(e, content);
     throw e;
   }

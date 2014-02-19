@@ -149,6 +149,10 @@ exports.traverse = function(program, enterCallback, exitCallback) {
     }
     if (context.addStatement == null) {
       context.addStatement = function(statement, offset, addToNode) {
+        var _ref;
+        if (typeof statement === 'number') {
+          _ref = [offset, statement], statement = _ref[0], offset = _ref[1];
+        }
         if (addToNode == null) {
           addToNode = this.scope().sourceNode;
         }

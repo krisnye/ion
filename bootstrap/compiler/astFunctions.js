@@ -1,70 +1,52 @@
-(function(){var _ion_compiler_astFunctions_ = function(module,exports,require){var forEachDestructuringAssignment;
-
-exports.addStatement = function(node, statement, index, offset) {
-  var body;
-  body = node.body;
-  if (body.type === "BlockStatement") {
-    body = body.body;
-  }
-  if (!Array.isArray(body)) {
-    node.body = {
-      type: "BlockStatement",
-      body: body = [node.body]
+'use strict';
+const addStatement = exports.addStatement = function (node, statement, index, offset) {
+        let body = node.body;
+        if (body.type === 'BlockStatement')
+            body = body.body;
+        if (!Array.isArray(body))
+            node.body = {
+                type: 'BlockStatement',
+                body: body = [node.body]
+            };
+        if (!(index != null))
+            index = 0;
+        else if (index.type != null)
+            index = body.indexOf(index) + (offset != null ? offset : 1);
+        index = Math.max(0, Math.min(index, body.length));
+        body.splice(index, 0, statement);
     };
-  }
-  if (index == null) {
-    index = 0;
-  } else if (index.type != null) {
-    index = body.indexOf(index) + (offset != null ? offset : 1);
-  }
-  index = Math.max(0, Math.min(index, body.length));
-  return body.splice(index, 0, statement);
-};
-
-exports.forEachDestructuringAssignment = forEachDestructuringAssignment = function(pattern, expression, callback) {
-  var index, key, value, _i, _j, _len, _len1, _ref, _ref1, _ref2, _results, _results1;
-  if (pattern.type === 'Identifier') {
-    return callback(pattern, expression);
-  } else if (pattern.properties != null) {
-    _ref = pattern.properties;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      _ref1 = _ref[_i], key = _ref1.key, value = _ref1.value;
-      _results.push(forEachDestructuringAssignment(value, {
-        type: 'MemberExpression',
-        object: expression,
-        property: key,
-        computed: key.type !== 'Identifier'
-      }, callback));
-    }
-    return _results;
-  } else if (pattern.elements != null) {
-    _ref2 = pattern.elements;
-    _results1 = [];
-    for (index = _j = 0, _len1 = _ref2.length; _j < _len1; index = ++_j) {
-      value = _ref2[index];
-      _results1.push(forEachDestructuringAssignment(value, {
-        type: 'MemberExpression',
-        object: expression,
-        property: {
-          type: 'Literal',
-          value: index
-        },
-        computed: true
-      }, callback));
-    }
-    return _results1;
-  }
-};
-
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('ion/compiler/astFunctions',_ion_compiler_astFunctions_);
-    else
-      _ion_compiler_astFunctions_.call(this, module, exports, require);
-  }
-  else {
-    _ion_compiler_astFunctions_.call(this);
-  }
-}).call(this)
+const forEachDestructuringAssignment = exports.forEachDestructuringAssignment = function (pattern, expression, callback) {
+        if (pattern.type === 'Identifier')
+            callback(pattern, expression);
+        else if (pattern.properties != null) {
+            let _ref = pattern.properties;
+            for (let _i = 0; _i < _ref.length; _i++) {
+                let _ref2 = _ref[_i];
+                let key = _ref2.key;
+                let value = _ref2.value;
+                let subExpression = {
+                        type: 'MemberExpression',
+                        object: expression,
+                        property: key,
+                        computed: key.type !== 'Identifier'
+                    };
+                forEachDestructuringAssignment(value, subExpression, callback);
+            }
+        } else if (pattern.elements != null) {
+            let _ref = pattern.elements;
+            for (let _i = 0; _i < _ref.length; _i++) {
+                let index = _i;
+                let value = _ref[_i];
+                let subExpression = {
+                        type: 'MemberExpression',
+                        object: expression,
+                        property: {
+                            type: 'Literal',
+                            value: index
+                        },
+                        computed: true
+                    };
+                forEachDestructuringAssignment(value, subExpression, callback);
+            }
+        }
+    };

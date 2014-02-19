@@ -40,12 +40,16 @@ tests = {
   "a?()": "'use strict';\na != null ? a() : void 0;",
   "a?.b?.c?()": "'use strict';\na != null ? a.b != null ? a.b.c != null ? a.b.c() : void 0 : void 0 : void 0;",
   "a?.b().c?()": "'use strict';\na != null ? a.b().c != null ? a.b().c() : void 0 : void 0;",
-  "(x) -> 2": "'use strict';\n(function (x) {\n    return 2;\n});",
+  "y = (x) -> 2": "'use strict';\ny = function (x) {\n    return 2;\n};",
   "s?": "'use strict';\ns != null;",
   "origin = Point\n    x: 0\n    y: 0": "'use strict';\norigin = new Point();\norigin.x = 0;\norigin.y = 0;",
   "origin = Line\n    a: Point\n        x: 0\n        y: 0\n    b: Point\n        x: 10\n        y: 20": "'use strict';\norigin = new Line();\norigin.a = new Point();\norigin.a.x = 0;\norigin.a.y = 0;\norigin.b = new Point();\norigin.b.x = 10;\norigin.b.y = 20;",
   "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: Point\n        x: 0\n        y: 0": "'use strict';\ninput.x = 10;\ninput.y = 20;\ninput.z.a = 1;\ninput.z.b = 2;\ninput.w = new Point();\ninput.w.x = 0;\ninput.w.y = 0;",
-  "# also test comments\nvar regex = /foo/": "'use strict';\nlet regex = /foo/;"
+  "# also test comments\nvar regex = /foo/": "'use strict';\nlet regex = /foo/;",
+  "for var i = 0; i < 10; i++\n    console.log(i)": "'use strict';\nfor (let i = 0; i < 10; i++)\n    console.log(i);",
+  "for key of object if key[0] isnt '_' for c in key\n    console.log(c)": "'use strict';\nfor (let key in object)\n    if (key[0] !== '_')\n        for (let _i = 0; _i < key.length; _i++) {\n            let c = key[_i];\n            console.log(c);\n        }",
+  "console.log([key for key of object if key is cool])": "'use strict';\nlet _ref = [];\nfor (let key in object)\n    if (key === cool)\n        _ref.push(key);\nconsole.log(_ref);",
+  "(console.log)\n    1\n    2\n    {}\n        x: 1\n        y: 2": "'use strict';\nconsole.log(1, 2, {\n    x: 1,\n    y: 2\n});"
 };
 
 exports.test = function() {
@@ -69,18 +73,11 @@ exports.test = function() {
         console.log(e.message);
       }
     } else {
-      try {
-        output = index.compile(input);
-        if (output.trim() !== expected.trim()) {
-          console.log('-Output---------------------------------------------');
-          console.log(output);
-          throw new Error("\n" + output + "\n!=\n" + expected);
-        }
-      } catch (_error) {
-        e = _error;
-        console.log('-Error----------------------------------------------');
-        console.log(JSON.stringify(e));
-        throw e;
+      output = index.compile(input);
+      if (output.trim() !== expected.trim()) {
+        console.log('-Output---------------------------------------------');
+        console.log(output);
+        throw new Error("\n" + output + "\n!=\n" + expected);
       }
     }
   }

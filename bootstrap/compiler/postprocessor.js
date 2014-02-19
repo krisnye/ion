@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrict, basicTraverse, callFunctionBindForFatArrows, convertForInToForLength, convertObjectExpressionToArrayExpression, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, existentialExpression, extractForLoopRightVariable, forEachDestructuringAssignment, nodejsModules, nodes, nullExpression, propertyStatements, separateAllVariableDeclarations, traverse, typedObjectExpressions, undefinedExpression, _ref;
+(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrict, arrayComprehensionsToES5, basicTraverse, callFunctionBindForFatArrows, convertForInToForLength, convertObjectExpressionToArrayExpression, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, nodejsModules, nodes, nullExpression, propertyStatements, separateAllVariableDeclarations, traverse, typedObjectExpressions, undefinedExpression, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -500,9 +500,58 @@ propertyStatements = function(node, context) {
   }
 };
 
+extractForLoopsInnerAndTest = function(node, context) {
+  if (node.type === 'ForInStatement' || node.type === 'ForOfStatement') {
+    if (node.inner != null) {
+      node.inner.body = node.body;
+      node.body = node.inner;
+      delete node.inner;
+    }
+    if (node.test != null) {
+      node.body = {
+        type: 'IfStatement',
+        test: node.test,
+        consequent: node.body
+      };
+      return delete node.test;
+    }
+  }
+};
+
+arrayComprehensionsToES5 = function(node, context) {
+  var forStatement, tempId;
+  if (node.type === 'ArrayExpression' && (node.value != null) && (node.comprehension != null)) {
+    tempId = context.addVariable({
+      offset: 0,
+      init: {
+        type: 'ArrayExpression',
+        elements: []
+      }
+    });
+    forStatement = node.comprehension;
+    forStatement.body = {
+      type: 'ExpressionStatement',
+      expression: {
+        type: 'CallExpression',
+        callee: {
+          type: 'MemberExpression',
+          object: tempId,
+          property: {
+            type: 'Identifier',
+            name: 'push'
+          }
+        },
+        "arguments": [node.value]
+      }
+    };
+    context.addStatement(0, forStatement);
+    return context.replace(tempId);
+  }
+};
+
 exports.postprocess = function(program, options) {
   var steps, traversal, _i, _len;
-  steps = [[extractForLoopRightVariable, callFunctionBindForFatArrows, defaultAssignmentsToDefaultOperators], [createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules], [propertyStatements, separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals], [existentialExpression, addUseStrict, typedObjectExpressions]];
+  steps = [[arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows, defaultAssignmentsToDefaultOperators], [createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules], [propertyStatements, separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals], [existentialExpression, addUseStrict, typedObjectExpressions]];
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
     traverse(program, function(node, context) {
@@ -510,6 +559,7 @@ exports.postprocess = function(program, options) {
       _results = [];
       for (_j = 0, _len1 = traversal.length; _j < _len1; _j++) {
         step = traversal[_j];
+        node = context.current();
         _results.push(step(node, context, options));
       }
       return _results;

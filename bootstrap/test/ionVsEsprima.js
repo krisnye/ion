@@ -1,6 +1,6 @@
 (function(){var _ion_test_ionVsEsprima_ = function(module,exports,require){var tests;
 
-tests = ["x", "x.y", "1 + 2 + 3", "1 + 2 * 3", "new foo.Bar()[3].x * 3", "a ? b : c ? d : e", "[]", "[1,2,null,foo]", "({})", "({ })", "({foo:bar})", "({'foo':'bar'})", "({a:1,b:{c:3}})", "const x = 2", "const x = 2\nlog(x)", "if (true)\n    x", "if (true)\n    x()\nelse\n    y()", "if (true)\n    x()\nelse if (a)\n    y()", "if (true)\n    x()\nelse if (a)\n    y()\nelse\n    z()", "({x:1,y:2})"];
+tests = ["x", "x.y", "1 + 2 + 3", "1 + 2 * 3", "new foo.Bar()[3].x * 3", "a ? b : c ? d : e", "[]", "[1,2,null,foo]", "const x = 2", "const x = 2\nlog(x)", "if (true)\n    x", "if (true)\n    x()\nelse\n    y()", "if (true)\n    x()\nelse if (a)\n    y()", "if (true)\n    x()\nelse if (a)\n    y()\nelse\n    z()"];
 
 exports.test = function() {
   var esprima, esprimaResult, index, ion, ionResult, options, test, _i, _len;

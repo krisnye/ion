@@ -157,7 +157,6 @@ ForInOfStatement = start:start head:ForInOfHead body:BlockOrSingleStatement end:
     }
 ForStatement = start:start for _ init:(VariableDeclaration / InlineExpression)? _ ";" _ test:InlineExpression? _ ";" _ update:InlineExpression? body:BlockOrSingleStatement end:end
     { return node("ForStatement", {init:init, test:test, update:update, body:body}, start, end) }
-//arrayComprehension = s "[" s value:expression forHeads:forHead+ s "]"
 ArrayComprehension = start:start "[" _ value:InlineExpression _ comprehension:ForInOfHead _ "]" end:end
     { return node("ArrayExpression", {value:value, comprehension:comprehension}, start, end) }
 
@@ -182,7 +181,18 @@ ArrayPattern = pattern:ArrayLiteral { /* due to packrat parsing, you MUST clone 
 
 //  Expressions
 //  We use javascript terms where available. http://www.ecma-international.org/ecma-262/5.1/#sec-A.3
-MultilineExpression = MultilineStringTemplate / MultilineStringLiteral / MultilineObjectExpression / InlineExpression
+MultilineExpression = MultilineStringTemplate / MultilineStringLiteral / MultilineObjectExpression / MultilineCallExpression / InlineExpression
+MultilineCallExpression = start:start callee:GroupExpression indent eol args:Statement+ end:end outdent
+    {
+        return node("CallExpression", {
+            callee: callee,
+            arguments: args.map(function(x) {
+                if (x.expression == null)
+                    expected("call expression to only contain arguments")
+                return x.expression
+            })
+        }, start, end)
+    }
 InlineExpression = AssignmentExpression
 AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=") _ right:MultilineExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
     / ConditionalOrDefaultExpression
@@ -210,6 +220,7 @@ UpdateExpression
     / start:start _ arg:LeftHandSideExpression op:("?") !"." end:end { return node('UnaryExpression', {operator:op, argument:arg}, start, end) }
     / LeftHandSideExpression
 LeftHandSideExpression = CallExpression
+
 CallExpression = start:start head:MemberExpression tail:(tailCall / tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 tailCall   = _ existential:("?" {return true})? args:arguments end:end { return ["callee", node("CallExpression", {callee:null, arguments:args, existential:existential || undefined}), end] }
 tailMember = _ existential:("?" {return true})? "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] }
@@ -253,8 +264,12 @@ propertyAssignmentList = head:propertyAssignment tail:(_ "," _ item:propertyAssi
 propertyAssignment
     = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:InlineExpression end:end { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
     / start:start key:IdentifierName end:end { return node("Property", { key: key, value:clone(key), kind: 'init'}, start, end) }
-MultilineObjectExpression = start:start type:InlineExpression? properties:BlockStatement end:end
-    { return node("ObjectExpression", {objectType:type,properties:properties.body}, start, end) }
+MultilineObjectExpression = start:start !"(" type:InlineExpression? properties:BlockStatement end:end
+    {
+        // if (type != null && type.type === 'CallExpression')
+        //     return expected('Type should not be a call expression')
+        return node("ObjectExpression", {objectType:type,properties:properties.body}, start, end)
+    }
 
 GroupExpression 'group' = "(" _ expression:InlineExpression _ ")" { return expression }
 Identifier = !reserved value:IdentifierName { return value }

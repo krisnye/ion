@@ -395,12 +395,12 @@ tests =
     a != null ? a.b().c != null ? a.b().c() : void 0 : void 0;
     """
     """
-    (x) -> 2
+    y = (x) -> 2
     """: """
     'use strict';
-    (function (x) {
+    y = function (x) {
         return 2;
-    });
+    };
     """
     """
     s?
@@ -494,6 +494,20 @@ tests =
         if (key === cool)
             _ref.push(key);
     console.log(_ref);
+    """
+    """
+    (console.log)
+        1
+        2
+        {}
+            x: 1
+            y: 2
+    """: """
+    'use strict';
+    console.log(1, 2, {
+        x: 1,
+        y: 2
+    });
     """
 
 exports.test = ->

@@ -8,11 +8,6 @@ tests = [
     "a ? b : c ? d : e"
     "[]"
     "[1,2,null,foo]"
-    "({})"
-    "({ })"
-    "({foo:bar})"
-    "({'foo':'bar'})"
-    "({a:1,b:{c:3}})"
     "const x = 2"
     """
     const x = 2
@@ -42,7 +37,6 @@ tests = [
     else
         z()
     """
-    "({x:1,y:2})"
 ]
 
 exports.test = ->
