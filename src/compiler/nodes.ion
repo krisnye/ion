@@ -1,0 +1,19 @@
+
+const
+    getVariablesFromStatements = (statements) ->
+        if not statements?
+            return []
+        return [s for s in statements if s.type is 'VariableDeclaration']
+
+export const
+    BlockStatement =
+        isBlock: true
+        newScope: true
+        getVariables: (node) -> getVariablesFromStatements(node.body)
+    Program = BlockStatement
+    ForInStatement =
+        newScope: true
+        getVariables: (node) -> [node.left].concat(getVariablesFromStatements(node.body))
+    FunctionExpression =
+        newScope: true
+        getVariables: (node) -> node.params
