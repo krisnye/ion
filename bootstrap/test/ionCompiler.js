@@ -49,7 +49,8 @@ tests = {
   "for var i = 0; i < 10; i++\n    console.log(i)": "'use strict';\nfor (let i = 0; i < 10; i++)\n    console.log(i);",
   "for key of object if key[0] isnt '_' for c in key\n    console.log(c)": "'use strict';\nfor (let key in object)\n    if (key[0] !== '_')\n        for (let _i = 0; _i < key.length; _i++) {\n            let c = key[_i];\n            console.log(c);\n        }",
   "console.log([key for key of object if key is cool])": "'use strict';\nlet _ref = [];\nfor (let key in object)\n    if (key === cool)\n        _ref.push(key);\nconsole.log(_ref);",
-  "(console.log)\n    1\n    2\n    {}\n        x: 1\n        y: 2": "'use strict';\nconsole.log(1, 2, {\n    x: 1,\n    y: 2\n});"
+  "(console.log)\n    1\n    2\n    {}\n        x: 1\n        y: 2": "'use strict';\nconsole.log(1, 2, {\n    x: 1,\n    y: 2\n});",
+  "var x = ->\n    try\n        foo\n        bar\n    catch e\n        baz": "'use strict';\nlet x = function () {\n    try {\n        foo;\n        bar;\n    } catch (e) {\n        baz;\n    }\n};"
 };
 
 exports.test = function() {
