@@ -1,8 +1,11 @@
 
-X   ForOfStatement  // ion for in
+X   ForOfStatement
         left: VariableDeclaration can have 2 declarations, second is index
 X   ForInStatement  // ion "for of"
         left: VariableDeclaration can have 2 declarations, second is value
+    ForOfStatement / ForInStatement
+        if: Expression / null
+        next: ForOfStatement / ForInStatement
     Function
         +bound: true / false
 

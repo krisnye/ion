@@ -473,6 +473,18 @@ tests =
     for (let i = 0; i < 10; i++)
         console.log(i);
     """
+    """
+    for key of object if key[0] isnt '_' for c in key
+        console.log(c)
+    """: """
+    'use strict';
+    for (let key in object)
+        if (key[0] !== '_')
+            for (let _i = 0; _i < key.length; _i++) {
+                let c = key[_i];
+                console.log(c);
+            }
+    """
 
 exports.test = ->
     for input, expected of tests

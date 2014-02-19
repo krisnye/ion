@@ -141,8 +141,20 @@ CatchClause =
     { return node("CatchClause", {param:param, guard:null, body:body}, start, end) }
 IterationStatement = WhileStatement / ForInOfStatement / ForStatement
 WhileStatement = start:start while _ test:InlineExpression body:BlockOrSingleStatement end:end { return node("WhileStatement", {test:test, body:body}, start, end)}
-ForInOfStatement = start:start for _ left:VariableDeclarationKindOptional _ type:(in { return "ForOfStatement" } / of { return "ForInStatement" }) _ right:InlineExpression body:BlockOrSingleStatement end:end
-    { return node(type, {left:left, right:right, body:body}, start, end) }
+
+ForInOfHead
+    = for _ left:VariableDeclarationKindOptional
+    _ type:(in { return "ForOfStatement" } / of { return "ForInStatement" })
+    _ right:InlineExpression
+    _ test:(if _ test:InlineExpression { return test })?
+    _ inner:ForInOfHead?
+    { return {type:type, left:left, right:right, test:test || undefined, inner: inner || undefined} }
+ForInOfStatement = start:start head:ForInOfHead body:BlockOrSingleStatement end:end
+    {
+        head = clone(head)
+        head.body = body
+        return node(head.type, head, start, end)
+    }
 ForStatement = start:start for _ init:(VariableDeclaration / InlineExpression)? _ ";" _ test:InlineExpression? _ ";" _ update:InlineExpression? body:BlockOrSingleStatement end:end
     { return node("ForStatement", {init:init, test:test, update:update, body:body}, start, end) }
 

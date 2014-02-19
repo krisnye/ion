@@ -358,9 +358,22 @@ propertyStatements = (node, context) ->
         createAssignments node.key, node.value
         context.remove()
 
+extractForLoopsInnerAndTest = (node, context) ->
+    if node.type is 'ForInStatement' or node.type is 'ForOfStatement'
+        if node.inner?
+            node.inner.body = node.body
+            node.body = node.inner
+            delete node.inner
+        if node.test?
+            node.body =
+                type: 'IfStatement'
+                test: node.test
+                consequent: node.body
+            delete node.test
+
 exports.postprocess = (program, options) ->
     steps = [
-        [extractForLoopRightVariable, callFunctionBindForFatArrows, defaultAssignmentsToDefaultOperators]
+        [extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows, defaultAssignmentsToDefaultOperators]
         [createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules]
         [propertyStatements, separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals]
         [existentialExpression, addUseStrict, typedObjectExpressions]
