@@ -527,6 +527,14 @@ tests =
         }
     };
     """
+    """
+    if foo
+        # bar
+    """: """
+    'use strict';
+    if (foo) {
+    }
+    """
 
 exports.test = ->
     for input, expected of tests

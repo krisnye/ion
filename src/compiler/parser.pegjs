@@ -157,7 +157,7 @@ ArrayComprehension = start:start "[" _ value:InlineExpression _ comprehension:Fo
 
 BlockOrSingleStatement = block:BlockStatement
     { return block.body.length == 1 ? block.body[0] : block }
-BlockStatement = indent eol start:start body:Statement+ end:end outdent
+BlockStatement = indent eol start:start body:Statement* end:end outdent
     { return node("BlockStatement", {body:body}, start, end) }
 PropertyDeclaration
     = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:MultilineExpression end:end
@@ -202,7 +202,7 @@ UnaryExpression = start:start op:unaryOperator _ arg:UpdateExpression end:end { 
     / UpdateExpression
 unaryOperator 'unaryOperator' = not / "-" / "+" / "~" / typeof / void / delete
 UpdateExpression
-    = start:start op:("++" / "--") _ arg:LeftHandSideExpression end:end { return node('UpdateExpression', {operator:op, argument:arg, prefix:true}, start, end) }
+    = start:start op:("++" / "--") arg:LeftHandSideExpression end:end { return node('UpdateExpression', {operator:op, argument:arg, prefix:true}, start, end) }
     / start:start _ arg:LeftHandSideExpression op:("++" / "--") end:end { return node('UpdateExpression', {operator:op, argument:arg, prefix:false}, start, end) }
     / start:start _ arg:LeftHandSideExpression op:("?") !"." end:end { return node('UnaryExpression', {operator:op, argument:arg}, start, end) }
     / LeftHandSideExpression
@@ -213,6 +213,7 @@ tailCall   = _ existential:("?" {return true})? args:arguments end:end { return 
 tailMember = _ existential:("?" {return true})? "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] }
            / _ existential:("?" {return true})? "." _ property:Identifier end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] }
 arguments = "(" a:argumentList? ")" { return a ? a : [] }
+//            / _ a:argumentList { return a }
 argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
 NewExpression = start:start new _ callee:MemberExpression args:arguments? end:end { return node("NewExpression", {callee:callee,arguments:args || []}, start, end) }
 MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
