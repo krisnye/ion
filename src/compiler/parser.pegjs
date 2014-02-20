@@ -177,7 +177,13 @@ ArrayPattern = pattern:ArrayLiteral { /* due to packrat parsing, you MUST clone 
 //  Expressions
 //  We use javascript terms where available. http://www.ecma-international.org/ecma-262/5.1/#sec-A.3
 MultilineExpression = MultilineStringTemplate / MultilineStringLiteral / MultilineObjectExpression / MultilineCallExpression / InlineExpression
-multilineCallArguments = (_ arg:MultilineExpression eol { return arg })+
+multilineCallArguments
+    = (_ arg:MultilineExpression eol { return arg })+
+    / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end
+        {
+            return [node("ObjectExpression", {properties:properties}, start, end)]
+        }
+
 MultilineCallExpression = start:start callee:GroupExpression indent eol args:multilineCallArguments end:end outdent
     { return node("CallExpression", {callee: callee, arguments: args}, start, end) }
 InlineExpression = LiterateCallExpression

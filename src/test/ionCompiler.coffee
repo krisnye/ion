@@ -527,6 +527,7 @@ tests =
         }
     };
     """
+    # empty comment block statement
     """
     if foo
         # bar
@@ -535,12 +536,14 @@ tests =
     if (foo) {
     }
     """
+    # function calls with no parentheses
     """
     foo bar baz, 3
     """: """
     'use strict';
     foo(bar(baz, 3));
     """
+    # function parameter default values
     """
     trim = (a = "") -> a.trim()
     """: """
@@ -549,6 +552,25 @@ tests =
         a = a != null ? a : '';
         return a.trim();
     };
+    """
+    # function call with single property names
+    """
+    (compile)
+        foo: 1
+        bar: 2
+        baz:
+            a: 1
+            b: 2
+    """: """
+    'use strict';
+    compile({
+        foo: 1,
+        bar: 2,
+        baz: {
+            a: 1,
+            b: 2
+        }
+    });
     """
 
 exports.test = ->
