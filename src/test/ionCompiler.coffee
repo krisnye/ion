@@ -543,7 +543,13 @@ tests =
     """
     """
     trim = (a = "") -> a.trim()
-    """: null
+    """: """
+    'use strict';
+    trim = function (a) {
+        a = a != null ? a : '';
+        return a.trim();
+    };
+    """
 
 exports.test = ->
     for input, expected of tests

@@ -394,10 +394,24 @@ arrayComprehensionsToES5 = (node, context) ->
         context.addStatement 0, forStatement
         context.replace tempId
 
+functionParameterDefaultValuesToES5 = (node, context) ->
+    if node.type is 'FunctionExpression' and node.params? and node.defaults?
+        for param, index in node.params
+            defaultValue = node.defaults?[index]
+            if defaultValue?
+                context.addStatement
+                    type: 'ExpressionStatement'
+                    expression:
+                        type: 'AssignmentExpression'
+                        operator: '?='
+                        left: param
+                        right: defaultValue
+                node.defaults[index] = undefined
+
 exports.postprocess = (program, options) ->
     steps = [
-        [arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows, defaultAssignmentsToDefaultOperators]
-        [createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules]
+        [functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
+        [defaultAssignmentsToDefaultOperators, createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules]
         [propertyStatements, separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals]
         [existentialExpression, addUseStrict, typedObjectExpressions]
     ]
