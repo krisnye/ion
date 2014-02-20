@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrict, arrayComprehensionsToES5, basicTraverse, callFunctionBindForFatArrows, convertForInToForLength, convertObjectExpressionToArrayExpression, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, nodejsModules, nodes, nullExpression, propertyStatements, separateAllVariableDeclarations, traverse, typedObjectExpressions, undefinedExpression, _ref;
+(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrict, arrayComprehensionsToES5, basicTraverse, callFunctionBindForFatArrows, convertForInToForLength, convertObjectExpressionToArrayExpression, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, nodejsModules, nodes, nullExpression, propertyStatements, separateAllVariableDeclarations, traverse, typedObjectExpressions, undefinedExpression, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -549,9 +549,36 @@ arrayComprehensionsToES5 = function(node, context) {
   }
 };
 
+functionParameterDefaultValuesToES5 = function(node, context) {
+  var defaultValue, index, param, _i, _len, _ref1, _ref2, _results;
+  if (node.type === 'FunctionExpression' && (node.params != null) && (node.defaults != null)) {
+    _ref1 = node.params;
+    _results = [];
+    for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
+      param = _ref1[index];
+      defaultValue = (_ref2 = node.defaults) != null ? _ref2[index] : void 0;
+      if (defaultValue != null) {
+        context.addStatement({
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            operator: '?=',
+            left: param,
+            right: defaultValue
+          }
+        });
+        _results.push(node.defaults[index] = void 0);
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  }
+};
+
 exports.postprocess = function(program, options) {
   var steps, traversal, _i, _len;
-  steps = [[arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows, defaultAssignmentsToDefaultOperators], [createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules], [propertyStatements, separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals], [existentialExpression, addUseStrict, typedObjectExpressions]];
+  steps = [[functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [defaultAssignmentsToDefaultOperators, createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules], [propertyStatements, separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals], [existentialExpression, addUseStrict, typedObjectExpressions]];
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
     traverse(program, function(node, context) {

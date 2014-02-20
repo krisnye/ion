@@ -1,5 +1,5 @@
 {
-    "modified": 1392782027918,
+    "modified": 1392857961454,
     "files": [
         "compiler/astFunctions.js",
         "compiler/common.js",
@@ -13,7 +13,6 @@
         "index.js",
         "test/ionCompiler.js",
         "test/ionCustomParse.js",
-        "test/ionVsEsprima.js",
-        "compiler/index2.js"
+        "test/ionVsEsprima.js"
     ]
 }

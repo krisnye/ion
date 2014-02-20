@@ -11,18 +11,16 @@ const
             e.message = newMessage
 
 export const
-    parse = (content, options) ->
-        options ?= {}
+    parse = (content, options = {}) ->
         options.generate = false
         return compile(content, options)
 
-    compile = (content, options) ->
+    compile = (content, options = {}) ->
         const
             preprocessor = import './preprocessor'
             parser = import './parser'
             postprocessor = import './postprocessor'
             escodegen = import 'escodegen'
-        options ?= {}
         var
             sourceMapping = {}
             result = preprocessor.preprocess(content, sourceMapping)

@@ -50,7 +50,11 @@ tests = {
   "for key of object if key[0] isnt '_' for c in key\n    console.log(c)": "'use strict';\nfor (let key in object)\n    if (key[0] !== '_')\n        for (let _i = 0; _i < key.length; _i++) {\n            let c = key[_i];\n            console.log(c);\n        }",
   "console.log([key for key of object if key is cool])": "'use strict';\nlet _ref = [];\nfor (let key in object)\n    if (key === cool)\n        _ref.push(key);\nconsole.log(_ref);",
   "(console.log)\n    1\n    2\n    {}\n        x: 1\n        y: 2": "'use strict';\nconsole.log(1, 2, {\n    x: 1,\n    y: 2\n});",
-  "var x = ->\n    try\n        foo\n        bar\n    catch e\n        baz": "'use strict';\nlet x = function () {\n    try {\n        foo;\n        bar;\n    } catch (e) {\n        baz;\n    }\n};"
+  "var x = ->\n    try\n        foo\n        bar\n    catch e\n        baz": "'use strict';\nlet x = function () {\n    try {\n        foo;\n        bar;\n    } catch (e) {\n        baz;\n    }\n};",
+  "if foo\n    # bar": "'use strict';\nif (foo) {\n}",
+  "foo bar baz, 3": "'use strict';\nfoo(bar(baz, 3));",
+  "trim = (a = \"\") -> a.trim()": "'use strict';\ntrim = function (a) {\n    a = a != null ? a : '';\n    return a.trim();\n};",
+  "(compile)\n    foo: 1\n    bar: 2\n    baz:\n        a: 1\n        b: 2": "'use strict';\ncompile({\n    foo: 1,\n    bar: 2,\n    baz: {\n        a: 1,\n        b: 2\n    }\n});"
 };
 
 exports.test = function() {
