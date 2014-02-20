@@ -535,6 +535,15 @@ tests =
     if (foo) {
     }
     """
+    """
+    foo bar baz, 3
+    """: """
+    'use strict';
+    foo(bar(baz, 3));
+    """
+    """
+    trim = (a = "") -> a.trim()
+    """: null
 
 exports.test = ->
     for input, expected of tests

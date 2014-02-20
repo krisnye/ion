@@ -180,7 +180,10 @@ MultilineExpression = MultilineStringTemplate / MultilineStringLiteral / Multili
 multilineCallArguments = (_ arg:MultilineExpression eol { return arg })+
 MultilineCallExpression = start:start callee:GroupExpression indent eol args:multilineCallArguments end:end outdent
     { return node("CallExpression", {callee: callee, arguments: args}, start, end) }
-InlineExpression = AssignmentExpression
+InlineExpression = LiterateCallExpression
+LiterateCallExpression
+    = start:start callee:AssignmentExpression _ args:argumentList end:end { return node("CallExpression", {callee:callee, arguments:args}, start, end) }
+    / AssignmentExpression
 AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=") _ right:MultilineExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
     / ConditionalOrDefaultExpression
 ConditionalOrDefaultExpression
@@ -213,17 +216,20 @@ tailCall   = _ existential:("?" {return true})? args:arguments end:end { return 
 tailMember = _ existential:("?" {return true})? "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] }
            / _ existential:("?" {return true})? "." _ property:Identifier end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] }
 arguments = "(" a:argumentList? ")" { return a ? a : [] }
-//            / _ a:argumentList { return a }
-argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
+argumentList = a:InlineExpression b:(_ "," _ c:MultilineExpression {return c})* { return [a].concat(b) }
 NewExpression = start:start new _ callee:MemberExpression args:arguments? end:end { return node("NewExpression", {callee:callee,arguments:args || []}, start, end) }
 MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 ImportExpression = start:start import _ name:InlineExpression end:end { return node('ImportExpression', {name:name}, start, end) }
-DoExpression = start:start do _ f:FunctionExpression end:end
+DoExpression = start:start do _ f:MultilineExpression end:end
     {
-        var args = f.params.map(function(x){ return x.name != null ? clone(x) : error("do parameters must be Identifiers") })
+        var args;
+        if (f.params != null)
+            args = f.params.map(function(x){ return x.name != null ? clone(x) : error("do parameters must be Identifiers") })
+        else
+            args = []
         return node("CallExpression", {callee:f,arguments:args}, start, end)
     }
-FunctionExpression = start:start params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:functionBody? end:end
+FunctionExpression = start:start params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(InlineExpression / BlockStatement)? end:end
     {
         if (params == null) params = []
         paramPatterns = params.map(function(x) { return x[0] })
@@ -235,10 +241,6 @@ FunctionExpression = start:start params:formalParameterList? _ bound:("->" { ret
             body = node("BlockStatement", {body:[node("ReturnStatement", {argument:body})]})
         return node("FunctionExpression", {id:null, params:paramPatterns, defaults:paramDefaults, body:body, bound:bound}, start, end)
     }
-functionBody
-    = InlineExpression
-    / statement:BlockStatement
-    { return statement }
 formalParameterList = "(" _ params:formalParameters? _ ")" { return params != null ? params : [] }
 formalParameters = head:formalParameter tail:(_ "," _ a:formalParameter { return a })* { return [head].concat(tail) }
 formalParameter = param:Pattern _ init:formalParameterInitializer? { return [param,init] }
