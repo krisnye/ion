@@ -162,6 +162,8 @@ BlockStatement = indent eol start:start body:Statement* end:end outdent
 PropertyDeclaration
     = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:MultilineExpression end:end
     { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
+    / start:start "[" _ key:InlineExpression _ "]" _ ":" _ value:MultilineExpression end:end
+    { return node("Property", { key: key, value:value, kind: 'init', computed: true}, start, end) }
 VariableDeclaration = &(var / const) a:VariableDeclarationKindOptional { return a }
 VariableDeclarationKindOptional = start:start kind:(var / const)? _ declarations:variableDeclaratorList end:end
     { return node("VariableDeclaration", {declarations:declarations, kind:kind != null ? kind : "let"}, start, end) }
@@ -258,7 +260,7 @@ elementList = head:InlineExpression tail:(_ "," _ item:InlineExpression {return 
 ObjectLiteral = start:start "{" _ assignments:propertyAssignmentList? _ "}" end:end { return node("ObjectExpression", {properties:assignments || []}, start, end) }
 propertyAssignmentList = head:propertyAssignment tail:(_ "," _ item:propertyAssignment {return item})* { return [head].concat(tail) }
 propertyAssignment
-    = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:InlineExpression end:end { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
+    = PropertyDeclaration
     / start:start key:IdentifierName end:end { return node("Property", { key: key, value:clone(key), kind: 'init'}, start, end) }
 MultilineObjectExpression = start:start !"(" type:InlineExpression? properties:BlockStatement end:end
     { return node("ObjectExpression", {objectType:type,properties:properties.body}, start, end) }

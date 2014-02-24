@@ -109,12 +109,6 @@ callFunctionBindForFatArrows = (node, context) ->
                     name: "bind"
             arguments: [ { type:"ThisExpression" } ]
 
-convertObjectExpressionToArrayExpression = (node, context) ->
-    if node.type is "ObjectExpression" and node.objectType?.type is "ArrayExpression"
-        node.type = "ArrayExpression"
-        node.elements = node.properties.map (x) -> x.expression
-        delete node.properties
-
 nodejsModules = (node, context) ->
     # convert ImportExpression{name} into require(name)
     if node.type is 'ImportExpression'
@@ -291,73 +285,6 @@ addUseStrict = (node, context) ->
                 type: 'Literal'
                 value: 'use strict'
 
-# only for imperative code
-typedObjectExpressions = (node, context) ->
-    if node.type is 'ObjectExpression' and node.objectType?
-        if node.objectType.type is 'ObjectExpression' and node.objectType.properties.length is 0
-            delete node.objectType
-            return
-
-        if node.objectType.type is 'ArrayExpression' or node.objectType.type is 'NewExpression'
-            value =
-                node.objectType
-        else
-            value =
-                type: 'NewExpression'
-                callee: node.objectType
-                arguments: []
-
-        parentNode = context.parentNode()
-        if parentNode.type is 'AssignmentExpression'
-            objectId = parentNode.left
-            context.replace value
-        else
-            objectId = context.addVariable
-                offset: 0
-                init: value
-            # replace this node with a reference to the temp id
-            context.replace objectId
-
-        delete node.objectType
-        for {key,value} in node.properties by -1
-            context.addStatement {
-                type: 'ExpressionStatement'
-                expression:
-                    type: 'AssignmentExpression'
-                    operator: '='
-                    left:
-                        type: 'MemberExpression'
-                        object: objectId
-                        property: key
-                    right: value
-                }, 1
-
-propertyStatements = (node, context) ->
-    parent = context.parentNode()
-    if node.type is 'Property' and not (parent.type is 'ObjectExpression' or parent.type is 'ObjectPattern')
-        if node.objectType?
-            throw new Error "Cannot use a typed object on a property declaration statement"
-        createAssignments = (path, value) ->
-            if value.type is 'ObjectExpression' and not value.objectType?
-                for property in value.properties by -1
-                    newPath =
-                        type: 'MemberExpression'
-                        object: path
-                        property: property.key
-                        computed: property.key.type isnt 'Identifier'
-                    createAssignments newPath, property.value
-            else
-                context.addStatement {
-                    type: 'ExpressionStatement'
-                    expression:
-                        type: 'AssignmentExpression'
-                        operator: '='
-                        left: path
-                        right: value
-                }, 0
-        createAssignments node.key, node.value
-        context.remove()
-
 extractForLoopsInnerAndTest = (node, context) ->
     if node.type is 'ForInStatement' or node.type is 'ForOfStatement'
         if node.inner?
@@ -408,12 +335,155 @@ functionParameterDefaultValuesToES5 = (node, context) ->
                         right: defaultValue
                 node.defaults[index] = undefined
 
+# only for imperative code
+typedObjectExpressions = (node, context) ->
+    if node.type is 'ObjectExpression' and node.objectType?
+
+        # first see if the object expression is complex or not
+        if node.type is "ObjectExpression" and node.objectType?.type is "ArrayExpression"
+            elements = []
+            for element in node.objectType.elements
+                elements.push element
+            for expressionStatement in node.properties
+                elements.push expressionStatement.expression
+            context.replace
+                type: "ArrayExpression"
+                elements: elements
+            return
+
+        # empty object expression without properties {}
+        if node.objectType.type is 'ObjectExpression' and node.objectType.properties.length is 0
+            delete node.objectType
+            return
+
+        if node.objectType.type is 'ArrayExpression' or node.objectType.type is 'NewExpression' or node.objectType.type is 'ObjectExpression'
+            initialValue =
+                node.objectType
+        else
+            initialValue =
+                type: 'NewExpression'
+                callee: node.objectType
+                arguments: []
+
+        parentNode = context.parentNode()
+        grandNode = context.ancestorNodes[context.ancestorNodes.length-2]
+        addPosition = 0
+        getExistingObjectIdIfTempVarNotNeeded = (node, parentNode, grandNode) ->
+            # don't need a temp variable because nothing can trigger on variable declaration
+            if parentNode.type is 'VariableDeclarator'
+                return parentNode.id
+            # don't need a temp variable because nothing can trigger on variable assignment
+            if parentNode.type is 'AssignmentExpression' and parentNode.left.type is 'Identifier' and grandNode?.type is 'ExpressionStatement'
+                return parentNode.left
+            # for everything else we must use a temp variable and assign all sub properties
+            # before using the final value in an expression, because it may trigger a setter
+            # or be a parameter in a function call or constructor
+            return null
+
+        objectId = getExistingObjectIdIfTempVarNotNeeded node, parentNode, grandNode
+        if objectId?
+            # replace this with the initial value
+            context.replace initialValue
+            addPosition = 1
+            node.properties.reverse()
+        else
+            # create a temp variable
+            objectId = context.addVariable
+                offset: 0
+                init: initialValue
+            # replace this with a reference to the variable
+            context.replace objectId
+
+        # traverse all properties and expression statements
+        # add a new property that indicates their output scope
+        traverse node.properties, (subnode, subcontext) ->
+            if subnode.type is 'ObjectExpression' or subnode.type is 'ArrayExpression'
+                return subcontext.skip()
+            if subnode.type is 'Property' #or subnode.type is 'ExpressionStatement'
+                # if initialValue is a simple ObjectExpression then just add to it
+                if initialValue.type is 'ObjectExpression' and subnode.computed isnt true
+                    initialValue.properties.push subnode
+                    return
+                # we convert the node to a Property: ObjectExpression node
+                # it will be handled correctly by the later propertyStatements rule
+                subnode = subcontext.replace
+                    type: 'Property'
+                    key: objectId
+                    value:
+                        type: 'ObjectExpression'
+                        properties: [subnode]
+                        create: false
+                subcontext.skip()
+            else if subnode.type is 'ExpressionStatement'
+                subnode = subcontext.replace
+                    type: 'ExpressionStatement'
+                    expression:
+                        type: 'CallExpression'
+                        callee:
+                            type: 'MemberExpression'
+                            object: objectId
+                            property:
+                                type: 'Identifier'
+                                name: 'add'
+                        arguments: [subnode.expression]
+                subcontext.skip()
+            if not subcontext.parentNode()?
+                # add this statement to the current context
+                context.addStatement subnode, addPosition
+
+propertyStatements = (node, context) ->
+    parent = context.parentNode()
+    if node.type is 'Property' and not (parent.type is 'ObjectExpression' or parent.type is 'ObjectPattern')
+        if node.objectType?
+            throw new Error "Cannot use a typed object on a property declaration statement"
+        createAssignments = (path, value) ->
+            if value.type is 'ObjectExpression' and not value.objectType?
+                for property in value.properties by -1
+                    newPath =
+                        type: 'MemberExpression'
+                        object: path
+                        property: property.key
+                        computed: property.computed || property.key.type isnt 'Identifier'
+                    createAssignments newPath, property.value
+                # assign an empty object if required
+                if value.create isnt false
+                    context.addStatement {
+                        type: 'IfStatement'
+                        test:
+                            type: 'BinaryExpression'
+                            operator: '=='
+                            left: path
+                            right: nullExpression
+                        consequent:
+                            type: 'ExpressionStatement'
+                            expression:
+                                type: 'AssignmentExpression'
+                                operator: '='
+                                left: path
+                                right:
+                                    type: 'ObjectExpression'
+                                    properties: []
+                    }, 0
+            else
+                context.addStatement {
+                    type: 'ExpressionStatement'
+                    expression:
+                        type: 'AssignmentExpression'
+                        operator: '='
+                        left: path
+                        right: value
+                }, 0
+        createAssignments node.key, node.value
+        context.remove node
+        # context.replace
+        #     type: 'EmptyStatement'
+
 exports.postprocess = (program, options) ->
     steps = [
         [functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
-        [defaultAssignmentsToDefaultOperators, createForInLoopValueVariable, convertForInToForLength, convertObjectExpressionToArrayExpression, nodejsModules]
-        [propertyStatements, separateAllVariableDeclarations, destructuringAssignments, defaultOperatorsToConditionals]
-        [existentialExpression, addUseStrict, typedObjectExpressions]
+        [createForInLoopValueVariable, convertForInToForLength, nodejsModules]
+        [separateAllVariableDeclarations, destructuringAssignments]
+        [existentialExpression, addUseStrict, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
     ]
     for traversal in steps
         traverse program, (node, context) ->

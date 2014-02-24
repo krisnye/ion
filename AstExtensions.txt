@@ -16,11 +16,15 @@ X   MemberExpression
 X   ObjectExpression
         +objectType: Expression
         properties: property / Statement
+        +create: true / false / undefined  // false means we don't need to assign an empty object first
 X   +Property     // compatible with ObjectExpression.properties type
         key: Literal / Identifier / Expression
         value: Expression
         kind: "init"
         +computed: true / false
+        +output: Identifier  // used while converting typed ObjectExpressions to imperative code
+X   ExpressionStatement
+        +output: Identifier  // used while converting typed ObjectExpressions to imperative code
 X   +ExportDeclaration
         name: null / Expression
         value: Variable / Expression

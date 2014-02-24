@@ -409,56 +409,6 @@ tests =
     s != null;
     """
     """
-    origin = Point
-        x: 0
-        y: 0
-    """: """
-    'use strict';
-    origin = new Point();
-    origin.x = 0;
-    origin.y = 0;
-    """
-    """
-    origin = Line
-        a: Point
-            x: 0
-            y: 0
-        b: Point
-            x: 10
-            y: 20
-    """: """
-    'use strict';
-    origin = new Line();
-    origin.a = new Point();
-    origin.a.x = 0;
-    origin.a.y = 0;
-    origin.b = new Point();
-    origin.b.x = 10;
-    origin.b.y = 20;
-    """
-    """
-    input:
-        # ignore this comment
-        x: 10
-        y: 20
-        z:
-            # also ignore this one
-            a: 1
-            b: 2
-        w: Point
-            x: 0
-            y: 0
-    """: """
-    'use strict';
-    input.x = 10;
-    input.y = 20;
-    input.z.a = 1;
-    input.z.b = 2;
-    input.w = new Point();
-    input.w.x = 0;
-    input.w.y = 0;
-    """
-    """
     # also test comments
     var regex = /foo/
     """: """
@@ -571,6 +521,147 @@ tests =
             b: 2
         }
     });
+    """
+    """
+    var array = [1,2,3]
+        4
+        5
+        6
+    """: """
+    'use strict';
+    let array = [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        ];
+    """
+    """
+    var point = new Point(10, 20)
+        z: 30
+    """: """
+    'use strict';
+    let point = new Point(10, 20);
+    point.z = 30;
+    """
+    """
+    var object = {x:1, y:2}
+        z: 3
+    """: """
+    'use strict';
+    let object = {
+            x: 1,
+            y: 2,
+            z: 3
+        };
+    """
+    """
+    origin = Point
+        x: 1
+        y: 2
+    """: """
+    'use strict';
+    origin = new Point();
+    origin.x = 1;
+    origin.y = 2;
+    """
+    """
+    origin = Line
+        a: Point
+            x: 0
+            y: 0
+        b: Point
+            x: 10
+            y: 20
+    """: """
+    'use strict';
+    origin = new Line();
+    let _ref = new Point();
+    _ref.x = 0;
+    _ref.y = 0;
+    origin.a = _ref;
+    let _ref2 = new Point();
+    _ref2.x = 10;
+    _ref2.y = 20;
+    origin.b = _ref2;
+    """
+    """
+    input:
+        # ignore this comment
+        x: 10
+        y: 20
+        z:
+            # also ignore this one
+            a: 1
+            b: 2
+        w: Point
+            x: 0
+            y: 0
+    """: """
+    'use strict';
+    if (input == null)
+        input = {};
+    input.x = 10;
+    input.y = 20;
+    if (input.z == null)
+        input.z = {};
+    input.z.a = 1;
+    input.z.b = 2;
+    let _ref = new Point();
+    _ref.x = 0;
+    _ref.y = 0;
+    input.w = _ref;
+    """
+    """
+    var point = Point
+        [x]: 1
+        [y]: 2
+    """: """
+    'use strict';
+    let point = new Point();
+    point[x] = 1;
+    point[y] = 2;
+    """
+    """
+    var element = div
+        id: 'foo'
+        style:
+            color: 'red'
+        for key, value of {y: 2, z: 3}
+            [key]: value
+        div
+            "Hello"
+        div
+            "World"
+        if name?
+            "Welcome: " + name
+    """: """
+    'use strict';
+    let element = new div();
+    element.id = 'foo';
+    if (element.style == null)
+        element.style = {};
+    element.style.color = 'red';
+    {
+        let _ref = {
+                y: 2,
+                z: 3
+            };
+        for (let key in _ref) {
+            let value = _ref[key];
+            element[key] = value;
+        }
+    }
+    let _ref = new div();
+    _ref.add('Hello');
+    element.add(_ref);
+    let _ref2 = new div();
+    _ref2.add('World');
+    element.add(_ref2);
+    if (name != null)
+        element.add('Welcome: ' + name);
     """
 
 exports.test = ->

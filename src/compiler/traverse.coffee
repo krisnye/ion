@@ -2,6 +2,7 @@
 exports.traverse = (graph, enterCallback, exitCallback) ->
     result = graph
     skip = false
+    removed = 0
     context =
         path: []
         ancestors: []
@@ -9,18 +10,22 @@ exports.traverse = (graph, enterCallback, exitCallback) ->
         skip: -> skip = true
         key: -> @path[@path.length - 1]
         parent: -> @ancestors[@ancestors.length - 1]
-        remove: -> @replace undefined
+        remove: (node) ->
+            if not node?
+                throw new Error "You must specify the node to remove"
+            parent = @parent()
+            if Array.isArray parent
+                index = parent.indexOf node
+                parent.splice index, 1
+                removed++
+            else
+                delete parent[@key()]
         replace: (value) ->
+            if value is undefined
+                throw new Error "You must specify a replacement value"
             parent = @parent()
             if parent?
-                if value is undefined
-                    if Array.isArray parent
-                        index = parent.indexOf value
-                        parent.splice index, 1
-                    else
-                        delete parent[@key()]
-                else
-                    parent[@key()] = value
+                parent[@key()] = value
             else
                 result = value
         current: ->
@@ -52,6 +57,9 @@ exports.traverse = (graph, enterCallback, exitCallback) ->
                             traverseNode value
                             context.path.pop()
                             index++
+                            if removed > 0
+                                index -= removed
+                                removed = 0
                     else
                         for key, value of node
                             context.path.push key
