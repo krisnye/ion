@@ -107,12 +107,12 @@
 Program = start:start body:Statement* end:end { return node("Program", {body:body}, start, end) }
 
 Statement = eol? _ a:(ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement) eol { return a }
-ExportStatement = start:start export _ value:(VariableDeclaration / MultilineExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
-ReturnStatement = start:start return _ argument:MultilineExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
-ThrowStatement = start:start throw _ argument:MultilineExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
+ExportStatement = start:start export _ value:(VariableDeclaration / RightHandSideExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
+ReturnStatement = start:start return _ argument:RightHandSideExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
+ThrowStatement = start:start throw _ argument:RightHandSideExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
 BreakStatement = start:start break end:end { return node("BreakStatement", {}, start, end) }
 ContinueStatement = start:start continue end:end { return node("ContinueStatement", {}, start, end) }
-ExpressionStatement = start:start expression:MultilineExpression end:end { return node("ExpressionStatement", {expression:expression}, start, end) }
+ExpressionStatement = start:start expression:Expression end:end { return node("ExpressionStatement", {expression:expression}, start, end) }
 IfStatement =
     start:start
     if _ test:InlineExpression
@@ -171,9 +171,9 @@ className
     / "[" _ name:InlineExpression _ "]" { return {name:name,computed:true} }
 classExtends = extends _ baseClasses:argumentList { return baseClasses }
 PropertyDeclaration
-    = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:MultilineExpression end:end
+    = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:RightHandSideExpression end:end
     { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
-    / start:start "[" _ key:InlineExpression _ "]" _ ":" _ value:MultilineExpression end:end
+    / start:start "[" _ key:InlineExpression _ "]" _ ":" _ value:RightHandSideExpression end:end
     { return node("Property", { key: key, value:value, kind: 'init', computed: true}, start, end) }
 VariableDeclaration = &(var / const) a:VariableDeclarationKindOptional { return a }
 VariableDeclarationKindOptional = start:start kind:(var / const)? _ declarations:variableDeclaratorList end:end
@@ -182,28 +182,27 @@ variableDeclaratorList = multilineVariableDeclaratorList / inlineVariableDeclara
 inlineVariableDeclaratorList = head:VariableDeclarator tail:(_ "," _ a:VariableDeclarator {return a})* { return [head].concat(tail) }
 multilineVariableDeclaratorList = indent eol declarations:(_ a:VariableDeclarator eol? { return a })+ outdent { return declarations }
 VariableDeclarator = start:start pattern:Pattern _ init:variableInitializer? end:end { return node("VariableDeclarator", {id:pattern,init:init}, start, end) }
-variableInitializer = "=" _ a:MultilineExpression { return a }
+variableInitializer = "=" _ a:RightHandSideExpression { return a }
 Pattern = Identifier / ObjectPattern / ArrayPattern
 ObjectPattern = pattern:ObjectLiteral { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ObjectPattern"; return pattern }
 ArrayPattern = pattern:ArrayLiteral { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ArrayPattern"; return pattern }
 
 //  Expressions
 //  We use javascript terms where available. http://www.ecma-international.org/ecma-262/5.1/#sec-A.3
-MultilineExpression = ClassExpression / MultilineStringTemplate / MultilineStringLiteral / MultilineObjectExpression / MultilineCallExpression / InlineExpression
+RightHandSideExpression = ImpliedObjectExpression / Expression
+Expression = MultilineExpression / InlineExpression
+MultilineExpression = ClassExpression / MultilineStringTemplate / MultilineStringLiteral / TypedObjectExpression / MultilineCallExpression
 multilineCallArguments
-    = (_ arg:MultilineExpression eol { return arg })+
+    = (_ arg:Expression eol { return arg })+
     / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end
-        {
-            return [node("ObjectExpression", {properties:properties}, start, end)]
-        }
-
+        { return [node("ObjectExpression", {properties:properties}, start, end)] }
 MultilineCallExpression = start:start callee:GroupExpression indent eol args:multilineCallArguments end:end outdent
     { return node("CallExpression", {callee: callee, arguments: args}, start, end) }
 InlineExpression = LiterateCallExpression
 LiterateCallExpression
     = start:start callee:AssignmentExpression _ args:argumentList end:end { return node("CallExpression", {callee:callee, arguments:args}, start, end) }
     / AssignmentExpression
-AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=") _ right:MultilineExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
+AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=") _ right:RightHandSideExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
     / ConditionalOrDefaultExpression
 ConditionalOrDefaultExpression
     = start:start test:LogicalOrExpression _ "?" _ consequent:ConditionalOrDefaultExpression _ ":" _ alternate:ConditionalOrDefaultExpression end:end
@@ -234,12 +233,13 @@ CallExpression = start:start head:MemberExpression tail:(tailCall / tailMember)*
 tailCall   = _ existential:("?" {return true})? args:arguments end:end { return ["callee", node("CallExpression", {callee:null, arguments:args, existential:existential || undefined}), end] }
 tailMember = _ existential:("?" {return true})? "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] }
            / _ existential:("?" {return true})? "." _ property:Identifier end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] }
-arguments = "(" a:argumentList? ")" { return a ? a : [] }
-argumentList = a:InlineExpression b:(_ "," _ c:MultilineExpression {return c})* { return [a].concat(b) }
+arguments = "(" a:elementList? ")" { return a ? a : [] }
+argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
+
 NewExpression = start:start new _ callee:MemberExpression args:arguments? end:end { return node("NewExpression", {callee:callee,arguments:args || []}, start, end) }
 MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 ImportExpression = start:start import _ name:InlineExpression end:end { return node('ImportExpression', {name:name}, start, end) }
-DoExpression = start:start do _ f:MultilineExpression end:end
+DoExpression = start:start do _ f:Expression end:end
     {
         var args;
         if (f.params != null)
@@ -273,8 +273,10 @@ propertyAssignmentList = head:propertyAssignment tail:(_ "," _ item:propertyAssi
 propertyAssignment
     = PropertyDeclaration
     / start:start key:IdentifierName end:end { return node("Property", { key: key, value:clone(key), kind: 'init'}, start, end) }
-MultilineObjectExpression = start:start !"(" type:InlineExpression? properties:BlockStatement end:end
+TypedObjectExpression = start:start !"(" type:InlineExpression properties:BlockStatement end:end
     { return node("ObjectExpression", {objectType:type,properties:properties.body}, start, end) }
+ImpliedObjectExpression = start:start properties:BlockStatement end:end
+    { return node("ObjectExpression", {objectType:null,properties:properties.body}, start, end) }
 
 GroupExpression 'group' = "(" _ expression:InlineExpression _ ")" { return expression }
 Identifier = !reserved value:IdentifierName { return value }

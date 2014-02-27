@@ -505,6 +505,14 @@ tests =
     """
     # function call with single property names
     """
+    (foo)
+        1
+        2
+    """: """
+    'use strict';
+    foo(1, 2);
+    """
+    """
     (compile)
         foo: 1
         bar: 2
@@ -680,7 +688,6 @@ tests =
     const Foo = ion.defineClass('Foo', { static: { toString: true } }, [require('Bar')]);
     module.exports = exports = Foo;
     """
-
 
 exports.test = ->
     for input, expected of tests
