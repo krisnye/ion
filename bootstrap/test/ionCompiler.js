@@ -42,9 +42,6 @@ tests = {
   "a?.b().c?()": "'use strict';\na != null ? a.b().c != null ? a.b().c() : void 0 : void 0;",
   "y = (x) -> 2": "'use strict';\ny = function (x) {\n    return 2;\n};",
   "s?": "'use strict';\ns != null;",
-  "origin = Point\n    x: 0\n    y: 0": "'use strict';\norigin = new Point();\norigin.x = 0;\norigin.y = 0;",
-  "origin = Line\n    a: Point\n        x: 0\n        y: 0\n    b: Point\n        x: 10\n        y: 20": "'use strict';\norigin = new Line();\norigin.a = new Point();\norigin.a.x = 0;\norigin.a.y = 0;\norigin.b = new Point();\norigin.b.x = 10;\norigin.b.y = 20;",
-  "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: Point\n        x: 0\n        y: 0": "'use strict';\ninput.x = 10;\ninput.y = 20;\ninput.z.a = 1;\ninput.z.b = 2;\ninput.w = new Point();\ninput.w.x = 0;\ninput.w.y = 0;",
   "# also test comments\nvar regex = /foo/": "'use strict';\nlet regex = /foo/;",
   "for var i = 0; i < 10; i++\n    console.log(i)": "'use strict';\nfor (let i = 0; i < 10; i++)\n    console.log(i);",
   "for key of object if key[0] isnt '_' for c in key\n    console.log(c)": "'use strict';\nfor (let key in object)\n    if (key[0] !== '_')\n        for (let _i = 0; _i < key.length; _i++) {\n            let c = key[_i];\n            console.log(c);\n        }",
@@ -54,7 +51,15 @@ tests = {
   "if foo\n    # bar": "'use strict';\nif (foo) {\n}",
   "foo bar baz, 3": "'use strict';\nfoo(bar(baz, 3));",
   "trim = (a = \"\") -> a.trim()": "'use strict';\ntrim = function (a) {\n    a = a != null ? a : '';\n    return a.trim();\n};",
-  "(compile)\n    foo: 1\n    bar: 2\n    baz:\n        a: 1\n        b: 2": "'use strict';\ncompile({\n    foo: 1,\n    bar: 2,\n    baz: {\n        a: 1,\n        b: 2\n    }\n});"
+  "(compile)\n    foo: 1\n    bar: 2\n    baz:\n        a: 1\n        b: 2": "'use strict';\ncompile({\n    foo: 1,\n    bar: 2,\n    baz: {\n        a: 1,\n        b: 2\n    }\n});",
+  "var array = [1,2,3]\n    4\n    5\n    6": "'use strict';\nlet array = [\n        1,\n        2,\n        3,\n        4,\n        5,\n        6\n    ];",
+  "var point = new Point(10, 20)\n    z: 30": "'use strict';\nlet point = new Point(10, 20);\npoint.z = 30;",
+  "var object = {x:1, y:2}\n    z: 3": "'use strict';\nlet object = {\n        x: 1,\n        y: 2,\n        z: 3\n    };",
+  "origin = Point\n    x: 1\n    y: 2": "'use strict';\norigin = new Point();\norigin.x = 1;\norigin.y = 2;",
+  "origin = Line\n    a: Point\n        x: 0\n        y: 0\n    b: Point\n        x: 10\n        y: 20": "'use strict';\norigin = new Line();\nlet _ref = new Point();\n_ref.x = 0;\n_ref.y = 0;\norigin.a = _ref;\nlet _ref2 = new Point();\n_ref2.x = 10;\n_ref2.y = 20;\norigin.b = _ref2;",
+  "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: Point\n        x: 0\n        y: 0": "'use strict';\nif (input == null)\n    input = {};\ninput.x = 10;\ninput.y = 20;\nif (input.z == null)\n    input.z = {};\ninput.z.a = 1;\ninput.z.b = 2;\nlet _ref = new Point();\n_ref.x = 0;\n_ref.y = 0;\ninput.w = _ref;",
+  "var point = Point\n    [x]: 1\n    [y]: 2": "'use strict';\nlet point = new Point();\npoint[x] = 1;\npoint[y] = 2;",
+  "var element = div\n    id: 'foo'\n    style:\n        color: 'red'\n    for key, value of {y: 2, z: 3}\n        [key]: value\n    div\n        \"Hello\"\n    div\n        \"World\"\n    if name?\n        \"Welcome: \" + name": "'use strict';\nlet element = new div();\nelement.id = 'foo';\nif (element.style == null)\n    element.style = {};\nelement.style.color = 'red';\n{\n    let _ref = {\n            y: 2,\n            z: 3\n        };\n    for (let key in _ref) {\n        let value = _ref[key];\n        element[key] = value;\n    }\n}\nlet _ref = new div();\n_ref.add('Hello');\nelement.add(_ref);\nlet _ref2 = new div();\n_ref2.add('World');\nelement.add(_ref2);\nif (name != null)\n    element.add('Welcome: ' + name);"
 };
 
 exports.test = function() {

@@ -13,6 +13,9 @@ undefinedExpression = Object.freeze
 nullExpression = Object.freeze
     type: 'Literal'
     value: null
+ionExpression = Object.freeze
+    type: 'Identifier'
+    name: 'ion'
 
 extractForLoopRightVariable = (node, context) ->
     if node.type is 'ForOfStatement' or node.type is 'ForInStatement' and node.left.declarations.length > 1
@@ -478,16 +481,66 @@ propertyStatements = (node, context) ->
         # context.replace
         #     type: 'EmptyStatement'
 
+classExpressions = (node, context) ->
+
+    if node.type is 'ClassExpression'
+        hasIdentifierName = node.name? and not node.computed
+        classExpression =
+            type: 'CallExpression'
+            callee:
+                type: 'MemberExpression'
+                object: ionExpression
+                property:
+                    type: 'Identifier'
+                    name: 'defineClass'
+            arguments: [
+                if hasIdentifierName then {type:'Literal',value:node.name.name} else node.name
+                {
+                    type: 'ObjectExpression'
+                    properties: node.properties
+                }
+                {
+                    type: 'ArrayExpression'
+                    elements: node.extends
+                }
+            ]
+
+        if hasIdentifierName
+            context.addVariable
+                id: node.name
+                kind: 'const'
+                init: classExpression
+                offset: 0
+            context.replace node.name
+        else
+            context.replace classExpression
+
+removeEmptyStatements = (node, context) ->
+    if node.type is 'EmptyStatement' or node.type is 'ExpressionStatement' and node.expression.type is 'Identifier'
+        context.remove node
+
+ensureIonVariable = (context) ->
+    if not context.getVariableInfo('ion')?
+        context.addVariable
+            id: 'ion'
+            kind: 'const'
+            offset: Number.MIN_VALUE
+            init:
+                type: 'ImportExpression'
+                name:
+                    type: 'Literal'
+                    value: 'ion'
+
 exports.postprocess = (program, options) ->
     steps = [
-        [functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
+        [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
         [createForInLoopValueVariable, convertForInToForLength, nodejsModules]
         [separateAllVariableDeclarations, destructuringAssignments]
-        [existentialExpression, addUseStrict, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
+        [existentialExpression, addUseStrict, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, removeEmptyStatements]
     ]
     for traversal in steps
         traverse program, (node, context) ->
-            for step in traversal
-                node = context.current() # might have been changed by a previous step
+            for step in traversal when node?
                 step node, context, options
+                node = context.current() # might have been changed by a previous step
     program

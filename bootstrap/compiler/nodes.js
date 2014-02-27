@@ -17,7 +17,21 @@ const BlockStatement = exports.BlockStatement = {
             return getVariablesFromStatements(node.body);
         }
     };
-const Program = exports.Program = BlockStatement;
+const Program = exports.Program = {
+        isBlock: true,
+        newScope: true,
+        getVariables: function (node) {
+            return getVariablesFromStatements(node.body);
+        },
+        reactive: false
+    };
+const Template = exports.Template = {
+        newScope: true,
+        getVariables: function (node) {
+            return node.params;
+        },
+        reactive: true
+    };
 const ForInStatement = exports.ForInStatement = {
         newScope: true,
         getVariables: function (node) {
@@ -28,5 +42,6 @@ const FunctionExpression = exports.FunctionExpression = {
         newScope: true,
         getVariables: function (node) {
             return node.params;
-        }
+        },
+        reactive: false
     };

@@ -1,7 +1,8 @@
 (function(){var _ion_compiler_traverse_ = function(module,exports,require){exports.traverse = function(graph, enterCallback, exitCallback) {
-  var context, result, skip, traverseNode;
+  var context, removed, result, skip, traverseNode;
   result = graph;
   skip = false;
+  removed = 0;
   context = {
     path: [],
     ancestors: [],
@@ -14,23 +15,28 @@
     parent: function() {
       return this.ancestors[this.ancestors.length - 1];
     },
-    remove: function() {
-      return this.replace(void 0);
+    remove: function(node) {
+      var index, parent;
+      if (node == null) {
+        throw new Error("You must specify the node to remove");
+      }
+      parent = this.parent();
+      if (Array.isArray(parent)) {
+        index = parent.indexOf(node);
+        parent.splice(index, 1);
+        return removed++;
+      } else {
+        return delete parent[this.key()];
+      }
     },
     replace: function(value) {
-      var index, parent;
+      var parent;
+      if (value === void 0) {
+        throw new Error("You must specify a replacement value");
+      }
       parent = this.parent();
       if (parent != null) {
-        if (value === void 0) {
-          if (Array.isArray(parent)) {
-            index = parent.indexOf(value);
-            return parent.splice(index, 1);
-          } else {
-            return delete parent[this.key()];
-          }
-        } else {
-          return parent[this.key()] = value;
-        }
+        return parent[this.key()] = value;
       } else {
         return result = value;
       }
@@ -76,6 +82,10 @@
               traverseNode(value);
               context.path.pop();
               index++;
+              if (removed > 0) {
+                index -= removed;
+                removed = 0;
+              }
             }
           } else {
             for (key in node) {

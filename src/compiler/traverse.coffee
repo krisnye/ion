@@ -28,6 +28,8 @@ exports.traverse = (graph, enterCallback, exitCallback) ->
                 parent[@key()] = value
             else
                 result = value
+        previous: -> @parent()?[@key() - 1]
+        next: -> @parent()?[@key() + 1]
         current: ->
             parent = @parent()
             if parent?

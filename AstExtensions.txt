@@ -15,7 +15,7 @@ X   MemberExpression
         +existential: true / undefined
 X   ObjectExpression
         +objectType: Expression
-        properties: property / Statement
+        properties: Property / Statement
         +create: true / false / undefined  // false means we don't need to assign an empty object first
 X   +Property     // compatible with ObjectExpression.properties type
         key: Literal / Identifier / Expression
@@ -30,4 +30,8 @@ X   +ExportDeclaration
         value: Variable / Expression
 X   +ImportExpression
         name: Expression
-
+X   +ClassDeclaration
+        export: true / false
+        name: Identifier
+        extends: [Identifier*]
+        properties: [Property*]

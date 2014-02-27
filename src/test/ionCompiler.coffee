@@ -462,18 +462,18 @@ tests =
     """
     var x = ->
         try
-            foo
-            bar
+            foo()
+            bar()
         catch e
-            baz
+            baz()
     """: """
     'use strict';
     let x = function () {
         try {
-            foo;
-            bar;
+            foo();
+            bar();
         } catch (e) {
-            baz;
+            baz();
         }
     };
     """
@@ -663,6 +663,24 @@ tests =
     if (name != null)
         element.add('Welcome: ' + name);
     """
+    """
+    class Foo extends import 'Bar'
+        static:
+            toString: true
+    """: """
+    'use strict';
+    const Foo = ion.defineClass('Foo', { static: { toString: true } }, [require('Bar')]);
+    """
+    """
+    export class Foo extends import 'Bar'
+        static:
+            toString: true
+    """: """
+    'use strict';
+    const Foo = ion.defineClass('Foo', { static: { toString: true } }, [require('Bar')]);
+    module.exports = exports = Foo;
+    """
+
 
 exports.test = ->
     for input, expected of tests

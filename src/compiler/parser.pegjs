@@ -159,6 +159,17 @@ BlockOrSingleStatement = block:BlockStatement
     { return block.body.length == 1 ? block.body[0] : block }
 BlockStatement = indent eol start:start body:Statement* end:end outdent
     { return node("BlockStatement", {body:body}, start, end) }
+ClassExpression = start:start class _ name:className? _ _extends:classExtends? properties:BlockStatement? end:end
+    {
+        if (name == null)
+            name = {name:null,computed:false}
+        return node("ClassExpression", {name:name.name, computed:name.computed, 'extends':_extends || [], properties:(properties != null ? properties.body : [])}, start, end)
+    }
+className
+    // treat an Identifier as a literal
+    = name:Identifier { return {name:name,computed:false} }
+    / "[" _ name:InlineExpression _ "]" { return {name:name,computed:true} }
+classExtends = extends _ baseClasses:argumentList { return baseClasses }
 PropertyDeclaration
     = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:MultilineExpression end:end
     { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
@@ -178,7 +189,7 @@ ArrayPattern = pattern:ArrayLiteral { /* due to packrat parsing, you MUST clone 
 
 //  Expressions
 //  We use javascript terms where available. http://www.ecma-international.org/ecma-262/5.1/#sec-A.3
-MultilineExpression = MultilineStringTemplate / MultilineStringLiteral / MultilineObjectExpression / MultilineCallExpression / InlineExpression
+MultilineExpression = ClassExpression / MultilineStringTemplate / MultilineStringLiteral / MultilineObjectExpression / MultilineCallExpression / InlineExpression
 multilineCallArguments
     = (_ arg:MultilineExpression eol { return arg })+
     / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end
@@ -271,11 +282,11 @@ IdentifierName = start:start name:identifierName end:end { return node("Identifi
 ThisExpression 'this' = start:start this end:end { return node("ThisExpression", null, start, end) }
 StringOrNumberLiteral = &(simpleString / number) value:Literal { return value }
 Literal 'literal'
-    = start:start value:(number / simpleString / boolean / regex / null) end:end
+    = StringTemplate
+    / start:start value:(number / simpleString / boolean / regex / null) end:end
         { return node('Literal', {value:value}, start, end) }
     / start:start undefined end:end
         { return node('UnaryExpression', {operator:'void', prefix:true, argument:node('Literal', {value:0}, start, end)}, start, end) }
-    / StringTemplate
 
 //  source positions
 start = &{return true} { return {line:line(),column:column()-1} }
@@ -287,6 +298,7 @@ regex = '/' a:regexBody '/' b:regexOptions { return new RegExp(a, b) }
 regexBody = $ ('\\' . / [^\/])*
 regexOptions = $ [gimy]*
 simpleString = "'" ('\\' (['\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / [^'\\\r\n])* "'"  { return eval(text()) }
+             / '"' ('\\' (["\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / [^"\\\r\n])* '"'  { return eval(text()) }
 MultilineStringTemplate = start:start "\"\"" eol content:multilineStringTemplateContent eol end:end
     { return concatenate(unindent(content)) }
 multilineStringTemplateContent = indent a:(multilineStringTemplateLine / multilineStringTemplateContent)* outdent { return Array.prototype.concat.apply([], a) }
@@ -326,7 +338,7 @@ zwnj = "\u200C"
 zwj = "\u200D"
 
 //  reserved words
-reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue / do / import / export
+reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue / do / import / export / class / extends
 true = "true" !identifierPart { return true }
 false = "false" !identifierPart { return false }
 new = "new" !identifierPart
@@ -360,6 +372,8 @@ continue = a:"continue" !identifierPart { return a }
 do = a:"do" !identifierPart { return a }
 import = a:"import" !identifierPart { return a }
 export = a:"export" !identifierPart { return a }
+class = a:"class" !identifierPart { return a }
+extends = a:"extends" !identifierPart { return a }
 
 //  white space
 indent 'INDENT' = eol? _ "{{{{"

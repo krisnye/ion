@@ -16,11 +16,11 @@ const parse = exports.parse = function (content, options) {
         return compile(content, options);
     };
 const compile = exports.compile = function (content, options) {
+        options = options != null ? options : {};
         const preprocessor = require('./preprocessor');
         const parser = require('./parser');
         const postprocessor = require('./postprocessor');
         const escodegen = require('escodegen');
-        options = options != null ? options : {};
         let sourceMapping = {};
         let result = preprocessor.preprocess(content, sourceMapping);
         let preprocessed = result;
