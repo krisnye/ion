@@ -1,7 +1,7 @@
 index = require '../compiler'
 
 tests =
-    "var x = 10": """
+    "let x = 10": """
     'use strict';
     let x = 10;
     """
@@ -16,7 +16,7 @@ tests =
     }
     """
     """
-    for var name, value of {a:1,b:2,c:3}
+    for let name, value of {a:1,b:2,c:3}
         console.log(name + value)
     """: """
     'use strict';
@@ -33,7 +33,7 @@ tests =
     }    
     """
     """
-    for var name in ["a","b","c"]
+    for let name in ["a","b","c"]
         console.log(name)
     """: """
     'use strict';
@@ -68,7 +68,7 @@ tests =
     }
     """
     """
-    var object =
+    let object =
         x: 1
         y: 2
         foo:
@@ -82,7 +82,7 @@ tests =
         };
         """
     """
-    var array = []
+    let array = []
         1
         2
         3
@@ -95,7 +95,7 @@ tests =
         ];
     """
     """
-    var kids = []
+    let kids = []
         {}
             name: "Alpha"
             age: 10
@@ -264,7 +264,7 @@ tests =
     module.exports = exports = { secret: 97542 };
     """
     """
-    export var x = 1, y = 2
+    export let x = 1, y = 2
     """: """
     'use strict';
     let x = exports.x = 1;
@@ -282,7 +282,7 @@ tests =
     const z = exports.z = 3;
     """
     """
-    var {x,y} = {x:1,y:2}
+    let {x,y} = {x:1,y:2}
     """: """
     'use strict';
     let _ref = {
@@ -411,13 +411,13 @@ tests =
     """
     """
     # also test comments
-    var regex = /foo/
+    let regex = /foo/
     """: """
     'use strict';
     let regex = /foo/;
     """
     """
-    for var i = 0; i < 10; i++
+    for let i = 0; i < 10; i++
         console.log(i)
     """: """
     'use strict';
@@ -466,7 +466,7 @@ tests =
     });
     """
     """
-    var x = ->
+    let x = ->
         try
             foo()
             bar()
@@ -491,13 +491,6 @@ tests =
     'use strict';
     if (foo) {
     }
-    """
-    # function calls with no parentheses
-    """
-    foo bar baz, 3
-    """: """
-    'use strict';
-    foo(bar(baz, 3));
     """
     # function parameter default values
     """
@@ -538,7 +531,7 @@ tests =
     });
     """
     """
-    var array = [1,2,3]
+    let array = [1,2,3]
         4
         5
         6
@@ -554,7 +547,7 @@ tests =
         ];
     """
     """
-    var point = new Point(10, 20)
+    let point = new Point(10, 20)
         z: 30
     """: """
     'use strict';
@@ -562,7 +555,7 @@ tests =
     point.z = 30;
     """
     """
-    var object = {x:1, y:2}
+    let object = {x:1, y:2}
         z: 3
     """: """
     'use strict';
@@ -630,7 +623,7 @@ tests =
     input.w = _ref;
     """
     """
-    var point = Point
+    let point = Point
         [x]: 1
         [y]: 2
     """: """
@@ -640,7 +633,7 @@ tests =
     point[y] = 2;
     """
     """
-    var element = div
+    let element = div
         id: 'foo'
         style:
             color: 'red'
@@ -697,10 +690,10 @@ tests =
     module.exports = exports = Foo;
     """
     """
-    var self = @
-    var x = @x
-    var y = @.y
-    var z = this.z
+    let self = @
+    let x = @x
+    let y = @.y
+    let z = this.z
     """: """
     'use strict';
     let self = this;
@@ -709,7 +702,7 @@ tests =
     let z = this.z;
     """
     """
-    var x = {}
+    let x = {}
         [key]: value
     """: """
     'use strict';
@@ -731,12 +724,6 @@ tests =
         }
         return _ref;
     }
-    """
-    """
-    not foo bar
-    """: """
-    'use strict';
-    !foo(bar);
     """
 
 exports.test = ->

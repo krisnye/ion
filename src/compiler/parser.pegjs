@@ -175,9 +175,10 @@ PropertyDeclaration
     { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
     / start:start "[" _ key:InlineExpression _ "]" _ ":" _ value:RightHandSideExpression end:end
     { return node("Property", { key: key, value:value, kind: 'init', computed: true}, start, end) }
-VariableDeclaration = &(var / const) a:VariableDeclarationKindOptional { return a }
-VariableDeclarationKindOptional = start:start kind:(var / const)? _ declarations:variableDeclaratorList end:end
+VariableDeclaration = &variableKind a:VariableDeclarationKindOptional { return a }
+VariableDeclarationKindOptional = start:start kind:variableKind? _ declarations:variableDeclaratorList end:end
     { return node("VariableDeclaration", {declarations:declarations, kind:kind != null ? kind : "let"}, start, end) }
+variableKind = let / const
 variableDeclaratorList = multilineVariableDeclaratorList / inlineVariableDeclaratorList
 inlineVariableDeclaratorList = head:VariableDeclarator tail:(_ "," _ a:VariableDeclarator {return a})* { return [head].concat(tail) }
 multilineVariableDeclaratorList = indent eol declarations:(_ a:VariableDeclarator eol? { return a })+ outdent { return declarations }
@@ -198,10 +199,7 @@ multilineCallArguments
         { return [node("ObjectExpression", {properties:properties}, start, end)] }
 MultilineCallExpression = start:start callee:GroupExpression indent eol args:multilineCallArguments end:end outdent
     { return node("CallExpression", {callee: callee, arguments: args}, start, end) }
-InlineExpression = LiterateCallExpression
-LiterateCallExpression
-    = start:start callee:AssignmentExpression _ args:argumentList end:end { return node("CallExpression", {callee:callee, arguments:args}, start, end) }
-    / AssignmentExpression
+InlineExpression = AssignmentExpression
 AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=") _ right:RightHandSideExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
     / ConditionalOrDefaultExpression
 ConditionalOrDefaultExpression
@@ -219,7 +217,7 @@ RelationalExpression = start:start head:BitwiseShiftExpression tail:( _ ("<=" / 
 BitwiseShiftExpression = start:start head:AdditiveExpression tail:( _ (">>>" / ">>" / "<<") _ AdditiveExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
 AdditiveExpression = start:start head:MultiplicativeExpression tail:( _ ("+" / "-") _ MultiplicativeExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
 MultiplicativeExpression = start:start head:UnaryExpression tail:( _ ("*" / "/" / "%") _ UnaryExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
-UnaryExpression = start:start op:unaryOperator _ arg:Expression end:end { return node('UnaryExpression', {operator:op, argument:arg}, start, end) }
+UnaryExpression = start:start op:unaryOperator _ arg:UpdateExpression end:end { return node('UnaryExpression', {operator:op, argument:arg}, start, end) }
     / UpdateExpression
 unaryOperator 'unaryOperator' = not / "-" / "+" / "~" / typeof / void / delete
 UpdateExpression
@@ -358,31 +356,31 @@ or = "or" !identifierPart { return "||" }
 is = "is" !identifierPart { return "===" }
 isnt = "isnt" !identifierPart { return "!==" }
 not = "not" !identifierPart { return "!" }
-typeof = a:"typeof" !identifierPart {return a }
-void = a:"void" !identifierPart {return a }
-delete = a:"delete" !identifierPart {return a }
-var = "var" !identifierPart { return "let" }
-const = a:"const" !identifierPart { return a }
-let = "let" !identifierPart { error("let is reserved but not used") }
-while = a:"while" !identifierPart { return a }
-for = a:"for" !identifierPart { return a }
-in = a:"in" !identifierPart { return a }
-of = a:"of" !identifierPart { return a }
-if = a:"if" !identifierPart { return a }
-else = a:"else" !identifierPart { return a }
-return = a:"return" !identifierPart { return a }
-try = a:"try" !identifierPart { return a }
-catch = a:"catch" !identifierPart { return a }
-finally = a:"finally" !identifierPart { return a }
-throw = a:"throw" !identifierPart { return a }
-break = a:"break" !identifierPart { return a }
-continue = a:"continue" !identifierPart { return a }
-do = a:"do" !identifierPart { return a }
-import = a:"import" !identifierPart { return a }
-export = a:"export" !identifierPart { return a }
-class = a:"class" !identifierPart { return a }
-extends = a:"extends" !identifierPart { return a }
-unless = a:"unless" !identifierPart { return a }
+typeof = "typeof" !identifierPart
+void = "void" !identifierPart
+delete = "delete" !identifierPart
+var = "var" !identifierPart
+const = "const" !identifierPart { return "const" }
+let = "let" !identifierPart { return "let" }
+while = "while" !identifierPart
+for = "for" !identifierPart
+in = "in" !identifierPart
+of = "of" !identifierPart
+if = "if" !identifierPart
+else = "else" !identifierPart
+return = "return" !identifierPart
+try = "try" !identifierPart
+catch = "catch" !identifierPart
+finally = "finally" !identifierPart
+throw = "throw" !identifierPart
+break = "break" !identifierPart
+continue = "continue" !identifierPart
+do = "do" !identifierPart
+import = "import" !identifierPart
+export = "export" !identifierPart
+class = "class" !identifierPart
+extends = "extends" !identifierPart
+unless = "unless" !identifierPart
 
 //  white space
 indent 'INDENT' = eol? _ "{{{{"
