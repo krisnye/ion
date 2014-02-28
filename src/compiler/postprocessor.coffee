@@ -17,6 +17,14 @@ ionExpression = Object.freeze
     type: 'Identifier'
     name: 'ion'
 
+# wraps a node in a BlockStatement if it isn't already.
+block = (node) ->
+    if node.type isnt 'BlockStatement'
+        node =
+            type: 'BlockStatement'
+            body: [node]
+    return node
+
 extractForLoopRightVariable = (node, context) ->
     if node.type is 'ForOfStatement' or node.type is 'ForInStatement' and node.left.declarations.length > 1
         if node.left.declarations.length > 2
@@ -295,10 +303,10 @@ extractForLoopsInnerAndTest = (node, context) ->
             node.body = node.inner
             delete node.inner
         if node.test?
-            node.body =
+            node.body = block
                 type: 'IfStatement'
                 test: node.test
-                consequent: node.body
+                consequent: block node.body
             delete node.test
 
 arrayComprehensionsToES5 = (node, context) ->
@@ -330,12 +338,19 @@ functionParameterDefaultValuesToES5 = (node, context) ->
             defaultValue = node.defaults?[index]
             if defaultValue?
                 context.addStatement
-                    type: 'ExpressionStatement'
-                    expression:
-                        type: 'AssignmentExpression'
-                        operator: '?='
+                    type: 'IfStatement'
+                    test:
+                        type: 'BinaryExpression'
+                        operator: '=='
                         left: param
-                        right: defaultValue
+                        right: nullExpression
+                    consequent:
+                        type: 'ExpressionStatement'
+                        expression:
+                            type: 'AssignmentExpression'
+                            operator: '='
+                            left: param
+                            right: defaultValue
                 node.defaults[index] = undefined
 
 # only for imperative code
@@ -354,8 +369,15 @@ typedObjectExpressions = (node, context) ->
                 elements: elements
             return
 
+        isSimple = true
+        for property in node.properties
+            if property.type isnt 'Property' or property.computed
+                isSimple = false
+                break
+
         # empty object expression without properties {}
-        if node.objectType.type is 'ObjectExpression' and node.objectType.properties.length is 0
+        if node.objectType.type is 'ObjectExpression' and node.objectType.properties.length is 0 and isSimple
+            # check that our properties ONLY contain normal Property objects with no computed values
             delete node.objectType
             return
 

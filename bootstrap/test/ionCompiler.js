@@ -14,7 +14,7 @@ tests = {
   "try\n    doSomething(1)\ncatch e\n    log(e)": "'use strict';\ntry {\n    doSomething(1);\n} catch (e) {\n    log(e);\n}",
   "try\n    doSomething(1)\nfinally\n    log(e)": "'use strict';\ntry {\n    doSomething(1);\n} finally {\n    log(e);\n}",
   "try\n    doSomething(1)\ncatch e\n    console.error(e)\nfinally\n    log(e)": "'use strict';\ntry {\n    doSomething(1);\n} catch (e) {\n    console.error(e);\n} finally {\n    log(e);\n}",
-  "for key, name of foo\n    if name is 'a'\n        break\n    else if name is 'b'\n        continue\n    else if name is 'c'\n        return\n    else if name is 'd'\n        throw new Error(\"D\")\n    else\n        return\n            x: 1\n            y: 2": "'use strict';\nfor (let key in foo) {\n    let name = foo[key];\n    if (name === 'a')\n        break;\n    else if (name === 'b')\n        continue;\n    else if (name === 'c')\n        return;\n    else if (name === 'd')\n        throw new Error('D');\n    else\n        return {\n            x: 1,\n            y: 2\n        };\n}",
+  "for key, name of foo\n    if name is 'a'\n        break\n    else if name is 'b'\n        continue\n    else if name is 'c'\n        return\n    else if name is 'd'\n        throw new Error(\"D\")\n    else\n        return\n            x: 1\n            y: 2": "'use strict';\nfor (let key in foo) {\n    let name = foo[key];\n    if (name === 'a') {\n        break;\n    } else if (name === 'b') {\n        continue;\n    } else if (name === 'c') {\n        return;\n    } else if (name === 'd') {\n        throw new Error('D');\n    } else {\n        return {\n            x: 1,\n            y: 2\n        };\n    }\n}",
   "console.log(\"Hello {{name}}\")": "'use strict';\nconsole.log('Hello ' + name);",
   "console.log(\"{{name}}\")": "'use strict';\nconsole.log('' + name);",
   "console.log(\"{{ 1 }}{{ 2 }}\")": "'use strict';\nconsole.log('' + 1 + 2);",
@@ -43,14 +43,15 @@ tests = {
   "y = (x) -> 2": "'use strict';\ny = function (x) {\n    return 2;\n};",
   "s?": "'use strict';\ns != null;",
   "# also test comments\nvar regex = /foo/": "'use strict';\nlet regex = /foo/;",
-  "for var i = 0; i < 10; i++\n    console.log(i)": "'use strict';\nfor (let i = 0; i < 10; i++)\n    console.log(i);",
-  "for key of object if key[0] isnt '_' for c in key\n    console.log(c)": "'use strict';\nfor (let key in object)\n    if (key[0] !== '_')\n        for (let _i = 0; _i < key.length; _i++) {\n            let c = key[_i];\n            console.log(c);\n        }",
-  "console.log([key for key of object if key is cool])": "'use strict';\nlet _ref = [];\nfor (let key in object)\n    if (key === cool)\n        _ref.push(key);\nconsole.log(_ref);",
+  "for var i = 0; i < 10; i++\n    console.log(i)": "'use strict';\nfor (let i = 0; i < 10; i++) {\n    console.log(i);\n}",
+  "for key of object if key[0] isnt '_' for c in key\n    console.log(c)": "'use strict';\nfor (let key in object) {\n    if (key[0] !== '_') {\n        for (let _i = 0; _i < key.length; _i++) {\n            let c = key[_i];\n            console.log(c);\n        }\n    }\n}",
+  "console.log([key for key of object if key is cool])": "'use strict';\nlet _ref = [];\nfor (let key in object) {\n    if (key === cool) {\n        _ref.push(key);\n    }\n}\nconsole.log(_ref);",
   "(console.log)\n    1\n    2\n    {}\n        x: 1\n        y: 2": "'use strict';\nconsole.log(1, 2, {\n    x: 1,\n    y: 2\n});",
-  "var x = ->\n    try\n        foo\n        bar\n    catch e\n        baz": "'use strict';\nlet x = function () {\n    try {\n        foo;\n        bar;\n    } catch (e) {\n        baz;\n    }\n};",
+  "var x = ->\n    try\n        foo()\n        bar()\n    catch e\n        baz()": "'use strict';\nlet x = function () {\n    try {\n        foo();\n        bar();\n    } catch (e) {\n        baz();\n    }\n};",
   "if foo\n    # bar": "'use strict';\nif (foo) {\n}",
   "foo bar baz, 3": "'use strict';\nfoo(bar(baz, 3));",
   "trim = (a = \"\") -> a.trim()": "'use strict';\ntrim = function (a) {\n    a = a != null ? a : '';\n    return a.trim();\n};",
+  "(foo)\n    1\n    2": "'use strict';\nfoo(1, 2);",
   "(compile)\n    foo: 1\n    bar: 2\n    baz:\n        a: 1\n        b: 2": "'use strict';\ncompile({\n    foo: 1,\n    bar: 2,\n    baz: {\n        a: 1,\n        b: 2\n    }\n});",
   "var array = [1,2,3]\n    4\n    5\n    6": "'use strict';\nlet array = [\n        1,\n        2,\n        3,\n        4,\n        5,\n        6\n    ];",
   "var point = new Point(10, 20)\n    z: 30": "'use strict';\nlet point = new Point(10, 20);\npoint.z = 30;",
@@ -59,7 +60,12 @@ tests = {
   "origin = Line\n    a: Point\n        x: 0\n        y: 0\n    b: Point\n        x: 10\n        y: 20": "'use strict';\norigin = new Line();\nlet _ref = new Point();\n_ref.x = 0;\n_ref.y = 0;\norigin.a = _ref;\nlet _ref2 = new Point();\n_ref2.x = 10;\n_ref2.y = 20;\norigin.b = _ref2;",
   "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: Point\n        x: 0\n        y: 0": "'use strict';\nif (input == null)\n    input = {};\ninput.x = 10;\ninput.y = 20;\nif (input.z == null)\n    input.z = {};\ninput.z.a = 1;\ninput.z.b = 2;\nlet _ref = new Point();\n_ref.x = 0;\n_ref.y = 0;\ninput.w = _ref;",
   "var point = Point\n    [x]: 1\n    [y]: 2": "'use strict';\nlet point = new Point();\npoint[x] = 1;\npoint[y] = 2;",
-  "var element = div\n    id: 'foo'\n    style:\n        color: 'red'\n    for key, value of {y: 2, z: 3}\n        [key]: value\n    div\n        \"Hello\"\n    div\n        \"World\"\n    if name?\n        \"Welcome: \" + name": "'use strict';\nlet element = new div();\nelement.id = 'foo';\nif (element.style == null)\n    element.style = {};\nelement.style.color = 'red';\n{\n    let _ref = {\n            y: 2,\n            z: 3\n        };\n    for (let key in _ref) {\n        let value = _ref[key];\n        element[key] = value;\n    }\n}\nlet _ref = new div();\n_ref.add('Hello');\nelement.add(_ref);\nlet _ref2 = new div();\n_ref2.add('World');\nelement.add(_ref2);\nif (name != null)\n    element.add('Welcome: ' + name);"
+  "var element = div\n    id: 'foo'\n    style:\n        color: 'red'\n    for key, value of {y: 2, z: 3}\n        [key]: value\n    div\n        \"Hello\"\n    div\n        \"World\"\n    if name?\n        \"Welcome: \" + name": "'use strict';\nlet element = new div();\nelement.id = 'foo';\nif (element.style == null)\n    element.style = {};\nelement.style.color = 'red';\n{\n    let _ref = {\n            y: 2,\n            z: 3\n        };\n    for (let key in _ref) {\n        let value = _ref[key];\n        element[key] = value;\n    }\n}\nlet _ref = new div();\n_ref.add('Hello');\nelement.add(_ref);\nlet _ref2 = new div();\n_ref2.add('World');\nelement.add(_ref2);\nif (name != null) {\n    element.add('Welcome: ' + name);\n}",
+  "class Foo extends import 'Bar'\n    static:\n        toString: true": "'use strict';\nconst Foo = ion.defineClass('Foo', { static: { toString: true } }, [require('Bar')]);",
+  "export class Foo extends import 'Bar'\n    static:\n        toString: true": "'use strict';\nconst Foo = ion.defineClass('Foo', { static: { toString: true } }, [require('Bar')]);\nmodule.exports = exports = Foo;",
+  "var self = @\nvar x = @x\nvar y = @.y\nvar z = this.z": "'use strict';\nlet self = this;\nlet x = this.x;\nlet y = this.y;\nlet z = this.z;",
+  "var x = {}\n    [key]: value": "'use strict';\nlet x = {};\nx[key] = value;",
+  "if foo\n    return {}\n        for key, value of object\n            [key]: value": "'use strict';\nif (foo) {\n    let _ref = {};\n    for (let key in object) {\n        let value = object[key];\n        _ref[key] = value;\n    }\n    return _ref;\n}"
 };
 
 exports.test = function() {

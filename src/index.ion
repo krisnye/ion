@@ -1,8 +1,12 @@
 
 export const
-    create = (type, properties) ->
-        var instance = typeof type is 'function' ? new type : type
-        if instance? and properties?
-            for key, value of properties
-                instance[key] = value
-        return instance
+    nextTick = @process?.nextTick ? (fn) -> setTimeout fn, 0
+    clone = (object, deep = false) ->
+        if object?.constructor is Object
+            return {}
+                for key, value of object
+                    [key]: deep ? clone(value, deep) : value
+        else if Array.isArray object
+            return [deep ? clone(item, deep) : item for item in object]
+        else
+            return object

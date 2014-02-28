@@ -38,6 +38,7 @@ const ForInStatement = exports.ForInStatement = {
             return [node.left].concat(getVariablesFromStatements(node.body));
         }
     };
+const ForOfStatement = exports.ForOfStatement = ForInStatement;
 const FunctionExpression = exports.FunctionExpression = {
         newScope: true,
         getVariables: function (node) {

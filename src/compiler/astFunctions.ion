@@ -4,10 +4,11 @@ export const
         var body = node.body
         if body.type is "BlockStatement"
             body = body.body
-        if not Array.isArray(body)
+        else if not Array.isArray(body)
             node.body =
                 type: "BlockStatement"
                 body: body = [node.body]
+
         # clamp index from zero to length
         if not index?
             index = 0

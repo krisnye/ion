@@ -41,6 +41,14 @@
         return result = value;
       }
     },
+    previous: function() {
+      var _ref;
+      return (_ref = this.parent()) != null ? _ref[this.key() - 1] : void 0;
+    },
+    next: function() {
+      var _ref;
+      return (_ref = this.parent()) != null ? _ref[this.key() + 1] : void 0;
+    },
     current: function() {
       var parent;
       parent = this.parent();

@@ -1,9 +1,11 @@
 'use strict';
 const addStatement = exports.addStatement = function (node, statement, index, offset) {
         let body = node.body;
+        if (node.type === 'IfStatement')
+            console.log('___________________________ IF STATEMENT');
         if (body.type === 'BlockStatement')
             body = body.body;
-        if (!Array.isArray(body))
+        else if (!Array.isArray(body))
             node.body = {
                 type: 'BlockStatement',
                 body: body = [node.body]

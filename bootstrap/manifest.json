@@ -1,5 +1,5 @@
 {
-    "modified": 1393220422885,
+    "modified": 1393622278568,
     "files": [
         "compiler/astFunctions.js",
         "compiler/common.js",
@@ -11,6 +11,7 @@
         "compiler/traverse.js",
         "compiler/traverseAst.js",
         "index.js",
+        "mergePatch.js",
         "test/ionCompiler.js",
         "test/ionCustomParse.js",
         "test/ionVsEsprima.js"

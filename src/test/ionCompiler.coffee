@@ -176,19 +176,20 @@ tests =
     'use strict';
     for (let key in foo) {
         let name = foo[key];
-        if (name === 'a')
+        if (name === 'a') {
             break;
-        else if (name === 'b')
+        } else if (name === 'b') {
             continue;
-        else if (name === 'c')
+        } else if (name === 'c') {
             return;
-        else if (name === 'd')
+        } else if (name === 'd') {
             throw new Error('D');
-        else
+        } else {
             return {
                 x: 1,
                 y: 2
             };
+        }
     }
     """
     """
@@ -420,29 +421,34 @@ tests =
         console.log(i)
     """: """
     'use strict';
-    for (let i = 0; i < 10; i++)
+    for (let i = 0; i < 10; i++) {
         console.log(i);
+    }
     """
     """
     for key of object if key[0] isnt '_' for c in key
         console.log(c)
     """: """
     'use strict';
-    for (let key in object)
-        if (key[0] !== '_')
+    for (let key in object) {
+        if (key[0] !== '_') {
             for (let _i = 0; _i < key.length; _i++) {
                 let c = key[_i];
                 console.log(c);
             }
+        }
+    }
     """
     """
     console.log([key for key of object if key is cool])
     """: """
     'use strict';
     let _ref = [];
-    for (let key in object)
-        if (key === cool)
+    for (let key in object) {
+        if (key === cool) {
             _ref.push(key);
+        }
+    }
     console.log(_ref);
     """
     """
@@ -499,7 +505,8 @@ tests =
     """: """
     'use strict';
     trim = function (a) {
-        a = a != null ? a : '';
+        if (a == null)
+            a = '';
         return a.trim();
     };
     """
@@ -668,8 +675,9 @@ tests =
     let _ref2 = new div();
     _ref2.add('World');
     element.add(_ref2);
-    if (name != null)
+    if (name != null) {
         element.add('Welcome: ' + name);
+    }
     """
     """
     class Foo extends import 'Bar'
@@ -687,6 +695,48 @@ tests =
     'use strict';
     const Foo = ion.defineClass('Foo', { static: { toString: true } }, [require('Bar')]);
     module.exports = exports = Foo;
+    """
+    """
+    var self = @
+    var x = @x
+    var y = @.y
+    var z = this.z
+    """: """
+    'use strict';
+    let self = this;
+    let x = this.x;
+    let y = this.y;
+    let z = this.z;
+    """
+    """
+    var x = {}
+        [key]: value
+    """: """
+    'use strict';
+    let x = {};
+    x[key] = value;
+    """
+    """
+    if foo
+        return {}
+            for key, value of object
+                [key]: value
+    """: """
+    'use strict';
+    if (foo) {
+        let _ref = {};
+        for (let key in object) {
+            let value = object[key];
+            _ref[key] = value;
+        }
+        return _ref;
+    }
+    """
+    """
+    not foo bar
+    """: """
+    'use strict';
+    !foo(bar);
     """
 
 exports.test = ->

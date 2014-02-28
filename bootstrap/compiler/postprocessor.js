@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrict, arrayComprehensionsToES5, basicTraverse, callFunctionBindForFatArrows, convertForInToForLength, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, nodejsModules, nodes, nullExpression, propertyStatements, separateAllVariableDeclarations, traverse, typedObjectExpressions, undefinedExpression, _ref;
+(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrict, arrayComprehensionsToES5, basicTraverse, block, callFunctionBindForFatArrows, classExpressions, convertForInToForLength, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, ionExpression, nodejsModules, nodes, nullExpression, propertyStatements, removeEmptyStatements, separateAllVariableDeclarations, traverse, typedObjectExpressions, undefinedExpression, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -22,6 +22,21 @@ nullExpression = Object.freeze({
   type: 'Literal',
   value: null
 });
+
+ionExpression = Object.freeze({
+  type: 'Identifier',
+  name: 'ion'
+});
+
+block = function(node) {
+  if (node.type !== 'BlockStatement') {
+    node = {
+      type: 'BlockStatement',
+      body: [node]
+    };
+  }
+  return node;
+};
 
 extractForLoopRightVariable = function(node, context) {
   var ref, right;
@@ -407,11 +422,11 @@ extractForLoopsInnerAndTest = function(node, context) {
       delete node.inner;
     }
     if (node.test != null) {
-      node.body = {
+      node.body = block({
         type: 'IfStatement',
         test: node.test,
-        consequent: node.body
-      };
+        consequent: block(node.body)
+      });
       return delete node.test;
     }
   }
@@ -476,7 +491,7 @@ functionParameterDefaultValuesToES5 = function(node, context) {
 };
 
 typedObjectExpressions = function(node, context) {
-  var addPosition, element, elements, expressionStatement, getExistingObjectIdIfTempVarNotNeeded, grandNode, initialValue, objectId, parentNode, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
+  var addPosition, element, elements, expressionStatement, getExistingObjectIdIfTempVarNotNeeded, grandNode, initialValue, isSimple, objectId, parentNode, property, _i, _j, _k, _len, _len1, _len2, _ref1, _ref2, _ref3, _ref4;
   if (node.type === 'ObjectExpression' && (node.objectType != null)) {
     if (node.type === "ObjectExpression" && ((_ref1 = node.objectType) != null ? _ref1.type : void 0) === "ArrayExpression") {
       elements = [];
@@ -496,7 +511,16 @@ typedObjectExpressions = function(node, context) {
       });
       return;
     }
-    if (node.objectType.type === 'ObjectExpression' && node.objectType.properties.length === 0) {
+    isSimple = true;
+    _ref4 = node.properties;
+    for (_k = 0, _len2 = _ref4.length; _k < _len2; _k++) {
+      property = _ref4[_k];
+      if (property.type !== 'Property' || property.computed) {
+        isSimple = false;
+        break;
+      }
+    }
+    if (node.objectType.type === 'ObjectExpression' && node.objectType.properties.length === 0 && isSimple) {
       delete node.objectType;
       return;
     }
@@ -638,9 +662,73 @@ propertyStatements = function(node, context) {
   }
 };
 
+classExpressions = function(node, context) {
+  var classExpression, hasIdentifierName;
+  if (node.type === 'ClassExpression') {
+    hasIdentifierName = (node.name != null) && !node.computed;
+    classExpression = {
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        object: ionExpression,
+        property: {
+          type: 'Identifier',
+          name: 'defineClass'
+        }
+      },
+      "arguments": [
+        hasIdentifierName ? {
+          type: 'Literal',
+          value: node.name.name
+        } : node.name, {
+          type: 'ObjectExpression',
+          properties: node.properties
+        }, {
+          type: 'ArrayExpression',
+          elements: node["extends"]
+        }
+      ]
+    };
+    if (hasIdentifierName) {
+      context.addVariable({
+        id: node.name,
+        kind: 'const',
+        init: classExpression,
+        offset: 0
+      });
+      return context.replace(node.name);
+    } else {
+      return context.replace(classExpression);
+    }
+  }
+};
+
+removeEmptyStatements = function(node, context) {
+  if (node.type === 'EmptyStatement' || node.type === 'ExpressionStatement' && node.expression.type === 'Identifier') {
+    return context.remove(node);
+  }
+};
+
+ensureIonVariable = function(context) {
+  if (context.getVariableInfo('ion') == null) {
+    return context.addVariable({
+      id: 'ion',
+      kind: 'const',
+      offset: Number.MIN_VALUE,
+      init: {
+        type: 'ImportExpression',
+        name: {
+          type: 'Literal',
+          value: 'ion'
+        }
+      }
+    });
+  }
+};
+
 exports.postprocess = function(program, options) {
   var steps, traversal, _i, _len;
-  steps = [[functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [createForInLoopValueVariable, convertForInToForLength, nodejsModules], [separateAllVariableDeclarations, destructuringAssignments], [existentialExpression, addUseStrict, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]];
+  steps = [[classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [createForInLoopValueVariable, convertForInToForLength, nodejsModules], [separateAllVariableDeclarations, destructuringAssignments], [existentialExpression, addUseStrict, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, removeEmptyStatements]];
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
     traverse(program, function(node, context) {
@@ -648,8 +736,11 @@ exports.postprocess = function(program, options) {
       _results = [];
       for (_j = 0, _len1 = traversal.length; _j < _len1; _j++) {
         step = traversal[_j];
-        node = context.current();
-        _results.push(step(node, context, options));
+        if (!(node != null)) {
+          continue;
+        }
+        step(node, context, options);
+        _results.push(node = context.current());
       }
       return _results;
     });

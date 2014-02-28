@@ -155,8 +155,8 @@ ForStatement = start:start for _ init:(VariableDeclaration / InlineExpression)? 
 ArrayComprehension = start:start "[" _ value:InlineExpression _ comprehension:ForInOfHead _ "]" end:end
     { return node("ArrayExpression", {value:value, comprehension:comprehension}, start, end) }
 
-BlockOrSingleStatement = block:BlockStatement
-    { return block.body.length == 1 ? block.body[0] : block }
+BlockOrSingleStatement = BlockStatement
+//    { return block.body.length == 1 ? block.body[0] : block }
 BlockStatement = indent eol start:start body:Statement* end:end outdent
     { return node("BlockStatement", {body:body}, start, end) }
 ClassExpression = start:start class _ name:className? _ _extends:classExtends? properties:BlockStatement? end:end
@@ -219,7 +219,7 @@ RelationalExpression = start:start head:BitwiseShiftExpression tail:( _ ("<=" / 
 BitwiseShiftExpression = start:start head:AdditiveExpression tail:( _ (">>>" / ">>" / "<<") _ AdditiveExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
 AdditiveExpression = start:start head:MultiplicativeExpression tail:( _ ("+" / "-") _ MultiplicativeExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
 MultiplicativeExpression = start:start head:UnaryExpression tail:( _ ("*" / "/" / "%") _ UnaryExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
-UnaryExpression = start:start op:unaryOperator _ arg:UpdateExpression end:end { return node('UnaryExpression', {operator:op, argument:arg}, start, end) }
+UnaryExpression = start:start op:unaryOperator _ arg:Expression end:end { return node('UnaryExpression', {operator:op, argument:arg}, start, end) }
     / UpdateExpression
 unaryOperator 'unaryOperator' = not / "-" / "+" / "~" / typeof / void / delete
 UpdateExpression
@@ -233,12 +233,15 @@ CallExpression = start:start head:MemberExpression tail:(tailCall / tailMember)*
 tailCall   = _ existential:("?" {return true})? args:arguments end:end { return ["callee", node("CallExpression", {callee:null, arguments:args, existential:existential || undefined}), end] }
 tailMember = _ existential:("?" {return true})? "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] }
            / _ existential:("?" {return true})? "." _ property:Identifier end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] }
-arguments = "(" a:elementList? ")" { return a ? a : [] }
+arguments
+    = "(" a:elementList? ")" { return a ? a : [] }
 argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
 
-NewExpression = start:start new _ callee:MemberExpression args:arguments? end:end { return node("NewExpression", {callee:callee,arguments:args || []}, start, end) }
 MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
+
+NewExpression = start:start new _ callee:MemberExpression args:arguments? end:end { return node("NewExpression", {callee:callee,arguments:args || []}, start, end) }
 ImportExpression = start:start import _ name:InlineExpression end:end { return node('ImportExpression', {name:name}, start, end) }
+
 DoExpression = start:start do _ f:Expression end:end
     {
         var args;
@@ -281,7 +284,10 @@ ImpliedObjectExpression = start:start properties:BlockStatement end:end
 GroupExpression 'group' = "(" _ expression:InlineExpression _ ")" { return expression }
 Identifier = !reserved value:IdentifierName { return value }
 IdentifierName = start:start name:identifierName end:end { return node("Identifier", {name:name}, start, end) }
-ThisExpression 'this' = start:start this end:end { return node("ThisExpression", null, start, end) }
+ThisExpression 'this'
+    = start:start '@' property:IdentifierName end:end { return node("MemberExpression", {object:node("ThisExpression", null, start, end),property:property}, start, end) }
+    / start:start (this / '@') end:end { return node("ThisExpression", null, start, end) }
+
 StringOrNumberLiteral = &(simpleString / number) value:Literal { return value }
 Literal 'literal'
     = StringTemplate
@@ -340,7 +346,7 @@ zwnj = "\u200C"
 zwj = "\u200D"
 
 //  reserved words
-reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue / do / import / export / class / extends
+reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue / do / import / export / class / extends / unless
 true = "true" !identifierPart { return true }
 false = "false" !identifierPart { return false }
 new = "new" !identifierPart
@@ -376,6 +382,7 @@ import = a:"import" !identifierPart { return a }
 export = a:"export" !identifierPart { return a }
 class = a:"class" !identifierPart { return a }
 extends = a:"extends" !identifierPart { return a }
+unless = a:"unless" !identifierPart { return a }
 
 //  white space
 indent 'INDENT' = eol? _ "{{{{"
