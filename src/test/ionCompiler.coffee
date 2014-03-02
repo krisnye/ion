@@ -725,24 +725,44 @@ tests =
         return _ref;
     }
     """
+    # test for syntax errors
+    """
+    for x, y, z of foo
+        log(foo)
+    """: {line:1, column:11}
+    """
+    export let x
+    """: {line:1, column:12}
+    """
+    export const x
+    """: {line:1, column:14}
+    """
+    export const x = 1
+    export {y:2}
+    """: {line:2,column:1}
 
 exports.test = ->
     for input, expected of tests
         if expected is null
             console.log '---------------------------------------------------'
-            console.log JSON.stringify index.compile(input, {postprocess:false}), null, '  '
+            console.log JSON.stringify index.compile(input, {postprocess:false,loc:true}), null, '  '
             console.log '-Postprocessed------------------------------------'
             console.log JSON.stringify index.compile(input, {generate:false}), null, '  '
             console.log '---------------------------------------------------'
+            console.log index.compile input
+        else if typeof expected is 'object'
+            # expected to throw an error
             try
-                console.log index.compile input
+                index.compile input
             catch e
-                console.log e.message
+                # check equivalent fields
+                for key, value of expected
+                    if value isnt e[key]
+                        throw new Error "\n#{JSON.stringify e}\n!=\n#{JSON.stringify expected}"
         else
             output = index.compile input
             if output.trim() isnt expected.trim()
                 console.log '-Output---------------------------------------------'
                 console.log output
                 throw new Error "\n#{output}\n!=\n#{expected}"
-
     return

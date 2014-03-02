@@ -28,7 +28,7 @@ block = (node) ->
 extractForLoopRightVariable = (node, context) ->
     if node.type is 'ForOfStatement' or node.type is 'ForInStatement' and node.left.declarations.length > 1
         if node.left.declarations.length > 2
-            throw new Error "too many declarations"
+            throw context.error "too many declarations", node.left.declarations[2]
         right = node.right
         if right.type isnt "Identifier"
             ref = context.getNewInternalIdentifier()
@@ -138,7 +138,7 @@ nodejsModules = (node, context) ->
             # then make each init also assign to it's export variable.
             for declarator in node.value.declarations by -1
                 if not declarator.init?
-                    throw new Error "Export variables must have an init value"
+                    throw context.error "Export variables must have an init value", declarator
                 declarator.init =
                     type: 'AssignmentExpression'
                     operator: '='
@@ -152,7 +152,7 @@ nodejsModules = (node, context) ->
         else
             # default export
             if context.exports
-                throw new Error "default export must be first"
+                throw context.error "default export must be first"
             context.replace
                 type: 'ExpressionStatement'
                 expression:
@@ -459,8 +459,6 @@ typedObjectExpressions = (node, context) ->
 propertyStatements = (node, context) ->
     parent = context.parentNode()
     if node.type is 'Property' and not (parent.type is 'ObjectExpression' or parent.type is 'ObjectPattern')
-        if node.objectType?
-            throw new Error "Cannot use a typed object on a property declaration statement"
         createAssignments = (path, value) ->
             if value.type is 'ObjectExpression' and not value.objectType?
                 for property in value.properties by -1
@@ -500,8 +498,6 @@ propertyStatements = (node, context) ->
                 }, 0
         createAssignments node.key, node.value
         context.remove node
-        # context.replace
-        #     type: 'EmptyStatement'
 
 classExpressions = (node, context) ->
 

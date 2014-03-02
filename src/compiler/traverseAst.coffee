@@ -90,6 +90,15 @@ exports.traverse = (program, enterCallback, exitCallback) ->
                 }]
                 kind: options.kind
             return variable
+        context.error = (message, node) ->
+            node ?= @current()
+            # make sure node has line/column numbers or else search up stack
+            e = new Error(message)
+            e.line = node.loc?.start?.line
+            e.column = node.loc?.start?.column + 1
+            e.lineEnd = node.loc?.end?.line
+            e.columnEnd = node.loc?.end?.column + 1
+            return e
         if node.type?
             nodeInfo = nodes[node.type]
             if nodeInfo?.newScope

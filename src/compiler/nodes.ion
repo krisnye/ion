@@ -9,21 +9,16 @@ export const
     BlockStatement =
         isBlock: true
         newScope: true
-        getVariables: (node) -> getVariablesFromStatements node.body
     Program =
         isBlock: true
         newScope: true
-        getVariables: (node) -> getVariablesFromStatements node.body
         reactive: false
     Template =
         newScope: true
         getVariables: (node) -> node.params
         reactive: true
+    FunctionExpression = Template
     ForInStatement =
         newScope: true
-        getVariables: (node) -> [node.left].concat getVariablesFromStatements node.body
+        getVariables: (node) -> [node.left]
     ForOfStatement = ForInStatement
-    FunctionExpression =
-        newScope: true
-        getVariables: (node) -> node.params
-        reactive: false
