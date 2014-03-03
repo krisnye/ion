@@ -153,7 +153,11 @@ ForInOfStatement = start:start head:ForInOfHead body:BlockOrSingleStatement end:
 ForStatement = start:start for _ init:(VariableDeclaration / InlineExpression)? _ ";" _ test:InlineExpression? _ ";" _ update:InlineExpression? body:BlockOrSingleStatement end:end
     { return node("ForStatement", {init:init, test:test, update:update, body:body}, start, end) }
 ArrayComprehension = start:start "[" _ value:InlineExpression _ comprehension:ForInOfHead _ "]" end:end
-    { return node("ArrayExpression", {value:value, comprehension:comprehension}, start, end) }
+    {
+        // value must be defined AFTER comprehension so that it reflects the actual order of usage.
+        // This is important for the checkVariableDeclarations processor.
+        return node("ArrayExpression", {comprehension:comprehension, value:value}, start, end)
+    }
 
 BlockOrSingleStatement = BlockStatement
 //    { return block.body.length == 1 ? block.body[0] : block }

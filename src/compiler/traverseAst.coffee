@@ -2,52 +2,49 @@ basicTraverse = require './traverse'
 nodes = require './nodes'
 {addStatement} = require "./astFunctions"
 
-trackVariables = (context, nodes) ->
+trackVariableDeclaration = (context, node, kind, name = node.name) ->
     scope = context.scope()
-    trackVariable = (kind, name, init, sourceNode, shadow) ->
-        # if scope.variables[id]?
-        #     # todo: this needs to be a strongly typed SyntaxError
-        #     throw new Error "Cannot redefine: " + id
-        scope.variables[name] =
-            kind: kind
-            id:
-                type: 'Identifier'
-                name: name
-            init: init
-            sourceNode: sourceNode
+    variable =
+        kind: kind
+        id:
+            type: 'Identifier'
+            name: name
+        name: name
+        node: node
+        scope: scope
+    context.variableCallback?(variable, context)
+    scope.variables[name] = variable
 
-    for node in nodes
-        if node.type is "Identifier"
-            trackVariable "let", node, null, node
+trackVariableDeclarations = (context, node, kind = 'let') ->
+    if Array.isArray node
+        for item in node
+            trackVariableDeclarations context, item, kind
+    else
         if node.type is "VariableDeclaration"
+            kind = node.kind
             for declarator in node.declarations
-                idpattern = declarator.id
-                # deal with destructuring patterns later
-                if idpattern.type is "Identifier"
-                    trackVariable node.kind, idpattern.name, declarator.init, node
-                else if idpattern.type is "ObjectPattern"
-                    basicTraverse.traverse idpattern, (child, newContext) ->
-                        if child.key? and child.value?
-                            name = child.key.value ? child.key.name
-                            trackVariable node.kind, name, declarator.init, node
-                            newContext.skip()
-                else if idpattern.type is "ArrayPattern"
-                    basicTraverse.traverse idpattern, (child, newContext) ->
-                        if child.type is 'Identifier'
-                            trackVariable node.kind, child.name, declarator.init, node
-                            newContext.skip()
+                trackVariableDeclarations context, declarator.id, kind
+        else if node.type is "Identifier"
+            trackVariableDeclaration context, node, kind
+        else if node.type is "ObjectPattern"
+            basicTraverse.traverse node, (child, newContext) ->
+                if child.key? and child.value?
+                    name = child.key.value ? child.key.name
+                    trackVariableDeclaration context, child, kind, name
+                    newContext.skip()
+        else if node.type is "ArrayPattern"
+            basicTraverse.traverse node, (child, newContext) ->
+                if child.type is 'Identifier'
+                    trackVariableDeclaration context, child, kind
+                    newContext.skip()
 
-exports.traverse = (program, enterCallback, exitCallback) ->
+exports.traverse = (program, enterCallback, exitCallback, variableCallback) ->
     ourEnter = (node, context) ->
+        context.variableCallback ?= variableCallback
         context.scopeStack ?= []
         context.scope ?= -> @scopeStack[@scopeStack.length - 1]
         context.ancestorNodes ?= []
         context.parentNode ?= -> @ancestorNodes[@ancestorNodes.length - 1]
-        context.getAncestorBlock ?= ->
-            for ancestor in @ancestorNodes by -1
-                if nodes[ancestor.type]?.isBlock
-                    return ancestor
-            return undefined
         context.isParentBlock ?= -> nodes[@parentNode()?.type]?.isBlock ? false
         context.getVariableInfo ?= (id) -> @scope().variables[id]
         context.getNewInternalIdentifier ?= (prefix = '_ref') ->
@@ -64,9 +61,9 @@ exports.traverse = (program, enterCallback, exitCallback) ->
         context.addStatement ?= (statement, offset, addToNode) ->
             if typeof statement is 'number'
                 [statement, offset] = [offset, statement]
-            addToNode ?= @scope().sourceNode
+            addToNode ?= @scope().node
             if statement.type is 'VariableDeclaration'
-                trackVariables context, [statement]
+                trackVariableDeclarations context, statement
             addStatement addToNode, statement, @getAncestorChildOf(addToNode), offset
         context.addVariable ?= (options) ->
             variable = @getVariable options
@@ -104,9 +101,11 @@ exports.traverse = (program, enterCallback, exitCallback) ->
             if nodeInfo?.newScope
                 context.scopeStack.push
                     variables: Object.create(context.scope()?.variables ? {})
-                    sourceNode: node
-            if nodeInfo?.getVariables?
-                trackVariables context, nodeInfo.getVariables node
+                    node: node
+            if node.type is 'VariableDeclaration'
+                trackVariableDeclarations context, node
+            else if node.type is 'FunctionExpression'
+                trackVariableDeclarations context, node.params
             enterCallback?(node, context)
             context.ancestorNodes.push node
     ourExit = (node, context) ->

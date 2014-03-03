@@ -15,10 +15,10 @@ export const
         reactive: false
     Template =
         newScope: true
-        getVariables: (node) -> node.params
         reactive: true
-    FunctionExpression = Template
+    FunctionExpression =
+        newScope: true
+        shadow: true
     ForInStatement =
         newScope: true
-        getVariables: (node) -> [node.left]
     ForOfStatement = ForInStatement

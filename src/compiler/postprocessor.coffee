@@ -549,16 +549,77 @@ ensureIonVariable = (context) ->
                     type: 'Literal'
                     value: 'ion'
 
+checkVariableDeclarations =
+    enter: (node, context) ->
+        # check assigning to a constant
+        if node.type is 'AssignmentExpression' and node.left.type is 'Identifier'
+            variable = context.getVariableInfo(node.left.name)
+            if not variable?
+                throw context.error "cannot assign to undeclared variable #{node.left.name}"
+            if variable.kind is 'const'
+                throw context.error "cannot assign to a const", node.left
+        # track variable usage on a scope
+        if node.type is 'Identifier'
+            key = context.key()
+            parent = context.parentNode()
+            if not (parent.type is 'MemberExpression' and key is 'property' or parent.type is 'Property' and key is 'key')
+                # then this is a variable usage, so we will track it.
+                (context.scope().usage ?= {})[node.name] = node
+    variable: (variable, context) ->
+        scope = context.scope()
+        # check that we arent redeclaring a variable
+        existing = context.getVariableInfo(variable.name)
+        if existing?
+            # check to see if shadowing is allowed.
+            # walk the scope stack backwards
+            shadow = false
+            for checkScope in context.scopeStack by -1
+                # we only check back until we hit the scope
+                # where the existing variable was declared
+                if checkScope is existing?.scope
+                    break
+                # if we pass a scope that allows shadowing then we are ok
+                if nodes[checkScope.node.type]?.shadow
+                    shadow = true
+                    break
+            if not shadow
+                throw context.error "Cannot redeclare variable #{variable.name}", variable.node
+        # make sure we havent used this variable before declaration
+        for checkScope in context.scopeStack by -1
+            used = checkScope.usage?[variable.name]
+            if used?
+                throw context.error "Cannot use variable '#{variable.name}' before declaration", used
+            # we only check back to a shadow, max
+            if nodes[checkScope.node.type]?.shadow
+                break
+
 exports.postprocess = (program, options) ->
     steps = [
+        [checkVariableDeclarations]
         [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
         [createForInLoopValueVariable, convertForInToForLength, nodejsModules]
         [separateAllVariableDeclarations, destructuringAssignments]
         [existentialExpression, addUseStrict, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, removeEmptyStatements]
     ]
     for traversal in steps
-        traverse program, (node, context) ->
+        enter = (node, context) ->
+            context.options ?= options
             for step in traversal when node?
-                step node, context, options
-                node = context.current() # might have been changed by a previous step
+                handler = step.enter ? (if typeof step is 'function' then step else null)
+                if handler?
+                    handler node, context
+                    node = context.current()
+        exit = (node, context) ->
+            for step in traversal by -1 when node?
+                handler = step.exit ? null
+                if handler?
+                    handler node, context
+                    node = context.current()
+        variable = (node, context, kind, name) ->
+            for step in traversal when node?
+                handler = step.variable ? null
+                if handler?
+                    handler node, context, kind, name
+                    node = context.current()
+        traverse program, enter, exit, variable
     program

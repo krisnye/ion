@@ -332,15 +332,19 @@ tests =
     foo != void 0 ? foo : bar;
     """
     """
+    let x
     x ?= y
     """: """
     'use strict';
+    let x;
     x = x != null ? x : y;
     """
     """
+    let x
     x ??= y
     """: """
     'use strict';
+    let x;
     x = x != void 0 ? x : y;
     """
     """
@@ -396,10 +400,10 @@ tests =
     a != null ? a.b().c != null ? a.b().c() : void 0 : void 0;
     """
     """
-    y = (x) -> 2
+    let y = (x) -> 2
     """: """
     'use strict';
-    y = function (x) {
+    let y = function (x) {
         return 2;
     };
     """
@@ -494,10 +498,10 @@ tests =
     """
     # function parameter default values
     """
-    trim = (a = "") -> a.trim()
+    let trim = (a = "") -> a.trim()
     """: """
     'use strict';
-    trim = function (a) {
+    let trim = function (a) {
         if (a == null)
             a = '';
         return a.trim();
@@ -566,17 +570,17 @@ tests =
         };
     """
     """
-    origin = Point
+    let origin = Point
         x: 1
         y: 2
     """: """
     'use strict';
-    origin = new Point();
+    let origin = new Point();
     origin.x = 1;
     origin.y = 2;
     """
     """
-    origin = Line
+    let origin = Line
         a: Point
             x: 0
             y: 0
@@ -585,7 +589,7 @@ tests =
             y: 20
     """: """
     'use strict';
-    origin = new Line();
+    let origin = new Line();
     let _ref = new Point();
     _ref.x = 0;
     _ref.y = 0;
@@ -740,6 +744,61 @@ tests =
     export const x = 1
     export {y:2}
     """: {line:2,column:1}
+    """
+    let _ref = 1
+    let _ref2 = 2
+    let {x,y} = z
+    """: """
+    'use strict';
+    let _ref = 1;
+    let _ref2 = 2;
+    let _ref3 = z;
+    let x = _ref3.x;
+    let y = _ref3.y;
+    """
+    """
+    const x = 1
+    x = 2
+    """: {line:2, column:1}
+    """
+    const double = (x) ->
+        x *= 2
+        return x
+    """: """
+    'use strict';
+    const double = function (x) {
+        x *= 2;
+        return x;
+    };
+    """
+    """
+    x = 1
+    """: {line:1, column:1}
+    """
+    let x = 1
+    let x = 2
+    """: {line:2, column:5}
+    # make sure we allow variable shadowing
+    """
+    let x = 1
+    const double = (x) ->
+        return x
+    """: """
+    'use strict';
+    let x = 1;
+    const double = function (x) {
+        return x;
+    };
+    """
+    """
+    console.log(x)
+    let x = 1
+    """: {line:1, column:13}
+    """
+    console.log(x)
+    if a
+        let x = 1
+    """: {line:1, column:13}
 
 exports.test = ->
     for input, expected of tests
