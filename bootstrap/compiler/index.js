@@ -3,11 +3,13 @@ const makePrettyError = function (e, source, id) {
     if (typeof e.line === 'number' && typeof e.column === 'number' && e.line > 0 && e.column > 0) {
         let line = source.split('\n')[e.line - 1];
         let caret = '^';
-        for (let i = 2; i < e.column; i++)
+        for (let i = 1; i < e.column; i++) {
             caret = ' ' + caret;
-        let newMessage = '' + (id ? id + ':' : '') + e.line + ':' + e.column + '\n' + e.message + '\n' + line + '\n' + caret;
+        }
+        let newMessage = '' + (id != null ? id : '(anonymous)') + ':' + e.line + ':' + e.column + ': ' + e.message + '\n' + line + '\n' + caret;
         e.originalMessage = e.message;
         e.message = newMessage;
+        e.stack = newMessage;
     }
 };
 const parse = exports.parse = function (content, options) {
@@ -17,6 +19,7 @@ const parse = exports.parse = function (content, options) {
     };
 const compile = exports.compile = function (content, options) {
         options = options != null ? options : {};
+        options.loc = options.loc != null ? options.loc : true;
         const preprocessor = require('./preprocessor');
         const parser = require('./parser');
         const postprocessor = require('./postprocessor');
@@ -29,13 +32,12 @@ const compile = exports.compile = function (content, options) {
             result = preprocessor.fixSourceLocations(result, sourceMapping);
             if (options.postprocess !== false) {
                 result = postprocessor.postprocess(result, options);
-                if ((options != null ? options.generate : void 0) !== false)
+                if ((options != null ? options.generate : void 0) !== false) {
                     result = escodegen.generate(result);
+                }
             }
         } catch (e) {
             preprocessor.fixSourceLocation(e, sourceMapping);
-            console.log('-Preprocessed--------------------------------------------');
-            console.log(preprocessed);
             makePrettyError(e, content, options.id);
             throw e;
         }

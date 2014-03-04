@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_traverseAst_ = function(module,exports,require){var addStatement, basicTraverse, nodes, trackVariables;
+(function(){var _ion_compiler_traverseAst_ = function(module,exports,require){var addStatement, basicTraverse, nodes, trackVariableDeclaration, trackVariableDeclarations;
 
 basicTraverse = require('./traverse');
 
@@ -6,69 +6,79 @@ nodes = require('./nodes');
 
 addStatement = require("./astFunctions").addStatement;
 
-trackVariables = function(context, nodes) {
-  var declarator, idpattern, node, scope, trackVariable, _i, _len, _results;
-  scope = context.scope();
-  trackVariable = function(kind, name, init, sourceNode, shadow) {
-    return scope.variables[name] = {
-      kind: kind,
-      id: {
-        type: 'Identifier',
-        name: name
-      },
-      init: init,
-      sourceNode: sourceNode
-    };
-  };
-  _results = [];
-  for (_i = 0, _len = nodes.length; _i < _len; _i++) {
-    node = nodes[_i];
-    if (node.type === "Identifier") {
-      trackVariable("let", node, null, node);
-    }
-    if (node.type === "VariableDeclaration") {
-      _results.push((function() {
-        var _j, _len1, _ref, _results1;
-        _ref = node.declarations;
-        _results1 = [];
-        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-          declarator = _ref[_j];
-          idpattern = declarator.id;
-          if (idpattern.type === "Identifier") {
-            _results1.push(trackVariable(node.kind, idpattern.name, declarator.init, node));
-          } else if (idpattern.type === "ObjectPattern") {
-            _results1.push(basicTraverse.traverse(idpattern, function(child, newContext) {
-              var name, _ref1;
-              if ((child.key != null) && (child.value != null)) {
-                name = (_ref1 = child.key.value) != null ? _ref1 : child.key.name;
-                trackVariable(node.kind, name, declarator.init, node);
-                return newContext.skip();
-              }
-            }));
-          } else if (idpattern.type === "ArrayPattern") {
-            _results1.push(basicTraverse.traverse(idpattern, function(child, newContext) {
-              if (child.type === 'Identifier') {
-                trackVariable(node.kind, child.name, declarator.init, node);
-                return newContext.skip();
-              }
-            }));
-          } else {
-            _results1.push(void 0);
-          }
-        }
-        return _results1;
-      })());
-    } else {
-      _results.push(void 0);
-    }
+trackVariableDeclaration = function(context, node, kind, name) {
+  var scope, variable;
+  if (name == null) {
+    name = node.name;
   }
-  return _results;
+  scope = context.scope();
+  variable = {
+    kind: kind,
+    id: {
+      type: 'Identifier',
+      name: name
+    },
+    name: name,
+    node: node,
+    scope: scope
+  };
+  if (typeof context.variableCallback === "function") {
+    context.variableCallback(variable, context);
+  }
+  return scope.variables[name] = variable;
 };
 
-exports.traverse = function(program, enterCallback, exitCallback) {
+trackVariableDeclarations = function(context, node, kind) {
+  var declarator, item, _i, _j, _len, _len1, _ref, _results, _results1;
+  if (kind == null) {
+    kind = 'let';
+  }
+  if (Array.isArray(node)) {
+    _results = [];
+    for (_i = 0, _len = node.length; _i < _len; _i++) {
+      item = node[_i];
+      _results.push(trackVariableDeclarations(context, item, kind));
+    }
+    return _results;
+  } else {
+    if (node.type === "VariableDeclaration") {
+      kind = node.kind;
+      _ref = node.declarations;
+      _results1 = [];
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        declarator = _ref[_j];
+        _results1.push(trackVariableDeclarations(context, declarator.id, kind));
+      }
+      return _results1;
+    } else if (node.type === "Identifier") {
+      return trackVariableDeclaration(context, node, kind);
+    } else if (node.type === "ObjectPattern") {
+      return basicTraverse.traverse(node, function(child, newContext) {
+        var name, _ref1;
+        if ((child.key != null) && (child.value != null)) {
+          name = (_ref1 = child.key.value) != null ? _ref1 : child.key.name;
+          trackVariableDeclaration(context, child, kind, name);
+          return newContext.skip();
+        }
+      });
+    } else if (node.type === "ArrayPattern") {
+      return basicTraverse.traverse(node, function(child, newContext) {
+        if (child.type === 'Identifier') {
+          trackVariableDeclaration(context, child, kind);
+          return newContext.skip();
+        }
+      });
+    }
+  }
+};
+
+exports.traverse = function(program, enterCallback, exitCallback, variableCallback) {
   var ourEnter, ourExit;
   ourEnter = function(node, context) {
     var nodeInfo, _ref, _ref1;
+    if (context.variableCallback == null) {
+      context.variableCallback = variableCallback;
+    }
     if (context.scopeStack == null) {
       context.scopeStack = [];
     }
@@ -83,19 +93,6 @@ exports.traverse = function(program, enterCallback, exitCallback) {
     if (context.parentNode == null) {
       context.parentNode = function() {
         return this.ancestorNodes[this.ancestorNodes.length - 1];
-      };
-    }
-    if (context.getAncestorBlock == null) {
-      context.getAncestorBlock = function() {
-        var ancestor, _i, _ref, _ref1;
-        _ref = this.ancestorNodes;
-        for (_i = _ref.length - 1; _i >= 0; _i += -1) {
-          ancestor = _ref[_i];
-          if ((_ref1 = nodes[ancestor.type]) != null ? _ref1.isBlock : void 0) {
-            return ancestor;
-          }
-        }
-        return void 0;
       };
     }
     if (context.isParentBlock == null) {
@@ -154,10 +151,10 @@ exports.traverse = function(program, enterCallback, exitCallback) {
           _ref = [offset, statement], statement = _ref[0], offset = _ref[1];
         }
         if (addToNode == null) {
-          addToNode = this.scope().sourceNode;
+          addToNode = this.scope().node;
         }
         if (statement.type === 'VariableDeclaration') {
-          trackVariables(context, [statement]);
+          trackVariableDeclarations(context, statement);
         }
         return addStatement(addToNode, statement, this.getAncestorChildOf(addToNode), offset);
       };
@@ -202,16 +199,30 @@ exports.traverse = function(program, enterCallback, exitCallback) {
         return variable;
       };
     }
+    context.error = function(message, node) {
+      var e, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+      if (node == null) {
+        node = this.current();
+      }
+      e = new Error(message);
+      e.line = (_ref = node.loc) != null ? (_ref1 = _ref.start) != null ? _ref1.line : void 0 : void 0;
+      e.column = ((_ref2 = node.loc) != null ? (_ref3 = _ref2.start) != null ? _ref3.column : void 0 : void 0) + 1;
+      e.lineEnd = (_ref4 = node.loc) != null ? (_ref5 = _ref4.end) != null ? _ref5.line : void 0 : void 0;
+      e.columnEnd = ((_ref6 = node.loc) != null ? (_ref7 = _ref6.end) != null ? _ref7.column : void 0 : void 0) + 1;
+      return e;
+    };
     if (node.type != null) {
       nodeInfo = nodes[node.type];
       if (nodeInfo != null ? nodeInfo.newScope : void 0) {
         context.scopeStack.push({
           variables: Object.create((_ref = (_ref1 = context.scope()) != null ? _ref1.variables : void 0) != null ? _ref : {}),
-          sourceNode: node
+          node: node
         });
       }
-      if ((nodeInfo != null ? nodeInfo.getVariables : void 0) != null) {
-        trackVariables(context, nodeInfo.getVariables(node));
+      if (node.type === 'VariableDeclaration') {
+        trackVariableDeclarations(context, node);
+      } else if (node.type === 'FunctionExpression') {
+        trackVariableDeclarations(context, node.params);
       }
       if (typeof enterCallback === "function") {
         enterCallback(node, context);

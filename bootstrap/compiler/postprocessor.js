@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrict, arrayComprehensionsToES5, basicTraverse, block, callFunctionBindForFatArrows, classExpressions, convertForInToForLength, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, ionExpression, nodejsModules, nodes, nullExpression, propertyStatements, removeEmptyStatements, separateAllVariableDeclarations, traverse, typedObjectExpressions, undefinedExpression, _ref;
+(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrict, arrayComprehensionsToES5, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, ionExpression, nodejsModules, nodes, nullExpression, propertyStatements, removeEmptyStatements, separateAllVariableDeclarations, traverse, typedObjectExpressions, undefinedExpression, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -42,7 +42,7 @@ extractForLoopRightVariable = function(node, context) {
   var ref, right;
   if (node.type === 'ForOfStatement' || node.type === 'ForInStatement' && node.left.declarations.length > 1) {
     if (node.left.declarations.length > 2) {
-      throw new Error("too many declarations");
+      throw context.error("too many declarations", node.left.declarations[2]);
     }
     right = node.right;
     if (right.type !== "Identifier") {
@@ -200,7 +200,7 @@ nodejsModules = function(node, context) {
       for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
         declarator = _ref1[_i];
         if (declarator.init == null) {
-          throw new Error("Export variables must have an init value");
+          throw context.error("Export variables must have an init value", declarator);
         }
         _results.push(declarator.init = {
           type: 'AssignmentExpression',
@@ -219,7 +219,7 @@ nodejsModules = function(node, context) {
       return _results;
     } else {
       if (context.exports) {
-        throw new Error("default export must be first");
+        throw context.error("default export must be first");
       }
       return context.replace({
         type: 'ExpressionStatement',
@@ -473,12 +473,21 @@ functionParameterDefaultValuesToES5 = function(node, context) {
       defaultValue = (_ref2 = node.defaults) != null ? _ref2[index] : void 0;
       if (defaultValue != null) {
         context.addStatement({
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'AssignmentExpression',
-            operator: '?=',
+          type: 'IfStatement',
+          test: {
+            type: 'BinaryExpression',
+            operator: '==',
             left: param,
-            right: defaultValue
+            right: nullExpression
+          },
+          consequent: {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              operator: '=',
+              left: param,
+              right: defaultValue
+            }
           }
         });
         _results.push(node.defaults[index] = void 0);
@@ -605,9 +614,6 @@ propertyStatements = function(node, context) {
   var createAssignments, parent;
   parent = context.parentNode();
   if (node.type === 'Property' && !(parent.type === 'ObjectExpression' || parent.type === 'ObjectPattern')) {
-    if (node.objectType != null) {
-      throw new Error("Cannot use a typed object on a property declaration statement");
-    }
     createAssignments = function(path, value) {
       var newPath, property, _i, _ref1;
       if (value.type === 'ObjectExpression' && (value.objectType == null)) {
@@ -726,24 +732,128 @@ ensureIonVariable = function(context) {
   }
 };
 
+checkVariableDeclarations = {
+  enter: function(node, context) {
+    var key, parent, variable, _base;
+    if (node.type === 'AssignmentExpression' && node.left.type === 'Identifier') {
+      variable = context.getVariableInfo(node.left.name);
+      if (variable == null) {
+        throw context.error("cannot assign to undeclared variable " + node.left.name);
+      }
+      if (variable.kind === 'const') {
+        throw context.error("cannot assign to a const", node.left);
+      }
+    }
+    if (node.type === 'Identifier') {
+      key = context.key();
+      parent = context.parentNode();
+      if (!(parent.type === 'MemberExpression' && key === 'property' || parent.type === 'Property' && key === 'key')) {
+        return ((_base = context.scope()).usage != null ? (_base = context.scope()).usage : _base.usage = {})[node.name] = node;
+      }
+    }
+  },
+  variable: function(variable, context) {
+    var checkScope, existing, scope, shadow, used, _i, _j, _ref1, _ref2, _ref3, _ref4, _ref5, _results;
+    scope = context.scope();
+    existing = context.getVariableInfo(variable.name);
+    if (existing != null) {
+      shadow = false;
+      _ref1 = context.scopeStack;
+      for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
+        checkScope = _ref1[_i];
+        if (checkScope === (existing != null ? existing.scope : void 0)) {
+          break;
+        }
+        if ((_ref2 = nodes[checkScope.node.type]) != null ? _ref2.shadow : void 0) {
+          shadow = true;
+          break;
+        }
+      }
+      if (!shadow) {
+        throw context.error("Cannot redeclare variable " + variable.name, variable.node);
+      }
+    }
+    _ref3 = context.scopeStack;
+    _results = [];
+    for (_j = _ref3.length - 1; _j >= 0; _j += -1) {
+      checkScope = _ref3[_j];
+      used = (_ref4 = checkScope.usage) != null ? _ref4[variable.name] : void 0;
+      if (used != null) {
+        throw context.error("Cannot use variable '" + variable.name + "' before declaration", used);
+      }
+      if ((_ref5 = nodes[checkScope.node.type]) != null ? _ref5.shadow : void 0) {
+        break;
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  }
+};
+
 exports.postprocess = function(program, options) {
-  var steps, traversal, _i, _len;
-  steps = [[classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [createForInLoopValueVariable, convertForInToForLength, nodejsModules], [separateAllVariableDeclarations, destructuringAssignments], [existentialExpression, addUseStrict, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, removeEmptyStatements]];
+  var enter, exit, steps, traversal, variable, _i, _len;
+  steps = [[checkVariableDeclarations], [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [createForInLoopValueVariable, convertForInToForLength, nodejsModules], [separateAllVariableDeclarations, destructuringAssignments], [existentialExpression, addUseStrict, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, removeEmptyStatements]];
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
-    traverse(program, function(node, context) {
-      var step, _j, _len1, _results;
+    enter = function(node, context) {
+      var handler, step, _j, _len1, _ref1, _results;
+      if (context.options == null) {
+        context.options = options;
+      }
       _results = [];
       for (_j = 0, _len1 = traversal.length; _j < _len1; _j++) {
         step = traversal[_j];
         if (!(node != null)) {
           continue;
         }
-        step(node, context, options);
-        _results.push(node = context.current());
+        handler = (_ref1 = step.enter) != null ? _ref1 : (typeof step === 'function' ? step : null);
+        if (handler != null) {
+          handler(node, context);
+          _results.push(node = context.current());
+        } else {
+          _results.push(void 0);
+        }
       }
       return _results;
-    });
+    };
+    exit = function(node, context) {
+      var handler, step, _j, _ref1, _results;
+      _results = [];
+      for (_j = traversal.length - 1; _j >= 0; _j += -1) {
+        step = traversal[_j];
+        if (!(node != null)) {
+          continue;
+        }
+        handler = (_ref1 = step.exit) != null ? _ref1 : null;
+        if (handler != null) {
+          handler(node, context);
+          _results.push(node = context.current());
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+    variable = function(node, context, kind, name) {
+      var handler, step, _j, _len1, _ref1, _results;
+      _results = [];
+      for (_j = 0, _len1 = traversal.length; _j < _len1; _j++) {
+        step = traversal[_j];
+        if (!(node != null)) {
+          continue;
+        }
+        handler = (_ref1 = step.variable) != null ? _ref1 : null;
+        if (handler != null) {
+          handler(node, context, kind, name);
+          _results.push(node = context.current());
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+    traverse(program, enter, exit, variable);
   }
   return program;
 };

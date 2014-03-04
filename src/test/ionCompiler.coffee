@@ -799,16 +799,31 @@ tests =
     if a
         let x = 1
     """: {line:1, column:13}
+    """
+    if typeof a is 'string' and void a and delete a.b
+        log(a)
+    """: """
+    'use strict';
+    if (typeof a === 'string' && void a && delete a.b) {
+        log(a);
+    }
+    """
+    """
+    if 1
+        # 1
+        # 2
+        x = 12
+    """: {line:4, column:5}
 
 exports.test = ->
     for input, expected of tests
         if expected is null
             console.log '---------------------------------------------------'
-            console.log JSON.stringify index.compile(input, {postprocess:false,loc:true}), null, '  '
+            console.log JSON.stringify index.compile(input, {postprocess:false}), null, '  '
             console.log '-Postprocessed------------------------------------'
             console.log JSON.stringify index.compile(input, {generate:false}), null, '  '
             console.log '---------------------------------------------------'
-            console.log index.compile input
+            console.log index.compile input, {loc:false}
         else if typeof expected is 'object'
             # expected to throw an error
             try

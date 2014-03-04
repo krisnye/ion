@@ -8,8 +8,10 @@ getSpace = (size) ->
 exports.isMarkdownCommented = (source) -> /(\n|^)[^\s\n][^\n]*\n(\s*\n)+\s+[^\s\n]/.test source
 
 exports.fixSourceLocation = fixSourceLocation = (location, sourceMapping) ->
-    location.line = sourceMapping[location.line - 1] + 1
-    location.column += sourceMapping.columnOffset ? 0
+    if not location.fixed
+        location.fixed = true
+        location.line = sourceMapping[location.line - 1] + 1
+        location.column += sourceMapping.columnOffset ? 0
 exports.fixSourceLocations = fixSourceLocations = (program, sourceMapping) ->
     require('./traverseAst').traverse program, (node) ->
         if node.loc?.start?
@@ -33,6 +35,7 @@ exports.preprocess = preprocess = (source, sourceMapping) ->
         if totalIndent >= baseIndent
             writeLine getSpace(totalIndent) + common.outdentToken, inputIndex
     output = []
+
     for line, index in lines
         indent = common.getIndent line
         isEmpty = line.trim().length is 0
@@ -51,7 +54,7 @@ exports.preprocess = preprocess = (source, sourceMapping) ->
             writeLine line, index
     # push any remaining outdents
     while indentStack.length > 0
-        outdent()
+        outdent lines.length
 
     return common.unindentString common.joinLines(output), sourceMapping
 
@@ -119,6 +122,6 @@ exports.test = ->
         console.log 'expected-------------------------------'
         console.log expectedResult
         throw new Error "Preprocessor result not expected result."
-    if JSON.stringify(sourceMapping) != '{"0":0,"1":3,"2":4,"3":5,"4":5,"5":6,"6":7,"7":8,"8":8,"9":9,"10":9,"11":10,"12":11,"13":11,"14":12,"15":13,"16":13,"17":14,"18":15,"19":16,"20":17,"21":17,"22":18,"23":18,"24":19,"25":19,"columnOffset":4}'
+    if JSON.stringify(sourceMapping) != '{"0":0,"1":3,"2":4,"3":5,"4":5,"5":6,"6":7,"7":8,"8":8,"9":9,"10":9,"11":10,"12":11,"13":11,"14":12,"15":13,"16":13,"17":14,"18":15,"19":16,"20":17,"21":17,"22":18,"23":18,"24":19,"25":19,"26":20,"27":20,"28":20,"29":20,"columnOffset":4}'
         throw new Error "Unexpected line mapping: " + JSON.stringify sourceMapping
 

@@ -2,11 +2,11 @@
 const
     makePrettyError = (e, source, id) ->
         if typeof e.line is 'number' and typeof e.column is 'number' and e.line > 0 and e.column > 0
-            var line = source.split('\n')[e.line - 1]
-            var caret = '^'
-            for var i = 1; i < e.column; i++
+            let line = source.split('\n')[e.line - 1]
+            let caret = '^'
+            for let i = 1; i < e.column; i++
                 caret = ' ' + caret
-            var newMessage = "{{id ? '(anonymous)'}}:{{e.line}}:{{e.column}}: {{e.message}}\n{{line}}\n{{caret}}"
+            let newMessage = "{{id ? '(anonymous)'}}:{{e.line}}:{{e.column}}: {{e.message}}\n{{line}}\n{{caret}}"
             e.originalMessage = e.message
             e.message = newMessage
             e.stack = newMessage # + '\n' + e.stack
@@ -23,7 +23,7 @@ export const
             parser = import './parser'
             postprocessor = import './postprocessor'
             escodegen = import 'escodegen'
-        var
+        let
             sourceMapping = {}
             result = preprocessor.preprocess(content, sourceMapping)
             preprocessed = result
@@ -35,7 +35,6 @@ export const
                 if options?.generate isnt false
                     result = escodegen.generate(result)
         catch e
-            preprocessor.fixSourceLocation(e, sourceMapping)
             # console.log('-Preprocessed--------------------------------------------')
             # console.log(preprocessed)
             makePrettyError(e, content, options.id)

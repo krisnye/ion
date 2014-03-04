@@ -13,12 +13,13 @@ export const
         isBlock: true
         newScope: true
         reactive: false
-    Template =
-        newScope: true
-        reactive: true
     FunctionExpression =
         newScope: true
         shadow: true
+    Template =
+        newScope: true
+        shadow: true
+        reactive: true
     ForInStatement =
         newScope: true
     ForOfStatement = ForInStatement

@@ -360,9 +360,9 @@ or = "or" !identifierPart { return "||" }
 is = "is" !identifierPart { return "===" }
 isnt = "isnt" !identifierPart { return "!==" }
 not = "not" !identifierPart { return "!" }
-typeof = "typeof" !identifierPart
-void = "void" !identifierPart
-delete = "delete" !identifierPart
+typeof = "typeof" !identifierPart { return "typeof"}
+void = "void" !identifierPart  { return "void"}
+delete = "delete" !identifierPart { return "delete"}
 var = "var" !identifierPart
 const = "const" !identifierPart { return "const" }
 let = "let" !identifierPart { return "let" }

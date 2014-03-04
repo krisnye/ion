@@ -1,12 +1,27 @@
 
 export const
-    nextTick = @process?.nextTick ? (fn) -> setTimeout fn, 0
+    nextTick = @process?.nextTick ? (fn) -> setTimeout(fn, 0)
     clone = (object, deep = false) ->
         if object?.constructor is Object
             return {}
                 for key, value of object
                     [key]: deep ? clone(value, deep) : value
-        else if Array.isArray object
+        else if Array.isArray(object)
             return [deep ? clone(item, deep) : item for item in object]
         else
             return object
+    # property is optional
+    observe = (object, observer, property) ->
+        # console.log 'observe', object, property
+        if object? and observer? and Object.observe? and typeof object is 'object'
+            Object.observe(object, observer)
+            # watch change on dom elements
+            object.addEventListener?('change', observer)
+        object?.onObserved?(observer, property)
+    # property is optional
+    unobserve = (object, observer, property) ->
+        if object? and observer? and Object.unobserve? and typeof object is 'object'
+            Object.unobserve(object, observer)
+            # unwatch change on dom elements
+            object.removeEventListener?('change', observer)
+        object?.unObserved?(observer, property)

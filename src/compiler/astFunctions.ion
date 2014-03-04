@@ -1,7 +1,7 @@
 
 export const
     addStatement = (node, statement, index, offset) ->
-        var body = node.body
+        let body = node.body
         if body.type is "BlockStatement"
             body = body.body
         else if not Array.isArray(body)

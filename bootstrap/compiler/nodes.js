@@ -1,48 +1,34 @@
 'use strict';
 const getVariablesFromStatements = function (statements) {
-    if (!(statements != null))
+    if (!(statements != null)) {
         return [];
+    }
     let _ref = [];
     for (let _i = 0; _i < statements.length; _i++) {
         let s = statements[_i];
-        if (s.type === 'VariableDeclaration')
+        if (s.type === 'VariableDeclaration') {
             _ref.push(s);
+        }
     }
     return _ref;
 };
 const BlockStatement = exports.BlockStatement = {
         isBlock: true,
-        newScope: true,
-        getVariables: function (node) {
-            return getVariablesFromStatements(node.body);
-        }
+        newScope: true
     };
 const Program = exports.Program = {
         isBlock: true,
         newScope: true,
-        getVariables: function (node) {
-            return getVariablesFromStatements(node.body);
-        },
         reactive: false
+    };
+const FunctionExpression = exports.FunctionExpression = {
+        newScope: true,
+        shadow: true
     };
 const Template = exports.Template = {
         newScope: true,
-        getVariables: function (node) {
-            return node.params;
-        },
+        shadow: true,
         reactive: true
     };
-const ForInStatement = exports.ForInStatement = {
-        newScope: true,
-        getVariables: function (node) {
-            return [node.left].concat(getVariablesFromStatements(node.body));
-        }
-    };
+const ForInStatement = exports.ForInStatement = { newScope: true };
 const ForOfStatement = exports.ForOfStatement = ForInStatement;
-const FunctionExpression = exports.FunctionExpression = {
-        newScope: true,
-        getVariables: function (node) {
-            return node.params;
-        },
-        reactive: false
-    };
