@@ -10,18 +10,43 @@ export const
             return [deep ? clone(item, deep) : item for item in object]
         else
             return object
-    # property is optional
     observe = (object, observer, property) ->
+        # property is optional
         if object? and observer? and Object.observe? and typeof object is 'object'
             Object.observe(object, observer)
             # watch change on dom elements
             object.addEventListener?('change', observer)
         object?.onObserved?(observer, property)
-    # property is optional
     unobserve = (object, observer, property) ->
+        # property is optional
         if object? and observer? and Object.unobserve? and typeof object is 'object'
             Object.unobserve(object, observer)
             # unwatch change on dom elements
             object.removeEventListener?('change', observer)
         object?.unObserved?(observer, property)
-    defineClass = (object, baseClasses) ->
+    add = (container, item, returnRemoveFunction) ->
+        if container.nodeType is 1
+            if typeof item is 'string'
+                item = document.createTextNode(item)
+            container.appendChild(item)
+        else if container.push?
+            container.push(item)
+        else
+            container.add(item)
+
+        item.onAdded?(container)
+
+        if returnRemoveFunction
+            # returns a function which can be used to remove the item
+            return ->
+                if container.nodeType is 1
+                    container.removeChild(item)
+                else if container.lastIndexOf? and container.removeAt?
+                    let index = container.lastIndexOf(item)
+                    if index >= 0
+                        container.removeAt(index)
+                else
+                    container.remove(item)
+
+                item.onRemoved?(container)
+    defineClass = (definitions) ->

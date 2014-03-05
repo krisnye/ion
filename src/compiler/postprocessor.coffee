@@ -288,13 +288,35 @@ existentialExpression = (node, context) ->
                 consequent: node
                 alternate: undefinedExpression
 
-addUseStrict = (node, context) ->
-    if node.type is 'Program'
-        node.body.unshift
-            type: 'ExpressionStatement'
-            expression:
-                type: 'Literal'
-                value: 'use strict'
+ensureIonVariable = (context, required = true) ->
+    context.ancestorNodes[0].requiresIon = required
+
+addUseStrictAndRequireIon =
+    enter: (node, context) ->
+        # see if we are already importing ion at the Program scope
+        if node.type is 'VariableDeclaration' and context.parentNode()?.type is 'Program'
+            for d in node.declarations when d.id.name is 'ion'
+                # we don't need to import ion because the user already did
+                ensureIonVariable context, false
+                break
+    exit: (node, context) ->
+        if node.type is 'Program'
+            if node.requiresIon
+                delete node.requiresIon
+                context.addVariable
+                    offset: Number.MIN_VALUE
+                    kind: 'const'
+                    id: ionExpression
+                    init:
+                        type: 'ImportExpression'
+                        name:
+                            type: 'Literal'
+                            value: 'ion'
+            node.body.unshift
+                type: 'ExpressionStatement'
+                expression:
+                    type: 'Literal'
+                    value: 'use strict'
 
 extractForLoopsInnerAndTest = (node, context) ->
     if node.type is 'ForInStatement' or node.type is 'ForOfStatement'
@@ -355,33 +377,45 @@ functionParameterDefaultValuesToES5 = (node, context) ->
 
 # only for imperative code
 typedObjectExpressions = (node, context) ->
-    if node.type is 'ObjectExpression' and node.objectType?
+    if node.type is 'ObjectExpression' and node.simple isnt true
 
-        # first see if the object expression is complex or not
-        if node.type is "ObjectExpression" and node.objectType?.type is "ArrayExpression"
-            elements = []
-            for element in node.objectType.elements
-                elements.push element
-            for expressionStatement in node.properties
-                elements.push expressionStatement.expression
-            context.replace
-                type: "ArrayExpression"
-                elements: elements
-            return
-
+        isArray = node.objectType?.type is "ArrayExpression"
         isSimple = true
-        for property in node.properties
-            if property.type isnt 'Property' or property.computed
-                isSimple = false
-                break
+        if node.properties?
+            for property in node.properties
+                if isArray
+                    if property.type isnt 'ExpressionStatement'
+                        isSimple = false
+                        break
+                else
+                    if property.type isnt 'Property' or property.computed
+                        isSimple = false
+                        break
 
         # empty object expression without properties {}
-        if node.objectType.type is 'ObjectExpression' and node.objectType.properties.length is 0 and isSimple
-            # check that our properties ONLY contain normal Property objects with no computed values
-            delete node.objectType
-            return
+        if isSimple
+            if isArray
+                elements = []
+                if node.objectType?
+                    for element in node.objectType.elements
+                        elements.push element
+                for expressionStatement in node.properties
+                    elements.push expressionStatement.expression
+                context.replace
+                    type: "ArrayExpression"
+                    elements: elements
+                return
+            if (not node.objectType? or (node.objectType.type is 'ObjectExpression' and node.objectType.properties.length is 0))
+                # check that our properties ONLY contain normal Property objects with no computed values
+                delete node.objectType
+                node.simple = true
+                return
 
-        if node.objectType.type is 'ArrayExpression' or node.objectType.type is 'NewExpression' or node.objectType.type is 'ObjectExpression'
+        if not node.objectType?
+            initialValue =
+                type: 'ObjectExpression'
+                properties: []
+        else if node.objectType.type is 'ArrayExpression' or node.objectType.type is 'NewExpression' or node.objectType.type is 'ObjectExpression'
             initialValue =
                 node.objectType
         else
@@ -410,7 +444,6 @@ typedObjectExpressions = (node, context) ->
             # replace this with the initial value
             context.replace initialValue
             addPosition = 1
-            node.properties.reverse()
         else
             # create a temp variable
             objectId = context.addVariable
@@ -419,16 +452,14 @@ typedObjectExpressions = (node, context) ->
             # replace this with a reference to the variable
             context.replace objectId
 
+        statements = []
+
         # traverse all properties and expression statements
         # add a new property that indicates their output scope
         traverse node.properties, (subnode, subcontext) ->
             if subnode.type is 'ObjectExpression' or subnode.type is 'ArrayExpression'
                 return subcontext.skip()
             if subnode.type is 'Property' #or subnode.type is 'ExpressionStatement'
-                # if initialValue is a simple ObjectExpression then just add to it
-                if initialValue.type is 'ObjectExpression' and subnode.computed isnt true
-                    initialValue.properties.push subnode
-                    return
                 # we convert the node to a Property: ObjectExpression node
                 # it will be handled correctly by the later propertyStatements rule
                 subnode = subcontext.replace
@@ -440,21 +471,28 @@ typedObjectExpressions = (node, context) ->
                         create: false
                 subcontext.skip()
             else if subnode.type is 'ExpressionStatement'
+                if not isArray
+                    ensureIonVariable(context)
                 subnode = subcontext.replace
                     type: 'ExpressionStatement'
                     expression:
                         type: 'CallExpression'
                         callee:
                             type: 'MemberExpression'
-                            object: objectId
+                            object: if isArray then objectId else ionExpression
                             property:
                                 type: 'Identifier'
-                                name: 'add'
-                        arguments: [subnode.expression]
+                                name: if isArray then 'push' else 'add'
+                        arguments: if isArray then [subnode.expression] else [objectId, subnode.expression]
                 subcontext.skip()
+
             if not subcontext.parentNode()?
                 # add this statement to the current context
-                context.addStatement subnode, addPosition
+                statements.push subnode
+        if statements.length is 1
+            context.addStatement statements[0], addPosition
+        else
+            context.addStatement {type:'BlockStatement',body:statements}, addPosition
 
 propertyStatements = (node, context) ->
     parent = context.parentNode()
@@ -533,18 +571,6 @@ removeEmptyStatements = (node, context) ->
     if node.type is 'EmptyStatement' or node.type is 'ExpressionStatement' and node.expression.type is 'Identifier'
         context.remove node
 
-ensureIonVariable = (context) ->
-    if not context.getVariableInfo('ion')?
-        context.addVariable
-            id: 'ion'
-            kind: 'const'
-            offset: Number.MIN_VALUE
-            init:
-                type: 'ImportExpression'
-                name:
-                    type: 'Literal'
-                    value: 'ion'
-
 checkVariableDeclarations =
     enter: (node, context) ->
         # check assigning to a constant
@@ -589,12 +615,27 @@ checkVariableDeclarations =
             if nodes[checkScope.node.type]?.shadow
                 break
 
+isAncestorObjectExpression = (context) ->
+    for ancestor in context.ancestorNodes by -1
+        if ancestor.type is 'ObjectExpression'
+            return true
+        if ancestor.type is 'FunctionExpression' or ancestor.type is 'FunctionDeclaration'
+            return false
+    return false
+
 namedFunctions = (node, context) ->
     # first, named functions expressions to function declarations
     if node.type is 'ExpressionStatement' and node.expression.type is 'FunctionExpression'
         func = node.expression
         if not func.id?
             throw context.error "Function declaration missing name", func
+        # # check to see if we are in an ObjectExpression
+        # if isAncestorObjectExpression(context)
+        #     context.replace
+        #         type: 'Property'
+        #         key: func.id
+        #         value: func
+        # else
         # ok, convert it into a function declaration
         func.type = 'FunctionDeclaration'
         context.replace func
@@ -603,9 +644,9 @@ exports.postprocess = (program, options) ->
     steps = [
         [namedFunctions, checkVariableDeclarations]
         [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
-        [createForInLoopValueVariable, convertForInToForLength, nodejsModules]
-        [separateAllVariableDeclarations, destructuringAssignments]
-        [existentialExpression, addUseStrict, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, removeEmptyStatements]
+        [createForInLoopValueVariable, convertForInToForLength,existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, removeEmptyStatements]
+        [addUseStrictAndRequireIon]
+        [nodejsModules, separateAllVariableDeclarations, destructuringAssignments]
     ]
     for traversal in steps
         enter = (node, context) ->

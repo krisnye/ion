@@ -16,10 +16,12 @@ export const
     FunctionExpression =
         newScope: true
         shadow: true
+    FunctionDeclaration = FunctionExpression
     Template =
         newScope: true
         shadow: true
         reactive: true
-    ForInStatement =
+    ForStatement =
         newScope: true
-    ForOfStatement = ForInStatement
+    ForInStatement = ForStatement
+    ForOfStatement = ForStatement

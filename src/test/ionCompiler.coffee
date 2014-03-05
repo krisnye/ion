@@ -565,9 +565,9 @@ tests =
     'use strict';
     let object = {
             x: 1,
-            y: 2,
-            z: 3
+            y: 2
         };
+    object.z = 3;
     """
     """
     let origin = Point
@@ -576,8 +576,10 @@ tests =
     """: """
     'use strict';
     let origin = new Point();
-    origin.x = 1;
-    origin.y = 2;
+    {
+        origin.x = 1;
+        origin.y = 2;
+    }
     """
     """
     let origin = Line
@@ -590,14 +592,20 @@ tests =
     """: """
     'use strict';
     let origin = new Line();
-    let _ref = new Point();
-    _ref.x = 0;
-    _ref.y = 0;
-    origin.a = _ref;
-    let _ref2 = new Point();
-    _ref2.x = 10;
-    _ref2.y = 20;
-    origin.b = _ref2;
+    {
+        let _ref = new Point();
+        {
+            _ref.x = 0;
+            _ref.y = 0;
+        }
+        origin.a = _ref;
+        let _ref2 = new Point();
+        {
+            _ref2.x = 10;
+            _ref2.y = 20;
+        }
+        origin.b = _ref2;
+    }
     """
     """
     input:
@@ -622,8 +630,10 @@ tests =
     input.z.a = 1;
     input.z.b = 2;
     let _ref = new Point();
-    _ref.x = 0;
-    _ref.y = 0;
+    {
+        _ref.x = 0;
+        _ref.y = 0;
+    }
     input.w = _ref;
     """
     """
@@ -633,49 +643,53 @@ tests =
     """: """
     'use strict';
     let point = new Point();
-    point[x] = 1;
-    point[y] = 2;
-    """
-    """
-    let element = div
-        id: 'foo'
-        style:
-            color: 'red'
-        for key, value of {y: 2, z: 3}
-            [key]: value
-        div
-            "Hello"
-        div
-            "World"
-        if name?
-            "Welcome: " + name
-    """: """
-    'use strict';
-    let element = new div();
-    element.id = 'foo';
-    if (element.style == null)
-        element.style = {};
-    element.style.color = 'red';
     {
-        let _ref = {
-                y: 2,
-                z: 3
-            };
-        for (let key in _ref) {
-            let value = _ref[key];
-            element[key] = value;
-        }
-    }
-    let _ref = new div();
-    _ref.add('Hello');
-    element.add(_ref);
-    let _ref2 = new div();
-    _ref2.add('World');
-    element.add(_ref2);
-    if (name != null) {
-        element.add('Welcome: ' + name);
+        point[x] = 1;
+        point[y] = 2;
     }
     """
+    # """
+    # let element = div
+    #     id: 'foo'
+    #     style:
+    #         color: 'red'
+    #     for key, value of {y: 2, z: 3}
+    #         [key]: value
+    #     div
+    #         "Hello"
+    #     div
+    #         "World"
+    #     if name?
+    #         "Welcome: " + name
+    # """: """
+    # 'use strict';
+    # let element = new div();
+    # {
+    #     element.id = 'foo';
+    #     if (element.style == null)
+    #         element.style = {};
+    #     element.style.color = 'red';
+    #     {
+    #         let _ref = {
+    #                 y: 2,
+    #                 z: 3
+    #             };
+    #         for (let key in _ref) {
+    #             let value = _ref[key];
+    #             element[key] = value;
+    #         }
+    #     }
+    #     let _ref = new div();
+    #     _ref.add('Hello');
+    #     element.add(_ref);
+    #     let _ref2 = new div();
+    #     _ref2.add('World');
+    #     element.add(_ref2);
+    #     if (name != null) {
+    #         element.add('Welcome: ' + name);
+    #     }
+    # }
+    # """
     """
     let self = @
     let x = @x
@@ -853,6 +867,65 @@ tests =
     double(a) -> a * 2
     double = 12
     """: {line:2, column: 1}
+    """
+    let object =
+        double(a) -> a * 2
+        if a
+            [key]: value
+        else
+            foo: double(2)
+    """: """
+    'use strict';
+    let object = {};
+    {
+        function double(a) {
+            return a * 2;
+        }
+        if (a) {
+            object[key] = value;
+        } else {
+            object.foo = double(2);
+        }
+    }
+    """
+    """
+    let items = []
+        for key, value of window
+            value
+    """: """
+    'use strict';
+    let items = [];
+    for (let key in window) {
+        let value = window[key];
+        items.push(value);
+    }
+    """
+    """
+    let foo = div
+        span
+            'Hello'
+    """: """
+    'use strict';
+    const ion = require('ion');
+    let foo = new div();
+    let _ref = new span();
+    ion.add(_ref, 'Hello');
+    ion.add(foo, _ref);
+    """
+    # we don't auto import ion if the user already declares an ion variable
+    """
+    const ion = import './'
+    let foo = div
+        span
+            'Hello'
+    """: """
+    'use strict';
+    const ion = require('./');
+    let foo = new div();
+    let _ref = new span();
+    ion.add(_ref, 'Hello');
+    ion.add(foo, _ref);
+    """
 
 exports.test = ->
     for input, expected of tests
