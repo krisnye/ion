@@ -104,7 +104,15 @@ tests = {
     line: 1,
     column: 13
   },
-  "if typeof a is 'string' and void a and delete a.b\n    log(a)": "'use strict';\nif (typeof a === 'string' && void a && delete a.b) {\n    log(a);\n}"
+  "if typeof a is 'string' and void a and delete a.b\n    log(a)": "'use strict';\nif (typeof a === 'string' && void a && delete a.b) {\n    log(a);\n}",
+  "if 1\n    # 1\n    # 2\n    x = 12": {
+    line: 4,
+    column: 5
+  },
+  "export const\n    BlockStatement =\n        isBlock: true\n        newScope: tr ue": {
+    line: 4,
+    column: 22
+  }
 };
 
 exports.test = function() {
@@ -114,13 +122,11 @@ exports.test = function() {
     if (expected === null) {
       console.log('---------------------------------------------------');
       console.log(JSON.stringify(index.compile(input, {
-        postprocess: false,
-        loc: false
+        postprocess: false
       }), null, '  '));
       console.log('-Postprocessed------------------------------------');
       console.log(JSON.stringify(index.compile(input, {
-        generate: false,
-        loc: false
+        generate: false
       }), null, '  '));
       console.log('---------------------------------------------------');
       console.log(index.compile(input, {

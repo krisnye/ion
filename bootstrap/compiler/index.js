@@ -13,12 +13,14 @@ const makePrettyError = function (e, source, id) {
     }
 };
 const parse = exports.parse = function (content, options) {
-        options = options != null ? options : {};
+        if (options == null)
+            options = {};
         options.generate = false;
         return compile(content, options);
     };
 const compile = exports.compile = function (content, options) {
-        options = options != null ? options : {};
+        if (options == null)
+            options = {};
         options.loc = options.loc != null ? options.loc : true;
         const preprocessor = require('./preprocessor');
         const parser = require('./parser');
@@ -27,9 +29,11 @@ const compile = exports.compile = function (content, options) {
         let sourceMapping = {};
         let result = preprocessor.preprocess(content, sourceMapping);
         let preprocessed = result;
+        let sourceLocationsFixed = false;
         try {
             result = parser.parse(result, options != null ? options : {});
             result = preprocessor.fixSourceLocations(result, sourceMapping);
+            sourceLocationsFixed = true;
             if (options.postprocess !== false) {
                 result = postprocessor.postprocess(result, options);
                 if ((options != null ? options.generate : void 0) !== false) {
@@ -37,7 +41,9 @@ const compile = exports.compile = function (content, options) {
                 }
             }
         } catch (e) {
-            preprocessor.fixSourceLocation(e, sourceMapping);
+            if (!sourceLocationsFixed) {
+                preprocessor.fixSourceLocation(e, sourceMapping);
+            }
             makePrettyError(e, content, options.id);
             throw e;
         }

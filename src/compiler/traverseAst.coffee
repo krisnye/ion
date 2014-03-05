@@ -20,7 +20,11 @@ trackVariableDeclarations = (context, node, kind = 'let') ->
         for item in node
             trackVariableDeclarations context, item, kind
     else
-        if node.type is "VariableDeclaration"
+        if node.type is 'FunctionDeclaration'
+            kind = 'const'
+            if node.id?
+                trackVariableDeclarations context, node.id, kind
+        else if node.type is 'VariableDeclaration'
             kind = node.kind
             for declarator in node.declarations
                 trackVariableDeclarations context, declarator.id, kind
@@ -62,7 +66,7 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback) ->
             if typeof statement is 'number'
                 [statement, offset] = [offset, statement]
             addToNode ?= @scope().node
-            if statement.type is 'VariableDeclaration'
+            if statement.type is 'VariableDeclaration' or statement.type is 'FunctionDeclaration'
                 trackVariableDeclarations context, statement
             addStatement addToNode, statement, @getAncestorChildOf(addToNode), offset
         context.addVariable ?= (options) ->
@@ -102,9 +106,9 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback) ->
                 context.scopeStack.push
                     variables: Object.create(context.scope()?.variables ? {})
                     node: node
-            if node.type is 'VariableDeclaration'
+            if node.type is 'VariableDeclaration' or node.type is 'FunctionDeclaration'
                 trackVariableDeclarations context, node
-            else if node.type is 'FunctionExpression'
+            if node.type is 'FunctionExpression' or node.type is 'FunctionDeclaration'
                 trackVariableDeclarations context, node.params
             enterCallback?(node, context)
             context.ancestorNodes.push node

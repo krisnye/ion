@@ -253,7 +253,7 @@ DoExpression = start:start do _ f:Expression end:end
             args = []
         return node("CallExpression", {callee:f,arguments:args}, start, end)
     }
-FunctionExpression = start:start params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(InlineExpression / BlockStatement)? end:end
+FunctionExpression = start:start id:Identifier? params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(InlineExpression / BlockStatement)? end:end
     {
         if (params == null) params = []
         paramPatterns = params.map(function(x) { return x[0] })
@@ -263,7 +263,7 @@ FunctionExpression = start:start params:formalParameterList? _ bound:("->" { ret
             body = node("BlockStatement", {body:[]})
         else if (body.type !== "BlockStatement")
             body = node("BlockStatement", {body:[node("ReturnStatement", {argument:body})]})
-        return node("FunctionExpression", {id:null, params:paramPatterns, defaults:paramDefaults, body:body, bound:bound}, start, end)
+        return node("FunctionExpression", {id:id, params:paramPatterns, defaults:paramDefaults, body:body, bound:bound}, start, end)
     }
 formalParameterList = "(" _ params:formalParameters? _ ")" { return params != null ? params : [] }
 formalParameters = head:formalParameter tail:(_ "," _ a:formalParameter { return a })* { return [head].concat(tail) }

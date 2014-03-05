@@ -12,7 +12,6 @@ export const
             return object
     # property is optional
     observe = (object, observer, property) ->
-        # console.log 'observe', object, property
         if object? and observer? and Object.observe? and typeof object is 'object'
             Object.observe(object, observer)
             # watch change on dom elements
@@ -25,3 +24,4 @@ export const
             # unwatch change on dom elements
             object.removeEventListener?('change', observer)
         object?.unObserved?(observer, property)
+    defineClass = (object, baseClasses) ->

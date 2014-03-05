@@ -502,7 +502,13 @@ propertyStatements = (node, context) ->
 classExpressions = (node, context) ->
 
     if node.type is 'ClassExpression'
+        properties = node.properties
         hasIdentifierName = node.name? and not node.computed
+        if node.name?
+            name = if hasIdentifierName then {type:'Literal',value:node.name.name} else node.name
+            # add id to the properties
+            properties = [{type:'Property',key:{type:'Identifier',name:'id'},value:name}].concat properties
+        # must add a constructor property if one doesnt exist
         classExpression =
             type: 'CallExpression'
             callee:
@@ -511,17 +517,7 @@ classExpressions = (node, context) ->
                 property:
                     type: 'Identifier'
                     name: 'defineClass'
-            arguments: [
-                if hasIdentifierName then {type:'Literal',value:node.name.name} else node.name
-                {
-                    type: 'ObjectExpression'
-                    properties: node.properties
-                }
-                {
-                    type: 'ArrayExpression'
-                    elements: node.extends
-                }
-            ]
+            arguments: [{type: 'ObjectExpression',properties: properties}].concat node.extends
 
         if hasIdentifierName
             context.addVariable
@@ -593,9 +589,19 @@ checkVariableDeclarations =
             if nodes[checkScope.node.type]?.shadow
                 break
 
+namedFunctions = (node, context) ->
+    # first, named functions expressions to function declarations
+    if node.type is 'ExpressionStatement' and node.expression.type is 'FunctionExpression'
+        func = node.expression
+        if not func.id?
+            throw context.error "Function declaration missing name", func
+        # ok, convert it into a function declaration
+        func.type = 'FunctionDeclaration'
+        context.replace func
+
 exports.postprocess = (program, options) ->
     steps = [
-        [checkVariableDeclarations]
+        [namedFunctions, checkVariableDeclarations]
         [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
         [createForInLoopValueVariable, convertForInToForLength, nodejsModules]
         [separateAllVariableDeclarations, destructuringAssignments]

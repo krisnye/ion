@@ -17,8 +17,11 @@ exports.isMarkdownCommented = function(source) {
 
 exports.fixSourceLocation = fixSourceLocation = function(location, sourceMapping) {
   var _ref;
-  location.line = sourceMapping[location.line - 1] + 1;
-  return location.column += (_ref = sourceMapping.columnOffset) != null ? _ref : 0;
+  if (!location.fixed) {
+    location.fixed = true;
+    location.line = sourceMapping[location.line - 1] + 1;
+    return location.column += (_ref = sourceMapping.columnOffset) != null ? _ref : 0;
+  }
 };
 
 exports.fixSourceLocations = fixSourceLocations = function(program, sourceMapping) {
@@ -81,7 +84,7 @@ exports.preprocess = preprocess = function(source, sourceMapping) {
     }
   }
   while (indentStack.length > 0) {
-    outdent();
+    outdent(lines.length);
   }
   return common.unindentString(common.joinLines(output), sourceMapping);
 };
@@ -101,7 +104,7 @@ exports.test = function() {
     console.log(expectedResult);
     throw new Error("Preprocessor result not expected result.");
   }
-  if (JSON.stringify(sourceMapping) !== '{"0":0,"1":3,"2":4,"3":5,"4":5,"5":6,"6":7,"7":8,"8":8,"9":9,"10":9,"11":10,"12":11,"13":11,"14":12,"15":13,"16":13,"17":14,"18":15,"19":16,"20":17,"21":17,"22":18,"23":18,"24":19,"25":19,"columnOffset":4}') {
+  if (JSON.stringify(sourceMapping) !== '{"0":0,"1":3,"2":4,"3":5,"4":5,"5":6,"6":7,"7":8,"8":8,"9":9,"10":9,"11":10,"12":11,"13":11,"14":12,"15":13,"16":13,"17":14,"18":15,"19":16,"20":17,"21":17,"22":18,"23":18,"24":19,"25":19,"26":20,"27":20,"28":20,"29":20,"columnOffset":4}') {
     throw new Error("Unexpected line mapping: " + JSON.stringify(sourceMapping));
   }
 };

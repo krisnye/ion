@@ -27,14 +27,18 @@ export const
             sourceMapping = {}
             result = preprocessor.preprocess(content, sourceMapping)
             preprocessed = result
+            sourceLocationsFixed = false
         try
             result = parser.parse(result, options ? {})
             result = preprocessor.fixSourceLocations(result, sourceMapping)
+            sourceLocationsFixed = true
             if options.postprocess isnt false
                 result = postprocessor.postprocess(result, options)
                 if options?.generate isnt false
                     result = escodegen.generate(result)
         catch e
+            if not sourceLocationsFixed
+                preprocessor.fixSourceLocation(e, sourceMapping)
             # console.log('-Preprocessed--------------------------------------------')
             # console.log(preprocessed)
             makePrettyError(e, content, options.id)

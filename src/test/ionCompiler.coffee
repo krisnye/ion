@@ -677,23 +677,6 @@ tests =
     }
     """
     """
-    class Foo extends import 'Bar'
-        static:
-            toString: true
-    """: """
-    'use strict';
-    const Foo = ion.defineClass('Foo', { static: { toString: true } }, [require('Bar')]);
-    """
-    """
-    export class Foo extends import 'Bar'
-        static:
-            toString: true
-    """: """
-    'use strict';
-    const Foo = ion.defineClass('Foo', { static: { toString: true } }, [require('Bar')]);
-    module.exports = exports = Foo;
-    """
-    """
     let self = @
     let x = @x
     let y = @.y
@@ -808,12 +791,68 @@ tests =
         log(a);
     }
     """
+    # testing error correct location with comments and indents
     """
     if 1
         # 1
         # 2
         x = 12
     """: {line:4, column:5}
+    # testing parsing error correct location
+    """
+    export const
+        BlockStatement =
+            isBlock: true
+            newScope: tr ue
+    """: {line:4, column:22}
+    """
+    export class Foo extends import 'Bar'
+        constructor: (x,y) ->
+            @x = x
+            @y = y
+        properties:
+            x: 1
+            y: 2
+            getXY: -> [@x,@y]
+        isThisPropertyStatic: true
+    """: """
+    'use strict';
+    const Foo = ion.defineClass({
+            id: 'Foo',
+            constructor: function (x, y) {
+                this.x = x;
+                this.y = y;
+            },
+            properties: {
+                x: 1,
+                y: 2,
+                getXY: function () {
+                    return [
+                        this.x,
+                        this.y
+                    ];
+                }
+            },
+            isThisPropertyStatic: true
+        }, require('Bar'));
+    module.exports = exports = Foo;
+    """
+    """
+    # comment
+    (a) -> a * 2
+    """: {line:2, column:1}
+    """
+    double(a) -> a * 2
+    """: """
+    'use strict';
+    function double(a) {
+        return a * 2;
+    }
+    """
+    """
+    double(a) -> a * 2
+    double = 12
+    """: {line:2, column: 1}
 
 exports.test = ->
     for input, expected of tests
