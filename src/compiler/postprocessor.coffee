@@ -17,6 +17,8 @@ ionExpression = Object.freeze
     type: 'Identifier'
     name: 'ion'
 
+isFunctionNode = (node) -> node.type is 'FunctionExpression' or node.type is 'FunctionDeclaration'
+
 # wraps a node in a BlockStatement if it isn't already.
 block = (node) ->
     if node.type isnt 'BlockStatement'
@@ -108,7 +110,7 @@ convertForInToForLength = (node, context) ->
             body: node.body
 
 callFunctionBindForFatArrows = (node, context) ->
-    if node.type is "FunctionExpression" and node.bound
+    if node.type is 'FunctionExpression' and node.bound
         delete node.bound
         context.replace
             type: "CallExpression"
@@ -185,8 +187,28 @@ separateAllVariableDeclarations = (node, context) ->
 
 destructuringAssignments = (node, context) ->
     isPattern = (node) -> node.properties? or node.elements?
+
+    # function parameters
+    if isFunctionNode node
+        for pattern, index in node.params when isPattern pattern
+            tempId = context.getNewInternalIdentifier()
+            node.params[index] = tempId
+            statements = []
+            forEachDestructuringAssignment pattern, tempId, (id, expression) ->
+                statements.unshift {
+                        type: 'VariableDeclaration'
+                        declarations: [{
+                            type: 'VariableDeclarator'
+                            id: id
+                            init: expression
+                        }]
+                        kind: 'let'
+                    }
+            for statement in statements
+                context.addStatement statement
+
     # variable assignments
-    if node.type is 'VariableDeclaration' and (context.isParentBlock() or node.type is 'ForOfStatement')
+    if node.type is 'VariableDeclaration' and context.isParentBlock()
         for declarator in node.declarations when isPattern declarator.id
             pattern = declarator.id
             tempId = context.getNewInternalIdentifier()
@@ -355,7 +377,7 @@ arrayComprehensionsToES5 = (node, context) ->
         context.replace tempId
 
 functionParameterDefaultValuesToES5 = (node, context) ->
-    if node.type is 'FunctionExpression' and node.params? and node.defaults?
+    if isFunctionNode(node) and node.params? and node.defaults?
         for param, index in node.params
             defaultValue = node.defaults?[index]
             if defaultValue?
@@ -619,7 +641,7 @@ isAncestorObjectExpression = (context) ->
     for ancestor in context.ancestorNodes by -1
         if ancestor.type is 'ObjectExpression'
             return true
-        if ancestor.type is 'FunctionExpression' or ancestor.type is 'FunctionDeclaration'
+        if isFunctionNode(ancestor)
             return false
     return false
 

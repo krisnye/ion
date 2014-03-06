@@ -926,6 +926,24 @@ tests =
     ion.add(_ref, 'Hello');
     ion.add(foo, _ref);
     """
+    """
+    translate({x,y}) ->
+        x++
+        y++
+        return {x,y}
+    """: """
+    'use strict';
+    function translate(_ref) {
+        let x = _ref.x;
+        let y = _ref.y;
+        x++;
+        y++;
+        return {
+            x: x,
+            y: y
+        };
+    }
+    """
 
 exports.test = ->
     for input, expected of tests
