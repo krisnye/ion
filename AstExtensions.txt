@@ -37,3 +37,5 @@ X   +ClassDeclaration
         properties: [Property*]
 X   +AssertStatement
         expression: Expression
+    +SpreadExpression
+        expression: Expression

@@ -995,6 +995,33 @@ tests =
         });
     module.exports = exports = Point;
     """
+    """
+    spreadFunction1(a, b, ...c) ->
+        log(1)
+    spreadFunction2(a, b, ...c, d, e) ->
+        log(2)
+    spreadFunction3(a,b, ...c, {d,e}) ->
+        log(3)
+    """: """
+    'use strict';
+    function spreadFunction1(a, b, ___c) {
+        let c = Array.prototype.slice.call(arguments, 2);
+        log(1);
+    }
+    function spreadFunction2(a, b, ___c, d, e) {
+        let c = Array.prototype.slice.call(arguments, 2, arguments.length - 2);
+        d = arguments[arguments.length - 2];
+        e = arguments[arguments.length - 1];
+        log(2);
+    }
+    function spreadFunction3(a, b, ___c, _ref) {
+        let c = Array.prototype.slice.call(arguments, 2, arguments.length - 1);
+        _ref = arguments[arguments.length - 1];
+        let d = _ref.d;
+        let e = _ref.e;
+        log(3);
+    }
+    """
 
 exports.test = ->
     for input, expected of tests

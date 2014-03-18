@@ -17,6 +17,25 @@ ionExpression = Object.freeze
     type: 'Identifier'
     name: 'ion'
 
+getPathExpression = (path) ->
+    steps = path.split '.'
+
+    if steps[0] is 'this'
+        result =
+            type: 'ThisExpression'
+    else
+        result =
+            type: 'Identifier'
+            name: steps[0]
+    for step, i in steps when i > 0
+        result =
+            type: 'MemberExpression'
+            object: result
+            property:
+                type: 'Identifier'
+                name: step
+    return result
+
 isFunctionNode = (node) -> node.type is 'FunctionExpression' or node.type is 'FunctionDeclaration'
 
 # wraps a node in a BlockStatement if it isn't already.
@@ -714,18 +733,7 @@ superExpressions = (node, context) ->
         else
             args = args.concat node.arguments
             applyOrCall = 'call'
-        superFunction =
-            type: 'MemberExpression'
-            object:
-                type: 'MemberExpression'
-                object:
-                    type: 'ThisExpression'
-                property:
-                    type: 'Identifier'
-                    name: 'constructor'
-            property:
-                type: 'Identifier'
-                name: 'super'
+        superFunction = getPathExpression "this.constructor.super"
 
         if not isConstructor
             superFunction =
@@ -749,13 +757,66 @@ superExpressions = (node, context) ->
                     name: applyOrCall
             arguments: args
 
+spreadExpressions = (node, context) ->
+    # function rest parameters
+    if isFunctionNode node
+        spread = null
+        spreadIndex = null
+        for param, index in node.params
+            if param.type is 'SpreadExpression'
+                spread = param
+                spreadIndex = index
+                break
+        if spread?
+            # replace the spread parameter with a placeholder named parameter
+            node.params[spreadIndex] =
+                type: 'Identifier'
+                name: "___" + spread.expression.name
+            # add a variable that extracts the spread
+            args = [
+                {type:'Identifier', name:'arguments'}
+                {type:'Literal', value:spreadIndex}
+            ]
+            finalParameters = node.params.length - 1 - spreadIndex
+            if finalParameters > 0
+                # add a third arg to the slice that removes the final parameters from the end
+                getOffsetFromArgumentsLength = (offset) ->
+                    return {
+                        type: 'BinaryExpression'
+                        operator: '-'
+                        left: getPathExpression 'arguments.length'
+                        right: {type:'Literal', value: offset }
+                    }
+                args.push getOffsetFromArgumentsLength finalParameters
+                # extract the correct values for the final variables.
+                index = node.params.length - 1
+                while index > spreadIndex
+                    param = node.params[index--]
+                    context.addStatement
+                        type: 'ExpressionStatement'
+                        expression:
+                            type: 'AssignmentExpression'
+                            operator: '='
+                            left: param
+                            right:
+                                type: 'MemberExpression'
+                                computed: true
+                                object: getPathExpression 'arguments'
+                                property: getOffsetFromArgumentsLength node.params.length - 1 - index
+            context.addVariable
+                id: spread.expression
+                init:
+                    type: 'CallExpression'
+                    callee: getPathExpression 'Array.prototype.slice.call'
+                    arguments: args
+
 exports.postprocess = (program, options) ->
     steps = [
         [namedFunctions, checkVariableDeclarations, superExpressions]
         [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
         [createForInLoopValueVariable, convertForInToForLength,existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
         [addUseStrictAndRequireIon]
-        [nodejsModules, separateAllVariableDeclarations, destructuringAssignments, assertStatements]
+        [nodejsModules, separateAllVariableDeclarations, destructuringAssignments, spreadExpressions, assertStatements]
     ]
     for traversal in steps
         enter = (node, context) ->

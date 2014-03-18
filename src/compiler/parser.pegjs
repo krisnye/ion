@@ -192,6 +192,14 @@ variableInitializer = "=" _ a:RightHandSideExpression { return a }
 Pattern = Identifier / ObjectPattern / ArrayPattern
 ObjectPattern = pattern:ObjectLiteral { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ObjectPattern"; return pattern }
 ArrayPattern = pattern:ArrayLiteral { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ArrayPattern"; return pattern }
+SpreadPattern = SpreadIdentifier / Pattern
+spread = "..."
+SpreadExpression
+    = start:start spread _ e:InlineExpression end:end { return node("SpreadExpression", {expression:e}, start, end) }
+    / InlineExpression
+SpreadIdentifier
+    = start:start spread _ e:Identifier end:end { return node("SpreadExpression", {expression:e}, start, end) }
+    / Identifier
 
 //  Expressions
 //  We use javascript terms where available. http://www.ecma-international.org/ecma-262/5.1/#sec-A.3
@@ -268,7 +276,7 @@ FunctionExpression = start:start id:Identifier? params:formalParameterList? _ bo
     }
 formalParameterList = "(" _ params:formalParameters? _ ")" { return params != null ? params : [] }
 formalParameters = head:formalParameter tail:(_ "," _ a:formalParameter { return a })* { return [head].concat(tail) }
-formalParameter = param:Pattern _ init:formalParameterInitializer? { return [param,init] }
+formalParameter = param:SpreadPattern _ init:formalParameterInitializer? { return [param,init] }
 formalParameterInitializer = "=" _ a:InlineExpression { return a }
 
 PrimaryExpression 'primaryExpression' = ThisExpression / Identifier / Literal / ArrayLiteral / ArrayComprehension / ObjectLiteral / GroupExpression
