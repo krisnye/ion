@@ -83,29 +83,23 @@ export const
         const name = classDefinition.name ? classDefinition.id?.match(/([a-z_0-9\$]+)(\.js)?$/i)?[1]
         if not name?
             throw new Error('missing name property')
-        let ctor
+        let classFunction
         if classDefinition.hasOwnProperty('constructor')
-            ctor = classDefinition.constructor
+            classFunction = classDefinition.constructor
         else
-            ctor = eval("(function {{name}}() { this.constructor.super.apply(this, arguments); })")
+            classFunction = eval("(function {{name}}() { this.constructor.super.apply(this, arguments); })")
 
         # successively merge patch the definitions onto the new class
         const mergePatch = import './mergePatch'
         for let i = definitions.length - 1; i >= 0; i--
             const definition = definitions[i]
             for key, value of definition if key isnt 'test' or i is 0
-                ctor[key] = mergePatch.apply(ctor[key], value)
+                classFunction[key] = mergePatch.apply(classFunction[key], value)
 
-        if ctor.properties?
-            # set definingClass on any property functions
-            for propertyName, property of ctor.properties
-                if typeof property.value is 'function'
-                    property.value.definingClass ?= ctor
+        if classFunction.properties?
+            defineProperties(classFunction.prototype, classFunction.properties)
 
-            # now call defineProperties on the functions prototype
-            defineProperties(ctor.prototype, ctor.properties)
-
-        return ctor
+        return classFunction
     test =
         defineClass: ->
             const Foo = (defineClass)
