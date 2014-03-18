@@ -111,11 +111,11 @@ const defineClass = exports.defineClass = function (definitions) {
         if (!(name != null)) {
             throw new Error('missing name property');
         }
-        let ctor;
+        let classFunction;
         if (classDefinition.hasOwnProperty('constructor')) {
-            ctor = classDefinition.constructor;
+            classFunction = classDefinition.constructor;
         } else {
-            ctor = eval('(function ' + name + '() { this.constructor.super.apply(this, arguments); })');
+            classFunction = eval('(function ' + name + '() { this.constructor.super.apply(this, arguments); })');
         }
         const mergePatch = require('./mergePatch');
         for (let i = definitions.length - 1; i >= 0; i--) {
@@ -123,12 +123,14 @@ const defineClass = exports.defineClass = function (definitions) {
             for (let key in definition) {
                 let value = definition[key];
                 if (key !== 'test' || i === 0) {
-                    ctor[key] = mergePatch.apply(ctor[key], value);
+                    classFunction[key] = mergePatch.apply(classFunction[key], value);
                 }
             }
         }
-        defineProperties(ctor.prototype, ctor.properties);
-        return ctor;
+        if (classFunction.properties != null) {
+            defineProperties(classFunction.prototype, classFunction.properties);
+        }
+        return classFunction;
     };
 const test = exports.test = {
         defineClass: function () {
@@ -143,5 +145,35 @@ const test = exports.test = {
                         }
                     }
                 });
+            if (!(new Foo(2).getValue() === 2))
+                throw new Error('Assertion Failed: (new Foo(2).getValue() is 2)');
+        },
+        defineProperties: {
+            'should allow primitive values': function () {
+                const object = {};
+                const result = defineProperties(object, {
+                        f: function () {
+                            return 'function';
+                        },
+                        i: 2,
+                        b: true,
+                        a: [],
+                        s: 'hello'
+                    });
+                if (!(object === result))
+                    throw new Error('Assertion Failed: (object is result)');
+                if (!(typeof object.f === 'function'))
+                    throw new Error('Assertion Failed: (typeof object.f is \'function\')');
+                if (!(object.f() === 'function'))
+                    throw new Error('Assertion Failed: (object.f() is \'function\')');
+                if (!(object.i === 2))
+                    throw new Error('Assertion Failed: (object.i is 2)');
+                if (!(object.b === true))
+                    throw new Error('Assertion Failed: (object.b is true)');
+                if (!Array.isArray(object.a))
+                    throw new Error('Assertion Failed: (Array.isArray(object.a))');
+                if (!(object.s === 'hello'))
+                    throw new Error('Assertion Failed: (object.s is \'hello\')');
+            }
         }
     };

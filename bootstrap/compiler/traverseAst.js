@@ -98,6 +98,19 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     if (context.ancestorNodes == null) {
       context.ancestorNodes = [];
     }
+    if (context.getAncestor == null) {
+      context.getAncestor = function(predicate) {
+        var ancestor, _i, _ref;
+        _ref = this.ancestorNodes;
+        for (_i = _ref.length - 1; _i >= 0; _i += -1) {
+          ancestor = _ref[_i];
+          if (predicate(ancestor)) {
+            return ancestor;
+          }
+        }
+        return null;
+      };
+    }
     if (context.rootNode == null) {
       context.rootNode = function() {
         return this.ancestorNodes[0];

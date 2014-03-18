@@ -679,13 +679,14 @@ namedFunctions = (node, context) ->
         # ok, convert it into a function declaration
         func.type = 'FunctionDeclaration'
         context.replace func
-    # add a name to functions declared as variables
+    # these names are used later by the classExpression rule
+    # add an internal name to functions declared as variables
     if node.type is 'VariableDeclarator' and node.init?.type is 'FunctionExpression'
-        node.init.id ?= node.id
+        node.init.name ?= node.id
+    # add an internal name to functions declared as properties
     if node.type is 'Property' and node.value.type is 'FunctionExpression' and node.key.type is 'Identifier'
-        # temp
         if node.key.name isnt 'constructor'
-            node.value.id ?= node.key
+            node.value.name ?= node.key
 
 assertStatements = (node, context) ->
     if node.type is 'AssertStatement'
@@ -723,7 +724,7 @@ superExpressions = (node, context) ->
         functionProperty = context.ancestorNodes[context.ancestorNodes.indexOf(functionNode) - 1]
         isConstructor = functionProperty?.key?.name is 'constructor'
 
-        if not classNode? or not (functionNode?.id? or isConstructor)
+        if not classNode? or not (functionNode?.name? or isConstructor)
             throw context.error "super can only be used within named class functions", node
 
         args = [{type:'ThisExpression'}]
@@ -744,7 +745,7 @@ superExpressions = (node, context) ->
                     property:
                         type: 'Identifier'
                         name: 'prototype'
-                property: functionNode.id ? 'constructor'
+                property: functionNode.name ? 'constructor'
 
         context.replace
             type: 'CallExpression'

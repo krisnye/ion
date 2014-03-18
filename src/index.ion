@@ -74,10 +74,7 @@ export const
                     container.remove(item)
 
                 item.onRemoved?(container)
-    defineClass = (definitions) ->
-        # TODO: need spread operator on arguments.
-        definitions = Array.prototype.slice.call(arguments, 0)
-
+    defineClass = (...definitions) ->
         const classDefinition = definitions[0]
         classDefinition.super = definitions[1]
         const name = classDefinition.name ? classDefinition.id?.match(/([a-z_0-9\$]+)(\.js)?$/i)?[1]

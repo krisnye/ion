@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, ionExpression, isAncestorObjectExpression, isFunctionNode, namedFunctions, nodejsModules, nodes, nullExpression, propertyStatements, removeEmptyStatements, separateAllVariableDeclarations, traverse, typedObjectExpressions, undefinedExpression, _ref;
+(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, getPathExpression, ionExpression, isAncestorObjectExpression, isFunctionNode, isSuperExpression, namedFunctions, nodejsModules, nodes, nullExpression, propertyStatements, separateAllVariableDeclarations, spreadExpressions, superExpressions, traverse, typedObjectExpressions, undefinedExpression, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -27,6 +27,35 @@ ionExpression = Object.freeze({
   type: 'Identifier',
   name: 'ion'
 });
+
+getPathExpression = function(path) {
+  var i, result, step, steps, _i, _len;
+  steps = path.split('.');
+  if (steps[0] === 'this') {
+    result = {
+      type: 'ThisExpression'
+    };
+  } else {
+    result = {
+      type: 'Identifier',
+      name: steps[0]
+    };
+  }
+  for (i = _i = 0, _len = steps.length; _i < _len; i = ++_i) {
+    step = steps[i];
+    if (i > 0) {
+      result = {
+        type: 'MemberExpression',
+        object: result,
+        property: {
+          type: 'Identifier',
+          name: step
+        }
+      };
+    }
+  }
+  return result;
+};
 
 isFunctionNode = function(node) {
   return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration';
@@ -769,7 +798,7 @@ propertyStatements = function(node, context) {
 };
 
 classExpressions = function(node, context) {
-  var classExpression, hasIdentifierName, name, properties;
+  var classExpression, hasIdentifierName, name, properties, property, _base, _i, _len;
   if (node.type === 'ClassExpression') {
     properties = node.properties;
     hasIdentifierName = (node.name != null) && !node.computed;
@@ -788,6 +817,16 @@ classExpressions = function(node, context) {
           value: name
         }
       ].concat(properties);
+    }
+    if (hasIdentifierName) {
+      for (_i = 0, _len = properties.length; _i < _len; _i++) {
+        property = properties[_i];
+        if (property.key.name === 'constructor') {
+          if ((_base = property.value).id == null) {
+            _base.id = node.name;
+          }
+        }
+      }
     }
     classExpression = {
       type: 'CallExpression',
@@ -817,12 +856,6 @@ classExpressions = function(node, context) {
     } else {
       return context.replace(classExpression);
     }
-  }
-};
-
-removeEmptyStatements = function(node, context) {
-  if (node.type === 'EmptyStatement' || node.type === 'ExpressionStatement' && node.expression.type === 'Identifier') {
-    return context.remove(node);
   }
 };
 
@@ -901,14 +934,24 @@ isAncestorObjectExpression = function(context) {
 };
 
 namedFunctions = function(node, context) {
-  var func;
+  var func, _base, _base1, _ref1;
   if (node.type === 'ExpressionStatement' && node.expression.type === 'FunctionExpression') {
     func = node.expression;
     if (func.id == null) {
       throw context.error("Function declaration missing name", func);
     }
     func.type = 'FunctionDeclaration';
-    return context.replace(func);
+    context.replace(func);
+  }
+  if (node.type === 'VariableDeclarator' && ((_ref1 = node.init) != null ? _ref1.type : void 0) === 'FunctionExpression') {
+    if ((_base = node.init).name == null) {
+      _base.name = node.id;
+    }
+  }
+  if (node.type === 'Property' && node.value.type === 'FunctionExpression' && node.key.type === 'Identifier') {
+    if (node.key.name !== 'constructor') {
+      return (_base1 = node.value).name != null ? (_base1 = node.value).name : _base1.name = node.key;
+    }
   }
 };
 
@@ -942,9 +985,151 @@ assertStatements = function(node, context) {
   }
 };
 
+isSuperExpression = function(node, context) {
+  var parentNode;
+  parentNode = context.parentNode();
+  if (node.type === 'Identifier' && node.name === 'super' && parentNode.type !== 'CallExpression' && parentNode.type !== 'MemberExpression') {
+    return true;
+  }
+  if (node.type === 'CallExpression' && node.callee.type === 'Identifier' && node.callee.name === 'super') {
+    return true;
+  }
+  return false;
+};
+
+superExpressions = function(node, context) {
+  var applyOrCall, args, classNode, functionNode, functionProperty, isConstructor, superFunction, _ref1, _ref2;
+  if (isSuperExpression(node, context)) {
+    classNode = context.getAncestor(function(node) {
+      return node.type === 'ClassExpression';
+    });
+    functionNode = context.getAncestor(isFunctionNode);
+    functionProperty = context.ancestorNodes[context.ancestorNodes.indexOf(functionNode) - 1];
+    isConstructor = (functionProperty != null ? (_ref1 = functionProperty.key) != null ? _ref1.name : void 0 : void 0) === 'constructor';
+    if ((classNode == null) || !(((functionNode != null ? functionNode.name : void 0) != null) || isConstructor)) {
+      throw context.error("super can only be used within named class functions", node);
+    }
+    args = [
+      {
+        type: 'ThisExpression'
+      }
+    ];
+    if (node.type === 'Identifier') {
+      args.push({
+        type: 'Identifier',
+        name: 'arguments'
+      });
+      applyOrCall = 'apply';
+    } else {
+      args = args.concat(node["arguments"]);
+      applyOrCall = 'call';
+    }
+    superFunction = getPathExpression("this.constructor.super");
+    if (!isConstructor) {
+      superFunction = {
+        type: 'MemberExpression',
+        object: {
+          type: 'MemberExpression',
+          object: superFunction,
+          property: {
+            type: 'Identifier',
+            name: 'prototype'
+          }
+        },
+        property: (_ref2 = functionNode.name) != null ? _ref2 : 'constructor'
+      };
+    }
+    return context.replace({
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        object: superFunction,
+        property: {
+          type: 'Identifier',
+          name: applyOrCall
+        }
+      },
+      "arguments": args
+    });
+  }
+};
+
+spreadExpressions = function(node, context) {
+  var args, finalParameters, getOffsetFromArgumentsLength, index, param, spread, spreadIndex, _i, _len, _ref1;
+  if (isFunctionNode(node)) {
+    spread = null;
+    spreadIndex = null;
+    _ref1 = node.params;
+    for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
+      param = _ref1[index];
+      if (param.type === 'SpreadExpression') {
+        spread = param;
+        spreadIndex = index;
+        break;
+      }
+    }
+    if (spread != null) {
+      node.params[spreadIndex] = {
+        type: 'Identifier',
+        name: "___" + spread.expression.name
+      };
+      args = [
+        {
+          type: 'Identifier',
+          name: 'arguments'
+        }, {
+          type: 'Literal',
+          value: spreadIndex
+        }
+      ];
+      finalParameters = node.params.length - 1 - spreadIndex;
+      if (finalParameters > 0) {
+        getOffsetFromArgumentsLength = function(offset) {
+          return {
+            type: 'BinaryExpression',
+            operator: '-',
+            left: getPathExpression('arguments.length'),
+            right: {
+              type: 'Literal',
+              value: offset
+            }
+          };
+        };
+        args.push(getOffsetFromArgumentsLength(finalParameters));
+        index = node.params.length - 1;
+        while (index > spreadIndex) {
+          param = node.params[index--];
+          context.addStatement({
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              operator: '=',
+              left: param,
+              right: {
+                type: 'MemberExpression',
+                computed: true,
+                object: getPathExpression('arguments'),
+                property: getOffsetFromArgumentsLength(node.params.length - 1 - index)
+              }
+            }
+          });
+        }
+      }
+      return context.addVariable({
+        id: spread.expression,
+        init: {
+          type: 'CallExpression',
+          callee: getPathExpression('Array.prototype.slice.call'),
+          "arguments": args
+        }
+      });
+    }
+  }
+};
+
 exports.postprocess = function(program, options) {
   var enter, exit, steps, traversal, variable, _i, _len;
-  steps = [[namedFunctions, checkVariableDeclarations], [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [createForInLoopValueVariable, convertForInToForLength, existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, removeEmptyStatements], [addUseStrictAndRequireIon], [nodejsModules, separateAllVariableDeclarations, destructuringAssignments, assertStatements]];
+  steps = [[namedFunctions, checkVariableDeclarations, superExpressions], [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [createForInLoopValueVariable, convertForInToForLength, existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals], [addUseStrictAndRequireIon], [nodejsModules, separateAllVariableDeclarations, destructuringAssignments, spreadExpressions, assertStatements]];
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
     enter = function(node, context) {

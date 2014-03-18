@@ -403,7 +403,7 @@ tests =
     let y = (x) -> 2
     """: """
     'use strict';
-    let y = function y(x) {
+    let y = function (x) {
         return 2;
     };
     """
@@ -478,7 +478,7 @@ tests =
             baz()
     """: """
     'use strict';
-    let x = function x() {
+    let x = function () {
         try {
             foo();
             bar();
@@ -501,7 +501,7 @@ tests =
     let trim = (a = "") -> a.trim()
     """: """
     'use strict';
-    let trim = function trim(a) {
+    let trim = function (a) {
         if (a == null)
             a = '';
         return a.trim();
@@ -763,7 +763,7 @@ tests =
         return x
     """: """
     'use strict';
-    const double = function double(x) {
+    const double = function (x) {
         x *= 2;
         return x;
     };
@@ -783,7 +783,7 @@ tests =
     """: """
     'use strict';
     let x = 1;
-    const double = function double(x) {
+    const double = function (x) {
         return x;
     };
     """
@@ -840,7 +840,7 @@ tests =
             properties: {
                 x: 1,
                 y: 2,
-                getXY: function getXY() {
+                getXY: function () {
                     return [
                         this.x,
                         this.y
@@ -985,10 +985,10 @@ tests =
             properties: {
                 x: 0,
                 y: 0,
-                superIdentifier: function superIdentifier(x, y) {
+                superIdentifier: function (x, y) {
                     return this.constructor.super.prototype.superIdentifier.apply(this, arguments);
                 },
-                superExplicit: function superExplicit(a, b) {
+                superExplicit: function (a, b) {
                     return this.constructor.super.prototype.superExplicit.call(this, a, b);
                 }
             }
