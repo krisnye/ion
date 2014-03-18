@@ -403,7 +403,7 @@ tests =
     let y = (x) -> 2
     """: """
     'use strict';
-    let y = function (x) {
+    let y = function y(x) {
         return 2;
     };
     """
@@ -478,7 +478,7 @@ tests =
             baz()
     """: """
     'use strict';
-    let x = function () {
+    let x = function x() {
         try {
             foo();
             bar();
@@ -501,7 +501,7 @@ tests =
     let trim = (a = "") -> a.trim()
     """: """
     'use strict';
-    let trim = function (a) {
+    let trim = function trim(a) {
         if (a == null)
             a = '';
         return a.trim();
@@ -763,7 +763,7 @@ tests =
         return x
     """: """
     'use strict';
-    const double = function (x) {
+    const double = function double(x) {
         x *= 2;
         return x;
     };
@@ -783,7 +783,7 @@ tests =
     """: """
     'use strict';
     let x = 1;
-    const double = function (x) {
+    const double = function double(x) {
         return x;
     };
     """
@@ -833,14 +833,14 @@ tests =
     'use strict';
     const Foo = ion.defineClass({
             id: 'Foo',
-            constructor: function (x, y) {
+            constructor: function Foo(x, y) {
                 this.x = x;
                 this.y = y;
             },
             properties: {
                 x: 1,
                 y: 2,
-                getXY: function () {
+                getXY: function getXY() {
                     return [
                         this.x,
                         this.y
@@ -943,6 +943,57 @@ tests =
             y: y
         };
     }
+    """
+    """
+    let x = (foo)
+        ''
+            multiline string literal
+        ""
+            multiline string template
+    """: """
+    'use strict';
+    let x = foo('multiline string literal', 'multiline string template');
+    """
+    """
+    assert x is 2
+    """: """
+    'use strict';
+    if (!(x === 2))
+        throw new Error('Assertion Failed: (x is 2)');
+    """
+    """
+    export class Point
+        constructor: ->
+            # call super with arguments object
+            super
+            # call super again with explicit arguments
+            super(width, height)
+            # calling twice is silly, but legal
+        properties:
+            x: 0
+            y: 0
+            superIdentifier: (x, y) -> super
+            superExplicit: (a, b) -> super(a, b)
+    """: """
+    'use strict';
+    const Point = ion.defineClass({
+            id: 'Point',
+            constructor: function Point() {
+                this.constructor.super.apply(this, arguments);
+                this.constructor.super.call(this, width, height);
+            },
+            properties: {
+                x: 0,
+                y: 0,
+                superIdentifier: function superIdentifier(x, y) {
+                    return this.constructor.super.prototype.superIdentifier.apply(this, arguments);
+                },
+                superExplicit: function superExplicit(a, b) {
+                    return this.constructor.super.prototype.superExplicit.call(this, a, b);
+                }
+            }
+        });
+    module.exports = exports = Point;
     """
 
 exports.test = ->

@@ -50,6 +50,12 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback) ->
         context.scopeStack ?= []
         context.scope ?= -> @scopeStack[@scopeStack.length - 1]
         context.ancestorNodes ?= []
+        context.getAncestor ?= (predicate) ->
+            for ancestor in @ancestorNodes by -1
+                if predicate ancestor
+                    return ancestor
+            return null
+        context.rootNode ?= -> @ancestorNodes[0]
         context.parentNode ?= -> @ancestorNodes[@ancestorNodes.length - 1]
         context.isParentBlock ?= -> nodes[@parentNode()?.type]?.isBlock ? false
         context.getVariableInfo ?= (id) -> @scope().variables[id]

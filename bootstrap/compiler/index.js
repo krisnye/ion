@@ -32,6 +32,9 @@ const compile = exports.compile = function (content, options) {
         let sourceLocationsFixed = false;
         try {
             result = parser.parse(result, options != null ? options : {});
+            if (options.loc) {
+                result.loc.source = content;
+            }
             result = preprocessor.fixSourceLocations(result, sourceMapping);
             sourceLocationsFixed = true;
             if (options.postprocess !== false) {

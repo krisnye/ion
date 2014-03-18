@@ -106,12 +106,13 @@
 
 Program = start:start body:Statement* end:end { return node("Program", {body:body}, start, end) }
 
-Statement = eol? _ a:(ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement) eol { return a }
+Statement = eol? _ a:(ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement / AssertStatement) eol { return a }
 ExportStatement = start:start export _ value:(VariableDeclaration / RightHandSideExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
 ReturnStatement = start:start return _ argument:RightHandSideExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
 ThrowStatement = start:start throw _ argument:RightHandSideExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
 BreakStatement = start:start break end:end { return node("BreakStatement", {}, start, end) }
 ContinueStatement = start:start continue end:end { return node("ContinueStatement", {}, start, end) }
+AssertStatement = start:start assert _ properties:(a:InlineExpression {return {expression:a, text:text()}} ) end:end { return node('AssertStatement', properties, start, end) }
 ExpressionStatement = start:start expression:Expression end:end { return node("ExpressionStatement", {expression:expression}, start, end) }
 IfStatement =
     start:start
@@ -301,6 +302,7 @@ Literal 'literal'
 //  source positions
 start = &{return true} { return {line:line(),column:column()-1} }
 end = start
+offset = &{return true} { return offset() }
 
 //  primitives
 boolean = true / false
@@ -309,7 +311,7 @@ regexBody = $ ('\\' . / [^\/])*
 regexOptions = $ [gimy]*
 simpleString = "'" ('\\' (['\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / [^'\\\r\n])* "'"  { return eval(text()) }
              / '"' ('\\' (["\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / [^"\\\r\n])* '"'  { return eval(text()) }
-MultilineStringTemplate = start:start "\"\"" eol content:multilineStringTemplateContent eol end:end
+MultilineStringTemplate = start:start "\"\"" eol content:multilineStringTemplateContent end:end
     { return concatenate(unindent(content)) }
 multilineStringTemplateContent = indent a:(multilineStringTemplateLine / multilineStringTemplateContent)* outdent { return Array.prototype.concat.apply([], a) }
 multilineStringTemplateLine = !indent !outdent a:(stringInterpolation / multilineStringTemplatePart) { return a }
@@ -348,7 +350,7 @@ zwnj = "\u200C"
 zwj = "\u200D"
 
 //  reserved words
-reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue / do / import / export / class / extends / unless
+reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue / do / import / export / class / extends / unless / assert
 true = "true" !identifierPart { return true }
 false = "false" !identifierPart { return false }
 new = "new" !identifierPart
@@ -385,6 +387,7 @@ export = "export" !identifierPart
 class = "class" !identifierPart
 extends = "extends" !identifierPart
 unless = "unless" !identifierPart
+assert = "assert" !identifierPart
 
 //  white space
 indent 'INDENT' = eol? _ "{{{{"

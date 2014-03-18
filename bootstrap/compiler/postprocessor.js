@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrict, arrayComprehensionsToES5, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, ionExpression, nodejsModules, nodes, nullExpression, propertyStatements, removeEmptyStatements, separateAllVariableDeclarations, traverse, typedObjectExpressions, undefinedExpression, _ref;
+(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, ionExpression, isAncestorObjectExpression, isFunctionNode, namedFunctions, nodejsModules, nodes, nullExpression, propertyStatements, removeEmptyStatements, separateAllVariableDeclarations, traverse, typedObjectExpressions, undefinedExpression, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -27,6 +27,10 @@ ionExpression = Object.freeze({
   type: 'Identifier',
   name: 'ion'
 });
+
+isFunctionNode = function(node) {
+  return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration';
+};
 
 block = function(node) {
   if (node.type !== 'BlockStatement') {
@@ -160,7 +164,7 @@ convertForInToForLength = function(node, context) {
 };
 
 callFunctionBindForFatArrows = function(node, context) {
-  if (node.type === "FunctionExpression" && node.bound) {
+  if (node.type === 'FunctionExpression' && node.bound) {
     delete node.bound;
     return context.replace({
       type: "CallExpression",
@@ -269,14 +273,43 @@ separateAllVariableDeclarations = function(node, context) {
 };
 
 destructuringAssignments = function(node, context) {
-  var count, declarator, expression, isPattern, pattern, tempId, _i, _len, _ref1;
+  var count, declarator, expression, index, isPattern, pattern, statement, statements, tempId, _i, _j, _k, _len, _len1, _len2, _ref1, _ref2;
   isPattern = function(node) {
     return (node.properties != null) || (node.elements != null);
   };
-  if (node.type === 'VariableDeclaration' && (context.isParentBlock() || node.type === 'ForOfStatement')) {
-    _ref1 = node.declarations;
-    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-      declarator = _ref1[_i];
+  if (isFunctionNode(node)) {
+    _ref1 = node.params;
+    for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
+      pattern = _ref1[index];
+      if (!(isPattern(pattern))) {
+        continue;
+      }
+      tempId = context.getNewInternalIdentifier();
+      node.params[index] = tempId;
+      statements = [];
+      forEachDestructuringAssignment(pattern, tempId, function(id, expression) {
+        return statements.unshift({
+          type: 'VariableDeclaration',
+          declarations: [
+            {
+              type: 'VariableDeclarator',
+              id: id,
+              init: expression
+            }
+          ],
+          kind: 'let'
+        });
+      });
+      for (_j = 0, _len1 = statements.length; _j < _len1; _j++) {
+        statement = statements[_j];
+        context.addStatement(statement);
+      }
+    }
+  }
+  if (node.type === 'VariableDeclaration' && context.isParentBlock()) {
+    _ref2 = node.declarations;
+    for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+      declarator = _ref2[_k];
       if (!(isPattern(declarator.id))) {
         continue;
       }
@@ -402,15 +435,55 @@ existentialExpression = function(node, context) {
   }
 };
 
-addUseStrict = function(node, context) {
-  if (node.type === 'Program') {
-    return node.body.unshift({
-      type: 'ExpressionStatement',
-      expression: {
-        type: 'Literal',
-        value: 'use strict'
+ensureIonVariable = function(context, required) {
+  if (required == null) {
+    required = true;
+  }
+  return context.ancestorNodes[0].requiresIon = required;
+};
+
+addUseStrictAndRequireIon = {
+  enter: function(node, context) {
+    var d, _i, _len, _ref1, _ref2, _results;
+    if (node.type === 'VariableDeclaration' && ((_ref1 = context.parentNode()) != null ? _ref1.type : void 0) === 'Program') {
+      _ref2 = node.declarations;
+      _results = [];
+      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+        d = _ref2[_i];
+        if (!(d.id.name === 'ion')) {
+          continue;
+        }
+        ensureIonVariable(context, false);
+        break;
       }
-    });
+      return _results;
+    }
+  },
+  exit: function(node, context) {
+    if (node.type === 'Program') {
+      if (node.requiresIon) {
+        delete node.requiresIon;
+        context.addVariable({
+          offset: Number.MIN_VALUE,
+          kind: 'const',
+          id: ionExpression,
+          init: {
+            type: 'ImportExpression',
+            name: {
+              type: 'Literal',
+              value: 'ion'
+            }
+          }
+        });
+      }
+      return node.body.unshift({
+        type: 'ExpressionStatement',
+        expression: {
+          type: 'Literal',
+          value: 'use strict'
+        }
+      });
+    }
   }
 };
 
@@ -465,7 +538,7 @@ arrayComprehensionsToES5 = function(node, context) {
 
 functionParameterDefaultValuesToES5 = function(node, context) {
   var defaultValue, index, param, _i, _len, _ref1, _ref2, _results;
-  if (node.type === 'FunctionExpression' && (node.params != null) && (node.defaults != null)) {
+  if (isFunctionNode(node) && (node.params != null) && (node.defaults != null)) {
     _ref1 = node.params;
     _results = [];
     for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
@@ -500,40 +573,60 @@ functionParameterDefaultValuesToES5 = function(node, context) {
 };
 
 typedObjectExpressions = function(node, context) {
-  var addPosition, element, elements, expressionStatement, getExistingObjectIdIfTempVarNotNeeded, grandNode, initialValue, isSimple, objectId, parentNode, property, _i, _j, _k, _len, _len1, _len2, _ref1, _ref2, _ref3, _ref4;
-  if (node.type === 'ObjectExpression' && (node.objectType != null)) {
-    if (node.type === "ObjectExpression" && ((_ref1 = node.objectType) != null ? _ref1.type : void 0) === "ArrayExpression") {
-      elements = [];
-      _ref2 = node.objectType.elements;
-      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-        element = _ref2[_i];
-        elements.push(element);
-      }
-      _ref3 = node.properties;
-      for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
-        expressionStatement = _ref3[_j];
-        elements.push(expressionStatement.expression);
-      }
-      context.replace({
-        type: "ArrayExpression",
-        elements: elements
-      });
-      return;
-    }
+  var addPosition, element, elements, expressionStatement, getExistingObjectIdIfTempVarNotNeeded, grandNode, initialValue, isArray, isSimple, objectId, parentNode, property, statements, _i, _j, _k, _len, _len1, _len2, _ref1, _ref2, _ref3, _ref4;
+  if (node.type === 'ObjectExpression' && node.simple !== true) {
+    isArray = ((_ref1 = node.objectType) != null ? _ref1.type : void 0) === "ArrayExpression";
     isSimple = true;
-    _ref4 = node.properties;
-    for (_k = 0, _len2 = _ref4.length; _k < _len2; _k++) {
-      property = _ref4[_k];
-      if (property.type !== 'Property' || property.computed) {
-        isSimple = false;
-        break;
+    if (node.properties != null) {
+      _ref2 = node.properties;
+      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+        property = _ref2[_i];
+        if (isArray) {
+          if (property.type !== 'ExpressionStatement') {
+            isSimple = false;
+            break;
+          }
+        } else {
+          if (property.type !== 'Property' || property.computed) {
+            isSimple = false;
+            break;
+          }
+        }
       }
     }
-    if (node.objectType.type === 'ObjectExpression' && node.objectType.properties.length === 0 && isSimple) {
-      delete node.objectType;
-      return;
+    if (isSimple) {
+      if (isArray) {
+        elements = [];
+        if (node.objectType != null) {
+          _ref3 = node.objectType.elements;
+          for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
+            element = _ref3[_j];
+            elements.push(element);
+          }
+        }
+        _ref4 = node.properties;
+        for (_k = 0, _len2 = _ref4.length; _k < _len2; _k++) {
+          expressionStatement = _ref4[_k];
+          elements.push(expressionStatement.expression);
+        }
+        context.replace({
+          type: "ArrayExpression",
+          elements: elements
+        });
+        return;
+      }
+      if ((node.objectType == null) || (node.objectType.type === 'ObjectExpression' && node.objectType.properties.length === 0)) {
+        delete node.objectType;
+        node.simple = true;
+        return;
+      }
     }
-    if (node.objectType.type === 'ArrayExpression' || node.objectType.type === 'NewExpression' || node.objectType.type === 'ObjectExpression') {
+    if (node.objectType == null) {
+      initialValue = {
+        type: 'ObjectExpression',
+        properties: []
+      };
+    } else if (node.objectType.type === 'ArrayExpression' || node.objectType.type === 'NewExpression' || node.objectType.type === 'ObjectExpression') {
       initialValue = node.objectType;
     } else {
       initialValue = {
@@ -558,7 +651,6 @@ typedObjectExpressions = function(node, context) {
     if (objectId != null) {
       context.replace(initialValue);
       addPosition = 1;
-      node.properties.reverse();
     } else {
       objectId = context.addVariable({
         offset: 0,
@@ -566,15 +658,12 @@ typedObjectExpressions = function(node, context) {
       });
       context.replace(objectId);
     }
-    return traverse(node.properties, function(subnode, subcontext) {
+    statements = [];
+    traverse(node.properties, function(subnode, subcontext) {
       if (subnode.type === 'ObjectExpression' || subnode.type === 'ArrayExpression') {
         return subcontext.skip();
       }
       if (subnode.type === 'Property') {
-        if (initialValue.type === 'ObjectExpression' && subnode.computed !== true) {
-          initialValue.properties.push(subnode);
-          return;
-        }
         subnode = subcontext.replace({
           type: 'Property',
           key: objectId,
@@ -586,27 +675,38 @@ typedObjectExpressions = function(node, context) {
         });
         subcontext.skip();
       } else if (subnode.type === 'ExpressionStatement') {
+        if (!isArray) {
+          ensureIonVariable(context);
+        }
         subnode = subcontext.replace({
           type: 'ExpressionStatement',
           expression: {
             type: 'CallExpression',
             callee: {
               type: 'MemberExpression',
-              object: objectId,
+              object: isArray ? objectId : ionExpression,
               property: {
                 type: 'Identifier',
-                name: 'add'
+                name: isArray ? 'push' : 'add'
               }
             },
-            "arguments": [subnode.expression]
+            "arguments": isArray ? [subnode.expression] : [objectId, subnode.expression]
           }
         });
         subcontext.skip();
       }
       if (subcontext.parentNode() == null) {
-        return context.addStatement(subnode, addPosition);
+        return statements.push(subnode);
       }
     });
+    if (statements.length === 1) {
+      return context.addStatement(statements[0], addPosition);
+    } else {
+      return context.addStatement({
+        type: 'BlockStatement',
+        body: statements
+      }, addPosition);
+    }
   }
 };
 
@@ -669,9 +769,26 @@ propertyStatements = function(node, context) {
 };
 
 classExpressions = function(node, context) {
-  var classExpression, hasIdentifierName;
+  var classExpression, hasIdentifierName, name, properties;
   if (node.type === 'ClassExpression') {
+    properties = node.properties;
     hasIdentifierName = (node.name != null) && !node.computed;
+    if (node.name != null) {
+      name = hasIdentifierName ? {
+        type: 'Literal',
+        value: node.name.name
+      } : node.name;
+      properties = [
+        {
+          type: 'Property',
+          key: {
+            type: 'Identifier',
+            name: 'id'
+          },
+          value: name
+        }
+      ].concat(properties);
+    }
     classExpression = {
       type: 'CallExpression',
       callee: {
@@ -683,17 +800,11 @@ classExpressions = function(node, context) {
         }
       },
       "arguments": [
-        hasIdentifierName ? {
-          type: 'Literal',
-          value: node.name.name
-        } : node.name, {
+        {
           type: 'ObjectExpression',
-          properties: node.properties
-        }, {
-          type: 'ArrayExpression',
-          elements: node["extends"]
+          properties: properties
         }
-      ]
+      ].concat(node["extends"])
     };
     if (hasIdentifierName) {
       context.addVariable({
@@ -712,23 +823,6 @@ classExpressions = function(node, context) {
 removeEmptyStatements = function(node, context) {
   if (node.type === 'EmptyStatement' || node.type === 'ExpressionStatement' && node.expression.type === 'Identifier') {
     return context.remove(node);
-  }
-};
-
-ensureIonVariable = function(context) {
-  if (context.getVariableInfo('ion') == null) {
-    return context.addVariable({
-      id: 'ion',
-      kind: 'const',
-      offset: Number.MIN_VALUE,
-      init: {
-        type: 'ImportExpression',
-        name: {
-          type: 'Literal',
-          value: 'ion'
-        }
-      }
-    });
   }
 };
 
@@ -791,9 +885,66 @@ checkVariableDeclarations = {
   }
 };
 
+isAncestorObjectExpression = function(context) {
+  var ancestor, _i, _ref1;
+  _ref1 = context.ancestorNodes;
+  for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
+    ancestor = _ref1[_i];
+    if (ancestor.type === 'ObjectExpression') {
+      return true;
+    }
+    if (isFunctionNode(ancestor)) {
+      return false;
+    }
+  }
+  return false;
+};
+
+namedFunctions = function(node, context) {
+  var func;
+  if (node.type === 'ExpressionStatement' && node.expression.type === 'FunctionExpression') {
+    func = node.expression;
+    if (func.id == null) {
+      throw context.error("Function declaration missing name", func);
+    }
+    func.type = 'FunctionDeclaration';
+    return context.replace(func);
+  }
+};
+
+assertStatements = function(node, context) {
+  if (node.type === 'AssertStatement') {
+    return context.replace({
+      type: 'IfStatement',
+      test: {
+        type: 'UnaryExpression',
+        prefix: true,
+        operator: '!',
+        argument: node.expression
+      },
+      consequent: {
+        type: 'ThrowStatement',
+        argument: {
+          type: 'NewExpression',
+          callee: {
+            type: 'Identifier',
+            name: 'Error'
+          },
+          "arguments": [
+            {
+              type: 'Literal',
+              value: "Assertion Failed: (" + node.text + ")"
+            }
+          ]
+        }
+      }
+    });
+  }
+};
+
 exports.postprocess = function(program, options) {
   var enter, exit, steps, traversal, variable, _i, _len;
-  steps = [[checkVariableDeclarations], [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [createForInLoopValueVariable, convertForInToForLength, nodejsModules], [separateAllVariableDeclarations, destructuringAssignments], [existentialExpression, addUseStrict, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, removeEmptyStatements]];
+  steps = [[namedFunctions, checkVariableDeclarations], [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [createForInLoopValueVariable, convertForInToForLength, existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, removeEmptyStatements], [addUseStrictAndRequireIon], [nodejsModules, separateAllVariableDeclarations, destructuringAssignments, assertStatements]];
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
     enter = function(node, context) {

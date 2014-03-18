@@ -25,10 +25,12 @@ const FunctionExpression = exports.FunctionExpression = {
         newScope: true,
         shadow: true
     };
+const FunctionDeclaration = exports.FunctionDeclaration = FunctionExpression;
 const Template = exports.Template = {
         newScope: true,
         shadow: true,
         reactive: true
     };
-const ForInStatement = exports.ForInStatement = { newScope: true };
-const ForOfStatement = exports.ForOfStatement = ForInStatement;
+const ForStatement = exports.ForStatement = { newScope: true };
+const ForInStatement = exports.ForInStatement = ForStatement;
+const ForOfStatement = exports.ForOfStatement = ForStatement;

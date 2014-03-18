@@ -35,3 +35,5 @@ X   +ClassDeclaration
         name: Identifier
         extends: [Identifier*]
         properties: [Property*]
+X   +AssertStatement
+        expression: Expression

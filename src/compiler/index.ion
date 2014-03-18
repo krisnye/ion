@@ -30,6 +30,8 @@ export const
             sourceLocationsFixed = false
         try
             result = parser.parse(result, options ? {})
+            if options.loc
+                result.loc.source = content
             result = preprocessor.fixSourceLocations(result, sourceMapping)
             sourceLocationsFixed = true
             if options.postprocess isnt false

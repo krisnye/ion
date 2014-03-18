@@ -96,32 +96,27 @@ export const
         return false
     isEmpty = (patch) -> patch is undefined or Object.isObject(patch) and Object.isEmpty(patch)
     test = do ->
-        const assert = (e) ->
-            if not e
-                throw new Error("Assert failed: {{e}}")
-        assert.equal = (a, b) ->
-            if isChange(a, b) or isChange(b, a)
-                throw new Error("{{JSON.stringify(a,null,'  ')}}\nisnt\n{{JSON.stringify(b,null,'  ')}}")
+        const equal = (a, b) -> not isChange(a, b) and not isChange(b, a)
         return
             apply: ->
-                assert.equal({a:{b:2,c:3},d:4}, apply({a:{b:2}}, {a:{c:3},d:4}))
-                assert.equal({b:2}, apply(null, {b:2}))
+                assert equal({a:{b:2,c:3},d:4}, apply({a:{b:2}}, {a:{c:3},d:4}))
+                assert equal({b:2}, apply(null, {b:2}))
             isChange: ->
-                assert(isChange({a:1}, null))
-                assert(not isChange(null, null))
-                assert(isChange(undefined, null))
-                assert(isChange(null, undefined))
-                assert(not isChange({a:1}, {a:1}))
-                assert(not isChange({a:{b:2,c:3}}, {a:{b:2}}))
-                assert(isChange({a:{b:2}}, {a:{b:3}}))
+                assert isChange({a:1}, null)
+                assert not isChange(null, null)
+                assert isChange(undefined, null)
+                assert isChange(null, undefined)
+                assert not isChange({a:1}, {a:1})
+                assert not isChange({a:{b:2,c:3}}, {a:{b:2}})
+                assert isChange({a:{b:2}}, {a:{b:3}})
             diff: ->
-                assert.equal({b:2}, diff({a:1}, {a:1,b:2}))
-                assert.equal({a:{b:3,c:null}}, diff({a:{b:2,c:4}}, {a:{b:3}}))
-                assert.equal({a:1}, diff(null, {a:1}))
-                assert.equal({c:{d:{f:4}}}, diff({a:1,b:2,c:{d:{e:1,f:2}}}, {a:1,b:2,c:{d:{e:1,f:4}}}))
-                assert.equal(null, diff({a:1}, undefined))
-                assert.equal(null, diff({a:1}, null))
-                assert.equal(undefined, diff({a:{b:2}}, {a:{b:2}}))
+                assert equal({b:2}, diff({a:1}, {a:1,b:2}))
+                assert equal({a:{b:3,c:null}}, diff({a:{b:2,c:4}}, {a:{b:3}}))
+                assert equal({a:1}, diff(null, {a:1}))
+                assert equal({c:{d:{f:4}}}, diff({a:1,b:2,c:{d:{e:1,f:2}}}, {a:1,b:2,c:{d:{e:1,f:4}}}))
+                assert equal(null, diff({a:1}, undefined))
+                assert equal(null, diff({a:1}, null))
+                assert equal(undefined, diff({a:{b:2}}, {a:{b:2}}))
             observe: (done) ->
                 if not Object.observe?
                     return done(null, "Object.observe missing.")
@@ -140,7 +135,7 @@ export const
                     source
                     (patch) ->
                         target = apply(target, patch)
-                        assert.equal(source, target)
+                        assert equal(source, target)
                         done()
                         unwatch()
                 source:

@@ -12,6 +12,9 @@ trackVariableDeclaration = function(context, node, kind, name) {
     name = node.name;
   }
   scope = context.scope();
+  if (scope == null) {
+    throw new Error('No scope: ' + JSON.stringify(node));
+  }
   variable = {
     kind: kind,
     id: {
@@ -41,7 +44,12 @@ trackVariableDeclarations = function(context, node, kind) {
     }
     return _results;
   } else {
-    if (node.type === "VariableDeclaration") {
+    if (node.type === 'FunctionDeclaration') {
+      kind = 'const';
+      if (node.id != null) {
+        return trackVariableDeclarations(context, node.id, kind);
+      }
+    } else if (node.type === 'VariableDeclaration') {
       kind = node.kind;
       _ref = node.declarations;
       _results1 = [];
@@ -89,6 +97,11 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     }
     if (context.ancestorNodes == null) {
       context.ancestorNodes = [];
+    }
+    if (context.rootNode == null) {
+      context.rootNode = function() {
+        return this.ancestorNodes[0];
+      };
     }
     if (context.parentNode == null) {
       context.parentNode = function() {
@@ -153,7 +166,7 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
         if (addToNode == null) {
           addToNode = this.scope().node;
         }
-        if (statement.type === 'VariableDeclaration') {
+        if (statement.type === 'VariableDeclaration' || statement.type === 'FunctionDeclaration') {
           trackVariableDeclarations(context, statement);
         }
         return addStatement(addToNode, statement, this.getAncestorChildOf(addToNode), offset);
@@ -219,9 +232,10 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
           node: node
         });
       }
-      if (node.type === 'VariableDeclaration') {
+      if (node.type === 'VariableDeclaration' || node.type === 'FunctionDeclaration') {
         trackVariableDeclarations(context, node);
-      } else if (node.type === 'FunctionExpression') {
+      }
+      if (node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration') {
         trackVariableDeclarations(context, node.params);
       }
       if (typeof enterCallback === "function") {

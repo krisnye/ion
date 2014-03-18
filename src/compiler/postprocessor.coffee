@@ -568,7 +568,10 @@ classExpressions = (node, context) ->
             name = if hasIdentifierName then {type:'Literal',value:node.name.name} else node.name
             # add id to the properties
             properties = [{type:'Property',key:{type:'Identifier',name:'id'},value:name}].concat properties
-        # must add a constructor property if one doesnt exist
+        # set the class name on the constructor function
+        if hasIdentifierName
+            for property in properties when property.key.name is 'constructor'
+                property.value.id ?= node.name
         classExpression =
             type: 'CallExpression'
             callee:
@@ -588,10 +591,6 @@ classExpressions = (node, context) ->
             context.replace node.name
         else
             context.replace classExpression
-
-removeEmptyStatements = (node, context) ->
-    if node.type is 'EmptyStatement' or node.type is 'ExpressionStatement' and node.expression.type is 'Identifier'
-        context.remove node
 
 checkVariableDeclarations =
     enter: (node, context) ->
@@ -661,14 +660,102 @@ namedFunctions = (node, context) ->
         # ok, convert it into a function declaration
         func.type = 'FunctionDeclaration'
         context.replace func
+    # add a name to functions declared as variables
+    if node.type is 'VariableDeclarator' and node.init?.type is 'FunctionExpression'
+        node.init.id ?= node.id
+    if node.type is 'Property' and node.value.type is 'FunctionExpression' and node.key.type is 'Identifier'
+        # temp
+        if node.key.name isnt 'constructor'
+            node.value.id ?= node.key
+
+assertStatements = (node, context) ->
+    if node.type is 'AssertStatement'
+        context.replace
+            type: 'IfStatement'
+            test:
+                type: 'UnaryExpression'
+                prefix: true
+                operator: '!'
+                argument: node.expression
+            consequent:
+                type: 'ThrowStatement'
+                argument:
+                    type: 'NewExpression'
+                    callee:
+                        type: 'Identifier'
+                        name: 'Error'
+                    arguments: [
+                        type: 'Literal'
+                        value: "Assertion Failed: (#{node.text})"
+                    ]
+
+isSuperExpression = (node, context) ->
+    parentNode = context.parentNode()
+    if node.type is 'Identifier' and node.name is 'super' and parentNode.type isnt 'CallExpression' and parentNode.type isnt 'MemberExpression'
+        return true
+    if node.type is 'CallExpression' and node.callee.type is 'Identifier' and node.callee.name is 'super'
+        return true
+    return false
+
+superExpressions = (node, context) ->
+    if isSuperExpression node, context
+        classNode = context.getAncestor (node) -> node.type is 'ClassExpression'
+        functionNode = context.getAncestor isFunctionNode
+        functionProperty = context.ancestorNodes[context.ancestorNodes.indexOf(functionNode) - 1]
+        isConstructor = functionProperty?.key?.name is 'constructor'
+
+        if not classNode? or not (functionNode?.id? or isConstructor)
+            throw context.error "super can only be used within named class functions", node
+
+        args = [{type:'ThisExpression'}]
+        if node.type is 'Identifier'
+            args.push {type:'Identifier',name:'arguments'}
+            applyOrCall = 'apply'
+        else
+            args = args.concat node.arguments
+            applyOrCall = 'call'
+        superFunction =
+            type: 'MemberExpression'
+            object:
+                type: 'MemberExpression'
+                object:
+                    type: 'ThisExpression'
+                property:
+                    type: 'Identifier'
+                    name: 'constructor'
+            property:
+                type: 'Identifier'
+                name: 'super'
+
+        if not isConstructor
+            superFunction =
+                type: 'MemberExpression'
+                object:
+                    type: 'MemberExpression'
+                    object: superFunction
+                    property:
+                        type: 'Identifier'
+                        name: 'prototype'
+                property: functionNode.id ? 'constructor'
+
+        context.replace
+            type: 'CallExpression'
+            callee:
+                type: 'MemberExpression'
+                object:
+                    superFunction
+                property:
+                    type: 'Identifier'
+                    name: applyOrCall
+            arguments: args
 
 exports.postprocess = (program, options) ->
     steps = [
-        [namedFunctions, checkVariableDeclarations]
+        [namedFunctions, checkVariableDeclarations, superExpressions]
         [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
-        [createForInLoopValueVariable, convertForInToForLength,existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, removeEmptyStatements]
+        [createForInLoopValueVariable, convertForInToForLength,existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
         [addUseStrictAndRequireIon]
-        [nodejsModules, separateAllVariableDeclarations, destructuringAssignments]
+        [nodejsModules, separateAllVariableDeclarations, destructuringAssignments, assertStatements]
     ]
     for traversal in steps
         enter = (node, context) ->

@@ -1,4 +1,29 @@
 
+const
+    primitive = {string:true,number:true,boolean:true,function:true}
+    isPrimitive = (object) -> not object? or primitive[typeof object] or false
+    normalizeProperty = (property) ->
+        if typeof property is 'function'
+            property =
+                writable: false
+                value: property
+        else if isPrimitive(property) or Array.isArray(property)
+            property =
+                value: property
+
+        if not property.get? and not property.set? and not property.hasOwnProperty('value')
+            property.value = undefined
+
+        if property.hasOwnProperty('value')
+            property.writable ?= true
+
+        return property
+    normalizeProperties = (properties = {}) ->
+        for name, property of properties
+            properties[name] = normalizeProperty(property)
+        return properties
+    defineProperties = (object, properties) -> Object.defineProperties(object, normalizeProperties(properties))
+
 export const
     nextTick = @process?.nextTick ? (fn) -> setTimeout(fn, 0)
     clone = (object, deep = false) ->
@@ -50,3 +75,63 @@ export const
 
                 item.onRemoved?(container)
     defineClass = (definitions) ->
+        # TODO: need spread operator on arguments.
+        definitions = Array.prototype.slice.call(arguments, 0)
+
+        const classDefinition = definitions[0]
+        classDefinition.super = definitions[1]
+        const name = classDefinition.name ? classDefinition.id?.match(/([a-z_0-9\$]+)(\.js)?$/i)?[1]
+        if not name?
+            throw new Error('missing name property')
+        let ctor
+        if classDefinition.hasOwnProperty('constructor')
+            ctor = classDefinition.constructor
+        else
+            ctor = eval("(function {{name}}() { this.constructor.super.apply(this, arguments); })")
+
+        # successively merge patch the definitions onto the new class
+        const mergePatch = import './mergePatch'
+        for let i = definitions.length - 1; i >= 0; i--
+            const definition = definitions[i]
+            for key, value of definition if key isnt 'test' or i is 0
+                ctor[key] = mergePatch.apply(ctor[key], value)
+
+        if ctor.properties?
+            # set definingClass on any property functions
+            for propertyName, property of ctor.properties
+                if typeof property.value is 'function'
+                    property.value.definingClass ?= ctor
+
+            # now call defineProperties on the functions prototype
+            defineProperties(ctor.prototype, ctor.properties)
+
+        return ctor
+    test =
+        defineClass: ->
+            const Foo = (defineClass)
+                {}
+                    id: "Foo"
+                    constructor: (number) ->
+                        @number = number
+                    properties:
+                        getValue: -> @number
+            assert new Foo(2).getValue() is 2
+        defineProperties:
+            "should allow primitive values": ->
+                const object = {}
+                const result = (defineProperties)
+                    object
+                    {}
+                        f: -> "function"
+                        i: 2
+                        b: true
+                        a: []
+                        s: "hello"
+                assert object is result
+                assert typeof object.f is 'function'
+                assert object.f() is 'function'
+                assert object.i is 2
+                assert object.b is true
+                assert Array.isArray(object.a)
+                assert object.s is 'hello'
+
