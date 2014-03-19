@@ -174,9 +174,10 @@ className
     // treat an Identifier as a literal
     = name:Identifier { return {name:name,computed:false} }
     / "[" _ name:InlineExpression _ "]" { return {name:name,computed:true} }
-classExtends = extends _ baseClasses:argumentList { return baseClasses }
+classExtends = extends _ baseClasses:elementList { return baseClasses }
+path = head:Identifier tail:('.' a:Identifier {return a})+ { return [head].concat(tail) }
 PropertyDeclaration
-    = start:start key:(IdentifierName / StringOrNumberLiteral) _ ":" _ value:RightHandSideExpression end:end
+    = start:start key:(path / Identifier / StringOrNumberLiteral) _ ":" _ value:RightHandSideExpression end:end
     { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
     / start:start "[" _ key:InlineExpression _ "]" _ ":" _ value:RightHandSideExpression end:end
     { return node("Property", { key: key, value:value, kind: 'init', computed: true}, start, end) }
@@ -245,7 +246,7 @@ tailCall   = _ existential:("?" {return true})? args:arguments end:end { return 
 tailMember = _ existential:("?" {return true})? "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] }
            / _ existential:("?" {return true})? "." _ property:Identifier end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] }
 arguments
-    = "(" a:elementList? ")" { return a ? a : [] }
+    = "(" a:argumentList? ")" { return a ? a : [] }
 argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
 
 MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
