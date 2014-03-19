@@ -1022,6 +1022,11 @@ tests =
         log(3);
     }
     """
+    """
+    export template () ->
+        return {}
+            z: @x + @y
+    """: null
 
 exports.test = ->
     for input, expected of tests

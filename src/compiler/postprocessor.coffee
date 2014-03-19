@@ -811,13 +811,22 @@ spreadExpressions = (node, context) ->
                     callee: getPathExpression 'Array.prototype.slice.call'
                     arguments: args
 
+templateExpressions = (node, context) ->
+    if node.type is 'TemplateExpression'
+        node.type = 'FunctionExpression'
+        # context.addStatement
+        #     type: 'ReturnStatement'
+        #     expression:
+        #         type: 'Literal'
+        #         value: null
+
 exports.postprocess = (program, options) ->
     steps = [
         [namedFunctions, checkVariableDeclarations, superExpressions]
         [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
         [createForInLoopValueVariable, convertForInToForLength,existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
         [addUseStrictAndRequireIon]
-        [nodejsModules, separateAllVariableDeclarations, destructuringAssignments, spreadExpressions, assertStatements]
+        [nodejsModules, separateAllVariableDeclarations, destructuringAssignments, spreadExpressions, assertStatements, templateExpressions]
     ]
     for traversal in steps
         enter = (node, context) ->

@@ -106,7 +106,7 @@
 
 Program = start:start body:Statement* end:end { return node("Program", {body:body}, start, end) }
 
-Statement = eol? _ a:(ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement / AssertStatement) eol { return a }
+Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement) eol { return a }
 ExportStatement = start:start export _ value:(VariableDeclaration / RightHandSideExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
 ReturnStatement = start:start return _ argument:RightHandSideExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
 ThrowStatement = start:start throw _ argument:RightHandSideExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
@@ -249,7 +249,7 @@ arguments
     = "(" a:argumentList? ")" { return a ? a : [] }
 argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
 
-MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
+MemberExpression = start:start head:(DoExpression / ImportExpression / TemplateExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 
 NewExpression = start:start new _ callee:MemberExpression args:arguments? end:end { return node("NewExpression", {callee:callee,arguments:args || []}, start, end) }
 ImportExpression = start:start import _ name:InlineExpression end:end { return node('ImportExpression', {name:name}, start, end) }
@@ -263,7 +263,8 @@ DoExpression = start:start do _ f:Expression end:end
             args = []
         return node("CallExpression", {callee:f,arguments:args}, start, end)
     }
-FunctionExpression = start:start id:Identifier? params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(InlineExpression / BlockStatement)? end:end
+TemplateExpression = template _ template:FunctionExpression { template.type = 'TemplateExpression'; return template }
+FunctionExpression = start:start id:Identifier? _ params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(InlineExpression / BlockStatement)? end:end
     {
         if (params == null) params = []
         paramPatterns = params.map(function(x) { return x[0] })
@@ -359,7 +360,7 @@ zwnj = "\u200C"
 zwj = "\u200D"
 
 //  reserved words
-reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue / do / import / export / class / extends / unless / assert
+reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue / do / import / export / class / extends
 true = "true" !identifierPart { return true }
 false = "false" !identifierPart { return false }
 new = "new" !identifierPart
@@ -395,8 +396,8 @@ import = "import" !identifierPart
 export = "export" !identifierPart
 class = "class" !identifierPart
 extends = "extends" !identifierPart
-unless = "unless" !identifierPart
 assert = "assert" !identifierPart
+template = "template" !identifierPart
 
 //  white space
 indent 'INDENT' = eol? _ "{{{{"
