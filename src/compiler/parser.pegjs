@@ -249,7 +249,7 @@ arguments
     = "(" a:argumentList? ")" { return a ? a : [] }
 argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
 
-MemberExpression = start:start head:(DoExpression / ImportExpression / TemplateExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
+MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 
 NewExpression = start:start new _ callee:MemberExpression args:arguments? end:end { return node("NewExpression", {callee:callee,arguments:args || []}, start, end) }
 ImportExpression = start:start import _ name:InlineExpression end:end { return node('ImportExpression', {name:name}, start, end) }
@@ -263,8 +263,7 @@ DoExpression = start:start do _ f:Expression end:end
             args = []
         return node("CallExpression", {callee:f,arguments:args}, start, end)
     }
-TemplateExpression = template _ template:FunctionExpression { template.type = 'TemplateExpression'; return template }
-FunctionExpression = start:start id:Identifier? _ params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(InlineExpression / BlockStatement)? end:end
+FunctionExpression = start:start template:template? _ id:Identifier? _ params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(InlineExpression / BlockStatement)? end:end
     {
         if (params == null) params = []
         paramPatterns = params.map(function(x) { return x[0] })
@@ -274,7 +273,7 @@ FunctionExpression = start:start id:Identifier? _ params:formalParameterList? _ 
             body = node("BlockStatement", {body:[]})
         else if (body.type !== "BlockStatement")
             body = node("BlockStatement", {body:[node("ReturnStatement", {argument:body})]})
-        return node("FunctionExpression", {id:id, params:paramPatterns, defaults:paramDefaults, body:body, bound:bound}, start, end)
+        return node("FunctionExpression", {id:id, params:paramPatterns, defaults:paramDefaults, body:body, bound:bound, template:template ? true : undefined}, start, end)
     }
 formalParameterList = "(" _ params:formalParameters? _ ")" { return params != null ? params : [] }
 formalParameters = head:formalParameter tail:(_ "," _ a:formalParameter { return a })* { return [head].concat(tail) }

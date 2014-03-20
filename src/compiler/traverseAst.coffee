@@ -110,6 +110,9 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback) ->
             return e
         if node.type?
             nodeInfo = nodes[node.type]
+            if nodeInfo?.reactive?
+                (context._reactiveStack ?= []).push context.reactive
+                context.reactive = nodeInfo.reactive
             if nodeInfo?.newScope
                 context.scopeStack.push
                     variables: Object.create(context.scope()?.variables ? {})
@@ -123,6 +126,8 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback) ->
     ourExit = (node, context) ->
         if node.type?
             nodeInfo = nodes[node.type]
+            if nodeInfo?.reactive?
+                context.reactive = context._reactiveStack.pop()
             context.ancestorNodes.pop()
             exitCallback?(node, context)
             if nodeInfo?.newScope

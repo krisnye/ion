@@ -1,0 +1,14 @@
+
+remove is and isnt and replace with === and !== explicit operators.
+    because of possible confusion with ES7+ is/isnt operator proposals.
+    also remove not, and, or operators and replace with !, &&, || for consistency.
+
+need a base class object1
+
+need merging syntactic sugar
+
+a.b.c: 1
+=>
+a:
+    b:
+        c: 1

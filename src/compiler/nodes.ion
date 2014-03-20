@@ -16,6 +16,7 @@ export const
     FunctionExpression =
         newScope: true
         shadow: true
+        reactive: false
     FunctionDeclaration = FunctionExpression
     Template =
         newScope: true
@@ -23,5 +24,14 @@ export const
         reactive: true
     ForStatement =
         newScope: true
+        allowedInReactive: false
     ForInStatement = ForStatement
     ForOfStatement = ForStatement
+    ExportStatement =
+        allowedInReactive: false
+    ClassExpression =
+        allowedInReactive: false
+    ThrowStatement =
+        allowedInReactive: false
+    TryStatement =
+        allowedInReactive: false

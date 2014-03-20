@@ -2,6 +2,7 @@
 basicTraverse = require('./traverse').traverse
 {addStatement,forEachDestructuringAssignment} = require './astFunctions'
 nodes = require './nodes'
+ion = require '../'
 
 undefinedExpression = Object.freeze
     type: 'UnaryExpression'
@@ -16,6 +17,8 @@ nullExpression = Object.freeze
 ionExpression = Object.freeze
     type: 'Identifier'
     name: 'ion'
+thisExpression = Object.freeze
+    type: 'ThisExpression'
 
 getPathExpression = (path) ->
     steps = path.split '.'
@@ -38,6 +41,30 @@ getPathExpression = (path) ->
 
 isFunctionNode = (node) -> node.type is 'FunctionExpression' or node.type is 'FunctionDeclaration'
 
+toLiteral = (object) ->
+    node = null
+    if Array.isArray object
+        node =
+            type: 'ArrayExpression'
+            elements: (toLiteral item for item in object)
+    else if object? and typeof object is 'object'
+        node =
+            type: 'ObjectExpression'
+            properties: []
+        for key, value of object
+            if value isnt undefined
+                node.properties.push
+                    key:
+                        type: 'Identifier' 
+                        name: key
+                    value: toLiteral value
+                    kind: 'init'
+    else
+        node =
+            type: 'Literal'
+            value: object
+    return node
+
 # wraps a node in a BlockStatement if it isn't already.
 block = (node) ->
     if node.type isnt 'BlockStatement'
@@ -47,6 +74,8 @@ block = (node) ->
     return node
 
 extractForLoopRightVariable = (node, context) ->
+    return if context.reactive
+
     if node.type is 'ForOfStatement' or node.type is 'ForInStatement' and node.left.declarations.length > 1
         if node.left.declarations.length > 2
             throw context.error "too many declarations", node.left.declarations[2]
@@ -62,6 +91,8 @@ extractForLoopRightVariable = (node, context) ->
                 ]
 
 createForInLoopValueVariable = (node, context) ->
+    return if context.reactive
+
     if node.type is 'ForInStatement' and node.left.declarations.length > 1
         valueDeclarator = node.left.declarations[1]
         context.addVariable
@@ -73,6 +104,8 @@ createForInLoopValueVariable = (node, context) ->
                 property: node.left.declarations[0].id
 
 convertForInToForLength = (node, context) ->
+    return if context.reactive
+
     if node.type is 'ForOfStatement'
         userIndex = node.left.declarations[1]?.id
         loopIndex = context.getNewInternalIdentifier "_i"
@@ -195,14 +228,14 @@ nodejsModules = (node, context) ->
                             name: 'exports'
                         right: node.value
 
-separateAllVariableDeclarations = (node, context) ->
-    if node.type is 'VariableDeclaration' and context.isParentBlock()
-        while node.declarations.length > 1
-            declaration = node.declarations.pop()
-            context.addStatement
-                type: node.type
-                declarations: [declaration]
-                kind: node.kind
+# separateAllVariableDeclarations = (node, context) ->
+#     if node.type is 'VariableDeclaration' and context.isParentBlock()
+#         while node.declarations.length > 1
+#             declaration = node.declarations.pop()
+#             context.addStatement
+#                 type: node.type
+#                 declarations: [declaration]
+#                 kind: node.kind
 
 destructuringAssignments = (node, context) ->
     isPattern = (node) -> node.properties? or node.elements?
@@ -396,8 +429,10 @@ arrayComprehensionsToES5 = (node, context) ->
         context.replace tempId
 
 functionParameterDefaultValuesToES5 = (node, context) ->
+    return if context.reactive
+
     if isFunctionNode(node) and node.params? and node.defaults?
-        for param, index in node.params
+        for param, index in node.params by -1
             defaultValue = node.defaults?[index]
             if defaultValue?
                 context.addStatement
@@ -416,8 +451,10 @@ functionParameterDefaultValuesToES5 = (node, context) ->
                             right: defaultValue
                 node.defaults[index] = undefined
 
-# only for imperative code
 typedObjectExpressions = (node, context) ->
+    # only for imperative code
+    return if context.reactive
+
     if node.type is 'ObjectExpression' and node.simple isnt true
 
         isArray = node.objectType?.type is "ArrayExpression"
@@ -449,7 +486,8 @@ typedObjectExpressions = (node, context) ->
             if (not node.objectType? or (node.objectType.type is 'ObjectExpression' and node.objectType.properties.length is 0))
                 # check that our properties ONLY contain normal Property objects with no computed values
                 delete node.objectType
-                node.simple = true
+                # set simple to true, but make it non-enumerable so we don't write it out
+                Object.defineProperty node, 'simple', {value:true}
                 return
 
         if not node.objectType?
@@ -536,6 +574,8 @@ typedObjectExpressions = (node, context) ->
             context.addStatement {type:'BlockStatement',body:statements}, addPosition
 
 propertyStatements = (node, context) ->
+    return if context.reactive
+
     parent = context.parentNode()
     if node.type is 'Property' and not (parent.type is 'ObjectExpression' or parent.type is 'ObjectPattern')
         createAssignments = (path, value) ->
@@ -581,6 +621,7 @@ propertyStatements = (node, context) ->
 classExpressions = (node, context) ->
 
     if node.type is 'ClassExpression'
+
         properties = node.properties
         hasIdentifierName = node.name? and not node.computed
         if node.name?
@@ -811,22 +852,69 @@ spreadExpressions = (node, context) ->
                     callee: getPathExpression 'Array.prototype.slice.call'
                     arguments: args
 
-templateExpressions = (node, context) ->
-    if node.type is 'TemplateExpression'
-        node.type = 'FunctionExpression'
-        # context.addStatement
-        #     type: 'ReturnStatement'
-        #     expression:
-        #         type: 'Literal'
-        #         value: null
+createTemplateFunctionClone = (node, context) ->
+    if isFunctionNode(node) and node.template is true
+        if node.bound
+            throw context.error "Templates cannot use the fat arrow (=>) binding syntax", node
+        delete node.template
+        template = ion.clone node, true
+        delete template.type
+        delete template.id
+        delete template.defaults
+        delete template.bound
+        Object.defineProperties template,
+            type: {value:'Template'}
+        node.template = template
+
+validateTemplateNodes = (node, context) ->
+    if context.reactive and nodes[node.type]?.allowedInReactive is false
+        throw context.error node.type + " not allowed in template", node
+
+createTemplateRuntime = (node, context) ->
+    if isFunctionNode(node) and node.template?
+        templateId = node.id ?= context.getNewInternalIdentifier('_template')
+        template = node.template
+        ensureIonVariable context
+
+        # create an arguments object that contains all the parameter values.
+        args =
+            type: 'ObjectExpression'
+            properties: []
+        for param in template.params
+            forEachDestructuringAssignment param, param, (id) ->
+                args.properties.push
+                    key: id
+                    value: id
+                    kind: 'init'
+        # now delete template params because we don't need them at runtime
+        delete template.params
+
+        context.addStatement
+            type: 'IfStatement'
+            # test for if this is a new object thingy.
+            test:
+                type: 'BinaryExpression'
+                operator: '==='
+                left: getPathExpression 'this.constructor'
+                right: templateId
+            consequent: block
+                type: 'ReturnStatement'
+                argument:
+                    type: 'CallExpression'
+                    callee: getPathExpression 'ion.createRuntime'
+                    arguments: [
+                        args
+                        toLiteral template
+                    ]
+        delete node.template
 
 exports.postprocess = (program, options) ->
     steps = [
         [namedFunctions, checkVariableDeclarations, superExpressions]
-        [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
-        [createForInLoopValueVariable, convertForInToForLength,existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
-        [addUseStrictAndRequireIon]
-        [nodejsModules, separateAllVariableDeclarations, destructuringAssignments, spreadExpressions, assertStatements, templateExpressions]
+        [createTemplateFunctionClone, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
+        [validateTemplateNodes, classExpressions, createForInLoopValueVariable, convertForInToForLength,existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
+        [createTemplateRuntime, functionParameterDefaultValuesToES5, addUseStrictAndRequireIon]
+        [nodejsModules, destructuringAssignments, spreadExpressions, assertStatements]
     ]
     for traversal in steps
         enter = (node, context) ->

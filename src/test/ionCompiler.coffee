@@ -267,8 +267,7 @@ tests =
     export let x = 1, y = 2
     """: """
     'use strict';
-    let x = exports.x = 1;
-    let y = exports.y = 2;
+    let x = exports.x = 1, y = exports.y = 2;
     """
     """
     export const
@@ -277,9 +276,7 @@ tests =
         z = 3
     """: """
     'use strict';
-    const x = exports.x = 1;
-    const y = exports.y = 2;
-    const z = exports.z = 3;
+    const x = exports.x = 1, y = exports.y = 2, z = exports.z = 3;
     """
     """
     let {x,y} = {x:1,y:2}
@@ -1023,9 +1020,53 @@ tests =
     }
     """
     """
-    export template () ->
-        return {}
-            z: @x + @y
+    # default value for a should be set before b
+    foo(a = 0, b = a) -> a + b
+    """: """
+    'use strict';
+    function foo(a, b) {
+        if (a == null)
+            a = 0;
+        if (b == null)
+            b = a;
+        return a + b;
+    }
+    """
+    """
+    export template ->
+        # cannot define classes in templates
+        class Poo
+    """: {line: 3, column: 5}
+    """
+    export template ->
+        # cannot for loop in templates
+        for let i = 0; i < 10; i++
+            console.log(i)
+    """: {line: 3, column: 5}
+    """
+    export template ->
+        # cannot export in templates
+        export x
+    """: {line: 3, column: 5}
+    """
+    export template ->
+        # cannot try/catch in templates
+        try
+            return 0
+        catch e
+            return 1
+    """: {line: 3, column: 5}
+    """
+    export template ->
+        # cannot throw errors in templates
+        throw new Error
+    """: {line: 3, column: 5}
+    """
+    # cannot use => syntax in templates
+    export template => 0
+    """: {line: 2, column: 8}
+    """
+    export template ({a,b}) -> a + b
     """: null
 
 exports.test = ->
@@ -1039,13 +1080,17 @@ exports.test = ->
             console.log index.compile input, {loc:false}
         else if typeof expected is 'object'
             # expected to throw an error
+            error = null
             try
                 index.compile input
             catch e
+                error = e
                 # check equivalent fields
                 for key, value of expected
                     if value isnt e[key]
                         throw new Error "\n#{JSON.stringify e}\n!=\n#{JSON.stringify expected}"
+            if not error?
+                throw new Error "Expected an error: #{JSON.stringify expected}"
         else
             output = index.compile input
             if output.trim() isnt expected.trim()

@@ -1,0 +1,12 @@
+
+
+Object(properties) ->
+    if properties?
+        for key, value of properties
+            @[key] = value
+
+# merging syntax.
+# Object.prototype.x: 1
+
+export Object
+
