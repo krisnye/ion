@@ -1066,8 +1066,35 @@ tests =
     export template => 0
     """: {line: 2, column: 8}
     """
-    export template ({a,b}) -> a + b
-    """: null
+    export template ->
+        const x = 12
+        # cannot assign to const variables, make sure enforced within template
+        x = 10
+        return x
+    """: {line: 4, column: 5}
+    """
+    export template ->
+        let x = 12
+        # cannot assign to let variables either.
+        x = 12
+        return x
+    """: {line: 4, column: 5}
+    """
+    export template ->
+        let x = {y:10}
+        # cannot assign to anything really.
+        x.y = 12
+        return x.y
+    """: {line: 4, column: 5}
+    """
+    export template (a) ->
+        # cannot assign to parameters either
+        a = 10
+        return a
+    """: {line: 3, column: 5}
+    # """
+    # export template ({a,b}) -> a + b
+    # """: null
 
 exports.test = ->
     for input, expected of tests

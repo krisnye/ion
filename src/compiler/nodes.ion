@@ -14,11 +14,15 @@ export const
         newScope: true
         reactive: false
     FunctionExpression =
+        isFunction: true
+        paramKind: 'let'
         newScope: true
         shadow: true
         reactive: false
     FunctionDeclaration = FunctionExpression
     Template =
+        isFunction: true
+        paramKind: 'const'
         newScope: true
         shadow: true
         reactive: true

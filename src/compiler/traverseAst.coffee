@@ -119,8 +119,8 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback) ->
                     node: node
             if node.type is 'VariableDeclaration' or node.type is 'FunctionDeclaration'
                 trackVariableDeclarations context, node
-            if node.type is 'FunctionExpression' or node.type is 'FunctionDeclaration'
-                trackVariableDeclarations context, node.params
+            if nodeInfo?.isFunction
+                trackVariableDeclarations context, node.params, nodeInfo.paramKind
             enterCallback?(node, context)
             context.ancestorNodes.push node
     ourExit = (node, context) ->

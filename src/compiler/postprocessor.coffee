@@ -39,7 +39,7 @@ getPathExpression = (path) ->
                 name: step
     return result
 
-isFunctionNode = (node) -> node.type is 'FunctionExpression' or node.type is 'FunctionDeclaration'
+isFunctionNode = (node) -> nodes[node.type]?.isFunction ? false
 
 toLiteral = (object) ->
     node = null
@@ -654,13 +654,17 @@ classExpressions = (node, context) ->
 
 checkVariableDeclarations =
     enter: (node, context) ->
+
         # check assigning to a constant
-        if node.type is 'AssignmentExpression' and node.left.type is 'Identifier'
-            variable = context.getVariableInfo(node.left.name)
-            if not variable?
-                throw context.error "cannot assign to undeclared variable #{node.left.name}"
-            if variable.kind is 'const'
-                throw context.error "cannot assign to a const", node.left
+        if node.type is 'AssignmentExpression'
+            if node.left.type is 'Identifier'
+                variable = context.getVariableInfo(node.left.name)
+                if not variable?
+                    throw context.error "cannot assign to undeclared variable #{node.left.name}"
+                if variable.kind is 'const'
+                    throw context.error "cannot assign to a const", node.left
+            if context.reactive
+                throw context.error "cannot assign within templates", node
         # track variable usage on a scope
         if node.type is 'Identifier'
             key = context.key()
@@ -867,8 +871,11 @@ createTemplateFunctionClone = (node, context) ->
         node.template = template
 
 validateTemplateNodes = (node, context) ->
-    if context.reactive and nodes[node.type]?.allowedInReactive is false
-        throw context.error node.type + " not allowed in template", node
+    return if not context.reactive
+    if nodes[node.type]?.allowedInReactive is false
+        throw context.error node.type + " not allowed in templates", node
+    if node.type is 'VariableDeclaration' and node.kind is 'let'
+        throw context.error "only const variables are allowed in templates", node
 
 createTemplateRuntime = (node, context) ->
     if isFunctionNode(node) and node.template?
@@ -910,8 +917,8 @@ createTemplateRuntime = (node, context) ->
 
 exports.postprocess = (program, options) ->
     steps = [
-        [namedFunctions, checkVariableDeclarations, superExpressions]
-        [createTemplateFunctionClone, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
+        [namedFunctions, superExpressions]
+        [createTemplateFunctionClone, checkVariableDeclarations, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
         [validateTemplateNodes, classExpressions, createForInLoopValueVariable, convertForInToForLength,existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
         [createTemplateRuntime, functionParameterDefaultValuesToES5, addUseStrictAndRequireIon]
         [nodejsModules, destructuringAssignments, spreadExpressions, assertStatements]
