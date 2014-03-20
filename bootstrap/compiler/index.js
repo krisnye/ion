@@ -17,19 +17,12 @@ const parse = exports.parse = function (content, options) {
             options = {};
         options.generate = false;
         return compile(content, options);
-    };
-const compile = exports.compile = function (content, options) {
+    }, compile = exports.compile = function (content, options) {
         if (options == null)
             options = {};
         options.loc = options.loc != null ? options.loc : true;
-        const preprocessor = require('./preprocessor');
-        const parser = require('./parser');
-        const postprocessor = require('./postprocessor');
-        const escodegen = require('escodegen');
-        let sourceMapping = {};
-        let result = preprocessor.preprocess(content, sourceMapping);
-        let preprocessed = result;
-        let sourceLocationsFixed = false;
+        const preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('escodegen');
+        let sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), preprocessed = result, sourceLocationsFixed = false;
         try {
             result = parser.parse(result, options != null ? options : {});
             if (options.loc) {

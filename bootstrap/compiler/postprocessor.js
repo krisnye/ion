@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, getPathExpression, ionExpression, isAncestorObjectExpression, isFunctionNode, isSuperExpression, namedFunctions, nodejsModules, nodes, nullExpression, propertyStatements, separateAllVariableDeclarations, spreadExpressions, superExpressions, traverse, typedObjectExpressions, undefinedExpression, _ref;
+(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, getPathExpression, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isSuperExpression, namedFunctions, nodejsModules, nodes, nullExpression, propertyStatements, spreadExpressions, superExpressions, thisExpression, toLiteral, traverse, typedObjectExpressions, undefinedExpression, validateTemplateNodes, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -7,6 +7,8 @@ basicTraverse = require('./traverse').traverse;
 _ref = require('./astFunctions'), addStatement = _ref.addStatement, forEachDestructuringAssignment = _ref.forEachDestructuringAssignment;
 
 nodes = require('./nodes');
+
+ion = require('../');
 
 undefinedExpression = Object.freeze({
   type: 'UnaryExpression',
@@ -26,6 +28,10 @@ nullExpression = Object.freeze({
 ionExpression = Object.freeze({
   type: 'Identifier',
   name: 'ion'
+});
+
+thisExpression = Object.freeze({
+  type: 'ThisExpression'
 });
 
 getPathExpression = function(path) {
@@ -58,7 +64,51 @@ getPathExpression = function(path) {
 };
 
 isFunctionNode = function(node) {
-  return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration';
+  var _ref1, _ref2;
+  return (_ref1 = (_ref2 = nodes[node.type]) != null ? _ref2.isFunction : void 0) != null ? _ref1 : false;
+};
+
+toLiteral = function(object) {
+  var item, key, node, value;
+  node = null;
+  if (Array.isArray(object)) {
+    node = {
+      type: 'ArrayExpression',
+      elements: (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = object.length; _i < _len; _i++) {
+          item = object[_i];
+          _results.push(toLiteral(item));
+        }
+        return _results;
+      })()
+    };
+  } else if ((object != null) && typeof object === 'object') {
+    node = {
+      type: 'ObjectExpression',
+      properties: []
+    };
+    for (key in object) {
+      value = object[key];
+      if (value !== void 0) {
+        node.properties.push({
+          key: {
+            type: 'Identifier',
+            name: key
+          },
+          value: toLiteral(value),
+          kind: 'init'
+        });
+      }
+    }
+  } else {
+    node = {
+      type: 'Literal',
+      value: object
+    };
+  }
+  return node;
 };
 
 block = function(node) {
@@ -73,6 +123,9 @@ block = function(node) {
 
 extractForLoopRightVariable = function(node, context) {
   var ref, right;
+  if (context.reactive) {
+    return;
+  }
   if (node.type === 'ForOfStatement' || node.type === 'ForInStatement' && node.left.declarations.length > 1) {
     if (node.left.declarations.length > 2) {
       throw context.error("too many declarations", node.left.declarations[2]);
@@ -103,6 +156,9 @@ extractForLoopRightVariable = function(node, context) {
 
 createForInLoopValueVariable = function(node, context) {
   var valueDeclarator;
+  if (context.reactive) {
+    return;
+  }
   if (node.type === 'ForInStatement' && node.left.declarations.length > 1) {
     valueDeclarator = node.left.declarations[1];
     return context.addVariable({
@@ -119,6 +175,9 @@ createForInLoopValueVariable = function(node, context) {
 
 convertForInToForLength = function(node, context) {
   var loopIndex, userIndex, _ref1;
+  if (context.reactive) {
+    return;
+  }
   if (node.type === 'ForOfStatement') {
     userIndex = (_ref1 = node.left.declarations[1]) != null ? _ref1.id : void 0;
     loopIndex = context.getNewInternalIdentifier("_i");
@@ -282,22 +341,6 @@ nodejsModules = function(node, context) {
         }
       });
     }
-  }
-};
-
-separateAllVariableDeclarations = function(node, context) {
-  var declaration, _results;
-  if (node.type === 'VariableDeclaration' && context.isParentBlock()) {
-    _results = [];
-    while (node.declarations.length > 1) {
-      declaration = node.declarations.pop();
-      _results.push(context.addStatement({
-        type: node.type,
-        declarations: [declaration],
-        kind: node.kind
-      }));
-    }
-    return _results;
   }
 };
 
@@ -566,11 +609,14 @@ arrayComprehensionsToES5 = function(node, context) {
 };
 
 functionParameterDefaultValuesToES5 = function(node, context) {
-  var defaultValue, index, param, _i, _len, _ref1, _ref2, _results;
+  var defaultValue, index, param, _i, _ref1, _ref2, _results;
+  if (context.reactive) {
+    return;
+  }
   if (isFunctionNode(node) && (node.params != null) && (node.defaults != null)) {
     _ref1 = node.params;
     _results = [];
-    for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
+    for (index = _i = _ref1.length - 1; _i >= 0; index = _i += -1) {
       param = _ref1[index];
       defaultValue = (_ref2 = node.defaults) != null ? _ref2[index] : void 0;
       if (defaultValue != null) {
@@ -603,6 +649,9 @@ functionParameterDefaultValuesToES5 = function(node, context) {
 
 typedObjectExpressions = function(node, context) {
   var addPosition, element, elements, expressionStatement, getExistingObjectIdIfTempVarNotNeeded, grandNode, initialValue, isArray, isSimple, objectId, parentNode, property, statements, _i, _j, _k, _len, _len1, _len2, _ref1, _ref2, _ref3, _ref4;
+  if (context.reactive) {
+    return;
+  }
   if (node.type === 'ObjectExpression' && node.simple !== true) {
     isArray = ((_ref1 = node.objectType) != null ? _ref1.type : void 0) === "ArrayExpression";
     isSimple = true;
@@ -646,7 +695,9 @@ typedObjectExpressions = function(node, context) {
       }
       if ((node.objectType == null) || (node.objectType.type === 'ObjectExpression' && node.objectType.properties.length === 0)) {
         delete node.objectType;
-        node.simple = true;
+        Object.defineProperty(node, 'simple', {
+          value: true
+        });
         return;
       }
     }
@@ -741,6 +792,9 @@ typedObjectExpressions = function(node, context) {
 
 propertyStatements = function(node, context) {
   var createAssignments, parent;
+  if (context.reactive) {
+    return;
+  }
   parent = context.parentNode();
   if (node.type === 'Property' && !(parent.type === 'ObjectExpression' || parent.type === 'ObjectPattern')) {
     createAssignments = function(path, value) {
@@ -800,6 +854,7 @@ propertyStatements = function(node, context) {
 classExpressions = function(node, context) {
   var classExpression, hasIdentifierName, name, properties, property, _base, _i, _len;
   if (node.type === 'ClassExpression') {
+    ensureIonVariable(context);
     properties = node.properties;
     hasIdentifierName = (node.name != null) && !node.computed;
     if (node.name != null) {
@@ -862,13 +917,18 @@ classExpressions = function(node, context) {
 checkVariableDeclarations = {
   enter: function(node, context) {
     var key, parent, variable, _base;
-    if (node.type === 'AssignmentExpression' && node.left.type === 'Identifier') {
-      variable = context.getVariableInfo(node.left.name);
-      if (variable == null) {
-        throw context.error("cannot assign to undeclared variable " + node.left.name);
+    if (node.type === 'AssignmentExpression') {
+      if (node.left.type === 'Identifier') {
+        variable = context.getVariableInfo(node.left.name);
+        if (variable == null) {
+          throw context.error("cannot assign to undeclared variable " + node.left.name);
+        }
+        if (variable.kind === 'const') {
+          throw context.error("cannot assign to a const", node.left);
+        }
       }
-      if (variable.kind === 'const') {
-        throw context.error("cannot assign to a const", node.left);
+      if (context.reactive) {
+        throw context.error("cannot assign within templates", node);
       }
     }
     if (node.type === 'Identifier') {
@@ -1127,9 +1187,86 @@ spreadExpressions = function(node, context) {
   }
 };
 
+createTemplateFunctionClone = function(node, context) {
+  var template;
+  if (isFunctionNode(node) && node.template === true) {
+    if (node.bound) {
+      throw context.error("Templates cannot use the fat arrow (=>) binding syntax", node);
+    }
+    delete node.template;
+    template = ion.clone(node, true);
+    delete template.type;
+    delete template.id;
+    delete template.defaults;
+    delete template.bound;
+    Object.defineProperties(template, {
+      type: {
+        value: 'Template'
+      }
+    });
+    return node.template = template;
+  }
+};
+
+validateTemplateNodes = function(node, context) {
+  var _ref1;
+  if (!context.reactive) {
+    return;
+  }
+  if (((_ref1 = nodes[node.type]) != null ? _ref1.allowedInReactive : void 0) === false) {
+    throw context.error(node.type + " not allowed in templates", node);
+  }
+  if (node.type === 'VariableDeclaration' && node.kind === 'let') {
+    throw context.error("only const variables are allowed in templates", node);
+  }
+};
+
+createTemplateRuntime = function(node, context) {
+  var args, param, template, templateId, _i, _len, _ref1;
+  if (isFunctionNode(node) && (node.template != null)) {
+    templateId = node.id != null ? node.id : node.id = context.getNewInternalIdentifier('_template');
+    template = node.template;
+    ensureIonVariable(context);
+    args = {
+      type: 'ObjectExpression',
+      properties: []
+    };
+    _ref1 = template.params;
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      param = _ref1[_i];
+      forEachDestructuringAssignment(param, param, function(id) {
+        return args.properties.push({
+          key: id,
+          value: id,
+          kind: 'init'
+        });
+      });
+    }
+    delete template.params;
+    context.addStatement({
+      type: 'IfStatement',
+      test: {
+        type: 'BinaryExpression',
+        operator: '===',
+        left: getPathExpression('this.constructor'),
+        right: templateId
+      },
+      consequent: block({
+        type: 'ReturnStatement',
+        argument: {
+          type: 'CallExpression',
+          callee: getPathExpression('ion.createRuntime'),
+          "arguments": [args, toLiteral(template)]
+        }
+      })
+    });
+    return delete node.template;
+  }
+};
+
 exports.postprocess = function(program, options) {
   var enter, exit, steps, traversal, variable, _i, _len;
-  steps = [[namedFunctions, checkVariableDeclarations, superExpressions], [classExpressions, functionParameterDefaultValuesToES5, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [createForInLoopValueVariable, convertForInToForLength, existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals], [addUseStrictAndRequireIon], [nodejsModules, separateAllVariableDeclarations, destructuringAssignments, spreadExpressions, assertStatements]];
+  steps = [[namedFunctions, superExpressions], [createTemplateFunctionClone, checkVariableDeclarations, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, addUseStrictAndRequireIon], [nodejsModules, destructuringAssignments, spreadExpressions, assertStatements]];
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
     enter = function(node, context) {

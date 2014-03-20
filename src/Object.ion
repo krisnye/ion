@@ -1,12 +1,15 @@
 
-
-Object(properties) ->
-    if properties?
-        for key, value of properties
-            @[key] = value
-
-# merging syntax.
-# Object.prototype.x: 1
-
-export Object
-
+export class Object
+    constructor: (properties) ->
+        if properties?
+            for key, value of properties
+                @[key] = value
+    properties:
+        toString: -> JSON.stringify(@)
+        toJSON: ->
+            const properties = {}
+            if @@id?
+                properties.$ = @@id
+            for key, value of @ if @hasOwnProperty(key)
+                properties[key] = value
+            return properties

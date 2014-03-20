@@ -16,8 +16,7 @@ const addStatement = exports.addStatement = function (node, statement, index, of
         }
         index = Math.max(0, Math.min(index, body.length));
         body.splice(index, 0, statement);
-    };
-const forEachDestructuringAssignment = exports.forEachDestructuringAssignment = function (pattern, expression, callback) {
+    }, forEachDestructuringAssignment = exports.forEachDestructuringAssignment = function (pattern, expression, callback) {
         if (pattern.type === 'Identifier') {
             callback(pattern, expression);
         } else if (pattern.properties != null) {

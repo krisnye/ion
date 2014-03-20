@@ -4,43 +4,39 @@ const primitive = {
         number: true,
         boolean: true,
         function: true
+    }, isPrimitive = function (object) {
+        return !(object != null) || primitive[typeof object] || false;
+    }, normalizeProperty = function (property) {
+        if (typeof property === 'function') {
+            property = {
+                writable: false,
+                value: property
+            };
+        } else if (isPrimitive(property) || Array.isArray(property)) {
+            property = { value: property };
+        }
+        if (!(property.get != null) && !(property.set != null) && !property.hasOwnProperty('value')) {
+            property.value = void 0;
+        }
+        if (property.hasOwnProperty('value')) {
+            property.writable = property.writable != null ? property.writable : true;
+        }
+        return property;
+    }, normalizeProperties = function (properties) {
+        if (properties == null)
+            properties = {};
+        for (let name in properties) {
+            let property = properties[name];
+            properties[name] = normalizeProperty(property);
+        }
+        return properties;
+    }, defineProperties = function (object, properties) {
+        return Object.defineProperties(object, normalizeProperties(properties));
     };
-const isPrimitive = function (object) {
-    return !(object != null) || primitive[typeof object] || false;
-};
-const normalizeProperty = function (property) {
-    if (typeof property === 'function') {
-        property = {
-            writable: false,
-            value: property
-        };
-    } else if (isPrimitive(property) || Array.isArray(property)) {
-        property = { value: property };
-    }
-    if (!(property.get != null) && !(property.set != null) && !property.hasOwnProperty('value')) {
-        property.value = void 0;
-    }
-    if (property.hasOwnProperty('value')) {
-        property.writable = property.writable != null ? property.writable : true;
-    }
-    return property;
-};
-const normalizeProperties = function (properties) {
-    if (properties == null)
-        properties = {};
-    for (let name in properties) {
-        let property = properties[name];
-        properties[name] = normalizeProperty(property);
-    }
-    return properties;
-};
-const defineProperties = function (object, properties) {
-    return Object.defineProperties(object, normalizeProperties(properties));
-};
-const nextTick = exports.nextTick = (this.process != null ? this.process.nextTick : void 0) != null ? this.process.nextTick : function (fn) {
+const createRuntime = exports.createRuntime = function (ast, args) {
+    }, nextTick = exports.nextTick = (this.process != null ? this.process.nextTick : void 0) != null ? this.process.nextTick : function (fn) {
         return setTimeout(fn, 0);
-    };
-const clone = exports.clone = function (object, deep) {
+    }, clone = exports.clone = function (object, deep) {
         if (deep == null)
             deep = false;
         if ((object != null ? object.constructor : void 0) === Object) {
@@ -60,22 +56,19 @@ const clone = exports.clone = function (object, deep) {
         } else {
             return object;
         }
-    };
-const observe = exports.observe = function (object, observer, property) {
+    }, observe = exports.observe = function (object, observer, property) {
         if (object != null && observer != null && Object.observe != null && typeof object === 'object') {
             Object.observe(object, observer);
             object.addEventListener != null ? object.addEventListener('change', observer) : void 0;
         }
         object != null ? object.onObserved != null ? object.onObserved(observer, property) : void 0 : void 0;
-    };
-const unobserve = exports.unobserve = function (object, observer, property) {
+    }, unobserve = exports.unobserve = function (object, observer, property) {
         if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
             Object.unobserve(object, observer);
             object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
         }
         object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
-    };
-const add = exports.add = function (container, item, returnRemoveFunction) {
+    }, add = exports.add = function (container, item, returnRemoveFunction) {
         if (container.nodeType === 1) {
             if (typeof item === 'string') {
                 item = document.createTextNode(item);
@@ -102,9 +95,8 @@ const add = exports.add = function (container, item, returnRemoveFunction) {
                 item.onRemoved != null ? item.onRemoved(container) : void 0;
             };
         }
-    };
-const defineClass = exports.defineClass = function (definitions) {
-        definitions = Array.prototype.slice.call(arguments, 0);
+    }, defineClass = exports.defineClass = function (___definitions) {
+        let definitions = Array.prototype.slice.call(arguments, 0);
         const classDefinition = definitions[0];
         classDefinition.super = definitions[1];
         const name = classDefinition.name != null ? classDefinition.name : classDefinition.id != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i) != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i)[1] : void 0 : void 0;
@@ -131,8 +123,7 @@ const defineClass = exports.defineClass = function (definitions) {
             defineProperties(classFunction.prototype, classFunction.properties);
         }
         return classFunction;
-    };
-const test = exports.test = {
+    }, test = exports.test = {
         defineClass: function () {
             const Foo = defineClass({
                     id: 'Foo',

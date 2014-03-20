@@ -239,6 +239,10 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     };
     if (node.type != null) {
       nodeInfo = nodes[node.type];
+      if ((nodeInfo != null ? nodeInfo.reactive : void 0) != null) {
+        (context._reactiveStack != null ? context._reactiveStack : context._reactiveStack = []).push(context.reactive);
+        context.reactive = nodeInfo.reactive;
+      }
       if (nodeInfo != null ? nodeInfo.newScope : void 0) {
         context.scopeStack.push({
           variables: Object.create((_ref = (_ref1 = context.scope()) != null ? _ref1.variables : void 0) != null ? _ref : {}),
@@ -248,8 +252,8 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
       if (node.type === 'VariableDeclaration' || node.type === 'FunctionDeclaration') {
         trackVariableDeclarations(context, node);
       }
-      if (node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration') {
-        trackVariableDeclarations(context, node.params);
+      if (nodeInfo != null ? nodeInfo.isFunction : void 0) {
+        trackVariableDeclarations(context, node.params, nodeInfo.paramKind);
       }
       if (typeof enterCallback === "function") {
         enterCallback(node, context);
@@ -261,6 +265,9 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     var nodeInfo;
     if (node.type != null) {
       nodeInfo = nodes[node.type];
+      if ((nodeInfo != null ? nodeInfo.reactive : void 0) != null) {
+        context.reactive = context._reactiveStack.pop();
+      }
       context.ancestorNodes.pop();
       if (typeof exitCallback === "function") {
         exitCallback(node, context);

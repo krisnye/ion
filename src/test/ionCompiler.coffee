@@ -828,6 +828,7 @@ tests =
         isThisPropertyStatic: true
     """: """
     'use strict';
+    const ion = require('ion');
     const Foo = ion.defineClass({
             id: 'Foo',
             constructor: function Foo(x, y) {
@@ -973,6 +974,7 @@ tests =
             superExplicit: (a, b) -> super(a, b)
     """: """
     'use strict';
+    const ion = require('ion');
     const Point = ion.defineClass({
             id: 'Point',
             constructor: function Point() {
@@ -1092,6 +1094,56 @@ tests =
         a = 10
         return a
     """: {line: 3, column: 5}
+    """
+    export class Foo
+        constructor: ->
+            # there was a problem with existential operators not processing within class definitions
+            if properties?
+                log(properties)
+    """: """
+    'use strict';
+    const ion = require('ion');
+    const Foo = ion.defineClass({
+            id: 'Foo',
+            constructor: function Foo() {
+                if (properties != null) {
+                    log(properties);
+                }
+            }
+        });
+    module.exports = exports = Foo;
+    """
+    """
+    const ctor = @@
+    const ctorName = @@name
+    """: """
+    'use strict';
+    const ctor = this.constructor;
+    const ctorName = this.constructor.name;
+    """
+    """
+    inlineThrow() -> throw new Error('inline throw')
+    """: """
+    'use strict';
+    function inlineThrow() {
+        throw new Error('inline throw');
+    }
+    """
+    """
+    class DynamicExpression
+        watch: ->
+            let x = @x ?= []
+    """: """
+    'use strict';
+    const ion = require('ion');
+    const DynamicExpression = ion.defineClass({
+            id: 'DynamicExpression',
+            watch: function () {
+                let x = this.x = this.x != null ? this.x : [];
+            }
+        });
+    DynamicExpression;
+    """
     # """
     # export template ({a,b}) -> a + b
     # """: null

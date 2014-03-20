@@ -621,6 +621,7 @@ propertyStatements = (node, context) ->
 classExpressions = (node, context) ->
 
     if node.type is 'ClassExpression'
+        ensureIonVariable context
 
         properties = node.properties
         hasIdentifierName = node.name? and not node.computed
@@ -919,8 +920,9 @@ exports.postprocess = (program, options) ->
     steps = [
         [namedFunctions, superExpressions]
         [createTemplateFunctionClone, checkVariableDeclarations, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
-        [validateTemplateNodes, classExpressions, createForInLoopValueVariable, convertForInToForLength,existentialExpression, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
-        [createTemplateRuntime, functionParameterDefaultValuesToES5, addUseStrictAndRequireIon]
+        [validateTemplateNodes, classExpressions]
+        [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
+        [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, addUseStrictAndRequireIon]
         [nodejsModules, destructuringAssignments, spreadExpressions, assertStatements]
     ]
     for traversal in steps

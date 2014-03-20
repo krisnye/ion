@@ -30,6 +30,16 @@
             }
         }
     }
+    function thisExpression(start, end, property) {
+        var thisExpression = node("ThisExpression", null, start, end);
+        for (var i = 2; i < arguments.length; i++) {
+            var property = arguments[i]
+            if (typeof property === 'string')
+                property = {type:'Identifier', name:property}
+            thisExpression = node("MemberExpression", {object:thisExpression,property:property}, start, end);
+        }
+        return thisExpression;
+    }
     function binaryExpression(op, left, right, start, end) {
         return node("BinaryExpression", {operator:op, left:left, right:right}, start, end)
     }
@@ -263,17 +273,19 @@ DoExpression = start:start do _ f:Expression end:end
             args = []
         return node("CallExpression", {callee:f,arguments:args}, start, end)
     }
-FunctionExpression = start:start template:template? _ id:Identifier? _ params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(InlineExpression / BlockStatement)? end:end
+FunctionExpression = start:start template:template? _ id:Identifier? _ params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(InlineExpression / ThrowStatement / BlockStatement)? end:end
     {
         if (params == null) params = []
         paramPatterns = params.map(function(x) { return x[0] })
         paramDefaults = params.map(function(x) { return x[1] })
         // convert expression closures to return statements in a block
         if (body == null)
-            body = node("BlockStatement", {body:[]})
-        else if (body.type !== "BlockStatement")
-            body = node("BlockStatement", {body:[node("ReturnStatement", {argument:body})]})
-        return node("FunctionExpression", {id:id, params:paramPatterns, defaults:paramDefaults, body:body, bound:bound, template:template ? true : undefined}, start, end)
+            body = node('BlockStatement', {body:[]})
+        else if (body.type === 'ThrowStatement')
+            body = node('BlockStatement', {body:[body]})
+        else if (body.type !== 'BlockStatement')
+            body = node('BlockStatement', {body:[node('ReturnStatement', {argument:body})]})
+        return node('FunctionExpression', {id:id, params:paramPatterns, defaults:paramDefaults, body:body, bound:bound, template:template ? true : undefined}, start, end)
     }
 formalParameterList = "(" _ params:formalParameters? _ ")" { return params != null ? params : [] }
 formalParameters = head:formalParameter tail:(_ "," _ a:formalParameter { return a })* { return [head].concat(tail) }
@@ -297,8 +309,10 @@ GroupExpression 'group' = "(" _ expression:InlineExpression _ ")" { return expre
 Identifier = !reserved value:IdentifierName { return value }
 IdentifierName = start:start name:identifierName end:end { return node("Identifier", {name:name}, start, end) }
 ThisExpression 'this'
-    = start:start '@' property:IdentifierName end:end { return node("MemberExpression", {object:node("ThisExpression", null, start, end),property:property}, start, end) }
-    / start:start (this / '@') end:end { return node("ThisExpression", null, start, end) }
+    = start:start '@@' property:IdentifierName end:end { return thisExpression(start, end, "constructor", property) }
+    / start:start '@' property:IdentifierName end:end { return thisExpression(start, end, property) }
+    / start:start '@@' end:end { return thisExpression(start, end, "constructor") }
+    / start:start (this / '@') end:end { return thisExpression(start, end) }
 
 StringOrNumberLiteral = &(simpleString / number) value:Literal { return value }
 Literal 'literal'

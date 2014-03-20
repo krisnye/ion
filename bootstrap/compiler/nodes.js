@@ -15,22 +15,23 @@ const getVariablesFromStatements = function (statements) {
 const BlockStatement = exports.BlockStatement = {
         isBlock: true,
         newScope: true
-    };
-const Program = exports.Program = {
+    }, Program = exports.Program = {
         isBlock: true,
         newScope: true,
         reactive: false
-    };
-const FunctionExpression = exports.FunctionExpression = {
+    }, FunctionExpression = exports.FunctionExpression = {
+        isFunction: true,
+        paramKind: 'let',
         newScope: true,
-        shadow: true
-    };
-const FunctionDeclaration = exports.FunctionDeclaration = FunctionExpression;
-const Template = exports.Template = {
+        shadow: true,
+        reactive: false
+    }, FunctionDeclaration = exports.FunctionDeclaration = FunctionExpression, Template = exports.Template = {
+        isFunction: true,
+        paramKind: 'const',
         newScope: true,
         shadow: true,
         reactive: true
-    };
-const ForStatement = exports.ForStatement = { newScope: true };
-const ForInStatement = exports.ForInStatement = ForStatement;
-const ForOfStatement = exports.ForOfStatement = ForStatement;
+    }, ForStatement = exports.ForStatement = {
+        newScope: true,
+        allowedInReactive: false
+    }, ForInStatement = exports.ForInStatement = ForStatement, ForOfStatement = exports.ForOfStatement = ForStatement, ExportStatement = exports.ExportStatement = { allowedInReactive: false }, ClassExpression = exports.ClassExpression = { allowedInReactive: false }, ThrowStatement = exports.ThrowStatement = { allowedInReactive: false }, TryStatement = exports.TryStatement = { allowedInReactive: false };

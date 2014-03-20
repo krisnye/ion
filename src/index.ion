@@ -84,8 +84,10 @@ export const
         let classFunction
         if classDefinition.hasOwnProperty('constructor')
             classFunction = classDefinition.constructor
+        else if classDefinition.super?
+            classFunction = eval("(function {{name}}() { {{name}}.super.apply(this, arguments); })")
         else
-            classFunction = eval("(function {{name}}() { this.constructor.super.apply(this, arguments); })")
+            classFunction = eval("(function {{name}}() {})")
 
         # successively merge patch the definitions onto the new class
         const mergePatch = import './mergePatch'
