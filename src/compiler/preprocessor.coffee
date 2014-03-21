@@ -20,7 +20,7 @@ exports.fixSourceLocations = fixSourceLocations = (program, sourceMapping) ->
             fixSourceLocation node.loc.end, sourceMapping
     return program
 exports.preprocess = preprocess = (source, sourceMapping) ->
-    isMarkdownCommented = exports.isMarkdownCommented source
+    isMarkdownCommented = false # exports.isMarkdownCommented source
     baseIndent = if isMarkdownCommented then 1 else 0
     totalIndent = 0
     indentStack = []
@@ -58,70 +58,70 @@ exports.preprocess = preprocess = (source, sourceMapping) ->
 
     return common.unindentString common.joinLines(output), sourceMapping
 
-sample = """
+# sample = """
 
-This is a comment.
-Anything left justified is a comment.
+# This is a comment.
+# Anything left justified is a comment.
 
-    Person
-        name: "Alpha"
-        age: 40
-        children:
-            Person
-                name: "Beta"
-                age: 1
-            Person
+#     Person
+#         name: "Alpha"
+#         age: 40
+#         children:
+#             Person
+#                 name: "Beta"
+#                 age: 1
+#             Person
 
-                name: "Charlie"
+#                 name: "Charlie"
 
-                age: 2
-                description: ""
-                        This is just a
-                    sample indented multiline
-                    string literal.
-"""
-expectedResult = """
+#                 age: 2
+#                 description: ""
+#                         This is just a
+#                     sample indented multiline
+#                     string literal.
+# """
+# expectedResult = """
 
 
-Person
-{{{{
-    name: "Alpha"
-    age: 40
-    children:
-    {{{{
-        Person
-        {{{{
-            name: "Beta"
-            age: 1
-        }}}}
-        Person
+# Person
+# {{{{
+#     name: "Alpha"
+#     age: 40
+#     children:
+#     {{{{
+#         Person
+#         {{{{
+#             name: "Beta"
+#             age: 1
+#         }}}}
+#         Person
 
-        {{{{
-            name: "Charlie"
+#         {{{{
+#             name: "Charlie"
 
-            age: 2
-            description: ""
-            {{{{
-                    This is just a
-            }}}}
-                sample indented multiline
-            {{{{
-                string literal.
-            }}}}
-        }}}}
-    }}}}
-}}}}
-"""
-exports.test = ->
-    sourceMapping = {}
-    # first try with the markdown commented sample.
-    result = preprocess sample, sourceMapping
-    if result != expectedResult
-        console.log 'result---------------------------------'
-        console.log result
-        console.log 'expected-------------------------------'
-        console.log expectedResult
-        throw new Error "Preprocessor result not expected result."
-    if JSON.stringify(sourceMapping) != '{"0":0,"1":3,"2":4,"3":5,"4":5,"5":6,"6":7,"7":8,"8":8,"9":9,"10":9,"11":10,"12":11,"13":11,"14":12,"15":13,"16":13,"17":14,"18":15,"19":16,"20":17,"21":17,"22":18,"23":18,"24":19,"25":19,"26":20,"27":20,"28":20,"29":20,"columnOffset":4}'
-        throw new Error "Unexpected line mapping: " + JSON.stringify sourceMapping
+#             age: 2
+#             description: ""
+#             {{{{
+#                     This is just a
+#             }}}}
+#                 sample indented multiline
+#             {{{{
+#                 string literal.
+#             }}}}
+#         }}}}
+#     }}}}
+# }}}}
+# """
+# exports.test = ->
+#     sourceMapping = {}
+#     # first try with the markdown commented sample.
+#     result = preprocess sample, sourceMapping
+#     if result != expectedResult
+#         console.log 'result---------------------------------'
+#         console.log result
+#         console.log 'expected-------------------------------'
+#         console.log expectedResult
+#         throw new Error "Preprocessor result not expected result."
+#     if JSON.stringify(sourceMapping) != '{"0":0,"1":3,"2":4,"3":5,"4":5,"5":6,"6":7,"7":8,"8":8,"9":9,"10":9,"11":10,"12":11,"13":11,"14":12,"15":13,"16":13,"17":14,"18":15,"19":16,"20":17,"21":17,"22":18,"23":18,"24":19,"25":19,"26":20,"27":20,"28":20,"29":20,"columnOffset":4}'
+#         throw new Error "Unexpected line mapping: " + JSON.stringify sourceMapping
 

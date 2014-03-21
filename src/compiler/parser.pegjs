@@ -222,7 +222,11 @@ multilineCallArguments
     / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end
         { return [node("ObjectExpression", {properties:properties}, start, end)] }
 MultilineCallExpression = start:start callee:GroupExpression indent eol args:multilineCallArguments end:end outdent
-    { return node("CallExpression", {callee: callee, arguments: args}, start, end) }
+    {
+        if (callee.type === 'NewExpression' && callee.arguments.length === 0)
+            return node("NewExpression", {callee: callee.callee, arguments: args}, start, end)
+        return node("CallExpression", {callee: callee, arguments: args}, start, end)
+    }
 InlineExpression = AssignmentExpression
 AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=") _ right:RightHandSideExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
     / ConditionalOrDefaultExpression

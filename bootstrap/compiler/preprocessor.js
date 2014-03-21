@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_preprocessor_ = function(module,exports,require){var common, expectedResult, fixSourceLocation, fixSourceLocations, getSpace, preprocess, sample;
+(function(){var _ion_compiler_preprocessor_ = function(module,exports,require){var common, fixSourceLocation, fixSourceLocations, getSpace, preprocess;
 
 common = require('./common');
 
@@ -39,7 +39,7 @@ exports.fixSourceLocations = fixSourceLocations = function(program, sourceMappin
 
 exports.preprocess = preprocess = function(source, sourceMapping) {
   var baseIndent, comment, indent, indentStack, index, isEmpty, isMarkdownCommented, line, lines, outdent, output, totalIndent, writeLine, _i, _len;
-  isMarkdownCommented = exports.isMarkdownCommented(source);
+  isMarkdownCommented = false;
   baseIndent = isMarkdownCommented ? 1 : 0;
   totalIndent = 0;
   indentStack = [];
@@ -87,26 +87,6 @@ exports.preprocess = preprocess = function(source, sourceMapping) {
     outdent(lines.length);
   }
   return common.unindentString(common.joinLines(output), sourceMapping);
-};
-
-sample = "\nThis is a comment.\nAnything left justified is a comment.\n\n    Person\n        name: \"Alpha\"\n        age: 40\n        children:\n            Person\n                name: \"Beta\"\n                age: 1\n            Person\n\n                name: \"Charlie\"\n\n                age: 2\n                description: \"\"\n                        This is just a\n                    sample indented multiline\n                    string literal.";
-
-expectedResult = "\n\nPerson\n{{{{\n    name: \"Alpha\"\n    age: 40\n    children:\n    {{{{\n        Person\n        {{{{\n            name: \"Beta\"\n            age: 1\n        }}}}\n        Person\n\n        {{{{\n            name: \"Charlie\"\n\n            age: 2\n            description: \"\"\n            {{{{\n                    This is just a\n            }}}}\n                sample indented multiline\n            {{{{\n                string literal.\n            }}}}\n        }}}}\n    }}}}\n}}}}";
-
-exports.test = function() {
-  var result, sourceMapping;
-  sourceMapping = {};
-  result = preprocess(sample, sourceMapping);
-  if (result !== expectedResult) {
-    console.log('result---------------------------------');
-    console.log(result);
-    console.log('expected-------------------------------');
-    console.log(expectedResult);
-    throw new Error("Preprocessor result not expected result.");
-  }
-  if (JSON.stringify(sourceMapping) !== '{"0":0,"1":3,"2":4,"3":5,"4":5,"5":6,"6":7,"7":8,"8":8,"9":9,"10":9,"11":10,"12":11,"13":11,"14":12,"15":13,"16":13,"17":14,"18":15,"19":16,"20":17,"21":17,"22":18,"23":18,"24":19,"25":19,"26":20,"27":20,"28":20,"29":20,"columnOffset":4}') {
-    throw new Error("Unexpected line mapping: " + JSON.stringify(sourceMapping));
-  }
 };
 
   }

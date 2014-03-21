@@ -1,10 +1,4 @@
 
-const
-    getVariablesFromStatements = (statements) ->
-        if not statements?
-            return []
-        return [s for s in statements if s.type is 'VariableDeclaration']
-
 export const
     BlockStatement =
         isBlock: true

@@ -30,10 +30,17 @@ const primitive = {
             properties[name] = normalizeProperty(property);
         }
         return properties;
-    }, defineProperties = function (object, properties) {
-        return Object.defineProperties(object, normalizeProperties(properties));
     };
 const createRuntime = exports.createRuntime = function (ast, args) {
+        const Context = require('./runtime/Context');
+        const context = new Context();
+        if (variables != null) {
+            for (let name in variables) {
+                let value = variables[name];
+                context.setVariable(name, value);
+            }
+        }
+        return context.createRuntime(ast);
     }, nextTick = exports.nextTick = (this.process != null ? this.process.nextTick : void 0) != null ? this.process.nextTick : function (fn) {
         return setTimeout(fn, 0);
     }, clone = exports.clone = function (object, deep) {
@@ -95,9 +102,14 @@ const createRuntime = exports.createRuntime = function (ast, args) {
                 item.onRemoved != null ? item.onRemoved(container) : void 0;
             };
         }
+    }, defineProperties = exports.defineProperties = function (object, properties) {
+        return Object.defineProperties(object, normalizeProperties(properties));
     }, defineClass = exports.defineClass = function (___definitions) {
         let definitions = Array.prototype.slice.call(arguments, 0);
         const classDefinition = definitions[0];
+        if (definitions[1] === void 0) {
+            definitions[1] = require('./Object');
+        }
         classDefinition.super = definitions[1];
         const name = classDefinition.name != null ? classDefinition.name : classDefinition.id != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i) != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i)[1] : void 0 : void 0;
         if (!(name != null)) {
@@ -106,8 +118,10 @@ const createRuntime = exports.createRuntime = function (ast, args) {
         let classFunction;
         if (classDefinition.hasOwnProperty('constructor')) {
             classFunction = classDefinition.constructor;
+        } else if (classDefinition.super != null) {
+            classFunction = eval('(function ' + name + '() { ' + name + '.super.apply(this, arguments); })');
         } else {
-            classFunction = eval('(function ' + name + '() { this.constructor.super.apply(this, arguments); })');
+            classFunction = eval('(function ' + name + '() {})');
         }
         const mergePatch = require('./mergePatch');
         for (let i = definitions.length - 1; i >= 0; i--) {

@@ -1,0 +1,44 @@
+const
+    DynamicExpression = import './DynamicExpression'
+    ExpressionList = import './ExpressionList'
+
+module.exports = class OperationExpression extends DynamicExpression
+    constructor: (properties) ->
+        super
+        # default args for BinaryExpressions
+        @args ?= [@left, @right]
+    properties:
+        args: null
+        activate: ->
+            super
+            @expressionList ?= new ExpressionList({context:@context, items:@args, observeItems:@factory.observe})
+            (@expressionList.watch)
+                @watcher ?= (value) =>
+                    @argumentValues = value
+                    @evaluate()
+        deactivate: ->
+            super
+            @expressionList.unwatch(@watcher)
+        evaluate: ->
+            if not @factory.evaluate?
+                throw new Error("evaluate method not defined for operation: " + @factory)
+            let value = @factory.evaluate.apply(@context, @argumentValues)
+            @setValue(value)
+    test: ->
+        const Context = import './Context'
+        const context = new Context()
+        let e = (context.createRuntime)
+            type: 'BinaryExpression'
+            operator: '+'
+            left:
+                type: 'Literal'
+                value: 1
+            right:
+                type: 'Literal'
+                value: 2
+        let result = undefined
+        watcher(value) ->
+            result = value
+        e.watch(watcher)
+        # we should actually get an immediate result
+        assert result is 3

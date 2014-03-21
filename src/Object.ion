@@ -1,5 +1,5 @@
 
-export class Object
+export class Object extends null
     constructor: (properties) ->
         if properties?
             for key, value of properties

@@ -1,0 +1,81 @@
+const ion = import '../'
+
+class Factory
+    properties:
+        runtime: './OperationExpression'
+        # creates a runtime construct from this operation
+        # with the specified context and AST arguments
+        createRuntime: (context, ast) ->
+            let properties = ion.clone(ast)
+            properties.context = context
+            properties.factory = @
+            let type = import @runtime
+            return new type(properties)
+
+const lookup =
+    type:
+        Literal: Factory
+            runtime: './Literal'
+        BinaryExpression:
+            operator:
+                "*": Factory
+                    evaluate: (left, right) -> left * right
+                "/": Factory
+                    evaluate: (left, right) -> left / right
+                "%": Factory
+                    evaluate: (left, right) -> left % right
+                "+": Factory
+                    evaluate: (left, right) -> left + right
+                "-": Factory
+                    evaluate: (left, right) -> left - right
+                "&&": Factory
+                    evaluate: (left, right) -> left and right
+                "||": Factory
+                    evaluate: (left, right) -> left or right
+                "&": Factory
+                    evaluate: (left, right) -> left & right
+                "|": Factory
+                    evaluate: (left, right) -> left | right
+                "==": Factory
+                    evaluate: (left, right) -> left is right
+                "!=": Factory
+                    evaluate: (left, right) -> left isnt right
+                "<": Factory
+                    evaluate: (left, right) -> left < right
+                ">": Factory
+                    evaluate: (left, right) -> left > right
+                "<=": Factory
+                    evaluate: (left, right) -> left <= right
+                ">=": Factory
+                    evaluate: (left, right) -> left >= right
+
+getFactory(ast, step = lookup) ->
+    for key, values of step
+        let nodeValue = ast[key]
+        let next = values[nodeValue]
+        if next?
+            if next.constructor is Factory
+                return next
+            return getFactory(ast, next)
+    return null
+
+export const
+    createRuntime = (context, ast) ->
+        let factory = getFactory(ast)
+        if not factory?
+            throw new Error("Factory not found for ast: {{ast.type}}")
+        return factory.createRuntime(context, ast)
+    test = ->
+        # try to get a factory for < operation
+        let factory = (getFactory)
+            {}
+                type: 'BinaryExpression'
+                operator: '>'
+                left:
+                    type: 'Literal'
+                    value: 1
+                right:
+                    type: 'Literal'
+                    value: 2
+        assert lookup.type.BinaryExpression.operator[">"]?
+        assert factory is lookup.type.BinaryExpression.operator[">"]

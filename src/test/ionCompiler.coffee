@@ -1147,6 +1147,14 @@ tests =
     # """
     # export template ({a,b}) -> a + b
     # """: null
+    """
+    let a = (new Point)
+        1
+        2
+    """: """
+    'use strict';
+    let a = new Point(1, 2);
+    """
 
 exports.test = ->
     for input, expected of tests

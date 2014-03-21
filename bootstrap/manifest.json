@@ -1,5 +1,5 @@
 {
-    "modified": 1395354664413,
+    "modified": 1395433401689,
     "files": [
         "compiler/astFunctions.js",
         "compiler/common.js",
@@ -13,10 +13,17 @@
         "index.js",
         "mergePatch.js",
         "Object.js",
+        "runtime/Context.js",
+        "runtime/DynamicExpression.js",
         "runtime/Expression.js",
         "test/ionCompiler.js",
         "test/ionCustomParse.js",
         "test/ionVsEsprima.js",
-        "runtime/DynamicExpression.js"
+        "runtime/Literal.js",
+        "runtime/Factory.js",
+        "runtime/Node.js",
+        "runtime/Statement.js",
+        "runtime/OperationExpression.js",
+        "runtime/ExpressionList.js"
     ]
 }

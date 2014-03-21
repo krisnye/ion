@@ -22,10 +22,15 @@ const
         for name, property of properties
             properties[name] = normalizeProperty(property)
         return properties
-    defineProperties = (object, properties) -> Object.defineProperties(object, normalizeProperties(properties))
 
 export const
     createRuntime = (ast, args) ->
+        const Context = import './runtime/Context'
+        const context = new Context()
+        if variables?
+            for name, value of variables
+                context.setVariable(name, value)
+        return context.createRuntime(ast)
     nextTick = @process?.nextTick ? (fn) -> setTimeout(fn, 0)
     clone = (object, deep = false) ->
         if object?.constructor is Object
@@ -75,8 +80,12 @@ export const
                     container.remove(item)
 
                 item.onRemoved?(container)
+    defineProperties = (object, properties) -> Object.defineProperties(object, normalizeProperties(properties))
     defineClass = (...definitions) ->
         const classDefinition = definitions[0]
+        if definitions[1] is undefined
+            # extend our base object by default unless user sets extends to null explicitly.
+            definitions[1] = import './Object'
         classDefinition.super = definitions[1]
         const name = classDefinition.name ? classDefinition.id?.match(/([a-z_0-9\$]+)(\.js)?$/i)?[1]
         if not name?

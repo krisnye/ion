@@ -1,0 +1,34 @@
+
+const
+    global = do -> @
+    Factory = import './Factory'
+    Literal = import './Literal'
+
+export class Context
+    constructor: (parent, output) ->
+        # the output object that values are written to
+        @output = output
+        # parent is either null or another Context
+        @parent = parent
+        # an object that maps variable names to variable expressions
+        @variables = {}
+    properties:
+        createRuntime: (node) -> Factory.createRuntime(@, node)
+        setVariable: (name, node) -> @variables[name] = @createRuntime(node)
+        getVariableExpression: (name) ->
+            let context = @, value
+            while context?
+                let variable = context.variables[name]
+                if variable?
+                    return variable
+                context = context.parent
+            # if the variable is not defined by us then it is probably a global variable.
+            # we do however require that it be a globally defined variable, otherwise we throw an error.
+            value = global[name]
+            if value is undefined
+                throw new Error("Variable not found: '{{name}}'")
+            # global values are considered to be constants.
+            # we could consider caching these values within the context.
+            let cachedGlobals = context.globals ?= {}
+            return cachedGlobals[name] ?= new Literal({value:value})
+

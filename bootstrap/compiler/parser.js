@@ -104,7 +104,11 @@
         peg$c57 = function(arg) { return arg },
         peg$c58 = function(property) { return property },
         peg$c59 = function(start, properties, end) { return [node("ObjectExpression", {properties:properties}, start, end)] },
-        peg$c60 = function(start, callee, args, end) { return node("CallExpression", {callee: callee, arguments: args}, start, end) },
+        peg$c60 = function(start, callee, args, end) {
+                if (callee.type === 'NewExpression' && callee.arguments.length === 0)
+                    return node("NewExpression", {callee: callee.callee, arguments: args}, start, end)
+                return node("CallExpression", {callee: callee, arguments: args}, start, end)
+            },
         peg$c61 = "+=",
         peg$c62 = { type: "literal", value: "+=", description: "\"+=\"" },
         peg$c63 = "-=",
