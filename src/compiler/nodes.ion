@@ -23,8 +23,10 @@ export const
     ForStatement =
         newScope: true
         allowedInReactive: false
-    ForInStatement = ForStatement
-    ForOfStatement = ForStatement
+    ForInStatement =
+        newScope: true
+    ForOfStatement =
+        newScope: true
     ExportStatement =
         allowedInReactive: false
     ClassExpression =

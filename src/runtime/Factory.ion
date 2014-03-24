@@ -4,7 +4,7 @@ class Factory
     properties:
         runtime: './OperationExpression'
         # creates a runtime construct from this operation
-        # with the specified context and AST arguments
+        # with the specified context and AST node
         createRuntime:
             writable: true
             value: (context, ast) ->
@@ -16,16 +16,46 @@ class Factory
 
 const lookup =
     type:
+        VariableDeclaration: Factory
+            runtime: './VariableDeclaration'
         Identifier: Factory
             createRuntime: (context, ast) -> context.getVariableExpression(ast.name)
         Template: Factory
             runtime: './Template'
         Literal: Factory
             runtime: './Literal'
+        Property: Factory
+            runtime: './Property'
+        IfStatement: Factory
+            runtime: './IfStatement'
         BlockStatement: Factory
             runtime: './BlockStatement'
         ReturnStatement: Factory
             runtime: './ReturnStatement'
+        ObjectExpression: Factory
+            runtime: './ObjectExpression'
+        ArrayExpression: Factory
+            runtime: './ArrayExpression'
+        ExpressionStatement: Factory
+            runtime: './ExpressionStatement'
+        ForOfStatement: Factory
+            runtime: './ForInOfStatement'
+        ForInStatement: Factory
+            runtime: './ForInOfStatement'
+        UnaryExpression:
+            operator:
+                "!": Factory
+                    evaluate: (a) -> not a
+                "typeof": Factory
+                    evaluate: (a) -> typeof a
+                "void": Factory
+                    evaluate: (a) -> void a
+                "-": Factory
+                    evaluate: (a) -> - a
+                "+": Factory
+                    evaluate: (a) -> + a
+                "~": Factory
+                    evaluate: (a) -> ~ a
         BinaryExpression:
             operator:
                 "*": Factory
@@ -71,9 +101,13 @@ getFactory(ast, step = lookup) ->
 
 export const
     createRuntime = (context, ast) ->
+        if typeof ast?.type isnt 'string'
+            ast =
+                type: 'Literal'
+                value: ast
         let factory = getFactory(ast)
         if not factory?
-            throw new Error("Factory not found for ast: {{JSON.stringify(ast)}}")
+            throw new Error("Factory not found for ast:\n{{JSON.stringify(ast, null, '  ')}}")
         return factory.createRuntime(context, ast)
     test = ->
         # try to get a factory for < operation

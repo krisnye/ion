@@ -1,0 +1,32 @@
+const
+    DynamicExpression = import './DynamicExpression'
+
+export class ObjectExpression extends DynamicExpression
+    properties:
+        activate: ->
+            super
+            @typeExpression ?= @context.createRuntime(@objectType ? {})
+            (@typeExpression.watch)
+                @typeWatcher ?= (type) =>
+                    let value
+                    if type is undefined
+                        value = undefined
+                    else if @value isnt type and @value?.constructor isnt type
+                        @statements?.deactivate()
+                        @statements = null
+                        if type? and typeof type is 'object'
+                            # the type is actually an instance to use.
+                            value = type
+                        else
+                            # otherwise the type is a function to use as our constructor.
+                            value = new (type ? Object)
+
+                    if value? and not @statements?
+                        let newContext = @context.newContext(value)
+                        @statements = newContext.createRuntime({type:'BlockStatement', body:@properties})
+                        @statements.activate()
+
+                    @setValue(value)
+        deactivate: ->
+            super
+            @typeExpression.unwatch(@typeWatcher)

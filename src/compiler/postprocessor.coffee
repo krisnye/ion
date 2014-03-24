@@ -407,26 +407,39 @@ extractForLoopsInnerAndTest = (node, context) ->
 
 arrayComprehensionsToES5 = (node, context) ->
     if node.type is 'ArrayExpression' and node.value? and node.comprehension?
-        # add a statement
-        tempId = context.addVariable
-            offset: 0
-            init:
-                type: 'ArrayExpression'
-                elements: []
-        forStatement = node.comprehension
-        forStatement.body =
-            type: 'ExpressionStatement'
-            expression:
-                type: 'CallExpression'
-                callee:
-                    type: 'MemberExpression'
-                    object: tempId
-                    property:
-                        type: 'Identifier'
-                        name: 'push'
-                arguments: [node.value]
-        context.addStatement 0, forStatement
-        context.replace tempId
+        if context.reactive
+            # convert it to a typed object expression
+            forStatement = node.comprehension
+            forStatement.body =
+                type: 'ExpressionStatement'
+                expression: node.value
+            context.replace
+                type: 'ObjectExpression'
+                objectType:
+                    type: 'ArrayExpression'
+                    elements: []
+                properties: [forStatement]
+        else
+            # add a statement
+            tempId = context.addVariable
+                offset: 0
+                init:
+                    type: 'ArrayExpression'
+                    elements: []
+            forStatement = node.comprehension
+            forStatement.body =
+                type: 'ExpressionStatement'
+                expression:
+                    type: 'CallExpression'
+                    callee:
+                        type: 'MemberExpression'
+                        object: tempId
+                        property:
+                            type: 'Identifier'
+                            name: 'push'
+                    arguments: [node.value]
+            context.addStatement 0, forStatement
+            context.replace tempId
 
 functionParameterDefaultValuesToES5 = (node, context) ->
     return if context.reactive
@@ -655,7 +668,6 @@ classExpressions = (node, context) ->
 
 checkVariableDeclarations =
     enter: (node, context) ->
-
         # check assigning to a constant
         if node.type is 'AssignmentExpression'
             if node.left.type is 'Identifier'
@@ -711,18 +723,8 @@ isAncestorObjectExpression = (context) ->
 
 namedFunctions = (node, context) ->
     # first, named functions expressions to function declarations
-    if node.type is 'ExpressionStatement' and node.expression.type is 'FunctionExpression'
+    if node.type is 'ExpressionStatement' and node.expression.type is 'FunctionExpression' and node.expression.id?
         func = node.expression
-        if not func.id?
-            throw context.error "Function declaration missing name", func
-        # # check to see if we are in an ObjectExpression
-        # if isAncestorObjectExpression(context)
-        #     context.replace
-        #         type: 'Property'
-        #         key: func.id
-        #         value: func
-        # else
-        # ok, convert it into a function declaration
         func.type = 'FunctionDeclaration'
         context.replace func
     # these names are used later by the classExpression rule
@@ -875,13 +877,19 @@ validateTemplateNodes = (node, context) ->
     return if not context.reactive
     if nodes[node.type]?.allowedInReactive is false
         throw context.error node.type + " not allowed in templates", node
-    if node.type is 'VariableDeclaration' and node.kind is 'let'
-        throw context.error "only const variables are allowed in templates", node
+    # if node.type is 'VariableDeclaration' and node.kind is 'let'
+    #     throw context.error "only const variables are allowed in templates", node
+
+removeLocationInfo = (node) ->
+    traverse node, (node) ->
+        if node.loc?
+            delete node.loc
+        return node
 
 createTemplateRuntime = (node, context) ->
     if isFunctionNode(node) and node.template?
         templateId = node.id ?= context.getNewInternalIdentifier('_template')
-        template = node.template
+        template = removeLocationInfo node.template
         ensureIonVariable context
 
         # create an arguments object that contains all the parameter values.
@@ -904,9 +912,17 @@ createTemplateRuntime = (node, context) ->
             # test for if this is a new object thingy.
             test:
                 type: 'BinaryExpression'
-                operator: '==='
-                left: getPathExpression 'this.constructor'
-                right: templateId
+                operator: '&&'
+                left:
+                    type: 'BinaryExpression'
+                    operator: '!='
+                    left: thisExpression
+                    right: nullExpression
+                right:
+                    type: 'BinaryExpression'
+                    operator: '==='
+                    left: getPathExpression 'this.constructor'
+                    right: templateId
             consequent: block
                 type: 'ReturnStatement'
                 argument:
@@ -921,7 +937,8 @@ createTemplateRuntime = (node, context) ->
 exports.postprocess = (program, options) ->
     steps = [
         [namedFunctions, superExpressions]
-        [createTemplateFunctionClone, checkVariableDeclarations, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
+        [createTemplateFunctionClone, checkVariableDeclarations]
+        [arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
         [validateTemplateNodes, classExpressions]
         [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
         [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, addUseStrictAndRequireIon]

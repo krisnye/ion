@@ -850,10 +850,6 @@ tests =
     module.exports = exports = Foo;
     """
     """
-    # comment
-    (a) -> a * 2
-    """: {line:2, column:1}
-    """
     double(a) -> a * 2
     """: """
     'use strict';
@@ -1151,6 +1147,95 @@ tests =
     """: """
     'use strict';
     let a = new Point(1, 2);
+    """
+    """
+    let x = [y for y in z]
+    """: """
+    'use strict';
+    let _ref = [];
+    for (let _i = 0; _i < z.length; _i++) {
+        let y = z[_i];
+        _ref.push(y);
+    }
+    let x = _ref;
+    """
+    """
+    let mytemplate = template -> [x + i for x, i in y]
+    """: """
+    'use strict';
+    const ion = require('ion');
+    let mytemplate = function _template() {
+        if (this != null && this.constructor === _template) {
+            return ion.createRuntime({
+                type: 'Template',
+                body: [{
+                        type: 'ReturnStatement',
+                        argument: {
+                            type: 'ObjectExpression',
+                            objectType: {
+                                type: 'ArrayExpression',
+                                elements: []
+                            },
+                            properties: [{
+                                    type: 'ForOfStatement',
+                                    left: {
+                                        type: 'VariableDeclaration',
+                                        declarations: [
+                                            {
+                                                type: 'VariableDeclarator',
+                                                id: {
+                                                    type: 'Identifier',
+                                                    name: 'x'
+                                                },
+                                                init: null
+                                            },
+                                            {
+                                                type: 'VariableDeclarator',
+                                                id: {
+                                                    type: 'Identifier',
+                                                    name: 'i'
+                                                },
+                                                init: null
+                                            }
+                                        ],
+                                        kind: 'let'
+                                    },
+                                    right: {
+                                        type: 'Identifier',
+                                        name: 'y'
+                                    },
+                                    body: {
+                                        type: 'ExpressionStatement',
+                                        expression: {
+                                            type: 'BinaryExpression',
+                                            operator: '+',
+                                            left: {
+                                                type: 'Identifier',
+                                                name: 'x'
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'i'
+                                            }
+                                        }
+                                    }
+                                }]
+                        }
+                    }],
+                name: {
+                    type: 'Identifier',
+                    name: 'mytemplate'
+                }
+            }, {});
+        }
+        let _ref = [];
+        for (let _i = 0; _i < y.length; _i++) {
+            let i = _i;
+            let x = y[_i];
+            _ref.push(x + i);
+        }
+        return _ref;
+    };
     """
     # """
     # export template ({a,b}) -> a + b

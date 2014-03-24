@@ -137,6 +137,27 @@ const createRuntime = exports.createRuntime = function (ast, args) {
             defineProperties(classFunction.prototype, classFunction.properties);
         }
         return classFunction;
+    }, get = exports.get = function (object, property) {
+        if (!(object != null && property != null)) {
+            return void 0;
+        }
+        if (typeof object.get === 'function') {
+            return object.get(property);
+        } else {
+            return object[property];
+        }
+    }, set = exports.set = function (object, property, value) {
+        if (object != null && property != null) {
+            if (typeof object.set === 'function') {
+                object.set(property, value);
+            } else if (value === void 0) {
+                delete object[property];
+            } else {
+                object[property] = value;
+            }
+            value != null ? value.onSet != null ? value.onSet(object, property) : void 0 : void 0;
+        }
+        return value;
     }, test = exports.test = {
         defineClass: function () {
             const Foo = defineClass({

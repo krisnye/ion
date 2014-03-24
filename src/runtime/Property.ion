@@ -1,0 +1,27 @@
+const
+    ion = import '../'
+    Statement = import './Statement'
+
+export class Property extends Statement
+    properties:
+        activate: ->
+            super
+            @keyExpression ?= @context.createRuntime(@computed ? @key : @key.name)
+            (@keyExpression.watch)
+                @keyWatcher ?= (key) =>
+                    @keyValue = key
+                    @_assign()
+            @valueExpression ?= @context.createRuntime(@value)
+            (@valueExpression.watch)
+                @valueWatcher ?= (value) =>
+                    @valueValue = value
+                    @_assign()
+        deactivate: ->
+            super
+            @keyExpression.unwatch(@keyWatcher)
+            @valueExpression.unwatch(@valueWatcher)
+        _assign: ->
+            if @keyValue? and @valueValue isnt undefined
+                let currentValue = ion.get(@context.output, @keyValue)
+                if currentValue isnt @valueValue
+                    ion.set(@context.output, @keyValue, @valueValue)

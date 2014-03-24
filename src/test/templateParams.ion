@@ -1,0 +1,14 @@
+
+const firstTemplate = template (a, b) -> a + b
+
+export const
+    test = ->
+        let template = new firstTemplate(1, 2)
+        template.activate()
+        let result = null
+        (template.watch)
+            (value) -> result = value
+        assert result is 3
+        template.deactivate()
+        assert result is undefined
+

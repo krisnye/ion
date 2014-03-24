@@ -1,0 +1,23 @@
+const
+    ion = import '../'
+    Statement = import './Statement'
+
+export class IfStatement extends Statement
+    properties:
+        activate: ->
+            super
+            @testExpression ?= @context.createRuntime(@test)
+            (@testExpression.watch)
+                @testExpressionWatcher ?= (value) =>
+                    if value
+                        @alternateStatement?.deactivate()
+                        @consequentStatement ?= @context.createRuntime(@consequent)
+                        @consequentStatement.activate()
+                    else if @alternate?
+                        @consequentStatement?.deactivate()
+                        @alternateStatement ?= @context.createRuntime(@alternate)
+                        @alternateStatement.activate()
+        deactivate: ->
+            super
+            (@testExpression.unwatch)
+                @testExpressionWatcher

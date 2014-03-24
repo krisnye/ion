@@ -1,0 +1,70 @@
+const
+    ion = import '../'
+    Statement = import './Statement'
+
+export class ForInOfStatement extends Statement
+    properties:
+        toKey: (name) ->
+            if @type is 'ForOfStatement'
+                return parseInt(name)
+            else
+                return name
+        forEach: (collection, callback) ->
+            if @type is 'ForOfStatement'
+                for let key = 0; key < collection.length; key++
+                    let value = collection[key]
+                    callback(key, value)
+            else
+                for key, value of collection
+                    callback(key, value)
+        activate: ->
+            super
+            @statements ?= {}
+            # we must create new contexts for every item in the list thingy.
+            @collectionExpression ?= @context.createRuntime(@right)
+            (@collectionExpression.watch)
+                @collectionWatcher ?= (collection) =>
+                    if @collection isnt collection
+                        if @collection?
+                            @forEach(@collection, @removeItem.bind(@))
+                            ion.unobserve(@collection, @collectionObserver)
+                        @collection = collection
+                        if @collection?
+                            @forEach(@collection, @addItem.bind(@))
+                            ion.observe(@collection, @collectionObserver ?= @applyChanges.bind(@))
+        deactivate: ->
+            super
+            @collectionExpression.unwatch(@collectionWatcher)
+        addItem: (key, value) ->
+            # console.log('add ' + key + ' ' + value)
+            if value isnt undefined
+                let newContext = @context.newContext()
+                newContext.setVariable(@left.declarations[@type is 'ForOfStatement' ? 0 : 1].id.name, value)
+                if @left.declarations.length >= 2
+                    newContext.setVariable(@left.declarations[@type is 'ForOfStatement' ? 1 : 0].id.name, key)
+                let statement = @statements[key] = newContext.createRuntime(@body)
+                statement.activate()
+        removeItem: (key, value) ->
+            # console.log('remove ' + key + ' ' + value)
+            let statement = @statements[key]
+            statement?.deactivate()
+            delete @statements[key]
+        applyChanges: (changes) ->
+            ignoreProperty(name) ->
+                if not name?
+                    return true
+                if name[0] is '_'
+                    return true
+                if name is 'length' and @type is 'ForOfStatement'
+                    return true
+                return false
+            # this will be an N performance algorithm for ARRAY insertions/deletions.
+            for {name,oldValue} in changes if not ignoreProperty(change.name)
+                let newValue = @collection[name]
+                let key = @toKey(name)
+                # console.log '---apply changes--- ', change
+                if oldValue isnt undefined
+                    @removeItem(key, oldValue)
+                if newValue isnt undefined
+                    @addItem(key, newValue)
+

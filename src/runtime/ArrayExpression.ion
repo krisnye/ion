@@ -2,24 +2,24 @@ const
     DynamicExpression = import './DynamicExpression'
     ion = import '../'
 
-export class ExpressionList extends DynamicExpression
+export class ArrayExpression extends DynamicExpression
     constructor: ->
         super
-        if not @items?
-            throw new Error("items is required")
+        if not @elements?
+            throw new Error("elements is required")
         if not @context?
             throw new Error("context is required")
     properties:
-        observeItems: false
+        observeElements: false
         notifyIfActive: ->
             if @isActive
                 @notify()
         setArgumentValue: (key, value) ->
             if @argumentValues[key] isnt value
-                if @observeItems
+                if @observeElements
                     ion.unobserve(@argumentValues[key], @itemObserver)
                 @argumentValues[key] = value
-                if @observeItems
+                if @observeElements
                     # console.log "observe items=============" + JSON.stringify value
                     (ion.observe)
                         value
@@ -29,7 +29,7 @@ export class ExpressionList extends DynamicExpression
                 @notifyIfActive()
         activate: ->
             if not @argumentValues?
-                @expressions = [@context.createRuntime(item) for item in @items]
+                @expressions = [@context.createRuntime(item) for item in @elements]
                 @argumentValues = []
                 @expressionWatchers = []
                 for let key = 0; key < @expressions.length; key++
@@ -44,9 +44,9 @@ export class ExpressionList extends DynamicExpression
             super
     test: ->
         const Context = import './Context'
-        let e = (new ExpressionList)
+        let e = (new ArrayExpression)
             context: new Context()
-            items: []
+            elements: []
                 {type:'Literal', value: 1}
                 {type:'Literal', value: 2}
         let result = undefined

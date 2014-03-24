@@ -1,6 +1,5 @@
 
 const
-    global = do -> @
     Factory = import './Factory'
     Literal = import './Literal'
 
@@ -15,14 +14,9 @@ export class Context
         # store a reference to the root context
         @root = @parent?.root ? @
     properties:
-        createRuntime: (node) ->
-            return Factory.createRuntime(@, node)
-        setVariable: (name, node) ->
-            if not node.type?
-                node =
-                    type: 'Literal'
-                    value: node
-            @variables[name] = @createRuntime(node)
+        newContext: (output = @output) -> new Context(@, output)
+        createRuntime: (node) -> Factory.createRuntime(@, node)
+        setVariable: (name, node) -> @variables[name] = @createRuntime(node)
         getVariableExpression: (name) ->
             let context = @, value
             while context?

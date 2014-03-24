@@ -21,4 +21,4 @@ const BlockStatement = exports.BlockStatement = {
     }, ForStatement = exports.ForStatement = {
         newScope: true,
         allowedInReactive: false
-    }, ForInStatement = exports.ForInStatement = ForStatement, ForOfStatement = exports.ForOfStatement = ForStatement, ExportStatement = exports.ExportStatement = { allowedInReactive: false }, ClassExpression = exports.ClassExpression = { allowedInReactive: false }, ThrowStatement = exports.ThrowStatement = { allowedInReactive: false }, TryStatement = exports.TryStatement = { allowedInReactive: false };
+    }, ForInStatement = exports.ForInStatement = { newScope: true }, ForOfStatement = exports.ForOfStatement = { newScope: true }, ExportStatement = exports.ExportStatement = { allowedInReactive: false }, ClassExpression = exports.ClassExpression = { allowedInReactive: false }, ThrowStatement = exports.ThrowStatement = { allowedInReactive: false }, TryStatement = exports.TryStatement = { allowedInReactive: false };
