@@ -41,6 +41,11 @@ const templates = []
             let x = [key + value for key, value of items]
             return x
         ['a1', 'b2', 'c3']
+    []
+        template ->
+            let object = {a:{b:1}}
+            return object.a.b
+        1
 
 export const
     test = ->

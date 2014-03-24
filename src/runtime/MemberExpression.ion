@@ -1,0 +1,27 @@
+const
+    ion = import '../'
+    DynamicExpression = import './DynamicExpression'
+
+export class MemberExpression extends DynamicExpression
+    properties:
+        activate: ->
+            super
+            @objectExpression ?= @context.createRuntime(@object)
+            (@objectExpression.watch)
+                @objectWatcher ?= (objectValue) =>
+                    @objectValue = objectValue
+                    @updateValue()
+            @propertyExpression ?= @context.createRuntime(@computed ? @property : @property.name)
+            (@propertyExpression.watch)
+                @propertyWatcher ?= (propertyValue) =>
+                    @propertyValue = propertyValue
+                    @updateValue()
+        deactivate: ->
+            super
+            @objectExpression.unwatch(@objectWatcher)
+            @propertyExpression.unwatch(@propertyWatcher)
+        updateValue: ->
+            let value = undefined
+            if @objectValue? and @propertyValue?
+                value = ion.get(@objectValue, @propertyValue)
+            @setValue(value)

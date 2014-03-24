@@ -16,7 +16,9 @@ export class Context
     properties:
         newContext: (output = @output) -> new Context(@, output)
         createRuntime: (node) -> Factory.createRuntime(@, node)
-        setVariable: (name, node) -> @variables[name] = @createRuntime(node)
+        setVariable: (name, node) ->
+            if name?
+                return @variables[name] = @createRuntime(node)
         getVariableExpression: (name) ->
             let context = @, value
             while context?

@@ -39,9 +39,8 @@ export class ForInOfStatement extends Statement
             # console.log('add ' + key + ' ' + value)
             if value isnt undefined
                 let newContext = @context.newContext()
-                newContext.setVariable(@left.declarations[@type is 'ForOfStatement' ? 0 : 1].id.name, value)
-                if @left.declarations.length >= 2
-                    newContext.setVariable(@left.declarations[@type is 'ForOfStatement' ? 1 : 0].id.name, key)
+                newContext.setVariable(@left.declarations[@type is 'ForOfStatement' ? 0 : 1]?.id.name, value)
+                newContext.setVariable(@left.declarations[@type is 'ForOfStatement' ? 1 : 0]?.id.name, key)
                 let statement = @statements[key] = newContext.createRuntime(@body)
                 statement.activate()
         removeItem: (key, value) ->

@@ -42,6 +42,8 @@ const lookup =
             runtime: './ForInOfStatement'
         ForInStatement: Factory
             runtime: './ForInOfStatement'
+        MemberExpression: Factory
+            runtime: './MemberExpression'
         UnaryExpression:
             operator:
                 "!": Factory
