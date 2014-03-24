@@ -27,8 +27,8 @@ export const
     createRuntime = (ast, args) ->
         const Context = import './runtime/Context'
         const context = new Context()
-        if variables?
-            for name, value of variables
+        if args?
+            for name, value of args
                 context.setVariable(name, value)
         return context.createRuntime(ast)
     nextTick = @process?.nextTick ? (fn) -> setTimeout(fn, 0)

@@ -1,5 +1,8 @@
 
 export class Statement extends import './Node'
     properties:
+        isActive: false
         activate: ->
+            @isActive = true
         deactivate: ->
+            @isActive = false

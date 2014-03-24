@@ -1084,7 +1084,7 @@ superExpressions = function(node, context) {
       args = args.concat(node["arguments"]);
       applyOrCall = 'call';
     }
-    superFunction = getPathExpression("this.constructor.super");
+    superFunction = getPathExpression("" + classNode.name.name + ".super");
     if (!isConstructor) {
       superFunction = {
         type: 'MemberExpression',
@@ -1195,7 +1195,7 @@ createTemplateFunctionClone = function(node, context) {
     }
     delete node.template;
     template = ion.clone(node, true);
-    delete template.type;
+    template.type = 'Template';
     delete template.id;
     delete template.defaults;
     delete template.bound;
@@ -1243,6 +1243,7 @@ createTemplateRuntime = function(node, context) {
       });
     }
     delete template.params;
+    template.body = template.body.body;
     context.addStatement({
       type: 'IfStatement',
       test: {
@@ -1256,7 +1257,7 @@ createTemplateRuntime = function(node, context) {
         argument: {
           type: 'CallExpression',
           callee: getPathExpression('ion.createRuntime'),
-          "arguments": [args, toLiteral(template)]
+          "arguments": [toLiteral(template), args]
         }
       })
     });

@@ -5,17 +5,27 @@ class Factory
         runtime: './OperationExpression'
         # creates a runtime construct from this operation
         # with the specified context and AST arguments
-        createRuntime: (context, ast) ->
-            let properties = ion.clone(ast)
-            properties.context = context
-            properties.factory = @
-            let type = import @runtime
-            return new type(properties)
+        createRuntime:
+            writable: true
+            value: (context, ast) ->
+                let properties = ion.clone(ast)
+                properties.context = context
+                properties.factory = @
+                let type = import @runtime
+                return new type(properties)
 
 const lookup =
     type:
+        Identifier: Factory
+            createRuntime: (context, ast) -> context.getVariableExpression(ast.name)
+        Template: Factory
+            runtime: './Template'
         Literal: Factory
             runtime: './Literal'
+        BlockStatement: Factory
+            runtime: './BlockStatement'
+        ReturnStatement: Factory
+            runtime: './ReturnStatement'
         BinaryExpression:
             operator:
                 "*": Factory
@@ -63,7 +73,7 @@ export const
     createRuntime = (context, ast) ->
         let factory = getFactory(ast)
         if not factory?
-            throw new Error("Factory not found for ast: {{ast.type}}")
+            throw new Error("Factory not found for ast: {{JSON.stringify(ast)}}")
         return factory.createRuntime(context, ast)
     test = ->
         # try to get a factory for < operation
@@ -77,5 +87,5 @@ export const
                 right:
                     type: 'Literal'
                     value: 2
-        assert lookup.type.BinaryExpression.operator[">"]?
         assert factory is lookup.type.BinaryExpression.operator[">"]
+        assert lookup.type.BinaryExpression.operator[">"]?

@@ -780,7 +780,7 @@ superExpressions = (node, context) ->
         else
             args = args.concat node.arguments
             applyOrCall = 'call'
-        superFunction = getPathExpression "this.constructor.super"
+        superFunction = getPathExpression "#{classNode.name.name}.super"
 
         if not isConstructor
             superFunction =
@@ -863,7 +863,7 @@ createTemplateFunctionClone = (node, context) ->
             throw context.error "Templates cannot use the fat arrow (=>) binding syntax", node
         delete node.template
         template = ion.clone node, true
-        delete template.type
+        template.type = 'Template'
         delete template.id
         delete template.defaults
         delete template.bound
@@ -896,6 +896,8 @@ createTemplateRuntime = (node, context) ->
                     kind: 'init'
         # now delete template params because we don't need them at runtime
         delete template.params
+        # move the template.body.body just to template.body
+        template.body = template.body.body
 
         context.addStatement
             type: 'IfStatement'
@@ -911,8 +913,8 @@ createTemplateRuntime = (node, context) ->
                     type: 'CallExpression'
                     callee: getPathExpression 'ion.createRuntime'
                     arguments: [
-                        args
                         toLiteral template
+                        args
                     ]
         delete node.template
 

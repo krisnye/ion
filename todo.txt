@@ -12,3 +12,16 @@ a.b.c: 1
 a:
     b:
         c: 1
+
+Need to fix array comprehensions to be lazily evaluated:
+    let _ref = [];
+    {
+        let _ref2 = this.body;
+        for (let _i = 0; _i < _ref2.length; _i++) {
+            let s = _ref2[_i];
+            _ref.push(this.context.createRuntime(s));
+        }
+    }
+    this.statements = this.statements != null ? this.statements : _ref;
+
+Optimize this: => if (!(this.statements != null))

@@ -978,17 +978,17 @@ tests =
     const Point = ion.defineClass({
             id: 'Point',
             constructor: function Point() {
-                this.constructor.super.apply(this, arguments);
-                this.constructor.super.call(this, width, height);
+                Point.super.apply(this, arguments);
+                Point.super.call(this, width, height);
             },
             properties: {
                 x: 0,
                 y: 0,
                 superIdentifier: function (x, y) {
-                    return this.constructor.super.prototype.superIdentifier.apply(this, arguments);
+                    return Point.super.prototype.superIdentifier.apply(this, arguments);
                 },
                 superExplicit: function (a, b) {
-                    return this.constructor.super.prototype.superExplicit.call(this, a, b);
+                    return Point.super.prototype.superExplicit.call(this, a, b);
                 }
             }
         });
@@ -1144,9 +1144,6 @@ tests =
         });
     DynamicExpression;
     """
-    # """
-    # export template ({a,b}) -> a + b
-    # """: null
     """
     let a = (new Point)
         1
@@ -1155,6 +1152,9 @@ tests =
     'use strict';
     let a = new Point(1, 2);
     """
+    # """
+    # export template ({a,b}) -> a + b
+    # """: null
 
 exports.test = ->
     for input, expected of tests

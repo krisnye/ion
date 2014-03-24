@@ -34,9 +34,9 @@ const primitive = {
 const createRuntime = exports.createRuntime = function (ast, args) {
         const Context = require('./runtime/Context');
         const context = new Context();
-        if (variables != null) {
-            for (let name in variables) {
-                let value = variables[name];
+        if (args != null) {
+            for (let name in args) {
+                let value = args[name];
                 context.setVariable(name, value);
             }
         }

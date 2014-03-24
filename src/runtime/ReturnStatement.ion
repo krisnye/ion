@@ -1,0 +1,14 @@
+const
+    Statement = import './Statement'
+
+export class ReturnStatement extends Statement
+    properties:
+        activate: ->
+            super
+            @argumentExpression ?= @context.createRuntime(@argument)
+            (@argumentExpression.watch)
+                @argumentWatcher ?= (value) => @context.returnExpression.setValue(value)
+        deactivate: ->
+            super
+            (@argumentExpression.unwatch)
+                @argumentWatcher

@@ -1,0 +1,20 @@
+const
+    Statement = import './Statement'
+
+export class BlockStatement extends Statement
+    properties:
+        activate: ->
+            super
+            if not @statements?
+                @statements = [@context.createRuntime(s) for s in @body]
+            for statement in @statements
+                statement.activate()
+        deactivate: ->
+            super
+            # we deactivate in reverse order
+            # this makes removing items from an array more efficient
+            # and keeps our operations more symmetrical.
+            for let i = @statements.length -1; i >= 0; i--
+                let statement = @statements[i]
+                statement.deactivate()
+

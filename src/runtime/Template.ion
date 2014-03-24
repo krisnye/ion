@@ -1,0 +1,16 @@
+const
+    BlockStatement = import './BlockStatement'
+    DynamicExpression = import './DynamicExpression'
+
+export class Template extends BlockStatement
+    constructor: ->
+        super
+        @context.returnExpression = new DynamicExpression()
+    properties:
+        # Template also implements Expression interface
+        watch: (watcher) ->
+            if not @isActive
+                throw new Error("You must activate a Template before you watch it.")
+            @context.returnExpression.watch(watcher)
+        unwatch: (watcher) ->
+            @context.returnExpression.unwatch(watcher)
