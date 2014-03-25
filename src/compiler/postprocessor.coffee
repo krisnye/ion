@@ -39,14 +39,16 @@ getPathExpression = (path) ->
                 name: step
     return result
 
-isFunctionNode = (node) -> nodes[node.type]?.isFunction ? false
+isFunctionNode = (node) -> nodes[node?.type]?.isFunction ? false
 
-toLiteral = (object) ->
+nodeToLiteral = (object) ->
     node = null
-    if Array.isArray object
+    if object?.toLiteral?
+        node = object?.toLiteral()
+    else if Array.isArray object
         node =
             type: 'ArrayExpression'
-            elements: (toLiteral item for item in object)
+            elements: (nodeToLiteral item for item in object)
     else if object?.constructor is Object
         node =
             type: 'ObjectExpression'
@@ -57,7 +59,7 @@ toLiteral = (object) ->
                     key:
                         type: 'Identifier' 
                         name: key
-                    value: toLiteral value
+                    value: nodeToLiteral value
                     kind: 'init'
     else
         node =
@@ -722,6 +724,8 @@ isAncestorObjectExpression = (context) ->
     return false
 
 namedFunctions = (node, context) ->
+    return if context.reactive
+
     # first, named functions expressions to function declarations
     if node.type is 'ExpressionStatement' and node.expression.type is 'FunctionExpression' and node.expression.id?
         func = node.expression
@@ -874,9 +878,23 @@ createTemplateFunctionClone = (node, context) ->
         node.template = template
 
 validateTemplateNodes = (node, context) ->
-    return if not context.reactive
-    if nodes[node.type]?.allowedInReactive is false
-        throw context.error node.type + " not allowed in templates", node
+    if context.reactive
+        if nodes[node.type]?.allowedInReactive is false
+            throw context.error node.type + " not allowed in templates", node
+
+    if context.parentReactive()
+        # also, convert FunctionDeclaration to variable declarations with function expression
+        if node.type is 'FunctionDeclaration'
+            node.type = 'FunctionExpression'
+            context.replace
+                type: 'VariableDeclaration'
+                kind: 'const'
+                declarations: [
+                    type: 'VariableDeclarator'
+                    id: node.id
+                    init: node
+                ]
+
     # if node.type is 'VariableDeclaration' and node.kind is 'let'
     #     throw context.error "only const variables are allowed in templates", node
 
@@ -885,6 +903,65 @@ removeLocationInfo = (node) ->
         if node.loc?
             delete node.loc
         return node
+
+# gets all identifiers, except member access properties
+getExternalIdentifiers = (node, callback) ->
+    traverse node, (node, context) ->
+        if node.type is 'Identifier'
+            # ignore member expression right hand identifiers
+            if context.parentNode()?.type is 'MemberExpression' and context.key() is 'property'
+                return
+            # ignore object property keys
+            if context.parentNode()?.type is 'Property' and context.key() is 'key'
+                return
+            # ignore internally defined variables
+            if context.getVariableInfo(node.name)?
+                return
+            callback(node)
+    return
+
+wrapTemplateInnerFunctions = (node, context) ->
+    if context.parentReactive()
+        if node.type is 'FunctionExpression' and not node.toLiteral?
+            # see if we need to replace any properties in this function or not.
+            variables = {}
+            getExternalIdentifiers node, (id) ->
+                if id.name isnt node.id?.name and context.parentScope()?.variables[id.name]?
+                    variables[id.name] = id
+            requiresWrapper = Object.keys(variables).length > 0
+            if requiresWrapper
+                # now convert the node to a new wrapped node
+                # add a statement extracting each needed variable from the reactive context
+                contextId = context.getNewInternalIdentifier('_context')
+                node.body.body.unshift
+                    type: 'VariableDeclaration'
+                    kind: 'const'
+                    declarations: (for name, id of variables
+                        type: 'VariableDeclarator'
+                        id: id
+                        init:
+                            type: 'CallExpression'
+                            callee: getPathExpression "#{contextId.name}.get"
+                            arguments: [
+                                type: 'Literal'
+                                value: id.name
+                            ]
+                    )
+                node =
+                    type: 'FunctionExpression'
+                    params: [contextId]
+                    body:
+                        type: 'BlockStatement'
+                        body: [
+                            type: 'ReturnStatement'
+                            argument: node
+                        ]
+
+            node.toLiteral = -> @
+            context.replace
+                type: 'Function'
+                context: requiresWrapper
+                value: node
 
 createTemplateRuntime = (node, context) ->
     if isFunctionNode(node) and node.template?
@@ -929,7 +1006,7 @@ createTemplateRuntime = (node, context) ->
                     type: 'CallExpression'
                     callee: getPathExpression 'ion.createRuntime'
                     arguments: [
-                        toLiteral template
+                        nodeToLiteral template
                         args
                     ]
         delete node.template
@@ -954,8 +1031,9 @@ exports.postprocess = (program, options) ->
         [createTemplateFunctionClone, checkVariableDeclarations]
         [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
         [validateTemplateNodes, classExpressions]
-        [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
-        [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, addUseStrictAndRequireIon]
+        [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions]
+        [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5]
+        [addUseStrictAndRequireIon]
         [nodejsModules, destructuringAssignments, spreadExpressions, assertStatements]
     ]
     for traversal in steps

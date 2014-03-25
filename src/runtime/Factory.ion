@@ -1,4 +1,5 @@
 const ion = import '../'
+const Literal = import './Literal'
 
 class Factory
     properties:
@@ -20,6 +21,12 @@ const lookup =
             runtime: './VariableDeclaration'
         Identifier: Factory
             createRuntime: (context, ast) -> context.getVariableExpression(ast.name)
+        Function: Factory
+            createRuntime: (context, ast) ->
+                let value = ast.value
+                if ast.context
+                    value = value(context)
+                return new Literal({value:value})
         Template: Factory
             runtime: './Template'
         Literal: Factory

@@ -10,14 +10,21 @@ export class IfStatement extends Statement
             (@testExpression.watch)
                 @testExpressionWatcher ?= (value) =>
                     if value
-                        @alternateStatement?.deactivate()
+                        if @alternateStatement?.isActive
+                            @alternateStatement?.deactivate()
                         @consequentStatement ?= @context.createRuntime(@consequent)
                         @consequentStatement.activate()
-                    else if @alternate?
-                        @consequentStatement?.deactivate()
-                        @alternateStatement ?= @context.createRuntime(@alternate)
-                        @alternateStatement.activate()
+                    else
+                        if @consequentStatement?.isActive
+                            @consequentStatement?.deactivate()
+                        if @alternate?
+                            @alternateStatement ?= @context.createRuntime(@alternate)
+                            @alternateStatement.activate()
         deactivate: ->
             super
             (@testExpression.unwatch)
                 @testExpressionWatcher
+            if @alternateStatement?.isActive
+                @alternateStatement?.deactivate()
+            if @consequentStatement?.isActive
+                @consequentStatement?.deactivate()

@@ -16,6 +16,18 @@ export class Context
     properties:
         newContext: (output = @output) -> new Context(@, output)
         createRuntime: (node) -> Factory.createRuntime(@, node)
+        get: (name) ->
+            let variable = @variables[name]
+            if not variable?
+                throw new Error("Variable not found: '{{name}}'")
+            let value = variable.value
+            if value is undefined
+                let watcher = (a) ->
+                    if a isnt undefined
+                        value = a
+                variable.watch(watcher)
+                variable.unwatch(watcher)
+            return value
         setVariable: (name, node) ->
             if name?
                 return @variables[name] = @createRuntime(node)

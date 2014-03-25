@@ -1,5 +1,5 @@
 'use strict';
-const primitive = {
+const mergePatch = require('./mergePatch'), primitive = {
         string: true,
         number: true,
         boolean: true,
@@ -31,41 +31,43 @@ const primitive = {
         }
         return properties;
     }, variableArgConstructs = [
-        function (type, args) {
+        function (type, a) {
             return new type();
         },
-        function (type, args) {
-            return new type(args[0]);
+        function (type, a) {
+            return new type(a[0]);
         },
-        function (type, args) {
-            return new type(args[0], args[1]);
+        function (type, a) {
+            return new type(a[0], a[1]);
         },
-        function (type, args) {
-            return new type(args[0], args[1], args[2]);
+        function (type, a) {
+            return new type(a[0], a[1], a[2]);
         },
-        function (type, args) {
-            return new type(args[0], args[1], args[2], args[3]);
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3]);
         },
-        function (type, args) {
-            return new type(args[0], args[1], args[2], args[3], args[4]);
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4]);
         },
-        function (type, args) {
-            return new type(args[0], args[1], args[2], args[3], args[4], args[5]);
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5]);
         },
-        function (type, args) {
-            return new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6]);
         },
-        function (type, args) {
-            return new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
         },
-        function (type, args) {
-            return new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]);
         },
-        function (type, args) {
-            return new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
         }
     ];
-const create = exports.create = function (type, args) {
+const patch = exports.patch = function (target, values) {
+        return mergePatch.apply(target, values);
+    }, create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
     }, createRuntime = exports.createRuntime = function (ast, args) {
         const Context = require('./runtime/Context');
@@ -111,7 +113,7 @@ const create = exports.create = function (type, args) {
             object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
         }
         object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
-    }, add = exports.add = function (container, item, returnRemoveFunction) {
+    }, add = exports.add = function (container, item) {
         if (container.nodeType === 1) {
             if (typeof item === 'string') {
                 item = document.createTextNode(item);
@@ -123,21 +125,19 @@ const create = exports.create = function (type, args) {
             container.add(item);
         }
         item.onAdded != null ? item.onAdded(container) : void 0;
-        if (returnRemoveFunction) {
-            return function () {
-                if (container.nodeType === 1) {
-                    container.removeChild(item);
-                } else if (container.lastIndexOf != null && container.removeAt != null) {
-                    let index = container.lastIndexOf(item);
-                    if (index >= 0) {
-                        container.removeAt(index);
-                    }
-                } else {
-                    container.remove(item);
+        return function () {
+            if (container.nodeType === 1) {
+                container.removeChild(item);
+            } else if (container.lastIndexOf != null && container.removeAt != null) {
+                let index = container.lastIndexOf(item);
+                if (index >= 0) {
+                    container.removeAt(index);
                 }
-                item.onRemoved != null ? item.onRemoved(container) : void 0;
-            };
-        }
+            } else {
+                container.remove(item);
+            }
+            item.onRemoved != null ? item.onRemoved(container) : void 0;
+        };
     }, defineProperties = exports.defineProperties = function (object, properties) {
         return Object.defineProperties(object, normalizeProperties(properties));
     }, defineClass = exports.defineClass = function (___definitions) {

@@ -9,19 +9,28 @@ export class Property extends Statement
             @keyExpression ?= @context.createRuntime(@computed ? @key : @key.name)
             (@keyExpression.watch)
                 @keyWatcher ?= (key) =>
+                    @restoreProperty()
                     @keyValue = key
-                    @_assign()
+                    @setProperty()
             @valueExpression ?= @context.createRuntime(@value)
             (@valueExpression.watch)
                 @valueWatcher ?= (value) =>
                     @valueValue = value
-                    @_assign()
+                    @setProperty()
         deactivate: ->
             super
+            @restoreProperty()
             @keyExpression.unwatch(@keyWatcher)
             @valueExpression.unwatch(@valueWatcher)
-        _assign: ->
-            if @keyValue? and @valueValue isnt undefined
-                let currentValue = ion.get(@context.output, @keyValue)
-                if currentValue isnt @valueValue
-                    ion.set(@context.output, @keyValue, @valueValue)
+        restoreProperty: ->
+            if @originalKey?
+                ion.set(@context.output, @originalKey, @originalValue)
+                @originalKey = undefined
+                @originalValue = undefined
+        setProperty: (key = @keyValue, value = @valueValue) ->
+            if key? and value isnt undefined
+                let currentValue = ion.get(@context.output, key)
+                if currentValue isnt value
+                    @originalKey ?= key
+                    @originalValue ?= currentValue
+                    ion.set(@context.output, key, value)

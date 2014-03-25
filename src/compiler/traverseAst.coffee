@@ -57,6 +57,8 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback) ->
             return null
         context.rootNode ?= -> @ancestorNodes[0]
         context.parentNode ?= -> @ancestorNodes[@ancestorNodes.length - 1]
+        context.parentScope ?= -> @scopeStack[@scopeStack.length - 2]
+        context.parentReactive ?= -> @_reactiveStack[@_reactiveStack.length - 1]
         context.isParentBlock ?= -> nodes[@parentNode()?.type]?.isBlock ? false
         context.getVariableInfo ?= (id) -> @scope().variables[id]
         context.getNewInternalIdentifier ?= (prefix = '_ref') ->

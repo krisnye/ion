@@ -121,6 +121,16 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
         return this.ancestorNodes[this.ancestorNodes.length - 1];
       };
     }
+    if (context.parentScope == null) {
+      context.parentScope = function() {
+        return this.scopeStack[this.scopeStack.length - 2];
+      };
+    }
+    if (context.parentReactive == null) {
+      context.parentReactive = function() {
+        return this._reactiveStack[this._reactiveStack.length - 1];
+      };
+    }
     if (context.isParentBlock == null) {
       context.isParentBlock = function() {
         var _ref, _ref1, _ref2;

@@ -1294,6 +1294,219 @@ tests =
     # should get accurate error locations even from inline javascript expressions
     let x = `y := null`
     """: {line: 2, column: 13}
+    """
+    const ion = import '../'
+    const templates = []
+        template (properties) -> 1
+    """: """
+    'use strict';
+    const ion = require('../');
+    const templates = [function _template(properties) {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'Literal',
+                                    value: 1
+                                }
+                            }]
+                    }, { properties: properties });
+                }
+                return 1;
+            }];
+    """
+    # """
+    # let mytemplate = template -> (-> 1)
+    # """: """
+    # 'use strict';
+    # const ion = require('ion');
+    # let mytemplate = function _template() {
+    #     if (this != null && this.constructor === _template) {
+    #         return ion.createRuntime({
+    #             type: 'Template',
+    #             body: [{
+    #                     type: 'ReturnStatement',
+    #                     argument: function () {
+    #                         return 1;
+    #                     }
+    #                 }],
+    #             name: {
+    #                 type: 'Identifier',
+    #                 name: 'mytemplate'
+    #             }
+    #         }, {});
+    #     }
+    #     return function () {
+    #         return 1;
+    #     };
+    # };
+    # """
+    # """
+    # template ->
+    #     double(a) -> a * 2
+    #     return double(1)
+    # """: """
+    # 'use strict';
+    # const ion = require('ion');
+    # (function _template() {
+    #     if (this != null && this.constructor === _template) {
+    #         return ion.createRuntime({
+    #             type: 'Template',
+    #             body: [
+    #                 {
+    #                     type: 'VariableDeclaration',
+    #                     kind: 'const',
+    #                     declarations: [{
+    #                             type: 'VariableDeclarator',
+    #                             id: {
+    #                                 type: 'Identifier',
+    #                                 name: 'double'
+    #                             },
+    #                             init: function double(a) {
+    #                                 return a * 2;
+    #                             }
+    #                         }]
+    #                 },
+    #                 {
+    #                     type: 'ReturnStatement',
+    #                     argument: {
+    #                         type: 'CallExpression',
+    #                         callee: {
+    #                             type: 'Identifier',
+    #                             name: 'double'
+    #                         },
+    #                         arguments: [{
+    #                                 type: 'Literal',
+    #                                 value: 1
+    #                             }]
+    #                     }
+    #                 }
+    #             ]
+    #         }, {});
+    #     }
+    #     function double(a) {
+    #         return a * 2;
+    #     }
+    #     return double(1);
+    # });
+    # """
+    """
+    template (properties) ->
+        let baz = 10
+        let foo = 1
+        let factor = 2
+        multiply(a) ->
+            let bar = factor.foo
+            let baz =
+                foo: 5
+            return a * factor
+        return multiply(2)
+    """: """
+    'use strict';
+    const ion = require('ion');
+    (function _template(properties) {
+        if (this != null && this.constructor === _template) {
+            return ion.createRuntime({
+                type: 'Template',
+                body: [
+                    {
+                        type: 'VariableDeclaration',
+                        declarations: [{
+                                type: 'VariableDeclarator',
+                                id: {
+                                    type: 'Identifier',
+                                    name: 'baz'
+                                },
+                                init: {
+                                    type: 'Literal',
+                                    value: 10
+                                }
+                            }],
+                        kind: 'let'
+                    },
+                    {
+                        type: 'VariableDeclaration',
+                        declarations: [{
+                                type: 'VariableDeclarator',
+                                id: {
+                                    type: 'Identifier',
+                                    name: 'foo'
+                                },
+                                init: {
+                                    type: 'Literal',
+                                    value: 1
+                                }
+                            }],
+                        kind: 'let'
+                    },
+                    {
+                        type: 'VariableDeclaration',
+                        declarations: [{
+                                type: 'VariableDeclarator',
+                                id: {
+                                    type: 'Identifier',
+                                    name: 'factor'
+                                },
+                                init: {
+                                    type: 'Literal',
+                                    value: 2
+                                }
+                            }],
+                        kind: 'let'
+                    },
+                    {
+                        type: 'VariableDeclaration',
+                        kind: 'const',
+                        declarations: [{
+                                type: 'VariableDeclarator',
+                                id: {
+                                    type: 'Identifier',
+                                    name: 'multiply'
+                                },
+                                init: {
+                                    type: 'Function',
+                                    context: true,
+                                    value: function (_context) {
+                                        return function multiply(a) {
+                                            const factor = _context.get('factor');
+                                            let bar = factor.foo;
+                                            let baz = { foo: 5 };
+                                            return a * factor;
+                                        };
+                                    }
+                                }
+                            }]
+                    },
+                    {
+                        type: 'ReturnStatement',
+                        argument: {
+                            type: 'CallExpression',
+                            callee: {
+                                type: 'Identifier',
+                                name: 'multiply'
+                            },
+                            arguments: [{
+                                    type: 'Literal',
+                                    value: 2
+                                }]
+                        }
+                    }
+                ]
+            }, { properties: properties });
+        }
+        let baz = 10;
+        let foo = 1;
+        let factor = 2;
+        function multiply(a) {
+            let bar = factor.foo;
+            let baz = { foo: 5 };
+            return a * factor;
+        }
+        return multiply(2);
+    });
+    """
     # """
     # export template ({a,b}) -> a + b
     # """: null

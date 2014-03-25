@@ -1,0 +1,49 @@
+const ion = import '../'
+
+const templates = []
+    []
+        "array comprehension"
+        template (properties) ->
+            return [key for key of properties]
+        {a:1,b:2}
+        {b:null,c:3}
+        ['a','c']
+    []
+        "imperative functions"
+        template (properties) ->
+            double(a) -> a * 2
+            return {}
+                for key, value of properties
+                    [key]: double(value)
+        {x:1,y:2}
+        {x:4,z:3}
+        {y:4,x:8,z:6} # the x swaps place because it is removed and re-added on property change
+    []
+        "shared variables functions"
+        template (properties) ->
+            let factor = properties.factor ? 3
+            multiply(a) -> a * factor
+            return {}
+                for key, value of properties if key isnt 'factor'
+                    [key]: multiply(value)
+        {x:1,y:2}
+        {x:4,y:null,z:5,factor:10}
+        {x:40,z:50}
+
+export
+    test:
+        for [name, templateType,argument,patch,expected] in templates if expected?
+            [name]: do (templateType, argument, patch, expected) ->
+                return (done) ->
+                    let template = new templateType(argument)
+                    template.activate()
+                    (template.watch)
+                        (value) ->
+                             (ion.observe)
+                                value
+                                (changes) ->
+                                    # console.log(value)
+                                    if JSON.stringify(value) is JSON.stringify(expected)
+                                        template.deactivate()
+                                        done()
+                    ion.patch(argument, patch)

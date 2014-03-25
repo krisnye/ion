@@ -1,5 +1,5 @@
-
 const
+    mergePatch = import './mergePatch'
     primitive = {string:true,number:true,boolean:true,function:true}
     isPrimitive = (object) -> not object? or primitive[typeof object] or false
     normalizeProperty = (property) ->
@@ -23,19 +23,20 @@ const
             properties[name] = normalizeProperty(property)
         return properties
     variableArgConstructs = []
-        (type, args) -> new type()
-        (type, args) -> new type(args[0])
-        (type, args) -> new type(args[0], args[1])
-        (type, args) -> new type(args[0], args[1], args[2])
-        (type, args) -> new type(args[0], args[1], args[2], args[3])
-        (type, args) -> new type(args[0], args[1], args[2], args[3], args[4])
-        (type, args) -> new type(args[0], args[1], args[2], args[3], args[4], args[5])
-        (type, args) -> new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6])
-        (type, args) -> new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7])
-        (type, args) -> new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8])
-        (type, args) -> new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9])
+        (type, a) -> new type()
+        (type, a) -> new type(a[0])
+        (type, a) -> new type(a[0], a[1])
+        (type, a) -> new type(a[0], a[1], a[2])
+        (type, a) -> new type(a[0], a[1], a[2], a[3])
+        (type, a) -> new type(a[0], a[1], a[2], a[3], a[4])
+        (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5])
+        (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6])
+        (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7])
+        (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8])
+        (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
 
 export const
+    patch = (target, values) -> mergePatch.apply(target, values)
     create = (type, args) -> variableArgConstructs[args.length](type, args)
     createRuntime = (ast, args) ->
         const Context = import './runtime/Context'
@@ -68,7 +69,7 @@ export const
             # unwatch change on dom elements
             object.removeEventListener?('change', observer)
         object?.unObserved?(observer, property)
-    add = (container, item, returnRemoveFunction) ->
+    add = (container, item) ->
         if container.nodeType is 1
             if typeof item is 'string'
                 item = document.createTextNode(item)
@@ -80,19 +81,18 @@ export const
 
         item.onAdded?(container)
 
-        if returnRemoveFunction
-            # returns a function which can be used to remove the item
-            return ->
-                if container.nodeType is 1
-                    container.removeChild(item)
-                else if container.lastIndexOf? and container.removeAt?
-                    let index = container.lastIndexOf(item)
-                    if index >= 0
-                        container.removeAt(index)
-                else
-                    container.remove(item)
+        # returns a function which can be used to remove the item
+        return ->
+            if container.nodeType is 1
+                container.removeChild(item)
+            else if container.lastIndexOf? and container.removeAt?
+                let index = container.lastIndexOf(item)
+                if index >= 0
+                    container.removeAt(index)
+            else
+                container.remove(item)
 
-                item.onRemoved?(container)
+            item.onRemoved?(container)
     defineProperties = (object, properties) -> Object.defineProperties(object, normalizeProperties(properties))
     defineClass = (...definitions) ->
         const classDefinition = definitions[0]

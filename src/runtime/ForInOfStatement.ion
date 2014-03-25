@@ -44,8 +44,8 @@ export class ForInOfStatement extends Statement
                 let statement = @statements[key] = newContext.createRuntime(@body)
                 statement.activate()
         removeItem: (key, value) ->
-            # console.log('remove ' + key + ' ' + value)
             let statement = @statements[key]
+            # console.log('remove ' + key + ' ' + value + ' ', statement)
             statement?.deactivate()
             delete @statements[key]
         applyChanges: (changes) ->
@@ -58,10 +58,10 @@ export class ForInOfStatement extends Statement
                     return true
                 return false
             # this will be an N performance algorithm for ARRAY insertions/deletions.
-            for {name,oldValue} in changes if not ignoreProperty(change.name)
+            # console.log('changes', changes)
+            for {name,oldValue} in changes if not ignoreProperty(name)
                 let newValue = @collection[name]
                 let key = @toKey(name)
-                # console.log '---apply changes--- ', change
                 if oldValue isnt undefined
                     @removeItem(key, oldValue)
                 if newValue isnt undefined

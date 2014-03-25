@@ -1,5 +1,5 @@
 {
-    "modified": 1395711710942,
+    "modified": 1395769350683,
     "files": [
         "compiler/astFunctions.js",
         "compiler/common.js",
@@ -33,10 +33,11 @@
         "runtime/Statement.js",
         "runtime/Template.js",
         "runtime/VariableDeclaration.js",
+        "test/immediateTemplates.js",
         "test/ionCompiler.js",
         "test/ionCustomParse.js",
         "test/ionVsEsprima.js",
-        "test/templateParams.js",
-        "test/templates.js"
+        "test/reactiveTemplates.js",
+        "test/templateParams.js"
     ]
 }
