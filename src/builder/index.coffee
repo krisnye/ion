@@ -19,7 +19,10 @@ module.exports = exports =
         try
             return require('uglify-js').minify files, options
         catch e
-            throw e
+            console.error e
+            result =
+                code:(fs.readFileSync(file, 'utf8') for file in files).join('\n')
+            return result
         finally
             process.chdir cwd
     isPrivate: isPrivate = (path) ->
@@ -146,7 +149,7 @@ module.exports = exports =
             safeId = "_" + moduleId.replace(/[^a-zA-Z0-9]/g, '_') + "_"
             sourceText =
                 """
-                (function(){var #{safeId} = function(module,exports,require){#{sourceText}
+                void (function(){var #{safeId} = function(module,exports,require){#{sourceText}
                   }
                   if (typeof require === 'function') {
                     if (require.register)
