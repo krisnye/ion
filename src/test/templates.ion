@@ -46,6 +46,43 @@ const templates = []
             let object = {a:{b:1}}
             return object.a.b
         1
+    []
+        template -> false ? 1 : 2
+        2
+    []
+        template -> null ? 2
+        2
+    []
+        template ->
+            let a = null
+            let b = 2
+            return [a?, b?]
+        [false,true]
+    []
+        template -> Math.min(1, 2)
+        1
+    []
+        template -> Math.min.call(null, 1, 2)
+        1
+    []
+        template -> new Date(2011, 10, 5)
+        new Date(2011, 10, 5)
+    []
+        template -> /foo/
+        /foo/
+    []
+        template ->
+            return
+                x: 1
+                y: 2
+                z: []
+                    let items = [3,2,1]
+                    for item in items
+                        item * 2
+        {x:1, y:2, z:[6,4,2]}
+    []
+        template -> [null ? 1, undefined ? 2]
+        [1, 2]
 
 export const
     test = ->

@@ -1,0 +1,35 @@
+const
+    ion = import '../'
+    DynamicExpression = import './DynamicExpression'
+    ArrayExpression = import './ArrayExpression'
+
+module.exports = class CallExpression extends DynamicExpression
+    properties:
+        args: null
+        activate: ->
+            super
+            @calleeExpression ?= @context.createRuntime(@callee)
+            (@calleeExpression.watch)
+                @calleeWatcher ?= (value) =>
+                    @calleeValue = value
+                    @evaluate()
+            @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:true})
+            (@argumentExpressions.watch)
+                @argumentWatcher ?= (value) =>
+                    @argumentsValue = value
+                    @evaluate()
+        deactivate: ->
+            super
+            @calleeExpression.unwatch(@calleeWatcher)
+            @argumentExpressions.unwatch(@argumentWatcher)
+        evaluate: ->
+            let value = undefined
+            if @calleeValue? and @argumentsValue?
+                if @type is 'NewExpression'
+                    # create a new with variable args
+                    value = ion.create(@calleeValue, @argumentsValue)
+                else # @type is 'CallExpression'
+                    let thisArg = @calleeExpression.objectExpression?.value
+                    value = @calleeValue.apply(thisArg, @argumentsValue)
+
+            @setValue(value)

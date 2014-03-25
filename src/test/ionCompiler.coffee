@@ -1237,6 +1237,63 @@ tests =
         return _ref;
     };
     """
+    """
+    let x = template -> /foo/
+    """: """
+    'use strict';
+    const ion = require('ion');
+    let x = function _template() {
+        if (this != null && this.constructor === _template) {
+            return ion.createRuntime({
+                type: 'Template',
+                body: [{
+                        type: 'ReturnStatement',
+                        argument: {
+                            type: 'Literal',
+                            value: /foo/
+                        }
+                    }],
+                name: {
+                    type: 'Identifier',
+                    name: 'x'
+                }
+            }, {});
+        }
+        return /foo/;
+    };
+    """
+    """
+    return
+        z: []
+            let items = [3,2,1]
+            for item in items
+                item * 2
+    """: """
+    'use strict';
+    let _ref = [];
+    {
+        let items = [
+                3,
+                2,
+                1
+            ];
+        for (let _i = 0; _i < items.length; _i++) {
+            let item = items[_i];
+            _ref.push(item * 2);
+        }
+    }
+    return { z: _ref };
+    """
+    """
+    let x = `y == null`
+    """: """
+    'use strict';
+    let x = y == null;
+    """
+    """
+    # should get accurate error locations even from inline javascript expressions
+    let x = `y := null`
+    """: {line: 2, column: 13}
     # """
     # export template ({a,b}) -> a + b
     # """: null

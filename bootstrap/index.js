@@ -30,8 +30,44 @@ const primitive = {
             properties[name] = normalizeProperty(property);
         }
         return properties;
-    };
-const createRuntime = exports.createRuntime = function (ast, args) {
+    }, variableArgConstructs = [
+        function (type, args) {
+            return new type();
+        },
+        function (type, args) {
+            return new type(args[0]);
+        },
+        function (type, args) {
+            return new type(args[0], args[1]);
+        },
+        function (type, args) {
+            return new type(args[0], args[1], args[2]);
+        },
+        function (type, args) {
+            return new type(args[0], args[1], args[2], args[3]);
+        },
+        function (type, args) {
+            return new type(args[0], args[1], args[2], args[3], args[4]);
+        },
+        function (type, args) {
+            return new type(args[0], args[1], args[2], args[3], args[4], args[5]);
+        },
+        function (type, args) {
+            return new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+        },
+        function (type, args) {
+            return new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+        },
+        function (type, args) {
+            return new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
+        },
+        function (type, args) {
+            return new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+        }
+    ];
+const create = exports.create = function (type, args) {
+        return variableArgConstructs[args.length](type, args);
+    }, createRuntime = exports.createRuntime = function (ast, args) {
         const Context = require('./runtime/Context');
         const context = new Context();
         if (args != null) {

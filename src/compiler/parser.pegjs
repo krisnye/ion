@@ -296,7 +296,8 @@ formalParameters = head:formalParameter tail:(_ "," _ a:formalParameter { return
 formalParameter = param:SpreadPattern _ init:formalParameterInitializer? { return [param,init] }
 formalParameterInitializer = "=" _ a:InlineExpression { return a }
 
-PrimaryExpression 'primaryExpression' = ThisExpression / Identifier / Literal / ArrayLiteral / ArrayComprehension / ObjectLiteral / GroupExpression
+PrimaryExpression 'primaryExpression' = ThisExpression / Identifier / Literal / ArrayLiteral / ArrayComprehension / ObjectLiteral / GroupExpression / JavascriptExpression
+JavascriptExpression = start:start "`" a:(!"`" .)+ "`" end:end { return node("JavascriptExpression", {text:text().slice(1, -1)}, start, end) }
 ArrayLiteral = start:start "[" _ elements:elementList?  _ "]" end:end { return node("ArrayExpression", {elements:elements || []}, start, end) }
 elementList = head:InlineExpression tail:(_ "," _ item:InlineExpression {return item})* { return [head].concat(tail) }
 ObjectLiteral = start:start "{" _ assignments:propertyAssignmentList? _ "}" end:end { return node("ObjectExpression", {properties:assignments || []}, start, end) }

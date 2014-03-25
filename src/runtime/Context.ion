@@ -33,6 +33,6 @@ export class Context
                 throw new Error("Variable not found: '{{name}}'")
             # global values are considered to be constants.
             # we could consider caching these values within the context.
-            let cachedGlobals = context.globals ?= {}
+            let cachedGlobals = @root.globals ?= {}
             return cachedGlobals[name] ?= new Literal({value:value})
 

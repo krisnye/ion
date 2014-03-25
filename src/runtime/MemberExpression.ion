@@ -25,3 +25,7 @@ export class MemberExpression extends DynamicExpression
             if @objectValue? and @propertyValue?
                 value = ion.get(@objectValue, @propertyValue)
             @setValue(value)
+        # sets the underlying property value.  This may be used for two way binding.
+        setMemberValue: (value) ->
+            if @objectValue? and @propertyValue?
+                ion.set(@objectValue, @propertyValue, value)

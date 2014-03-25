@@ -47,7 +47,7 @@ toLiteral = (object) ->
         node =
             type: 'ArrayExpression'
             elements: (toLiteral item for item in object)
-    else if object? and typeof object is 'object'
+    else if object?.constructor is Object
         node =
             type: 'ObjectExpression'
             properties: []
@@ -934,11 +934,25 @@ createTemplateRuntime = (node, context) ->
                     ]
         delete node.template
 
+javascriptExpressions = (node, context) ->
+    if node.type is 'JavascriptExpression'
+        esprima = require 'esprima'
+        try
+            program = esprima.parse node.text
+            expression = program.body[0].expression
+            context.replace expression
+        catch e
+            errorNode = ion.clone node, true
+            errorNode.loc?.start.line += e.lineNumber - 1
+            errorNode.loc?.start.column += e.column - 1 + "`".length
+            message = e.message.substring(e.message.indexOf(':') + 1).trim()
+            throw context.error message, errorNode
+
 exports.postprocess = (program, options) ->
     steps = [
         [namedFunctions, superExpressions]
         [createTemplateFunctionClone, checkVariableDeclarations]
-        [arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
+        [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
         [validateTemplateNodes, classExpressions]
         [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals]
         [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, addUseStrictAndRequireIon]

@@ -13,7 +13,7 @@ trackVariableDeclaration = function(context, node, kind, name) {
   }
   scope = context.scope();
   if (scope == null) {
-    throw new Error('No scope: ' + JSON.stringify(node));
+    return;
   }
   variable = {
     kind: kind,

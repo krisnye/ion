@@ -44,6 +44,10 @@ const lookup =
             runtime: './ForInOfStatement'
         MemberExpression: Factory
             runtime: './MemberExpression'
+        CallExpression: Factory
+            runtime: './CallExpression'
+        NewExpression: Factory
+            runtime: './CallExpression'
         UnaryExpression:
             operator:
                 "!": Factory
@@ -58,6 +62,11 @@ const lookup =
                     evaluate: (a) -> + a
                 "~": Factory
                     evaluate: (a) -> ~ a
+                "?": Factory
+                    evaluate: (a) -> a?
+        ConditionalExpression: Factory
+            # unlike in imperative code, both consequent and alternate are always evaluated
+            evaluate: (test, consequent, alternate) -> test ? consequent : alternate
         BinaryExpression:
             operator:
                 "*": Factory
@@ -79,8 +88,12 @@ const lookup =
                 "|": Factory
                     evaluate: (left, right) -> left | right
                 "==": Factory
-                    evaluate: (left, right) -> left is right
+                    evaluate: (left, right) -> `left == right`
                 "!=": Factory
+                    evaluate: (left, right) -> `left != right`
+                "===": Factory
+                    evaluate: (left, right) -> left is right
+                "!==": Factory
                     evaluate: (left, right) -> left isnt right
                 "<": Factory
                     evaluate: (left, right) -> left < right

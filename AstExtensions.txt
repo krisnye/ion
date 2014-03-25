@@ -39,3 +39,5 @@ X   +AssertStatement
         expression: Expression
     +SpreadExpression
         expression: Expression
+    +JavascriptExpression
+        text: String

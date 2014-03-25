@@ -1,21 +1,22 @@
 const
     DynamicExpression = import './DynamicExpression'
-    ArrayExpression = import './ArrayExpression'
 
 module.exports = class OperationExpression extends DynamicExpression
     constructor: (properties) ->
         super
-        # default args for BinaryExpressions
+        # default args for common types of BinaryExpressions
         if not @args?
             if @type is 'BinaryExpression'
                 @args = [@left, @right]
             else if @type is 'UnaryExpression'
                 @args = [@argument]
+            else if @type is 'ConditionalExpression'
+                @args = [@test, @consequent, @alternate]
     properties:
         args: null
         activate: ->
             super
-            @argumentExpressions ?= new ArrayExpression({context:@context, elements:@args, observeElements:@factory.observe})
+            @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@args, observeElements:@factory.observe})
             (@argumentExpressions.watch)
                 @watcher ?= (value) =>
                     @argumentValues = value

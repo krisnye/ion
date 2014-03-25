@@ -5,7 +5,7 @@ nodes = require './nodes'
 trackVariableDeclaration = (context, node, kind, name = node.name) ->
     scope = context.scope()
     if not scope?
-        throw new Error 'No scope: ' + JSON.stringify(node)
+        return
     variable =
         kind: kind
         id:

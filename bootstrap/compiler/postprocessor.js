@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, getPathExpression, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isSuperExpression, namedFunctions, nodejsModules, nodes, nullExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, toLiteral, traverse, typedObjectExpressions, undefinedExpression, validateTemplateNodes, _ref;
+(function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, getPathExpression, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isSuperExpression, javascriptExpressions, namedFunctions, nodejsModules, nodes, nullExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, toLiteral, traverse, typedObjectExpressions, undefinedExpression, validateTemplateNodes, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -84,7 +84,7 @@ toLiteral = function(object) {
         return _results;
       })()
     };
-  } else if ((object != null) && typeof object === 'object') {
+  } else if ((object != null ? object.constructor : void 0) === Object) {
     node = {
       type: 'ObjectExpression',
       properties: []
@@ -1294,9 +1294,32 @@ createTemplateRuntime = function(node, context) {
   }
 };
 
+javascriptExpressions = function(node, context) {
+  var e, errorNode, esprima, expression, message, program, _ref1, _ref2;
+  if (node.type === 'JavascriptExpression') {
+    esprima = require('esprima');
+    try {
+      program = esprima.parse(node.text);
+      expression = program.body[0].expression;
+      return context.replace(expression);
+    } catch (_error) {
+      e = _error;
+      errorNode = ion.clone(node, true);
+      if ((_ref1 = errorNode.loc) != null) {
+        _ref1.start.line += e.lineNumber - 1;
+      }
+      if ((_ref2 = errorNode.loc) != null) {
+        _ref2.start.column += e.column - 1 + "`".length;
+      }
+      message = e.message.substring(e.message.indexOf(':') + 1).trim();
+      throw context.error(message, errorNode);
+    }
+  }
+};
+
 exports.postprocess = function(program, options) {
   var enter, exit, steps, traversal, variable, _i, _len;
-  steps = [[namedFunctions, superExpressions], [createTemplateFunctionClone, checkVariableDeclarations], [arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, addUseStrictAndRequireIon], [nodejsModules, destructuringAssignments, spreadExpressions, assertStatements]];
+  steps = [[namedFunctions, superExpressions], [createTemplateFunctionClone, checkVariableDeclarations], [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, addUseStrictAndRequireIon], [nodejsModules, destructuringAssignments, spreadExpressions, assertStatements]];
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
     enter = function(node, context) {

@@ -22,8 +22,21 @@ const
         for name, property of properties
             properties[name] = normalizeProperty(property)
         return properties
+    variableArgConstructs = []
+        (type, args) -> new type()
+        (type, args) -> new type(args[0])
+        (type, args) -> new type(args[0], args[1])
+        (type, args) -> new type(args[0], args[1], args[2])
+        (type, args) -> new type(args[0], args[1], args[2], args[3])
+        (type, args) -> new type(args[0], args[1], args[2], args[3], args[4])
+        (type, args) -> new type(args[0], args[1], args[2], args[3], args[4], args[5])
+        (type, args) -> new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6])
+        (type, args) -> new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7])
+        (type, args) -> new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8])
+        (type, args) -> new type(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9])
 
 export const
+    create = (type, args) -> variableArgConstructs[args.length](type, args)
     createRuntime = (ast, args) ->
         const Context = import './runtime/Context'
         const context = new Context()
