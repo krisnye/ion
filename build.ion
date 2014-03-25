@@ -25,9 +25,10 @@ Compile any pegjs grammars
 
 Compile ion files
 
-    for path, file of input.search('.ion')
-        target = output.getFile(builder.changeExtension(path, ".js"))
-        [target.path]: newCompiler.compile file.read()
+    for key, file of input.search('.ion')
+        target = output.getFile(builder.changeExtension(key, ".js"))
+        var moduleId = builder.getModuleId(name, key)
+        [target.path]: builder.addBrowserShim(newCompiler.compile(file.read()), moduleId)
 
 Write a manifest.json file listing all of our modules with require.js at the top
 
@@ -40,6 +41,22 @@ Write a manifest.json file listing all of our modules with require.js at the top
     manifestFile = output.getFile "manifest.json"
     if sortedFiles.length > 0
         [manifestFile]: JSON.stringify manifest, null, '    '
+
+Build a single big browser file
+
+    allName = "_browser.js"
+    uglyOptions =
+        mangle: false
+        compress: false
+        outSourceMap: allName + ".map"
+        forceRebuild: manifestFile.modified
+    all = output.getFile allName
+    map = output.getFile uglyOptions.outSourceMap
+    files = JSON.parse(manifestFile.read()).files
+    result = builder.minify output.path, files, uglyOptions
+    [all.path]: result.code + "//# sourceMappingURL=" + uglyOptions.outSourceMap
+    if result.map
+        [map.path]: result.map.replace new RegExp('"' + output.path + "\\\\\\\\", "g"), '"'
 
 Run tests on all of our output modules
 

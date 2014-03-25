@@ -1511,6 +1511,9 @@ tests =
     # export template ({a,b}) -> a + b
     # """: null
 
+if global.window?
+    return
+
 exports.test = ->
     for input, expected of tests
         if expected is null

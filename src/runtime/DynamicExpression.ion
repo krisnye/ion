@@ -1,3 +1,4 @@
+const ion = import '../'
 
 export class DynamicExpression extends import './Expression'
     properties:
@@ -12,13 +13,13 @@ export class DynamicExpression extends import './Expression'
             let watchers = @_watchers ?= []
             if watchers.length is 0
                 @activate()
-            watchers.add(watcher)
+            watchers.push(watcher)
             # notify watcher immediately if we have a defined value
             let value = @getValue()
             if value isnt undefined
                 @_notifyWatcher(watcher, value)
         unwatch: (watcher) ->
-            @_watchers?.remove(watcher)
+            ion.remove(@_watchers, watcher)
             # notify watcher immediately if we have a defined value
             let value = @getValue()
             if value isnt undefined

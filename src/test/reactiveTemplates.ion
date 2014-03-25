@@ -42,7 +42,6 @@ export
                              (ion.observe)
                                 value
                                 (changes) ->
-                                    # console.log(value)
                                     if JSON.stringify(value) is JSON.stringify(expected)
                                         template.deactivate()
                                         done()

@@ -89,10 +89,19 @@ export const
                 let index = container.lastIndexOf(item)
                 if index >= 0
                     container.removeAt(index)
-            else
+            else if typeof container.remove is 'function'
                 container.remove(item)
+            else
+                remove(container, item)
 
             item.onRemoved?(container)
+    remove = (array, item) ->
+        if array?
+            let index = array.lastIndexOf(item)
+            if index >= 0
+                array.splice(index, 1)
+                return index
+        return
     defineProperties = (object, properties) -> Object.defineProperties(object, normalizeProperties(properties))
     defineClass = (...definitions) ->
         const classDefinition = definitions[0]

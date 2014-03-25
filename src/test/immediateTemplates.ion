@@ -92,12 +92,12 @@ export const
             let reactiveResult = null
             (template.watch)
                 (value) -> reactiveResult = value
-            console.log('reactiveResult: ', reactiveResult)
+            # console.log('reactiveResult: ', reactiveResult)
             assert JSON.stringify(reactiveResult) is JSON.stringify(expected)
             template.deactivate()
             assert reactiveResult is undefined
             # also, call the template function imperatively and see that it's still the expected value
             let imperativeResult = templateType()
-            console.log('imperativeResult: ', imperativeResult)
+            # console.log('imperativeResult: ', imperativeResult)
             assert JSON.stringify(imperativeResult) is JSON.stringify(expected)
 

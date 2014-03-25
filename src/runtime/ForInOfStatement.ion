@@ -49,6 +49,7 @@ export class ForInOfStatement extends Statement
             statement?.deactivate()
             delete @statements[key]
         applyChanges: (changes) ->
+            # console.log('changes', changes)
             ignoreProperty(name) ->
                 if not name?
                     return true
@@ -59,11 +60,13 @@ export class ForInOfStatement extends Statement
                 return false
             # this will be an N performance algorithm for ARRAY insertions/deletions.
             # console.log('changes', changes)
-            for {name,oldValue} in changes if not ignoreProperty(name)
-                let newValue = @collection[name]
-                let key = @toKey(name)
-                if oldValue isnt undefined
-                    @removeItem(key, oldValue)
-                if newValue isnt undefined
-                    @addItem(key, newValue)
+            for {name,oldValue} in changes
+                let ignore = ignoreProperty(name)
+                if not ignore
+                    let newValue = @collection[name]
+                    let key = @toKey(name)
+                    if oldValue isnt undefined
+                        @removeItem(key, oldValue)
+                    if newValue isnt undefined
+                        @addItem(key, newValue)
 
