@@ -69,7 +69,7 @@ ops =
                     # process.on 'uncaughtException' doesn't seem to work either
                     fn?.apply thisArg, args
                 catch e
-                    console.error e
+                    console.error e.stack ? e.message
             else
                 fn?.apply thisArg, args
     "new":
