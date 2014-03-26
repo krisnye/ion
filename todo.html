@@ -1,0 +1,17 @@
+<html>
+<head>
+    <title>Todo</title>
+</head>
+<body>
+</body>
+<script src="lib/_browser.js"></script>
+<script>
+var Todo = require('ion/test/Todo')
+var template = new Todo()
+template.activate()
+template.watch(function(result){
+	console.log(result)
+	// document.body.appendChild(result);
+})
+</script>
+</html>

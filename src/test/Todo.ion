@@ -1,0 +1,6 @@
+# export template ->
+#     const {div,span,input,a,form,table,tbody,thead,tr,td,button} = import 'ion/browser/html'
+#     return div
+#         "Hello Div"
+
+1
