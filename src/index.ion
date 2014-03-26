@@ -121,7 +121,6 @@ export const
             classFunction = eval("(function {{name}}() {})")
 
         # successively merge patch the definitions onto the new class
-        const mergePatch = import './mergePatch'
         for let i = definitions.length - 1; i >= 0; i--
             const definition = definitions[i]
             for key, value of definition if key isnt 'test' or i is 0
