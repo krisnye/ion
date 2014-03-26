@@ -6,10 +6,10 @@
         "src": "src"
     },
     "dependencies": {
+        "esprima": "1.0.x",
         "escodegen": "1.2.x"
     },
     "devDependencies": {
-        "esprima": "1.0.x",
         "pegjs": "0.7.x"
     }
 }
