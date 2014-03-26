@@ -57,3 +57,6 @@ from ionlanguage directory
 At this point the ion language branch should work.
     cake watch
         you should see green errors.  There may be some JS_Parse_Errors
+
+enable experimental javascript in chrome.
+open index.html in chrome.  Should say 16/16 Passed.
