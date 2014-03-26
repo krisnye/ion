@@ -7,7 +7,7 @@ Read the package.json
     input = new Directory(package.directories.src)
     output = new Directory(package.directories.lib)
     builder = require 'ionold/builder'
-    newCompiler = require './bootstrap/compiler'
+    newCompiler = require './boot/compiler'
 
 Compile coffeescript
 

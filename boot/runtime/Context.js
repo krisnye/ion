@@ -1,0 +1,57 @@
+'use strict';
+const ion = require('ion');
+const Factory = require('./Factory'), Literal = require('./Literal');
+const Context = ion.defineClass({
+        id: 'Context',
+        constructor: function Context(parent, output) {
+            this.output = output;
+            this.parent = parent;
+            this.variables = {};
+            this.root = (this.parent != null ? this.parent.root : void 0) != null ? this.parent.root : this;
+        },
+        properties: {
+            newContext: function (output) {
+                if (output == null)
+                    output = this.output;
+                return new Context(this, output);
+            },
+            createRuntime: function (node) {
+                return Factory.createRuntime(this, node);
+            },
+            get: function (name) {
+                let variable = this.variables[name];
+                if (!(variable != null)) {
+                    throw new Error('Variable not found: \'' + name + '\'');
+                }
+                let value = variable.value;
+                if (value === void 0) {
+                    variable.watch(function (a) {
+                        return value = a;
+                    })();
+                }
+                return value;
+            },
+            setVariable: function (name, node) {
+                if (name != null) {
+                    return this.variables[name] = this.createRuntime(node);
+                }
+            },
+            getVariableExpression: function (name) {
+                let context = this, value;
+                while (context != null) {
+                    let variable = context.variables[name];
+                    if (variable != null) {
+                        return variable;
+                    }
+                    context = context.parent;
+                }
+                value = global[name];
+                if (value === void 0) {
+                    throw new Error('Variable not found: \'' + name + '\'');
+                }
+                let cachedGlobals = this.root.globals = this.root.globals != null ? this.root.globals : {};
+                return cachedGlobals[name] = cachedGlobals[name] != null ? cachedGlobals[name] : new Literal({ value: value });
+            }
+        }
+    });
+module.exports = exports = Context;
