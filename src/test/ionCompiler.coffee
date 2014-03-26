@@ -1428,12 +1428,12 @@ tests =
         return multiply(2);
     });
     """
-    """
-    export template ->
-        const {div} = import 'ion/browser/html'
-        return div
-            "Hello Div"
-    """: null
+    # """
+    # export template ->
+    #     const {div} = import 'ion/browser/html'
+    #     return div
+    #         "Hello Div"
+    # """: null
     # """
     # export template ({a,b}) -> a + b
     # """: null
