@@ -1,4 +1,4 @@
-'use strict';
+void (function(){var _ion_test_reactiveTemplates_ = function(module,exports,require){'use strict';
 const ion = require('../');
 const templates = [
         [
@@ -79,8 +79,12 @@ const templates = [
                                             type: 'Identifier',
                                             name: 'double'
                                         },
-                                        init: function double(a) {
-                                            return a * 2;
+                                        init: {
+                                            type: 'Function',
+                                            context: false,
+                                            value: function double(a) {
+                                                return a * 2;
+                                            }
                                         }
                                     }]
                             },
@@ -168,9 +172,198 @@ const templates = [
                 z: 3
             },
             {
-                x: 8,
                 y: 4,
+                x: 8,
                 z: 6
+            }
+        ],
+        [
+            'shared variables functions',
+            function _template(properties) {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'factor'
+                                        },
+                                        init: {
+                                            type: 'ConditionalExpression',
+                                            test: {
+                                                type: 'BinaryExpression',
+                                                operator: '!=',
+                                                left: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'properties'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'factor'
+                                                    }
+                                                },
+                                                right: {
+                                                    type: 'Literal',
+                                                    value: null
+                                                }
+                                            },
+                                            consequent: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'properties'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'factor'
+                                                }
+                                            },
+                                            alternate: {
+                                                type: 'Literal',
+                                                value: 3
+                                            }
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'VariableDeclaration',
+                                kind: 'const',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'multiply'
+                                        },
+                                        init: {
+                                            type: 'Function',
+                                            context: true,
+                                            value: function (_context) {
+                                                return function multiply(a) {
+                                                    const factor = _context.get('factor');
+                                                    return a * factor;
+                                                };
+                                            }
+                                        }
+                                    }]
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'ObjectExpression',
+                                        properties: []
+                                    },
+                                    properties: [{
+                                            type: 'ForInStatement',
+                                            left: {
+                                                type: 'VariableDeclaration',
+                                                declarations: [
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'key'
+                                                        },
+                                                        init: null
+                                                    },
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'value'
+                                                        },
+                                                        init: null
+                                                    }
+                                                ],
+                                                kind: 'let'
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'properties'
+                                            },
+                                            body: {
+                                                type: 'BlockStatement',
+                                                body: [{
+                                                        type: 'IfStatement',
+                                                        test: {
+                                                            type: 'BinaryExpression',
+                                                            operator: '!==',
+                                                            left: {
+                                                                type: 'Identifier',
+                                                                name: 'key'
+                                                            },
+                                                            right: {
+                                                                type: 'Literal',
+                                                                value: 'factor'
+                                                            }
+                                                        },
+                                                        consequent: {
+                                                            type: 'BlockStatement',
+                                                            body: [{
+                                                                    type: 'Property',
+                                                                    key: {
+                                                                        type: 'Identifier',
+                                                                        name: 'key'
+                                                                    },
+                                                                    value: {
+                                                                        type: 'CallExpression',
+                                                                        callee: {
+                                                                            type: 'Identifier',
+                                                                            name: 'multiply'
+                                                                        },
+                                                                        arguments: [{
+                                                                                type: 'Identifier',
+                                                                                name: 'value'
+                                                                            }]
+                                                                    },
+                                                                    kind: 'init',
+                                                                    computed: true
+                                                                }]
+                                                        }
+                                                    }]
+                                            }
+                                        }]
+                                }
+                            }
+                        ]
+                    }, { properties: properties });
+                }
+                let factor = properties.factor != null ? properties.factor : 3;
+                function multiply(a) {
+                    return a * factor;
+                }
+                let _ref = {};
+                for (let key in properties) {
+                    let value = properties[key];
+                    if (key !== 'factor') {
+                        _ref[key] = multiply(value);
+                    }
+                }
+                return _ref;
+            },
+            {
+                x: 1,
+                y: 2
+            },
+            {
+                x: 4,
+                y: null,
+                z: 5,
+                factor: 10
+            },
+            {
+                x: 40,
+                z: 50
             }
         ]
     ];
@@ -189,7 +382,6 @@ for (let _i = 0; _i < templates.length; _i++) {
                 template.activate();
                 template.watch(function (value) {
                     ion.observe(value, function (changes) {
-                        console.log(value);
                         if (JSON.stringify(value) === JSON.stringify(expected)) {
                             template.deactivate();
                             done();
@@ -202,3 +394,14 @@ for (let _i = 0; _i < templates.length; _i++) {
     }
 }
 module.exports = exports = { test: _ref };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/test/reactiveTemplates',_ion_test_reactiveTemplates_);
+    else
+      _ion_test_reactiveTemplates_.call(this, module, exports, require);
+  }
+  else {
+    _ion_test_reactiveTemplates_.call(this);
+  }
+}).call(this)

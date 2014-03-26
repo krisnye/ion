@@ -25,3 +25,9 @@ Need to fix array comprehensions to be lazily evaluated:
     this.statements = this.statements != null ? this.statements : _ref;
 
 Optimize this: => if (!(this.statements != null))
+
+This should be an error:
+    console.log(x)
+    let x = 12
+
+

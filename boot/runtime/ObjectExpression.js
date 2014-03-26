@@ -1,4 +1,4 @@
-'use strict';
+void (function(){var _ion_runtime_ObjectExpression_ = function(module,exports,require){'use strict';
 const ion = require('ion');
 const DynamicExpression = require('./DynamicExpression');
 const ObjectExpression = ion.defineClass({
@@ -38,3 +38,14 @@ const ObjectExpression = ion.defineClass({
         }
     }, DynamicExpression);
 module.exports = exports = ObjectExpression;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/ObjectExpression',_ion_runtime_ObjectExpression_);
+    else
+      _ion_runtime_ObjectExpression_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_ObjectExpression_.call(this);
+  }
+}).call(this)

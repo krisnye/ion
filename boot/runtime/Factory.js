@@ -1,4 +1,4 @@
-'use strict';
+void (function(){var _ion_runtime_Factory_ = function(module,exports,require){'use strict';
 const ion = require('../');
 const Literal = require('./Literal');
 const Factory = ion.defineClass({
@@ -260,3 +260,14 @@ const createRuntime = exports.createRuntime = function (context, ast) {
         if (!(lookup.type.BinaryExpression.operator['>'] != null))
             throw new Error('Assertion Failed: (lookup.type.BinaryExpression.operator[">"]?)');
     };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/Factory',_ion_runtime_Factory_);
+    else
+      _ion_runtime_Factory_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_Factory_.call(this);
+  }
+}).call(this)

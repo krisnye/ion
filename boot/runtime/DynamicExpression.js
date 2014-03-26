@@ -1,5 +1,5 @@
-'use strict';
-const ion = require('ion');
+void (function(){var _ion_runtime_DynamicExpression_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const DynamicExpression = ion.defineClass({
         id: 'DynamicExpression',
         properties: {
@@ -15,14 +15,14 @@ const DynamicExpression = ion.defineClass({
                 if (watchers.length === 0) {
                     this.activate();
                 }
-                watchers.add(watcher);
+                watchers.push(watcher);
                 let value = this.getValue();
                 if (value !== void 0) {
                     this._notifyWatcher(watcher, value);
                 }
             },
             unwatch: function (watcher) {
-                this._watchers != null ? this._watchers.remove(watcher) : void 0;
+                ion.remove(this._watchers, watcher);
                 let value = this.getValue();
                 if (value !== void 0) {
                     this._notifyWatcher(watcher, void 0);
@@ -89,3 +89,14 @@ const DynamicExpression = ion.defineClass({
         }
     }, require('./Expression'));
 module.exports = exports = DynamicExpression;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/DynamicExpression',_ion_runtime_DynamicExpression_);
+    else
+      _ion_runtime_DynamicExpression_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_DynamicExpression_.call(this);
+  }
+}).call(this)

@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_traverse_ = function(module,exports,require){exports.traverse = function(graph, enterCallback, exitCallback) {
+void (function(){var _ion_compiler_traverse_ = function(module,exports,require){exports.traverse = function(graph, enterCallback, exitCallback) {
   var context, removed, result, skip, traverseNode;
   result = graph;
   skip = false;

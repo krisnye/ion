@@ -1,3 +1,618 @@
+void (function(){var _ion_browser_require_ = function(module,exports,require){var modules, normalize, require, resolve;
+
+if (this.global == null) {
+  this.global = (function() {
+    return this;
+  })();
+}
+
+if (this.require != null) {
+  return;
+}
+
+require = function(path) {
+  var i, m, object, originalPath, steps;
+  originalPath = path;
+  m = modules[path];
+  if (!m) {
+    if (path[path.length - 1] !== '/') {
+      path += '/';
+    }
+    path += "index";
+    m = modules[path];
+  }
+  if (!m) {
+    steps = path.replace(/\/index$/, "").split(/\//);
+    object = this;
+    i = 0;
+    while ((object != null) && i < steps.length) {
+      object = object[steps[i]];
+      i++;
+    }
+    if (object != null) {
+      m = modules[originalPath] = {
+        exports: object
+      };
+    }
+  }
+  if (!m) {
+    throw new Error("Couldn't find module for: " + path);
+  }
+  if (!m.exports) {
+    m.exports = {};
+    m.id = path;
+    m.call(this, m, m.exports, resolve(path));
+  }
+  return m.exports;
+};
+
+modules = {};
+
+normalize = require.normalize = function(curr, path) {
+  var i, seg, segs;
+  segs = curr.split("/");
+  seg = void 0;
+  if (path[0] !== ".") {
+    return path;
+  }
+  segs.pop();
+  path = path.split("/");
+  i = 0;
+  while (i < path.length) {
+    seg = path[i];
+    if (seg === "..") {
+      segs.pop();
+    } else {
+      if (seg !== ".") {
+        segs.push(seg);
+      }
+    }
+    ++i;
+  }
+  return segs.join("/");
+};
+
+resolve = function(path) {
+  return function(p) {
+    return require(normalize(path, p));
+  };
+};
+
+require.register = function(path, fn) {
+  return modules[path] = fn;
+};
+
+require.loadAll = function() {
+  var id, _results;
+  _results = [];
+  for (id in modules) {
+    _results.push(require(id));
+  }
+  return _results;
+};
+
+require.getModuleIds = function() {
+  return Object.keys(modules);
+};
+
+require.runTests = function(callback) {
+  var fn;
+  fn = function() {
+    return require("ion/browser/tester").runTests(require.getModuleIds(), callback);
+  };
+  if (global.setTimeout != null) {
+    return setTimeout(fn, 0);
+  } else {
+    return fn();
+  }
+};
+
+if (typeof module === "undefined") {
+  this.require = require;
+} else {
+  module.exports = require;
+}
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/browser/require',_ion_browser_require_);
+    else
+      _ion_browser_require_.call(this, module, exports, require);
+  }
+  else {
+    _ion_browser_require_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_browser_html_ = function(module,exports,require){var name, _fn, _i, _len, _ref;
+
+_ref = ["div", "span", "input", "a", "br", "button", "caption", "fieldset", "form", "frame", "frameset", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "legend", "menu", "option", "select", "script", "pre", "table", "tbody", "td", "tr", "thead"];
+_fn = function(name) {
+  return exports[name] = function(properties) {
+    var element, key, value;
+    element = document.createElement(name);
+    if (properties != null) {
+      for (key in properties) {
+        value = properties[key];
+        element[key] = value;
+      }
+    }
+    return element;
+  };
+};
+for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+  name = _ref[_i];
+  _fn(name);
+}
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/browser/html',_ion_browser_html_);
+    else
+      _ion_browser_html_.call(this, module, exports, require);
+  }
+  else {
+    _ion_browser_html_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_browser_tester_ = function(module,exports,require){var args, file, manifest, manifestFile, moduleId, modules, np, runTest, runTests, spawnTests, utility, _i, _len, _ref;
+
+runTest = function(name, test, callback) {
+  var e, expectedCallbacks, key, result, value;
+  expectedCallbacks = [];
+  if (typeof test === 'object') {
+    for (key in test) {
+      value = test[key];
+      expectedCallbacks = expectedCallbacks.concat(runTest(name + ' ' + key, value, callback));
+    }
+  } else if (typeof test === 'function') {
+    if (/^\s*function\s*[a-zA-Z_0-9]*\s*\(\s*(done)?\s*\)/.test(test.toString())) {
+      expectedCallbacks.push(name);
+      try {
+        if (test.length === 1) {
+          test(function(error, warning) {
+            return callback(name, error, warning);
+          });
+        } else {
+          result = test();
+          callback(name, null, result);
+        }
+      } catch (_error) {
+        e = _error;
+        callback(name, e, null);
+      }
+    }
+  }
+  return expectedCallbacks;
+};
+
+exports.spawnTests = spawnTests = function(manifestFile) {
+  var command;
+  command = "node" + (process.platform === 'win32' ? '.cmd' : '') + " " + __filename + " " + manifestFile;
+  require('../builder/utility').spawn(command);
+};
+
+exports.runTests = runTests = function(moduleIds, callback) {
+  var array, duration, e, error, expectedCallbacks, getIncompleteCallbacks, handler, inc, key, module, moduleId, name, timeout, waitingForFinishTimeout, warning, _i, _len,
+    _this = this;
+  if (!moduleIds) {
+    throw new Error("moduleIds is required");
+  }
+  if (callback == null) {
+    callback = exports.createCallback();
+  }
+  expectedCallbacks = {};
+  waitingForFinishTimeout = null;
+  handler = function(name, error, warning) {
+    var inc;
+    expectedCallbacks[name] = true;
+    callback(name, error, warning);
+    if (waitingForFinishTimeout != null) {
+      inc = getIncompleteCallbacks();
+      if (inc.length === 0) {
+        clearTimeout(waitingForFinishTimeout);
+        return callback();
+      }
+    }
+  };
+  for (key in moduleIds) {
+    moduleId = moduleIds[key];
+    try {
+      module = require(moduleId);
+      name = Array.isArray(moduleIds) ? moduleId : key;
+      array = runTest(name, module.test, handler);
+      for (_i = 0, _len = array.length; _i < _len; _i++) {
+        name = array[_i];
+        if (expectedCallbacks[name] == null) {
+          expectedCallbacks[name] = false;
+        }
+      }
+    } catch (_error) {
+      e = _error;
+      handler(moduleId, e, null);
+    }
+  }
+  getIncompleteCallbacks = function() {
+    var value;
+    return (function() {
+      var _results;
+      _results = [];
+      for (name in expectedCallbacks) {
+        value = expectedCallbacks[name];
+        if (!value) {
+          _results.push(name);
+        }
+      }
+      return _results;
+    })();
+  };
+  inc = getIncompleteCallbacks();
+  if (inc.length === 0) {
+    return callback();
+  } else {
+    duration = 10000;
+    error = "Timed out after " + duration + " ms";
+    warning = void 0;
+    timeout = function() {
+      var _j, _len1;
+      inc = getIncompleteCallbacks();
+      for (_j = 0, _len1 = inc.length; _j < _len1; _j++) {
+        name = inc[_j];
+        callback(name, error, warning);
+      }
+      return callback();
+    };
+    if (global.setTimeout != null) {
+      return waitingForFinishTimeout = setTimeout(timeout, duration);
+    } else {
+      error = void 0;
+      warning = "Platform missing setTimeout";
+      return timeout();
+    }
+  }
+};
+
+exports.createCallback = function(options, html) {
+  var beep, blue, endColor, endLine, fails, green, log, plain, red, start, tests, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+  if (html == null) {
+    html = global.window != null;
+  }
+  if (options == null) {
+    options = html ? {
+      red: '<span style="color:red;white-space:pre">',
+      green: '<span style="color:green;white-space:pre">',
+      blue: '<span style="color:blue;white-space:pre">',
+      plain: '<span>',
+      endColor: '</span>',
+      log: function(x) {
+        return document.writeln(x);
+      },
+      beep: '',
+      endLine: '<br>'
+    } : {};
+  }
+  red = (_ref = options.red) != null ? _ref : '\u001b[31m';
+  green = (_ref1 = options.green) != null ? _ref1 : '\u001b[32m';
+  blue = (_ref2 = options.blue) != null ? _ref2 : '\u001b[36m';
+  endColor = (_ref3 = options.endColor) != null ? _ref3 : '\u001b[0m';
+  plain = (_ref4 = options.plain) != null ? _ref4 : '';
+  beep = (_ref5 = options.beep) != null ? _ref5 : '\u0007';
+  log = (_ref6 = options.log) != null ? _ref6 : function(x) {
+    return console.log(x);
+  };
+  endLine = (_ref7 = options.endLine) != null ? _ref7 : '';
+  tests = 0;
+  fails = 0;
+  start = null;
+  return function(name, error, result) {
+    var color, finish, passed, time, title, _ref10, _ref8, _ref9;
+    if (start == null) {
+      start = new Date().getTime();
+    }
+    if (name != null) {
+      tests++;
+      if (error != null) {
+        fails++;
+      }
+      color = error != null ? red : result != null ? blue : plain;
+      return log(color + name + ": " + ((_ref8 = (_ref9 = (_ref10 = error != null ? error.stack : void 0) != null ? _ref10 : error) != null ? _ref9 : result) != null ? _ref8 : "") + endColor + endLine);
+    } else {
+      finish = new Date().getTime();
+      time = finish - start;
+      passed = tests - fails;
+      log(endLine);
+      color = passed === tests ? green : red + beep;
+      log(color + (title = "" + passed + "/" + tests + " Passed (" + time + " ms).") + endColor + endLine);
+      if (global.document) {
+        document.title = title;
+      }
+      return log(endLine);
+    }
+  };
+};
+
+exports.test = function() {
+  var assert, tests;
+  assert = {
+    equal: function(a, b) {
+      if (!a == b) {
+        throw new Error("" + a + " != " + b);
+      }
+    }
+  };
+  tests = {
+    alpha: function() {
+      throw "Failure";
+    },
+    beta: function() {},
+    charlie: function() {
+      return "Return value";
+    }
+  };
+  runTest('fail', (function() {
+    throw 'Failure';
+  }), function(name, error, result) {
+    assert.equal(name, 'fail');
+    assert.equal(error, 'Failure');
+    return assert.equal(result, null);
+  });
+  runTest('pass', (function() {}), function(name, error, result) {
+    assert.equal(name, 'pass');
+    assert.equal(error, null);
+    return assert.equal(result, null);
+  });
+  runTest('warn', (function() {
+    return 'warning';
+  }), function(name, error, result) {
+    assert.equal(name, 'warn');
+    assert.equal(error, null);
+    return assert.equal(result, 'warning');
+  });
+};
+
+if (require.main === module) {
+  np = require('path');
+  args = process.argv.slice(2).map(function(x) {
+    return x.replace(/\\/g, '\/');
+  });
+  if (args.length < 1) {
+    console.log("Usage: tester manifestFile");
+    return;
+  }
+  manifestFile = args[0];
+  utility = require('../builder/utility');
+  manifest = JSON.parse(utility.read(manifestFile));
+  modules = {};
+  _ref = manifest.files;
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    file = _ref[_i];
+    moduleId = np.join(process.cwd(), np.dirname(manifestFile), file);
+    modules[file] = moduleId;
+  }
+  console.log("------------------------------------------------------");
+  runTests(modules);
+}
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/browser/tester',_ion_browser_tester_);
+    else
+      _ion_browser_tester_.call(this, module, exports, require);
+  }
+  else {
+    _ion_browser_tester_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_compiler_astFunctions_ = function(module,exports,require){'use strict';
+const addStatement = exports.addStatement = function (node, statement, index, offset) {
+        let body = node.body;
+        if (body.type === 'BlockStatement') {
+            body = body.body;
+        } else if (!Array.isArray(body)) {
+            node.body = {
+                type: 'BlockStatement',
+                body: body = [node.body]
+            };
+        }
+        if (!(index != null)) {
+            index = 0;
+        } else if (index.type != null) {
+            index = body.indexOf(index) + (offset != null ? offset : 1);
+        }
+        index = Math.max(0, Math.min(index, body.length));
+        body.splice(index, 0, statement);
+    }, forEachDestructuringAssignment = exports.forEachDestructuringAssignment = function (pattern, expression, callback) {
+        if (pattern.type === 'Identifier') {
+            callback(pattern, expression);
+        } else if (pattern.properties != null) {
+            {
+                let _ref = pattern.properties;
+                for (let _i = 0; _i < _ref.length; _i++) {
+                    let _ref2 = _ref[_i];
+                    let key = _ref2.key;
+                    let value = _ref2.value;
+                    forEachDestructuringAssignment(value, {
+                        type: 'MemberExpression',
+                        object: expression,
+                        property: key,
+                        computed: key.type !== 'Identifier'
+                    }, callback);
+                }
+            }
+        } else if (pattern.elements != null) {
+            {
+                let _ref = pattern.elements;
+                for (let _i = 0; _i < _ref.length; _i++) {
+                    let index = _i;
+                    let value = _ref[_i];
+                    forEachDestructuringAssignment(value, {
+                        type: 'MemberExpression',
+                        object: expression,
+                        property: {
+                            type: 'Literal',
+                            value: index
+                        },
+                        computed: true
+                    }, callback);
+                }
+            }
+        }
+    };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/astFunctions',_ion_compiler_astFunctions_);
+    else
+      _ion_compiler_astFunctions_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_astFunctions_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_compiler_common_ = function(module,exports,require){'use strict';
+const lineDelimiter = '\n', isEmpty = function (s) {
+        return !(s != null) || s.length === 0 || (s.trim != null ? s.trim().length : void 0) === 0;
+    };
+const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdentToken = '}}}}', splitLines = exports.splitLines = function (s) {
+        return s.split(lineDelimiter);
+    }, joinLines = exports.joinLines = function (array) {
+        return array.join(lineDelimiter);
+    }, getIndent = exports.getIndent = function (s, regex) {
+        regex = regex != null ? regex : /^([ ]*)/;
+        return (regex.exec(s) != null ? regex.exec(s)[1].length : void 0) != null ? regex.exec(s)[1].length : Number.MAX_VALUE;
+    }, unindentString = exports.unindentString = function (s, sourceMapping) {
+        let lines = splitLines(s.trimRight());
+        let minIndent = unindentLines(lines);
+        if (sourceMapping != null) {
+            sourceMapping.columnOffset = minIndent;
+        }
+        return joinLines(lines);
+    }, getMinIndent = exports.getMinIndent = function (lines, regex) {
+        let minIndent = Number.MAX_VALUE;
+        for (let _i = 0; _i < lines.length; _i++) {
+            let line = lines[_i];
+            if (typeof line === 'string' && !isEmpty(line)) {
+                minIndent = Math.min(minIndent, getIndent(line, regex));
+            }
+        }
+        return minIndent;
+    }, unindentLines = exports.unindentLines = function (lines) {
+        let minIndent = getMinIndent(lines);
+        for (let _i = 0; _i < lines.length; _i++) {
+            let i = _i;
+            let line = lines[_i];
+            if (typeof line === 'string') {
+                lines[i] = isEmpty(line) ? '' : line.substring(minIndent);
+            }
+        }
+        return minIndent;
+    };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/common',_ion_compiler_common_);
+    else
+      _ion_compiler_common_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_common_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_compiler_index_ = function(module,exports,require){'use strict';
+const makePrettyError = function (e, source, id) {
+    if (typeof e.line === 'number' && typeof e.column === 'number' && e.line > 0 && e.column > 0) {
+        let line = source.split('\n')[e.line - 1];
+        let caret = '^';
+        for (let i = 1; i < e.column; i++) {
+            caret = ' ' + caret;
+        }
+        let newMessage = '' + (id != null ? id : '(anonymous)') + ':' + e.line + ':' + e.column + ': ' + e.message + '\n' + line + '\n' + caret;
+        e.originalMessage = e.message;
+        e.message = newMessage;
+        e.stack = newMessage;
+    }
+};
+const parse = exports.parse = function (content, options) {
+        if (options == null)
+            options = {};
+        options.generate = false;
+        return compile(content, options);
+    }, compile = exports.compile = function (content, options) {
+        if (options == null)
+            options = {};
+        options.loc = options.loc != null ? options.loc : true;
+        const preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('escodegen');
+        let sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), preprocessed = result, sourceLocationsFixed = false;
+        try {
+            result = parser.parse(result, options != null ? options : {});
+            if (options.loc) {
+                result.loc.source = content;
+            }
+            result = preprocessor.fixSourceLocations(result, sourceMapping);
+            sourceLocationsFixed = true;
+            if (options.postprocess !== false) {
+                result = postprocessor.postprocess(result, options);
+                if ((options != null ? options.generate : void 0) !== false) {
+                    result = escodegen.generate(result);
+                }
+            }
+        } catch (e) {
+            if (!sourceLocationsFixed) {
+                preprocessor.fixSourceLocation(e, sourceMapping);
+            }
+            makePrettyError(e, content, options.id);
+            throw e;
+        }
+        return result;
+    };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/index',_ion_compiler_index_);
+    else
+      _ion_compiler_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_index_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_compiler_nodes_ = function(module,exports,require){'use strict';
+const BlockStatement = exports.BlockStatement = {
+        isBlock: true,
+        newScope: true
+    }, Program = exports.Program = {
+        isBlock: true,
+        newScope: true,
+        reactive: false
+    }, FunctionExpression = exports.FunctionExpression = {
+        isFunction: true,
+        paramKind: 'let',
+        newScope: true,
+        shadow: true,
+        reactive: false
+    }, FunctionDeclaration = exports.FunctionDeclaration = FunctionExpression, Template = exports.Template = {
+        isFunction: true,
+        paramKind: 'const',
+        newScope: true,
+        shadow: true,
+        reactive: true
+    }, ForStatement = exports.ForStatement = {
+        newScope: true,
+        allowedInReactive: false
+    }, ForInStatement = exports.ForInStatement = { newScope: true }, ForOfStatement = exports.ForOfStatement = { newScope: true }, ExportStatement = exports.ExportStatement = { allowedInReactive: false }, ClassExpression = exports.ClassExpression = { allowedInReactive: false }, ThrowStatement = exports.ThrowStatement = { allowedInReactive: false }, TryStatement = exports.TryStatement = { allowedInReactive: false };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/nodes',_ion_compiler_nodes_);
+    else
+      _ion_compiler_nodes_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_nodes_.call(this);
+  }
+}).call(this)
 void (function(){var _ion_compiler_parser_ = function(module,exports,require){module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
@@ -13072,3 +13687,5816 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     _ion_compiler_parser_.call(this);
   }
 }).call(this)
+void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isSuperExpression, javascriptExpressions, namedFunctions, nodeToLiteral, nodejsModules, nodes, nullExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
+
+traverse = require('./traverseAst').traverse;
+
+basicTraverse = require('./traverse').traverse;
+
+_ref = require('./astFunctions'), addStatement = _ref.addStatement, forEachDestructuringAssignment = _ref.forEachDestructuringAssignment;
+
+nodes = require('./nodes');
+
+ion = require('../');
+
+undefinedExpression = Object.freeze({
+  type: 'UnaryExpression',
+  argument: {
+    type: 'Literal',
+    value: 0
+  },
+  operator: 'void',
+  prefix: true
+});
+
+nullExpression = Object.freeze({
+  type: 'Literal',
+  value: null
+});
+
+ionExpression = Object.freeze({
+  type: 'Identifier',
+  name: 'ion'
+});
+
+thisExpression = Object.freeze({
+  type: 'ThisExpression'
+});
+
+getPathExpression = function(path) {
+  var i, result, step, steps, _i, _len;
+  steps = path.split('.');
+  if (steps[0] === 'this') {
+    result = {
+      type: 'ThisExpression'
+    };
+  } else {
+    result = {
+      type: 'Identifier',
+      name: steps[0]
+    };
+  }
+  for (i = _i = 0, _len = steps.length; _i < _len; i = ++_i) {
+    step = steps[i];
+    if (i > 0) {
+      result = {
+        type: 'MemberExpression',
+        object: result,
+        property: {
+          type: 'Identifier',
+          name: step
+        }
+      };
+    }
+  }
+  return result;
+};
+
+isFunctionNode = function(node) {
+  var _ref1, _ref2;
+  return (_ref1 = (_ref2 = nodes[node != null ? node.type : void 0]) != null ? _ref2.isFunction : void 0) != null ? _ref1 : false;
+};
+
+nodeToLiteral = function(object) {
+  var item, key, node, value;
+  node = null;
+  if ((object != null ? object.toLiteral : void 0) != null) {
+    node = object != null ? object.toLiteral() : void 0;
+  } else if (Array.isArray(object)) {
+    node = {
+      type: 'ArrayExpression',
+      elements: (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = object.length; _i < _len; _i++) {
+          item = object[_i];
+          _results.push(nodeToLiteral(item));
+        }
+        return _results;
+      })()
+    };
+  } else if ((object != null ? object.constructor : void 0) === Object) {
+    node = {
+      type: 'ObjectExpression',
+      properties: []
+    };
+    for (key in object) {
+      value = object[key];
+      if (value !== void 0) {
+        node.properties.push({
+          key: {
+            type: 'Identifier',
+            name: key
+          },
+          value: nodeToLiteral(value),
+          kind: 'init'
+        });
+      }
+    }
+  } else {
+    node = {
+      type: 'Literal',
+      value: object
+    };
+  }
+  return node;
+};
+
+block = function(node) {
+  if (node.type !== 'BlockStatement') {
+    node = {
+      type: 'BlockStatement',
+      body: [node]
+    };
+  }
+  return node;
+};
+
+extractForLoopRightVariable = function(node, context) {
+  var ref, right;
+  if (context.reactive) {
+    return;
+  }
+  if (node.type === 'ForOfStatement' || node.type === 'ForInStatement' && node.left.declarations.length > 1) {
+    if (node.left.declarations.length > 2) {
+      throw context.error("too many declarations", node.left.declarations[2]);
+    }
+    right = node.right;
+    if (right.type !== "Identifier") {
+      ref = context.getNewInternalIdentifier();
+      node.right = ref;
+      return context.replace({
+        type: "BlockStatement",
+        body: [
+          {
+            type: "VariableDeclaration",
+            declarations: [
+              {
+                type: "VariableDeclarator",
+                id: ref,
+                init: right
+              }
+            ],
+            kind: node.left.kind
+          }, node
+        ]
+      });
+    }
+  }
+};
+
+createForInLoopValueVariable = function(node, context) {
+  var valueDeclarator;
+  if (context.reactive) {
+    return;
+  }
+  if (node.type === 'ForInStatement' && node.left.declarations.length > 1) {
+    valueDeclarator = node.left.declarations[1];
+    return context.addVariable({
+      id: valueDeclarator.id,
+      init: {
+        type: 'MemberExpression',
+        computed: true,
+        object: node.right,
+        property: node.left.declarations[0].id
+      }
+    });
+  }
+};
+
+convertForInToForLength = function(node, context) {
+  var loopIndex, userIndex, _ref1;
+  if (context.reactive) {
+    return;
+  }
+  if (node.type === 'ForOfStatement') {
+    userIndex = (_ref1 = node.left.declarations[1]) != null ? _ref1.id : void 0;
+    loopIndex = context.getNewInternalIdentifier("_i");
+    addStatement(node, {
+      type: "VariableDeclaration",
+      declarations: [
+        {
+          type: "VariableDeclarator",
+          id: node.left.declarations[0].id,
+          init: {
+            type: "MemberExpression",
+            object: node.right,
+            property: loopIndex,
+            computed: true
+          }
+        }
+      ],
+      kind: node.left.kind
+    });
+    if (userIndex != null) {
+      addStatement(node, {
+        type: "VariableDeclaration",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: userIndex,
+            init: loopIndex
+          }
+        ],
+        kind: node.left.kind
+      });
+    }
+    return context.replace({
+      type: 'ForStatement',
+      init: {
+        type: "VariableDeclaration",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: loopIndex,
+            init: {
+              type: "Literal",
+              value: 0
+            }
+          }
+        ],
+        kind: 'let'
+      },
+      test: {
+        type: "BinaryExpression",
+        operator: "<",
+        left: loopIndex,
+        right: {
+          type: "MemberExpression",
+          object: node.right,
+          property: {
+            type: "Identifier",
+            name: "length"
+          },
+          computed: false
+        }
+      },
+      update: {
+        type: "UpdateExpression",
+        operator: "++",
+        argument: loopIndex,
+        prefix: false
+      },
+      body: node.body
+    });
+  }
+};
+
+callFunctionBindForFatArrows = function(node, context) {
+  if (node.type === 'FunctionExpression' && node.bound) {
+    delete node.bound;
+    return context.replace({
+      type: "CallExpression",
+      callee: {
+        type: "MemberExpression",
+        object: node,
+        property: {
+          type: "Identifier",
+          name: "bind"
+        }
+      },
+      "arguments": [
+        {
+          type: "ThisExpression"
+        }
+      ]
+    });
+  }
+};
+
+nodejsModules = function(node, context) {
+  var declarator, _i, _ref1, _results;
+  if (node.type === 'ImportExpression') {
+    node.type = 'CallExpression';
+    node.callee = {
+      type: 'Identifier',
+      name: 'require'
+    };
+    node["arguments"] = [node.name];
+    return delete node.name;
+  } else if (node.type === 'ExportStatement') {
+    if (node.value.type === 'VariableDeclaration') {
+      context.exports = true;
+      context.replace(node.value);
+      _ref1 = node.value.declarations;
+      _results = [];
+      for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
+        declarator = _ref1[_i];
+        if (declarator.init == null) {
+          throw context.error("Export variables must have an init value", declarator);
+        }
+        _results.push(declarator.init = {
+          type: 'AssignmentExpression',
+          operator: '=',
+          left: {
+            type: 'MemberExpression',
+            object: {
+              type: 'Identifier',
+              name: 'exports'
+            },
+            property: declarator.id
+          },
+          right: declarator.init
+        });
+      }
+      return _results;
+    } else {
+      if (context.exports) {
+        throw context.error("default export must be first");
+      }
+      return context.replace({
+        type: 'ExpressionStatement',
+        expression: {
+          type: 'AssignmentExpression',
+          operator: '=',
+          left: {
+            type: 'MemberExpression',
+            object: {
+              type: 'Identifier',
+              name: 'module'
+            },
+            property: {
+              type: 'Identifier',
+              name: 'exports'
+            }
+          },
+          right: {
+            type: 'AssignmentExpression',
+            operator: '=',
+            left: {
+              type: 'Identifier',
+              name: 'exports'
+            },
+            right: node.value
+          }
+        }
+      });
+    }
+  }
+};
+
+destructuringAssignments = function(node, context) {
+  var count, declarator, expression, index, isPattern, pattern, statement, statements, tempId, _i, _j, _k, _len, _len1, _len2, _ref1, _ref2;
+  isPattern = function(node) {
+    return (node.properties != null) || (node.elements != null);
+  };
+  if (isFunctionNode(node)) {
+    _ref1 = node.params;
+    for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
+      pattern = _ref1[index];
+      if (!(isPattern(pattern))) {
+        continue;
+      }
+      tempId = context.getNewInternalIdentifier();
+      node.params[index] = tempId;
+      statements = [];
+      forEachDestructuringAssignment(pattern, tempId, function(id, expression) {
+        return statements.unshift({
+          type: 'VariableDeclaration',
+          declarations: [
+            {
+              type: 'VariableDeclarator',
+              id: id,
+              init: expression
+            }
+          ],
+          kind: 'let'
+        });
+      });
+      for (_j = 0, _len1 = statements.length; _j < _len1; _j++) {
+        statement = statements[_j];
+        context.addStatement(statement);
+      }
+    }
+  }
+  if (node.type === 'VariableDeclaration' && context.isParentBlock()) {
+    _ref2 = node.declarations;
+    for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+      declarator = _ref2[_k];
+      if (!(isPattern(declarator.id))) {
+        continue;
+      }
+      pattern = declarator.id;
+      tempId = context.getNewInternalIdentifier();
+      declarator.id = tempId;
+      count = 0;
+      forEachDestructuringAssignment(pattern, tempId, function(id, expression) {
+        return context.addStatement({
+          type: 'VariableDeclaration',
+          declarations: [
+            {
+              type: 'VariableDeclarator',
+              id: id,
+              init: expression
+            }
+          ],
+          kind: 'let'
+        }, ++count);
+      });
+    }
+  }
+  if (node.type === 'ExpressionStatement' && node.expression.operator === '=') {
+    expression = node.expression;
+    pattern = expression.left;
+    if (isPattern(pattern)) {
+      tempId = context.getNewInternalIdentifier();
+      context.replace({
+        type: 'VariableDeclaration',
+        declarations: [
+          {
+            type: 'VariableDeclarator',
+            id: tempId,
+            init: expression.right
+          }
+        ],
+        kind: 'const'
+      });
+      count = 0;
+      return forEachDestructuringAssignment(pattern, tempId, function(id, expression) {
+        return context.addStatement({
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            operator: '=',
+            left: id,
+            right: expression
+          }
+        }, ++count);
+      });
+    }
+  }
+};
+
+defaultOperatorsToConditionals = function(node, context) {
+  if (node.type === 'BinaryExpression' && (node.operator === '??' || node.operator === '?')) {
+    return context.replace({
+      type: 'ConditionalExpression',
+      test: {
+        type: 'BinaryExpression',
+        operator: '!=',
+        left: node.left,
+        right: node.operator === '??' ? undefinedExpression : nullExpression
+      },
+      consequent: node.left,
+      alternate: node.right
+    });
+  }
+};
+
+defaultAssignmentsToDefaultOperators = function(node, context) {
+  if (node.type === 'AssignmentExpression' && (node.operator === '?=' || node.operator === '??=')) {
+    node.right = {
+      type: 'BinaryExpression',
+      operator: node.operator === '?=' ? '?' : '??',
+      left: node.left,
+      right: node.right
+    };
+    return node.operator = '=';
+  }
+};
+
+existentialExpression = function(node, context) {
+  var existentialChild, existentialChildObject, getExistentialDescendantObject, _ref1;
+  if (node.type === 'UnaryExpression' && node.operator === '?') {
+    context.replace({
+      type: 'BinaryExpression',
+      operator: '!=',
+      left: node.argument,
+      right: nullExpression
+    });
+  }
+  if (node.type === 'MemberExpression' || node.type === 'CallExpression') {
+    getExistentialDescendantObject = function(check) {
+      var result, _ref1;
+      result = null;
+      if (check.type === 'MemberExpression' || check.type === 'CallExpression') {
+        result = getExistentialDescendantObject((_ref1 = check.object) != null ? _ref1 : check.callee);
+        if (check.existential) {
+          if (result == null) {
+            result = check;
+          }
+        }
+      }
+      return result;
+    };
+    existentialChild = getExistentialDescendantObject(node);
+    if (existentialChild != null) {
+      existentialChildObject = (_ref1 = existentialChild.object) != null ? _ref1 : existentialChild.callee;
+      delete existentialChild.existential;
+      return context.replace({
+        type: 'ConditionalExpression',
+        test: {
+          type: 'BinaryExpression',
+          operator: '!=',
+          left: existentialChildObject,
+          right: nullExpression
+        },
+        consequent: node,
+        alternate: undefinedExpression
+      });
+    }
+  }
+};
+
+ensureIonVariable = function(context, required) {
+  if (required == null) {
+    required = true;
+  }
+  return context.ancestorNodes[0].requiresIon = required;
+};
+
+addUseStrictAndRequireIon = {
+  enter: function(node, context) {
+    var d, _i, _len, _ref1, _ref2, _results;
+    if (node.type === 'VariableDeclaration' && ((_ref1 = context.parentNode()) != null ? _ref1.type : void 0) === 'Program') {
+      _ref2 = node.declarations;
+      _results = [];
+      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+        d = _ref2[_i];
+        if (!(d.id.name === 'ion')) {
+          continue;
+        }
+        ensureIonVariable(context, false);
+        break;
+      }
+      return _results;
+    }
+  },
+  exit: function(node, context) {
+    if (node.type === 'Program') {
+      if (node.requiresIon) {
+        delete node.requiresIon;
+        context.addVariable({
+          offset: Number.MIN_VALUE,
+          kind: 'const',
+          id: ionExpression,
+          init: {
+            type: 'ImportExpression',
+            name: {
+              type: 'Literal',
+              value: 'ion'
+            }
+          }
+        });
+      }
+      return node.body.unshift({
+        type: 'ExpressionStatement',
+        expression: {
+          type: 'Literal',
+          value: 'use strict'
+        }
+      });
+    }
+  }
+};
+
+extractForLoopsInnerAndTest = function(node, context) {
+  if (node.type === 'ForInStatement' || node.type === 'ForOfStatement') {
+    if (node.inner != null) {
+      node.inner.body = node.body;
+      node.body = node.inner;
+      delete node.inner;
+    }
+    if (node.test != null) {
+      node.body = block({
+        type: 'IfStatement',
+        test: node.test,
+        consequent: block(node.body)
+      });
+      return delete node.test;
+    }
+  }
+};
+
+arrayComprehensionsToES5 = function(node, context) {
+  var forStatement, tempId;
+  if (node.type === 'ArrayExpression' && (node.value != null) && (node.comprehension != null)) {
+    if (context.reactive) {
+      forStatement = node.comprehension;
+      forStatement.body = {
+        type: 'ExpressionStatement',
+        expression: node.value
+      };
+      return context.replace({
+        type: 'ObjectExpression',
+        objectType: {
+          type: 'ArrayExpression',
+          elements: []
+        },
+        properties: [forStatement]
+      });
+    } else {
+      tempId = context.addVariable({
+        offset: 0,
+        init: {
+          type: 'ArrayExpression',
+          elements: []
+        }
+      });
+      forStatement = node.comprehension;
+      forStatement.body = {
+        type: 'ExpressionStatement',
+        expression: {
+          type: 'CallExpression',
+          callee: {
+            type: 'MemberExpression',
+            object: tempId,
+            property: {
+              type: 'Identifier',
+              name: 'push'
+            }
+          },
+          "arguments": [node.value]
+        }
+      };
+      context.addStatement(0, forStatement);
+      return context.replace(tempId);
+    }
+  }
+};
+
+functionParameterDefaultValuesToES5 = function(node, context) {
+  var defaultValue, index, param, _i, _ref1, _ref2, _results;
+  if (context.reactive) {
+    return;
+  }
+  if (isFunctionNode(node) && (node.params != null) && (node.defaults != null)) {
+    _ref1 = node.params;
+    _results = [];
+    for (index = _i = _ref1.length - 1; _i >= 0; index = _i += -1) {
+      param = _ref1[index];
+      defaultValue = (_ref2 = node.defaults) != null ? _ref2[index] : void 0;
+      if (defaultValue != null) {
+        context.addStatement({
+          type: 'IfStatement',
+          test: {
+            type: 'BinaryExpression',
+            operator: '==',
+            left: param,
+            right: nullExpression
+          },
+          consequent: {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              operator: '=',
+              left: param,
+              right: defaultValue
+            }
+          }
+        });
+        _results.push(node.defaults[index] = void 0);
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  }
+};
+
+typedObjectExpressions = function(node, context) {
+  var addPosition, element, elements, expressionStatement, getExistingObjectIdIfTempVarNotNeeded, grandNode, initialValue, isArray, isSimple, objectId, parentNode, property, statements, _i, _j, _k, _len, _len1, _len2, _ref1, _ref2, _ref3, _ref4;
+  if (context.reactive) {
+    return;
+  }
+  if (node.type === 'ObjectExpression' && node.simple !== true) {
+    isArray = ((_ref1 = node.objectType) != null ? _ref1.type : void 0) === "ArrayExpression";
+    isSimple = true;
+    if (node.properties != null) {
+      _ref2 = node.properties;
+      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+        property = _ref2[_i];
+        if (isArray) {
+          if (property.type !== 'ExpressionStatement') {
+            isSimple = false;
+            break;
+          }
+        } else {
+          if (property.type !== 'Property' || property.computed) {
+            isSimple = false;
+            break;
+          }
+        }
+      }
+    }
+    if (isSimple) {
+      if (isArray) {
+        elements = [];
+        if (node.objectType != null) {
+          _ref3 = node.objectType.elements;
+          for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
+            element = _ref3[_j];
+            elements.push(element);
+          }
+        }
+        _ref4 = node.properties;
+        for (_k = 0, _len2 = _ref4.length; _k < _len2; _k++) {
+          expressionStatement = _ref4[_k];
+          elements.push(expressionStatement.expression);
+        }
+        context.replace({
+          type: "ArrayExpression",
+          elements: elements
+        });
+        return;
+      }
+      if ((node.objectType == null) || (node.objectType.type === 'ObjectExpression' && node.objectType.properties.length === 0)) {
+        delete node.objectType;
+        Object.defineProperty(node, 'simple', {
+          value: true
+        });
+        return;
+      }
+    }
+    if (node.objectType == null) {
+      initialValue = {
+        type: 'ObjectExpression',
+        properties: []
+      };
+    } else if (node.objectType.type === 'ArrayExpression' || node.objectType.type === 'NewExpression' || node.objectType.type === 'ObjectExpression') {
+      initialValue = node.objectType;
+    } else {
+      initialValue = {
+        type: 'NewExpression',
+        callee: node.objectType,
+        "arguments": []
+      };
+    }
+    parentNode = context.parentNode();
+    grandNode = context.ancestorNodes[context.ancestorNodes.length - 2];
+    addPosition = 0;
+    getExistingObjectIdIfTempVarNotNeeded = function(node, parentNode, grandNode) {
+      if (parentNode.type === 'VariableDeclarator') {
+        return parentNode.id;
+      }
+      if (parentNode.type === 'AssignmentExpression' && parentNode.left.type === 'Identifier' && (grandNode != null ? grandNode.type : void 0) === 'ExpressionStatement') {
+        return parentNode.left;
+      }
+      return null;
+    };
+    objectId = getExistingObjectIdIfTempVarNotNeeded(node, parentNode, grandNode);
+    if (objectId != null) {
+      context.replace(initialValue);
+      addPosition = 1;
+    } else {
+      objectId = context.addVariable({
+        offset: 0,
+        init: initialValue
+      });
+      context.replace(objectId);
+    }
+    statements = [];
+    traverse(node.properties, function(subnode, subcontext) {
+      if (subnode.type === 'ObjectExpression' || subnode.type === 'ArrayExpression') {
+        return subcontext.skip();
+      }
+      if (subnode.type === 'Property') {
+        subnode = subcontext.replace({
+          type: 'Property',
+          key: objectId,
+          value: {
+            type: 'ObjectExpression',
+            properties: [subnode],
+            create: false
+          }
+        });
+        subcontext.skip();
+      } else if (subnode.type === 'ExpressionStatement') {
+        if (!isArray) {
+          ensureIonVariable(context);
+        }
+        subnode = subcontext.replace({
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'CallExpression',
+            callee: {
+              type: 'MemberExpression',
+              object: isArray ? objectId : ionExpression,
+              property: {
+                type: 'Identifier',
+                name: isArray ? 'push' : 'add'
+              }
+            },
+            "arguments": isArray ? [subnode.expression] : [objectId, subnode.expression]
+          }
+        });
+        subcontext.skip();
+      }
+      if (subcontext.parentNode() == null) {
+        return statements.push(subnode);
+      }
+    });
+    if (statements.length === 1) {
+      return context.addStatement(statements[0], addPosition);
+    } else {
+      return context.addStatement({
+        type: 'BlockStatement',
+        body: statements
+      }, addPosition);
+    }
+  }
+};
+
+propertyStatements = function(node, context) {
+  var createAssignments, parent;
+  if (context.reactive) {
+    return;
+  }
+  parent = context.parentNode();
+  if (node.type === 'Property' && !(parent.type === 'ObjectExpression' || parent.type === 'ObjectPattern')) {
+    createAssignments = function(path, value) {
+      var newPath, property, _i, _ref1;
+      if (value.type === 'ObjectExpression' && (value.objectType == null)) {
+        _ref1 = value.properties;
+        for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
+          property = _ref1[_i];
+          newPath = {
+            type: 'MemberExpression',
+            object: path,
+            property: property.key,
+            computed: property.computed || property.key.type !== 'Identifier'
+          };
+          createAssignments(newPath, property.value);
+        }
+        if (value.create !== false) {
+          return context.addStatement({
+            type: 'IfStatement',
+            test: {
+              type: 'BinaryExpression',
+              operator: '==',
+              left: path,
+              right: nullExpression
+            },
+            consequent: {
+              type: 'ExpressionStatement',
+              expression: {
+                type: 'AssignmentExpression',
+                operator: '=',
+                left: path,
+                right: {
+                  type: 'ObjectExpression',
+                  properties: []
+                }
+              }
+            }
+          }, 0);
+        }
+      } else {
+        return context.addStatement({
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            operator: '=',
+            left: path,
+            right: value
+          }
+        }, 0);
+      }
+    };
+    createAssignments(node.key, node.value);
+    return context.remove(node);
+  }
+};
+
+classExpressions = function(node, context) {
+  var classExpression, hasIdentifierName, name, properties, property, _base, _i, _len;
+  if (node.type === 'ClassExpression') {
+    ensureIonVariable(context);
+    properties = node.properties;
+    hasIdentifierName = (node.name != null) && !node.computed;
+    if (node.name != null) {
+      name = hasIdentifierName ? {
+        type: 'Literal',
+        value: node.name.name
+      } : node.name;
+      properties = [
+        {
+          type: 'Property',
+          key: {
+            type: 'Identifier',
+            name: 'id'
+          },
+          value: name
+        }
+      ].concat(properties);
+    }
+    if (hasIdentifierName) {
+      for (_i = 0, _len = properties.length; _i < _len; _i++) {
+        property = properties[_i];
+        if (property.key.name === 'constructor') {
+          if ((_base = property.value).id == null) {
+            _base.id = node.name;
+          }
+        }
+      }
+    }
+    classExpression = {
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        object: ionExpression,
+        property: {
+          type: 'Identifier',
+          name: 'defineClass'
+        }
+      },
+      "arguments": [
+        {
+          type: 'ObjectExpression',
+          properties: properties
+        }
+      ].concat(node["extends"])
+    };
+    if (hasIdentifierName) {
+      context.addVariable({
+        id: node.name,
+        kind: 'const',
+        init: classExpression,
+        offset: 0
+      });
+      return context.replace(node.name);
+    } else {
+      return context.replace(classExpression);
+    }
+  }
+};
+
+checkVariableDeclarations = {
+  enter: function(node, context) {
+    var key, parent, variable, _base;
+    if (node.type === 'AssignmentExpression') {
+      if (node.left.type === 'Identifier') {
+        variable = context.getVariableInfo(node.left.name);
+        if (variable == null) {
+          throw context.error("cannot assign to undeclared variable " + node.left.name);
+        }
+        if (variable.kind === 'const') {
+          throw context.error("cannot assign to a const", node.left);
+        }
+      }
+      if (context.reactive) {
+        throw context.error("cannot assign within templates", node);
+      }
+    }
+    if (node.type === 'Identifier') {
+      key = context.key();
+      parent = context.parentNode();
+      if (!(parent.type === 'MemberExpression' && key === 'property' || parent.type === 'Property' && key === 'key')) {
+        return ((_base = context.scope()).usage != null ? (_base = context.scope()).usage : _base.usage = {})[node.name] = node;
+      }
+    }
+  },
+  variable: function(variable, context) {
+    var checkScope, existing, scope, shadow, used, _i, _j, _ref1, _ref2, _ref3, _ref4, _ref5, _results;
+    scope = context.scope();
+    existing = context.getVariableInfo(variable.name);
+    if (existing != null) {
+      shadow = false;
+      _ref1 = context.scopeStack;
+      for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
+        checkScope = _ref1[_i];
+        if (checkScope === (existing != null ? existing.scope : void 0)) {
+          break;
+        }
+        if ((_ref2 = nodes[checkScope.node.type]) != null ? _ref2.shadow : void 0) {
+          shadow = true;
+          break;
+        }
+      }
+      if (!shadow) {
+        throw context.error("Cannot redeclare variable " + variable.name, variable.node);
+      }
+    }
+    _ref3 = context.scopeStack;
+    _results = [];
+    for (_j = _ref3.length - 1; _j >= 0; _j += -1) {
+      checkScope = _ref3[_j];
+      used = (_ref4 = checkScope.usage) != null ? _ref4[variable.name] : void 0;
+      if (used != null) {
+        throw context.error("Cannot use variable '" + variable.name + "' before declaration", used);
+      }
+      if ((_ref5 = nodes[checkScope.node.type]) != null ? _ref5.shadow : void 0) {
+        break;
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  }
+};
+
+isAncestorObjectExpression = function(context) {
+  var ancestor, _i, _ref1;
+  _ref1 = context.ancestorNodes;
+  for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
+    ancestor = _ref1[_i];
+    if (ancestor.type === 'ObjectExpression') {
+      return true;
+    }
+    if (isFunctionNode(ancestor)) {
+      return false;
+    }
+  }
+  return false;
+};
+
+namedFunctions = function(node, context) {
+  var func, _base, _base1, _ref1;
+  if (context.reactive) {
+    return;
+  }
+  if (node.type === 'ExpressionStatement' && node.expression.type === 'FunctionExpression' && (node.expression.id != null)) {
+    func = node.expression;
+    func.type = 'FunctionDeclaration';
+    context.replace(func);
+  }
+  if (node.type === 'VariableDeclarator' && ((_ref1 = node.init) != null ? _ref1.type : void 0) === 'FunctionExpression') {
+    if ((_base = node.init).name == null) {
+      _base.name = node.id;
+    }
+  }
+  if (node.type === 'Property' && node.value.type === 'FunctionExpression' && node.key.type === 'Identifier') {
+    if (node.key.name !== 'constructor') {
+      return (_base1 = node.value).name != null ? (_base1 = node.value).name : _base1.name = node.key;
+    }
+  }
+};
+
+assertStatements = function(node, context) {
+  if (node.type === 'AssertStatement') {
+    return context.replace({
+      type: 'IfStatement',
+      test: {
+        type: 'UnaryExpression',
+        prefix: true,
+        operator: '!',
+        argument: node.expression
+      },
+      consequent: {
+        type: 'ThrowStatement',
+        argument: {
+          type: 'NewExpression',
+          callee: {
+            type: 'Identifier',
+            name: 'Error'
+          },
+          "arguments": [
+            {
+              type: 'Literal',
+              value: "Assertion Failed: (" + node.text + ")"
+            }
+          ]
+        }
+      }
+    });
+  }
+};
+
+isSuperExpression = function(node, context) {
+  var parentNode;
+  parentNode = context.parentNode();
+  if (node.type === 'Identifier' && node.name === 'super' && parentNode.type !== 'CallExpression' && parentNode.type !== 'MemberExpression') {
+    return true;
+  }
+  if (node.type === 'CallExpression' && node.callee.type === 'Identifier' && node.callee.name === 'super') {
+    return true;
+  }
+  return false;
+};
+
+superExpressions = function(node, context) {
+  var applyOrCall, args, classNode, functionNode, functionProperty, isConstructor, superFunction, _ref1, _ref2;
+  if (isSuperExpression(node, context)) {
+    classNode = context.getAncestor(function(node) {
+      return node.type === 'ClassExpression';
+    });
+    functionNode = context.getAncestor(isFunctionNode);
+    functionProperty = context.ancestorNodes[context.ancestorNodes.indexOf(functionNode) - 1];
+    isConstructor = (functionProperty != null ? (_ref1 = functionProperty.key) != null ? _ref1.name : void 0 : void 0) === 'constructor';
+    if ((classNode == null) || !(((functionNode != null ? functionNode.name : void 0) != null) || isConstructor)) {
+      throw context.error("super can only be used within named class functions", node);
+    }
+    args = [
+      {
+        type: 'ThisExpression'
+      }
+    ];
+    if (node.type === 'Identifier') {
+      args.push({
+        type: 'Identifier',
+        name: 'arguments'
+      });
+      applyOrCall = 'apply';
+    } else {
+      args = args.concat(node["arguments"]);
+      applyOrCall = 'call';
+    }
+    superFunction = getPathExpression("" + classNode.name.name + ".super");
+    if (!isConstructor) {
+      superFunction = {
+        type: 'MemberExpression',
+        object: {
+          type: 'MemberExpression',
+          object: superFunction,
+          property: {
+            type: 'Identifier',
+            name: 'prototype'
+          }
+        },
+        property: (_ref2 = functionNode.name) != null ? _ref2 : 'constructor'
+      };
+    }
+    return context.replace({
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        object: superFunction,
+        property: {
+          type: 'Identifier',
+          name: applyOrCall
+        }
+      },
+      "arguments": args
+    });
+  }
+};
+
+spreadExpressions = function(node, context) {
+  var args, finalParameters, getOffsetFromArgumentsLength, index, param, spread, spreadIndex, _i, _len, _ref1;
+  if (isFunctionNode(node)) {
+    spread = null;
+    spreadIndex = null;
+    _ref1 = node.params;
+    for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
+      param = _ref1[index];
+      if (param.type === 'SpreadExpression') {
+        spread = param;
+        spreadIndex = index;
+        break;
+      }
+    }
+    if (spread != null) {
+      node.params[spreadIndex] = {
+        type: 'Identifier',
+        name: "___" + spread.expression.name
+      };
+      args = [
+        {
+          type: 'Identifier',
+          name: 'arguments'
+        }, {
+          type: 'Literal',
+          value: spreadIndex
+        }
+      ];
+      finalParameters = node.params.length - 1 - spreadIndex;
+      if (finalParameters > 0) {
+        getOffsetFromArgumentsLength = function(offset) {
+          return {
+            type: 'BinaryExpression',
+            operator: '-',
+            left: getPathExpression('arguments.length'),
+            right: {
+              type: 'Literal',
+              value: offset
+            }
+          };
+        };
+        args.push(getOffsetFromArgumentsLength(finalParameters));
+        index = node.params.length - 1;
+        while (index > spreadIndex) {
+          param = node.params[index--];
+          context.addStatement({
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              operator: '=',
+              left: param,
+              right: {
+                type: 'MemberExpression',
+                computed: true,
+                object: getPathExpression('arguments'),
+                property: getOffsetFromArgumentsLength(node.params.length - 1 - index)
+              }
+            }
+          });
+        }
+      }
+      return context.addVariable({
+        id: spread.expression,
+        init: {
+          type: 'CallExpression',
+          callee: getPathExpression('Array.prototype.slice.call'),
+          "arguments": args
+        }
+      });
+    }
+  }
+};
+
+createTemplateFunctionClone = function(node, context) {
+  var template;
+  if (isFunctionNode(node) && node.template === true) {
+    if (node.bound) {
+      throw context.error("Templates cannot use the fat arrow (=>) binding syntax", node);
+    }
+    delete node.template;
+    template = ion.clone(node, true);
+    template.type = 'Template';
+    delete template.id;
+    delete template.defaults;
+    delete template.bound;
+    Object.defineProperties(template, {
+      type: {
+        value: 'Template'
+      }
+    });
+    return node.template = template;
+  }
+};
+
+validateTemplateNodes = function(node, context) {
+  var _ref1;
+  if (context.reactive) {
+    if (((_ref1 = nodes[node.type]) != null ? _ref1.allowedInReactive : void 0) === false) {
+      throw context.error(node.type + " not allowed in templates", node);
+    }
+  }
+  if (context.parentReactive()) {
+    if (node.type === 'FunctionDeclaration') {
+      node.type = 'FunctionExpression';
+      return context.replace({
+        type: 'VariableDeclaration',
+        kind: 'const',
+        declarations: [
+          {
+            type: 'VariableDeclarator',
+            id: node.id,
+            init: node
+          }
+        ]
+      });
+    }
+  }
+};
+
+removeLocationInfo = function(node) {
+  return traverse(node, function(node) {
+    if (node.loc != null) {
+      delete node.loc;
+    }
+    return node;
+  });
+};
+
+getExternalIdentifiers = function(node, callback) {
+  traverse(node, function(node, context) {
+    var _ref1, _ref2;
+    if (node.type === 'Identifier') {
+      if (((_ref1 = context.parentNode()) != null ? _ref1.type : void 0) === 'MemberExpression' && context.key() === 'property') {
+        return;
+      }
+      if (((_ref2 = context.parentNode()) != null ? _ref2.type : void 0) === 'Property' && context.key() === 'key') {
+        return;
+      }
+      if (context.getVariableInfo(node.name) != null) {
+        return;
+      }
+      return callback(node);
+    }
+  });
+};
+
+wrapTemplateInnerFunctions = function(node, context) {
+  var contextId, id, name, requiresWrapper, variables;
+  if (context.parentReactive()) {
+    if (node.type === 'FunctionExpression' && (node.toLiteral == null)) {
+      variables = {};
+      getExternalIdentifiers(node, function(id) {
+        var _ref1, _ref2;
+        if (id.name !== ((_ref1 = node.id) != null ? _ref1.name : void 0) && (((_ref2 = context.parentScope()) != null ? _ref2.variables[id.name] : void 0) != null)) {
+          return variables[id.name] = id;
+        }
+      });
+      requiresWrapper = Object.keys(variables).length > 0;
+      if (requiresWrapper) {
+        contextId = context.getNewInternalIdentifier('_context');
+        node.body.body.unshift({
+          type: 'VariableDeclaration',
+          kind: 'const',
+          declarations: (function() {
+            var _results;
+            _results = [];
+            for (name in variables) {
+              id = variables[name];
+              _results.push({
+                type: 'VariableDeclarator',
+                id: id,
+                init: {
+                  type: 'CallExpression',
+                  callee: getPathExpression("" + contextId.name + ".get"),
+                  "arguments": [
+                    {
+                      type: 'Literal',
+                      value: id.name
+                    }
+                  ]
+                }
+              });
+            }
+            return _results;
+          })()
+        });
+        node = {
+          type: 'FunctionExpression',
+          params: [contextId],
+          body: {
+            type: 'BlockStatement',
+            body: [
+              {
+                type: 'ReturnStatement',
+                argument: node
+              }
+            ]
+          }
+        };
+      }
+      node.toLiteral = function() {
+        return this;
+      };
+      return context.replace({
+        type: 'Function',
+        context: requiresWrapper,
+        value: node
+      });
+    }
+  }
+};
+
+createTemplateRuntime = function(node, context) {
+  var args, param, template, templateId, _i, _len, _ref1;
+  if (isFunctionNode(node) && (node.template != null)) {
+    templateId = node.id != null ? node.id : node.id = context.getNewInternalIdentifier('_template');
+    template = removeLocationInfo(node.template);
+    ensureIonVariable(context);
+    args = {
+      type: 'ObjectExpression',
+      properties: []
+    };
+    _ref1 = template.params;
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      param = _ref1[_i];
+      forEachDestructuringAssignment(param, param, function(id) {
+        return args.properties.push({
+          key: id,
+          value: id,
+          kind: 'init'
+        });
+      });
+    }
+    delete template.params;
+    template.body = template.body.body;
+    context.addStatement({
+      type: 'IfStatement',
+      test: {
+        type: 'BinaryExpression',
+        operator: '&&',
+        left: {
+          type: 'BinaryExpression',
+          operator: '!=',
+          left: thisExpression,
+          right: nullExpression
+        },
+        right: {
+          type: 'BinaryExpression',
+          operator: '===',
+          left: getPathExpression('this.constructor'),
+          right: templateId
+        }
+      },
+      consequent: block({
+        type: 'ReturnStatement',
+        argument: {
+          type: 'CallExpression',
+          callee: getPathExpression('ion.createRuntime'),
+          "arguments": [nodeToLiteral(template), args]
+        }
+      })
+    });
+    return delete node.template;
+  }
+};
+
+javascriptExpressions = function(node, context) {
+  var e, errorNode, esprima, expression, message, program, _ref1, _ref2;
+  if (node.type === 'JavascriptExpression') {
+    esprima = require('esprima');
+    try {
+      program = esprima.parse(node.text);
+      expression = program.body[0].expression;
+      return context.replace(expression);
+    } catch (_error) {
+      e = _error;
+      errorNode = ion.clone(node, true);
+      if ((_ref1 = errorNode.loc) != null) {
+        _ref1.start.line += e.lineNumber - 1;
+      }
+      if ((_ref2 = errorNode.loc) != null) {
+        _ref2.start.column += e.column - 1 + "`".length;
+      }
+      message = e.message.substring(e.message.indexOf(':') + 1).trim();
+      throw context.error(message, errorNode);
+    }
+  }
+};
+
+exports.postprocess = function(program, options) {
+  var enter, exit, steps, traversal, variable, _i, _len;
+  steps = [[namedFunctions, superExpressions], [createTemplateFunctionClone, checkVariableDeclarations], [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5], [addUseStrictAndRequireIon], [nodejsModules, destructuringAssignments, spreadExpressions, assertStatements]];
+  for (_i = 0, _len = steps.length; _i < _len; _i++) {
+    traversal = steps[_i];
+    enter = function(node, context) {
+      var handler, step, _j, _len1, _ref1, _results;
+      if (context.options == null) {
+        context.options = options;
+      }
+      _results = [];
+      for (_j = 0, _len1 = traversal.length; _j < _len1; _j++) {
+        step = traversal[_j];
+        if (!(node != null)) {
+          continue;
+        }
+        handler = (_ref1 = step.enter) != null ? _ref1 : (typeof step === 'function' ? step : null);
+        if (handler != null) {
+          handler(node, context);
+          _results.push(node = context.current());
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+    exit = function(node, context) {
+      var handler, step, _j, _ref1, _results;
+      _results = [];
+      for (_j = traversal.length - 1; _j >= 0; _j += -1) {
+        step = traversal[_j];
+        if (!(node != null)) {
+          continue;
+        }
+        handler = (_ref1 = step.exit) != null ? _ref1 : null;
+        if (handler != null) {
+          handler(node, context);
+          _results.push(node = context.current());
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+    variable = function(node, context, kind, name) {
+      var handler, step, _j, _len1, _ref1, _results;
+      _results = [];
+      for (_j = 0, _len1 = traversal.length; _j < _len1; _j++) {
+        step = traversal[_j];
+        if (!(node != null)) {
+          continue;
+        }
+        handler = (_ref1 = step.variable) != null ? _ref1 : null;
+        if (handler != null) {
+          handler(node, context, kind, name);
+          _results.push(node = context.current());
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+    traverse(program, enter, exit, variable);
+  }
+  return program;
+};
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/postprocessor',_ion_compiler_postprocessor_);
+    else
+      _ion_compiler_postprocessor_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_postprocessor_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_compiler_preprocessor_ = function(module,exports,require){var common, fixSourceLocation, fixSourceLocations, getSpace, preprocess;
+
+common = require('./common');
+
+getSpace = function(size) {
+  var i, result, _i;
+  result = [];
+  for (i = _i = 0; 0 <= size ? _i < size : _i > size; i = 0 <= size ? ++_i : --_i) {
+    result.push(" ");
+  }
+  return result.join("");
+};
+
+exports.isMarkdownCommented = function(source) {
+  return /(\n|^)[^\s\n][^\n]*\n(\s*\n)+\s+[^\s\n]/.test(source);
+};
+
+exports.fixSourceLocation = fixSourceLocation = function(location, sourceMapping) {
+  var _ref;
+  if (!location.fixed) {
+    location.fixed = true;
+    location.line = sourceMapping[location.line - 1] + 1;
+    return location.column += (_ref = sourceMapping.columnOffset) != null ? _ref : 0;
+  }
+};
+
+exports.fixSourceLocations = fixSourceLocations = function(program, sourceMapping) {
+  require('./traverseAst').traverse(program, function(node) {
+    var _ref, _ref1;
+    if (((_ref = node.loc) != null ? _ref.start : void 0) != null) {
+      fixSourceLocation(node.loc.start, sourceMapping);
+    }
+    if (((_ref1 = node.loc) != null ? _ref1.end : void 0) != null) {
+      return fixSourceLocation(node.loc.end, sourceMapping);
+    }
+  });
+  return program;
+};
+
+exports.preprocess = preprocess = function(source, sourceMapping) {
+  var baseIndent, comment, indent, indentStack, index, isEmpty, isMarkdownCommented, line, lines, outdent, output, totalIndent, writeLine, _i, _len;
+  isMarkdownCommented = false;
+  baseIndent = isMarkdownCommented ? 1 : 0;
+  totalIndent = 0;
+  indentStack = [];
+  lines = common.splitLines(source);
+  writeLine = function(line, inputIndex) {
+    if (inputIndex != null) {
+      if (sourceMapping != null) {
+        sourceMapping[output.length] = inputIndex;
+      }
+    }
+    return output.push(line);
+  };
+  outdent = function(inputIndex) {
+    var _ref;
+    indentStack.pop();
+    totalIndent = (_ref = indentStack[indentStack.length - 1]) != null ? _ref : 0;
+    if (totalIndent >= baseIndent) {
+      return writeLine(getSpace(totalIndent) + common.outdentToken, inputIndex);
+    }
+  };
+  output = [];
+  for (index = _i = 0, _len = lines.length; _i < _len; index = ++_i) {
+    line = lines[index];
+    indent = common.getIndent(line);
+    isEmpty = line.trim().length === 0;
+    if (!isEmpty) {
+      if (indent > totalIndent) {
+        if (totalIndent >= baseIndent) {
+          writeLine(getSpace(totalIndent) + common.indentToken, index);
+        }
+        totalIndent = indent;
+        indentStack.push(indent);
+      } else {
+        while (indent < totalIndent) {
+          outdent(index);
+        }
+      }
+    }
+    comment = isMarkdownCommented && indent === 0 && !isEmpty;
+    if (!comment) {
+      writeLine(line, index);
+    }
+  }
+  while (indentStack.length > 0) {
+    outdent(lines.length);
+  }
+  return common.unindentString(common.joinLines(output), sourceMapping);
+};
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/preprocessor',_ion_compiler_preprocessor_);
+    else
+      _ion_compiler_preprocessor_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_preprocessor_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_compiler_traverse_ = function(module,exports,require){exports.traverse = function(graph, enterCallback, exitCallback) {
+  var context, removed, result, skip, traverseNode;
+  result = graph;
+  skip = false;
+  removed = 0;
+  context = {
+    path: [],
+    ancestors: [],
+    skip: function() {
+      return skip = true;
+    },
+    key: function() {
+      return this.path[this.path.length - 1];
+    },
+    parent: function() {
+      return this.ancestors[this.ancestors.length - 1];
+    },
+    remove: function(node) {
+      var index, parent;
+      if (node == null) {
+        throw new Error("You must specify the node to remove");
+      }
+      parent = this.parent();
+      if (Array.isArray(parent)) {
+        index = parent.indexOf(node);
+        parent.splice(index, 1);
+        return removed++;
+      } else {
+        return delete parent[this.key()];
+      }
+    },
+    replace: function(value) {
+      var parent;
+      if (value === void 0) {
+        throw new Error("You must specify a replacement value");
+      }
+      parent = this.parent();
+      if (parent != null) {
+        return parent[this.key()] = value;
+      } else {
+        return result = value;
+      }
+    },
+    previous: function() {
+      var _ref;
+      return (_ref = this.parent()) != null ? _ref[this.key() - 1] : void 0;
+    },
+    next: function() {
+      var _ref;
+      return (_ref = this.parent()) != null ? _ref[this.key() + 1] : void 0;
+    },
+    current: function() {
+      var parent;
+      parent = this.parent();
+      if (parent != null) {
+        return parent[this.key()];
+      } else {
+        return result;
+      }
+    }
+  };
+  traverseNode = function(node) {
+    var index, key, newNode, value;
+    if ((node != null) && typeof node === 'object') {
+      if (typeof enterCallback === "function") {
+        enterCallback(node, context);
+      }
+      if (skip) {
+        skip = false;
+      } else {
+        newNode = context.current();
+        if (newNode !== node) {
+          if (typeof exitCallback === "function") {
+            exitCallback(node, context);
+          }
+          node = newNode;
+          if (node != null) {
+            if (typeof enterCallback === "function") {
+              enterCallback(node, context);
+            }
+          }
+        }
+        if ((node != null) && typeof node === 'object') {
+          context.ancestors.push(node);
+          if (Array.isArray(node)) {
+            index = 0;
+            while (index < node.length) {
+              value = node[index];
+              context.path.push(index);
+              traverseNode(value);
+              context.path.pop();
+              index++;
+              if (removed > 0) {
+                index -= removed;
+                removed = 0;
+              }
+            }
+          } else {
+            for (key in node) {
+              value = node[key];
+              context.path.push(key);
+              traverseNode(value);
+              context.path.pop();
+            }
+          }
+          context.ancestors.pop();
+        }
+      }
+      if (node != null) {
+        return typeof exitCallback === "function" ? exitCallback(node, context) : void 0;
+      }
+    }
+  };
+  traverseNode(graph);
+  return result;
+};
+
+exports.test = function() {
+  var graph;
+  graph = {
+    id: 'root',
+    alpha: 1,
+    beta: {
+      id: 'beta',
+      charlie: 2,
+      delta: 3
+    },
+    echo: {
+      id: 'echo',
+      foxtrot: 1
+    }
+  };
+  if (graph !== exports.traverse(graph, function() {})) {
+    throw new Error("traverse should have returned graph");
+  }
+  if (2 !== exports.traverse(graph, function(node, context) {
+    return context.replace(2);
+  })) {
+    throw new Error("traverse should have returned 2");
+  }
+};
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/traverse',_ion_compiler_traverse_);
+    else
+      _ion_compiler_traverse_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_traverse_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_compiler_traverseAst_ = function(module,exports,require){var addStatement, basicTraverse, nodes, trackVariableDeclaration, trackVariableDeclarations;
+
+basicTraverse = require('./traverse');
+
+nodes = require('./nodes');
+
+addStatement = require("./astFunctions").addStatement;
+
+trackVariableDeclaration = function(context, node, kind, name) {
+  var scope, variable;
+  if (name == null) {
+    name = node.name;
+  }
+  scope = context.scope();
+  if (scope == null) {
+    return;
+  }
+  variable = {
+    kind: kind,
+    id: {
+      type: 'Identifier',
+      name: name
+    },
+    name: name,
+    node: node,
+    scope: scope
+  };
+  if (typeof context.variableCallback === "function") {
+    context.variableCallback(variable, context);
+  }
+  return scope.variables[name] = variable;
+};
+
+trackVariableDeclarations = function(context, node, kind) {
+  var declarator, item, _i, _j, _len, _len1, _ref, _results, _results1;
+  if (kind == null) {
+    kind = 'let';
+  }
+  if (Array.isArray(node)) {
+    _results = [];
+    for (_i = 0, _len = node.length; _i < _len; _i++) {
+      item = node[_i];
+      _results.push(trackVariableDeclarations(context, item, kind));
+    }
+    return _results;
+  } else {
+    if (node.type === 'FunctionDeclaration') {
+      kind = 'const';
+      if (node.id != null) {
+        return trackVariableDeclarations(context, node.id, kind);
+      }
+    } else if (node.type === 'VariableDeclaration') {
+      kind = node.kind;
+      _ref = node.declarations;
+      _results1 = [];
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        declarator = _ref[_j];
+        _results1.push(trackVariableDeclarations(context, declarator.id, kind));
+      }
+      return _results1;
+    } else if (node.type === "Identifier") {
+      return trackVariableDeclaration(context, node, kind);
+    } else if (node.type === "ObjectPattern") {
+      return basicTraverse.traverse(node, function(child, newContext) {
+        var name, _ref1;
+        if ((child.key != null) && (child.value != null)) {
+          name = (_ref1 = child.key.value) != null ? _ref1 : child.key.name;
+          trackVariableDeclaration(context, child, kind, name);
+          return newContext.skip();
+        }
+      });
+    } else if (node.type === "ArrayPattern") {
+      return basicTraverse.traverse(node, function(child, newContext) {
+        if (child.type === 'Identifier') {
+          trackVariableDeclaration(context, child, kind);
+          return newContext.skip();
+        }
+      });
+    }
+  }
+};
+
+exports.traverse = function(program, enterCallback, exitCallback, variableCallback) {
+  var ourEnter, ourExit;
+  ourEnter = function(node, context) {
+    var nodeInfo, _ref, _ref1;
+    if (context.variableCallback == null) {
+      context.variableCallback = variableCallback;
+    }
+    if (context.scopeStack == null) {
+      context.scopeStack = [];
+    }
+    if (context.scope == null) {
+      context.scope = function() {
+        return this.scopeStack[this.scopeStack.length - 1];
+      };
+    }
+    if (context.ancestorNodes == null) {
+      context.ancestorNodes = [];
+    }
+    if (context.getAncestor == null) {
+      context.getAncestor = function(predicate) {
+        var ancestor, _i, _ref;
+        _ref = this.ancestorNodes;
+        for (_i = _ref.length - 1; _i >= 0; _i += -1) {
+          ancestor = _ref[_i];
+          if (predicate(ancestor)) {
+            return ancestor;
+          }
+        }
+        return null;
+      };
+    }
+    if (context.rootNode == null) {
+      context.rootNode = function() {
+        return this.ancestorNodes[0];
+      };
+    }
+    if (context.parentNode == null) {
+      context.parentNode = function() {
+        return this.ancestorNodes[this.ancestorNodes.length - 1];
+      };
+    }
+    if (context.parentScope == null) {
+      context.parentScope = function() {
+        return this.scopeStack[this.scopeStack.length - 2];
+      };
+    }
+    if (context.parentReactive == null) {
+      context.parentReactive = function() {
+        return this._reactiveStack[this._reactiveStack.length - 1];
+      };
+    }
+    if (context.isParentBlock == null) {
+      context.isParentBlock = function() {
+        var _ref, _ref1, _ref2;
+        return (_ref = (_ref1 = nodes[(_ref2 = this.parentNode()) != null ? _ref2.type : void 0]) != null ? _ref1.isBlock : void 0) != null ? _ref : false;
+      };
+    }
+    if (context.getVariableInfo == null) {
+      context.getVariableInfo = function(id) {
+        return this.scope().variables[id];
+      };
+    }
+    if (context.getNewInternalIdentifier == null) {
+      context.getNewInternalIdentifier = function(prefix) {
+        var check, i;
+        if (prefix == null) {
+          prefix = '_ref';
+        }
+        i = 0;
+        while (++i) {
+          check = prefix + (i === 1 ? "" : i);
+          if (this.getVariableInfo(check) === void 0) {
+            return {
+              type: 'Identifier',
+              name: check
+            };
+          }
+        }
+      };
+    }
+    if (context.getAncestorChildOf == null) {
+      context.getAncestorChildOf = function(ancestor) {
+        var index, _ref;
+        index = this.ancestorNodes.indexOf(ancestor);
+        if (index >= 0) {
+          return (_ref = this.ancestorNodes[index + 1]) != null ? _ref : this.current();
+        } else {
+          return void 0;
+        }
+      };
+    }
+    if (context.getSharedVariableId == null) {
+      context.getSharedVariableId = function(name) {
+        var _ref, _ref1;
+        return (_ref = (_ref1 = this.getVariableInfo(name)) != null ? _ref1.id : void 0) != null ? _ref : this.addVariable({
+          id: name,
+          offset: Number.MIN_VALUE
+        });
+      };
+    }
+    if (context.addStatement == null) {
+      context.addStatement = function(statement, offset, addToNode) {
+        var _ref;
+        if (typeof statement === 'number') {
+          _ref = [offset, statement], statement = _ref[0], offset = _ref[1];
+        }
+        if (addToNode == null) {
+          addToNode = this.scope().node;
+        }
+        if (statement.type === 'VariableDeclaration' || statement.type === 'FunctionDeclaration') {
+          trackVariableDeclarations(context, statement);
+        }
+        return addStatement(addToNode, statement, this.getAncestorChildOf(addToNode), offset);
+      };
+    }
+    if (context.addVariable == null) {
+      context.addVariable = function(options) {
+        var variable;
+        variable = this.getVariable(options);
+        this.addStatement(variable, options.offset);
+        return variable.declarations[0].id;
+      };
+    }
+    if (context.getVariable == null) {
+      context.getVariable = function(options) {
+        var variable;
+        if (options == null) {
+          options = {};
+        }
+        if (typeof options.id === 'string') {
+          options.id = {
+            type: 'Identifier',
+            name: options.id
+          };
+        }
+        if (options.id == null) {
+          options.id = this.getNewInternalIdentifier();
+        }
+        if (options.kind == null) {
+          options.kind = 'let';
+        }
+        variable = {
+          type: "VariableDeclaration",
+          declarations: [
+            {
+              type: "VariableDeclarator",
+              id: options.id,
+              init: options.init
+            }
+          ],
+          kind: options.kind
+        };
+        return variable;
+      };
+    }
+    context.error = function(message, node) {
+      var e, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+      if (node == null) {
+        node = this.current();
+      }
+      e = new Error(message);
+      e.line = (_ref = node.loc) != null ? (_ref1 = _ref.start) != null ? _ref1.line : void 0 : void 0;
+      e.column = ((_ref2 = node.loc) != null ? (_ref3 = _ref2.start) != null ? _ref3.column : void 0 : void 0) + 1;
+      e.lineEnd = (_ref4 = node.loc) != null ? (_ref5 = _ref4.end) != null ? _ref5.line : void 0 : void 0;
+      e.columnEnd = ((_ref6 = node.loc) != null ? (_ref7 = _ref6.end) != null ? _ref7.column : void 0 : void 0) + 1;
+      return e;
+    };
+    if (node.type != null) {
+      nodeInfo = nodes[node.type];
+      if ((nodeInfo != null ? nodeInfo.reactive : void 0) != null) {
+        (context._reactiveStack != null ? context._reactiveStack : context._reactiveStack = []).push(context.reactive);
+        context.reactive = nodeInfo.reactive;
+      }
+      if (nodeInfo != null ? nodeInfo.newScope : void 0) {
+        context.scopeStack.push({
+          variables: Object.create((_ref = (_ref1 = context.scope()) != null ? _ref1.variables : void 0) != null ? _ref : {}),
+          node: node
+        });
+      }
+      if (Array.isArray(node.body)) {
+        trackVariableDeclarations(context, node.body);
+      }
+      if (nodeInfo != null ? nodeInfo.isFunction : void 0) {
+        trackVariableDeclarations(context, node.params, nodeInfo.paramKind);
+      }
+      if (typeof enterCallback === "function") {
+        enterCallback(node, context);
+      }
+      return context.ancestorNodes.push(node);
+    }
+  };
+  ourExit = function(node, context) {
+    var nodeInfo;
+    if (node.type != null) {
+      nodeInfo = nodes[node.type];
+      if ((nodeInfo != null ? nodeInfo.reactive : void 0) != null) {
+        context.reactive = context._reactiveStack.pop();
+      }
+      context.ancestorNodes.pop();
+      if (typeof exitCallback === "function") {
+        exitCallback(node, context);
+      }
+      if (nodeInfo != null ? nodeInfo.newScope : void 0) {
+        return context.scopeStack.pop();
+      }
+    }
+  };
+  return basicTraverse.traverse(program, ourEnter, ourExit);
+};
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/traverseAst',_ion_compiler_traverseAst_);
+    else
+      _ion_compiler_traverseAst_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_traverseAst_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_index_ = function(module,exports,require){'use strict';
+const mergePatch = require('./mergePatch'), primitive = {
+        string: true,
+        number: true,
+        boolean: true,
+        function: true
+    }, isPrimitive = function (object) {
+        return !(object != null) || primitive[typeof object] || false;
+    }, normalizeProperty = function (property) {
+        if (typeof property === 'function') {
+            property = {
+                writable: false,
+                value: property
+            };
+        } else if (isPrimitive(property) || Array.isArray(property)) {
+            property = { value: property };
+        }
+        if (!(property.get != null) && !(property.set != null) && !property.hasOwnProperty('value')) {
+            property.value = void 0;
+        }
+        if (property.hasOwnProperty('value')) {
+            property.writable = property.writable != null ? property.writable : true;
+        }
+        return property;
+    }, normalizeProperties = function (properties) {
+        if (properties == null)
+            properties = {};
+        for (let name in properties) {
+            let property = properties[name];
+            properties[name] = normalizeProperty(property);
+        }
+        return properties;
+    }, variableArgConstructs = [
+        function (type, a) {
+            return new type();
+        },
+        function (type, a) {
+            return new type(a[0]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
+        }
+    ];
+const patch = exports.patch = function (target, values) {
+        return mergePatch.apply(target, values);
+    }, create = exports.create = function (type, args) {
+        return variableArgConstructs[args.length](type, args);
+    }, createRuntime = exports.createRuntime = function (ast, args) {
+        const Context = require('./runtime/Context');
+        const context = new Context();
+        if (args != null) {
+            for (let name in args) {
+                let value = args[name];
+                context.setVariable(name, value);
+            }
+        }
+        return context.createRuntime(ast);
+    }, nextTick = exports.nextTick = (this.process != null ? this.process.nextTick : void 0) != null ? this.process.nextTick : function (fn) {
+        return setTimeout(fn, 0);
+    }, clone = exports.clone = function (object, deep) {
+        if (deep == null)
+            deep = false;
+        if ((object != null ? object.constructor : void 0) === Object) {
+            let _ref = {};
+            for (let key in object) {
+                let value = object[key];
+                _ref[key] = deep ? clone(value, deep) : value;
+            }
+            return _ref;
+        } else if (Array.isArray(object)) {
+            let _ref = [];
+            for (let _i = 0; _i < object.length; _i++) {
+                let item = object[_i];
+                _ref.push(deep ? clone(item, deep) : item);
+            }
+            return _ref;
+        } else {
+            return object;
+        }
+    }, observe = exports.observe = function (object, observer, property) {
+        if (object != null && observer != null && Object.observe != null && typeof object === 'object') {
+            Object.observe(object, observer);
+            object.addEventListener != null ? object.addEventListener('change', observer) : void 0;
+        }
+        object != null ? object.onObserved != null ? object.onObserved(observer, property) : void 0 : void 0;
+    }, unobserve = exports.unobserve = function (object, observer, property) {
+        if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
+            Object.unobserve(object, observer);
+            object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
+        }
+        object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
+    }, add = exports.add = function (container, item) {
+        if (container.nodeType === 1) {
+            if (typeof item === 'string') {
+                item = document.createTextNode(item);
+            }
+            container.appendChild(item);
+        } else if (container.push != null) {
+            container.push(item);
+        } else {
+            container.add(item);
+        }
+        item.onAdded != null ? item.onAdded(container) : void 0;
+        return function () {
+            if (container.nodeType === 1) {
+                container.removeChild(item);
+            } else if (container.lastIndexOf != null && container.removeAt != null) {
+                let index = container.lastIndexOf(item);
+                if (index >= 0) {
+                    container.removeAt(index);
+                }
+            } else if (typeof container.remove === 'function') {
+                container.remove(item);
+            } else {
+                remove(container, item);
+            }
+            item.onRemoved != null ? item.onRemoved(container) : void 0;
+        };
+    }, remove = exports.remove = function (array, item) {
+        if (array != null) {
+            let index = array.lastIndexOf(item);
+            if (index >= 0) {
+                array.splice(index, 1);
+                return index;
+            }
+        }
+        return;
+    }, defineProperties = exports.defineProperties = function (object, properties) {
+        return Object.defineProperties(object, normalizeProperties(properties));
+    }, defineClass = exports.defineClass = function (___definitions) {
+        let definitions = Array.prototype.slice.call(arguments, 0);
+        const classDefinition = definitions[0];
+        if (definitions[1] === void 0) {
+            definitions[1] = require('./Object');
+        }
+        classDefinition.super = definitions[1];
+        const name = classDefinition.name != null ? classDefinition.name : classDefinition.id != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i) != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i)[1] : void 0 : void 0;
+        if (!(name != null)) {
+            throw new Error('missing name property');
+        }
+        let classFunction;
+        if (classDefinition.hasOwnProperty('constructor')) {
+            classFunction = classDefinition.constructor;
+        } else if (classDefinition.super != null) {
+            classFunction = eval('(function ' + name + '() { ' + name + '.super.apply(this, arguments); })');
+        } else {
+            classFunction = eval('(function ' + name + '() {})');
+        }
+        for (let i = definitions.length - 1; i >= 0; i--) {
+            const definition = definitions[i];
+            for (let key in definition) {
+                let value = definition[key];
+                if (key !== 'test' || i === 0) {
+                    classFunction[key] = mergePatch.apply(classFunction[key], value);
+                }
+            }
+        }
+        if (classFunction.properties != null) {
+            defineProperties(classFunction.prototype, classFunction.properties);
+        }
+        return classFunction;
+    }, get = exports.get = function (object, property) {
+        if (!(object != null && property != null)) {
+            return void 0;
+        }
+        if (typeof object.get === 'function') {
+            return object.get(property);
+        } else {
+            return object[property];
+        }
+    }, set = exports.set = function (object, property, value) {
+        if (object != null && property != null) {
+            if (typeof object.set === 'function') {
+                object.set(property, value);
+            } else if (value === void 0) {
+                delete object[property];
+            } else {
+                object[property] = value;
+            }
+            value != null ? value.onSet != null ? value.onSet(object, property) : void 0 : void 0;
+        }
+        return value;
+    }, test = exports.test = {
+        defineClass: function () {
+            const Foo = defineClass({
+                    id: 'Foo',
+                    constructor: function (number) {
+                        this.number = number;
+                    },
+                    properties: {
+                        getValue: function () {
+                            return this.number;
+                        }
+                    }
+                });
+            if (!(new Foo(2).getValue() === 2))
+                throw new Error('Assertion Failed: (new Foo(2).getValue() is 2)');
+        },
+        defineProperties: {
+            'should allow primitive values': function () {
+                const object = {};
+                const result = defineProperties(object, {
+                        f: function () {
+                            return 'function';
+                        },
+                        i: 2,
+                        b: true,
+                        a: [],
+                        s: 'hello'
+                    });
+                if (!(object === result))
+                    throw new Error('Assertion Failed: (object is result)');
+                if (!(typeof object.f === 'function'))
+                    throw new Error('Assertion Failed: (typeof object.f is \'function\')');
+                if (!(object.f() === 'function'))
+                    throw new Error('Assertion Failed: (object.f() is \'function\')');
+                if (!(object.i === 2))
+                    throw new Error('Assertion Failed: (object.i is 2)');
+                if (!(object.b === true))
+                    throw new Error('Assertion Failed: (object.b is true)');
+                if (!Array.isArray(object.a))
+                    throw new Error('Assertion Failed: (Array.isArray(object.a))');
+                if (!(object.s === 'hello'))
+                    throw new Error('Assertion Failed: (object.s is \'hello\')');
+            }
+        }
+    };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/index',_ion_index_);
+    else
+      _ion_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_index_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
+const ion = require('./'), isObject = function (a) {
+        return a != null && typeof a === 'object';
+    };
+const apply = exports.apply = function (target, values, deleteNull) {
+        if (deleteNull == null)
+            deleteNull = true;
+        if ((values != null ? values.constructor : void 0) !== Object) {
+            return values;
+        }
+        if (!isObject(target)) {
+            target = {};
+        }
+        for (let key in values) {
+            let value = values[key];
+            let patchedValue = apply(target[key], value, deleteNull);
+            if (deleteNull && !(value != null)) {
+                delete target[key];
+            } else {
+                target[key] = patchedValue;
+            }
+        }
+        return target;
+    }, combine = exports.combine = function (patch1, patch2) {
+        return apply(patch1, patch2, false);
+    }, watch = exports.watch = function (object, handler, callInitial) {
+        if (callInitial == null)
+            callInitial = true;
+        if (!isObject(object)) {
+            throw new Error('Cannot watch: #{object}');
+        }
+        let subWatchers = {};
+        let pendingPatch = null;
+        let processPatch = function (patchValues) {
+            for (let name in patchValues) {
+                subWatchers[name] != null ? subWatchers[name]() : void 0;
+                let value = object[name];
+                if (isObject(value)) {
+                    (function (name) {
+                        let subHandler = function (patch) {
+                            let basePatch = {};
+                            basePatch[name] = patch;
+                            if (pendingPatch != null) {
+                                pendingPatch = combine(pendingPatch, basePatch);
+                            } else {
+                                handler(basePatch);
+                            }
+                        };
+                        subWatchers[name] = watch(value, subHandler, false);
+                    }(name));
+                }
+            }
+        };
+        let watcher = function (changes) {
+            try {
+                pendingPatch = {};
+                for (let _i = 0; _i < changes.length; _i++) {
+                    let change = changes[_i];
+                    pendingPatch[change.name] = object[change.name] != null ? object[change.name] : null;
+                }
+                processPatch(pendingPatch);
+                ion.nextTick(function () {
+                    handler(pendingPatch);
+                    pendingPatch = null;
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        };
+        processPatch(object);
+        ion.observe(object, watcher);
+        return function () {
+            ion.unobserve(object, watcher);
+            for (let key in subWatchers) {
+                let value = subWatchers[key];
+                value();
+            }
+        };
+    }, diff = exports.diff = function (oldValue, newValue) {
+        if (oldValue === newValue) {
+            return void 0;
+        }
+        if (!(oldValue != null && newValue != null && typeof newValue === 'object' && typeof oldValue === 'object')) {
+            return newValue != null ? newValue : null;
+        }
+        let patch = void 0;
+        for (let name in oldValue) {
+            if (oldValue.hasOwnProperty(name)) {
+                let propertyDiff = diff(oldValue[name], newValue[name]);
+                if (propertyDiff !== void 0) {
+                    patch = patch != null ? patch : {};
+                    patch[name] = propertyDiff;
+                }
+            }
+        }
+        for (let name in newValue) {
+            if (newValue.hasOwnProperty(name) && !oldValue.hasOwnProperty(name)) {
+                patch = patch != null ? patch : {};
+                patch[name] = newValue[name];
+            }
+        }
+        return patch;
+    }, isChange = exports.isChange = function (oldValue, newValue) {
+        if (oldValue === newValue) {
+            return false;
+        }
+        if (!(oldValue != null && newValue != null && typeof newValue === 'object' && typeof oldValue === 'object')) {
+            return true;
+        }
+        for (let name in newValue) {
+            if (isChange(oldValue[name], newValue[name])) {
+                return true;
+            }
+        }
+        return false;
+    }, isEmpty = exports.isEmpty = function (patch) {
+        return patch === void 0 || Object.isObject(patch) && Object.isEmpty(patch);
+    }, test = exports.test = function () {
+        const equal = function (a, b) {
+            return !isChange(a, b) && !isChange(b, a);
+        };
+        return {
+            apply: function () {
+                if (!equal({
+                        a: {
+                            b: 2,
+                            c: 3
+                        },
+                        d: 4
+                    }, apply({ a: { b: 2 } }, {
+                        a: { c: 3 },
+                        d: 4
+                    })))
+                    throw new Error('Assertion Failed: (equal({a:{b:2,c:3},d:4}, apply({a:{b:2}}, {a:{c:3},d:4})))');
+                if (!equal({ b: 2 }, apply(null, { b: 2 })))
+                    throw new Error('Assertion Failed: (equal({b:2}, apply(null, {b:2})))');
+            },
+            isChange: function () {
+                if (!isChange({ a: 1 }, null))
+                    throw new Error('Assertion Failed: (isChange({a:1}, null))');
+                if (!!isChange(null, null))
+                    throw new Error('Assertion Failed: (not isChange(null, null))');
+                if (!isChange(void 0, null))
+                    throw new Error('Assertion Failed: (isChange(undefined, null))');
+                if (!isChange(null, void 0))
+                    throw new Error('Assertion Failed: (isChange(null, undefined))');
+                if (!!isChange({ a: 1 }, { a: 1 }))
+                    throw new Error('Assertion Failed: (not isChange({a:1}, {a:1}))');
+                if (!!isChange({
+                        a: {
+                            b: 2,
+                            c: 3
+                        }
+                    }, { a: { b: 2 } }))
+                    throw new Error('Assertion Failed: (not isChange({a:{b:2,c:3}}, {a:{b:2}}))');
+                if (!isChange({ a: { b: 2 } }, { a: { b: 3 } }))
+                    throw new Error('Assertion Failed: (isChange({a:{b:2}}, {a:{b:3}}))');
+            },
+            diff: function () {
+                if (!equal({ b: 2 }, diff({ a: 1 }, {
+                        a: 1,
+                        b: 2
+                    })))
+                    throw new Error('Assertion Failed: (equal({b:2}, diff({a:1}, {a:1,b:2})))');
+                if (!equal({
+                        a: {
+                            b: 3,
+                            c: null
+                        }
+                    }, diff({
+                        a: {
+                            b: 2,
+                            c: 4
+                        }
+                    }, { a: { b: 3 } })))
+                    throw new Error('Assertion Failed: (equal({a:{b:3,c:null}}, diff({a:{b:2,c:4}}, {a:{b:3}})))');
+                if (!equal({ a: 1 }, diff(null, { a: 1 })))
+                    throw new Error('Assertion Failed: (equal({a:1}, diff(null, {a:1})))');
+                if (!equal({ c: { d: { f: 4 } } }, diff({
+                        a: 1,
+                        b: 2,
+                        c: {
+                            d: {
+                                e: 1,
+                                f: 2
+                            }
+                        }
+                    }, {
+                        a: 1,
+                        b: 2,
+                        c: {
+                            d: {
+                                e: 1,
+                                f: 4
+                            }
+                        }
+                    })))
+                    throw new Error('Assertion Failed: (equal({c:{d:{f:4}}}, diff({a:1,b:2,c:{d:{e:1,f:2}}}, {a:1,b:2,c:{d:{e:1,f:4}}})))');
+                if (!equal(null, diff({ a: 1 }, void 0)))
+                    throw new Error('Assertion Failed: (equal(null, diff({a:1}, undefined)))');
+                if (!equal(null, diff({ a: 1 }, null)))
+                    throw new Error('Assertion Failed: (equal(null, diff({a:1}, null)))');
+                if (!equal(void 0, diff({ a: { b: 2 } }, { a: { b: 2 } })))
+                    throw new Error('Assertion Failed: (equal(undefined, diff({a:{b:2}}, {a:{b:2}})))');
+            },
+            observe: function (done) {
+                if (!(Object.observe != null)) {
+                    return done(null, 'Object.observe missing.');
+                }
+                let source = {
+                        name: 'Kris',
+                        age: 41,
+                        children: {
+                            Sadera: {
+                                grandchildren: {
+                                    One: 1,
+                                    Two: 2
+                                }
+                            },
+                            Orion: {},
+                            Third: {}
+                        }
+                    };
+                let target = ion.clone(source, true);
+                let unwatch = watch(source, function (patch) {
+                        target = apply(target, patch);
+                        if (!equal(source, target))
+                            throw new Error('Assertion Failed: (equal(source, target))');
+                        done();
+                        unwatch();
+                    });
+                if (source == null)
+                    source = {};
+                source.name = 'Fred';
+                if (source.children == null)
+                    source.children = {};
+                if (source.children.Orion == null)
+                    source.children.Orion = {};
+                source.children.Orion.a = 1;
+                source.children.Orion.b = 2;
+                source.children.Orion.c = 12;
+                if (source.children.Sadera == null)
+                    source.children.Sadera = {};
+                if (source.children.Sadera.grandchildren == null)
+                    source.children.Sadera.grandchildren = {};
+                source.children.Sadera.grandchildren.three = 3;
+                delete source.children.Third;
+            }
+        };
+    }();
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/mergePatch',_ion_mergePatch_);
+    else
+      _ion_mergePatch_.call(this, module, exports, require);
+  }
+  else {
+    _ion_mergePatch_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_Object_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const Object = ion.defineClass({
+        id: 'Object',
+        constructor: function Object(properties) {
+            if (properties != null) {
+                for (let key in properties) {
+                    let value = properties[key];
+                    this[key] = value;
+                }
+            }
+        },
+        properties: {
+            toJSON: function () {
+                const properties = {};
+                if (this.constructor.id != null) {
+                    properties.$ = this.constructor.id;
+                }
+                {
+                    let _ref = this;
+                    for (let key in _ref) {
+                        let value = _ref[key];
+                        if (this.hasOwnProperty(key)) {
+                            properties[key] = value;
+                        }
+                    }
+                }
+                return properties;
+            }
+        }
+    }, null);
+module.exports = exports = Object;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/Object',_ion_Object_);
+    else
+      _ion_Object_.call(this, module, exports, require);
+  }
+  else {
+    _ion_Object_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_ArrayExpression_ = function(module,exports,require){'use strict';
+const DynamicExpression = require('./DynamicExpression'), ion = require('../');
+const ArrayExpression = ion.defineClass({
+        id: 'ArrayExpression',
+        constructor: function ArrayExpression() {
+            ArrayExpression.super.apply(this, arguments);
+            if (!(this.elements != null)) {
+                throw new Error('elements is required');
+            }
+            if (!(this.context != null)) {
+                throw new Error('context is required');
+            }
+        },
+        properties: {
+            observeElements: false,
+            notifyIfActive: function () {
+                if (this.isActive) {
+                    this.notify();
+                }
+            },
+            setArgumentValue: function (key, value) {
+                if (this.argumentValues[key] !== value) {
+                    if (this.observeElements) {
+                        ion.unobserve(this.argumentValues[key], this.itemObserver);
+                    }
+                    this.argumentValues[key] = value;
+                    if (this.observeElements) {
+                        ion.observe(value, this.itemObserver = this.itemObserver != null ? this.itemObserver : function () {
+                            this.notifyIfActive();
+                        }.bind(this));
+                    }
+                    this.notifyIfActive();
+                }
+            },
+            activate: function () {
+                if (!(this.argumentValues != null)) {
+                    let _ref = [];
+                    {
+                        let _ref2 = this.elements;
+                        for (let _i = 0; _i < _ref2.length; _i++) {
+                            let item = _ref2[_i];
+                            _ref.push(this.context.createRuntime(item));
+                        }
+                    }
+                    this.expressions = _ref;
+                    this.argumentValues = [];
+                    this.expressionWatchers = [];
+                    for (let key = 0; key < this.expressions.length; key++) {
+                        this.expressionWatchers[key] = this.setArgumentValue.bind(this, key);
+                    }
+                }
+                {
+                    let _ref = this.expressions;
+                    for (let _i = 0; _i < _ref.length; _i++) {
+                        let key = _i;
+                        let expression = _ref[_i];
+                        expression.watch(this.expressionWatchers[key]);
+                    }
+                }
+                ArrayExpression.super.prototype.activate.apply(this, arguments);
+                this.setValue(this.argumentValues);
+            },
+            deactivate: function () {
+                {
+                    let _ref = this.expressions;
+                    for (let _i = 0; _i < _ref.length; _i++) {
+                        let key = _i;
+                        let expression = _ref[_i];
+                        expression.unwatch(this.expressionWatchers[key]);
+                    }
+                }
+                ArrayExpression.super.prototype.deactivate.apply(this, arguments);
+            }
+        },
+        test: function () {
+            const Context = require('./Context');
+            let e = new ArrayExpression({
+                    context: new Context(),
+                    elements: [
+                        {
+                            type: 'Literal',
+                            value: 1
+                        },
+                        {
+                            type: 'Literal',
+                            value: 2
+                        }
+                    ]
+                });
+            let result = void 0;
+            function watcher(value) {
+                result = value;
+            }
+            e.watch(watcher);
+            if (!(JSON.stringify(result) === '[1,2]'))
+                throw new Error('Assertion Failed: (JSON.stringify(result) is "[1,2]")');
+        }
+    }, DynamicExpression);
+module.exports = exports = ArrayExpression;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/ArrayExpression',_ion_runtime_ArrayExpression_);
+    else
+      _ion_runtime_ArrayExpression_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_ArrayExpression_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_BlockStatement_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const Statement = require('./Statement');
+const BlockStatement = ion.defineClass({
+        id: 'BlockStatement',
+        properties: {
+            activate: function () {
+                BlockStatement.super.prototype.activate.apply(this, arguments);
+                if (!(this.statements != null)) {
+                    let _ref = [];
+                    {
+                        let _ref2 = this.body;
+                        for (let _i = 0; _i < _ref2.length; _i++) {
+                            let s = _ref2[_i];
+                            _ref.push(this.context.createRuntime(s));
+                        }
+                    }
+                    this.statements = _ref;
+                }
+                {
+                    let _ref = this.statements;
+                    for (let _i = 0; _i < _ref.length; _i++) {
+                        let statement = _ref[_i];
+                        statement.activate();
+                    }
+                }
+            },
+            deactivate: function () {
+                BlockStatement.super.prototype.deactivate.apply(this, arguments);
+                for (let i = this.statements.length - 1; i >= 0; i--) {
+                    let statement = this.statements[i];
+                    statement.deactivate();
+                }
+            }
+        }
+    }, Statement);
+module.exports = exports = BlockStatement;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/BlockStatement',_ion_runtime_BlockStatement_);
+    else
+      _ion_runtime_BlockStatement_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_BlockStatement_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_CallExpression_ = function(module,exports,require){'use strict';
+const ion = require('../'), DynamicExpression = require('./DynamicExpression'), ArrayExpression = require('./ArrayExpression');
+const CallExpression = ion.defineClass({
+        id: 'CallExpression',
+        properties: {
+            args: null,
+            activate: function () {
+                CallExpression.super.prototype.activate.apply(this, arguments);
+                this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
+                this.calleeExpression.watch(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : function (value) {
+                    this.calleeValue = value;
+                    this.evaluate();
+                }.bind(this));
+                this.argumentExpressions = this.argumentExpressions != null ? this.argumentExpressions : this.context.createRuntime({
+                    type: 'ArrayExpression',
+                    elements: this.arguments,
+                    observeElements: true
+                });
+                this.argumentExpressions.watch(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : function (value) {
+                    this.argumentsValue = value;
+                    this.evaluate();
+                }.bind(this));
+            },
+            deactivate: function () {
+                CallExpression.super.prototype.deactivate.apply(this, arguments);
+                this.calleeExpression.unwatch(this.calleeWatcher);
+                this.argumentExpressions.unwatch(this.argumentWatcher);
+            },
+            evaluate: function () {
+                let value = void 0;
+                if (this.calleeValue != null && this.argumentsValue != null) {
+                    if (this.type === 'NewExpression') {
+                        value = ion.create(this.calleeValue, this.argumentsValue);
+                    } else {
+                        let thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
+                        value = this.calleeValue.apply(thisArg, this.argumentsValue);
+                    }
+                }
+                this.setValue(value);
+            }
+        }
+    }, DynamicExpression);
+module.exports = CallExpression;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/CallExpression',_ion_runtime_CallExpression_);
+    else
+      _ion_runtime_CallExpression_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_CallExpression_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const Factory = require('./Factory'), Literal = require('./Literal');
+const Context = ion.defineClass({
+        id: 'Context',
+        constructor: function Context(parent, output) {
+            this.output = output;
+            this.parent = parent;
+            this.variables = {};
+            this.root = (this.parent != null ? this.parent.root : void 0) != null ? this.parent.root : this;
+        },
+        properties: {
+            newContext: function (output) {
+                if (output == null)
+                    output = this.output;
+                return new Context(this, output);
+            },
+            createRuntime: function (node) {
+                return Factory.createRuntime(this, node);
+            },
+            get: function (name) {
+                let variable = this.variables[name];
+                if (!(variable != null)) {
+                    throw new Error('Variable not found: \'' + name + '\'');
+                }
+                let value = variable.value;
+                if (value === void 0) {
+                    let watcher = function (a) {
+                        if (a !== void 0) {
+                            value = a;
+                        }
+                    };
+                    variable.watch(watcher);
+                    variable.unwatch(watcher);
+                }
+                return value;
+            },
+            setVariable: function (name, node) {
+                if (name != null) {
+                    return this.variables[name] = this.createRuntime(node);
+                }
+            },
+            getVariableExpression: function (name) {
+                let context = this, value;
+                while (context != null) {
+                    let variable = context.variables[name];
+                    if (variable != null) {
+                        return variable;
+                    }
+                    context = context.parent;
+                }
+                value = global[name];
+                if (value === void 0) {
+                    throw new Error('Variable not found: \'' + name + '\'');
+                }
+                let cachedGlobals = this.root.globals = this.root.globals != null ? this.root.globals : {};
+                return cachedGlobals[name] = cachedGlobals[name] != null ? cachedGlobals[name] : new Literal({ value: value });
+            }
+        }
+    });
+module.exports = exports = Context;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/Context',_ion_runtime_Context_);
+    else
+      _ion_runtime_Context_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_Context_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_DynamicExpression_ = function(module,exports,require){'use strict';
+const ion = require('../');
+const DynamicExpression = ion.defineClass({
+        id: 'DynamicExpression',
+        properties: {
+            isActive: false,
+            activate: function () {
+                this.isActive = true;
+            },
+            deactivate: function () {
+                this.isActive = false;
+            },
+            watch: function (watcher) {
+                let watchers = this._watchers = this._watchers != null ? this._watchers : [];
+                if (watchers.length === 0) {
+                    this.activate();
+                }
+                watchers.push(watcher);
+                let value = this.getValue();
+                if (value !== void 0) {
+                    this._notifyWatcher(watcher, value);
+                }
+            },
+            unwatch: function (watcher) {
+                ion.remove(this._watchers, watcher);
+                let value = this.getValue();
+                if (value !== void 0) {
+                    this._notifyWatcher(watcher, void 0);
+                }
+                if (this._watchers.length === 0) {
+                    this.deactivate();
+                }
+            },
+            _notifyWatcher: function (watcher, value) {
+                return watcher.call(this, value);
+            },
+            notify: function () {
+                if (this._watchers != null) {
+                    let value = this.getValue();
+                    {
+                        let _ref = this._watchers;
+                        for (let _i = 0; _i < _ref.length; _i++) {
+                            let watcher = _ref[_i];
+                            this._notifyWatcher(watcher, value);
+                        }
+                    }
+                }
+                return;
+            },
+            getValue: function () {
+                return this.value;
+            },
+            setValue: function (value) {
+                if (value !== this.value) {
+                    this.value = value;
+                    this.notify();
+                }
+                return;
+            }
+        },
+        test: function () {
+            const d = new DynamicExpression();
+            if (d.getValue() !== void 0) {
+                throw 'd.getValue() != undefined';
+            }
+            let total = 10;
+            const watcher = function (value) {
+                if (value !== void 0) {
+                    total += value;
+                }
+            };
+            d.watch(watcher);
+            if (!(total === 10))
+                throw new Error('Assertion Failed: (total is 10)');
+            d.setValue(10);
+            if (!(d.getValue() === 10))
+                throw new Error('Assertion Failed: (d.getValue() is 10)');
+            if (!(total === 20))
+                throw new Error('Assertion Failed: (total is 20)');
+            d.setValue(20);
+            if (!(total === 40))
+                throw new Error('Assertion Failed: (total is 40)');
+            d.unwatch(watcher);
+            if (!(total === 40))
+                throw new Error('Assertion Failed: (total is 40)');
+            d.setValue(50);
+            if (!(total === 40))
+                throw new Error('Assertion Failed: (total is 40)');
+        }
+    }, require('./Expression'));
+module.exports = exports = DynamicExpression;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/DynamicExpression',_ion_runtime_DynamicExpression_);
+    else
+      _ion_runtime_DynamicExpression_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_DynamicExpression_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_Expression_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const Expression = ion.defineClass({
+        id: 'Expression',
+        properties: {
+            watch: function (watcher) {
+                throw new Error('not implemented');
+            },
+            unwatch: function (watcher) {
+                throw new Error('not implemented');
+            }
+        }
+    }, require('./Node'));
+module.exports = exports = Expression;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/Expression',_ion_runtime_Expression_);
+    else
+      _ion_runtime_Expression_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_Expression_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_ExpressionStatement_ = function(module,exports,require){'use strict';
+const ion = require('../'), Statement = require('./Statement');
+const ExpressionStatement = ion.defineClass({
+        id: 'ExpressionStatement',
+        properties: {
+            activate: function () {
+                ExpressionStatement.super.prototype.activate.apply(this, arguments);
+                this.runtimeExpression = this.runtimeExpression != null ? this.runtimeExpression : this.context.createRuntime(this.expression);
+                this.runtimeExpression.watch(this.runtimeExpressionWatcher = this.runtimeExpressionWatcher != null ? this.runtimeExpressionWatcher : function (value) {
+                    if (this.expressionValue !== value) {
+                        this.expressionValue = value;
+                        this._remove != null ? this._remove() : void 0;
+                        this._remove = null;
+                        if (this.context.output != null && value !== void 0) {
+                            this._remove = ion.add(this.context.output, value);
+                        }
+                    }
+                }.bind(this));
+            },
+            deactivate: function () {
+                ExpressionStatement.super.prototype.deactivate.apply(this, arguments);
+                this.runtimeExpression.unwatch(this.runtimeExpressionWatcher);
+            }
+        }
+    }, Statement);
+module.exports = exports = ExpressionStatement;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/ExpressionStatement',_ion_runtime_ExpressionStatement_);
+    else
+      _ion_runtime_ExpressionStatement_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_ExpressionStatement_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_Factory_ = function(module,exports,require){'use strict';
+const ion = require('../');
+const Literal = require('./Literal');
+const Factory = ion.defineClass({
+        id: 'Factory',
+        properties: {
+            runtime: './OperationExpression',
+            createRuntime: {
+                writable: true,
+                value: function (context, ast) {
+                    let properties = ion.clone(ast);
+                    properties.context = context;
+                    properties.factory = this;
+                    let type = require(this.runtime);
+                    return new type(properties);
+                }
+            }
+        }
+    });
+Factory;
+let _ref = new Factory();
+_ref.runtime = './VariableDeclaration';
+let _ref2 = new Factory();
+_ref2.createRuntime = function (context, ast) {
+    return context.getVariableExpression(ast.name);
+};
+let _ref3 = new Factory();
+_ref3.createRuntime = function (context, ast) {
+    let value = ast.value;
+    if (ast.context) {
+        value = value(context);
+    }
+    return new Literal({ value: value });
+};
+let _ref4 = new Factory();
+_ref4.runtime = './Template';
+let _ref5 = new Factory();
+_ref5.runtime = './Literal';
+let _ref6 = new Factory();
+_ref6.runtime = './Property';
+let _ref7 = new Factory();
+_ref7.runtime = './IfStatement';
+let _ref8 = new Factory();
+_ref8.runtime = './BlockStatement';
+let _ref9 = new Factory();
+_ref9.runtime = './ReturnStatement';
+let _ref10 = new Factory();
+_ref10.runtime = './ObjectExpression';
+let _ref11 = new Factory();
+_ref11.runtime = './ArrayExpression';
+let _ref12 = new Factory();
+_ref12.runtime = './ExpressionStatement';
+let _ref13 = new Factory();
+_ref13.runtime = './ForInOfStatement';
+let _ref14 = new Factory();
+_ref14.runtime = './ForInOfStatement';
+let _ref15 = new Factory();
+_ref15.runtime = './MemberExpression';
+let _ref16 = new Factory();
+_ref16.runtime = './CallExpression';
+let _ref17 = new Factory();
+_ref17.runtime = './CallExpression';
+let _ref18 = new Factory();
+_ref18.evaluate = function (a) {
+    return !a;
+};
+let _ref19 = new Factory();
+_ref19.evaluate = function (a) {
+    return typeof a;
+};
+let _ref20 = new Factory();
+_ref20.evaluate = function (a) {
+    return void a;
+};
+let _ref21 = new Factory();
+_ref21.evaluate = function (a) {
+    return -a;
+};
+let _ref22 = new Factory();
+_ref22.evaluate = function (a) {
+    return +a;
+};
+let _ref23 = new Factory();
+_ref23.evaluate = function (a) {
+    return ~a;
+};
+let _ref24 = new Factory();
+_ref24.evaluate = function (a) {
+    return a != null;
+};
+let _ref25 = new Factory();
+_ref25.evaluate = function (test, consequent, alternate) {
+    return test ? consequent : alternate;
+};
+let _ref26 = new Factory();
+_ref26.evaluate = function (left, right) {
+    return left * right;
+};
+let _ref27 = new Factory();
+_ref27.evaluate = function (left, right) {
+    return left / right;
+};
+let _ref28 = new Factory();
+_ref28.evaluate = function (left, right) {
+    return left % right;
+};
+let _ref29 = new Factory();
+_ref29.evaluate = function (left, right) {
+    return left + right;
+};
+let _ref30 = new Factory();
+_ref30.evaluate = function (left, right) {
+    return left - right;
+};
+let _ref31 = new Factory();
+_ref31.evaluate = function (left, right) {
+    return left && right;
+};
+let _ref32 = new Factory();
+_ref32.evaluate = function (left, right) {
+    return left || right;
+};
+let _ref33 = new Factory();
+_ref33.evaluate = function (left, right) {
+    return left & right;
+};
+let _ref34 = new Factory();
+_ref34.evaluate = function (left, right) {
+    return left | right;
+};
+let _ref35 = new Factory();
+_ref35.evaluate = function (left, right) {
+    return left == right;
+};
+let _ref36 = new Factory();
+_ref36.evaluate = function (left, right) {
+    return left != right;
+};
+let _ref37 = new Factory();
+_ref37.evaluate = function (left, right) {
+    return left === right;
+};
+let _ref38 = new Factory();
+_ref38.evaluate = function (left, right) {
+    return left !== right;
+};
+let _ref39 = new Factory();
+_ref39.evaluate = function (left, right) {
+    return left < right;
+};
+let _ref40 = new Factory();
+_ref40.evaluate = function (left, right) {
+    return left > right;
+};
+let _ref41 = new Factory();
+_ref41.evaluate = function (left, right) {
+    return left <= right;
+};
+let _ref42 = new Factory();
+_ref42.evaluate = function (left, right) {
+    return left >= right;
+};
+const lookup = {
+        type: {
+            VariableDeclaration: _ref,
+            Identifier: _ref2,
+            Function: _ref3,
+            Template: _ref4,
+            Literal: _ref5,
+            Property: _ref6,
+            IfStatement: _ref7,
+            BlockStatement: _ref8,
+            ReturnStatement: _ref9,
+            ObjectExpression: _ref10,
+            ArrayExpression: _ref11,
+            ExpressionStatement: _ref12,
+            ForOfStatement: _ref13,
+            ForInStatement: _ref14,
+            MemberExpression: _ref15,
+            CallExpression: _ref16,
+            NewExpression: _ref17,
+            UnaryExpression: {
+                operator: {
+                    '!': _ref18,
+                    'typeof': _ref19,
+                    'void': _ref20,
+                    '-': _ref21,
+                    '+': _ref22,
+                    '~': _ref23,
+                    '?': _ref24
+                }
+            },
+            ConditionalExpression: _ref25,
+            BinaryExpression: {
+                operator: {
+                    '*': _ref26,
+                    '/': _ref27,
+                    '%': _ref28,
+                    '+': _ref29,
+                    '-': _ref30,
+                    '&&': _ref31,
+                    '||': _ref32,
+                    '&': _ref33,
+                    '|': _ref34,
+                    '==': _ref35,
+                    '!=': _ref36,
+                    '===': _ref37,
+                    '!==': _ref38,
+                    '<': _ref39,
+                    '>': _ref40,
+                    '<=': _ref41,
+                    '>=': _ref42
+                }
+            }
+        }
+    };
+function getFactory(ast, step) {
+    if (step == null)
+        step = lookup;
+    for (let key in step) {
+        let values = step[key];
+        let nodeValue = ast[key];
+        let next = values[nodeValue];
+        if (next != null) {
+            if (next.constructor === Factory) {
+                return next;
+            }
+            return getFactory(ast, next);
+        }
+    }
+    return null;
+}
+const createRuntime = exports.createRuntime = function (context, ast) {
+        if (typeof (ast != null ? ast.type : void 0) !== 'string') {
+            ast = {
+                type: 'Literal',
+                value: ast
+            };
+        }
+        let factory = getFactory(ast);
+        if (!(factory != null)) {
+            throw new Error('Factory not found for ast:\n' + JSON.stringify(ast, null, '  '));
+        }
+        return factory.createRuntime(context, ast);
+    }, test = exports.test = function () {
+        let factory = getFactory({
+                type: 'BinaryExpression',
+                operator: '>',
+                left: {
+                    type: 'Literal',
+                    value: 1
+                },
+                right: {
+                    type: 'Literal',
+                    value: 2
+                }
+            });
+        if (!(factory === lookup.type.BinaryExpression.operator['>']))
+            throw new Error('Assertion Failed: (factory is lookup.type.BinaryExpression.operator[">"])');
+        if (!(lookup.type.BinaryExpression.operator['>'] != null))
+            throw new Error('Assertion Failed: (lookup.type.BinaryExpression.operator[">"]?)');
+    };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/Factory',_ion_runtime_Factory_);
+    else
+      _ion_runtime_Factory_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_Factory_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_ForInOfStatement_ = function(module,exports,require){'use strict';
+const ion = require('../'), Statement = require('./Statement');
+const ForInOfStatement = ion.defineClass({
+        id: 'ForInOfStatement',
+        properties: {
+            toKey: function (name) {
+                if (this.type === 'ForOfStatement') {
+                    return parseInt(name);
+                } else {
+                    return name;
+                }
+            },
+            forEach: function (collection, callback) {
+                if (this.type === 'ForOfStatement') {
+                    for (let key = 0; key < collection.length; key++) {
+                        let value = collection[key];
+                        callback(key, value);
+                    }
+                } else {
+                    for (let key in collection) {
+                        let value = collection[key];
+                        callback(key, value);
+                    }
+                }
+            },
+            activate: function () {
+                ForInOfStatement.super.prototype.activate.apply(this, arguments);
+                this.statements = this.statements != null ? this.statements : {};
+                this.collectionExpression = this.collectionExpression != null ? this.collectionExpression : this.context.createRuntime(this.right);
+                this.collectionExpression.watch(this.collectionWatcher = this.collectionWatcher != null ? this.collectionWatcher : function (collection) {
+                    if (this.collection !== collection) {
+                        if (this.collection != null) {
+                            this.forEach(this.collection, this.removeItem.bind(this));
+                            ion.unobserve(this.collection, this.collectionObserver);
+                        }
+                        this.collection = collection;
+                        if (this.collection != null) {
+                            this.forEach(this.collection, this.addItem.bind(this));
+                            ion.observe(this.collection, this.collectionObserver = this.collectionObserver != null ? this.collectionObserver : this.applyChanges.bind(this));
+                        }
+                    }
+                }.bind(this));
+            },
+            deactivate: function () {
+                ForInOfStatement.super.prototype.deactivate.apply(this, arguments);
+                this.collectionExpression.unwatch(this.collectionWatcher);
+            },
+            addItem: function (key, value) {
+                if (value !== void 0) {
+                    let newContext = this.context.newContext();
+                    newContext.setVariable(this.left.declarations[this.type === 'ForOfStatement' ? 0 : 1] != null ? this.left.declarations[this.type === 'ForOfStatement' ? 0 : 1].id.name : void 0, value);
+                    newContext.setVariable(this.left.declarations[this.type === 'ForOfStatement' ? 1 : 0] != null ? this.left.declarations[this.type === 'ForOfStatement' ? 1 : 0].id.name : void 0, key);
+                    let statement = this.statements[key] = newContext.createRuntime(this.body);
+                    statement.activate();
+                }
+            },
+            removeItem: function (key, value) {
+                let statement = this.statements[key];
+                statement != null ? statement.deactivate() : void 0;
+                delete this.statements[key];
+            },
+            applyChanges: function (changes) {
+                function ignoreProperty(name) {
+                    if (!(name != null)) {
+                        return true;
+                    }
+                    if (name[0] === '_') {
+                        return true;
+                    }
+                    if (name === 'length' && this.type === 'ForOfStatement') {
+                        return true;
+                    }
+                    return false;
+                }
+                for (let _i = 0; _i < changes.length; _i++) {
+                    let _ref = changes[_i];
+                    let name = _ref.name;
+                    let oldValue = _ref.oldValue;
+                    let ignore = ignoreProperty(name);
+                    if (!ignore) {
+                        let newValue = this.collection[name];
+                        let key = this.toKey(name);
+                        if (oldValue !== void 0) {
+                            this.removeItem(key, oldValue);
+                        }
+                        if (newValue !== void 0) {
+                            this.addItem(key, newValue);
+                        }
+                    }
+                }
+            }
+        }
+    }, Statement);
+module.exports = exports = ForInOfStatement;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/ForInOfStatement',_ion_runtime_ForInOfStatement_);
+    else
+      _ion_runtime_ForInOfStatement_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_ForInOfStatement_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_IfStatement_ = function(module,exports,require){'use strict';
+const ion = require('../'), Statement = require('./Statement');
+const IfStatement = ion.defineClass({
+        id: 'IfStatement',
+        properties: {
+            activate: function () {
+                IfStatement.super.prototype.activate.apply(this, arguments);
+                this.testExpression = this.testExpression != null ? this.testExpression : this.context.createRuntime(this.test);
+                this.testExpression.watch(this.testExpressionWatcher = this.testExpressionWatcher != null ? this.testExpressionWatcher : function (value) {
+                    if (value) {
+                        if (this.alternateStatement != null ? this.alternateStatement.isActive : void 0) {
+                            this.alternateStatement != null ? this.alternateStatement.deactivate() : void 0;
+                        }
+                        this.consequentStatement = this.consequentStatement != null ? this.consequentStatement : this.context.createRuntime(this.consequent);
+                        this.consequentStatement.activate();
+                    } else {
+                        if (this.consequentStatement != null ? this.consequentStatement.isActive : void 0) {
+                            this.consequentStatement != null ? this.consequentStatement.deactivate() : void 0;
+                        }
+                        if (this.alternate != null) {
+                            this.alternateStatement = this.alternateStatement != null ? this.alternateStatement : this.context.createRuntime(this.alternate);
+                            this.alternateStatement.activate();
+                        }
+                    }
+                }.bind(this));
+            },
+            deactivate: function () {
+                IfStatement.super.prototype.deactivate.apply(this, arguments);
+                this.testExpression.unwatch(this.testExpressionWatcher);
+                if (this.alternateStatement != null ? this.alternateStatement.isActive : void 0) {
+                    this.alternateStatement != null ? this.alternateStatement.deactivate() : void 0;
+                }
+                if (this.consequentStatement != null ? this.consequentStatement.isActive : void 0) {
+                    this.consequentStatement != null ? this.consequentStatement.deactivate() : void 0;
+                }
+            }
+        }
+    }, Statement);
+module.exports = exports = IfStatement;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/IfStatement',_ion_runtime_IfStatement_);
+    else
+      _ion_runtime_IfStatement_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_IfStatement_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_Literal_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const Literal = ion.defineClass({
+        id: 'Literal',
+        properties: {
+            watch: function (watcher) {
+                watcher(this.value);
+            },
+            unwatch: function (watcher) {
+                watcher(void 0);
+            }
+        }
+    }, require('./Expression'));
+module.exports = exports = Literal;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/Literal',_ion_runtime_Literal_);
+    else
+      _ion_runtime_Literal_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_Literal_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_MemberExpression_ = function(module,exports,require){'use strict';
+const ion = require('../'), DynamicExpression = require('./DynamicExpression');
+const MemberExpression = ion.defineClass({
+        id: 'MemberExpression',
+        properties: {
+            activate: function () {
+                MemberExpression.super.prototype.activate.apply(this, arguments);
+                this.objectExpression = this.objectExpression != null ? this.objectExpression : this.context.createRuntime(this.object);
+                this.objectExpression.watch(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : function (objectValue) {
+                    this.objectValue = objectValue;
+                    this.updateValue();
+                }.bind(this));
+                this.propertyExpression = this.propertyExpression != null ? this.propertyExpression : this.context.createRuntime(this.computed ? this.property : this.property.name);
+                this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : function (propertyValue) {
+                    this.propertyValue = propertyValue;
+                    this.updateValue();
+                }.bind(this));
+            },
+            deactivate: function () {
+                MemberExpression.super.prototype.deactivate.apply(this, arguments);
+                this.objectExpression.unwatch(this.objectWatcher);
+                this.propertyExpression.unwatch(this.propertyWatcher);
+            },
+            updateValue: function () {
+                let value = void 0;
+                if (this.objectValue != null && this.propertyValue != null) {
+                    value = ion.get(this.objectValue, this.propertyValue);
+                }
+                this.setValue(value);
+            },
+            setMemberValue: function (value) {
+                if (this.objectValue != null && this.propertyValue != null) {
+                    ion.set(this.objectValue, this.propertyValue, value);
+                }
+            }
+        }
+    }, DynamicExpression);
+module.exports = exports = MemberExpression;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/MemberExpression',_ion_runtime_MemberExpression_);
+    else
+      _ion_runtime_MemberExpression_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_MemberExpression_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_Node_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const Node = ion.defineClass({ id: 'Node' });
+module.exports = exports = Node;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/Node',_ion_runtime_Node_);
+    else
+      _ion_runtime_Node_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_Node_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_ObjectExpression_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const DynamicExpression = require('./DynamicExpression');
+const ObjectExpression = ion.defineClass({
+        id: 'ObjectExpression',
+        properties: {
+            activate: function () {
+                ObjectExpression.super.prototype.activate.apply(this, arguments);
+                this.typeExpression = this.typeExpression != null ? this.typeExpression : this.context.createRuntime(this.objectType != null ? this.objectType : {});
+                this.typeExpression.watch(this.typeWatcher = this.typeWatcher != null ? this.typeWatcher : function (type) {
+                    let value;
+                    if (type === void 0) {
+                        value = void 0;
+                    } else if (this.value !== type && (this.value != null ? this.value.constructor : void 0) !== type) {
+                        this.statements != null ? this.statements.deactivate() : void 0;
+                        this.statements = null;
+                        if (type != null && typeof type === 'object') {
+                            value = type;
+                        } else {
+                            value = new (type != null ? type : Object)();
+                        }
+                    }
+                    if (value != null && !(this.statements != null)) {
+                        let newContext = this.context.newContext(value);
+                        this.statements = newContext.createRuntime({
+                            type: 'BlockStatement',
+                            body: this.properties
+                        });
+                        this.statements.activate();
+                    }
+                    this.setValue(value);
+                }.bind(this));
+            },
+            deactivate: function () {
+                ObjectExpression.super.prototype.deactivate.apply(this, arguments);
+                this.typeExpression.unwatch(this.typeWatcher);
+            }
+        }
+    }, DynamicExpression);
+module.exports = exports = ObjectExpression;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/ObjectExpression',_ion_runtime_ObjectExpression_);
+    else
+      _ion_runtime_ObjectExpression_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_ObjectExpression_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_OperationExpression_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const DynamicExpression = require('./DynamicExpression');
+const OperationExpression = ion.defineClass({
+        id: 'OperationExpression',
+        constructor: function OperationExpression(properties) {
+            OperationExpression.super.apply(this, arguments);
+            if (!(this.args != null)) {
+                if (this.type === 'BinaryExpression') {
+                    this.args = [
+                        this.left,
+                        this.right
+                    ];
+                } else if (this.type === 'UnaryExpression') {
+                    this.args = [this.argument];
+                } else if (this.type === 'ConditionalExpression') {
+                    this.args = [
+                        this.test,
+                        this.consequent,
+                        this.alternate
+                    ];
+                }
+            }
+        },
+        properties: {
+            args: null,
+            activate: function () {
+                OperationExpression.super.prototype.activate.apply(this, arguments);
+                this.argumentExpressions = this.argumentExpressions != null ? this.argumentExpressions : this.context.createRuntime({
+                    type: 'ArrayExpression',
+                    elements: this.args,
+                    observeElements: this.factory.observe
+                });
+                this.argumentExpressions.watch(this.watcher = this.watcher != null ? this.watcher : function (value) {
+                    this.argumentValues = value;
+                    this.evaluate();
+                }.bind(this));
+            },
+            deactivate: function () {
+                OperationExpression.super.prototype.deactivate.apply(this, arguments);
+                this.argumentExpressions.unwatch(this.watcher);
+            },
+            evaluate: function () {
+                if (!(this.factory.evaluate != null)) {
+                    throw new Error('evaluate method not defined for operation: ' + this.factory);
+                }
+                let value = this.factory.evaluate.apply(this.context, this.argumentValues);
+                this.setValue(value);
+            }
+        }
+    }, DynamicExpression);
+module.exports = OperationExpression;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/OperationExpression',_ion_runtime_OperationExpression_);
+    else
+      _ion_runtime_OperationExpression_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_OperationExpression_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_Property_ = function(module,exports,require){'use strict';
+const ion = require('../'), Statement = require('./Statement');
+const Property = ion.defineClass({
+        id: 'Property',
+        properties: {
+            activate: function () {
+                Property.super.prototype.activate.apply(this, arguments);
+                this.keyExpression = this.keyExpression != null ? this.keyExpression : this.context.createRuntime(this.computed ? this.key : this.key.name);
+                this.keyExpression.watch(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : function (key) {
+                    this.restoreProperty();
+                    this.keyValue = key;
+                    this.setProperty();
+                }.bind(this));
+                this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
+                this.valueExpression.watch(this.valueWatcher = this.valueWatcher != null ? this.valueWatcher : function (value) {
+                    this.valueValue = value;
+                    this.setProperty();
+                }.bind(this));
+            },
+            deactivate: function () {
+                Property.super.prototype.deactivate.apply(this, arguments);
+                this.restoreProperty();
+                this.keyExpression.unwatch(this.keyWatcher);
+                this.valueExpression.unwatch(this.valueWatcher);
+            },
+            restoreProperty: function () {
+                if (this.originalKey != null) {
+                    ion.set(this.context.output, this.originalKey, this.originalValue);
+                    this.originalKey = void 0;
+                    this.originalValue = void 0;
+                }
+            },
+            setProperty: function (key, value) {
+                if (key == null)
+                    key = this.keyValue;
+                if (value == null)
+                    value = this.valueValue;
+                if (key != null && value !== void 0) {
+                    let currentValue = ion.get(this.context.output, key);
+                    if (currentValue !== value) {
+                        this.originalKey = this.originalKey != null ? this.originalKey : key;
+                        this.originalValue = this.originalValue != null ? this.originalValue : currentValue;
+                        ion.set(this.context.output, key, value);
+                    }
+                }
+            }
+        }
+    }, Statement);
+module.exports = exports = Property;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/Property',_ion_runtime_Property_);
+    else
+      _ion_runtime_Property_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_Property_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_ReturnStatement_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const Statement = require('./Statement');
+const ReturnStatement = ion.defineClass({
+        id: 'ReturnStatement',
+        properties: {
+            activate: function () {
+                ReturnStatement.super.prototype.activate.apply(this, arguments);
+                this.argumentExpression = this.argumentExpression != null ? this.argumentExpression : this.context.createRuntime(this.argument);
+                this.argumentExpression.watch(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : function (value) {
+                    return this.context.returnExpression.setValue(value);
+                }.bind(this));
+            },
+            deactivate: function () {
+                ReturnStatement.super.prototype.deactivate.apply(this, arguments);
+                this.argumentExpression.unwatch(this.argumentWatcher);
+            }
+        }
+    }, Statement);
+module.exports = exports = ReturnStatement;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/ReturnStatement',_ion_runtime_ReturnStatement_);
+    else
+      _ion_runtime_ReturnStatement_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_ReturnStatement_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_Statement_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const Statement = ion.defineClass({
+        id: 'Statement',
+        properties: {
+            isActive: false,
+            activate: function () {
+                this.isActive = true;
+            },
+            deactivate: function () {
+                this.isActive = false;
+            }
+        }
+    }, require('./Node'));
+module.exports = exports = Statement;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/Statement',_ion_runtime_Statement_);
+    else
+      _ion_runtime_Statement_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_Statement_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_Template_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression');
+const Template = ion.defineClass({
+        id: 'Template',
+        constructor: function Template() {
+            Template.super.apply(this, arguments);
+            this.context.returnExpression = new DynamicExpression();
+        },
+        properties: {
+            watch: function (watcher) {
+                if (!this.isActive) {
+                    throw new Error('You must activate a Template before you watch it.');
+                }
+                this.context.returnExpression.watch(watcher);
+            },
+            unwatch: function (watcher) {
+                this.context.returnExpression.unwatch(watcher);
+            }
+        }
+    }, BlockStatement);
+module.exports = exports = Template;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/Template',_ion_runtime_Template_);
+    else
+      _ion_runtime_Template_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_Template_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_runtime_VariableDeclaration_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const Statement = require('./Statement');
+const VariableDeclaration = ion.defineClass({
+        id: 'VariableDeclaration',
+        constructor: function VariableDeclaration() {
+            VariableDeclaration.super.apply(this, arguments);
+            {
+                let _ref = this.declarations;
+                for (let _i = 0; _i < _ref.length; _i++) {
+                    let _ref2 = _ref[_i];
+                    let name = _ref2.id.name;
+                    let init = _ref2.init;
+                    this.context.setVariable(name, init);
+                }
+            }
+        }
+    }, Statement);
+module.exports = exports = VariableDeclaration;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/VariableDeclaration',_ion_runtime_VariableDeclaration_);
+    else
+      _ion_runtime_VariableDeclaration_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_VariableDeclaration_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_test_immediateTemplates_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const templates = [
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [
+                                    {
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'a'
+                                        },
+                                        init: {
+                                            type: 'Literal',
+                                            value: 1
+                                        }
+                                    },
+                                    {
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'b'
+                                        },
+                                        init: {
+                                            type: 'Literal',
+                                            value: 2
+                                        }
+                                    },
+                                    {
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'c'
+                                        },
+                                        init: {
+                                            type: 'BinaryExpression',
+                                            operator: '+',
+                                            left: {
+                                                type: 'Identifier',
+                                                name: 'a'
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'b'
+                                            }
+                                        }
+                                    }
+                                ],
+                                kind: 'const'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'Identifier',
+                                    name: 'c'
+                                }
+                            }
+                        ]
+                    }, {});
+                }
+                const a = 1, b = 2, c = a + b;
+                return c;
+            },
+            3
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    properties: [
+                                        {
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'a'
+                                            },
+                                            value: {
+                                                type: 'Literal',
+                                                value: 1
+                                            },
+                                            kind: 'init'
+                                        },
+                                        {
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'b'
+                                            },
+                                            value: {
+                                                type: 'Literal',
+                                                value: 2
+                                            },
+                                            kind: 'init'
+                                        }
+                                    ]
+                                }
+                            }]
+                    }, {});
+                }
+                return {
+                    a: 1,
+                    b: 2
+                };
+            },
+            {
+                a: 1,
+                b: 2
+            }
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'ArrayExpression',
+                                        elements: []
+                                    },
+                                    properties: [
+                                        {
+                                            type: 'ExpressionStatement',
+                                            expression: {
+                                                type: 'Literal',
+                                                value: 1
+                                            }
+                                        },
+                                        {
+                                            type: 'ExpressionStatement',
+                                            expression: {
+                                                type: 'Literal',
+                                                value: 2
+                                            }
+                                        }
+                                    ]
+                                }
+                            }]
+                    }, {});
+                }
+                return [
+                    1,
+                    2
+                ];
+            },
+            [
+                1,
+                2
+            ]
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'a'
+                                        },
+                                        init: {
+                                            type: 'Literal',
+                                            value: 1
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'b'
+                                        },
+                                        init: {
+                                            type: 'Literal',
+                                            value: 2
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'ArrayExpression',
+                                        elements: []
+                                    },
+                                    properties: [
+                                        {
+                                            type: 'ExpressionStatement',
+                                            expression: {
+                                                type: 'Identifier',
+                                                name: 'a'
+                                            }
+                                        },
+                                        {
+                                            type: 'ExpressionStatement',
+                                            expression: {
+                                                type: 'Identifier',
+                                                name: 'b'
+                                            }
+                                        },
+                                        {
+                                            type: 'IfStatement',
+                                            test: {
+                                                type: 'BinaryExpression',
+                                                operator: '>',
+                                                left: {
+                                                    type: 'Identifier',
+                                                    name: 'a'
+                                                },
+                                                right: {
+                                                    type: 'Identifier',
+                                                    name: 'b'
+                                                }
+                                            },
+                                            consequent: {
+                                                type: 'BlockStatement',
+                                                body: [{
+                                                        type: 'ExpressionStatement',
+                                                        expression: {
+                                                            type: 'Literal',
+                                                            value: 10
+                                                        }
+                                                    }]
+                                            },
+                                            alternate: {
+                                                type: 'IfStatement',
+                                                test: {
+                                                    type: 'BinaryExpression',
+                                                    operator: '>',
+                                                    left: {
+                                                        type: 'Identifier',
+                                                        name: 'b'
+                                                    },
+                                                    right: {
+                                                        type: 'Identifier',
+                                                        name: 'a'
+                                                    }
+                                                },
+                                                consequent: {
+                                                    type: 'BlockStatement',
+                                                    body: [{
+                                                            type: 'ExpressionStatement',
+                                                            expression: {
+                                                                type: 'Literal',
+                                                                value: 20
+                                                            }
+                                                        }]
+                                                },
+                                                alternate: null
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }, {});
+                }
+                let a = 1;
+                let b = 2;
+                let _ref = [];
+                {
+                    _ref.push(a);
+                    _ref.push(b);
+                    if (a > b) {
+                        _ref.push(10);
+                    } else if (b > a) {
+                        _ref.push(20);
+                    }
+                }
+                return _ref;
+            },
+            [
+                1,
+                2,
+                20
+            ]
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'items'
+                                        },
+                                        init: {
+                                            type: 'ArrayExpression',
+                                            elements: [
+                                                {
+                                                    type: 'Literal',
+                                                    value: 1
+                                                },
+                                                {
+                                                    type: 'Literal',
+                                                    value: 2
+                                                },
+                                                {
+                                                    type: 'Literal',
+                                                    value: 3
+                                                }
+                                            ]
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'x'
+                                        },
+                                        init: {
+                                            type: 'ObjectExpression',
+                                            objectType: {
+                                                type: 'ArrayExpression',
+                                                elements: []
+                                            },
+                                            properties: [{
+                                                    type: 'ForOfStatement',
+                                                    left: {
+                                                        type: 'VariableDeclaration',
+                                                        declarations: [
+                                                            {
+                                                                type: 'VariableDeclarator',
+                                                                id: {
+                                                                    type: 'Identifier',
+                                                                    name: 'item'
+                                                                },
+                                                                init: null
+                                                            },
+                                                            {
+                                                                type: 'VariableDeclarator',
+                                                                id: {
+                                                                    type: 'Identifier',
+                                                                    name: 'index'
+                                                                },
+                                                                init: null
+                                                            }
+                                                        ],
+                                                        kind: 'let'
+                                                    },
+                                                    right: {
+                                                        type: 'Identifier',
+                                                        name: 'items'
+                                                    },
+                                                    body: {
+                                                        type: 'ExpressionStatement',
+                                                        expression: {
+                                                            type: 'BinaryExpression',
+                                                            operator: '+',
+                                                            left: {
+                                                                type: 'Identifier',
+                                                                name: 'item'
+                                                            },
+                                                            right: {
+                                                                type: 'Identifier',
+                                                                name: 'index'
+                                                            }
+                                                        }
+                                                    }
+                                                }]
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'Identifier',
+                                    name: 'x'
+                                }
+                            }
+                        ]
+                    }, {});
+                }
+                let items = [
+                        1,
+                        2,
+                        3
+                    ];
+                let _ref = [];
+                for (let _i = 0; _i < items.length; _i++) {
+                    let index = _i;
+                    let item = items[_i];
+                    _ref.push(item + index);
+                }
+                let x = _ref;
+                return x;
+            },
+            [
+                1,
+                3,
+                5
+            ]
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'items'
+                                        },
+                                        init: {
+                                            type: 'ObjectExpression',
+                                            properties: [
+                                                {
+                                                    type: 'Property',
+                                                    key: {
+                                                        type: 'Identifier',
+                                                        name: 'a'
+                                                    },
+                                                    value: {
+                                                        type: 'Literal',
+                                                        value: 1
+                                                    },
+                                                    kind: 'init'
+                                                },
+                                                {
+                                                    type: 'Property',
+                                                    key: {
+                                                        type: 'Identifier',
+                                                        name: 'b'
+                                                    },
+                                                    value: {
+                                                        type: 'Literal',
+                                                        value: 2
+                                                    },
+                                                    kind: 'init'
+                                                },
+                                                {
+                                                    type: 'Property',
+                                                    key: {
+                                                        type: 'Identifier',
+                                                        name: 'c'
+                                                    },
+                                                    value: {
+                                                        type: 'Literal',
+                                                        value: 3
+                                                    },
+                                                    kind: 'init'
+                                                }
+                                            ]
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'x'
+                                        },
+                                        init: {
+                                            type: 'ObjectExpression',
+                                            objectType: {
+                                                type: 'ArrayExpression',
+                                                elements: []
+                                            },
+                                            properties: [{
+                                                    type: 'ForInStatement',
+                                                    left: {
+                                                        type: 'VariableDeclaration',
+                                                        declarations: [
+                                                            {
+                                                                type: 'VariableDeclarator',
+                                                                id: {
+                                                                    type: 'Identifier',
+                                                                    name: 'key'
+                                                                },
+                                                                init: null
+                                                            },
+                                                            {
+                                                                type: 'VariableDeclarator',
+                                                                id: {
+                                                                    type: 'Identifier',
+                                                                    name: 'value'
+                                                                },
+                                                                init: null
+                                                            }
+                                                        ],
+                                                        kind: 'let'
+                                                    },
+                                                    right: {
+                                                        type: 'Identifier',
+                                                        name: 'items'
+                                                    },
+                                                    body: {
+                                                        type: 'ExpressionStatement',
+                                                        expression: {
+                                                            type: 'BinaryExpression',
+                                                            operator: '+',
+                                                            left: {
+                                                                type: 'Identifier',
+                                                                name: 'key'
+                                                            },
+                                                            right: {
+                                                                type: 'Identifier',
+                                                                name: 'value'
+                                                            }
+                                                        }
+                                                    }
+                                                }]
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'Identifier',
+                                    name: 'x'
+                                }
+                            }
+                        ]
+                    }, {});
+                }
+                let items = {
+                        a: 1,
+                        b: 2,
+                        c: 3
+                    };
+                let _ref = [];
+                for (let key in items) {
+                    let value = items[key];
+                    _ref.push(key + value);
+                }
+                let x = _ref;
+                return x;
+            },
+            [
+                'a1',
+                'b2',
+                'c3'
+            ]
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'object'
+                                        },
+                                        init: {
+                                            type: 'ObjectExpression',
+                                            properties: [{
+                                                    type: 'Property',
+                                                    key: {
+                                                        type: 'Identifier',
+                                                        name: 'a'
+                                                    },
+                                                    value: {
+                                                        type: 'ObjectExpression',
+                                                        properties: [{
+                                                                type: 'Property',
+                                                                key: {
+                                                                    type: 'Identifier',
+                                                                    name: 'b'
+                                                                },
+                                                                value: {
+                                                                    type: 'Literal',
+                                                                    value: 1
+                                                                },
+                                                                kind: 'init'
+                                                            }]
+                                                    },
+                                                    kind: 'init'
+                                                }]
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'object'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'a'
+                                        }
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'b'
+                                    }
+                                }
+                            }
+                        ]
+                    }, {});
+                }
+                let object = { a: { b: 1 } };
+                return object.a.b;
+            },
+            1
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ConditionalExpression',
+                                    test: {
+                                        type: 'Literal',
+                                        value: false
+                                    },
+                                    consequent: {
+                                        type: 'Literal',
+                                        value: 1
+                                    },
+                                    alternate: {
+                                        type: 'Literal',
+                                        value: 2
+                                    }
+                                }
+                            }]
+                    }, {});
+                }
+                return false ? 1 : 2;
+            },
+            2
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ConditionalExpression',
+                                    test: {
+                                        type: 'BinaryExpression',
+                                        operator: '!=',
+                                        left: {
+                                            type: 'Literal',
+                                            value: null
+                                        },
+                                        right: {
+                                            type: 'Literal',
+                                            value: null
+                                        }
+                                    },
+                                    consequent: {
+                                        type: 'Literal',
+                                        value: null
+                                    },
+                                    alternate: {
+                                        type: 'Literal',
+                                        value: 2
+                                    }
+                                }
+                            }]
+                    }, {});
+                }
+                return null != null ? null : 2;
+            },
+            2
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'a'
+                                        },
+                                        init: {
+                                            type: 'Literal',
+                                            value: null
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'b'
+                                        },
+                                        init: {
+                                            type: 'Literal',
+                                            value: 2
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ArrayExpression',
+                                    elements: [
+                                        {
+                                            type: 'UnaryExpression',
+                                            operator: '?',
+                                            argument: {
+                                                type: 'Identifier',
+                                                name: 'a'
+                                            }
+                                        },
+                                        {
+                                            type: 'UnaryExpression',
+                                            operator: '?',
+                                            argument: {
+                                                type: 'Identifier',
+                                                name: 'b'
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }, {});
+                }
+                let a = null;
+                let b = 2;
+                return [
+                    a != null,
+                    b != null
+                ];
+            },
+            [
+                false,
+                true
+            ]
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'Math'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'min'
+                                        }
+                                    },
+                                    arguments: [
+                                        {
+                                            type: 'Literal',
+                                            value: 1
+                                        },
+                                        {
+                                            type: 'Literal',
+                                            value: 2
+                                        }
+                                    ]
+                                }
+                            }]
+                    }, {});
+                }
+                return Math.min(1, 2);
+            },
+            1
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'Math'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'min'
+                                            }
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'call'
+                                        }
+                                    },
+                                    arguments: [
+                                        {
+                                            type: 'Literal',
+                                            value: null
+                                        },
+                                        {
+                                            type: 'Literal',
+                                            value: 1
+                                        },
+                                        {
+                                            type: 'Literal',
+                                            value: 2
+                                        }
+                                    ]
+                                }
+                            }]
+                    }, {});
+                }
+                return Math.min.call(null, 1, 2);
+            },
+            1
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'NewExpression',
+                                    callee: {
+                                        type: 'Identifier',
+                                        name: 'Date'
+                                    },
+                                    arguments: [
+                                        {
+                                            type: 'Literal',
+                                            value: 2011
+                                        },
+                                        {
+                                            type: 'Literal',
+                                            value: 10
+                                        },
+                                        {
+                                            type: 'Literal',
+                                            value: 5
+                                        }
+                                    ]
+                                }
+                            }]
+                    }, {});
+                }
+                return new Date(2011, 10, 5);
+            },
+            new Date(2011, 10, 5)
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'Literal',
+                                    value: /foo/
+                                }
+                            }]
+                    }, {});
+                }
+                return /foo/;
+            },
+            /foo/
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    objectType: null,
+                                    properties: [
+                                        {
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'x'
+                                            },
+                                            value: {
+                                                type: 'Literal',
+                                                value: 1
+                                            },
+                                            kind: 'init'
+                                        },
+                                        {
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'y'
+                                            },
+                                            value: {
+                                                type: 'Literal',
+                                                value: 2
+                                            },
+                                            kind: 'init'
+                                        },
+                                        {
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'z'
+                                            },
+                                            value: {
+                                                type: 'ObjectExpression',
+                                                objectType: {
+                                                    type: 'ArrayExpression',
+                                                    elements: []
+                                                },
+                                                properties: [
+                                                    {
+                                                        type: 'VariableDeclaration',
+                                                        declarations: [{
+                                                                type: 'VariableDeclarator',
+                                                                id: {
+                                                                    type: 'Identifier',
+                                                                    name: 'items'
+                                                                },
+                                                                init: {
+                                                                    type: 'ArrayExpression',
+                                                                    elements: [
+                                                                        {
+                                                                            type: 'Literal',
+                                                                            value: 3
+                                                                        },
+                                                                        {
+                                                                            type: 'Literal',
+                                                                            value: 2
+                                                                        },
+                                                                        {
+                                                                            type: 'Literal',
+                                                                            value: 1
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            }],
+                                                        kind: 'let'
+                                                    },
+                                                    {
+                                                        type: 'ForOfStatement',
+                                                        left: {
+                                                            type: 'VariableDeclaration',
+                                                            declarations: [{
+                                                                    type: 'VariableDeclarator',
+                                                                    id: {
+                                                                        type: 'Identifier',
+                                                                        name: 'item'
+                                                                    },
+                                                                    init: null
+                                                                }],
+                                                            kind: 'let'
+                                                        },
+                                                        right: {
+                                                            type: 'Identifier',
+                                                            name: 'items'
+                                                        },
+                                                        body: {
+                                                            type: 'BlockStatement',
+                                                            body: [{
+                                                                    type: 'ExpressionStatement',
+                                                                    expression: {
+                                                                        type: 'BinaryExpression',
+                                                                        operator: '*',
+                                                                        left: {
+                                                                            type: 'Identifier',
+                                                                            name: 'item'
+                                                                        },
+                                                                        right: {
+                                                                            type: 'Literal',
+                                                                            value: 2
+                                                                        }
+                                                                    }
+                                                                }]
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            kind: 'init'
+                                        }
+                                    ]
+                                }
+                            }]
+                    }, {});
+                }
+                let _ref = [];
+                {
+                    let items = [
+                            3,
+                            2,
+                            1
+                        ];
+                    for (let _i = 0; _i < items.length; _i++) {
+                        let item = items[_i];
+                        _ref.push(item * 2);
+                    }
+                }
+                return {
+                    x: 1,
+                    y: 2,
+                    z: _ref
+                };
+            },
+            {
+                x: 1,
+                y: 2,
+                z: [
+                    6,
+                    4,
+                    2
+                ]
+            }
+        ],
+        [
+            function _template() {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ArrayExpression',
+                                    elements: [
+                                        {
+                                            type: 'ConditionalExpression',
+                                            test: {
+                                                type: 'BinaryExpression',
+                                                operator: '!=',
+                                                left: {
+                                                    type: 'Literal',
+                                                    value: null
+                                                },
+                                                right: {
+                                                    type: 'Literal',
+                                                    value: null
+                                                }
+                                            },
+                                            consequent: {
+                                                type: 'Literal',
+                                                value: null
+                                            },
+                                            alternate: {
+                                                type: 'Literal',
+                                                value: 1
+                                            }
+                                        },
+                                        {
+                                            type: 'ConditionalExpression',
+                                            test: {
+                                                type: 'BinaryExpression',
+                                                operator: '!=',
+                                                left: {
+                                                    type: 'UnaryExpression',
+                                                    operator: 'void',
+                                                    prefix: true,
+                                                    argument: {
+                                                        type: 'Literal',
+                                                        value: 0
+                                                    }
+                                                },
+                                                right: {
+                                                    type: 'Literal',
+                                                    value: null
+                                                }
+                                            },
+                                            consequent: {
+                                                type: 'UnaryExpression',
+                                                operator: 'void',
+                                                prefix: true,
+                                                argument: {
+                                                    type: 'Literal',
+                                                    value: 0
+                                                }
+                                            },
+                                            alternate: {
+                                                type: 'Literal',
+                                                value: 2
+                                            }
+                                        }
+                                    ]
+                                }
+                            }]
+                    }, {});
+                }
+                return [
+                    null != null ? null : 1,
+                    void 0 != null ? void 0 : 2
+                ];
+            },
+            [
+                1,
+                2
+            ]
+        ]
+    ];
+const test = exports.test = function () {
+        for (let _i = 0; _i < templates.length; _i++) {
+            let _ref = templates[_i];
+            let templateType = _ref[0];
+            let expected = _ref[1];
+            if (expected != null) {
+                let template = new templateType();
+                template.activate();
+                let reactiveResult = null;
+                template.watch(function (value) {
+                    return reactiveResult = value;
+                });
+                if (!(JSON.stringify(reactiveResult) === JSON.stringify(expected)))
+                    throw new Error('Assertion Failed: (JSON.stringify(reactiveResult) is JSON.stringify(expected))');
+                template.deactivate();
+                if (!(reactiveResult === void 0))
+                    throw new Error('Assertion Failed: (reactiveResult is undefined)');
+                let imperativeResult = templateType();
+                if (!(JSON.stringify(imperativeResult) === JSON.stringify(expected)))
+                    throw new Error('Assertion Failed: (JSON.stringify(imperativeResult) is JSON.stringify(expected))');
+            }
+        }
+    };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/test/immediateTemplates',_ion_test_immediateTemplates_);
+    else
+      _ion_test_immediateTemplates_.call(this, module, exports, require);
+  }
+  else {
+    _ion_test_immediateTemplates_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_test_ionCompiler_ = function(module,exports,require){var index, tests;
+
+index = require('../compiler');
+
+tests = {
+  "let x = 10": "'use strict';\nlet x = 10;",
+  "for name, value of foo\n    console.log(name + value)": "'use strict';\nfor (let name in foo) {\n    let value = foo[name];\n    console.log(name + value);\n}",
+  "for let name, value of {a:1,b:2,c:3}\n    console.log(name + value)": "'use strict';\n{\n    let _ref = {\n            a: 1,\n            b: 2,\n            c: 3\n        };\n    for (let name in _ref) {\n        let value = _ref[name];\n        console.log(name + value);\n    }\n}    ",
+  "for let name in [\"a\",\"b\",\"c\"]\n    console.log(name)": "'use strict';\n{\n    let _ref = [\n            'a',\n            'b',\n            'c'\n        ];\n    for (let _i = 0; _i < _ref.length; _i++) {\n        let name = _ref[_i];\n        console.log(name);\n    }\n}",
+  "for name, index in [\"a\",\"b\",\"c\"]\n    console.log(name)": "'use strict';\n{\n    let _ref = [\n            'a',\n            'b',\n            'c'\n        ];\n    for (let _i = 0; _i < _ref.length; _i++) {\n        let index = _i;\n        let name = _ref[_i];\n        console.log(name);\n    }\n}",
+  "let object =\n    x: 1\n    y: 2\n    foo:\n        z: 3": "'use strict';\nlet object = {\n        x: 1,\n        y: 2,\n        foo: { z: 3 }\n    };",
+  "let array = []\n    1\n    2\n    3": "'use strict';\nlet array = [\n        1,\n        2,\n        3\n    ];",
+  "let kids = []\n    {}\n        name: \"Alpha\"\n        age: 10\n    {}\n        name: \"Beta\"\n        age: 8": "'use strict';\nlet kids = [\n        {\n            name: 'Alpha',\n            age: 10\n        },\n        {\n            name: 'Beta',\n            age: 8\n        }\n    ];",
+  "try\n    doSomething(1)\ncatch e\n    log(e)": "'use strict';\ntry {\n    doSomething(1);\n} catch (e) {\n    log(e);\n}",
+  "try\n    doSomething(1)\nfinally\n    log(e)": "'use strict';\ntry {\n    doSomething(1);\n} finally {\n    log(e);\n}",
+  "try\n    doSomething(1)\ncatch e\n    console.error(e)\nfinally\n    log(e)": "'use strict';\ntry {\n    doSomething(1);\n} catch (e) {\n    console.error(e);\n} finally {\n    log(e);\n}",
+  "for key, name of foo\n    if name is 'a'\n        break\n    else if name is 'b'\n        continue\n    else if name is 'c'\n        return\n    else if name is 'd'\n        throw new Error(\"D\")\n    else\n        return\n            x: 1\n            y: 2": "'use strict';\nfor (let key in foo) {\n    let name = foo[key];\n    if (name === 'a') {\n        break;\n    } else if (name === 'b') {\n        continue;\n    } else if (name === 'c') {\n        return;\n    } else if (name === 'd') {\n        throw new Error('D');\n    } else {\n        return {\n            x: 1,\n            y: 2\n        };\n    }\n}",
+  "console.log(\"Hello {{name}}\")": "'use strict';\nconsole.log('Hello ' + name);",
+  "console.log(\"{{name}}\")": "'use strict';\nconsole.log('' + name);",
+  "console.log(\"{{ 1 }}{{ 2 }}\")": "'use strict';\nconsole.log('' + 1 + 2);",
+  "return \"\"\n    <html>\n        <head><title>{{ title }}</title></head>\n        <body>\n        {{ body }}\n        </body>\n    </html>": "'use strict';\nreturn '<html>\\n    <head><title>' + title + '</title></head>\\n    <body>\\n    ' + body + '\\n    </body>\\n</html>';",
+  "return ''\n    <html>\n        <head><title>{{ title }}</title></head>\n        <body>\n        {{ body }}\n        </body>\n    </html>": "'use strict';\nreturn '<html>\\n    <head><title>{{ title }}</title></head>\\n    <body>\\n    {{ body }}\\n    </body>\\n</html>';",
+  "do -> x": "'use strict';\n(function () {\n    return x;\n}());",
+  "do (x, y) => x + y": "'use strict';\n(function (x, y) {\n    return x + y;\n}.bind(this)(x, y));",
+  "const ion = import \"ion\"": "'use strict';\nconst ion = require('ion');",
+  "export\n    secret: 97542": "'use strict';\nmodule.exports = exports = { secret: 97542 };",
+  "export let x = 1, y = 2": "'use strict';\nlet x = exports.x = 1, y = exports.y = 2;",
+  "export const\n    x = 1\n    y = 2\n    z = 3": "'use strict';\nconst x = exports.x = 1, y = exports.y = 2, z = exports.z = 3;",
+  "let {x,y} = {x:1,y:2}": "'use strict';\nlet _ref = {\n        x: 1,\n        y: 2\n    };\nlet x = _ref.x;\nlet y = _ref.y;",
+  "for key, {x:[a,b],y:{c:d}} of points\n    console.log(x, y)": "'use strict';\nfor (let key in points) {\n    let _ref = points[key];\n    let a = _ref.x[0];\n    let b = _ref.x[1];\n    let d = _ref.y.c;\n    console.log(x, y);\n}",
+  "for {x:[a,b],y:{c:d}}, index in points\n    console.log(x, y)": "'use strict';\nfor (let _i = 0; _i < points.length; _i++) {\n    let index = _i;\n    let _ref = points[_i];\n    let a = _ref.x[0];\n    let b = _ref.x[1];\n    let d = _ref.y.c;\n    console.log(x, y);\n}",
+  "foo ? bar": "'use strict';\nfoo != null ? foo : bar;",
+  "foo ?? bar": "'use strict';\nfoo != void 0 ? foo : bar;",
+  "let x\nx ?= y": "'use strict';\nlet x;\nx = x != null ? x : y;",
+  "let x\nx ??= y": "'use strict';\nlet x;\nx = x != void 0 ? x : y;",
+  "for const x, index in foo\n    log(x)": "'use strict';\nfor (let _i = 0; _i < foo.length; _i++) {\n    const index = _i;\n    const x = foo[_i];\n    log(x);\n}",
+  "[x,y] = [y,x]": "'use strict';\nconst _ref = [\n        y,\n        x\n    ];\nx = _ref[0];\ny = _ref[1];",
+  "a?.b": "'use strict';\na != null ? a.b : void 0;",
+  "a?.b.c?.d": "'use strict';\na != null ? a.b.c != null ? a.b.c.d : void 0 : void 0;",
+  "a?()": "'use strict';\na != null ? a() : void 0;",
+  "a?.b?.c?()": "'use strict';\na != null ? a.b != null ? a.b.c != null ? a.b.c() : void 0 : void 0 : void 0;",
+  "a?.b().c?()": "'use strict';\na != null ? a.b().c != null ? a.b().c() : void 0 : void 0;",
+  "let y = (x) -> 2": "'use strict';\nlet y = function (x) {\n    return 2;\n};",
+  "s?": "'use strict';\ns != null;",
+  "# also test comments\nlet regex = /foo/": "'use strict';\nlet regex = /foo/;",
+  "for let i = 0; i < 10; i++\n    console.log(i)": "'use strict';\nfor (let i = 0; i < 10; i++) {\n    console.log(i);\n}",
+  "for key of object if key[0] isnt '_' for c in key\n    console.log(c)": "'use strict';\nfor (let key in object) {\n    if (key[0] !== '_') {\n        for (let _i = 0; _i < key.length; _i++) {\n            let c = key[_i];\n            console.log(c);\n        }\n    }\n}",
+  "console.log([key for key of object if key is cool])": "'use strict';\nlet _ref = [];\nfor (let key in object) {\n    if (key === cool) {\n        _ref.push(key);\n    }\n}\nconsole.log(_ref);",
+  "(console.log)\n    1\n    2\n    {}\n        x: 1\n        y: 2": "'use strict';\nconsole.log(1, 2, {\n    x: 1,\n    y: 2\n});",
+  "let x = ->\n    try\n        foo()\n        bar()\n    catch e\n        baz()": "'use strict';\nlet x = function () {\n    try {\n        foo();\n        bar();\n    } catch (e) {\n        baz();\n    }\n};",
+  "if foo\n    # bar": "'use strict';\nif (foo) {\n}",
+  "let trim = (a = \"\") -> a.trim()": "'use strict';\nlet trim = function (a) {\n    if (a == null)\n        a = '';\n    return a.trim();\n};",
+  "(foo)\n    1\n    2": "'use strict';\nfoo(1, 2);",
+  "(compile)\n    foo: 1\n    bar: 2\n    baz:\n        a: 1\n        b: 2": "'use strict';\ncompile({\n    foo: 1,\n    bar: 2,\n    baz: {\n        a: 1,\n        b: 2\n    }\n});",
+  "let array = [1,2,3]\n    4\n    5\n    6": "'use strict';\nlet array = [\n        1,\n        2,\n        3,\n        4,\n        5,\n        6\n    ];",
+  "let point = new Point(10, 20)\n    z: 30": "'use strict';\nlet point = new Point(10, 20);\npoint.z = 30;",
+  "let object = {x:1, y:2}\n    z: 3": "'use strict';\nlet object = {\n        x: 1,\n        y: 2\n    };\nobject.z = 3;",
+  "let origin = Point\n    x: 1\n    y: 2": "'use strict';\nlet origin = new Point();\n{\n    origin.x = 1;\n    origin.y = 2;\n}",
+  "let origin = Line\n    a: Point\n        x: 0\n        y: 0\n    b: Point\n        x: 10\n        y: 20": "'use strict';\nlet origin = new Line();\n{\n    let _ref = new Point();\n    {\n        _ref.x = 0;\n        _ref.y = 0;\n    }\n    origin.a = _ref;\n    let _ref2 = new Point();\n    {\n        _ref2.x = 10;\n        _ref2.y = 20;\n    }\n    origin.b = _ref2;\n}",
+  "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: Point\n        x: 0\n        y: 0": "'use strict';\nif (input == null)\n    input = {};\ninput.x = 10;\ninput.y = 20;\nif (input.z == null)\n    input.z = {};\ninput.z.a = 1;\ninput.z.b = 2;\nlet _ref = new Point();\n{\n    _ref.x = 0;\n    _ref.y = 0;\n}\ninput.w = _ref;",
+  "let point = Point\n    [x]: 1\n    [y]: 2": "'use strict';\nlet point = new Point();\n{\n    point[x] = 1;\n    point[y] = 2;\n}",
+  "let self = @\nlet x = @x\nlet y = @.y\nlet z = this.z": "'use strict';\nlet self = this;\nlet x = this.x;\nlet y = this.y;\nlet z = this.z;",
+  "let x = {}\n    [key]: value": "'use strict';\nlet x = {};\nx[key] = value;",
+  "if foo\n    return {}\n        for key, value of object\n            [key]: value": "'use strict';\nif (foo) {\n    let _ref = {};\n    for (let key in object) {\n        let value = object[key];\n        _ref[key] = value;\n    }\n    return _ref;\n}",
+  "for x, y, z of foo\n    log(foo)": {
+    line: 1,
+    column: 11
+  },
+  "export let x": {
+    line: 1,
+    column: 12
+  },
+  "export const x": {
+    line: 1,
+    column: 14
+  },
+  "export const x = 1\nexport {y:2}": {
+    line: 2,
+    column: 1
+  },
+  "let _ref = 1\nlet _ref2 = 2\nlet {x,y} = z": "'use strict';\nlet _ref = 1;\nlet _ref2 = 2;\nlet _ref3 = z;\nlet x = _ref3.x;\nlet y = _ref3.y;",
+  "const x = 1\nx = 2": {
+    line: 2,
+    column: 1
+  },
+  "const double = (x) ->\n    x *= 2\n    return x": "'use strict';\nconst double = function (x) {\n    x *= 2;\n    return x;\n};",
+  "x = 1": {
+    line: 1,
+    column: 1
+  },
+  "let x = 1\nlet x = 2": {
+    line: 2,
+    column: 5
+  },
+  "let x = 1\nconst double = (x) ->\n    return x": "'use strict';\nlet x = 1;\nconst double = function (x) {\n    return x;\n};",
+  "console.log(x)\nif a\n    let x = 1": {
+    line: 1,
+    column: 13
+  },
+  "if typeof a is 'string' and void a and delete a.b\n    log(a)": "'use strict';\nif (typeof a === 'string' && void a && delete a.b) {\n    log(a);\n}",
+  "if 1\n    # 1\n    # 2\n    x = 12": {
+    line: 4,
+    column: 5
+  },
+  "export const\n    BlockStatement =\n        isBlock: true\n        newScope: tr ue": {
+    line: 4,
+    column: 22
+  },
+  "export class Foo extends import 'Bar'\n    constructor: (x,y) ->\n        @x = x\n        @y = y\n    properties:\n        x: 1\n        y: 2\n        getXY: -> [@x,@y]\n    isThisPropertyStatic: true": "'use strict';\nconst ion = require('ion');\nconst Foo = ion.defineClass({\n        id: 'Foo',\n        constructor: function Foo(x, y) {\n            this.x = x;\n            this.y = y;\n        },\n        properties: {\n            x: 1,\n            y: 2,\n            getXY: function () {\n                return [\n                    this.x,\n                    this.y\n                ];\n            }\n        },\n        isThisPropertyStatic: true\n    }, require('Bar'));\nmodule.exports = exports = Foo;",
+  "double(a) -> a * 2": "'use strict';\nfunction double(a) {\n    return a * 2;\n}",
+  "double(a) -> a * 2\ndouble = 12": {
+    line: 2,
+    column: 1
+  },
+  "let object =\n    double(a) -> a * 2\n    if a\n        [key]: value\n    else\n        foo: double(2)": "'use strict';\nlet object = {};\n{\n    function double(a) {\n        return a * 2;\n    }\n    if (a) {\n        object[key] = value;\n    } else {\n        object.foo = double(2);\n    }\n}",
+  "let items = []\n    for key, value of window\n        value": "'use strict';\nlet items = [];\nfor (let key in window) {\n    let value = window[key];\n    items.push(value);\n}",
+  "let foo = div\n    span\n        'Hello'": "'use strict';\nconst ion = require('ion');\nlet foo = new div();\nlet _ref = new span();\nion.add(_ref, 'Hello');\nion.add(foo, _ref);",
+  "const ion = import './'\nlet foo = div\n    span\n        'Hello'": "'use strict';\nconst ion = require('./');\nlet foo = new div();\nlet _ref = new span();\nion.add(_ref, 'Hello');\nion.add(foo, _ref);",
+  "translate({x,y}) ->\n    x++\n    y++\n    return {x,y}": "'use strict';\nfunction translate(_ref) {\n    let x = _ref.x;\n    let y = _ref.y;\n    x++;\n    y++;\n    return {\n        x: x,\n        y: y\n    };\n}",
+  "let x = (foo)\n    ''\n        multiline string literal\n    \"\"\n        multiline string template": "'use strict';\nlet x = foo('multiline string literal', 'multiline string template');",
+  "assert x is 2": "'use strict';\nif (!(x === 2))\n    throw new Error('Assertion Failed: (x is 2)');",
+  "export class Point\n    constructor: ->\n        # call super with arguments object\n        super\n        # call super again with explicit arguments\n        super(width, height)\n        # calling twice is silly, but legal\n    properties:\n        x: 0\n        y: 0\n        superIdentifier: (x, y) -> super\n        superExplicit: (a, b) -> super(a, b)": "'use strict';\nconst ion = require('ion');\nconst Point = ion.defineClass({\n        id: 'Point',\n        constructor: function Point() {\n            Point.super.apply(this, arguments);\n            Point.super.call(this, width, height);\n        },\n        properties: {\n            x: 0,\n            y: 0,\n            superIdentifier: function (x, y) {\n                return Point.super.prototype.superIdentifier.apply(this, arguments);\n            },\n            superExplicit: function (a, b) {\n                return Point.super.prototype.superExplicit.call(this, a, b);\n            }\n        }\n    });\nmodule.exports = exports = Point;",
+  "spreadFunction1(a, b, ...c) ->\n    log(1)\nspreadFunction2(a, b, ...c, d, e) ->\n    log(2)\nspreadFunction3(a,b, ...c, {d,e}) ->\n    log(3)": "'use strict';\nfunction spreadFunction1(a, b, ___c) {\n    let c = Array.prototype.slice.call(arguments, 2);\n    log(1);\n}\nfunction spreadFunction2(a, b, ___c, d, e) {\n    let c = Array.prototype.slice.call(arguments, 2, arguments.length - 2);\n    d = arguments[arguments.length - 2];\n    e = arguments[arguments.length - 1];\n    log(2);\n}\nfunction spreadFunction3(a, b, ___c, _ref) {\n    let c = Array.prototype.slice.call(arguments, 2, arguments.length - 1);\n    _ref = arguments[arguments.length - 1];\n    let d = _ref.d;\n    let e = _ref.e;\n    log(3);\n}",
+  "# default value for a should be set before b\nfoo(a = 0, b = a) -> a + b": "'use strict';\nfunction foo(a, b) {\n    if (a == null)\n        a = 0;\n    if (b == null)\n        b = a;\n    return a + b;\n}",
+  "export template ->\n    # cannot define classes in templates\n    class Poo": {
+    line: 3,
+    column: 5
+  },
+  "export template ->\n    # cannot for loop in templates\n    for let i = 0; i < 10; i++\n        console.log(i)": {
+    line: 3,
+    column: 5
+  },
+  "export template ->\n    # cannot export in templates\n    export x": {
+    line: 3,
+    column: 5
+  },
+  "export template ->\n    # cannot try/catch in templates\n    try\n        return 0\n    catch e\n        return 1": {
+    line: 3,
+    column: 5
+  },
+  "export template ->\n    # cannot throw errors in templates\n    throw new Error": {
+    line: 3,
+    column: 5
+  },
+  "# cannot use => syntax in templates\nexport template => 0": {
+    line: 2,
+    column: 8
+  },
+  "export template ->\n    const x = 12\n    # cannot assign to const variables, make sure enforced within template\n    x = 10\n    return x": {
+    line: 4,
+    column: 5
+  },
+  "export template ->\n    let x = 12\n    # cannot assign to let variables either.\n    x = 12\n    return x": {
+    line: 4,
+    column: 5
+  },
+  "export template ->\n    let x = {y:10}\n    # cannot assign to anything really.\n    x.y = 12\n    return x.y": {
+    line: 4,
+    column: 5
+  },
+  "export template (a) ->\n    # cannot assign to parameters either\n    a = 10\n    return a": {
+    line: 3,
+    column: 5
+  },
+  "export class Foo\n    constructor: ->\n        # there was a problem with existential operators not processing within class definitions\n        if properties?\n            log(properties)": "'use strict';\nconst ion = require('ion');\nconst Foo = ion.defineClass({\n        id: 'Foo',\n        constructor: function Foo() {\n            if (properties != null) {\n                log(properties);\n            }\n        }\n    });\nmodule.exports = exports = Foo;",
+  "const ctor = @@\nconst ctorName = @@name": "'use strict';\nconst ctor = this.constructor;\nconst ctorName = this.constructor.name;",
+  "inlineThrow() -> throw new Error('inline throw')": "'use strict';\nfunction inlineThrow() {\n    throw new Error('inline throw');\n}",
+  "class DynamicExpression\n    watch: ->\n        let x = @x ?= []": "'use strict';\nconst ion = require('ion');\nconst DynamicExpression = ion.defineClass({\n        id: 'DynamicExpression',\n        watch: function () {\n            let x = this.x = this.x != null ? this.x : [];\n        }\n    });\nDynamicExpression;",
+  "let a = (new Point)\n    1\n    2": "'use strict';\nlet a = new Point(1, 2);",
+  "let x = [y for y in z]": "'use strict';\nlet _ref = [];\nfor (let _i = 0; _i < z.length; _i++) {\n    let y = z[_i];\n    _ref.push(y);\n}\nlet x = _ref;",
+  "let mytemplate = template -> [x + i for x, i in y]": "'use strict';\nconst ion = require('ion');\nlet mytemplate = function _template() {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [{\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'ObjectExpression',\n                        objectType: {\n                            type: 'ArrayExpression',\n                            elements: []\n                        },\n                        properties: [{\n                                type: 'ForOfStatement',\n                                left: {\n                                    type: 'VariableDeclaration',\n                                    declarations: [\n                                        {\n                                            type: 'VariableDeclarator',\n                                            id: {\n                                                type: 'Identifier',\n                                                name: 'x'\n                                            },\n                                            init: null\n                                        },\n                                        {\n                                            type: 'VariableDeclarator',\n                                            id: {\n                                                type: 'Identifier',\n                                                name: 'i'\n                                            },\n                                            init: null\n                                        }\n                                    ],\n                                    kind: 'let'\n                                },\n                                right: {\n                                    type: 'Identifier',\n                                    name: 'y'\n                                },\n                                body: {\n                                    type: 'ExpressionStatement',\n                                    expression: {\n                                        type: 'BinaryExpression',\n                                        operator: '+',\n                                        left: {\n                                            type: 'Identifier',\n                                            name: 'x'\n                                        },\n                                        right: {\n                                            type: 'Identifier',\n                                            name: 'i'\n                                        }\n                                    }\n                                }\n                            }]\n                    }\n                }],\n            name: {\n                type: 'Identifier',\n                name: 'mytemplate'\n            }\n        }, {});\n    }\n    let _ref = [];\n    for (let _i = 0; _i < y.length; _i++) {\n        let i = _i;\n        let x = y[_i];\n        _ref.push(x + i);\n    }\n    return _ref;\n};",
+  "let x = template -> /foo/": "'use strict';\nconst ion = require('ion');\nlet x = function _template() {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [{\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'Literal',\n                        value: /foo/\n                    }\n                }],\n            name: {\n                type: 'Identifier',\n                name: 'x'\n            }\n        }, {});\n    }\n    return /foo/;\n};",
+  "return\n    z: []\n        let items = [3,2,1]\n        for item in items\n            item * 2": "'use strict';\nlet _ref = [];\n{\n    let items = [\n            3,\n            2,\n            1\n        ];\n    for (let _i = 0; _i < items.length; _i++) {\n        let item = items[_i];\n        _ref.push(item * 2);\n    }\n}\nreturn { z: _ref };",
+  "let x = `y == null`": "'use strict';\nlet x = y == null;",
+  "# should get accurate error locations even from inline javascript expressions\nlet x = `y := null`": {
+    line: 2,
+    column: 13
+  },
+  "const ion = import '../'\nconst templates = []\n    template (properties) -> 1": "'use strict';\nconst ion = require('../');\nconst templates = [function _template(properties) {\n            if (this != null && this.constructor === _template) {\n                return ion.createRuntime({\n                    type: 'Template',\n                    body: [{\n                            type: 'ReturnStatement',\n                            argument: {\n                                type: 'Literal',\n                                value: 1\n                            }\n                        }]\n                }, { properties: properties });\n            }\n            return 1;\n        }];",
+  "template (properties) ->\n    let baz = 10\n    let foo = 1\n    let factor = 2\n    multiply(a) ->\n        let bar = factor.foo\n        let baz =\n            foo: 5\n        return a * factor\n    return multiply(2)": "'use strict';\nconst ion = require('ion');\n(function _template(properties) {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'baz'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 10\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'foo'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 1\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'factor'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 2\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    kind: 'const',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'multiply'\n                            },\n                            init: {\n                                type: 'Function',\n                                context: true,\n                                value: function (_context) {\n                                    return function multiply(a) {\n                                        const factor = _context.get('factor');\n                                        let bar = factor.foo;\n                                        let baz = { foo: 5 };\n                                        return a * factor;\n                                    };\n                                }\n                            }\n                        }]\n                },\n                {\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'CallExpression',\n                        callee: {\n                            type: 'Identifier',\n                            name: 'multiply'\n                        },\n                        arguments: [{\n                                type: 'Literal',\n                                value: 2\n                            }]\n                    }\n                }\n            ]\n        }, { properties: properties });\n    }\n    let baz = 10;\n    let foo = 1;\n    let factor = 2;\n    function multiply(a) {\n        let bar = factor.foo;\n        let baz = { foo: 5 };\n        return a * factor;\n    }\n    return multiply(2);\n});"
+};
+
+if (global.window != null) {
+  return;
+}
+
+exports.test = function() {
+  var e, error, expected, input, key, output, value;
+  for (input in tests) {
+    expected = tests[input];
+    if (expected === null) {
+      console.log('---------------------------------------------------');
+      console.log(JSON.stringify(index.compile(input, {
+        postprocess: false
+      }), null, '  '));
+      console.log('-Postprocessed------------------------------------');
+      console.log(JSON.stringify(index.compile(input, {
+        generate: false
+      }), null, '  '));
+      console.log('---------------------------------------------------');
+      console.log(index.compile(input, {
+        loc: false
+      }));
+    } else if (typeof expected === 'object') {
+      error = null;
+      try {
+        index.compile(input);
+      } catch (_error) {
+        e = _error;
+        error = e;
+        for (key in expected) {
+          value = expected[key];
+          if (value !== e[key]) {
+            throw new Error("\n" + (JSON.stringify(e)) + "\n!=\n" + (JSON.stringify(expected)));
+          }
+        }
+      }
+      if (error == null) {
+        throw new Error("Expected an error: " + (JSON.stringify(expected)));
+      }
+    } else {
+      output = index.compile(input);
+      if (output.trim() !== expected.trim()) {
+        console.log('-Output---------------------------------------------');
+        console.log(output);
+        throw new Error("\n" + output + "\n!=\n" + expected);
+      }
+    }
+  }
+};
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/test/ionCompiler',_ion_test_ionCompiler_);
+    else
+      _ion_test_ionCompiler_.call(this, module, exports, require);
+  }
+  else {
+    _ion_test_ionCompiler_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_test_ionCustomParse_ = function(module,exports,require){
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/test/ionCustomParse',_ion_test_ionCustomParse_);
+    else
+      _ion_test_ionCustomParse_.call(this, module, exports, require);
+  }
+  else {
+    _ion_test_ionCustomParse_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_test_ionVsEsprima_ = function(module,exports,require){
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/test/ionVsEsprima',_ion_test_ionVsEsprima_);
+    else
+      _ion_test_ionVsEsprima_.call(this, module, exports, require);
+  }
+  else {
+    _ion_test_ionVsEsprima_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_test_reactiveTemplates_ = function(module,exports,require){'use strict';
+const ion = require('../');
+const templates = [
+        [
+            'array comprehension',
+            function _template(properties) {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'ArrayExpression',
+                                        elements: []
+                                    },
+                                    properties: [{
+                                            type: 'ForInStatement',
+                                            left: {
+                                                type: 'VariableDeclaration',
+                                                declarations: [{
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'key'
+                                                        },
+                                                        init: null
+                                                    }],
+                                                kind: 'let'
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'properties'
+                                            },
+                                            body: {
+                                                type: 'ExpressionStatement',
+                                                expression: {
+                                                    type: 'Identifier',
+                                                    name: 'key'
+                                                }
+                                            }
+                                        }]
+                                }
+                            }]
+                    }, { properties: properties });
+                }
+                let _ref = [];
+                for (let key in properties)
+                    _ref.push(key);
+                return _ref;
+            },
+            {
+                a: 1,
+                b: 2
+            },
+            {
+                b: null,
+                c: 3
+            },
+            [
+                'a',
+                'c'
+            ]
+        ],
+        [
+            'imperative functions',
+            function _template(properties) {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                kind: 'const',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'double'
+                                        },
+                                        init: {
+                                            type: 'Function',
+                                            context: false,
+                                            value: function double(a) {
+                                                return a * 2;
+                                            }
+                                        }
+                                    }]
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'ObjectExpression',
+                                        properties: []
+                                    },
+                                    properties: [{
+                                            type: 'ForInStatement',
+                                            left: {
+                                                type: 'VariableDeclaration',
+                                                declarations: [
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'key'
+                                                        },
+                                                        init: null
+                                                    },
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'value'
+                                                        },
+                                                        init: null
+                                                    }
+                                                ],
+                                                kind: 'let'
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'properties'
+                                            },
+                                            body: {
+                                                type: 'BlockStatement',
+                                                body: [{
+                                                        type: 'Property',
+                                                        key: {
+                                                            type: 'Identifier',
+                                                            name: 'key'
+                                                        },
+                                                        value: {
+                                                            type: 'CallExpression',
+                                                            callee: {
+                                                                type: 'Identifier',
+                                                                name: 'double'
+                                                            },
+                                                            arguments: [{
+                                                                    type: 'Identifier',
+                                                                    name: 'value'
+                                                                }]
+                                                        },
+                                                        kind: 'init',
+                                                        computed: true
+                                                    }]
+                                            }
+                                        }]
+                                }
+                            }
+                        ]
+                    }, { properties: properties });
+                }
+                function double(a) {
+                    return a * 2;
+                }
+                let _ref = {};
+                for (let key in properties) {
+                    let value = properties[key];
+                    _ref[key] = double(value);
+                }
+                return _ref;
+            },
+            {
+                x: 1,
+                y: 2
+            },
+            {
+                x: 4,
+                z: 3
+            },
+            {
+                y: 4,
+                x: 8,
+                z: 6
+            }
+        ],
+        [
+            'shared variables functions',
+            function _template(properties) {
+                if (this != null && this.constructor === _template) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'factor'
+                                        },
+                                        init: {
+                                            type: 'ConditionalExpression',
+                                            test: {
+                                                type: 'BinaryExpression',
+                                                operator: '!=',
+                                                left: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'properties'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'factor'
+                                                    }
+                                                },
+                                                right: {
+                                                    type: 'Literal',
+                                                    value: null
+                                                }
+                                            },
+                                            consequent: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'properties'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'factor'
+                                                }
+                                            },
+                                            alternate: {
+                                                type: 'Literal',
+                                                value: 3
+                                            }
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'VariableDeclaration',
+                                kind: 'const',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'multiply'
+                                        },
+                                        init: {
+                                            type: 'Function',
+                                            context: true,
+                                            value: function (_context) {
+                                                return function multiply(a) {
+                                                    const factor = _context.get('factor');
+                                                    return a * factor;
+                                                };
+                                            }
+                                        }
+                                    }]
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'ObjectExpression',
+                                        properties: []
+                                    },
+                                    properties: [{
+                                            type: 'ForInStatement',
+                                            left: {
+                                                type: 'VariableDeclaration',
+                                                declarations: [
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'key'
+                                                        },
+                                                        init: null
+                                                    },
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'value'
+                                                        },
+                                                        init: null
+                                                    }
+                                                ],
+                                                kind: 'let'
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'properties'
+                                            },
+                                            body: {
+                                                type: 'BlockStatement',
+                                                body: [{
+                                                        type: 'IfStatement',
+                                                        test: {
+                                                            type: 'BinaryExpression',
+                                                            operator: '!==',
+                                                            left: {
+                                                                type: 'Identifier',
+                                                                name: 'key'
+                                                            },
+                                                            right: {
+                                                                type: 'Literal',
+                                                                value: 'factor'
+                                                            }
+                                                        },
+                                                        consequent: {
+                                                            type: 'BlockStatement',
+                                                            body: [{
+                                                                    type: 'Property',
+                                                                    key: {
+                                                                        type: 'Identifier',
+                                                                        name: 'key'
+                                                                    },
+                                                                    value: {
+                                                                        type: 'CallExpression',
+                                                                        callee: {
+                                                                            type: 'Identifier',
+                                                                            name: 'multiply'
+                                                                        },
+                                                                        arguments: [{
+                                                                                type: 'Identifier',
+                                                                                name: 'value'
+                                                                            }]
+                                                                    },
+                                                                    kind: 'init',
+                                                                    computed: true
+                                                                }]
+                                                        }
+                                                    }]
+                                            }
+                                        }]
+                                }
+                            }
+                        ]
+                    }, { properties: properties });
+                }
+                let factor = properties.factor != null ? properties.factor : 3;
+                function multiply(a) {
+                    return a * factor;
+                }
+                let _ref = {};
+                for (let key in properties) {
+                    let value = properties[key];
+                    if (key !== 'factor') {
+                        _ref[key] = multiply(value);
+                    }
+                }
+                return _ref;
+            },
+            {
+                x: 1,
+                y: 2
+            },
+            {
+                x: 4,
+                y: null,
+                z: 5,
+                factor: 10
+            },
+            {
+                x: 40,
+                z: 50
+            }
+        ]
+    ];
+let _ref = {};
+for (let _i = 0; _i < templates.length; _i++) {
+    let _ref2 = templates[_i];
+    let name = _ref2[0];
+    let templateType = _ref2[1];
+    let argument = _ref2[2];
+    let patch = _ref2[3];
+    let expected = _ref2[4];
+    if (expected != null) {
+        _ref[name] = function (templateType, argument, patch, expected) {
+            return function (done) {
+                let template = new templateType(argument);
+                template.activate();
+                template.watch(function (value) {
+                    ion.observe(value, function (changes) {
+                        if (JSON.stringify(value) === JSON.stringify(expected)) {
+                            template.deactivate();
+                            done();
+                        }
+                    });
+                });
+                ion.patch(argument, patch);
+            };
+        }(templateType, argument, patch, expected);
+    }
+}
+module.exports = exports = { test: _ref };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/test/reactiveTemplates',_ion_test_reactiveTemplates_);
+    else
+      _ion_test_reactiveTemplates_.call(this, module, exports, require);
+  }
+  else {
+    _ion_test_reactiveTemplates_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_test_templateParams_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const firstTemplate = function _template(a, b) {
+    if (this != null && this.constructor === _template) {
+        return ion.createRuntime({
+            type: 'Template',
+            body: [{
+                    type: 'ReturnStatement',
+                    argument: {
+                        type: 'BinaryExpression',
+                        operator: '+',
+                        left: {
+                            type: 'Identifier',
+                            name: 'a'
+                        },
+                        right: {
+                            type: 'Identifier',
+                            name: 'b'
+                        }
+                    }
+                }],
+            name: {
+                type: 'Identifier',
+                name: 'firstTemplate'
+            }
+        }, {
+            a: a,
+            b: b
+        });
+    }
+    return a + b;
+};
+const test = exports.test = function () {
+        let template = new firstTemplate(1, 2);
+        template.activate();
+        let result = null;
+        template.watch(function (value) {
+            return result = value;
+        });
+        if (!(result === 3))
+            throw new Error('Assertion Failed: (result is 3)');
+        template.deactivate();
+        if (!(result === void 0))
+            throw new Error('Assertion Failed: (result is undefined)');
+    };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/test/templateParams',_ion_test_templateParams_);
+    else
+      _ion_test_templateParams_.call(this, module, exports, require);
+  }
+  else {
+    _ion_test_templateParams_.call(this);
+  }
+}).call(this)//# sourceMappingURL=_browser.js.map

@@ -1,4 +1,4 @@
-'use strict';
+void (function(){var _ion_test_templateParams_ = function(module,exports,require){'use strict';
 const ion = require('ion');
 const firstTemplate = function _template(a, b) {
     if (this != null && this.constructor === _template) {
@@ -43,3 +43,14 @@ const test = exports.test = function () {
         if (!(result === void 0))
             throw new Error('Assertion Failed: (result is undefined)');
     };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/test/templateParams',_ion_test_templateParams_);
+    else
+      _ion_test_templateParams_.call(this, module, exports, require);
+  }
+  else {
+    _ion_test_templateParams_.call(this);
+  }
+}).call(this)

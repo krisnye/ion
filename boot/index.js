@@ -1,4 +1,4 @@
-'use strict';
+void (function(){var _ion_index_ = function(module,exports,require){'use strict';
 const mergePatch = require('./mergePatch'), primitive = {
         string: true,
         number: true,
@@ -133,11 +133,22 @@ const patch = exports.patch = function (target, values) {
                 if (index >= 0) {
                     container.removeAt(index);
                 }
-            } else {
+            } else if (typeof container.remove === 'function') {
                 container.remove(item);
+            } else {
+                remove(container, item);
             }
             item.onRemoved != null ? item.onRemoved(container) : void 0;
         };
+    }, remove = exports.remove = function (array, item) {
+        if (array != null) {
+            let index = array.lastIndexOf(item);
+            if (index >= 0) {
+                array.splice(index, 1);
+                return index;
+            }
+        }
+        return;
     }, defineProperties = exports.defineProperties = function (object, properties) {
         return Object.defineProperties(object, normalizeProperties(properties));
     }, defineClass = exports.defineClass = function (___definitions) {
@@ -159,7 +170,6 @@ const patch = exports.patch = function (target, values) {
         } else {
             classFunction = eval('(function ' + name + '() {})');
         }
-        const mergePatch = require('./mergePatch');
         for (let i = definitions.length - 1; i >= 0; i--) {
             const definition = definitions[i];
             for (let key in definition) {
@@ -239,3 +249,14 @@ const patch = exports.patch = function (target, values) {
             }
         }
     };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/index',_ion_index_);
+    else
+      _ion_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_index_.call(this);
+  }
+}).call(this)
