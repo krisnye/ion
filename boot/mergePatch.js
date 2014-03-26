@@ -1,4 +1,4 @@
-'use strict';
+void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
 const ion = require('./'), isObject = function (a) {
         return a != null && typeof a === 'object';
     };
@@ -248,3 +248,14 @@ const apply = exports.apply = function (target, values, deleteNull) {
             }
         };
     }();
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/mergePatch',_ion_mergePatch_);
+    else
+      _ion_mergePatch_.call(this, module, exports, require);
+  }
+  else {
+    _ion_mergePatch_.call(this);
+  }
+}).call(this)

@@ -1,4 +1,4 @@
-'use strict';
+void (function(){var _ion_runtime_Property_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const Property = ion.defineClass({
         id: 'Property',
@@ -7,28 +7,54 @@ const Property = ion.defineClass({
                 Property.super.prototype.activate.apply(this, arguments);
                 this.keyExpression = this.keyExpression != null ? this.keyExpression : this.context.createRuntime(this.computed ? this.key : this.key.name);
                 this.keyExpression.watch(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : function (key) {
+                    this.restoreProperty();
                     this.keyValue = key;
-                    this._assign();
+                    this.setProperty();
                 }.bind(this));
                 this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
                 this.valueExpression.watch(this.valueWatcher = this.valueWatcher != null ? this.valueWatcher : function (value) {
                     this.valueValue = value;
-                    this._assign();
+                    this.setProperty();
                 }.bind(this));
             },
             deactivate: function () {
                 Property.super.prototype.deactivate.apply(this, arguments);
+                this.restoreProperty();
                 this.keyExpression.unwatch(this.keyWatcher);
                 this.valueExpression.unwatch(this.valueWatcher);
             },
-            _assign: function () {
-                if (this.keyValue != null && this.valueValue !== void 0) {
-                    let currentValue = ion.get(this.context.output, this.keyValue);
-                    if (currentValue !== this.valueValue) {
-                        ion.set(this.context.output, this.keyValue, this.valueValue);
+            restoreProperty: function () {
+                if (this.originalKey != null) {
+                    ion.set(this.context.output, this.originalKey, this.originalValue);
+                    this.originalKey = void 0;
+                    this.originalValue = void 0;
+                }
+            },
+            setProperty: function (key, value) {
+                if (key == null)
+                    key = this.keyValue;
+                if (value == null)
+                    value = this.valueValue;
+                if (key != null && value !== void 0) {
+                    let currentValue = ion.get(this.context.output, key);
+                    if (currentValue !== value) {
+                        this.originalKey = this.originalKey != null ? this.originalKey : key;
+                        this.originalValue = this.originalValue != null ? this.originalValue : currentValue;
+                        ion.set(this.context.output, key, value);
                     }
                 }
             }
         }
     }, Statement);
 module.exports = exports = Property;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/Property',_ion_runtime_Property_);
+    else
+      _ion_runtime_Property_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_Property_.call(this);
+  }
+}).call(this)

@@ -1,6 +1,9 @@
 {
-    "modified": 1395769350683,
+    "modified": 1395847103032,
     "files": [
+        "browser/require.js",
+        "browser/html.js",
+        "browser/tester.js",
         "compiler/astFunctions.js",
         "compiler/common.js",
         "compiler/index.js",

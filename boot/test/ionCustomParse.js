@@ -1,4 +1,4 @@
-(function(){var _ion_test_ionCustomParse_ = function(module,exports,require){
+void (function(){var _ion_test_ionCustomParse_ = function(module,exports,require){
 
   }
   if (typeof require === 'function') {

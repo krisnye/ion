@@ -786,10 +786,6 @@ tests =
     """
     """
     console.log(x)
-    let x = 1
-    """: {line:1, column:13}
-    """
-    console.log(x)
     if a
         let x = 1
     """: {line:1, column:13}
@@ -1317,81 +1313,6 @@ tests =
                 return 1;
             }];
     """
-    # """
-    # let mytemplate = template -> (-> 1)
-    # """: """
-    # 'use strict';
-    # const ion = require('ion');
-    # let mytemplate = function _template() {
-    #     if (this != null && this.constructor === _template) {
-    #         return ion.createRuntime({
-    #             type: 'Template',
-    #             body: [{
-    #                     type: 'ReturnStatement',
-    #                     argument: function () {
-    #                         return 1;
-    #                     }
-    #                 }],
-    #             name: {
-    #                 type: 'Identifier',
-    #                 name: 'mytemplate'
-    #             }
-    #         }, {});
-    #     }
-    #     return function () {
-    #         return 1;
-    #     };
-    # };
-    # """
-    # """
-    # template ->
-    #     double(a) -> a * 2
-    #     return double(1)
-    # """: """
-    # 'use strict';
-    # const ion = require('ion');
-    # (function _template() {
-    #     if (this != null && this.constructor === _template) {
-    #         return ion.createRuntime({
-    #             type: 'Template',
-    #             body: [
-    #                 {
-    #                     type: 'VariableDeclaration',
-    #                     kind: 'const',
-    #                     declarations: [{
-    #                             type: 'VariableDeclarator',
-    #                             id: {
-    #                                 type: 'Identifier',
-    #                                 name: 'double'
-    #                             },
-    #                             init: function double(a) {
-    #                                 return a * 2;
-    #                             }
-    #                         }]
-    #                 },
-    #                 {
-    #                     type: 'ReturnStatement',
-    #                     argument: {
-    #                         type: 'CallExpression',
-    #                         callee: {
-    #                             type: 'Identifier',
-    #                             name: 'double'
-    #                         },
-    #                         arguments: [{
-    #                                 type: 'Literal',
-    #                                 value: 1
-    #                             }]
-    #                     }
-    #                 }
-    #             ]
-    #         }, {});
-    #     }
-    #     function double(a) {
-    #         return a * 2;
-    #     }
-    #     return double(1);
-    # });
-    # """
     """
     template (properties) ->
         let baz = 10

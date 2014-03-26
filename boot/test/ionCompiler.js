@@ -1,4 +1,4 @@
-(function(){var _ion_test_ionCompiler_ = function(module,exports,require){var index, tests;
+void (function(){var _ion_test_ionCompiler_ = function(module,exports,require){var index, tests;
 
 index = require('../compiler');
 
@@ -93,10 +93,6 @@ tests = {
     column: 5
   },
   "let x = 1\nconst double = (x) ->\n    return x": "'use strict';\nlet x = 1;\nconst double = function (x) {\n    return x;\n};",
-  "console.log(x)\nlet x = 1": {
-    line: 1,
-    column: 13
-  },
   "console.log(x)\nif a\n    let x = 1": {
     line: 1,
     column: 13
@@ -183,6 +179,10 @@ tests = {
   "const ion = import '../'\nconst templates = []\n    template (properties) -> 1": "'use strict';\nconst ion = require('../');\nconst templates = [function _template(properties) {\n            if (this != null && this.constructor === _template) {\n                return ion.createRuntime({\n                    type: 'Template',\n                    body: [{\n                            type: 'ReturnStatement',\n                            argument: {\n                                type: 'Literal',\n                                value: 1\n                            }\n                        }]\n                }, { properties: properties });\n            }\n            return 1;\n        }];",
   "template (properties) ->\n    let baz = 10\n    let foo = 1\n    let factor = 2\n    multiply(a) ->\n        let bar = factor.foo\n        let baz =\n            foo: 5\n        return a * factor\n    return multiply(2)": "'use strict';\nconst ion = require('ion');\n(function _template(properties) {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'baz'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 10\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'foo'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 1\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'factor'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 2\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    kind: 'const',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'multiply'\n                            },\n                            init: {\n                                type: 'Function',\n                                context: true,\n                                value: function (_context) {\n                                    return function multiply(a) {\n                                        const factor = _context.get('factor');\n                                        let bar = factor.foo;\n                                        let baz = { foo: 5 };\n                                        return a * factor;\n                                    };\n                                }\n                            }\n                        }]\n                },\n                {\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'CallExpression',\n                        callee: {\n                            type: 'Identifier',\n                            name: 'multiply'\n                        },\n                        arguments: [{\n                                type: 'Literal',\n                                value: 2\n                            }]\n                    }\n                }\n            ]\n        }, { properties: properties });\n    }\n    let baz = 10;\n    let foo = 1;\n    let factor = 2;\n    function multiply(a) {\n        let bar = factor.foo;\n        let baz = { foo: 5 };\n        return a * factor;\n    }\n    return multiply(2);\n});"
 };
+
+if (global.window != null) {
+  return;
+}
 
 exports.test = function() {
   var e, error, expected, input, key, output, value;

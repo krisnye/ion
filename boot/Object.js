@@ -1,4 +1,4 @@
-'use strict';
+void (function(){var _ion_Object_ = function(module,exports,require){'use strict';
 const ion = require('ion');
 const Object = ion.defineClass({
         id: 'Object',
@@ -30,3 +30,14 @@ const Object = ion.defineClass({
         }
     }, null);
 module.exports = exports = Object;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/Object',_ion_Object_);
+    else
+      _ion_Object_.call(this, module, exports, require);
+  }
+  else {
+    _ion_Object_.call(this);
+  }
+}).call(this)

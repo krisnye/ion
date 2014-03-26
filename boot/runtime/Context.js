@@ -1,4 +1,4 @@
-'use strict';
+void (function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
 const ion = require('ion');
 const Factory = require('./Factory'), Literal = require('./Literal');
 const Context = ion.defineClass({
@@ -25,9 +25,13 @@ const Context = ion.defineClass({
                 }
                 let value = variable.value;
                 if (value === void 0) {
-                    variable.watch(function (a) {
-                        return value = a;
-                    })();
+                    let watcher = function (a) {
+                        if (a !== void 0) {
+                            value = a;
+                        }
+                    };
+                    variable.watch(watcher);
+                    variable.unwatch(watcher);
                 }
                 return value;
             },
@@ -55,3 +59,14 @@ const Context = ion.defineClass({
         }
     });
 module.exports = exports = Context;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/Context',_ion_runtime_Context_);
+    else
+      _ion_runtime_Context_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_Context_.call(this);
+  }
+}).call(this)

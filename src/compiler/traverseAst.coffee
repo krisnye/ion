@@ -119,8 +119,10 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback) ->
                 context.scopeStack.push
                     variables: Object.create(context.scope()?.variables ? {})
                     node: node
-            if node.type is 'VariableDeclaration' or node.type is 'FunctionDeclaration'
-                trackVariableDeclarations context, node
+            # if node.type is 'VariableDeclaration' or node.type is 'FunctionDeclaration'
+            #     trackVariableDeclarations context, node
+            if Array.isArray(node.body)
+                trackVariableDeclarations context, node.body
             if nodeInfo?.isFunction
                 trackVariableDeclarations context, node.params, nodeInfo.paramKind
             enterCallback?(node, context)

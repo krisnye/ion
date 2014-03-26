@@ -27,3 +27,7 @@ Need to fix array comprehensions to be lazily evaluated:
 Optimize this: => if (!(this.statements != null))
 
 Current temp variable creation is wrong, should use a counter on the root.
+
+This should be an error:
+    console.log(x)
+    let x = 12

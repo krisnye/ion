@@ -1,4 +1,4 @@
-'use strict';
+void (function(){var _ion_runtime_ForInOfStatement_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const ForInOfStatement = ion.defineClass({
         id: 'ForInOfStatement',
@@ -76,7 +76,8 @@ const ForInOfStatement = ion.defineClass({
                     let _ref = changes[_i];
                     let name = _ref.name;
                     let oldValue = _ref.oldValue;
-                    if (!ignoreProperty(name)) {
+                    let ignore = ignoreProperty(name);
+                    if (!ignore) {
                         let newValue = this.collection[name];
                         let key = this.toKey(name);
                         if (oldValue !== void 0) {
@@ -91,3 +92,14 @@ const ForInOfStatement = ion.defineClass({
         }
     }, Statement);
 module.exports = exports = ForInOfStatement;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/ForInOfStatement',_ion_runtime_ForInOfStatement_);
+    else
+      _ion_runtime_ForInOfStatement_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_ForInOfStatement_.call(this);
+  }
+}).call(this)

@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_traverseAst_ = function(module,exports,require){var addStatement, basicTraverse, nodes, trackVariableDeclaration, trackVariableDeclarations;
+void (function(){var _ion_compiler_traverseAst_ = function(module,exports,require){var addStatement, basicTraverse, nodes, trackVariableDeclaration, trackVariableDeclarations;
 
 basicTraverse = require('./traverse');
 
@@ -259,8 +259,8 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
           node: node
         });
       }
-      if (node.type === 'VariableDeclaration' || node.type === 'FunctionDeclaration') {
-        trackVariableDeclarations(context, node);
+      if (Array.isArray(node.body)) {
+        trackVariableDeclarations(context, node.body);
       }
       if (nodeInfo != null ? nodeInfo.isFunction : void 0) {
         trackVariableDeclarations(context, node.params, nodeInfo.paramKind);
