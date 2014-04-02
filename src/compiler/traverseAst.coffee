@@ -44,7 +44,7 @@ trackVariableDeclarations = (context, node, kind = 'let') ->
                     trackVariableDeclaration context, child, kind
                     newContext.skip()
 
-exports.traverse = (program, enterCallback, exitCallback, variableCallback) ->
+exports.traverse = (program, enterCallback, exitCallback, variableCallback, previousContext) ->
     ourEnter = (node, context) ->
         context.variableCallback ?= variableCallback
         context.scopeStack ?= []
@@ -61,12 +61,13 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback) ->
         context.parentReactive ?= -> @_reactiveStack[@_reactiveStack.length - 1]
         context.isParentBlock ?= -> nodes[@parentNode()?.type]?.isBlock ? false
         context.getVariableInfo ?= (id) -> @scope().variables[id]
+        context._variableCounts ?= previousContext?._variableCounts ? {}
         context.getNewInternalIdentifier ?= (prefix = '_ref') ->
-            i = 0
-            while ++i
-                check = prefix + (if i is 1 then "" else i)
-                if @getVariableInfo(check) is undefined
-                    return {type:'Identifier',name:check}
+            counts = @_variableCounts
+            count = counts[prefix] ?= 1
+            counts[prefix]++
+            name = if count is 1 then prefix else prefix + count
+            return {type:'Identifier',name:name}
         context.getAncestorChildOf ?= (ancestor) ->
             index = @ancestorNodes.indexOf ancestor
             return if index >= 0 then @ancestorNodes[index + 1] ? @current() else undefined

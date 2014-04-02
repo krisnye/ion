@@ -80,10 +80,10 @@ trackVariableDeclarations = function(context, node, kind) {
   }
 };
 
-exports.traverse = function(program, enterCallback, exitCallback, variableCallback) {
+exports.traverse = function(program, enterCallback, exitCallback, variableCallback, previousContext) {
   var ourEnter, ourExit;
   ourEnter = function(node, context) {
-    var nodeInfo, _ref, _ref1;
+    var nodeInfo, _ref, _ref1, _ref2;
     if (context.variableCallback == null) {
       context.variableCallback = variableCallback;
     }
@@ -142,30 +142,31 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
         return this.scope().variables[id];
       };
     }
+    if (context._variableCounts == null) {
+      context._variableCounts = (_ref = previousContext != null ? previousContext._variableCounts : void 0) != null ? _ref : {};
+    }
     if (context.getNewInternalIdentifier == null) {
       context.getNewInternalIdentifier = function(prefix) {
-        var check, i;
+        var count, counts, name;
         if (prefix == null) {
           prefix = '_ref';
         }
-        i = 0;
-        while (++i) {
-          check = prefix + (i === 1 ? "" : i);
-          if (this.getVariableInfo(check) === void 0) {
-            return {
-              type: 'Identifier',
-              name: check
-            };
-          }
-        }
+        counts = this._variableCounts;
+        count = counts[prefix] != null ? counts[prefix] : counts[prefix] = 1;
+        counts[prefix]++;
+        name = count === 1 ? prefix : prefix + count;
+        return {
+          type: 'Identifier',
+          name: name
+        };
       };
     }
     if (context.getAncestorChildOf == null) {
       context.getAncestorChildOf = function(ancestor) {
-        var index, _ref;
+        var index, _ref1;
         index = this.ancestorNodes.indexOf(ancestor);
         if (index >= 0) {
-          return (_ref = this.ancestorNodes[index + 1]) != null ? _ref : this.current();
+          return (_ref1 = this.ancestorNodes[index + 1]) != null ? _ref1 : this.current();
         } else {
           return void 0;
         }
@@ -173,8 +174,8 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     }
     if (context.getSharedVariableId == null) {
       context.getSharedVariableId = function(name) {
-        var _ref, _ref1;
-        return (_ref = (_ref1 = this.getVariableInfo(name)) != null ? _ref1.id : void 0) != null ? _ref : this.addVariable({
+        var _ref1, _ref2;
+        return (_ref1 = (_ref2 = this.getVariableInfo(name)) != null ? _ref2.id : void 0) != null ? _ref1 : this.addVariable({
           id: name,
           offset: Number.MIN_VALUE
         });
@@ -182,9 +183,9 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     }
     if (context.addStatement == null) {
       context.addStatement = function(statement, offset, addToNode) {
-        var _ref;
+        var _ref1;
         if (typeof statement === 'number') {
-          _ref = [offset, statement], statement = _ref[0], offset = _ref[1];
+          _ref1 = [offset, statement], statement = _ref1[0], offset = _ref1[1];
         }
         if (addToNode == null) {
           addToNode = this.scope().node;
@@ -236,15 +237,15 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
       };
     }
     context.error = function(message, node) {
-      var e, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+      var e, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
       if (node == null) {
         node = this.current();
       }
       e = new Error(message);
-      e.line = (_ref = node.loc) != null ? (_ref1 = _ref.start) != null ? _ref1.line : void 0 : void 0;
-      e.column = ((_ref2 = node.loc) != null ? (_ref3 = _ref2.start) != null ? _ref3.column : void 0 : void 0) + 1;
-      e.lineEnd = (_ref4 = node.loc) != null ? (_ref5 = _ref4.end) != null ? _ref5.line : void 0 : void 0;
-      e.columnEnd = ((_ref6 = node.loc) != null ? (_ref7 = _ref6.end) != null ? _ref7.column : void 0 : void 0) + 1;
+      e.line = (_ref1 = node.loc) != null ? (_ref2 = _ref1.start) != null ? _ref2.line : void 0 : void 0;
+      e.column = ((_ref3 = node.loc) != null ? (_ref4 = _ref3.start) != null ? _ref4.column : void 0 : void 0) + 1;
+      e.lineEnd = (_ref5 = node.loc) != null ? (_ref6 = _ref5.end) != null ? _ref6.line : void 0 : void 0;
+      e.columnEnd = ((_ref7 = node.loc) != null ? (_ref8 = _ref7.end) != null ? _ref8.column : void 0 : void 0) + 1;
       return e;
     };
     if (node.type != null) {
@@ -255,7 +256,7 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
       }
       if (nodeInfo != null ? nodeInfo.newScope : void 0) {
         context.scopeStack.push({
-          variables: Object.create((_ref = (_ref1 = context.scope()) != null ? _ref1.variables : void 0) != null ? _ref : {}),
+          variables: Object.create((_ref1 = (_ref2 = context.scope()) != null ? _ref2.variables : void 0) != null ? _ref1 : {}),
           node: node
         });
       }

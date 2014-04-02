@@ -1,5 +1,5 @@
 void (function(){var _ion_test_immediateTemplates_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+const ion = require('../');
 const templates = [
         [
             function _template() {
@@ -67,11 +67,12 @@ const templates = [
                 const a = 1, b = 2, c = a + b;
                 return c;
             },
+            [],
             3
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template2() {
+                if (this != null && this.constructor === _template2) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -113,14 +114,15 @@ const templates = [
                     b: 2
                 };
             },
+            [],
             {
                 a: 1,
                 b: 2
             }
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template3() {
+                if (this != null && this.constructor === _template3) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -156,14 +158,15 @@ const templates = [
                     2
                 ];
             },
+            [],
             [
                 1,
                 2
             ]
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template4() {
+                if (this != null && this.constructor === _template4) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -279,18 +282,19 @@ const templates = [
                 }
                 let a = 1;
                 let b = 2;
-                let _ref = [];
+                let _ref3 = [];
                 {
-                    _ref.push(a);
-                    _ref.push(b);
+                    _ref3.push(a);
+                    _ref3.push(b);
                     if (a > b) {
-                        _ref.push(10);
+                        _ref3.push(10);
                     } else if (b > a) {
-                        _ref.push(20);
+                        _ref3.push(20);
                     }
                 }
-                return _ref;
+                return _ref3;
             },
+            [],
             [
                 1,
                 2,
@@ -298,8 +302,8 @@ const templates = [
             ]
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template5() {
+                if (this != null && this.constructor === _template5) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -417,6 +421,7 @@ const templates = [
                 let x = _ref;
                 return x;
             },
+            [],
             [
                 1,
                 3,
@@ -424,8 +429,8 @@ const templates = [
             ]
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template6() {
+                if (this != null && this.constructor === _template6) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -558,14 +563,15 @@ const templates = [
                         b: 2,
                         c: 3
                     };
-                let _ref = [];
+                let _ref2 = [];
                 for (let key in items) {
                     let value = items[key];
-                    _ref.push(key + value);
+                    _ref2.push(key + value);
                 }
-                let x = _ref;
+                let x = _ref2;
                 return x;
             },
+            [],
             [
                 'a1',
                 'b2',
@@ -573,8 +579,8 @@ const templates = [
             ]
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template7() {
+                if (this != null && this.constructor === _template7) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -644,11 +650,12 @@ const templates = [
                 let object = { a: { b: 1 } };
                 return object.a.b;
             },
+            [],
             1
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template8() {
+                if (this != null && this.constructor === _template8) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -673,11 +680,12 @@ const templates = [
                 }
                 return false ? 1 : 2;
             },
+            [],
             2
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template9() {
+                if (this != null && this.constructor === _template9) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -710,11 +718,12 @@ const templates = [
                 }
                 return null != null ? null : 2;
             },
+            [],
             2
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template10() {
+                if (this != null && this.constructor === _template10) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -782,14 +791,15 @@ const templates = [
                     b != null
                 ];
             },
+            [],
             [
                 false,
                 true
             ]
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template11() {
+                if (this != null && this.constructor === _template11) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -824,11 +834,12 @@ const templates = [
                 }
                 return Math.min(1, 2);
             },
+            [],
             1
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template12() {
+                if (this != null && this.constructor === _template12) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -875,11 +886,12 @@ const templates = [
                 }
                 return Math.min.call(null, 1, 2);
             },
+            [],
             1
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template13() {
+                if (this != null && this.constructor === _template13) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -910,11 +922,12 @@ const templates = [
                 }
                 return new Date(2011, 10, 5);
             },
+            [],
             new Date(2011, 10, 5)
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template14() {
+                if (this != null && this.constructor === _template14) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -928,11 +941,12 @@ const templates = [
                 }
                 return /foo/;
             },
+            [],
             /foo/
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template15() {
+                if (this != null && this.constructor === _template15) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -1052,24 +1066,25 @@ const templates = [
                             }]
                     }, {});
                 }
-                let _ref = [];
+                let _ref4 = [];
                 {
                     let items = [
                             3,
                             2,
                             1
                         ];
-                    for (let _i = 0; _i < items.length; _i++) {
-                        let item = items[_i];
-                        _ref.push(item * 2);
+                    for (let _i2 = 0; _i2 < items.length; _i2++) {
+                        let item = items[_i2];
+                        _ref4.push(item * 2);
                     }
                 }
                 return {
                     x: 1,
                     y: 2,
-                    z: _ref
+                    z: _ref4
                 };
             },
+            [],
             {
                 x: 1,
                 y: 2,
@@ -1081,8 +1096,8 @@ const templates = [
             }
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template16() {
+                if (this != null && this.constructor === _template16) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -1156,6 +1171,7 @@ const templates = [
                     void 0 != null ? void 0 : 2
                 ];
             },
+            [],
             [
                 1,
                 2
@@ -1163,12 +1179,13 @@ const templates = [
         ]
     ];
 const test = exports.test = function () {
-        for (let _i = 0; _i < templates.length; _i++) {
-            let _ref = templates[_i];
-            let templateType = _ref[0];
-            let expected = _ref[1];
+        for (let _i3 = 0; _i3 < templates.length; _i3++) {
+            let _ref5 = templates[_i3];
+            let templateType = _ref5[0];
+            let args = _ref5[1];
+            let expected = _ref5[2];
             if (expected != null) {
-                let template = new templateType();
+                let template = ion.create(templateType, args);
                 template.activate();
                 let reactiveResult = null;
                 template.watch(function (value) {
@@ -1179,7 +1196,7 @@ const test = exports.test = function () {
                 template.deactivate();
                 if (!(reactiveResult === void 0))
                     throw new Error('Assertion Failed: (reactiveResult is undefined)');
-                let imperativeResult = templateType();
+                let imperativeResult = templateType.apply(null, args);
                 if (!(JSON.stringify(imperativeResult) === JSON.stringify(expected)))
                     throw new Error('Assertion Failed: (JSON.stringify(imperativeResult) is JSON.stringify(expected))');
             }

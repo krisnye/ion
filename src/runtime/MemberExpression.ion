@@ -11,6 +11,13 @@ export class MemberExpression extends DynamicExpression
                 @objectWatcher ?= (objectValue) =>
                     @objectValue = objectValue
                     @updateValue()
+                    # also observe the objectValue for changes
+                    @objectObserver?()
+                    if objectValue?
+                        @objectObserver = (ion.observe)
+                            objectValue
+                            (changes) =>
+                                @updateValue()
             @propertyExpression ?= @context.createRuntime(@computed ? @property : @property.name)
             (@propertyExpression.watch)
                 @propertyWatcher ?= (propertyValue) =>

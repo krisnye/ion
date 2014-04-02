@@ -194,8 +194,7 @@ exports.spawnTests = spawnTests = function(manifestFile) {
 };
 
 exports.runTests = runTests = function(moduleIds, callback) {
-  var array, duration, e, error, expectedCallbacks, getIncompleteCallbacks, handler, inc, key, module, moduleId, name, timeout, waitingForFinishTimeout, warning, _i, _len,
-    _this = this;
+  var array, duration, e, error, expectedCallbacks, getIncompleteCallbacks, handler, inc, key, module, moduleId, name, timeout, waitingForFinishTimeout, warning, _i, _len;
   if (!moduleIds) {
     throw new Error("moduleIds is required");
   }
@@ -254,15 +253,17 @@ exports.runTests = runTests = function(moduleIds, callback) {
     duration = 10000;
     error = "Timed out after " + duration + " ms";
     warning = void 0;
-    timeout = function() {
-      var _j, _len1;
-      inc = getIncompleteCallbacks();
-      for (_j = 0, _len1 = inc.length; _j < _len1; _j++) {
-        name = inc[_j];
-        callback(name, error, warning);
-      }
-      return callback();
-    };
+    timeout = (function(_this) {
+      return function() {
+        var _j, _len1;
+        inc = getIncompleteCallbacks();
+        for (_j = 0, _len1 = inc.length; _j < _len1; _j++) {
+          name = inc[_j];
+          callback(name, error, warning);
+        }
+        return callback();
+      };
+    })(this);
     if (global.setTimeout != null) {
       return waitingForFinishTimeout = setTimeout(timeout, duration);
     } else {
@@ -430,9 +431,9 @@ const addStatement = exports.addStatement = function (node, statement, index, of
             {
                 let _ref = pattern.properties;
                 for (let _i = 0; _i < _ref.length; _i++) {
-                    let _ref2 = _ref[_i];
-                    let key = _ref2.key;
-                    let value = _ref2.value;
+                    let _ref3 = _ref[_i];
+                    let key = _ref3.key;
+                    let value = _ref3.value;
                     forEachDestructuringAssignment(value, {
                         type: 'MemberExpression',
                         object: expression,
@@ -443,10 +444,10 @@ const addStatement = exports.addStatement = function (node, statement, index, of
             }
         } else if (pattern.elements != null) {
             {
-                let _ref = pattern.elements;
-                for (let _i = 0; _i < _ref.length; _i++) {
-                    let index = _i;
-                    let value = _ref[_i];
+                let _ref2 = pattern.elements;
+                for (let _i2 = 0; _i2 < _ref2.length; _i2++) {
+                    let index = _i2;
+                    let value = _ref2[_i2];
                     forEachDestructuringAssignment(value, {
                         type: 'MemberExpression',
                         object: expression,
@@ -500,9 +501,9 @@ const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdent
         return minIndent;
     }, unindentLines = exports.unindentLines = function (lines) {
         let minIndent = getMinIndent(lines);
-        for (let _i = 0; _i < lines.length; _i++) {
-            let i = _i;
-            let line = lines[_i];
+        for (let _i2 = 0; _i2 < lines.length; _i2++) {
+            let i = _i2;
+            let line = lines[_i2];
             if (typeof line === 'string') {
                 lines[i] = isEmpty(line) ? '' : line.substring(minIndent);
             }
@@ -14642,7 +14643,7 @@ checkVariableDeclarations = {
       key = context.key();
       parent = context.parentNode();
       if (!(parent.type === 'MemberExpression' && key === 'property' || parent.type === 'Property' && key === 'key')) {
-        return ((_base = context.scope()).usage != null ? (_base = context.scope()).usage : _base.usage = {})[node.name] = node;
+        return ((_base = context.scope()).usage != null ? _base.usage : _base.usage = {})[node.name] = node;
       }
     }
   },
@@ -14717,7 +14718,7 @@ namedFunctions = function(node, context) {
   }
   if (node.type === 'Property' && node.value.type === 'FunctionExpression' && node.key.type === 'Identifier') {
     if (node.key.name !== 'constructor') {
-      return (_base1 = node.value).name != null ? (_base1 = node.value).name : _base1.name = node.key;
+      return (_base1 = node.value).name != null ? _base1.name : _base1.name = node.key;
     }
   }
 };
@@ -15034,7 +15035,7 @@ wrapTemplateInnerFunctions = function(node, context) {
 };
 
 createTemplateRuntime = function(node, context) {
-  var args, param, template, templateId, _i, _len, _ref1;
+  var args, id, index, template, templateId, _i, _len, _ref1;
   if (isFunctionNode(node) && (node.template != null)) {
     templateId = node.id != null ? node.id : node.id = context.getNewInternalIdentifier('_template');
     template = removeLocationInfo(node.template);
@@ -15044,14 +15045,12 @@ createTemplateRuntime = function(node, context) {
       properties: []
     };
     _ref1 = template.params;
-    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-      param = _ref1[_i];
-      forEachDestructuringAssignment(param, param, function(id) {
-        return args.properties.push({
-          key: id,
-          value: id,
-          kind: 'init'
-        });
+    for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
+      id = _ref1[index];
+      args.properties.push({
+        key: id,
+        value: id,
+        kind: 'init'
       });
     }
     delete template.params;
@@ -15111,12 +15110,14 @@ javascriptExpressions = function(node, context) {
 };
 
 exports.postprocess = function(program, options) {
-  var enter, exit, steps, traversal, variable, _i, _len;
-  steps = [[namedFunctions, superExpressions], [createTemplateFunctionClone, checkVariableDeclarations], [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5], [addUseStrictAndRequireIon], [nodejsModules, destructuringAssignments, spreadExpressions, assertStatements]];
+  var enter, exit, previousContext, steps, traversal, variable, _i, _len;
+  steps = [[namedFunctions, superExpressions], [destructuringAssignments], [createTemplateFunctionClone, checkVariableDeclarations], [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions], [destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements]];
+  previousContext = null;
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
     enter = function(node, context) {
       var handler, step, _j, _len1, _ref1, _results;
+      previousContext = context;
       if (context.options == null) {
         context.options = options;
       }
@@ -15172,7 +15173,7 @@ exports.postprocess = function(program, options) {
       }
       return _results;
     };
-    traverse(program, enter, exit, variable);
+    traverse(program, enter, exit, variable, previousContext);
   }
   return program;
 };
@@ -15525,10 +15526,10 @@ trackVariableDeclarations = function(context, node, kind) {
   }
 };
 
-exports.traverse = function(program, enterCallback, exitCallback, variableCallback) {
+exports.traverse = function(program, enterCallback, exitCallback, variableCallback, previousContext) {
   var ourEnter, ourExit;
   ourEnter = function(node, context) {
-    var nodeInfo, _ref, _ref1;
+    var nodeInfo, _ref, _ref1, _ref2;
     if (context.variableCallback == null) {
       context.variableCallback = variableCallback;
     }
@@ -15587,30 +15588,31 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
         return this.scope().variables[id];
       };
     }
+    if (context._variableCounts == null) {
+      context._variableCounts = (_ref = previousContext != null ? previousContext._variableCounts : void 0) != null ? _ref : {};
+    }
     if (context.getNewInternalIdentifier == null) {
       context.getNewInternalIdentifier = function(prefix) {
-        var check, i;
+        var count, counts, name;
         if (prefix == null) {
           prefix = '_ref';
         }
-        i = 0;
-        while (++i) {
-          check = prefix + (i === 1 ? "" : i);
-          if (this.getVariableInfo(check) === void 0) {
-            return {
-              type: 'Identifier',
-              name: check
-            };
-          }
-        }
+        counts = this._variableCounts;
+        count = counts[prefix] != null ? counts[prefix] : counts[prefix] = 1;
+        counts[prefix]++;
+        name = count === 1 ? prefix : prefix + count;
+        return {
+          type: 'Identifier',
+          name: name
+        };
       };
     }
     if (context.getAncestorChildOf == null) {
       context.getAncestorChildOf = function(ancestor) {
-        var index, _ref;
+        var index, _ref1;
         index = this.ancestorNodes.indexOf(ancestor);
         if (index >= 0) {
-          return (_ref = this.ancestorNodes[index + 1]) != null ? _ref : this.current();
+          return (_ref1 = this.ancestorNodes[index + 1]) != null ? _ref1 : this.current();
         } else {
           return void 0;
         }
@@ -15618,8 +15620,8 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     }
     if (context.getSharedVariableId == null) {
       context.getSharedVariableId = function(name) {
-        var _ref, _ref1;
-        return (_ref = (_ref1 = this.getVariableInfo(name)) != null ? _ref1.id : void 0) != null ? _ref : this.addVariable({
+        var _ref1, _ref2;
+        return (_ref1 = (_ref2 = this.getVariableInfo(name)) != null ? _ref2.id : void 0) != null ? _ref1 : this.addVariable({
           id: name,
           offset: Number.MIN_VALUE
         });
@@ -15627,9 +15629,9 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     }
     if (context.addStatement == null) {
       context.addStatement = function(statement, offset, addToNode) {
-        var _ref;
+        var _ref1;
         if (typeof statement === 'number') {
-          _ref = [offset, statement], statement = _ref[0], offset = _ref[1];
+          _ref1 = [offset, statement], statement = _ref1[0], offset = _ref1[1];
         }
         if (addToNode == null) {
           addToNode = this.scope().node;
@@ -15681,15 +15683,15 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
       };
     }
     context.error = function(message, node) {
-      var e, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+      var e, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
       if (node == null) {
         node = this.current();
       }
       e = new Error(message);
-      e.line = (_ref = node.loc) != null ? (_ref1 = _ref.start) != null ? _ref1.line : void 0 : void 0;
-      e.column = ((_ref2 = node.loc) != null ? (_ref3 = _ref2.start) != null ? _ref3.column : void 0 : void 0) + 1;
-      e.lineEnd = (_ref4 = node.loc) != null ? (_ref5 = _ref4.end) != null ? _ref5.line : void 0 : void 0;
-      e.columnEnd = ((_ref6 = node.loc) != null ? (_ref7 = _ref6.end) != null ? _ref7.column : void 0 : void 0) + 1;
+      e.line = (_ref1 = node.loc) != null ? (_ref2 = _ref1.start) != null ? _ref2.line : void 0 : void 0;
+      e.column = ((_ref3 = node.loc) != null ? (_ref4 = _ref3.start) != null ? _ref4.column : void 0 : void 0) + 1;
+      e.lineEnd = (_ref5 = node.loc) != null ? (_ref6 = _ref5.end) != null ? _ref6.line : void 0 : void 0;
+      e.columnEnd = ((_ref7 = node.loc) != null ? (_ref8 = _ref7.end) != null ? _ref8.column : void 0 : void 0) + 1;
       return e;
     };
     if (node.type != null) {
@@ -15700,7 +15702,7 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
       }
       if (nodeInfo != null ? nodeInfo.newScope : void 0) {
         context.scopeStack.push({
-          variables: Object.create((_ref = (_ref1 = context.scope()) != null ? _ref1.variables : void 0) != null ? _ref : {}),
+          variables: Object.create((_ref1 = (_ref2 = context.scope()) != null ? _ref2.variables : void 0) != null ? _ref1 : {}),
           node: node
         });
       }
@@ -15833,12 +15835,12 @@ const patch = exports.patch = function (target, values) {
         if (deep == null)
             deep = false;
         if ((object != null ? object.constructor : void 0) === Object) {
-            let _ref = {};
+            let _ref2 = {};
             for (let key in object) {
                 let value = object[key];
-                _ref[key] = deep ? clone(value, deep) : value;
+                _ref2[key] = deep ? clone(value, deep) : value;
             }
-            return _ref;
+            return _ref2;
         } else if (Array.isArray(object)) {
             let _ref = [];
             for (let _i = 0; _i < object.length; _i++) {
@@ -16364,10 +16366,10 @@ const ArrayExpression = ion.defineClass({
                     }
                 }
                 {
-                    let _ref = this.expressions;
-                    for (let _i = 0; _i < _ref.length; _i++) {
-                        let key = _i;
-                        let expression = _ref[_i];
+                    let _ref3 = this.expressions;
+                    for (let _i2 = 0; _i2 < _ref3.length; _i2++) {
+                        let key = _i2;
+                        let expression = _ref3[_i2];
                         expression.watch(this.expressionWatchers[key]);
                     }
                 }
@@ -16376,10 +16378,10 @@ const ArrayExpression = ion.defineClass({
             },
             deactivate: function () {
                 {
-                    let _ref = this.expressions;
-                    for (let _i = 0; _i < _ref.length; _i++) {
-                        let key = _i;
-                        let expression = _ref[_i];
+                    let _ref4 = this.expressions;
+                    for (let _i3 = 0; _i3 < _ref4.length; _i3++) {
+                        let key = _i3;
+                        let expression = _ref4[_i3];
                         expression.unwatch(this.expressionWatchers[key]);
                     }
                 }
@@ -16442,9 +16444,9 @@ const BlockStatement = ion.defineClass({
                     this.statements = _ref;
                 }
                 {
-                    let _ref = this.statements;
-                    for (let _i = 0; _i < _ref.length; _i++) {
-                        let statement = _ref[_i];
+                    let _ref3 = this.statements;
+                    for (let _i2 = 0; _i2 < _ref3.length; _i2++) {
+                        let statement = _ref3[_i2];
                         statement.activate();
                     }
                 }
@@ -17572,7 +17574,7 @@ module.exports = exports = VariableDeclaration;
   }
 }).call(this)
 void (function(){var _ion_test_immediateTemplates_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+const ion = require('../');
 const templates = [
         [
             function _template() {
@@ -17640,11 +17642,12 @@ const templates = [
                 const a = 1, b = 2, c = a + b;
                 return c;
             },
+            [],
             3
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template2() {
+                if (this != null && this.constructor === _template2) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -17686,14 +17689,15 @@ const templates = [
                     b: 2
                 };
             },
+            [],
             {
                 a: 1,
                 b: 2
             }
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template3() {
+                if (this != null && this.constructor === _template3) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -17729,14 +17733,15 @@ const templates = [
                     2
                 ];
             },
+            [],
             [
                 1,
                 2
             ]
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template4() {
+                if (this != null && this.constructor === _template4) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -17852,18 +17857,19 @@ const templates = [
                 }
                 let a = 1;
                 let b = 2;
-                let _ref = [];
+                let _ref3 = [];
                 {
-                    _ref.push(a);
-                    _ref.push(b);
+                    _ref3.push(a);
+                    _ref3.push(b);
                     if (a > b) {
-                        _ref.push(10);
+                        _ref3.push(10);
                     } else if (b > a) {
-                        _ref.push(20);
+                        _ref3.push(20);
                     }
                 }
-                return _ref;
+                return _ref3;
             },
+            [],
             [
                 1,
                 2,
@@ -17871,8 +17877,8 @@ const templates = [
             ]
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template5() {
+                if (this != null && this.constructor === _template5) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -17990,6 +17996,7 @@ const templates = [
                 let x = _ref;
                 return x;
             },
+            [],
             [
                 1,
                 3,
@@ -17997,8 +18004,8 @@ const templates = [
             ]
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template6() {
+                if (this != null && this.constructor === _template6) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -18131,14 +18138,15 @@ const templates = [
                         b: 2,
                         c: 3
                     };
-                let _ref = [];
+                let _ref2 = [];
                 for (let key in items) {
                     let value = items[key];
-                    _ref.push(key + value);
+                    _ref2.push(key + value);
                 }
-                let x = _ref;
+                let x = _ref2;
                 return x;
             },
+            [],
             [
                 'a1',
                 'b2',
@@ -18146,8 +18154,8 @@ const templates = [
             ]
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template7() {
+                if (this != null && this.constructor === _template7) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -18217,11 +18225,12 @@ const templates = [
                 let object = { a: { b: 1 } };
                 return object.a.b;
             },
+            [],
             1
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template8() {
+                if (this != null && this.constructor === _template8) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -18246,11 +18255,12 @@ const templates = [
                 }
                 return false ? 1 : 2;
             },
+            [],
             2
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template9() {
+                if (this != null && this.constructor === _template9) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -18283,11 +18293,12 @@ const templates = [
                 }
                 return null != null ? null : 2;
             },
+            [],
             2
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template10() {
+                if (this != null && this.constructor === _template10) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -18355,14 +18366,15 @@ const templates = [
                     b != null
                 ];
             },
+            [],
             [
                 false,
                 true
             ]
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template11() {
+                if (this != null && this.constructor === _template11) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -18397,11 +18409,12 @@ const templates = [
                 }
                 return Math.min(1, 2);
             },
+            [],
             1
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template12() {
+                if (this != null && this.constructor === _template12) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -18448,11 +18461,12 @@ const templates = [
                 }
                 return Math.min.call(null, 1, 2);
             },
+            [],
             1
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template13() {
+                if (this != null && this.constructor === _template13) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -18483,11 +18497,12 @@ const templates = [
                 }
                 return new Date(2011, 10, 5);
             },
+            [],
             new Date(2011, 10, 5)
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template14() {
+                if (this != null && this.constructor === _template14) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -18501,11 +18516,12 @@ const templates = [
                 }
                 return /foo/;
             },
+            [],
             /foo/
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template15() {
+                if (this != null && this.constructor === _template15) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -18625,24 +18641,25 @@ const templates = [
                             }]
                     }, {});
                 }
-                let _ref = [];
+                let _ref4 = [];
                 {
                     let items = [
                             3,
                             2,
                             1
                         ];
-                    for (let _i = 0; _i < items.length; _i++) {
-                        let item = items[_i];
-                        _ref.push(item * 2);
+                    for (let _i2 = 0; _i2 < items.length; _i2++) {
+                        let item = items[_i2];
+                        _ref4.push(item * 2);
                     }
                 }
                 return {
                     x: 1,
                     y: 2,
-                    z: _ref
+                    z: _ref4
                 };
             },
+            [],
             {
                 x: 1,
                 y: 2,
@@ -18654,8 +18671,8 @@ const templates = [
             }
         ],
         [
-            function _template() {
-                if (this != null && this.constructor === _template) {
+            function _template16() {
+                if (this != null && this.constructor === _template16) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -18729,6 +18746,7 @@ const templates = [
                     void 0 != null ? void 0 : 2
                 ];
             },
+            [],
             [
                 1,
                 2
@@ -18736,12 +18754,13 @@ const templates = [
         ]
     ];
 const test = exports.test = function () {
-        for (let _i = 0; _i < templates.length; _i++) {
-            let _ref = templates[_i];
-            let templateType = _ref[0];
-            let expected = _ref[1];
+        for (let _i3 = 0; _i3 < templates.length; _i3++) {
+            let _ref5 = templates[_i3];
+            let templateType = _ref5[0];
+            let args = _ref5[1];
+            let expected = _ref5[2];
             if (expected != null) {
-                let template = new templateType();
+                let template = ion.create(templateType, args);
                 template.activate();
                 let reactiveResult = null;
                 template.watch(function (value) {
@@ -18752,7 +18771,7 @@ const test = exports.test = function () {
                 template.deactivate();
                 if (!(reactiveResult === void 0))
                     throw new Error('Assertion Failed: (reactiveResult is undefined)');
-                let imperativeResult = templateType();
+                let imperativeResult = templateType.apply(null, args);
                 if (!(JSON.stringify(imperativeResult) === JSON.stringify(expected)))
                     throw new Error('Assertion Failed: (JSON.stringify(imperativeResult) is JSON.stringify(expected))');
             }
@@ -18805,7 +18824,7 @@ tests = {
   "let x\nx ?= y": "'use strict';\nlet x;\nx = x != null ? x : y;",
   "let x\nx ??= y": "'use strict';\nlet x;\nx = x != void 0 ? x : y;",
   "for const x, index in foo\n    log(x)": "'use strict';\nfor (let _i = 0; _i < foo.length; _i++) {\n    const index = _i;\n    const x = foo[_i];\n    log(x);\n}",
-  "[x,y] = [y,x]": "'use strict';\nconst _ref = [\n        y,\n        x\n    ];\nx = _ref[0];\ny = _ref[1];",
+  "let x = 1, y = 2\n[x,y] = [y,x]": "'use strict';\nlet x = 1, y = 2;\nconst _ref = [\n        y,\n        x\n    ];\nx = _ref[0];\ny = _ref[1];",
   "a?.b": "'use strict';\na != null ? a.b : void 0;",
   "a?.b.c?.d": "'use strict';\na != null ? a.b.c != null ? a.b.c.d : void 0 : void 0;",
   "a?()": "'use strict';\na != null ? a() : void 0;",
@@ -18849,7 +18868,6 @@ tests = {
     line: 2,
     column: 1
   },
-  "let _ref = 1\nlet _ref2 = 2\nlet {x,y} = z": "'use strict';\nlet _ref = 1;\nlet _ref2 = 2;\nlet _ref3 = z;\nlet x = _ref3.x;\nlet y = _ref3.y;",
   "const x = 1\nx = 2": {
     line: 2,
     column: 1
@@ -18948,7 +18966,9 @@ tests = {
     column: 13
   },
   "const ion = import '../'\nconst templates = []\n    template (properties) -> 1": "'use strict';\nconst ion = require('../');\nconst templates = [function _template(properties) {\n            if (this != null && this.constructor === _template) {\n                return ion.createRuntime({\n                    type: 'Template',\n                    body: [{\n                            type: 'ReturnStatement',\n                            argument: {\n                                type: 'Literal',\n                                value: 1\n                            }\n                        }]\n                }, { properties: properties });\n            }\n            return 1;\n        }];",
-  "template (properties) ->\n    let baz = 10\n    let foo = 1\n    let factor = 2\n    multiply(a) ->\n        let bar = factor.foo\n        let baz =\n            foo: 5\n        return a * factor\n    return multiply(2)": "'use strict';\nconst ion = require('ion');\n(function _template(properties) {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'baz'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 10\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'foo'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 1\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'factor'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 2\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    kind: 'const',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'multiply'\n                            },\n                            init: {\n                                type: 'Function',\n                                context: true,\n                                value: function (_context) {\n                                    return function multiply(a) {\n                                        const factor = _context.get('factor');\n                                        let bar = factor.foo;\n                                        let baz = { foo: 5 };\n                                        return a * factor;\n                                    };\n                                }\n                            }\n                        }]\n                },\n                {\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'CallExpression',\n                        callee: {\n                            type: 'Identifier',\n                            name: 'multiply'\n                        },\n                        arguments: [{\n                                type: 'Literal',\n                                value: 2\n                            }]\n                    }\n                }\n            ]\n        }, { properties: properties });\n    }\n    let baz = 10;\n    let foo = 1;\n    let factor = 2;\n    function multiply(a) {\n        let bar = factor.foo;\n        let baz = { foo: 5 };\n        return a * factor;\n    }\n    return multiply(2);\n});"
+  "template (properties) ->\n    let baz = 10\n    let foo = 1\n    let factor = 2\n    multiply(a) ->\n        let bar = factor.foo\n        let baz =\n            foo: 5\n        return a * factor\n    return multiply(2)": "'use strict';\nconst ion = require('ion');\n(function _template(properties) {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'baz'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 10\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'foo'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 1\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'factor'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 2\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    kind: 'const',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'multiply'\n                            },\n                            init: {\n                                type: 'Function',\n                                context: true,\n                                value: function (_context) {\n                                    return function multiply(a) {\n                                        const factor = _context.get('factor');\n                                        let bar = factor.foo;\n                                        let baz = { foo: 5 };\n                                        return a * factor;\n                                    };\n                                }\n                            }\n                        }]\n                },\n                {\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'CallExpression',\n                        callee: {\n                            type: 'Identifier',\n                            name: 'multiply'\n                        },\n                        arguments: [{\n                                type: 'Literal',\n                                value: 2\n                            }]\n                    }\n                }\n            ]\n        }, { properties: properties });\n    }\n    let baz = 10;\n    let foo = 1;\n    let factor = 2;\n    function multiply(a) {\n        let bar = factor.foo;\n        let baz = { foo: 5 };\n        return a * factor;\n    }\n    return multiply(2);\n});",
+  "export ->\n    const {div} = import 'ion/browser/html'\n    return div\n        \"Hello Div\"": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = function () {\n    const _ref = require('ion/browser/html');\n    let div = _ref.div;\n    let _ref2 = new div();\n    ion.add(_ref2, 'Hello Div');\n    return _ref2;\n};",
+  "export template ({a}) -> a": null
 };
 
 if (global.window != null) {
@@ -19104,8 +19124,8 @@ const templates = [
         ],
         [
             'imperative functions',
-            function _template(properties) {
-                if (this != null && this.constructor === _template) {
+            function _template2(properties) {
+                if (this != null && this.constructor === _template2) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -19195,12 +19215,12 @@ const templates = [
                 function double(a) {
                     return a * 2;
                 }
-                let _ref = {};
+                let _ref2 = {};
                 for (let key in properties) {
                     let value = properties[key];
-                    _ref[key] = double(value);
+                    _ref2[key] = double(value);
                 }
-                return _ref;
+                return _ref2;
             },
             {
                 x: 1,
@@ -19218,8 +19238,8 @@ const templates = [
         ],
         [
             'shared variables functions',
-            function _template(properties) {
-                if (this != null && this.constructor === _template) {
+            function _template3(properties) {
+                if (this != null && this.constructor === _template3) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -19381,14 +19401,14 @@ const templates = [
                 function multiply(a) {
                     return a * factor;
                 }
-                let _ref = {};
+                let _ref3 = {};
                 for (let key in properties) {
                     let value = properties[key];
                     if (key !== 'factor') {
-                        _ref[key] = multiply(value);
+                        _ref3[key] = multiply(value);
                     }
                 }
-                return _ref;
+                return _ref3;
             },
             {
                 x: 1,
@@ -19406,16 +19426,16 @@ const templates = [
             }
         ]
     ];
-let _ref = {};
+let _ref4 = {};
 for (let _i = 0; _i < templates.length; _i++) {
-    let _ref2 = templates[_i];
-    let name = _ref2[0];
-    let templateType = _ref2[1];
-    let argument = _ref2[2];
-    let patch = _ref2[3];
-    let expected = _ref2[4];
+    let _ref5 = templates[_i];
+    let name = _ref5[0];
+    let templateType = _ref5[1];
+    let argument = _ref5[2];
+    let patch = _ref5[3];
+    let expected = _ref5[4];
     if (expected != null) {
-        _ref[name] = function (templateType, argument, patch, expected) {
+        _ref4[name] = function (templateType, argument, patch, expected) {
             return function (done) {
                 let template = new templateType(argument);
                 template.activate();
@@ -19432,7 +19452,7 @@ for (let _i = 0; _i < templates.length; _i++) {
         }(templateType, argument, patch, expected);
     }
 }
-module.exports = exports = { test: _ref };
+module.exports = exports = { test: _ref4 };
   }
   if (typeof require === 'function') {
     if (require.register)
@@ -19498,5 +19518,330 @@ const test = exports.test = function () {
   }
   else {
     _ion_test_templateParams_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_test_Todo_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+module.exports = exports = function _template() {
+    if (this != null && this.constructor === _template) {
+        return ion.createRuntime({
+            type: 'Template',
+            body: [
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: '_ref3'
+                            },
+                            init: {
+                                type: 'ImportExpression',
+                                name: {
+                                    type: 'Literal',
+                                    value: 'ion/browser/html'
+                                }
+                            }
+                        }],
+                    kind: 'const'
+                },
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'div'
+                            },
+                            init: {
+                                type: 'MemberExpression',
+                                object: {
+                                    type: 'Identifier',
+                                    name: '_ref3'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'div'
+                                },
+                                computed: false
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'span'
+                            },
+                            init: {
+                                type: 'MemberExpression',
+                                object: {
+                                    type: 'Identifier',
+                                    name: '_ref3'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'span'
+                                },
+                                computed: false
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'input'
+                            },
+                            init: {
+                                type: 'MemberExpression',
+                                object: {
+                                    type: 'Identifier',
+                                    name: '_ref3'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'input'
+                                },
+                                computed: false
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'a'
+                            },
+                            init: {
+                                type: 'MemberExpression',
+                                object: {
+                                    type: 'Identifier',
+                                    name: '_ref3'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'a'
+                                },
+                                computed: false
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'form'
+                            },
+                            init: {
+                                type: 'MemberExpression',
+                                object: {
+                                    type: 'Identifier',
+                                    name: '_ref3'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'form'
+                                },
+                                computed: false
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'table'
+                            },
+                            init: {
+                                type: 'MemberExpression',
+                                object: {
+                                    type: 'Identifier',
+                                    name: '_ref3'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'table'
+                                },
+                                computed: false
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'tbody'
+                            },
+                            init: {
+                                type: 'MemberExpression',
+                                object: {
+                                    type: 'Identifier',
+                                    name: '_ref3'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'tbody'
+                                },
+                                computed: false
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'thead'
+                            },
+                            init: {
+                                type: 'MemberExpression',
+                                object: {
+                                    type: 'Identifier',
+                                    name: '_ref3'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'thead'
+                                },
+                                computed: false
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'tr'
+                            },
+                            init: {
+                                type: 'MemberExpression',
+                                object: {
+                                    type: 'Identifier',
+                                    name: '_ref3'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'tr'
+                                },
+                                computed: false
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'td'
+                            },
+                            init: {
+                                type: 'MemberExpression',
+                                object: {
+                                    type: 'Identifier',
+                                    name: '_ref3'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'td'
+                                },
+                                computed: false
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'button'
+                            },
+                            init: {
+                                type: 'MemberExpression',
+                                object: {
+                                    type: 'Identifier',
+                                    name: '_ref3'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'button'
+                                },
+                                computed: false
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'ReturnStatement',
+                    argument: {
+                        type: 'ObjectExpression',
+                        objectType: {
+                            type: 'Identifier',
+                            name: 'div'
+                        },
+                        properties: [{
+                                type: 'ExpressionStatement',
+                                expression: {
+                                    type: 'Literal',
+                                    value: 'Hello Div'
+                                }
+                            }]
+                    }
+                }
+            ]
+        }, {});
+    }
+    const _ref2 = require('ion/browser/html');
+    let div = _ref2.div;
+    let span = _ref2.span;
+    let input = _ref2.input;
+    let a = _ref2.a;
+    let form = _ref2.form;
+    let table = _ref2.table;
+    let tbody = _ref2.tbody;
+    let thead = _ref2.thead;
+    let tr = _ref2.tr;
+    let td = _ref2.td;
+    let button = _ref2.button;
+    let _ref = new div();
+    ion.add(_ref, 'Hello Div');
+    return _ref;
+};
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/test/Todo',_ion_test_Todo_);
+    else
+      _ion_test_Todo_.call(this, module, exports, require);
+  }
+  else {
+    _ion_test_Todo_.call(this);
   }
 }).call(this)//# sourceMappingURL=_browser.js.map

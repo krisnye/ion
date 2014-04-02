@@ -356,9 +356,11 @@ tests =
     }
     """
     """
+    let x = 1, y = 2
     [x,y] = [y,x]
     """: """
     'use strict';
+    let x = 1, y = 2;
     const _ref = [
             y,
             x
@@ -738,18 +740,6 @@ tests =
     export const x = 1
     export {y:2}
     """: {line:2,column:1}
-    """
-    let _ref = 1
-    let _ref2 = 2
-    let {x,y} = z
-    """: """
-    'use strict';
-    let _ref = 1;
-    let _ref2 = 2;
-    let _ref3 = z;
-    let x = _ref3.x;
-    let y = _ref3.y;
-    """
     """
     const x = 1
     x = 2
@@ -1429,13 +1419,23 @@ tests =
     });
     """
     """
-    export template ->
+    export ->
         const {div} = import 'ion/browser/html'
         return div
             "Hello Div"
-    """: null
+    """: """
+    'use strict';
+    const ion = require('ion');
+    module.exports = exports = function () {
+        const _ref = require('ion/browser/html');
+        let div = _ref.div;
+        let _ref2 = new div();
+        ion.add(_ref2, 'Hello Div');
+        return _ref2;
+    };
+    """
     # """
-    # export template ({a,b}) -> a + b
+    # export template ({a}) -> a
     # """: null
 
 if global.window?

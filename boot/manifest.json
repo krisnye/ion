@@ -1,5 +1,5 @@
 {
-    "modified": 1395847103032,
+    "modified": 1396479087762,
     "files": [
         "browser/require.js",
         "browser/html.js",
@@ -41,6 +41,7 @@
         "test/ionCustomParse.js",
         "test/ionVsEsprima.js",
         "test/reactiveTemplates.js",
-        "test/templateParams.js"
+        "test/templateParams.js",
+        "test/Todo.js"
     ]
 }

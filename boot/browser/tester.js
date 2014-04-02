@@ -36,8 +36,7 @@ exports.spawnTests = spawnTests = function(manifestFile) {
 };
 
 exports.runTests = runTests = function(moduleIds, callback) {
-  var array, duration, e, error, expectedCallbacks, getIncompleteCallbacks, handler, inc, key, module, moduleId, name, timeout, waitingForFinishTimeout, warning, _i, _len,
-    _this = this;
+  var array, duration, e, error, expectedCallbacks, getIncompleteCallbacks, handler, inc, key, module, moduleId, name, timeout, waitingForFinishTimeout, warning, _i, _len;
   if (!moduleIds) {
     throw new Error("moduleIds is required");
   }
@@ -96,15 +95,17 @@ exports.runTests = runTests = function(moduleIds, callback) {
     duration = 10000;
     error = "Timed out after " + duration + " ms";
     warning = void 0;
-    timeout = function() {
-      var _j, _len1;
-      inc = getIncompleteCallbacks();
-      for (_j = 0, _len1 = inc.length; _j < _len1; _j++) {
-        name = inc[_j];
-        callback(name, error, warning);
-      }
-      return callback();
-    };
+    timeout = (function(_this) {
+      return function() {
+        var _j, _len1;
+        inc = getIncompleteCallbacks();
+        for (_j = 0, _len1 = inc.length; _j < _len1; _j++) {
+          name = inc[_j];
+          callback(name, error, warning);
+        }
+        return callback();
+      };
+    })(this);
     if (global.setTimeout != null) {
       return waitingForFinishTimeout = setTimeout(timeout, duration);
     } else {

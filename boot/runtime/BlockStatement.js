@@ -18,9 +18,9 @@ const BlockStatement = ion.defineClass({
                     this.statements = _ref;
                 }
                 {
-                    let _ref = this.statements;
-                    for (let _i = 0; _i < _ref.length; _i++) {
-                        let statement = _ref[_i];
+                    let _ref3 = this.statements;
+                    for (let _i2 = 0; _i2 < _ref3.length; _i2++) {
+                        let statement = _ref3[_i2];
                         statement.activate();
                     }
                 }

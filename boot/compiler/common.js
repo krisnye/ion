@@ -27,9 +27,9 @@ const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdent
         return minIndent;
     }, unindentLines = exports.unindentLines = function (lines) {
         let minIndent = getMinIndent(lines);
-        for (let _i = 0; _i < lines.length; _i++) {
-            let i = _i;
-            let line = lines[_i];
+        for (let _i2 = 0; _i2 < lines.length; _i2++) {
+            let i = _i2;
+            let line = lines[_i2];
             if (typeof line === 'string') {
                 lines[i] = isEmpty(line) ? '' : line.substring(minIndent);
             }

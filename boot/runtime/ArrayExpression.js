@@ -50,10 +50,10 @@ const ArrayExpression = ion.defineClass({
                     }
                 }
                 {
-                    let _ref = this.expressions;
-                    for (let _i = 0; _i < _ref.length; _i++) {
-                        let key = _i;
-                        let expression = _ref[_i];
+                    let _ref3 = this.expressions;
+                    for (let _i2 = 0; _i2 < _ref3.length; _i2++) {
+                        let key = _i2;
+                        let expression = _ref3[_i2];
                         expression.watch(this.expressionWatchers[key]);
                     }
                 }
@@ -62,10 +62,10 @@ const ArrayExpression = ion.defineClass({
             },
             deactivate: function () {
                 {
-                    let _ref = this.expressions;
-                    for (let _i = 0; _i < _ref.length; _i++) {
-                        let key = _i;
-                        let expression = _ref[_i];
+                    let _ref4 = this.expressions;
+                    for (let _i3 = 0; _i3 < _ref4.length; _i3++) {
+                        let key = _i3;
+                        let expression = _ref4[_i3];
                         expression.unwatch(this.expressionWatchers[key]);
                     }
                 }

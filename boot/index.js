@@ -85,12 +85,12 @@ const patch = exports.patch = function (target, values) {
         if (deep == null)
             deep = false;
         if ((object != null ? object.constructor : void 0) === Object) {
-            let _ref = {};
+            let _ref2 = {};
             for (let key in object) {
                 let value = object[key];
-                _ref[key] = deep ? clone(value, deep) : value;
+                _ref2[key] = deep ? clone(value, deep) : value;
             }
-            return _ref;
+            return _ref2;
         } else if (Array.isArray(object)) {
             let _ref = [];
             for (let _i = 0; _i < object.length; _i++) {

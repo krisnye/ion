@@ -29,6 +29,12 @@ const templates = []
         {x:1,y:2}
         {x:4,y:null,z:5,factor:10}
         {x:40,z:50}
+    []
+        "reactive destructured parameters"
+        template (obj) -> obj.a + obj.b
+        {a:1,b:2}
+        {a:5}
+        7
 
 export
     test:
@@ -36,13 +42,16 @@ export
             [name]: do (templateType, argument, patch, expected) ->
                 return (done) ->
                     let template = new templateType(argument)
+                    checkIfDone (check) ->
+                        if JSON.stringify(check) is JSON.stringify(expected)
+                            template.deactivate()
+                            done()
                     template.activate()
                     (template.watch)
                         (value) ->
-                             (ion.observe)
+                            checkIfDone(value)
+                            (ion.observe)
                                 value
                                 (changes) ->
-                                    if JSON.stringify(value) is JSON.stringify(expected)
-                                        template.deactivate()
-                                        done()
+                                    checkIfDone(value)
                     ion.patch(argument, patch)

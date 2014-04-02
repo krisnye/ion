@@ -65,8 +65,8 @@ const templates = [
         ],
         [
             'imperative functions',
-            function _template(properties) {
-                if (this != null && this.constructor === _template) {
+            function _template2(properties) {
+                if (this != null && this.constructor === _template2) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -156,12 +156,12 @@ const templates = [
                 function double(a) {
                     return a * 2;
                 }
-                let _ref = {};
+                let _ref2 = {};
                 for (let key in properties) {
                     let value = properties[key];
-                    _ref[key] = double(value);
+                    _ref2[key] = double(value);
                 }
-                return _ref;
+                return _ref2;
             },
             {
                 x: 1,
@@ -179,8 +179,8 @@ const templates = [
         ],
         [
             'shared variables functions',
-            function _template(properties) {
-                if (this != null && this.constructor === _template) {
+            function _template3(properties) {
+                if (this != null && this.constructor === _template3) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [
@@ -342,14 +342,14 @@ const templates = [
                 function multiply(a) {
                     return a * factor;
                 }
-                let _ref = {};
+                let _ref3 = {};
                 for (let key in properties) {
                     let value = properties[key];
                     if (key !== 'factor') {
-                        _ref[key] = multiply(value);
+                        _ref3[key] = multiply(value);
                     }
                 }
-                return _ref;
+                return _ref3;
             },
             {
                 x: 1,
@@ -367,16 +367,16 @@ const templates = [
             }
         ]
     ];
-let _ref = {};
+let _ref4 = {};
 for (let _i = 0; _i < templates.length; _i++) {
-    let _ref2 = templates[_i];
-    let name = _ref2[0];
-    let templateType = _ref2[1];
-    let argument = _ref2[2];
-    let patch = _ref2[3];
-    let expected = _ref2[4];
+    let _ref5 = templates[_i];
+    let name = _ref5[0];
+    let templateType = _ref5[1];
+    let argument = _ref5[2];
+    let patch = _ref5[3];
+    let expected = _ref5[4];
     if (expected != null) {
-        _ref[name] = function (templateType, argument, patch, expected) {
+        _ref4[name] = function (templateType, argument, patch, expected) {
             return function (done) {
                 let template = new templateType(argument);
                 template.activate();
@@ -393,7 +393,7 @@ for (let _i = 0; _i < templates.length; _i++) {
         }(templateType, argument, patch, expected);
     }
 }
-module.exports = exports = { test: _ref };
+module.exports = exports = { test: _ref4 };
   }
   if (typeof require === 'function') {
     if (require.register)

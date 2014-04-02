@@ -953,7 +953,7 @@ checkVariableDeclarations = {
       key = context.key();
       parent = context.parentNode();
       if (!(parent.type === 'MemberExpression' && key === 'property' || parent.type === 'Property' && key === 'key')) {
-        return ((_base = context.scope()).usage != null ? (_base = context.scope()).usage : _base.usage = {})[node.name] = node;
+        return ((_base = context.scope()).usage != null ? _base.usage : _base.usage = {})[node.name] = node;
       }
     }
   },
@@ -1028,7 +1028,7 @@ namedFunctions = function(node, context) {
   }
   if (node.type === 'Property' && node.value.type === 'FunctionExpression' && node.key.type === 'Identifier') {
     if (node.key.name !== 'constructor') {
-      return (_base1 = node.value).name != null ? (_base1 = node.value).name : _base1.name = node.key;
+      return (_base1 = node.value).name != null ? _base1.name : _base1.name = node.key;
     }
   }
 };
@@ -1345,7 +1345,7 @@ wrapTemplateInnerFunctions = function(node, context) {
 };
 
 createTemplateRuntime = function(node, context) {
-  var args, param, template, templateId, _i, _len, _ref1;
+  var args, id, index, template, templateId, _i, _len, _ref1;
   if (isFunctionNode(node) && (node.template != null)) {
     templateId = node.id != null ? node.id : node.id = context.getNewInternalIdentifier('_template');
     template = removeLocationInfo(node.template);
@@ -1355,14 +1355,12 @@ createTemplateRuntime = function(node, context) {
       properties: []
     };
     _ref1 = template.params;
-    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-      param = _ref1[_i];
-      forEachDestructuringAssignment(param, param, function(id) {
-        return args.properties.push({
-          key: id,
-          value: id,
-          kind: 'init'
-        });
+    for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
+      id = _ref1[index];
+      args.properties.push({
+        key: id,
+        value: id,
+        kind: 'init'
       });
     }
     delete template.params;
@@ -1422,12 +1420,14 @@ javascriptExpressions = function(node, context) {
 };
 
 exports.postprocess = function(program, options) {
-  var enter, exit, steps, traversal, variable, _i, _len;
-  steps = [[namedFunctions, superExpressions], [createTemplateFunctionClone, checkVariableDeclarations], [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5], [addUseStrictAndRequireIon], [nodejsModules, destructuringAssignments, spreadExpressions, assertStatements]];
+  var enter, exit, previousContext, steps, traversal, variable, _i, _len;
+  steps = [[namedFunctions, superExpressions], [destructuringAssignments], [createTemplateFunctionClone, checkVariableDeclarations], [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions], [destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements]];
+  previousContext = null;
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
     enter = function(node, context) {
       var handler, step, _j, _len1, _ref1, _results;
+      previousContext = context;
       if (context.options == null) {
         context.options = options;
       }
@@ -1483,7 +1483,7 @@ exports.postprocess = function(program, options) {
       }
       return _results;
     };
-    traverse(program, enter, exit, variable);
+    traverse(program, enter, exit, variable, previousContext);
   }
   return program;
 };

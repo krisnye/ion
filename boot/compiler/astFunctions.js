@@ -23,9 +23,9 @@ const addStatement = exports.addStatement = function (node, statement, index, of
             {
                 let _ref = pattern.properties;
                 for (let _i = 0; _i < _ref.length; _i++) {
-                    let _ref2 = _ref[_i];
-                    let key = _ref2.key;
-                    let value = _ref2.value;
+                    let _ref3 = _ref[_i];
+                    let key = _ref3.key;
+                    let value = _ref3.value;
                     forEachDestructuringAssignment(value, {
                         type: 'MemberExpression',
                         object: expression,
@@ -36,10 +36,10 @@ const addStatement = exports.addStatement = function (node, statement, index, of
             }
         } else if (pattern.elements != null) {
             {
-                let _ref = pattern.elements;
-                for (let _i = 0; _i < _ref.length; _i++) {
-                    let index = _i;
-                    let value = _ref[_i];
+                let _ref2 = pattern.elements;
+                for (let _i2 = 0; _i2 < _ref2.length; _i2++) {
+                    let index = _i2;
+                    let value = _ref2[_i2];
                     forEachDestructuringAssignment(value, {
                         type: 'MemberExpression',
                         object: expression,

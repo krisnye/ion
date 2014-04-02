@@ -973,12 +973,11 @@ createTemplateRuntime = (node, context) ->
         args =
             type: 'ObjectExpression'
             properties: []
-        for param in template.params
-            forEachDestructuringAssignment param, param, (id) ->
-                args.properties.push
-                    key: id
-                    value: id
-                    kind: 'init'
+        for id, index in template.params
+            args.properties.push
+                key: id
+                value: id # node.params[index]
+                kind: 'init'
         # now delete template params because we don't need them at runtime
         delete template.params
         # move the template.body.body just to template.body
@@ -1028,16 +1027,19 @@ javascriptExpressions = (node, context) ->
 exports.postprocess = (program, options) ->
     steps = [
         [namedFunctions, superExpressions]
+        [destructuringAssignments]
         [createTemplateFunctionClone, checkVariableDeclarations]
         [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
         [validateTemplateNodes, classExpressions]
         [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions]
-        [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5]
+        [destructuringAssignments, existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5]
         [addUseStrictAndRequireIon]
-        [nodejsModules, destructuringAssignments, spreadExpressions, assertStatements]
+        [nodejsModules, spreadExpressions, assertStatements]
     ]
+    previousContext = null
     for traversal in steps
         enter = (node, context) ->
+            previousContext = context
             context.options ?= options
             for step in traversal when node?
                 handler = step.enter ? (if typeof step is 'function' then step else null)
@@ -1056,5 +1058,5 @@ exports.postprocess = (program, options) ->
                 if handler?
                     handler node, context, kind, name
                     node = context.current()
-        traverse program, enter, exit, variable
+        traverse program, enter, exit, variable, previousContext
     program
