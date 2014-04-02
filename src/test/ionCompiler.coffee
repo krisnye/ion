@@ -1418,22 +1418,12 @@ tests =
         return multiply(2);
     });
     """
-    """
-    export ->
-        const {div} = import 'ion/browser/html'
-        return div
-            "Hello Div"
-    """: """
-    'use strict';
-    const ion = require('ion');
-    module.exports = exports = function () {
-        const _ref = require('ion/browser/html');
-        let div = _ref.div;
-        let _ref2 = new div();
-        ion.add(_ref2, 'Hello Div');
-        return _ref2;
-    };
-    """
+    # """
+    # export template ->
+    #     const {div} = import 'ion/browser/html'
+    #     return div
+    #         "Hello Div"
+    # """: null
     # """
     # export template ({a}) -> a
     # """: null
