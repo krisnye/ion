@@ -204,6 +204,21 @@ const patch = exports.patch = function (target, values) {
             value != null ? value.onSet != null ? value.onSet(object, property) : void 0 : void 0;
         }
         return value;
+    }, is = exports.is = function (instance, type) {
+        if (!(instance != null)) {
+            return false;
+        }
+        if (!(type != null)) {
+            return true;
+        }
+        if (typeof type === 'function') {
+            if (typeof instance.is === 'function') {
+                return instance.is(type);
+            }
+            return instance instanceof type;
+        } else {
+            return instance === type;
+        }
     }, test = exports.test = {
         defineClass: function () {
             const Foo = defineClass({

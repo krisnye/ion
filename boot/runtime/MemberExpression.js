@@ -9,6 +9,12 @@ const MemberExpression = ion.defineClass({
                 this.objectExpression.watch(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : function (objectValue) {
                     this.objectValue = objectValue;
                     this.updateValue();
+                    this.objectObserver != null ? this.objectObserver() : void 0;
+                    if (objectValue != null) {
+                        this.objectObserver = ion.observe(objectValue, function (changes) {
+                            this.updateValue();
+                        }.bind(this));
+                    }
                 }.bind(this));
                 this.propertyExpression = this.propertyExpression != null ? this.propertyExpression : this.context.createRuntime(this.computed ? this.property : this.property.name);
                 this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : function (propertyValue) {

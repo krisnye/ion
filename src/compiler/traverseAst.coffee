@@ -77,8 +77,7 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback, prev
             if typeof statement is 'number'
                 [statement, offset] = [offset, statement]
             addToNode ?= @scope().node
-            if statement.type is 'VariableDeclaration' or statement.type is 'FunctionDeclaration'
-                trackVariableDeclarations context, statement
+            trackVariableDeclarations context, statement
             addStatement addToNode, statement, @getAncestorChildOf(addToNode), offset
         context.addVariable ?= (options) ->
             variable = @getVariable options
@@ -120,12 +119,12 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback, prev
                 context.scopeStack.push
                     variables: Object.create(context.scope()?.variables ? {})
                     node: node
-            # if node.type is 'VariableDeclaration' or node.type is 'FunctionDeclaration'
-            #     trackVariableDeclarations context, node
             if Array.isArray(node.body)
                 trackVariableDeclarations context, node.body
             if nodeInfo?.isFunction
                 trackVariableDeclarations context, node.params, nodeInfo.paramKind
+            else if node.type is 'ForInStatement' or node.type is 'ForOfStatement'
+                trackVariableDeclarations context, node.left
             enterCallback?(node, context)
             context.ancestorNodes.push node
     ourExit = (node, context) ->

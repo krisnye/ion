@@ -62,7 +62,14 @@ const templates = [
                                 }
                             }
                         ]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 const a = 1, b = 2, c = a + b;
                 return c;
@@ -107,7 +114,14 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return {
                     a: 1,
@@ -151,7 +165,14 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return [
                     1,
@@ -278,21 +299,28 @@ const templates = [
                                 }
                             }
                         ]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 let a = 1;
                 let b = 2;
-                let _ref3 = [];
+                let _ref4 = [];
                 {
-                    _ref3.push(a);
-                    _ref3.push(b);
+                    _ref4.push(a);
+                    _ref4.push(b);
                     if (a > b) {
-                        _ref3.push(10);
+                        _ref4.push(10);
                     } else if (b > a) {
-                        _ref3.push(20);
+                        _ref4.push(20);
                     }
                 }
-                return _ref3;
+                return _ref4;
             },
             [],
             [
@@ -405,20 +433,27 @@ const templates = [
                                 }
                             }
                         ]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 let items = [
                         1,
                         2,
                         3
                     ];
-                let _ref = [];
+                let _ref2 = [];
                 for (let _i = 0; _i < items.length; _i++) {
                     let index = _i;
                     let item = items[_i];
-                    _ref.push(item + index);
+                    _ref2.push(item + index);
                 }
-                let x = _ref;
+                let x = _ref2;
                 return x;
             },
             [],
@@ -556,19 +591,26 @@ const templates = [
                                 }
                             }
                         ]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 let items = {
                         a: 1,
                         b: 2,
                         c: 3
                     };
-                let _ref2 = [];
+                let _ref3 = [];
                 for (let key in items) {
                     let value = items[key];
-                    _ref2.push(key + value);
+                    _ref3.push(key + value);
                 }
-                let x = _ref2;
+                let x = _ref3;
                 return x;
             },
             [],
@@ -645,7 +687,14 @@ const templates = [
                                 }
                             }
                         ]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 let object = { a: { b: 1 } };
                 return object.a.b;
@@ -676,7 +725,14 @@ const templates = [
                                     }
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return false ? 1 : 2;
             },
@@ -714,7 +770,14 @@ const templates = [
                                     }
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return null != null ? null : 2;
             },
@@ -782,7 +845,14 @@ const templates = [
                                 }
                             }
                         ]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 let a = null;
                 let b = 2;
@@ -830,7 +900,14 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return Math.min(1, 2);
             },
@@ -882,7 +959,14 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return Math.min.call(null, 1, 2);
             },
@@ -918,7 +1002,14 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return new Date(2011, 10, 5);
             },
@@ -937,7 +1028,14 @@ const templates = [
                                     value: /foo/
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return /foo/;
             },
@@ -1064,9 +1162,16 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
-                let _ref4 = [];
+                let _ref5 = [];
                 {
                     let items = [
                             3,
@@ -1075,13 +1180,13 @@ const templates = [
                         ];
                     for (let _i2 = 0; _i2 < items.length; _i2++) {
                         let item = items[_i2];
-                        _ref4.push(item * 2);
+                        _ref5.push(item * 2);
                     }
                 }
                 return {
                     x: 1,
                     y: 2,
-                    z: _ref4
+                    z: _ref5
                 };
             },
             [],
@@ -1164,7 +1269,14 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return [
                     null != null ? null : 1,
@@ -1176,14 +1288,170 @@ const templates = [
                 1,
                 2
             ]
+        ],
+        [
+            function _template17(_ref) {
+                if (this != null && this.constructor === _template17) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'a'
+                                        },
+                                        init: {
+                                            type: 'MemberExpression',
+                                            object: {
+                                                type: 'Identifier',
+                                                name: '_ref'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'a'
+                                            },
+                                            computed: false
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'b'
+                                        },
+                                        init: {
+                                            type: 'MemberExpression',
+                                            object: {
+                                                type: 'Identifier',
+                                                name: '_ref'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'b'
+                                            },
+                                            computed: false
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'BinaryExpression',
+                                    operator: '+',
+                                    left: {
+                                        type: 'Identifier',
+                                        name: 'a'
+                                    },
+                                    right: {
+                                        type: 'Identifier',
+                                        name: 'b'
+                                    }
+                                }
+                            }
+                        ]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        _ref: _ref,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
+                }
+                let a = _ref.a;
+                let b = _ref.b;
+                return a + b;
+            },
+            [{
+                    a: 1,
+                    b: 2
+                }],
+            3
+        ],
+        [
+            function _template18(type) {
+                if (this != null && this.constructor === _template18) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'Identifier',
+                                        name: 'type'
+                                    },
+                                    properties: [{
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'position'
+                                            },
+                                            value: {
+                                                type: 'ObjectExpression',
+                                                objectType: null,
+                                                properties: [{
+                                                        type: 'Property',
+                                                        key: {
+                                                            type: 'Identifier',
+                                                            name: 'x'
+                                                        },
+                                                        value: {
+                                                            type: 'Literal',
+                                                            value: 10
+                                                        },
+                                                        kind: 'init'
+                                                    }]
+                                            },
+                                            kind: 'init'
+                                        }]
+                                }
+                            }]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        type: type,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
+                }
+                let _ref6 = new type();
+                if (_ref6.position == null)
+                    _ref6.position = {};
+                _ref6.position.x = 10;
+                return _ref6;
+            },
+            [function () {
+                    this.position = {
+                        x: 1,
+                        y: 2
+                    };
+                }],
+            {
+                position: {
+                    x: 10,
+                    y: 2
+                }
+            }
         ]
     ];
 const test = exports.test = function () {
         for (let _i3 = 0; _i3 < templates.length; _i3++) {
-            let _ref5 = templates[_i3];
-            let templateType = _ref5[0];
-            let args = _ref5[1];
-            let expected = _ref5[2];
+            let _ref7 = templates[_i3];
+            let templateType = _ref7[0];
+            let args = _ref7[1];
+            let expected = _ref7[2];
             if (expected != null) {
                 let template = ion.create(templateType, args);
                 template.activate();
@@ -1191,8 +1459,13 @@ const test = exports.test = function () {
                 template.watch(function (value) {
                     return reactiveResult = value;
                 });
-                if (!(JSON.stringify(reactiveResult) === JSON.stringify(expected)))
-                    throw new Error('Assertion Failed: (JSON.stringify(reactiveResult) is JSON.stringify(expected))');
+                try {
+                    if (!(JSON.stringify(reactiveResult) === JSON.stringify(expected)))
+                        throw new Error('Assertion Failed: (JSON.stringify(reactiveResult) is JSON.stringify(expected))');
+                } catch (e) {
+                    console.log(JSON.stringify(reactiveResult), JSON.stringify(expected));
+                    throw e;
+                }
                 template.deactivate();
                 if (!(reactiveResult === void 0))
                     throw new Error('Assertion Failed: (reactiveResult is undefined)');

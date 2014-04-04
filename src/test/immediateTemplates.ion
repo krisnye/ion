@@ -104,6 +104,15 @@ const templates = []
         template ({a,b}) -> a + b
         [{a:1,b:2}]
         3
+    []
+        template (type) ->
+            return type
+                position:
+                    x: 10
+        []
+            ->
+                @position = {x:1,y:2}
+        {position:{x:10,y:2}}
 
 export const
     test = ->
@@ -114,7 +123,12 @@ export const
             (template.watch)
                 (value) -> reactiveResult = value
             # console.log('reactiveResult: ', reactiveResult)
-            assert JSON.stringify(reactiveResult) is JSON.stringify(expected)
+            try
+                assert JSON.stringify(reactiveResult) is JSON.stringify(expected)
+            catch e
+                console.log(JSON.stringify(reactiveResult), JSON.stringify(expected))
+                throw e
+            
             template.deactivate()
             assert reactiveResult is undefined
             # also, call the template function imperatively and see that it's still the expected value

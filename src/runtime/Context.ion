@@ -17,7 +17,7 @@ export class Context
         newContext: (output = @output) -> new Context(@, output)
         createRuntime: (node) -> Factory.createRuntime(@, node)
         get: (name) ->
-            let variable = @variables[name]
+            let variable = @getVariable(name)
             if not variable?
                 throw new Error("Variable not found: '{{name}}'")
             let value = variable.value
@@ -28,9 +28,11 @@ export class Context
                 variable.watch(watcher)
                 variable.unwatch(watcher)
             return value
+        getVariable: (name) -> @variables[name] ? @parent?.getVariable(name)
         setVariable: (name, node) ->
             if name?
-                return @variables[name] = @createRuntime(node)
+                let variable = @variables[name] = @createRuntime(node)
+                return variable
         getVariableExpression: (name) ->
             let context = @, value
             while context?

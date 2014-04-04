@@ -6,13 +6,21 @@ export class Property extends Statement
     properties:
         activate: ->
             super
+            # create the runtime expressions
             @keyExpression ?= @context.createRuntime(@computed ? @key : @key.name)
+            @valueExpression ?= @context.createRuntime(@value)
+            # then watch them, this way, the keywatcher can set the left value on the right hand side
+            # before it is activated
             (@keyExpression.watch)
                 @keyWatcher ?= (key) =>
+                    if key? and @valueExpression.setLeftValue?
+                        let currentValue = ion.get(@context.output, key)
+                        if currentValue?
+                            @valueExpression.setLeftValue(currentValue)
+
                     @restoreProperty()
                     @keyValue = key
                     @setProperty()
-            @valueExpression ?= @context.createRuntime(@value)
             (@valueExpression.watch)
                 @valueWatcher ?= (value) =>
                     @valueValue = value

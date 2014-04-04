@@ -923,10 +923,14 @@ getExternalIdentifiers = (node, callback) ->
 wrapTemplateInnerFunctions = (node, context) ->
     if context.parentReactive()
         if node.type is 'FunctionExpression' and not node.toLiteral?
+            console.log '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', node.name?.name
+            for key, value of context.scope().variables
+                console.log '::::::::::::::::::::::::::::::::', key
             # see if we need to replace any properties in this function or not.
             variables = {}
             getExternalIdentifiers node, (id) ->
-                if id.name isnt node.id?.name and context.parentScope()?.variables[id.name]?
+                console.log('ID: ' + id.name, context.getVariableInfo(id.name))
+                if id.name isnt node.id?.name and context.scope()?.variables[id.name]?
                     variables[id.name] = id
             requiresWrapper = Object.keys(variables).length > 0
             if requiresWrapper
@@ -973,11 +977,22 @@ createTemplateRuntime = (node, context) ->
         args =
             type: 'ObjectExpression'
             properties: []
-        for id, index in template.params
+        variables = {}
+        # if nodejs, add built in ids
+        for name in ['require', 'module', 'exports']
+            variables[name] = { type: 'Identifier', name: name }
+        for id in template.params
+            variables[id.name] = id
+        # also add any variables in scope
+        for key, value of context.scope().variables
+            id = value.id
+            variables[id.name] = id
+        for key, id of variables
             args.properties.push
                 key: id
-                value: id # node.params[index]
+                value: id
                 kind: 'init'
+
         # now delete template params because we don't need them at runtime
         delete template.params
         # move the template.body.body just to template.body
@@ -1031,7 +1046,7 @@ exports.postprocess = (program, options) ->
         [createTemplateFunctionClone, checkVariableDeclarations]
         [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
         [validateTemplateNodes, classExpressions]
-        [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions]
+        [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules]
         [destructuringAssignments, existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5]
         [addUseStrictAndRequireIon]
         [nodejsModules, spreadExpressions, assertStatements]

@@ -1146,109 +1146,6 @@ tests =
     let x = _ref;
     """
     """
-    let mytemplate = template -> [x + i for x, i in y]
-    """: """
-    'use strict';
-    const ion = require('ion');
-    let mytemplate = function _template() {
-        if (this != null && this.constructor === _template) {
-            return ion.createRuntime({
-                type: 'Template',
-                body: [{
-                        type: 'ReturnStatement',
-                        argument: {
-                            type: 'ObjectExpression',
-                            objectType: {
-                                type: 'ArrayExpression',
-                                elements: []
-                            },
-                            properties: [{
-                                    type: 'ForOfStatement',
-                                    left: {
-                                        type: 'VariableDeclaration',
-                                        declarations: [
-                                            {
-                                                type: 'VariableDeclarator',
-                                                id: {
-                                                    type: 'Identifier',
-                                                    name: 'x'
-                                                },
-                                                init: null
-                                            },
-                                            {
-                                                type: 'VariableDeclarator',
-                                                id: {
-                                                    type: 'Identifier',
-                                                    name: 'i'
-                                                },
-                                                init: null
-                                            }
-                                        ],
-                                        kind: 'let'
-                                    },
-                                    right: {
-                                        type: 'Identifier',
-                                        name: 'y'
-                                    },
-                                    body: {
-                                        type: 'ExpressionStatement',
-                                        expression: {
-                                            type: 'BinaryExpression',
-                                            operator: '+',
-                                            left: {
-                                                type: 'Identifier',
-                                                name: 'x'
-                                            },
-                                            right: {
-                                                type: 'Identifier',
-                                                name: 'i'
-                                            }
-                                        }
-                                    }
-                                }]
-                        }
-                    }],
-                name: {
-                    type: 'Identifier',
-                    name: 'mytemplate'
-                }
-            }, {});
-        }
-        let _ref = [];
-        for (let _i = 0; _i < y.length; _i++) {
-            let i = _i;
-            let x = y[_i];
-            _ref.push(x + i);
-        }
-        return _ref;
-    };
-    """
-    """
-    let x = template -> /foo/
-    """: """
-    'use strict';
-    const ion = require('ion');
-    let x = function _template() {
-        if (this != null && this.constructor === _template) {
-            return ion.createRuntime({
-                type: 'Template',
-                body: [{
-                        type: 'ReturnStatement',
-                        argument: {
-                            type: 'Literal',
-                            value: /foo/
-                        }
-                    }],
-                name: {
-                    type: 'Identifier',
-                    name: 'x'
-                }
-            }, {});
-        }
-        return /foo/;
-    };
-    """
-    """
     return
         z: []
             let items = [3,2,1]
@@ -1281,152 +1178,22 @@ tests =
     let x = `y := null`
     """: {line: 2, column: 13}
     """
-    const ion = import '../'
-    const templates = []
-        template (properties) -> 1
+    let x = 0 in Array
+    let y = "foo" instanceof String
     """: """
     'use strict';
-    const ion = require('../');
-    const templates = [function _template(properties) {
-                if (this != null && this.constructor === _template) {
-                    return ion.createRuntime({
-                        type: 'Template',
-                        body: [{
-                                type: 'ReturnStatement',
-                                argument: {
-                                    type: 'Literal',
-                                    value: 1
-                                }
-                            }]
-                    }, { properties: properties });
-                }
-                return 1;
-            }];
+    let x = 0 in Array;
+    let y = 'foo' instanceof String;
     """
     """
-    template (properties) ->
-        let baz = 10
-        let foo = 1
-        let factor = 2
-        multiply(a) ->
-            let bar = factor.foo
-            let baz =
-                foo: 5
-            return a * factor
-        return multiply(2)
-    """: """
-    'use strict';
-    const ion = require('ion');
-    (function _template(properties) {
-        if (this != null && this.constructor === _template) {
-            return ion.createRuntime({
-                type: 'Template',
-                body: [
-                    {
-                        type: 'VariableDeclaration',
-                        declarations: [{
-                                type: 'VariableDeclarator',
-                                id: {
-                                    type: 'Identifier',
-                                    name: 'baz'
-                                },
-                                init: {
-                                    type: 'Literal',
-                                    value: 10
-                                }
-                            }],
-                        kind: 'let'
-                    },
-                    {
-                        type: 'VariableDeclaration',
-                        declarations: [{
-                                type: 'VariableDeclarator',
-                                id: {
-                                    type: 'Identifier',
-                                    name: 'foo'
-                                },
-                                init: {
-                                    type: 'Literal',
-                                    value: 1
-                                }
-                            }],
-                        kind: 'let'
-                    },
-                    {
-                        type: 'VariableDeclaration',
-                        declarations: [{
-                                type: 'VariableDeclarator',
-                                id: {
-                                    type: 'Identifier',
-                                    name: 'factor'
-                                },
-                                init: {
-                                    type: 'Literal',
-                                    value: 2
-                                }
-                            }],
-                        kind: 'let'
-                    },
-                    {
-                        type: 'VariableDeclaration',
-                        kind: 'const',
-                        declarations: [{
-                                type: 'VariableDeclarator',
-                                id: {
-                                    type: 'Identifier',
-                                    name: 'multiply'
-                                },
-                                init: {
-                                    type: 'Function',
-                                    context: true,
-                                    value: function (_context) {
-                                        return function multiply(a) {
-                                            const factor = _context.get('factor');
-                                            let bar = factor.foo;
-                                            let baz = { foo: 5 };
-                                            return a * factor;
-                                        };
-                                    }
-                                }
-                            }]
-                    },
-                    {
-                        type: 'ReturnStatement',
-                        argument: {
-                            type: 'CallExpression',
-                            callee: {
-                                type: 'Identifier',
-                                name: 'multiply'
-                            },
-                            arguments: [{
-                                    type: 'Literal',
-                                    value: 2
-                                }]
-                        }
-                    }
-                ]
-            }, { properties: properties });
-        }
-        let baz = 10;
-        let foo = 1;
-        let factor = 2;
-        function multiply(a) {
-            let bar = factor.foo;
-            let baz = { foo: 5 };
-            return a * factor;
-        }
-        return multiply(2);
-    });
-    """
-    # """
-    # export template ->
-    #     const {div} = import 'ion/browser/html'
-    #     return div
-    #         "Hello Div"
-    # """: null
-    # """
-    # export template ({a}) -> a
-    # """: null
+    let name = "Kris"
+    export template ->
+        return {}
+            for key, value of foo
+                let x = 1
+                onclick: ->
+                    alert('Hey ' + key)
+    """: null
 
 if global.window?
     return

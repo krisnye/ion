@@ -24,8 +24,13 @@ const firstTemplate = function _template(a, b) {
                 name: 'firstTemplate'
             }
         }, {
+            require: require,
+            module: module,
+            exports: exports,
             a: a,
-            b: b
+            b: b,
+            firstTemplate: firstTemplate,
+            test: test
         });
     }
     return a + b;

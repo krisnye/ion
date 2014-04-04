@@ -241,7 +241,7 @@ BitwiseOrExpression = start:start head:BitwiseXorExpression tail:( _ ("|") _ Bit
 BitwiseXorExpression = start:start head:BitwiseAndExpression tail:( _ ("^") _ BitwiseAndExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
 BitwiseAndExpression = start:start head:EqualityExpression tail:( _ ("&") _ EqualityExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
 EqualityExpression = start:start head:RelationalExpression tail:( _ (is / isnt) _ RelationalExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
-RelationalExpression = start:start head:BitwiseShiftExpression tail:( _ ("<=" / ">=" / "<" / ">") _ BitwiseShiftExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
+RelationalExpression = start:start head:BitwiseShiftExpression tail:( _ ("<=" / ">=" / "<" / ">" / in / instanceof) _ BitwiseShiftExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
 BitwiseShiftExpression = start:start head:AdditiveExpression tail:( _ (">>>" / ">>" / "<<") _ AdditiveExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
 AdditiveExpression = start:start head:MultiplicativeExpression tail:( _ ("+" / "-") _ MultiplicativeExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
 MultiplicativeExpression = start:start head:UnaryExpression tail:( _ ("*" / "/" / "%") _ UnaryExpression end)* { return leftAssociateBinaryExpressions(start, head, tail) }
@@ -378,7 +378,7 @@ zwnj = "\u200C"
 zwj = "\u200D"
 
 //  reserved words
-reserved = null / undefined / and / or / is / isnt / not / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue / do / import / export / class / extends
+reserved = null / undefined / typeof / void / delete / new / true / false / var / const / let / while / for / in / of / if / else / return / try / catch / finally / throw / break / continue / do / import / export / class / extends
 true = "true" !identifierPart { return true }
 false = "false" !identifierPart { return false }
 new = "new" !identifierPart
@@ -396,9 +396,10 @@ delete = "delete" !identifierPart { return "delete"}
 var = "var" !identifierPart
 const = "const" !identifierPart { return "const" }
 let = "let" !identifierPart { return "let" }
+in = "in" !identifierPart { return "in" }
+instanceof = "instanceof" !identifierPart { return "instanceof" }
 while = "while" !identifierPart
 for = "for" !identifierPart
-in = "in" !identifierPart
 of = "of" !identifierPart
 if = "if" !identifierPart
 else = "else" !identifierPart

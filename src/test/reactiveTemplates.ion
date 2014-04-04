@@ -31,10 +31,16 @@ const templates = []
         {x:40,z:50}
     []
         "reactive destructured parameters"
-        template (obj) -> obj.a + obj.b
+        template ({a,b}) -> a + b
         {a:1,b:2}
         {a:5}
         7
+    []
+        "array comprehensions"
+        template ({items}) -> [x + i for x, i in items]
+        {items:[1,2,3]}
+        {items:{3:4}}
+        [1,3,5,7]
 
 export
     test:

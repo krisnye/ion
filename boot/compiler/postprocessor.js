@@ -1279,13 +1279,20 @@ getExternalIdentifiers = function(node, callback) {
 };
 
 wrapTemplateInnerFunctions = function(node, context) {
-  var contextId, id, name, requiresWrapper, variables;
+  var contextId, id, key, name, requiresWrapper, value, variables, _ref1, _ref2;
   if (context.parentReactive()) {
     if (node.type === 'FunctionExpression' && (node.toLiteral == null)) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', (_ref1 = node.name) != null ? _ref1.name : void 0);
+      _ref2 = context.scope().variables;
+      for (key in _ref2) {
+        value = _ref2[key];
+        console.log('::::::::::::::::::::::::::::::::', key);
+      }
       variables = {};
       getExternalIdentifiers(node, function(id) {
-        var _ref1, _ref2;
-        if (id.name !== ((_ref1 = node.id) != null ? _ref1.name : void 0) && (((_ref2 = context.parentScope()) != null ? _ref2.variables[id.name] : void 0) != null)) {
+        var _ref3, _ref4;
+        console.log('ID: ' + id.name, context.getVariableInfo(id.name));
+        if (id.name !== ((_ref3 = node.id) != null ? _ref3.name : void 0) && (((_ref4 = context.scope()) != null ? _ref4.variables[id.name] : void 0) != null)) {
           return variables[id.name] = id;
         }
       });
@@ -1345,7 +1352,7 @@ wrapTemplateInnerFunctions = function(node, context) {
 };
 
 createTemplateRuntime = function(node, context) {
-  var args, id, index, template, templateId, _i, _len, _ref1;
+  var args, id, key, name, template, templateId, value, variables, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
   if (isFunctionNode(node) && (node.template != null)) {
     templateId = node.id != null ? node.id : node.id = context.getNewInternalIdentifier('_template');
     template = removeLocationInfo(node.template);
@@ -1354,9 +1361,28 @@ createTemplateRuntime = function(node, context) {
       type: 'ObjectExpression',
       properties: []
     };
-    _ref1 = template.params;
-    for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
-      id = _ref1[index];
+    variables = {};
+    _ref1 = ['require', 'module', 'exports'];
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      name = _ref1[_i];
+      variables[name] = {
+        type: 'Identifier',
+        name: name
+      };
+    }
+    _ref2 = template.params;
+    for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+      id = _ref2[_j];
+      variables[id.name] = id;
+    }
+    _ref3 = context.scope().variables;
+    for (key in _ref3) {
+      value = _ref3[key];
+      id = value.id;
+      variables[id.name] = id;
+    }
+    for (key in variables) {
+      id = variables[key];
       args.properties.push({
         key: id,
         value: id,
@@ -1421,7 +1447,7 @@ javascriptExpressions = function(node, context) {
 
 exports.postprocess = function(program, options) {
   var enter, exit, previousContext, steps, traversal, variable, _i, _len;
-  steps = [[namedFunctions, superExpressions], [destructuringAssignments], [createTemplateFunctionClone, checkVariableDeclarations], [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions], [destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements]];
+  steps = [[namedFunctions, superExpressions], [destructuringAssignments], [createTemplateFunctionClone, checkVariableDeclarations], [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules], [destructuringAssignments, existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements]];
   previousContext = null;
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];

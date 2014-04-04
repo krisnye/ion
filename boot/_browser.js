@@ -1076,63 +1076,67 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         peg$c390 = "let",
         peg$c391 = { type: "literal", value: "let", description: "\"let\"" },
         peg$c392 = function() { return "let" },
-        peg$c393 = "while",
-        peg$c394 = { type: "literal", value: "while", description: "\"while\"" },
-        peg$c395 = "for",
-        peg$c396 = { type: "literal", value: "for", description: "\"for\"" },
-        peg$c397 = "in",
-        peg$c398 = { type: "literal", value: "in", description: "\"in\"" },
-        peg$c399 = "of",
-        peg$c400 = { type: "literal", value: "of", description: "\"of\"" },
-        peg$c401 = "if",
-        peg$c402 = { type: "literal", value: "if", description: "\"if\"" },
-        peg$c403 = "else",
-        peg$c404 = { type: "literal", value: "else", description: "\"else\"" },
-        peg$c405 = "return",
-        peg$c406 = { type: "literal", value: "return", description: "\"return\"" },
-        peg$c407 = "try",
-        peg$c408 = { type: "literal", value: "try", description: "\"try\"" },
-        peg$c409 = "catch",
-        peg$c410 = { type: "literal", value: "catch", description: "\"catch\"" },
-        peg$c411 = "finally",
-        peg$c412 = { type: "literal", value: "finally", description: "\"finally\"" },
-        peg$c413 = "throw",
-        peg$c414 = { type: "literal", value: "throw", description: "\"throw\"" },
-        peg$c415 = "break",
-        peg$c416 = { type: "literal", value: "break", description: "\"break\"" },
-        peg$c417 = "continue",
-        peg$c418 = { type: "literal", value: "continue", description: "\"continue\"" },
-        peg$c419 = "do",
-        peg$c420 = { type: "literal", value: "do", description: "\"do\"" },
-        peg$c421 = "import",
-        peg$c422 = { type: "literal", value: "import", description: "\"import\"" },
-        peg$c423 = "export",
-        peg$c424 = { type: "literal", value: "export", description: "\"export\"" },
-        peg$c425 = "class",
-        peg$c426 = { type: "literal", value: "class", description: "\"class\"" },
-        peg$c427 = "extends",
-        peg$c428 = { type: "literal", value: "extends", description: "\"extends\"" },
-        peg$c429 = "assert",
-        peg$c430 = { type: "literal", value: "assert", description: "\"assert\"" },
-        peg$c431 = "template",
-        peg$c432 = { type: "literal", value: "template", description: "\"template\"" },
-        peg$c433 = { type: "other", description: "INDENT" },
-        peg$c434 = "{{{{",
-        peg$c435 = { type: "literal", value: "{{{{", description: "\"{{{{\"" },
-        peg$c436 = { type: "other", description: "OUTDENT" },
-        peg$c437 = "}}}}",
-        peg$c438 = { type: "literal", value: "}}}}", description: "\"}}}}\"" },
-        peg$c439 = { type: "other", description: "space" },
-        peg$c440 = " ",
-        peg$c441 = { type: "literal", value: " ", description: "\" \"" },
-        peg$c442 = "#",
-        peg$c443 = { type: "literal", value: "#", description: "\"#\"" },
-        peg$c444 = "\n",
-        peg$c445 = { type: "literal", value: "\n", description: "\"\\n\"" },
-        peg$c446 = { type: "other", description: "end of line" },
-        peg$c447 = "\r",
-        peg$c448 = { type: "literal", value: "\r", description: "\"\\r\"" },
-        peg$c449 = { type: "other", description: "end of file" },
+        peg$c393 = "in",
+        peg$c394 = { type: "literal", value: "in", description: "\"in\"" },
+        peg$c395 = function() { return "in" },
+        peg$c396 = "instanceof",
+        peg$c397 = { type: "literal", value: "instanceof", description: "\"instanceof\"" },
+        peg$c398 = function() { return "instanceof" },
+        peg$c399 = "while",
+        peg$c400 = { type: "literal", value: "while", description: "\"while\"" },
+        peg$c401 = "for",
+        peg$c402 = { type: "literal", value: "for", description: "\"for\"" },
+        peg$c403 = "of",
+        peg$c404 = { type: "literal", value: "of", description: "\"of\"" },
+        peg$c405 = "if",
+        peg$c406 = { type: "literal", value: "if", description: "\"if\"" },
+        peg$c407 = "else",
+        peg$c408 = { type: "literal", value: "else", description: "\"else\"" },
+        peg$c409 = "return",
+        peg$c410 = { type: "literal", value: "return", description: "\"return\"" },
+        peg$c411 = "try",
+        peg$c412 = { type: "literal", value: "try", description: "\"try\"" },
+        peg$c413 = "catch",
+        peg$c414 = { type: "literal", value: "catch", description: "\"catch\"" },
+        peg$c415 = "finally",
+        peg$c416 = { type: "literal", value: "finally", description: "\"finally\"" },
+        peg$c417 = "throw",
+        peg$c418 = { type: "literal", value: "throw", description: "\"throw\"" },
+        peg$c419 = "break",
+        peg$c420 = { type: "literal", value: "break", description: "\"break\"" },
+        peg$c421 = "continue",
+        peg$c422 = { type: "literal", value: "continue", description: "\"continue\"" },
+        peg$c423 = "do",
+        peg$c424 = { type: "literal", value: "do", description: "\"do\"" },
+        peg$c425 = "import",
+        peg$c426 = { type: "literal", value: "import", description: "\"import\"" },
+        peg$c427 = "export",
+        peg$c428 = { type: "literal", value: "export", description: "\"export\"" },
+        peg$c429 = "class",
+        peg$c430 = { type: "literal", value: "class", description: "\"class\"" },
+        peg$c431 = "extends",
+        peg$c432 = { type: "literal", value: "extends", description: "\"extends\"" },
+        peg$c433 = "assert",
+        peg$c434 = { type: "literal", value: "assert", description: "\"assert\"" },
+        peg$c435 = "template",
+        peg$c436 = { type: "literal", value: "template", description: "\"template\"" },
+        peg$c437 = { type: "other", description: "INDENT" },
+        peg$c438 = "{{{{",
+        peg$c439 = { type: "literal", value: "{{{{", description: "\"{{{{\"" },
+        peg$c440 = { type: "other", description: "OUTDENT" },
+        peg$c441 = "}}}}",
+        peg$c442 = { type: "literal", value: "}}}}", description: "\"}}}}\"" },
+        peg$c443 = { type: "other", description: "space" },
+        peg$c444 = " ",
+        peg$c445 = { type: "literal", value: " ", description: "\" \"" },
+        peg$c446 = "#",
+        peg$c447 = { type: "literal", value: "#", description: "\"#\"" },
+        peg$c448 = "\n",
+        peg$c449 = { type: "literal", value: "\n", description: "\"\\n\"" },
+        peg$c450 = { type: "other", description: "end of line" },
+        peg$c451 = "\r",
+        peg$c452 = { type: "literal", value: "\r", description: "\"\\r\"" },
+        peg$c453 = { type: "other", description: "end of file" },
 
         peg$currPos          = 0,
         peg$reportedPos      = 0,
@@ -1304,7 +1308,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseProgram() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 0,
+      var key    = peg$currPos * 171 + 0,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1348,7 +1352,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseStatement() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 170 + 1,
+      var key    = peg$currPos * 171 + 1,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1429,7 +1433,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseExportStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 2,
+      var key    = peg$currPos * 171 + 2,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1483,7 +1487,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseReturnStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 3,
+      var key    = peg$currPos * 171 + 3,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1537,7 +1541,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseThrowStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 4,
+      var key    = peg$currPos * 171 + 4,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1588,7 +1592,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBreakStatement() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 5,
+      var key    = peg$currPos * 171 + 5,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1627,7 +1631,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseContinueStatement() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 6,
+      var key    = peg$currPos * 171 + 6,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1666,7 +1670,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseAssertStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 7,
+      var key    = peg$currPos * 171 + 7,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1723,7 +1727,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseExpressionStatement() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 8,
+      var key    = peg$currPos * 171 + 8,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1762,7 +1766,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseIfStatement() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
-      var key    = peg$currPos * 170 + 9,
+      var key    = peg$currPos * 171 + 9,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1864,7 +1868,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseTryStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 170 + 10,
+      var key    = peg$currPos * 171 + 10,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1960,7 +1964,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsefinallyClause() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 170 + 11,
+      var key    = peg$currPos * 171 + 11,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2005,7 +2009,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsecatchClause() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 170 + 12,
+      var key    = peg$currPos * 171 + 12,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2074,7 +2078,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseIterationStatement() {
       var s0;
 
-      var key    = peg$currPos * 170 + 13,
+      var key    = peg$currPos * 171 + 13,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2098,7 +2102,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseWhileStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 170 + 14,
+      var key    = peg$currPos * 171 + 14,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2155,7 +2159,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseForInOfHead() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12;
 
-      var key    = peg$currPos * 170 + 15,
+      var key    = peg$currPos * 171 + 15,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2284,7 +2288,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseForInOfStatement() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 170 + 16,
+      var key    = peg$currPos * 171 + 16,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2329,7 +2333,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseForStatement() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14;
 
-      var key    = peg$currPos * 170 + 17,
+      var key    = peg$currPos * 171 + 17,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2458,7 +2462,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseArrayComprehension() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 170 + 18,
+      var key    = peg$currPos * 171 + 18,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2545,7 +2549,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBlockStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 170 + 19,
+      var key    = peg$currPos * 171 + 19,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2607,7 +2611,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseClassExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 170 + 20,
+      var key    = peg$currPos * 171 + 20,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2685,7 +2689,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseclassName() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 21,
+      var key    = peg$currPos * 171 + 21,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2757,7 +2761,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseclassExtends() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 22,
+      var key    = peg$currPos * 171 + 22,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2796,7 +2800,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsepath() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 23,
+      var key    = peg$currPos * 171 + 23,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2880,7 +2884,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsePropertyDeclaration() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
-      var key    = peg$currPos * 170 + 24,
+      var key    = peg$currPos * 171 + 24,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3045,7 +3049,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseVariableDeclaration() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 170 + 25,
+      var key    = peg$currPos * 171 + 25,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3087,7 +3091,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseVariableDeclarationKindOptional() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 26,
+      var key    = peg$currPos * 171 + 26,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3141,7 +3145,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevariableKind() {
       var s0;
 
-      var key    = peg$currPos * 170 + 27,
+      var key    = peg$currPos * 171 + 27,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3162,7 +3166,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevariableDeclaratorList() {
       var s0;
 
-      var key    = peg$currPos * 170 + 28,
+      var key    = peg$currPos * 171 + 28,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3183,7 +3187,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseinlineVariableDeclaratorList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 29,
+      var key    = peg$currPos * 171 + 29,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3287,7 +3291,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineVariableDeclaratorList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 30,
+      var key    = peg$currPos * 171 + 30,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3389,7 +3393,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseVariableDeclarator() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 31,
+      var key    = peg$currPos * 171 + 31,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3443,7 +3447,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevariableInitializer() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 32,
+      var key    = peg$currPos * 171 + 32,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3488,7 +3492,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsePattern() {
       var s0;
 
-      var key    = peg$currPos * 170 + 33,
+      var key    = peg$currPos * 171 + 33,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3512,7 +3516,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseObjectPattern() {
       var s0, s1;
 
-      var key    = peg$currPos * 170 + 34,
+      var key    = peg$currPos * 171 + 34,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3536,7 +3540,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseArrayPattern() {
       var s0, s1;
 
-      var key    = peg$currPos * 170 + 35,
+      var key    = peg$currPos * 171 + 35,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3560,7 +3564,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseSpreadPattern() {
       var s0;
 
-      var key    = peg$currPos * 170 + 36,
+      var key    = peg$currPos * 171 + 36,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3581,7 +3585,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsespread() {
       var s0;
 
-      var key    = peg$currPos * 170 + 37,
+      var key    = peg$currPos * 171 + 37,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3605,7 +3609,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseSpreadExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 38,
+      var key    = peg$currPos * 171 + 38,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3659,7 +3663,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseSpreadIdentifier() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 39,
+      var key    = peg$currPos * 171 + 39,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3713,7 +3717,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseRightHandSideExpression() {
       var s0;
 
-      var key    = peg$currPos * 170 + 40,
+      var key    = peg$currPos * 171 + 40,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3734,7 +3738,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseExpression() {
       var s0;
 
-      var key    = peg$currPos * 170 + 41,
+      var key    = peg$currPos * 171 + 41,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3755,7 +3759,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineExpression() {
       var s0;
 
-      var key    = peg$currPos * 170 + 42,
+      var key    = peg$currPos * 171 + 42,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3785,7 +3789,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineCallArguments() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 170 + 43,
+      var key    = peg$currPos * 171 + 43,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3929,7 +3933,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineCallExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 44,
+      var key    = peg$currPos * 171 + 44,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3992,7 +3996,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseAssignmentExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 45,
+      var key    = peg$currPos * 171 + 45,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4181,7 +4185,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseConditionalOrDefaultExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
-      var key    = peg$currPos * 170 + 46,
+      var key    = peg$currPos * 171 + 46,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4406,7 +4410,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseLogicalOrExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 170 + 47,
+      var key    = peg$currPos * 171 + 47,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4514,7 +4518,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseLogicalAndExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 170 + 48,
+      var key    = peg$currPos * 171 + 48,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4622,7 +4626,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBitwiseOrExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 170 + 49,
+      var key    = peg$currPos * 171 + 49,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4742,7 +4746,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBitwiseXorExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 170 + 50,
+      var key    = peg$currPos * 171 + 50,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4862,7 +4866,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBitwiseAndExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 170 + 51,
+      var key    = peg$currPos * 171 + 51,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4982,7 +4986,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseEqualityExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 170 + 52,
+      var key    = peg$currPos * 171 + 52,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5096,7 +5100,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseRelationalExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 170 + 53,
+      var key    = peg$currPos * 171 + 53,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5143,6 +5147,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   } else {
                     s6 = peg$FAILED;
                     if (peg$silentFails === 0) { peg$fail(peg$c105); }
+                  }
+                  if (s6 === peg$FAILED) {
+                    s6 = peg$parsein();
+                    if (s6 === peg$FAILED) {
+                      s6 = peg$parseinstanceof();
+                    }
                   }
                 }
               }
@@ -5212,6 +5222,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                       s6 = peg$FAILED;
                       if (peg$silentFails === 0) { peg$fail(peg$c105); }
                     }
+                    if (s6 === peg$FAILED) {
+                      s6 = peg$parsein();
+                      if (s6 === peg$FAILED) {
+                        s6 = peg$parseinstanceof();
+                      }
+                    }
                   }
                 }
               }
@@ -5270,7 +5286,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBitwiseShiftExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 170 + 54,
+      var key    = peg$currPos * 171 + 54,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5426,7 +5442,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseAdditiveExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 170 + 55,
+      var key    = peg$currPos * 171 + 55,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5564,7 +5580,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultiplicativeExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 170 + 56,
+      var key    = peg$currPos * 171 + 56,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5720,7 +5736,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseUnaryExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 57,
+      var key    = peg$currPos * 171 + 57,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5774,7 +5790,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunaryOperator() {
       var s0, s1;
 
-      var key    = peg$currPos * 170 + 58,
+      var key    = peg$currPos * 171 + 58,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5834,7 +5850,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseUpdateExpression() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 170 + 59,
+      var key    = peg$currPos * 171 + 59,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6011,7 +6027,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseCallExpression() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 170 + 60,
+      var key    = peg$currPos * 171 + 60,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6061,7 +6077,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetailCall() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 170 + 61,
+      var key    = peg$currPos * 171 + 61,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6121,7 +6137,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetailMember() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 170 + 62,
+      var key    = peg$currPos * 171 + 62,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6280,7 +6296,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsearguments() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 63,
+      var key    = peg$currPos * 171 + 63,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6334,7 +6350,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseargumentList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 64,
+      var key    = peg$currPos * 171 + 64,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6438,7 +6454,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMemberExpression() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 170 + 65,
+      var key    = peg$currPos * 171 + 65,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6494,7 +6510,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseNewExpression() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 170 + 66,
+      var key    = peg$currPos * 171 + 66,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6554,7 +6570,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseImportExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 67,
+      var key    = peg$currPos * 171 + 67,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6605,7 +6621,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseDoExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 68,
+      var key    = peg$currPos * 171 + 68,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6656,7 +6672,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseFunctionExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
-      var key    = peg$currPos * 170 + 69,
+      var key    = peg$currPos * 171 + 69,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6788,7 +6804,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseformalParameterList() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 70,
+      var key    = peg$currPos * 171 + 70,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6854,7 +6870,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseformalParameters() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 71,
+      var key    = peg$currPos * 171 + 71,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6958,7 +6974,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseformalParameter() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 72,
+      var key    = peg$currPos * 171 + 72,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7000,7 +7016,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseformalParameterInitializer() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 73,
+      var key    = peg$currPos * 171 + 73,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7045,7 +7061,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsePrimaryExpression() {
       var s0, s1;
 
-      var key    = peg$currPos * 170 + 74,
+      var key    = peg$currPos * 171 + 74,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7090,7 +7106,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseJavascriptExpression() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 170 + 75,
+      var key    = peg$currPos * 171 + 75,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7232,7 +7248,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseArrayLiteral() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 76,
+      var key    = peg$currPos * 171 + 76,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7310,7 +7326,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseelementList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 77,
+      var key    = peg$currPos * 171 + 77,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7414,7 +7430,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseObjectLiteral() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 78,
+      var key    = peg$currPos * 171 + 78,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7492,7 +7508,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsepropertyAssignmentList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 79,
+      var key    = peg$currPos * 171 + 79,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7596,7 +7612,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsepropertyAssignment() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 80,
+      var key    = peg$currPos * 171 + 80,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7638,7 +7654,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseTypedObjectExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 81,
+      var key    = peg$currPos * 171 + 81,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7704,7 +7720,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseImpliedObjectExpression() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 82,
+      var key    = peg$currPos * 171 + 82,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7743,7 +7759,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseGroupExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 83,
+      var key    = peg$currPos * 171 + 83,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7812,7 +7828,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseIdentifier() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 170 + 84,
+      var key    = peg$currPos * 171 + 84,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7854,7 +7870,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseIdentifierName() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 85,
+      var key    = peg$currPos * 171 + 85,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7893,7 +7909,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseThisExpression() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 170 + 86,
+      var key    = peg$currPos * 171 + 86,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8049,7 +8065,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseStringOrNumberLiteral() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 170 + 87,
+      var key    = peg$currPos * 171 + 87,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8094,7 +8110,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseLiteral() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 88,
+      var key    = peg$currPos * 171 + 88,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8178,7 +8194,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsestart() {
       var s0, s1;
 
-      var key    = peg$currPos * 170 + 89,
+      var key    = peg$currPos * 171 + 89,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8208,7 +8224,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseoffset() {
       var s0, s1;
 
-      var key    = peg$currPos * 170 + 90,
+      var key    = peg$currPos * 171 + 90,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8238,7 +8254,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseboolean() {
       var s0;
 
-      var key    = peg$currPos * 170 + 91,
+      var key    = peg$currPos * 171 + 91,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8259,7 +8275,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseregex() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 170 + 92,
+      var key    = peg$currPos * 171 + 92,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8316,7 +8332,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseregexBody() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 170 + 93,
+      var key    = peg$currPos * 171 + 93,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8414,7 +8430,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseregexOptions() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 170 + 94,
+      var key    = peg$currPos * 171 + 94,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8454,7 +8470,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsesimpleString() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
-      var key    = peg$currPos * 170 + 95,
+      var key    = peg$currPos * 171 + 95,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8855,7 +8871,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineStringTemplate() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 96,
+      var key    = peg$currPos * 171 + 96,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8912,7 +8928,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringTemplateContent() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 97,
+      var key    = peg$currPos * 171 + 97,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8962,7 +8978,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringTemplateLine() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 98,
+      var key    = peg$currPos * 171 + 98,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9022,7 +9038,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringTemplatePart() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 170 + 99,
+      var key    = peg$currPos * 171 + 99,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9167,7 +9183,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineStringLiteral() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 100,
+      var key    = peg$currPos * 171 + 100,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9224,7 +9240,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringLiteralContent() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 101,
+      var key    = peg$currPos * 171 + 101,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9274,7 +9290,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringLiteralLine() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 102,
+      var key    = peg$currPos * 171 + 102,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9407,7 +9423,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsestringInterpolation() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 103,
+      var key    = peg$currPos * 171 + 103,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9470,7 +9486,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseStringTemplate() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 104,
+      var key    = peg$currPos * 171 + 104,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9532,7 +9548,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsestringTemplateChars() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 170 + 105,
+      var key    = peg$currPos * 171 + 105,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9565,7 +9581,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsestringTemplateChar() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 106,
+      var key    = peg$currPos * 171 + 106,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9688,7 +9704,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenumber() {
       var s0;
 
-      var key    = peg$currPos * 170 + 107,
+      var key    = peg$currPos * 171 + 107,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9709,7 +9725,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedecimal() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 108,
+      var key    = peg$currPos * 171 + 108,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9897,7 +9913,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseinteger() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 170 + 109,
+      var key    = peg$currPos * 171 + 109,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9954,7 +9970,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedecimalDigit() {
       var s0;
 
-      var key    = peg$currPos * 170 + 110,
+      var key    = peg$currPos * 171 + 110,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9978,7 +9994,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenonzeroDigit() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 170 + 111,
+      var key    = peg$currPos * 171 + 111,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10025,7 +10041,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedecimalInteger() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 112,
+      var key    = peg$currPos * 171 + 112,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10071,7 +10087,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsehexInteger() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 113,
+      var key    = peg$currPos * 171 + 113,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10119,7 +10135,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsehexDigit() {
       var s0;
 
-      var key    = peg$currPos * 170 + 114,
+      var key    = peg$currPos * 171 + 114,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10143,7 +10159,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseidentifier() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 115,
+      var key    = peg$currPos * 171 + 115,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10195,7 +10211,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseidentifierName() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 170 + 116,
+      var key    = peg$currPos * 171 + 116,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10243,7 +10259,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseidentifierStart() {
       var s0;
 
-      var key    = peg$currPos * 170 + 117,
+      var key    = peg$currPos * 171 + 117,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10273,7 +10289,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseidentifierPart() {
       var s0;
 
-      var key    = peg$currPos * 170 + 118,
+      var key    = peg$currPos * 171 + 118,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10306,7 +10322,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeEscapeSequence() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 170 + 119,
+      var key    = peg$currPos * 171 + 119,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10363,7 +10379,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeLetter() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 170 + 120,
+      var key    = peg$currPos * 171 + 120,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10880,7 +10896,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeCombiningMark() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 170 + 121,
+      var key    = peg$currPos * 171 + 121,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11049,7 +11065,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeDigit() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 170 + 122,
+      var key    = peg$currPos * 171 + 122,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11160,7 +11176,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeConnectorPunctuation() {
       var s0;
 
-      var key    = peg$currPos * 170 + 123,
+      var key    = peg$currPos * 171 + 123,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11184,7 +11200,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsezwnj() {
       var s0;
 
-      var key    = peg$currPos * 170 + 124,
+      var key    = peg$currPos * 171 + 124,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11208,7 +11224,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsezwj() {
       var s0;
 
-      var key    = peg$currPos * 170 + 125,
+      var key    = peg$currPos * 171 + 125,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11232,7 +11248,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsereserved() {
       var s0;
 
-      var key    = peg$currPos * 170 + 126,
+      var key    = peg$currPos * 171 + 126,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11244,74 +11260,59 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       if (s0 === peg$FAILED) {
         s0 = peg$parseundefined();
         if (s0 === peg$FAILED) {
-          s0 = peg$parseand();
+          s0 = peg$parsetypeof();
           if (s0 === peg$FAILED) {
-            s0 = peg$parseor();
+            s0 = peg$parsevoid();
             if (s0 === peg$FAILED) {
-              s0 = peg$parseis();
+              s0 = peg$parsedelete();
               if (s0 === peg$FAILED) {
-                s0 = peg$parseisnt();
+                s0 = peg$parsenew();
                 if (s0 === peg$FAILED) {
-                  s0 = peg$parsenot();
+                  s0 = peg$parsetrue();
                   if (s0 === peg$FAILED) {
-                    s0 = peg$parsetypeof();
+                    s0 = peg$parsefalse();
                     if (s0 === peg$FAILED) {
-                      s0 = peg$parsevoid();
+                      s0 = peg$parsevar();
                       if (s0 === peg$FAILED) {
-                        s0 = peg$parsedelete();
+                        s0 = peg$parseconst();
                         if (s0 === peg$FAILED) {
-                          s0 = peg$parsenew();
+                          s0 = peg$parselet();
                           if (s0 === peg$FAILED) {
-                            s0 = peg$parsetrue();
+                            s0 = peg$parsewhile();
                             if (s0 === peg$FAILED) {
-                              s0 = peg$parsefalse();
+                              s0 = peg$parsefor();
                               if (s0 === peg$FAILED) {
-                                s0 = peg$parsevar();
+                                s0 = peg$parsein();
                                 if (s0 === peg$FAILED) {
-                                  s0 = peg$parseconst();
+                                  s0 = peg$parseof();
                                   if (s0 === peg$FAILED) {
-                                    s0 = peg$parselet();
+                                    s0 = peg$parseif();
                                     if (s0 === peg$FAILED) {
-                                      s0 = peg$parsewhile();
+                                      s0 = peg$parseelse();
                                       if (s0 === peg$FAILED) {
-                                        s0 = peg$parsefor();
+                                        s0 = peg$parsereturn();
                                         if (s0 === peg$FAILED) {
-                                          s0 = peg$parsein();
+                                          s0 = peg$parsetry();
                                           if (s0 === peg$FAILED) {
-                                            s0 = peg$parseof();
+                                            s0 = peg$parsecatch();
                                             if (s0 === peg$FAILED) {
-                                              s0 = peg$parseif();
+                                              s0 = peg$parsefinally();
                                               if (s0 === peg$FAILED) {
-                                                s0 = peg$parseelse();
+                                                s0 = peg$parsethrow();
                                                 if (s0 === peg$FAILED) {
-                                                  s0 = peg$parsereturn();
+                                                  s0 = peg$parsebreak();
                                                   if (s0 === peg$FAILED) {
-                                                    s0 = peg$parsetry();
+                                                    s0 = peg$parsecontinue();
                                                     if (s0 === peg$FAILED) {
-                                                      s0 = peg$parsecatch();
+                                                      s0 = peg$parsedo();
                                                       if (s0 === peg$FAILED) {
-                                                        s0 = peg$parsefinally();
+                                                        s0 = peg$parseimport();
                                                         if (s0 === peg$FAILED) {
-                                                          s0 = peg$parsethrow();
+                                                          s0 = peg$parseexport();
                                                           if (s0 === peg$FAILED) {
-                                                            s0 = peg$parsebreak();
+                                                            s0 = peg$parseclass();
                                                             if (s0 === peg$FAILED) {
-                                                              s0 = peg$parsecontinue();
-                                                              if (s0 === peg$FAILED) {
-                                                                s0 = peg$parsedo();
-                                                                if (s0 === peg$FAILED) {
-                                                                  s0 = peg$parseimport();
-                                                                  if (s0 === peg$FAILED) {
-                                                                    s0 = peg$parseexport();
-                                                                    if (s0 === peg$FAILED) {
-                                                                      s0 = peg$parseclass();
-                                                                      if (s0 === peg$FAILED) {
-                                                                        s0 = peg$parseextends();
-                                                                      }
-                                                                    }
-                                                                  }
-                                                                }
-                                                              }
+                                                              s0 = peg$parseextends();
                                                             }
                                                           }
                                                         }
@@ -11349,7 +11350,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetrue() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 127,
+      var key    = peg$currPos * 171 + 127,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11397,7 +11398,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsefalse() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 128,
+      var key    = peg$currPos * 171 + 128,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11445,7 +11446,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenew() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 129,
+      var key    = peg$currPos * 171 + 129,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11492,7 +11493,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsethis() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 130,
+      var key    = peg$currPos * 171 + 130,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11539,7 +11540,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenull() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 131,
+      var key    = peg$currPos * 171 + 131,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11587,7 +11588,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseundefined() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 132,
+      var key    = peg$currPos * 171 + 132,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11635,7 +11636,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseand() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 133,
+      var key    = peg$currPos * 171 + 133,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11683,7 +11684,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseor() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 134,
+      var key    = peg$currPos * 171 + 134,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11731,7 +11732,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseis() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 135,
+      var key    = peg$currPos * 171 + 135,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11779,7 +11780,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseisnt() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 136,
+      var key    = peg$currPos * 171 + 136,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11827,7 +11828,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenot() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 137,
+      var key    = peg$currPos * 171 + 137,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11875,7 +11876,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetypeof() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 138,
+      var key    = peg$currPos * 171 + 138,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11923,7 +11924,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevoid() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 139,
+      var key    = peg$currPos * 171 + 139,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11971,7 +11972,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedelete() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 140,
+      var key    = peg$currPos * 171 + 140,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12019,7 +12020,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevar() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 141,
+      var key    = peg$currPos * 171 + 141,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12066,7 +12067,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseconst() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 142,
+      var key    = peg$currPos * 171 + 142,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12114,7 +12115,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parselet() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 143,
+      var key    = peg$currPos * 171 + 143,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12159,10 +12160,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parsewhile() {
+    function peg$parsein() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 144,
+      var key    = peg$currPos * 171 + 144,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12171,9 +12172,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c393) {
+      if (input.substr(peg$currPos, 2) === peg$c393) {
         s1 = peg$c393;
-        peg$currPos += 5;
+        peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c394); }
@@ -12190,7 +12191,8 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s2 = peg$c0;
         }
         if (s2 !== peg$FAILED) {
-          s1 = [s1, s2];
+          peg$reportedPos = s0;
+          s1 = peg$c395();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -12206,10 +12208,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parsefor() {
+    function peg$parseinstanceof() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 145,
+      var key    = peg$currPos * 171 + 145,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12218,12 +12220,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 3) === peg$c395) {
-        s1 = peg$c395;
-        peg$currPos += 3;
+      if (input.substr(peg$currPos, 10) === peg$c396) {
+        s1 = peg$c396;
+        peg$currPos += 10;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c396); }
+        if (peg$silentFails === 0) { peg$fail(peg$c397); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -12237,7 +12239,8 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s2 = peg$c0;
         }
         if (s2 !== peg$FAILED) {
-          s1 = [s1, s2];
+          peg$reportedPos = s0;
+          s1 = peg$c398();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -12253,10 +12256,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parsein() {
+    function peg$parsewhile() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 146,
+      var key    = peg$currPos * 171 + 146,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12265,56 +12268,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c397) {
-        s1 = peg$c397;
-        peg$currPos += 2;
-      } else {
-        s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c398); }
-      }
-      if (s1 !== peg$FAILED) {
-        s2 = peg$currPos;
-        peg$silentFails++;
-        s3 = peg$parseidentifierPart();
-        peg$silentFails--;
-        if (s3 === peg$FAILED) {
-          s2 = peg$c44;
-        } else {
-          peg$currPos = s2;
-          s2 = peg$c0;
-        }
-        if (s2 !== peg$FAILED) {
-          s1 = [s1, s2];
-          s0 = s1;
-        } else {
-          peg$currPos = s0;
-          s0 = peg$c0;
-        }
-      } else {
-        peg$currPos = s0;
-        s0 = peg$c0;
-      }
-
-      peg$cache[key] = { nextPos: peg$currPos, result: s0 };
-
-      return s0;
-    }
-
-    function peg$parseof() {
-      var s0, s1, s2, s3;
-
-      var key    = peg$currPos * 170 + 147,
-          cached = peg$cache[key];
-
-      if (cached) {
-        peg$currPos = cached.nextPos;
-        return cached.result;
-      }
-
-      s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c399) {
+      if (input.substr(peg$currPos, 5) === peg$c399) {
         s1 = peg$c399;
-        peg$currPos += 2;
+        peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c400); }
@@ -12347,10 +12303,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parseif() {
+    function peg$parsefor() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 148,
+      var key    = peg$currPos * 171 + 147,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12359,9 +12315,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c401) {
+      if (input.substr(peg$currPos, 3) === peg$c401) {
         s1 = peg$c401;
-        peg$currPos += 2;
+        peg$currPos += 3;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c402); }
@@ -12394,10 +12350,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parseelse() {
+    function peg$parseof() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 149,
+      var key    = peg$currPos * 171 + 148,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12406,9 +12362,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c403) {
+      if (input.substr(peg$currPos, 2) === peg$c403) {
         s1 = peg$c403;
-        peg$currPos += 4;
+        peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c404); }
@@ -12441,10 +12397,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parsereturn() {
+    function peg$parseif() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 150,
+      var key    = peg$currPos * 171 + 149,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12453,9 +12409,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c405) {
+      if (input.substr(peg$currPos, 2) === peg$c405) {
         s1 = peg$c405;
-        peg$currPos += 6;
+        peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c406); }
@@ -12488,10 +12444,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parsetry() {
+    function peg$parseelse() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 151,
+      var key    = peg$currPos * 171 + 150,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12500,9 +12456,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 3) === peg$c407) {
+      if (input.substr(peg$currPos, 4) === peg$c407) {
         s1 = peg$c407;
-        peg$currPos += 3;
+        peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c408); }
@@ -12535,10 +12491,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parsecatch() {
+    function peg$parsereturn() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 152,
+      var key    = peg$currPos * 171 + 151,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12547,9 +12503,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c409) {
+      if (input.substr(peg$currPos, 6) === peg$c409) {
         s1 = peg$c409;
-        peg$currPos += 5;
+        peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c410); }
@@ -12582,10 +12538,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parsefinally() {
+    function peg$parsetry() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 153,
+      var key    = peg$currPos * 171 + 152,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12594,9 +12550,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 7) === peg$c411) {
+      if (input.substr(peg$currPos, 3) === peg$c411) {
         s1 = peg$c411;
-        peg$currPos += 7;
+        peg$currPos += 3;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c412); }
@@ -12629,10 +12585,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parsethrow() {
+    function peg$parsecatch() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 154,
+      var key    = peg$currPos * 171 + 153,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12676,10 +12632,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parsebreak() {
+    function peg$parsefinally() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 155,
+      var key    = peg$currPos * 171 + 154,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12688,9 +12644,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c415) {
+      if (input.substr(peg$currPos, 7) === peg$c415) {
         s1 = peg$c415;
-        peg$currPos += 5;
+        peg$currPos += 7;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c416); }
@@ -12723,10 +12679,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parsecontinue() {
+    function peg$parsethrow() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 156,
+      var key    = peg$currPos * 171 + 155,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12735,9 +12691,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 8) === peg$c417) {
+      if (input.substr(peg$currPos, 5) === peg$c417) {
         s1 = peg$c417;
-        peg$currPos += 8;
+        peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c418); }
@@ -12770,10 +12726,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parsedo() {
+    function peg$parsebreak() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 157,
+      var key    = peg$currPos * 171 + 156,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12782,9 +12738,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c419) {
+      if (input.substr(peg$currPos, 5) === peg$c419) {
         s1 = peg$c419;
-        peg$currPos += 2;
+        peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c420); }
@@ -12817,10 +12773,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parseimport() {
+    function peg$parsecontinue() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 158,
+      var key    = peg$currPos * 171 + 157,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12829,9 +12785,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c421) {
+      if (input.substr(peg$currPos, 8) === peg$c421) {
         s1 = peg$c421;
-        peg$currPos += 6;
+        peg$currPos += 8;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c422); }
@@ -12864,10 +12820,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parseexport() {
+    function peg$parsedo() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 159,
+      var key    = peg$currPos * 171 + 158,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12876,9 +12832,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c423) {
+      if (input.substr(peg$currPos, 2) === peg$c423) {
         s1 = peg$c423;
-        peg$currPos += 6;
+        peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c424); }
@@ -12911,10 +12867,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parseclass() {
+    function peg$parseimport() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 160,
+      var key    = peg$currPos * 171 + 159,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12923,9 +12879,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c425) {
+      if (input.substr(peg$currPos, 6) === peg$c425) {
         s1 = peg$c425;
-        peg$currPos += 5;
+        peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c426); }
@@ -12958,10 +12914,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parseextends() {
+    function peg$parseexport() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 161,
+      var key    = peg$currPos * 171 + 160,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12970,9 +12926,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 7) === peg$c427) {
+      if (input.substr(peg$currPos, 6) === peg$c427) {
         s1 = peg$c427;
-        peg$currPos += 7;
+        peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c428); }
@@ -13005,10 +12961,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parseassert() {
+    function peg$parseclass() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 162,
+      var key    = peg$currPos * 171 + 161,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13017,9 +12973,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c429) {
+      if (input.substr(peg$currPos, 5) === peg$c429) {
         s1 = peg$c429;
-        peg$currPos += 6;
+        peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c430); }
@@ -13052,10 +13008,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
-    function peg$parsetemplate() {
+    function peg$parseextends() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 163,
+      var key    = peg$currPos * 171 + 162,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13064,9 +13020,9 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 8) === peg$c431) {
+      if (input.substr(peg$currPos, 7) === peg$c431) {
         s1 = peg$c431;
-        peg$currPos += 8;
+        peg$currPos += 7;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c432); }
@@ -13099,10 +13055,104 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
+    function peg$parseassert() {
+      var s0, s1, s2, s3;
+
+      var key    = peg$currPos * 171 + 163,
+          cached = peg$cache[key];
+
+      if (cached) {
+        peg$currPos = cached.nextPos;
+        return cached.result;
+      }
+
+      s0 = peg$currPos;
+      if (input.substr(peg$currPos, 6) === peg$c433) {
+        s1 = peg$c433;
+        peg$currPos += 6;
+      } else {
+        s1 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c434); }
+      }
+      if (s1 !== peg$FAILED) {
+        s2 = peg$currPos;
+        peg$silentFails++;
+        s3 = peg$parseidentifierPart();
+        peg$silentFails--;
+        if (s3 === peg$FAILED) {
+          s2 = peg$c44;
+        } else {
+          peg$currPos = s2;
+          s2 = peg$c0;
+        }
+        if (s2 !== peg$FAILED) {
+          s1 = [s1, s2];
+          s0 = s1;
+        } else {
+          peg$currPos = s0;
+          s0 = peg$c0;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$c0;
+      }
+
+      peg$cache[key] = { nextPos: peg$currPos, result: s0 };
+
+      return s0;
+    }
+
+    function peg$parsetemplate() {
+      var s0, s1, s2, s3;
+
+      var key    = peg$currPos * 171 + 164,
+          cached = peg$cache[key];
+
+      if (cached) {
+        peg$currPos = cached.nextPos;
+        return cached.result;
+      }
+
+      s0 = peg$currPos;
+      if (input.substr(peg$currPos, 8) === peg$c435) {
+        s1 = peg$c435;
+        peg$currPos += 8;
+      } else {
+        s1 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c436); }
+      }
+      if (s1 !== peg$FAILED) {
+        s2 = peg$currPos;
+        peg$silentFails++;
+        s3 = peg$parseidentifierPart();
+        peg$silentFails--;
+        if (s3 === peg$FAILED) {
+          s2 = peg$c44;
+        } else {
+          peg$currPos = s2;
+          s2 = peg$c0;
+        }
+        if (s2 !== peg$FAILED) {
+          s1 = [s1, s2];
+          s0 = s1;
+        } else {
+          peg$currPos = s0;
+          s0 = peg$c0;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$c0;
+      }
+
+      peg$cache[key] = { nextPos: peg$currPos, result: s0 };
+
+      return s0;
+    }
+
     function peg$parseindent() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 164,
+      var key    = peg$currPos * 171 + 165,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13119,12 +13169,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       if (s1 !== peg$FAILED) {
         s2 = peg$parse_();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 4) === peg$c434) {
-            s3 = peg$c434;
+          if (input.substr(peg$currPos, 4) === peg$c438) {
+            s3 = peg$c438;
             peg$currPos += 4;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c435); }
+            if (peg$silentFails === 0) { peg$fail(peg$c439); }
           }
           if (s3 !== peg$FAILED) {
             s1 = [s1, s2, s3];
@@ -13144,7 +13194,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c433); }
+        if (peg$silentFails === 0) { peg$fail(peg$c437); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -13155,7 +13205,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseoutdent() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 170 + 165,
+      var key    = peg$currPos * 171 + 166,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13172,12 +13222,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       if (s1 !== peg$FAILED) {
         s2 = peg$parse_();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 4) === peg$c437) {
-            s3 = peg$c437;
+          if (input.substr(peg$currPos, 4) === peg$c441) {
+            s3 = peg$c441;
             peg$currPos += 4;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c438); }
+            if (peg$silentFails === 0) { peg$fail(peg$c442); }
           }
           if (s3 !== peg$FAILED) {
             s1 = [s1, s2, s3];
@@ -13197,7 +13247,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c436); }
+        if (peg$silentFails === 0) { peg$fail(peg$c440); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -13208,7 +13258,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parse_() {
       var s0, s1;
 
-      var key    = peg$currPos * 170 + 166,
+      var key    = peg$currPos * 171 + 167,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13219,26 +13269,26 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails++;
       s0 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s1 = peg$c440;
+        s1 = peg$c444;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c441); }
+        if (peg$silentFails === 0) { peg$fail(peg$c445); }
       }
       while (s1 !== peg$FAILED) {
         s0.push(s1);
         if (input.charCodeAt(peg$currPos) === 32) {
-          s1 = peg$c440;
+          s1 = peg$c444;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c441); }
+          if (peg$silentFails === 0) { peg$fail(peg$c445); }
         }
       }
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c439); }
+        if (peg$silentFails === 0) { peg$fail(peg$c443); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -13249,7 +13299,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsecomment() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 170 + 167,
+      var key    = peg$currPos * 171 + 168,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13261,11 +13311,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s1 = peg$parse_();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 35) {
-          s2 = peg$c442;
+          s2 = peg$c446;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c443); }
+          if (peg$silentFails === 0) { peg$fail(peg$c447); }
         }
         if (s2 !== peg$FAILED) {
           s3 = [];
@@ -13273,11 +13323,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$currPos;
           peg$silentFails++;
           if (input.charCodeAt(peg$currPos) === 10) {
-            s6 = peg$c444;
+            s6 = peg$c448;
             peg$currPos++;
           } else {
             s6 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c445); }
+            if (peg$silentFails === 0) { peg$fail(peg$c449); }
           }
           peg$silentFails--;
           if (s6 === peg$FAILED) {
@@ -13312,11 +13362,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s5 = peg$currPos;
               peg$silentFails++;
               if (input.charCodeAt(peg$currPos) === 10) {
-                s6 = peg$c444;
+                s6 = peg$c448;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c445); }
+                if (peg$silentFails === 0) { peg$fail(peg$c449); }
               }
               peg$silentFails--;
               if (s6 === peg$FAILED) {
@@ -13372,7 +13422,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseeol() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 170 + 168,
+      var key    = peg$currPos * 171 + 169,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13394,22 +13444,22 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s3 = [];
             s4 = peg$currPos;
             if (input.charCodeAt(peg$currPos) === 13) {
-              s5 = peg$c447;
+              s5 = peg$c451;
               peg$currPos++;
             } else {
               s5 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c448); }
+              if (peg$silentFails === 0) { peg$fail(peg$c452); }
             }
             if (s5 === peg$FAILED) {
               s5 = peg$c3;
             }
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 10) {
-                s6 = peg$c444;
+                s6 = peg$c448;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c445); }
+                if (peg$silentFails === 0) { peg$fail(peg$c449); }
               }
               if (s6 !== peg$FAILED) {
                 s7 = peg$parsecomment();
@@ -13436,22 +13486,22 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                 s3.push(s4);
                 s4 = peg$currPos;
                 if (input.charCodeAt(peg$currPos) === 13) {
-                  s5 = peg$c447;
+                  s5 = peg$c451;
                   peg$currPos++;
                 } else {
                   s5 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c448); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c452); }
                 }
                 if (s5 === peg$FAILED) {
                   s5 = peg$c3;
                 }
                 if (s5 !== peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 10) {
-                    s6 = peg$c444;
+                    s6 = peg$c448;
                     peg$currPos++;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c445); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c449); }
                   }
                   if (s6 !== peg$FAILED) {
                     s7 = peg$parsecomment();
@@ -13496,7 +13546,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c446); }
+        if (peg$silentFails === 0) { peg$fail(peg$c450); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -13507,7 +13557,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseeof() {
       var s0, s1;
 
-      var key    = peg$currPos * 170 + 169,
+      var key    = peg$currPos * 171 + 170,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13535,7 +13585,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c449); }
+        if (peg$silentFails === 0) { peg$fail(peg$c453); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -14969,13 +15019,20 @@ getExternalIdentifiers = function(node, callback) {
 };
 
 wrapTemplateInnerFunctions = function(node, context) {
-  var contextId, id, name, requiresWrapper, variables;
+  var contextId, id, key, name, requiresWrapper, value, variables, _ref1, _ref2;
   if (context.parentReactive()) {
     if (node.type === 'FunctionExpression' && (node.toLiteral == null)) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', (_ref1 = node.name) != null ? _ref1.name : void 0);
+      _ref2 = context.scope().variables;
+      for (key in _ref2) {
+        value = _ref2[key];
+        console.log('::::::::::::::::::::::::::::::::', key);
+      }
       variables = {};
       getExternalIdentifiers(node, function(id) {
-        var _ref1, _ref2;
-        if (id.name !== ((_ref1 = node.id) != null ? _ref1.name : void 0) && (((_ref2 = context.parentScope()) != null ? _ref2.variables[id.name] : void 0) != null)) {
+        var _ref3, _ref4;
+        console.log('ID: ' + id.name, context.getVariableInfo(id.name));
+        if (id.name !== ((_ref3 = node.id) != null ? _ref3.name : void 0) && (((_ref4 = context.scope()) != null ? _ref4.variables[id.name] : void 0) != null)) {
           return variables[id.name] = id;
         }
       });
@@ -15035,7 +15092,7 @@ wrapTemplateInnerFunctions = function(node, context) {
 };
 
 createTemplateRuntime = function(node, context) {
-  var args, id, index, template, templateId, _i, _len, _ref1;
+  var args, id, key, name, template, templateId, value, variables, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
   if (isFunctionNode(node) && (node.template != null)) {
     templateId = node.id != null ? node.id : node.id = context.getNewInternalIdentifier('_template');
     template = removeLocationInfo(node.template);
@@ -15044,9 +15101,28 @@ createTemplateRuntime = function(node, context) {
       type: 'ObjectExpression',
       properties: []
     };
-    _ref1 = template.params;
-    for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
-      id = _ref1[index];
+    variables = {};
+    _ref1 = ['require', 'module', 'exports'];
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      name = _ref1[_i];
+      variables[name] = {
+        type: 'Identifier',
+        name: name
+      };
+    }
+    _ref2 = template.params;
+    for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+      id = _ref2[_j];
+      variables[id.name] = id;
+    }
+    _ref3 = context.scope().variables;
+    for (key in _ref3) {
+      value = _ref3[key];
+      id = value.id;
+      variables[id.name] = id;
+    }
+    for (key in variables) {
+      id = variables[key];
       args.properties.push({
         key: id,
         value: id,
@@ -15111,7 +15187,7 @@ javascriptExpressions = function(node, context) {
 
 exports.postprocess = function(program, options) {
   var enter, exit, previousContext, steps, traversal, variable, _i, _len;
-  steps = [[namedFunctions, superExpressions], [destructuringAssignments], [createTemplateFunctionClone, checkVariableDeclarations], [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions], [destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements]];
+  steps = [[namedFunctions, superExpressions], [destructuringAssignments], [createTemplateFunctionClone, checkVariableDeclarations], [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules], [destructuringAssignments, existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements]];
   previousContext = null;
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
@@ -15636,9 +15712,7 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
         if (addToNode == null) {
           addToNode = this.scope().node;
         }
-        if (statement.type === 'VariableDeclaration' || statement.type === 'FunctionDeclaration') {
-          trackVariableDeclarations(context, statement);
-        }
+        trackVariableDeclarations(context, statement);
         return addStatement(addToNode, statement, this.getAncestorChildOf(addToNode), offset);
       };
     }
@@ -15711,6 +15785,8 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
       }
       if (nodeInfo != null ? nodeInfo.isFunction : void 0) {
         trackVariableDeclarations(context, node.params, nodeInfo.paramKind);
+      } else if (node.type === 'ForInStatement' || node.type === 'ForOfStatement') {
+        trackVariableDeclarations(context, node.left);
       }
       if (typeof enterCallback === "function") {
         enterCallback(node, context);
@@ -15954,6 +16030,21 @@ const patch = exports.patch = function (target, values) {
             value != null ? value.onSet != null ? value.onSet(object, property) : void 0 : void 0;
         }
         return value;
+    }, is = exports.is = function (instance, type) {
+        if (!(instance != null)) {
+            return false;
+        }
+        if (!(type != null)) {
+            return true;
+        }
+        if (typeof type === 'function') {
+            if (typeof instance.is === 'function') {
+                return instance.is(type);
+            }
+            return instance instanceof type;
+        } else {
+            return instance === type;
+        }
     }, test = exports.test = {
         defineClass: function () {
             const Foo = defineClass({
@@ -17226,6 +17317,12 @@ const MemberExpression = ion.defineClass({
                 this.objectExpression.watch(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : function (objectValue) {
                     this.objectValue = objectValue;
                     this.updateValue();
+                    this.objectObserver != null ? this.objectObserver() : void 0;
+                    if (objectValue != null) {
+                        this.objectObserver = ion.observe(objectValue, function (changes) {
+                            this.updateValue();
+                        }.bind(this));
+                    }
                 }.bind(this));
                 this.propertyExpression = this.propertyExpression != null ? this.propertyExpression : this.context.createRuntime(this.computed ? this.property : this.property.name);
                 this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : function (propertyValue) {
@@ -17280,19 +17377,21 @@ module.exports = exports = Node;
   }
 }).call(this)
 void (function(){var _ion_runtime_ObjectExpression_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const DynamicExpression = require('./DynamicExpression');
+const DynamicExpression = require('./DynamicExpression'), ion = require('../');
 const ObjectExpression = ion.defineClass({
         id: 'ObjectExpression',
         properties: {
+            setLeftValue: function (value) {
+                this.value = value;
+            },
             activate: function () {
                 ObjectExpression.super.prototype.activate.apply(this, arguments);
-                this.typeExpression = this.typeExpression != null ? this.typeExpression : this.context.createRuntime(this.objectType != null ? this.objectType : {});
+                this.typeExpression = this.typeExpression != null ? this.typeExpression : this.context.createRuntime(this.objectType != null ? this.objectType : null);
                 this.typeExpression.watch(this.typeWatcher = this.typeWatcher != null ? this.typeWatcher : function (type) {
                     let value;
                     if (type === void 0) {
                         value = void 0;
-                    } else if (this.value !== type && (this.value != null ? this.value.constructor : void 0) !== type) {
+                    } else if (!ion.is(this.value, type)) {
                         this.statements != null ? this.statements.deactivate() : void 0;
                         this.statements = null;
                         if (type != null && typeof type === 'object') {
@@ -17300,6 +17399,8 @@ const ObjectExpression = ion.defineClass({
                         } else {
                             value = new (type != null ? type : Object)();
                         }
+                    } else {
+                        value = this.value;
                     }
                     if (value != null && !(this.statements != null)) {
                         let newContext = this.context.newContext(value);
@@ -17401,12 +17502,18 @@ const Property = ion.defineClass({
             activate: function () {
                 Property.super.prototype.activate.apply(this, arguments);
                 this.keyExpression = this.keyExpression != null ? this.keyExpression : this.context.createRuntime(this.computed ? this.key : this.key.name);
+                this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
                 this.keyExpression.watch(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : function (key) {
+                    if (key != null && this.valueExpression.setLeftValue != null) {
+                        let currentValue = ion.get(this.context.output, key);
+                        if (currentValue != null) {
+                            this.valueExpression.setLeftValue(currentValue);
+                        }
+                    }
                     this.restoreProperty();
                     this.keyValue = key;
                     this.setProperty();
                 }.bind(this));
-                this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
                 this.valueExpression.watch(this.valueWatcher = this.valueWatcher != null ? this.valueWatcher : function (value) {
                     this.valueValue = value;
                     this.setProperty();
@@ -17637,7 +17744,14 @@ const templates = [
                                 }
                             }
                         ]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 const a = 1, b = 2, c = a + b;
                 return c;
@@ -17682,7 +17796,14 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return {
                     a: 1,
@@ -17726,7 +17847,14 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return [
                     1,
@@ -17853,21 +17981,28 @@ const templates = [
                                 }
                             }
                         ]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 let a = 1;
                 let b = 2;
-                let _ref3 = [];
+                let _ref4 = [];
                 {
-                    _ref3.push(a);
-                    _ref3.push(b);
+                    _ref4.push(a);
+                    _ref4.push(b);
                     if (a > b) {
-                        _ref3.push(10);
+                        _ref4.push(10);
                     } else if (b > a) {
-                        _ref3.push(20);
+                        _ref4.push(20);
                     }
                 }
-                return _ref3;
+                return _ref4;
             },
             [],
             [
@@ -17980,20 +18115,27 @@ const templates = [
                                 }
                             }
                         ]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 let items = [
                         1,
                         2,
                         3
                     ];
-                let _ref = [];
+                let _ref2 = [];
                 for (let _i = 0; _i < items.length; _i++) {
                     let index = _i;
                     let item = items[_i];
-                    _ref.push(item + index);
+                    _ref2.push(item + index);
                 }
-                let x = _ref;
+                let x = _ref2;
                 return x;
             },
             [],
@@ -18131,19 +18273,26 @@ const templates = [
                                 }
                             }
                         ]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 let items = {
                         a: 1,
                         b: 2,
                         c: 3
                     };
-                let _ref2 = [];
+                let _ref3 = [];
                 for (let key in items) {
                     let value = items[key];
-                    _ref2.push(key + value);
+                    _ref3.push(key + value);
                 }
-                let x = _ref2;
+                let x = _ref3;
                 return x;
             },
             [],
@@ -18220,7 +18369,14 @@ const templates = [
                                 }
                             }
                         ]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 let object = { a: { b: 1 } };
                 return object.a.b;
@@ -18251,7 +18407,14 @@ const templates = [
                                     }
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return false ? 1 : 2;
             },
@@ -18289,7 +18452,14 @@ const templates = [
                                     }
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return null != null ? null : 2;
             },
@@ -18357,7 +18527,14 @@ const templates = [
                                 }
                             }
                         ]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 let a = null;
                 let b = 2;
@@ -18405,7 +18582,14 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return Math.min(1, 2);
             },
@@ -18457,7 +18641,14 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return Math.min.call(null, 1, 2);
             },
@@ -18493,7 +18684,14 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return new Date(2011, 10, 5);
             },
@@ -18512,7 +18710,14 @@ const templates = [
                                     value: /foo/
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return /foo/;
             },
@@ -18639,9 +18844,16 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
-                let _ref4 = [];
+                let _ref5 = [];
                 {
                     let items = [
                             3,
@@ -18650,13 +18862,13 @@ const templates = [
                         ];
                     for (let _i2 = 0; _i2 < items.length; _i2++) {
                         let item = items[_i2];
-                        _ref4.push(item * 2);
+                        _ref5.push(item * 2);
                     }
                 }
                 return {
                     x: 1,
                     y: 2,
-                    z: _ref4
+                    z: _ref5
                 };
             },
             [],
@@ -18739,7 +18951,14 @@ const templates = [
                                     ]
                                 }
                             }]
-                    }, {});
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
                 }
                 return [
                     null != null ? null : 1,
@@ -18751,14 +18970,170 @@ const templates = [
                 1,
                 2
             ]
+        ],
+        [
+            function _template17(_ref) {
+                if (this != null && this.constructor === _template17) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'a'
+                                        },
+                                        init: {
+                                            type: 'MemberExpression',
+                                            object: {
+                                                type: 'Identifier',
+                                                name: '_ref'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'a'
+                                            },
+                                            computed: false
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'b'
+                                        },
+                                        init: {
+                                            type: 'MemberExpression',
+                                            object: {
+                                                type: 'Identifier',
+                                                name: '_ref'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'b'
+                                            },
+                                            computed: false
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'BinaryExpression',
+                                    operator: '+',
+                                    left: {
+                                        type: 'Identifier',
+                                        name: 'a'
+                                    },
+                                    right: {
+                                        type: 'Identifier',
+                                        name: 'b'
+                                    }
+                                }
+                            }
+                        ]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        _ref: _ref,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
+                }
+                let a = _ref.a;
+                let b = _ref.b;
+                return a + b;
+            },
+            [{
+                    a: 1,
+                    b: 2
+                }],
+            3
+        ],
+        [
+            function _template18(type) {
+                if (this != null && this.constructor === _template18) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'Identifier',
+                                        name: 'type'
+                                    },
+                                    properties: [{
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'position'
+                                            },
+                                            value: {
+                                                type: 'ObjectExpression',
+                                                objectType: null,
+                                                properties: [{
+                                                        type: 'Property',
+                                                        key: {
+                                                            type: 'Identifier',
+                                                            name: 'x'
+                                                        },
+                                                        value: {
+                                                            type: 'Literal',
+                                                            value: 10
+                                                        },
+                                                        kind: 'init'
+                                                    }]
+                                            },
+                                            kind: 'init'
+                                        }]
+                                }
+                            }]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        type: type,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
+                }
+                let _ref6 = new type();
+                if (_ref6.position == null)
+                    _ref6.position = {};
+                _ref6.position.x = 10;
+                return _ref6;
+            },
+            [function () {
+                    this.position = {
+                        x: 1,
+                        y: 2
+                    };
+                }],
+            {
+                position: {
+                    x: 10,
+                    y: 2
+                }
+            }
         ]
     ];
 const test = exports.test = function () {
         for (let _i3 = 0; _i3 < templates.length; _i3++) {
-            let _ref5 = templates[_i3];
-            let templateType = _ref5[0];
-            let args = _ref5[1];
-            let expected = _ref5[2];
+            let _ref7 = templates[_i3];
+            let templateType = _ref7[0];
+            let args = _ref7[1];
+            let expected = _ref7[2];
             if (expected != null) {
                 let template = ion.create(templateType, args);
                 template.activate();
@@ -18766,8 +19141,13 @@ const test = exports.test = function () {
                 template.watch(function (value) {
                     return reactiveResult = value;
                 });
-                if (!(JSON.stringify(reactiveResult) === JSON.stringify(expected)))
-                    throw new Error('Assertion Failed: (JSON.stringify(reactiveResult) is JSON.stringify(expected))');
+                try {
+                    if (!(JSON.stringify(reactiveResult) === JSON.stringify(expected)))
+                        throw new Error('Assertion Failed: (JSON.stringify(reactiveResult) is JSON.stringify(expected))');
+                } catch (e) {
+                    console.log(JSON.stringify(reactiveResult), JSON.stringify(expected));
+                    throw e;
+                }
                 template.deactivate();
                 if (!(reactiveResult === void 0))
                     throw new Error('Assertion Failed: (reactiveResult is undefined)');
@@ -18957,18 +19337,14 @@ tests = {
   "class DynamicExpression\n    watch: ->\n        let x = @x ?= []": "'use strict';\nconst ion = require('ion');\nconst DynamicExpression = ion.defineClass({\n        id: 'DynamicExpression',\n        watch: function () {\n            let x = this.x = this.x != null ? this.x : [];\n        }\n    });\nDynamicExpression;",
   "let a = (new Point)\n    1\n    2": "'use strict';\nlet a = new Point(1, 2);",
   "let x = [y for y in z]": "'use strict';\nlet _ref = [];\nfor (let _i = 0; _i < z.length; _i++) {\n    let y = z[_i];\n    _ref.push(y);\n}\nlet x = _ref;",
-  "let mytemplate = template -> [x + i for x, i in y]": "'use strict';\nconst ion = require('ion');\nlet mytemplate = function _template() {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [{\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'ObjectExpression',\n                        objectType: {\n                            type: 'ArrayExpression',\n                            elements: []\n                        },\n                        properties: [{\n                                type: 'ForOfStatement',\n                                left: {\n                                    type: 'VariableDeclaration',\n                                    declarations: [\n                                        {\n                                            type: 'VariableDeclarator',\n                                            id: {\n                                                type: 'Identifier',\n                                                name: 'x'\n                                            },\n                                            init: null\n                                        },\n                                        {\n                                            type: 'VariableDeclarator',\n                                            id: {\n                                                type: 'Identifier',\n                                                name: 'i'\n                                            },\n                                            init: null\n                                        }\n                                    ],\n                                    kind: 'let'\n                                },\n                                right: {\n                                    type: 'Identifier',\n                                    name: 'y'\n                                },\n                                body: {\n                                    type: 'ExpressionStatement',\n                                    expression: {\n                                        type: 'BinaryExpression',\n                                        operator: '+',\n                                        left: {\n                                            type: 'Identifier',\n                                            name: 'x'\n                                        },\n                                        right: {\n                                            type: 'Identifier',\n                                            name: 'i'\n                                        }\n                                    }\n                                }\n                            }]\n                    }\n                }],\n            name: {\n                type: 'Identifier',\n                name: 'mytemplate'\n            }\n        }, {});\n    }\n    let _ref = [];\n    for (let _i = 0; _i < y.length; _i++) {\n        let i = _i;\n        let x = y[_i];\n        _ref.push(x + i);\n    }\n    return _ref;\n};",
-  "let x = template -> /foo/": "'use strict';\nconst ion = require('ion');\nlet x = function _template() {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [{\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'Literal',\n                        value: /foo/\n                    }\n                }],\n            name: {\n                type: 'Identifier',\n                name: 'x'\n            }\n        }, {});\n    }\n    return /foo/;\n};",
   "return\n    z: []\n        let items = [3,2,1]\n        for item in items\n            item * 2": "'use strict';\nlet _ref = [];\n{\n    let items = [\n            3,\n            2,\n            1\n        ];\n    for (let _i = 0; _i < items.length; _i++) {\n        let item = items[_i];\n        _ref.push(item * 2);\n    }\n}\nreturn { z: _ref };",
   "let x = `y == null`": "'use strict';\nlet x = y == null;",
   "# should get accurate error locations even from inline javascript expressions\nlet x = `y := null`": {
     line: 2,
     column: 13
   },
-  "const ion = import '../'\nconst templates = []\n    template (properties) -> 1": "'use strict';\nconst ion = require('../');\nconst templates = [function _template(properties) {\n            if (this != null && this.constructor === _template) {\n                return ion.createRuntime({\n                    type: 'Template',\n                    body: [{\n                            type: 'ReturnStatement',\n                            argument: {\n                                type: 'Literal',\n                                value: 1\n                            }\n                        }]\n                }, { properties: properties });\n            }\n            return 1;\n        }];",
-  "template (properties) ->\n    let baz = 10\n    let foo = 1\n    let factor = 2\n    multiply(a) ->\n        let bar = factor.foo\n        let baz =\n            foo: 5\n        return a * factor\n    return multiply(2)": "'use strict';\nconst ion = require('ion');\n(function _template(properties) {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'baz'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 10\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'foo'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 1\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'factor'\n                            },\n                            init: {\n                                type: 'Literal',\n                                value: 2\n                            }\n                        }],\n                    kind: 'let'\n                },\n                {\n                    type: 'VariableDeclaration',\n                    kind: 'const',\n                    declarations: [{\n                            type: 'VariableDeclarator',\n                            id: {\n                                type: 'Identifier',\n                                name: 'multiply'\n                            },\n                            init: {\n                                type: 'Function',\n                                context: true,\n                                value: function (_context) {\n                                    return function multiply(a) {\n                                        const factor = _context.get('factor');\n                                        let bar = factor.foo;\n                                        let baz = { foo: 5 };\n                                        return a * factor;\n                                    };\n                                }\n                            }\n                        }]\n                },\n                {\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'CallExpression',\n                        callee: {\n                            type: 'Identifier',\n                            name: 'multiply'\n                        },\n                        arguments: [{\n                                type: 'Literal',\n                                value: 2\n                            }]\n                    }\n                }\n            ]\n        }, { properties: properties });\n    }\n    let baz = 10;\n    let foo = 1;\n    let factor = 2;\n    function multiply(a) {\n        let bar = factor.foo;\n        let baz = { foo: 5 };\n        return a * factor;\n    }\n    return multiply(2);\n});",
-  "export ->\n    const {div} = import 'ion/browser/html'\n    return div\n        \"Hello Div\"": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = function () {\n    const _ref = require('ion/browser/html');\n    let div = _ref.div;\n    let _ref2 = new div();\n    ion.add(_ref2, 'Hello Div');\n    return _ref2;\n};",
-  "export template ({a}) -> a": null
+  "let x = 0 in Array\nlet y = \"foo\" instanceof String": "'use strict';\nlet x = 0 in Array;\nlet y = 'foo' instanceof String;",
+  "let name = \"Kris\"\nexport template ->\n    return {}\n        for key, value of foo\n            let x = 1\n            onclick: ->\n                alert('Hey ' + key)": null
 };
 
 if (global.window != null) {
@@ -19102,12 +19478,20 @@ const templates = [
                                         }]
                                 }
                             }]
-                    }, { properties: properties });
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        properties: properties,
+                        ion: ion,
+                        templates: templates,
+                        _ref7: _ref7
+                    });
                 }
-                let _ref = [];
+                let _ref3 = [];
                 for (let key in properties)
-                    _ref.push(key);
-                return _ref;
+                    _ref3.push(key);
+                return _ref3;
             },
             {
                 a: 1,
@@ -19210,17 +19594,25 @@ const templates = [
                                 }
                             }
                         ]
-                    }, { properties: properties });
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        properties: properties,
+                        ion: ion,
+                        templates: templates,
+                        _ref7: _ref7
+                    });
                 }
                 function double(a) {
                     return a * 2;
                 }
-                let _ref2 = {};
+                let _ref5 = {};
                 for (let key in properties) {
                     let value = properties[key];
-                    _ref2[key] = double(value);
+                    _ref5[key] = double(value);
                 }
-                return _ref2;
+                return _ref5;
             },
             {
                 x: 1,
@@ -19395,20 +19787,28 @@ const templates = [
                                 }
                             }
                         ]
-                    }, { properties: properties });
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        properties: properties,
+                        ion: ion,
+                        templates: templates,
+                        _ref7: _ref7
+                    });
                 }
                 let factor = properties.factor != null ? properties.factor : 3;
                 function multiply(a) {
                     return a * factor;
                 }
-                let _ref3 = {};
+                let _ref6 = {};
                 for (let key in properties) {
                     let value = properties[key];
                     if (key !== 'factor') {
-                        _ref3[key] = multiply(value);
+                        _ref6[key] = multiply(value);
                     }
                 }
-                return _ref3;
+                return _ref6;
             },
             {
                 x: 1,
@@ -19424,27 +19824,240 @@ const templates = [
                 x: 40,
                 z: 50
             }
+        ],
+        [
+            'reactive destructured parameters',
+            function _template4(_ref) {
+                if (this != null && this.constructor === _template4) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'a'
+                                        },
+                                        init: {
+                                            type: 'MemberExpression',
+                                            object: {
+                                                type: 'Identifier',
+                                                name: '_ref'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'a'
+                                            },
+                                            computed: false
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'b'
+                                        },
+                                        init: {
+                                            type: 'MemberExpression',
+                                            object: {
+                                                type: 'Identifier',
+                                                name: '_ref'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'b'
+                                            },
+                                            computed: false
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'BinaryExpression',
+                                    operator: '+',
+                                    left: {
+                                        type: 'Identifier',
+                                        name: 'a'
+                                    },
+                                    right: {
+                                        type: 'Identifier',
+                                        name: 'b'
+                                    }
+                                }
+                            }
+                        ]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        _ref: _ref,
+                        ion: ion,
+                        templates: templates,
+                        _ref7: _ref7
+                    });
+                }
+                let a = _ref.a;
+                let b = _ref.b;
+                return a + b;
+            },
+            {
+                a: 1,
+                b: 2
+            },
+            { a: 5 },
+            7
+        ],
+        [
+            'array comprehensions',
+            function _template5(_ref2) {
+                if (this != null && this.constructor === _template5) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'items'
+                                        },
+                                        init: {
+                                            type: 'MemberExpression',
+                                            object: {
+                                                type: 'Identifier',
+                                                name: '_ref2'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'items'
+                                            },
+                                            computed: false
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'ArrayExpression',
+                                        elements: []
+                                    },
+                                    properties: [{
+                                            type: 'ForOfStatement',
+                                            left: {
+                                                type: 'VariableDeclaration',
+                                                declarations: [
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'x'
+                                                        },
+                                                        init: null
+                                                    },
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'i'
+                                                        },
+                                                        init: null
+                                                    }
+                                                ],
+                                                kind: 'let'
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'items'
+                                            },
+                                            body: {
+                                                type: 'ExpressionStatement',
+                                                expression: {
+                                                    type: 'BinaryExpression',
+                                                    operator: '+',
+                                                    left: {
+                                                        type: 'Identifier',
+                                                        name: 'x'
+                                                    },
+                                                    right: {
+                                                        type: 'Identifier',
+                                                        name: 'i'
+                                                    }
+                                                }
+                                            }
+                                        }]
+                                }
+                            }
+                        ]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        _ref2: _ref2,
+                        ion: ion,
+                        templates: templates,
+                        _ref7: _ref7
+                    });
+                }
+                let items = _ref2.items;
+                let _ref4 = [];
+                for (let _i = 0; _i < items.length; _i++) {
+                    let i = _i;
+                    let x = items[_i];
+                    _ref4.push(x + i);
+                }
+                return _ref4;
+            },
+            {
+                items: [
+                    1,
+                    2,
+                    3
+                ]
+            },
+            { items: { 3: 4 } },
+            [
+                1,
+                3,
+                5,
+                7
+            ]
         ]
     ];
-let _ref4 = {};
-for (let _i = 0; _i < templates.length; _i++) {
-    let _ref5 = templates[_i];
-    let name = _ref5[0];
-    let templateType = _ref5[1];
-    let argument = _ref5[2];
-    let patch = _ref5[3];
-    let expected = _ref5[4];
+let _ref7 = {};
+for (let _i2 = 0; _i2 < templates.length; _i2++) {
+    let _ref8 = templates[_i2];
+    let name = _ref8[0];
+    let templateType = _ref8[1];
+    let argument = _ref8[2];
+    let patch = _ref8[3];
+    let expected = _ref8[4];
     if (expected != null) {
-        _ref4[name] = function (templateType, argument, patch, expected) {
+        _ref7[name] = function (templateType, argument, patch, expected) {
             return function (done) {
                 let template = new templateType(argument);
+                function checkIfDone(check) {
+                    if (JSON.stringify(check) === JSON.stringify(expected)) {
+                        template.deactivate();
+                        done();
+                    }
+                }
                 template.activate();
                 template.watch(function (value) {
+                    checkIfDone(value);
                     ion.observe(value, function (changes) {
-                        if (JSON.stringify(value) === JSON.stringify(expected)) {
-                            template.deactivate();
-                            done();
-                        }
+                        checkIfDone(value);
                     });
                 });
                 ion.patch(argument, patch);
@@ -19452,7 +20065,7 @@ for (let _i = 0; _i < templates.length; _i++) {
         }(templateType, argument, patch, expected);
     }
 }
-module.exports = exports = { test: _ref4 };
+module.exports = exports = { test: _ref7 };
   }
   if (typeof require === 'function') {
     if (require.register)
@@ -19490,8 +20103,13 @@ const firstTemplate = function _template(a, b) {
                 name: 'firstTemplate'
             }
         }, {
+            require: require,
+            module: module,
+            exports: exports,
             a: a,
-            b: b
+            b: b,
+            firstTemplate: firstTemplate,
+            test: test
         });
     }
     return a + b;
@@ -19522,283 +20140,33 @@ const test = exports.test = function () {
 }).call(this)
 void (function(){var _ion_test_Todo_ = function(module,exports,require){'use strict';
 const ion = require('ion');
+const _ref = require('ion/browser/html');
+let div = _ref.div;
+let span = _ref.span;
+let input = _ref.input;
+let a = _ref.a;
+let form = _ref.form;
+let table = _ref.table;
+let tbody = _ref.tbody;
+let thead = _ref.thead;
+let tr = _ref.tr;
+let td = _ref.td;
+let button = _ref.button;
+let br = _ref.br;
+global.data = {
+    name: 'Kris',
+    offset: 0,
+    kids: {
+        Sadera: 18,
+        Orion: 15,
+        Galileo: 4
+    }
+};
 module.exports = exports = function _template() {
     if (this != null && this.constructor === _template) {
         return ion.createRuntime({
             type: 'Template',
-            body: [
-                {
-                    type: 'VariableDeclaration',
-                    declarations: [{
-                            type: 'VariableDeclarator',
-                            id: {
-                                type: 'Identifier',
-                                name: '_ref3'
-                            },
-                            init: {
-                                type: 'ImportExpression',
-                                name: {
-                                    type: 'Literal',
-                                    value: 'ion/browser/html'
-                                }
-                            }
-                        }],
-                    kind: 'const'
-                },
-                {
-                    type: 'VariableDeclaration',
-                    declarations: [{
-                            type: 'VariableDeclarator',
-                            id: {
-                                type: 'Identifier',
-                                name: 'div'
-                            },
-                            init: {
-                                type: 'MemberExpression',
-                                object: {
-                                    type: 'Identifier',
-                                    name: '_ref3'
-                                },
-                                property: {
-                                    type: 'Identifier',
-                                    name: 'div'
-                                },
-                                computed: false
-                            }
-                        }],
-                    kind: 'let'
-                },
-                {
-                    type: 'VariableDeclaration',
-                    declarations: [{
-                            type: 'VariableDeclarator',
-                            id: {
-                                type: 'Identifier',
-                                name: 'span'
-                            },
-                            init: {
-                                type: 'MemberExpression',
-                                object: {
-                                    type: 'Identifier',
-                                    name: '_ref3'
-                                },
-                                property: {
-                                    type: 'Identifier',
-                                    name: 'span'
-                                },
-                                computed: false
-                            }
-                        }],
-                    kind: 'let'
-                },
-                {
-                    type: 'VariableDeclaration',
-                    declarations: [{
-                            type: 'VariableDeclarator',
-                            id: {
-                                type: 'Identifier',
-                                name: 'input'
-                            },
-                            init: {
-                                type: 'MemberExpression',
-                                object: {
-                                    type: 'Identifier',
-                                    name: '_ref3'
-                                },
-                                property: {
-                                    type: 'Identifier',
-                                    name: 'input'
-                                },
-                                computed: false
-                            }
-                        }],
-                    kind: 'let'
-                },
-                {
-                    type: 'VariableDeclaration',
-                    declarations: [{
-                            type: 'VariableDeclarator',
-                            id: {
-                                type: 'Identifier',
-                                name: 'a'
-                            },
-                            init: {
-                                type: 'MemberExpression',
-                                object: {
-                                    type: 'Identifier',
-                                    name: '_ref3'
-                                },
-                                property: {
-                                    type: 'Identifier',
-                                    name: 'a'
-                                },
-                                computed: false
-                            }
-                        }],
-                    kind: 'let'
-                },
-                {
-                    type: 'VariableDeclaration',
-                    declarations: [{
-                            type: 'VariableDeclarator',
-                            id: {
-                                type: 'Identifier',
-                                name: 'form'
-                            },
-                            init: {
-                                type: 'MemberExpression',
-                                object: {
-                                    type: 'Identifier',
-                                    name: '_ref3'
-                                },
-                                property: {
-                                    type: 'Identifier',
-                                    name: 'form'
-                                },
-                                computed: false
-                            }
-                        }],
-                    kind: 'let'
-                },
-                {
-                    type: 'VariableDeclaration',
-                    declarations: [{
-                            type: 'VariableDeclarator',
-                            id: {
-                                type: 'Identifier',
-                                name: 'table'
-                            },
-                            init: {
-                                type: 'MemberExpression',
-                                object: {
-                                    type: 'Identifier',
-                                    name: '_ref3'
-                                },
-                                property: {
-                                    type: 'Identifier',
-                                    name: 'table'
-                                },
-                                computed: false
-                            }
-                        }],
-                    kind: 'let'
-                },
-                {
-                    type: 'VariableDeclaration',
-                    declarations: [{
-                            type: 'VariableDeclarator',
-                            id: {
-                                type: 'Identifier',
-                                name: 'tbody'
-                            },
-                            init: {
-                                type: 'MemberExpression',
-                                object: {
-                                    type: 'Identifier',
-                                    name: '_ref3'
-                                },
-                                property: {
-                                    type: 'Identifier',
-                                    name: 'tbody'
-                                },
-                                computed: false
-                            }
-                        }],
-                    kind: 'let'
-                },
-                {
-                    type: 'VariableDeclaration',
-                    declarations: [{
-                            type: 'VariableDeclarator',
-                            id: {
-                                type: 'Identifier',
-                                name: 'thead'
-                            },
-                            init: {
-                                type: 'MemberExpression',
-                                object: {
-                                    type: 'Identifier',
-                                    name: '_ref3'
-                                },
-                                property: {
-                                    type: 'Identifier',
-                                    name: 'thead'
-                                },
-                                computed: false
-                            }
-                        }],
-                    kind: 'let'
-                },
-                {
-                    type: 'VariableDeclaration',
-                    declarations: [{
-                            type: 'VariableDeclarator',
-                            id: {
-                                type: 'Identifier',
-                                name: 'tr'
-                            },
-                            init: {
-                                type: 'MemberExpression',
-                                object: {
-                                    type: 'Identifier',
-                                    name: '_ref3'
-                                },
-                                property: {
-                                    type: 'Identifier',
-                                    name: 'tr'
-                                },
-                                computed: false
-                            }
-                        }],
-                    kind: 'let'
-                },
-                {
-                    type: 'VariableDeclaration',
-                    declarations: [{
-                            type: 'VariableDeclarator',
-                            id: {
-                                type: 'Identifier',
-                                name: 'td'
-                            },
-                            init: {
-                                type: 'MemberExpression',
-                                object: {
-                                    type: 'Identifier',
-                                    name: '_ref3'
-                                },
-                                property: {
-                                    type: 'Identifier',
-                                    name: 'td'
-                                },
-                                computed: false
-                            }
-                        }],
-                    kind: 'let'
-                },
-                {
-                    type: 'VariableDeclaration',
-                    declarations: [{
-                            type: 'VariableDeclarator',
-                            id: {
-                                type: 'Identifier',
-                                name: 'button'
-                            },
-                            init: {
-                                type: 'MemberExpression',
-                                object: {
-                                    type: 'Identifier',
-                                    name: '_ref3'
-                                },
-                                property: {
-                                    type: 'Identifier',
-                                    name: 'button'
-                                },
-                                computed: false
-                            }
-                        }],
-                    kind: 'let'
-                },
-                {
+            body: [{
                     type: 'ReturnStatement',
                     argument: {
                         type: 'ObjectExpression',
@@ -19806,33 +20174,282 @@ module.exports = exports = function _template() {
                             type: 'Identifier',
                             name: 'div'
                         },
-                        properties: [{
+                        properties: [
+                            {
                                 type: 'ExpressionStatement',
                                 expression: {
-                                    type: 'Literal',
-                                    value: 'Hello Div'
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'Identifier',
+                                        name: 'div'
+                                    },
+                                    properties: [{
+                                            type: 'ExpressionStatement',
+                                            expression: {
+                                                type: 'BinaryExpression',
+                                                operator: '+',
+                                                left: {
+                                                    type: 'Literal',
+                                                    value: 'Hello '
+                                                },
+                                                right: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'data'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'name'
+                                                    }
+                                                }
+                                            }
+                                        }]
                                 }
-                            }]
+                            },
+                            {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'Identifier',
+                                        name: 'div'
+                                    },
+                                    properties: [
+                                        {
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'style'
+                                            },
+                                            value: {
+                                                type: 'ObjectExpression',
+                                                objectType: null,
+                                                properties: [{
+                                                        type: 'Property',
+                                                        key: {
+                                                            type: 'Identifier',
+                                                            name: 'color'
+                                                        },
+                                                        value: {
+                                                            type: 'Literal',
+                                                            value: 'red'
+                                                        },
+                                                        kind: 'init'
+                                                    }]
+                                            },
+                                            kind: 'init'
+                                        },
+                                        {
+                                            type: 'ExpressionStatement',
+                                            expression: {
+                                                type: 'Literal',
+                                                value: 'red'
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                type: 'ForInStatement',
+                                left: {
+                                    type: 'VariableDeclaration',
+                                    declarations: [
+                                        {
+                                            type: 'VariableDeclarator',
+                                            id: {
+                                                type: 'Identifier',
+                                                name: 'name'
+                                            },
+                                            init: null
+                                        },
+                                        {
+                                            type: 'VariableDeclarator',
+                                            id: {
+                                                type: 'Identifier',
+                                                name: 'age'
+                                            },
+                                            init: null
+                                        }
+                                    ],
+                                    kind: 'let'
+                                },
+                                right: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'data'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'kids'
+                                    }
+                                },
+                                body: {
+                                    type: 'BlockStatement',
+                                    body: [{
+                                            type: 'ExpressionStatement',
+                                            expression: {
+                                                type: 'ObjectExpression',
+                                                objectType: {
+                                                    type: 'Identifier',
+                                                    name: 'div'
+                                                },
+                                                properties: [
+                                                    {
+                                                        type: 'Property',
+                                                        key: {
+                                                            type: 'Identifier',
+                                                            name: 'style'
+                                                        },
+                                                        value: {
+                                                            type: 'ObjectExpression',
+                                                            objectType: null,
+                                                            properties: [
+                                                                {
+                                                                    type: 'Property',
+                                                                    key: {
+                                                                        type: 'Identifier',
+                                                                        name: 'textDecoration'
+                                                                    },
+                                                                    value: {
+                                                                        type: 'Literal',
+                                                                        value: 'underline'
+                                                                    },
+                                                                    kind: 'init'
+                                                                },
+                                                                {
+                                                                    type: 'Property',
+                                                                    key: {
+                                                                        type: 'Identifier',
+                                                                        name: 'cursor'
+                                                                    },
+                                                                    value: {
+                                                                        type: 'Literal',
+                                                                        value: 'pointer'
+                                                                    },
+                                                                    kind: 'init'
+                                                                }
+                                                            ]
+                                                        },
+                                                        kind: 'init'
+                                                    },
+                                                    {
+                                                        type: 'Property',
+                                                        key: {
+                                                            type: 'Identifier',
+                                                            name: 'onclick'
+                                                        },
+                                                        value: {
+                                                            type: 'Function',
+                                                            context: false,
+                                                            value: function () {
+                                                                alert('fuck you ' + name);
+                                                            }
+                                                        },
+                                                        kind: 'init'
+                                                    },
+                                                    {
+                                                        type: 'ExpressionStatement',
+                                                        expression: {
+                                                            type: 'BinaryExpression',
+                                                            operator: '+',
+                                                            left: {
+                                                                type: 'BinaryExpression',
+                                                                operator: '+',
+                                                                left: {
+                                                                    type: 'Identifier',
+                                                                    name: 'name'
+                                                                },
+                                                                right: {
+                                                                    type: 'Literal',
+                                                                    value: ' '
+                                                                }
+                                                            },
+                                                            right: {
+                                                                type: 'BinaryExpression',
+                                                                operator: '+',
+                                                                left: {
+                                                                    type: 'Identifier',
+                                                                    name: 'age'
+                                                                },
+                                                                right: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
+                                                                        type: 'Identifier',
+                                                                        name: 'data'
+                                                                    },
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'offset'
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }]
+                                }
+                            }
+                        ]
                     }
-                }
-            ]
-        }, {});
+                }]
+        }, {
+            require: require,
+            module: module,
+            exports: exports,
+            _ref: _ref,
+            div: div,
+            span: span,
+            input: input,
+            a: a,
+            form: form,
+            table: table,
+            tbody: tbody,
+            thead: thead,
+            tr: tr,
+            td: td,
+            button: button,
+            br: br
+        });
     }
-    const _ref2 = require('ion/browser/html');
-    let div = _ref2.div;
-    let span = _ref2.span;
-    let input = _ref2.input;
-    let a = _ref2.a;
-    let form = _ref2.form;
-    let table = _ref2.table;
-    let tbody = _ref2.tbody;
-    let thead = _ref2.thead;
-    let tr = _ref2.tr;
-    let td = _ref2.td;
-    let button = _ref2.button;
-    let _ref = new div();
-    ion.add(_ref, 'Hello Div');
-    return _ref;
+    let _ref3 = new div();
+    {
+        let _ref4 = new div();
+        ion.add(_ref4, 'Hello ' + data.name);
+        ion.add(_ref3, _ref4);
+        let _ref5 = new div();
+        {
+            if (_ref5.style == null)
+                _ref5.style = {};
+            _ref5.style.color = 'red';
+            ion.add(_ref5, 'red');
+        }
+        ion.add(_ref3, _ref5);
+        {
+            let _ref2 = data.kids;
+            for (let name in _ref2) {
+                let age = _ref2[name];
+                let _ref6 = new div();
+                {
+                    if (_ref6.style == null)
+                        _ref6.style = {};
+                    _ref6.style.textDecoration = 'underline';
+                    _ref6.style.cursor = 'pointer';
+                    _ref6.onclick = function () {
+                        alert('fuck you ' + name);
+                    };
+                    ion.add(_ref6, name + ' ' + (age + data.offset));
+                }
+                ion.add(_ref3, _ref6);
+            }
+        }
+    }
+    return _ref3;
 };
   }
   if (typeof require === 'function') {

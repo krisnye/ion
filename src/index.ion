@@ -150,6 +150,17 @@ export const
             # if the object has an onSet 
             value?.onSet?(object, property)
         return value
+    is = (instance, type) ->
+        if not instance?
+            return false
+        if not type?
+            return true
+        if typeof type is 'function'
+            if typeof instance.is is 'function'
+                return instance.is(type)
+            return instance instanceof type
+        else
+            return instance is type
     test =
         defineClass: ->
             const Foo = (defineClass)

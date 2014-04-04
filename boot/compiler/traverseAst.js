@@ -190,9 +190,7 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
         if (addToNode == null) {
           addToNode = this.scope().node;
         }
-        if (statement.type === 'VariableDeclaration' || statement.type === 'FunctionDeclaration') {
-          trackVariableDeclarations(context, statement);
-        }
+        trackVariableDeclarations(context, statement);
         return addStatement(addToNode, statement, this.getAncestorChildOf(addToNode), offset);
       };
     }
@@ -265,6 +263,8 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
       }
       if (nodeInfo != null ? nodeInfo.isFunction : void 0) {
         trackVariableDeclarations(context, node.params, nodeInfo.paramKind);
+      } else if (node.type === 'ForInStatement' || node.type === 'ForOfStatement') {
+        trackVariableDeclarations(context, node.left);
       }
       if (typeof enterCallback === "function") {
         enterCallback(node, context);

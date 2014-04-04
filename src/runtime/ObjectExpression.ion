@@ -1,17 +1,21 @@
 const
     DynamicExpression = import './DynamicExpression'
+    ion = import '../'
 
 export class ObjectExpression extends DynamicExpression
     properties:
+        # this is called by a PropertyExpression to let us know the current left hand value.
+        setLeftValue: (value) ->
+            @value = value
         activate: ->
             super
-            @typeExpression ?= @context.createRuntime(@objectType ? {})
+            @typeExpression ?= @context.createRuntime(@objectType ? null)
             (@typeExpression.watch)
                 @typeWatcher ?= (type) =>
                     let value
                     if type is undefined
                         value = undefined
-                    else if @value isnt type and @value?.constructor isnt type
+                    else if not ion.is(@value, type)
                         @statements?.deactivate()
                         @statements = null
                         if type? and typeof type is 'object'
@@ -20,6 +24,9 @@ export class ObjectExpression extends DynamicExpression
                         else
                             # otherwise the type is a function to use as our constructor.
                             value = new (type ? Object)
+                    else
+                        # a default value could have been passed in
+                        value = @value
 
                     if value? and not @statements?
                         let newContext = @context.newContext(value)

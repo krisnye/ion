@@ -1,5 +1,27 @@
+const {div,span,input,a,form,table,tbody,thead,tr,td,button,br} = import 'ion/browser/html'
+
+global.data =
+    name: 'Kris'
+    offset: 0
+    kids:
+        Sadera: 18
+        Orion: 15
+        Galileo: 4
+
 export template ->
-    const {div,span,input,a,form,table,tbody,thead,tr,td,button} = import 'ion/browser/html'
     return div
-        "Hello Div"
+        div
+            "Hello {{ data.name }}"
+        div
+            style:
+                color: 'red'
+            "red"
+        for name, age of data.kids
+            div
+                style:
+                    textDecoration: 'underline'
+                    cursor: 'pointer'
+                onclick: ->
+                    alert('fuck you ' + name)
+                name + " " + (age + data.offset)
 
