@@ -107,7 +107,7 @@ module.exports = exports =
                         list file, options, files
         files
     makeDirectories: makeDirectories = (dir) ->
-        if not Object.isString dir
+        if typeof dir isnt 'string'
             throw new Error "dir is not a string: #{JSON.stringify dir}"
         if not fs.existsSync dir
             # make parent first

@@ -17,12 +17,9 @@ module.exports = exports =
         cwd = process.cwd()
         process.chdir root
         try
-            return require('uglify-js').minify files, options
-        catch e
-            console.error e
-            result =
+            return {
                 code:(fs.readFileSync(file, 'utf8') for file in files).join('\n')
-            return result
+            }
         finally
             process.chdir cwd
     isPrivate: isPrivate = (path) ->

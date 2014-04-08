@@ -555,7 +555,9 @@ tests =
     """: """
     'use strict';
     let point = new Point(10, 20);
-    point.z = 30;
+    {
+        point.z = 30;
+    }
     """
     """
     let object = {x:1, y:2}
@@ -566,7 +568,9 @@ tests =
             x: 1,
             y: 2
         };
-    object.z = 3;
+    {
+        object.z = 3;
+    }
     """
     """
     let origin = Point
@@ -620,20 +624,21 @@ tests =
             y: 0
     """: """
     'use strict';
-    if (input == null)
-        input = {};
-    input.x = 10;
-    input.y = 20;
-    if (input.z == null)
-        input.z = {};
-    input.z.a = 1;
-    input.z.b = 2;
+    const ion = require('ion');
     let _ref = new Point();
     {
         _ref.x = 0;
         _ref.y = 0;
     }
-    input.w = _ref;
+    ion.set(input, {
+        x: 10,
+        y: 20,
+        z: {
+            a: 1,
+            b: 2
+        },
+        w: _ref
+    });
     """
     """
     let point = Point
@@ -647,48 +652,6 @@ tests =
         point[y] = 2;
     }
     """
-    # """
-    # let element = div
-    #     id: 'foo'
-    #     style:
-    #         color: 'red'
-    #     for key, value of {y: 2, z: 3}
-    #         [key]: value
-    #     div
-    #         "Hello"
-    #     div
-    #         "World"
-    #     if name?
-    #         "Welcome: " + name
-    # """: """
-    # 'use strict';
-    # let element = new div();
-    # {
-    #     element.id = 'foo';
-    #     if (element.style == null)
-    #         element.style = {};
-    #     element.style.color = 'red';
-    #     {
-    #         let _ref = {
-    #                 y: 2,
-    #                 z: 3
-    #             };
-    #         for (let key in _ref) {
-    #             let value = _ref[key];
-    #             element[key] = value;
-    #         }
-    #     }
-    #     let _ref = new div();
-    #     _ref.add('Hello');
-    #     element.add(_ref);
-    #     let _ref2 = new div();
-    #     _ref2.add('World');
-    #     element.add(_ref2);
-    #     if (name != null) {
-    #         element.add('Welcome: ' + name);
-    #     }
-    # }
-    # """
     """
     let self = @
     let x = @x
@@ -707,7 +670,9 @@ tests =
     """: """
     'use strict';
     let x = {};
-    x[key] = value;
+    {
+        x[key] = value;
+    }
     """
     """
     if foo
@@ -718,9 +683,11 @@ tests =
     'use strict';
     if (foo) {
         let _ref = {};
-        for (let key in object) {
-            let value = object[key];
-            _ref[key] = value;
+        {
+            for (let key in object) {
+                let value = object[key];
+                _ref[key] = value;
+            }
         }
         return _ref;
     }
@@ -875,9 +842,11 @@ tests =
     """: """
     'use strict';
     let items = [];
-    for (let key in window) {
-        let value = window[key];
-        items.push(value);
+    {
+        for (let key in window) {
+            let value = window[key];
+            items.push(value);
+        }
     }
     """
     """
@@ -888,9 +857,13 @@ tests =
     'use strict';
     const ion = require('ion');
     let foo = new div();
-    let _ref = new span();
-    ion.add(_ref, 'Hello');
-    ion.add(foo, _ref);
+    {
+        let _ref = new span();
+        {
+            ion.add(_ref, 'Hello');
+        }
+        ion.add(foo, _ref);
+    }
     """
     # we don't auto import ion if the user already declares an ion variable
     """
@@ -902,9 +875,13 @@ tests =
     'use strict';
     const ion = require('./');
     let foo = new div();
-    let _ref = new span();
-    ion.add(_ref, 'Hello');
-    ion.add(foo, _ref);
+    {
+        let _ref = new span();
+        {
+            ion.add(_ref, 'Hello');
+        }
+        ion.add(foo, _ref);
+    }
     """
     """
     translate({x,y}) ->
@@ -1185,15 +1162,6 @@ tests =
     let x = 0 in Array;
     let y = 'foo' instanceof String;
     """
-    # """
-    # let name = "Kris"
-    # export template ->
-    #     return {}
-    #         for key, value of foo
-    #             let x = 1
-    #             onclick: ->
-    #                 alert('Hey ' + key)
-    # """: null
     """
     const output = {}
     output:
@@ -1201,10 +1169,37 @@ tests =
         y: 2
     """: """
     'use strict';
+    const ion = require('ion');
     const output = {};
-    output.x = 1;
-    output.y = 2;
+    ion.set(output, {
+        x: 1,
+        y: 2
+    });
     """
+    """
+    output:
+        for a in b
+            [c]: d
+    """: """
+    'use strict';
+    const ion = require('ion');
+    let _ref = {};
+    {
+        for (let _i = 0; _i < b.length; _i++) {
+            let a = b[_i];
+            _ref[c] = d;
+        }
+    }
+    ion.set(output, _ref);
+    """
+    """
+    output: {}
+        x: 1
+    """: {line: 1, column: 9}
+    """
+    [output]:
+        x: 1
+    """: {line: 1, column: 2}
 
 if global.window?
     return

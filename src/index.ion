@@ -36,7 +36,7 @@ const
         (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
 
 export const
-    patch = (target, values) -> mergePatch.apply(target, values)
+    patch = (target, values, deleteNull) -> mergePatch.apply(target, values, deleteNull)
     create = (type, args) -> variableArgConstructs[args.length](type, args)
     createRuntime = (ast, args) ->
         const Context = import './runtime/Context'
@@ -140,6 +140,12 @@ export const
     set = (object, property, value) ->
         # console.log 'core.set', property, value
         if object? and property?
+            if arguments.length is 2
+                # set all properties
+                for k, v of property
+                    set(object, k, v)
+                return
+
             if typeof object.set is 'function'
                 object.set(property, value)
             else if value is undefined

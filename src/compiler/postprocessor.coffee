@@ -14,6 +14,12 @@ undefinedExpression = Object.freeze
 nullExpression = Object.freeze
     type: 'Literal'
     value: null
+trueExpression = Object.freeze
+    type: 'Literal'
+    value: true
+falseExpression = Object.freeze
+    type: 'Literal'
+    value: false
 ionExpression = Object.freeze
     type: 'Identifier'
     name: 'ion'
@@ -550,20 +556,19 @@ typedObjectExpressions = (node, context) ->
 
         # traverse all properties and expression statements
         # add a new property that indicates their output scope
-        traverse node.properties, (subnode, subcontext) ->
+        subnodeEnter = (subnode, subcontext) ->
+            subcontext.outputStack ?= [objectId]
             if subnode.type is 'ObjectExpression' or subnode.type is 'ArrayExpression'
                 return subcontext.skip()
             if subnode.type is 'Property' #or subnode.type is 'ExpressionStatement'
                 # we convert the node to a Property: ObjectExpression node
                 # it will be handled correctly by the later propertyStatements rule
-                subnode = subcontext.replace
-                    type: 'Property'
-                    key: objectId
-                    value:
-                        type: 'ObjectExpression'
-                        properties: [subnode]
-                        create: false
-                subcontext.skip()
+                subnode.output = subcontext.outputStack[subcontext.outputStack.length - 1]
+                subcontext.outputStack.push
+                    type: 'MemberExpression'
+                    object: subnode.output
+                    property: subnode.key
+                    computed: subnode.computed || subnode.key.type isnt 'Identifier'
             else if subnode.type is 'ExpressionStatement'
                 if not isArray
                     ensureIonVariable(context)
@@ -587,52 +592,40 @@ typedObjectExpressions = (node, context) ->
             context.addStatement statements[0], addPosition
         else
             context.addStatement {type:'BlockStatement',body:statements}, addPosition
+        subnodeExit = (subnode, subcontext) ->
+            if subnode.type is 'Property'
+                subcontext.outputStack.pop()
+    traverse node.properties, subnodeEnter, subnodeExit
 
 propertyStatements = (node, context) ->
     return if context.reactive
 
     parent = context.parentNode()
     if node.type is 'Property' and not (parent.type is 'ObjectExpression' or parent.type is 'ObjectPattern')
-        createAssignments = (path, value) ->
-            if value.type is 'ObjectExpression' and not value.objectType?
-                for property in value.properties by -1
-                    newPath =
+        if node.output?
+            context.replace
+                type: 'ExpressionStatement'
+                expression:
+                    type: 'AssignmentExpression'
+                    operator: '='
+                    left:
                         type: 'MemberExpression'
-                        object: path
-                        property: property.key
-                        computed: property.computed || property.key.type isnt 'Identifier'
-                    createAssignments newPath, property.value
-                # assign an empty object if required
-                # but make sure we aren't assigning to a const variable
-                if value.create isnt false and not (path.type is 'Identifier' and context.getVariableInfo(path.name)?.kind is 'const')
-                    context.addStatement {
-                        type: 'IfStatement'
-                        test:
-                            type: 'BinaryExpression'
-                            operator: '=='
-                            left: path
-                            right: nullExpression
-                        consequent:
-                            type: 'ExpressionStatement'
-                            expression:
-                                type: 'AssignmentExpression'
-                                operator: '='
-                                left: path
-                                right:
-                                    type: 'ObjectExpression'
-                                    properties: []
-                    }, 0
-            else
-                context.addStatement {
-                    type: 'ExpressionStatement'
-                    expression:
-                        type: 'AssignmentExpression'
-                        operator: '='
-                        left: path
-                        right: value
-                }, 0
-        createAssignments node.key, node.value
-        context.remove node
+                        object: node.output
+                        property: node.key
+                        computed: node.computed
+                    right: node.value
+        else
+            if node.computed
+                throw context.error "dynamic property expression invalid here", node.key
+            if node.value.objectType?
+                throw context.error "type not allowed on set expression", node.value
+            ensureIonVariable context
+            context.replace
+                type: 'ExpressionStatement'
+                expression:
+                    type: 'CallExpression'
+                    callee: getPathExpression 'ion.set'
+                    arguments: [node.key, node.value]
 
 classExpressions = (node, context) ->
 

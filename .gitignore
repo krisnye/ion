@@ -1,4 +1,4 @@
-lib
+lib*
 src/test/input
 src/test/output
 node_modules
