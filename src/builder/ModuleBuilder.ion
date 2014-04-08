@@ -1,0 +1,14 @@
+const
+    File = import './File'
+    Directory = import './Directory'
+    builder = import './'
+
+export template (inputName, outputName, options) ->
+    let input = new Directory(inputName)
+    let output = new Directory(outputName)
+
+    for path, file of input.search('.coffee')
+        let target = output.getFile(builder.changeExtension(key, ".js"))
+        let moduleId = builder.getModuleId(name, key)
+        output:
+            [target.path]: builder.compileCoffeeScript(source, moduleId)

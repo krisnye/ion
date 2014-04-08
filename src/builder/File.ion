@@ -1,0 +1,47 @@
+
+const
+    fs = import 'fs'
+    np = import 'path'
+    utility = import './utility'
+    ion = import '../'
+
+export class File
+    constructor: (path) ->
+        if path?.constructor is File
+            return path
+        if @constructor isnt File
+            return new File(path)
+        if typeof path isnt 'string'
+            throw new Error("path string is required")
+        (Object.defineProperties)
+            @
+            {}
+                path:
+                    value: path
+                    enumerable: true
+                    writable: false
+        # set modified immediately
+        @modified = utility.getModified(path)
+        # make us reactive to observers.  Specifically we will just update our modified value as needed.
+        (ion.makeReactive)
+            @
+            =>
+                let watcher
+                if fs.existsSync(@path)
+                    watcher = (fs.watch)
+                        @path
+                        =>
+                            @modified = utility.getModified(@path)
+                return -> watcher?.close()
+    properties:
+        copyFrom: (file) ->
+            file = File(file)
+            @write(file.read(null), null)
+            console.log("Copied: {{np.normalize(@path)}}")
+        read: (encoding) ->
+            if fs.existsSync(@path)
+                return utility.read(@path, encoding)
+            else
+                return null
+        write: (content, encoding) -> utility.write(@path, content, encoding)
+        toString: -> @path

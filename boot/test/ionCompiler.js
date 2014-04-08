@@ -174,7 +174,7 @@ tests = {
     column: 13
   },
   "let x = 0 in Array\nlet y = \"foo\" instanceof String": "'use strict';\nlet x = 0 in Array;\nlet y = 'foo' instanceof String;",
-  "let name = \"Kris\"\nexport template ->\n    return {}\n        for key, value of foo\n            let x = 1\n            onclick: ->\n                alert('Hey ' + key)": null
+  "const output = {}\noutput:\n    x: 1\n    y: 2": "'use strict';\nconst output = {};\noutput.x = 1;\noutput.y = 2;"
 };
 
 if (global.window != null) {

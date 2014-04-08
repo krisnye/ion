@@ -15,13 +15,13 @@ export template ->
         div
             style:
                 color: 'red'
-            "red"
+            'red'
         for name, age of data.kids
             div
                 style:
                     textDecoration: 'underline'
                     cursor: 'pointer'
                 onclick: ->
-                    alert('fuck you ' + name)
+                    alert('hello ' + name)
                 name + " " + (age + data.offset)
 

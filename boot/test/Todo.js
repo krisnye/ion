@@ -204,9 +204,12 @@ module.exports = exports = function _template() {
                                                         },
                                                         value: {
                                                             type: 'Function',
-                                                            context: false,
-                                                            value: function () {
-                                                                alert('fuck you ' + name);
+                                                            context: true,
+                                                            value: function (_context) {
+                                                                return function () {
+                                                                    const name = _context.get('name');
+                                                                    alert('hello ' + name);
+                                                                };
                                                             }
                                                         },
                                                         kind: 'init'
@@ -301,7 +304,7 @@ module.exports = exports = function _template() {
                     _ref6.style.textDecoration = 'underline';
                     _ref6.style.cursor = 'pointer';
                     _ref6.onclick = function () {
-                        alert('fuck you ' + name);
+                        alert('hello ' + name);
                     };
                     ion.add(_ref6, name + ' ' + (age + data.offset));
                 }

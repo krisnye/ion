@@ -603,7 +603,8 @@ propertyStatements = (node, context) ->
                         computed: property.computed || property.key.type isnt 'Identifier'
                     createAssignments newPath, property.value
                 # assign an empty object if required
-                if value.create isnt false
+                # but make sure we aren't assigning to a const variable
+                if value.create isnt false and not (path.type is 'Identifier' and context.getVariableInfo(path.name)?.kind is 'const')
                     context.addStatement {
                         type: 'IfStatement'
                         test:
@@ -923,13 +924,9 @@ getExternalIdentifiers = (node, callback) ->
 wrapTemplateInnerFunctions = (node, context) ->
     if context.parentReactive()
         if node.type is 'FunctionExpression' and not node.toLiteral?
-            console.log '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', node.name?.name
-            for key, value of context.scope().variables
-                console.log '::::::::::::::::::::::::::::::::', key
             # see if we need to replace any properties in this function or not.
             variables = {}
             getExternalIdentifiers node, (id) ->
-                console.log('ID: ' + id.name, context.getVariableInfo(id.name))
                 if id.name isnt node.id?.name and context.scope()?.variables[id.name]?
                     variables[id.name] = id
             requiresWrapper = Object.keys(variables).length > 0

@@ -12,3 +12,7 @@ task 'dev', 'creates development symlinks', ->
 task "watch", "builds and watches the debug website", ->
     builder = require 'ionold/builder'
     builder.runTemplate 'build.ion', {output:"lib"}
+
+task 'test', 'runs the new build watcher', ->
+	ModuleBuilder = require './lib/builder/ModuleBuilder'
+	new ModuleBuilder('src', 'lib2').activate()

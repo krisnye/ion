@@ -9,7 +9,7 @@ const Property = ion.defineClass({
                 this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
                 this.keyExpression.watch(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : function (key) {
                     if (key != null && this.valueExpression.setLeftValue != null) {
-                        let currentValue = ion.get(this.context.output, key);
+                        let currentValue = this.context.output ? ion.get(this.context.output, key) : this.context.get(key);
                         if (currentValue != null) {
                             this.valueExpression.setLeftValue(currentValue);
                         }

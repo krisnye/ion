@@ -816,7 +816,7 @@ propertyStatements = function(node, context) {
   parent = context.parentNode();
   if (node.type === 'Property' && !(parent.type === 'ObjectExpression' || parent.type === 'ObjectPattern')) {
     createAssignments = function(path, value) {
-      var newPath, property, _i, _ref1;
+      var newPath, property, _i, _ref1, _ref2;
       if (value.type === 'ObjectExpression' && (value.objectType == null)) {
         _ref1 = value.properties;
         for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
@@ -829,7 +829,7 @@ propertyStatements = function(node, context) {
           };
           createAssignments(newPath, property.value);
         }
-        if (value.create !== false) {
+        if (value.create !== false && !(path.type === 'Identifier' && ((_ref2 = context.getVariableInfo(path.name)) != null ? _ref2.kind : void 0) === 'const')) {
           return context.addStatement({
             type: 'IfStatement',
             test: {
@@ -1279,20 +1279,13 @@ getExternalIdentifiers = function(node, callback) {
 };
 
 wrapTemplateInnerFunctions = function(node, context) {
-  var contextId, id, key, name, requiresWrapper, value, variables, _ref1, _ref2;
+  var contextId, id, name, requiresWrapper, variables;
   if (context.parentReactive()) {
     if (node.type === 'FunctionExpression' && (node.toLiteral == null)) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', (_ref1 = node.name) != null ? _ref1.name : void 0);
-      _ref2 = context.scope().variables;
-      for (key in _ref2) {
-        value = _ref2[key];
-        console.log('::::::::::::::::::::::::::::::::', key);
-      }
       variables = {};
       getExternalIdentifiers(node, function(id) {
-        var _ref3, _ref4;
-        console.log('ID: ' + id.name, context.getVariableInfo(id.name));
-        if (id.name !== ((_ref3 = node.id) != null ? _ref3.name : void 0) && (((_ref4 = context.scope()) != null ? _ref4.variables[id.name] : void 0) != null)) {
+        var _ref1, _ref2;
+        if (id.name !== ((_ref1 = node.id) != null ? _ref1.name : void 0) && (((_ref2 = context.scope()) != null ? _ref2.variables[id.name] : void 0) != null)) {
           return variables[id.name] = id;
         }
       });

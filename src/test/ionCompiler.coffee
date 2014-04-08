@@ -1185,15 +1185,26 @@ tests =
     let x = 0 in Array;
     let y = 'foo' instanceof String;
     """
+    # """
+    # let name = "Kris"
+    # export template ->
+    #     return {}
+    #         for key, value of foo
+    #             let x = 1
+    #             onclick: ->
+    #                 alert('Hey ' + key)
+    # """: null
     """
-    let name = "Kris"
-    export template ->
-        return {}
-            for key, value of foo
-                let x = 1
-                onclick: ->
-                    alert('Hey ' + key)
-    """: null
+    const output = {}
+    output:
+        x: 1
+        y: 2
+    """: """
+    'use strict';
+    const output = {};
+    output.x = 1;
+    output.y = 2;
+    """
 
 if global.window?
     return

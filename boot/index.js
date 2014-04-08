@@ -219,6 +219,27 @@ const patch = exports.patch = function (target, values) {
         } else {
             return instance === type;
         }
+    }, makeReactive = exports.makeReactive = function (object, activate) {
+        let observeCount = 0;
+        let deactivate = null;
+        return Object.defineProperties(object, {
+            onObserved: {
+                value: function () {
+                    observeCount++;
+                    if (observeCount === 1) {
+                        deactivate = activate.call(object);
+                    }
+                }
+            },
+            unObserved: {
+                value: function () {
+                    observeCount--;
+                    if (observeCount === 0) {
+                        deactivate != null ? deactivate() : void 0;
+                    }
+                }
+            }
+        });
     }, test = exports.test = {
         defineClass: function () {
             const Foo = defineClass({

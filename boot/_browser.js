@@ -406,6 +406,1075 @@ if (require.main === module) {
     _ion_browser_tester_.call(this);
   }
 }).call(this)
+void (function(){var _ion_builder_Directory_ = function(module,exports,require){'use strict';
+const fs = require('fs'), np = require('path'), utility = require('./utility'), watcher = require('./watcher'), File = require('./File'), ion = require('../');
+const Directory = ion.defineClass({
+        id: 'Directory',
+        constructor: function Directory(path) {
+            if (path != null) {
+                this.path = String(path);
+            }
+        },
+        properties: {
+            exists: {
+                get: function () {
+                    return fs.existsSync(this.path);
+                }
+            },
+            path: '.',
+            toString: function () {
+                return this.path;
+            },
+            get: function (path) {
+                if (this.hasOwnProperty(path) || this[path] != null) {
+                    return this[path];
+                }
+                path = this.getAbsoluteName(path);
+                if (fs.existsSync(path)) {
+                    return utility.read(path);
+                } else {
+                    return void 0;
+                }
+            },
+            set: function (path, content) {
+                if (this.hasOwnProperty(path) || this[path] != null) {
+                    return this[path] = content;
+                }
+                path = this.getAbsoluteName(path);
+                if (content != null) {
+                    console.log('Writing: ' + path);
+                } else {
+                    console.log('Deleting: ' + path);
+                }
+                utility.write(path, content);
+                return content;
+            },
+            getFile: function (path) {
+                return new File(this.getAbsoluteName(path));
+            },
+            getDirectory: function (path) {
+                return new Directory(this.getAbsoluteName(path));
+            },
+            getRelativeName: function (path) {
+                return np.relative(this.path, String(path));
+            },
+            getAbsoluteName: function (path) {
+                return np.join(this.path, String(path));
+            },
+            search: function (include, exclude) {
+                let options = { initial: false };
+                if (include != null) {
+                    options.include = include;
+                }
+                if (exclude != null) {
+                    options.exclude = exclude;
+                }
+                let results = {};
+                ion.makeReactive(results, function () {
+                    let unwatch = watcher.watchDirectory(this.path, options, function (filename) {
+                            let path = this.getRelativeName(filename);
+                            if (fs.existsSync(filename)) {
+                                if (!(results[path] != null)) {
+                                    results[path] = new File(filename);
+                                }
+                            } else {
+                                delete results[path];
+                            }
+                        }.bind(this));
+                    return unwatch;
+                }.bind(this));
+                let files = utility.list(this.path, options);
+                for (let _i = 0; _i < files.length; _i++) {
+                    let path = files[_i];
+                    results[this.getRelativeName(path)] = new File(path);
+                }
+                return results;
+            }
+        }
+    });
+module.exports = exports = Directory;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/builder/Directory',_ion_builder_Directory_);
+    else
+      _ion_builder_Directory_.call(this, module, exports, require);
+  }
+  else {
+    _ion_builder_Directory_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_builder_File_ = function(module,exports,require){'use strict';
+const fs = require('fs'), np = require('path'), utility = require('./utility'), ion = require('../');
+const File = ion.defineClass({
+        id: 'File',
+        constructor: function File(path) {
+            if ((path != null ? path.constructor : void 0) === File) {
+                return path;
+            }
+            if (this.constructor !== File) {
+                return new File(path);
+            }
+            if (typeof path !== 'string') {
+                throw new Error('path string is required');
+            }
+            Object.defineProperties(this, {
+                path: {
+                    value: path,
+                    enumerable: true,
+                    writable: false
+                }
+            });
+            this.modified = utility.getModified(path);
+            ion.makeReactive(this, function () {
+                let watcher;
+                if (fs.existsSync(this.path)) {
+                    watcher = fs.watch(this.path, function () {
+                        this.modified = utility.getModified(this.path);
+                    }.bind(this));
+                }
+                return function () {
+                    return watcher != null ? watcher.close() : void 0;
+                };
+            }.bind(this));
+        },
+        properties: {
+            copyFrom: function (file) {
+                file = File(file);
+                this.write(file.read(null), null);
+                console.log('Copied: ' + np.normalize(this.path));
+            },
+            read: function (encoding) {
+                if (fs.existsSync(this.path)) {
+                    return utility.read(this.path, encoding);
+                } else {
+                    return null;
+                }
+            },
+            write: function (content, encoding) {
+                return utility.write(this.path, content, encoding);
+            },
+            toString: function () {
+                return this.path;
+            }
+        }
+    });
+module.exports = exports = File;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/builder/File',_ion_builder_File_);
+    else
+      _ion_builder_File_.call(this, module, exports, require);
+  }
+  else {
+    _ion_builder_File_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compilePegjs, exports, fs, getModuleId, isPrivate, minify, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility;
+
+if (global.window) {
+  return;
+}
+
+utility = require('./utility');
+
+fs = require('fs');
+
+np = require('path');
+
+process.on('uncaughtException', function(e) {
+  var _ref;
+  return console.error((_ref = e.stack) != null ? _ref : e);
+});
+
+module.exports = exports = {
+  removeExtension: removeExtension = utility.removeExtension,
+  changeExtension: changeExtension = utility.changeExtension,
+  normalizePath: normalizePath = utility.normalizePath,
+  minify: minify = function(root, files, options) {
+    var cwd, e, file, result;
+    cwd = process.cwd();
+    process.chdir(root);
+    try {
+      return require('uglify-js').minify(files, options);
+    } catch (_error) {
+      e = _error;
+      console.error(e);
+      result = {
+        code: ((function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = files.length; _i < _len; _i++) {
+            file = files[_i];
+            _results.push(fs.readFileSync(file, 'utf8'));
+          }
+          return _results;
+        })()).join('\n')
+      };
+      return result;
+    } finally {
+      process.chdir(cwd);
+    }
+  },
+  isPrivate: isPrivate = function(path) {
+    var result;
+    if (path == null) {
+      return false;
+    }
+    path = normalizePath(path);
+    result = path[0] === '_' || path.indexOf('/_') >= 0;
+    return result;
+  },
+  link: function(object) {
+    var existingPath, isDirectory, key, value, _results;
+    _results = [];
+    for (key in object) {
+      value = object[key];
+      if (!fs.existsSync(key)) {
+        console.error("link source not found: " + key);
+        continue;
+      }
+      isDirectory = utility.isDirectory(key);
+      existingPath = np.relative(value, key);
+      _results.push(console.log("link EXISTING: " + existing + "  LINK: " + value));
+    }
+    return _results;
+  },
+  runTests: function(manifestFile) {
+    return require('../browser/tester').spawnTests(manifestFile);
+  },
+  buildScriptIncludeFile: function(files, base) {
+    if (base == null) {
+      base = '';
+    }
+    return files.map(function(x) {
+      return "document.writeln(\"<script type='text/javascript' src='" + base + (normalizePath(x)) + "'></script>\");";
+    }).join('\n');
+  },
+  getModuleId: getModuleId = function(source, packageObject) {
+    var path, root;
+    if (typeof source === 'string') {
+      root = source;
+      path = packageObject;
+      return normalizePath(removeExtension(np.join(root, path)));
+    }
+    if (packageObject != null) {
+      return normalizePath(removeExtension(np.join(packageObject.name, np.relative(packageObject.directories.src, source.path))));
+    } else {
+      return null;
+    }
+  },
+  showPrettyError: showPrettyError = function(e, filename, input) {
+    var beep, message;
+    message = e.message = syntaxErrorToString(e, filename, input);
+    beep = '\x07';
+    return console.error(message + beep);
+  },
+  syntaxErrorToString: syntaxErrorToString = function(e, filename, code) {
+    var codeLine, colorize, end, first_column, first_line, last_column, last_line, marker, repeat, start, _ref, _ref1;
+    if (e.location == null) {
+      return e.toString();
+    }
+    repeat = function(str, n) {
+      var res;
+      res = '';
+      while (n > 0) {
+        if (n & 1) {
+          res += str;
+        }
+        n >>>= 1;
+        str += str;
+      }
+      return res;
+    };
+    _ref = e.location, first_line = _ref.first_line, first_column = _ref.first_column, last_line = _ref.last_line, last_column = _ref.last_column;
+    if (last_line == null) {
+      last_line = first_line;
+    }
+    if (last_column == null) {
+      last_column = first_column;
+    }
+    codeLine = code.split('\n')[first_line];
+    start = first_column;
+    end = first_line === last_line ? last_column + 1 : codeLine.length;
+    marker = repeat(' ', start) + repeat('^', end - start);
+    colorize = function(str) {
+      return "\x1B[1;31m" + str + "\x1B[0m";
+    };
+    codeLine = codeLine.slice(0, start) + colorize(codeLine.slice(start, end)) + codeLine.slice(end);
+    marker = colorize(marker);
+    return "" + filename + ":" + (first_line + 1) + ":" + (first_column + 1) + ": error: " + ((_ref1 = e.originalMessage) != null ? _ref1 : e.message) + "\n\n" + codeLine + "\n" + marker;
+  },
+  compileCoffeeScript: compileCoffeeScript = function(source, packageObject) {
+    var compiled, cs, e, filename, input, moduleId, options;
+    if (source.modified === 0) {
+      return;
+    }
+    moduleId = typeof packageObject === 'string' ? packageObject : getModuleId(source, packageObject);
+    input = source.read();
+    filename = source.path;
+    cs = require('coffee-script');
+    try {
+      console.log("Compile: " + filename);
+      compiled = cs.compile(input, options = {
+        bare: true
+      });
+      compiled = addBrowserShim(compiled, moduleId);
+      return compiled;
+    } catch (_error) {
+      e = _error;
+      showPrettyError(e, filename, input);
+    }
+  },
+  compilePegjs: compilePegjs = function(source, packageObject) {
+    var e, input, moduleId, parser, peg;
+    if (source.modified === 0) {
+      return;
+    }
+    moduleId = typeof packageObject === 'string' ? packageObject : getModuleId(source, packageObject);
+    try {
+      peg = require('pegjs');
+      input = source.read();
+      parser = peg.buildParser(input, {
+        cache: true,
+        output: "source"
+      });
+      source = "module.exports = " + parser;
+      source = addBrowserShim(source, moduleId);
+      return source;
+    } catch (_error) {
+      e = _error;
+      return console.error(e);
+    }
+  },
+  shimJavascript: shimJavascript = function(source, packageObject) {
+    var moduleId;
+    if (source.modified === 0) {
+      return;
+    }
+    moduleId = typeof packageObject === 'string' ? packageObject : getModuleId(source, packageObject);
+    return addBrowserShim(source.read(), moduleId);
+  },
+  addBrowserShim: addBrowserShim = function(sourceText, moduleId) {
+    var safeId;
+    if (moduleId != null) {
+      safeId = "_" + moduleId.replace(/[^a-zA-Z0-9]/g, '_') + "_";
+      sourceText = "void (function(){var " + safeId + " = function(module,exports,require){" + sourceText + "\n  }\n  if (typeof require === 'function') {\n    if (require.register)\n      require.register('" + moduleId + "'," + safeId + ");\n    else\n      " + safeId + ".call(this, module, exports, require);\n  }\n  else {\n    " + safeId + ".call(this);\n  }\n}).call(this)";
+    }
+    return sourceText;
+  }
+};
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/builder/index',_ion_builder_index_);
+    else
+      _ion_builder_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_builder_index_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_builder_ModuleBuilder_ = function(module,exports,require){'use strict';
+const ion = require('ion');
+const File = require('./File'), Directory = require('./Directory'), builder = require('./');
+module.exports = exports = function _template(inputName, outputName, options) {
+    if (this != null && this.constructor === _template) {
+        return ion.createRuntime({
+            type: 'Template',
+            body: [
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'input'
+                            },
+                            init: {
+                                type: 'NewExpression',
+                                callee: {
+                                    type: 'Identifier',
+                                    name: 'Directory'
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'inputName'
+                                    }]
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'output'
+                            },
+                            init: {
+                                type: 'NewExpression',
+                                callee: {
+                                    type: 'Identifier',
+                                    name: 'Directory'
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'outputName'
+                                    }]
+                            }
+                        }],
+                    kind: 'let'
+                },
+                {
+                    type: 'ForInStatement',
+                    left: {
+                        type: 'VariableDeclaration',
+                        declarations: [
+                            {
+                                type: 'VariableDeclarator',
+                                id: {
+                                    type: 'Identifier',
+                                    name: 'path'
+                                },
+                                init: null
+                            },
+                            {
+                                type: 'VariableDeclarator',
+                                id: {
+                                    type: 'Identifier',
+                                    name: 'file'
+                                },
+                                init: null
+                            }
+                        ],
+                        kind: 'let'
+                    },
+                    right: {
+                        type: 'CallExpression',
+                        callee: {
+                            type: 'MemberExpression',
+                            computed: false,
+                            object: {
+                                type: 'Identifier',
+                                name: 'input'
+                            },
+                            property: {
+                                type: 'Identifier',
+                                name: 'search'
+                            }
+                        },
+                        arguments: [{
+                                type: 'Literal',
+                                value: '.coffee'
+                            }]
+                    },
+                    body: {
+                        type: 'BlockStatement',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'target'
+                                        },
+                                        init: {
+                                            type: 'CallExpression',
+                                            callee: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'output'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'getFile'
+                                                }
+                                            },
+                                            arguments: [{
+                                                    type: 'CallExpression',
+                                                    callee: {
+                                                        type: 'MemberExpression',
+                                                        computed: false,
+                                                        object: {
+                                                            type: 'Identifier',
+                                                            name: 'builder'
+                                                        },
+                                                        property: {
+                                                            type: 'Identifier',
+                                                            name: 'changeExtension'
+                                                        }
+                                                    },
+                                                    arguments: [
+                                                        {
+                                                            type: 'Identifier',
+                                                            name: 'key'
+                                                        },
+                                                        {
+                                                            type: 'Literal',
+                                                            value: '.js'
+                                                        }
+                                                    ]
+                                                }]
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'moduleId'
+                                        },
+                                        init: {
+                                            type: 'CallExpression',
+                                            callee: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'builder'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'getModuleId'
+                                                }
+                                            },
+                                            arguments: [
+                                                {
+                                                    type: 'Identifier',
+                                                    name: 'name'
+                                                },
+                                                {
+                                                    type: 'Identifier',
+                                                    name: 'key'
+                                                }
+                                            ]
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'Property',
+                                key: {
+                                    type: 'Identifier',
+                                    name: 'output'
+                                },
+                                value: {
+                                    type: 'ObjectExpression',
+                                    objectType: null,
+                                    properties: [{
+                                            type: 'Property',
+                                            key: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'target'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'path'
+                                                }
+                                            },
+                                            value: {
+                                                type: 'CallExpression',
+                                                callee: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'builder'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'compileCoffeeScript'
+                                                    }
+                                                },
+                                                arguments: [
+                                                    {
+                                                        type: 'Identifier',
+                                                        name: 'source'
+                                                    },
+                                                    {
+                                                        type: 'Identifier',
+                                                        name: 'moduleId'
+                                                    }
+                                                ]
+                                            },
+                                            kind: 'init',
+                                            computed: true
+                                        }]
+                                },
+                                kind: 'init'
+                            }
+                        ]
+                    }
+                }
+            ]
+        }, {
+            require: require,
+            module: module,
+            exports: exports,
+            inputName: inputName,
+            outputName: outputName,
+            options: options,
+            File: File,
+            Directory: Directory,
+            builder: builder
+        });
+    }
+    let input = new Directory(inputName);
+    let output = new Directory(outputName);
+    {
+        let _ref = input.search('.coffee');
+        for (let path in _ref) {
+            let file = _ref[path];
+            let target = output.getFile(builder.changeExtension(key, '.js'));
+            let moduleId = builder.getModuleId(name, key);
+            if (output == null)
+                output = {};
+            output[target.path] = builder.compileCoffeeScript(source, moduleId);
+        }
+    }
+};
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/builder/ModuleBuilder',_ion_builder_ModuleBuilder_);
+    else
+      _ion_builder_ModuleBuilder_.call(this, module, exports, require);
+  }
+  else {
+    _ion_builder_ModuleBuilder_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_builder_utility_ = function(module,exports,require){var buildCoffee, changeExtension, copy, copyMetadata, cp, exec, exports, fixCommand, fs, getModified, isDirectory, isFile, isMatch, isWindows, list, makeDirectories, makeParentDirectories, normalizePath, np, read, removeExtension, spawn, touch, watchCoffee, write;
+
+if (global.window) {
+  return;
+}
+
+fs = require('fs');
+
+np = require('path');
+
+cp = require('child_process');
+
+isWindows = process.platform === 'win32';
+
+fixCommand = function(command) {
+  if (!isWindows) {
+    command = command.replace(/\.cmd\b/, "");
+  }
+  return command;
+};
+
+module.exports = exports = {
+  spawn: spawn = function(command, options, callback) {
+    var args, child, e, originalCommand;
+    originalCommand = command;
+    if (command == null) {
+      return typeof callback === "function" ? callback() : void 0;
+    }
+    command = fixCommand(command);
+    if (typeof options === 'function') {
+      callback = options;
+      options = null;
+    }
+    if (options == null) {
+      options = {};
+    }
+    if (options.stdio == null) {
+      options.stdio = 'inherit';
+    }
+    args = command.split(/\s+/);
+    command = args.shift();
+    try {
+      child = cp.spawn(command, args, options);
+      if (callback != null) {
+        child.on('exit', callback);
+      }
+      child.on('error', function(error) {
+        console.log("Error running " + originalCommand + "\n" + error);
+        return typeof callback === "function" ? callback() : void 0;
+      });
+    } catch (_error) {
+      e = _error;
+      console.log(originalCommand);
+      throw e;
+    }
+    return child;
+  },
+  exec: exec = function(command, options, callback) {
+    var e, originalCommand;
+    originalCommand = command;
+    if (command == null) {
+      return typeof callback === "function" ? callback() : void 0;
+    }
+    command = fixCommand(command);
+    if (typeof options === 'function') {
+      callback = options;
+      options = null;
+    }
+    if (options == null) {
+      options = {};
+    }
+    try {
+      return cp.exec(command, options, function(err, stdout, stderr) {
+        if (err != null) {
+          console.log(err);
+        }
+        if (stdout != null) {
+          console.log(stdout.toString());
+        }
+        if (stderr != null) {
+          console.log(stderr.toString());
+        }
+        return typeof callback === "function" ? callback() : void 0;
+      });
+    } catch (_error) {
+      e = _error;
+      console.log(originalCommand);
+      throw e;
+    }
+  },
+  copyMetadata: copyMetadata = function(source, target) {
+    var file, from, to, _i, _len, _ref, _results;
+    _ref = ["package.json", "README.md"];
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      file = _ref[_i];
+      from = np.join(source, file);
+      to = np.join(target, file);
+      if (fs.existsSync(from)) {
+        _results.push(copy(from, to));
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  },
+  buildCoffee: buildCoffee = function(input, output, callback) {
+    return spawn("coffee.cmd -c -o " + output + " " + input, callback);
+  },
+  watchCoffee: watchCoffee = function(input, output) {
+    return spawn("coffee.cmd -w -c -o " + output + " " + input);
+  },
+  isMatch: isMatch = function(value, match, defaultValue) {
+    var item, _i, _len;
+    if (defaultValue == null) {
+      defaultValue = false;
+    }
+    if (match == null) {
+      return defaultValue;
+    }
+    if ('function' === typeof match) {
+      return match(value);
+    }
+    if (Array.isArray(match)) {
+      for (_i = 0, _len = match.length; _i < _len; _i++) {
+        item = match[_i];
+        if (isMatch(value, item)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    value = normalizePath(value);
+    if (typeof match === 'string') {
+      return value.substring(value.length - match.length) === match;
+    }
+    value = value.split(/[\/\\]/g).pop();
+    return match.test(value);
+  },
+  defaultFileExclude: ["node_modules", "www"],
+  removeExtension: removeExtension = function(file) {
+    var dot;
+    dot = file.lastIndexOf('.');
+    if (dot > 0) {
+      return file.substring(0, dot);
+    } else {
+      return file;
+    }
+  },
+  changeExtension: changeExtension = function(file, ext) {
+    return removeExtension(file) + ext;
+  },
+  touch: touch = function(file) {
+    var now;
+    now = new Date();
+    return fs.utimesSync(file, now, now);
+  },
+  getModified: getModified = function(path) {
+    var e, stats, _ref, _ref1;
+    try {
+      if (fs.existsSync(path)) {
+        stats = fs.statSync(path);
+        return (_ref = (_ref1 = stats.mtime) != null ? _ref1.getTime() : void 0) != null ? _ref : 0;
+      }
+    } catch (_error) {
+      e = _error;
+      console.warn(e);
+    }
+    return 0;
+  },
+  isFile: isFile = function(file) {
+    var _ref;
+    return ((_ref = fs.statSync(file)) != null ? typeof _ref.isFile === "function" ? _ref.isFile() : void 0 : void 0) === true;
+  },
+  isDirectory: isDirectory = function(file) {
+    var _ref;
+    return ((_ref = fs.statSync(file)) != null ? typeof _ref.isDirectory === "function" ? _ref.isDirectory() : void 0 : void 0) === true;
+  },
+  list: list = function(dir, options, files) {
+    var exclude, file, recursive, _i, _len, _ref, _ref1, _ref2;
+    if (options == null) {
+      options = {};
+    }
+    if (files == null) {
+      files = [];
+    }
+    exclude = (_ref = options.exclude) != null ? _ref : exports.defaultFileExclude;
+    recursive = (_ref1 = options.recursive) != null ? _ref1 : true;
+    if (fs.existsSync(dir)) {
+      _ref2 = fs.readdirSync(dir);
+      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+        file = _ref2[_i];
+        file = np.join(dir, file);
+        if (!isMatch(file, exclude, false)) {
+          if (isFile(file)) {
+            if (isMatch(file, options.include, true)) {
+              files.push(file);
+            }
+          } else if (recursive) {
+            list(file, options, files);
+          }
+        }
+      }
+    }
+    return files;
+  },
+  makeDirectories: makeDirectories = function(dir) {
+    if (!Object.isString(dir)) {
+      throw new Error("dir is not a string: " + (JSON.stringify(dir)));
+    }
+    if (!fs.existsSync(dir)) {
+      makeDirectories(np.dirname(dir));
+      return fs.mkdirSync(dir);
+    }
+  },
+  makeParentDirectories: makeParentDirectories = function(file) {
+    return makeDirectories(np.dirname(file));
+  },
+  read: read = function(file, encoding) {
+    if (encoding === void 0) {
+      encoding = 'utf8';
+    }
+    return fs.readFileSync(file, encoding);
+  },
+  write: write = function(file, content, encoding) {
+    makeParentDirectories(file);
+    if (content != null) {
+      if (encoding === void 0 && typeof content === 'string') {
+        encoding = 'utf8';
+      }
+      return fs.writeFileSync(file, content, encoding);
+    } else {
+      return fs.unlinkSync(file);
+    }
+  },
+  copy: copy = function(source, target, include) {
+    var content, file, files, _i, _len, _results;
+    target = np.normalize(target);
+    if (isFile(source)) {
+      if (isMatch(source, include, true)) {
+        content = read(source);
+        write(target, content);
+        return console.log("Copied: " + (np.normalize(target)));
+      }
+    } else if (isDirectory(source)) {
+      files = fs.readdirSync(source);
+      _results = [];
+      for (_i = 0, _len = files.length; _i < _len; _i++) {
+        file = files[_i];
+        _results.push(copy(np.join(source, file), np.join(target, file), include));
+      }
+      return _results;
+    }
+  },
+  normalizePath: normalizePath = function(path) {
+    return path != null ? path.replace(/\\/g, "\/") : void 0;
+  },
+  watchCopy: function(input, output, include) {
+    var watcher;
+    watcher = require('./watcher');
+    return watcher.watchDirectory(input, {
+      include: include
+    }, function(inputFile) {
+      var outputFile;
+      outputFile = np.join(output, np.relative(input, inputFile));
+      return copy(inputFile, outputFile);
+    });
+  },
+  getMatches: function(s, regex, group) {
+    var match, results;
+    if (!regex.global) {
+      throw 'regex must be declared with global modifier /trailing/g';
+    }
+    results = [];
+    while (match = regex.exec(s)) {
+      results.push(group > 0 ? match[group] : match);
+    }
+    return results;
+  }
+};
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/builder/utility',_ion_builder_utility_);
+    else
+      _ion_builder_utility_.call(this, module, exports, require);
+  }
+  else {
+    _ion_builder_utility_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_builder_watcher_ = function(module,exports,require){var fs, np, util;
+
+if (global.window) {
+  return;
+}
+
+fs = require('fs');
+
+np = require('path');
+
+util = require('./utility');
+
+exports.watchDirectory = function(dirname, options, listener) {
+  var filter, fsListener, initial, notifyListener, unwatchFile, watchFile, watchedFiles;
+  if (listener == null) {
+    listener = options;
+    options = {};
+  }
+  if (options.persistent == null) {
+    options.persistent = true;
+  }
+  if (options.interval == null) {
+    options.interval = 100;
+  }
+  if (options.recursive == null) {
+    options.recursive = true;
+  }
+  if (options.initial == null) {
+    options.initial = 'initial';
+  }
+  if (options.exclude == null) {
+    options.exclude = util.defaultFileExclude;
+  }
+  filter = function(name) {
+    if (util.isMatch(name, options.exclude, false)) {
+      return false;
+    } else {
+      return util.isMatch(name, options.include, true);
+    }
+  };
+  watchedFiles = {};
+  notifyListener = function(filename, curr, prev, change, async) {
+    if (async == null) {
+      async = false;
+    }
+    if (filter(filename)) {
+      if (async) {
+        return process.nextTick(function() {
+          return listener(filename, curr, prev, change);
+        });
+      } else {
+        return listener(filename, curr, prev, change);
+      }
+    }
+  };
+  fsListener = function(filename, depth, curr, prev) {
+    var change;
+    change = curr.nlink === 0 ? 'deleted' : prev.nlink === 0 ? 'created' : 'modified';
+    notifyListener(filename, curr, prev, change);
+    if (change !== 'deleted') {
+      return watchFile(filename, depth, curr);
+    } else {
+      return unwatchFile(filename);
+    }
+  };
+  unwatchFile = function(filename) {
+    fs.unwatchFile(filename, watchedFiles[filename]);
+    return delete watchedFiles[filename];
+  };
+  watchFile = function(filename, depth, stats) {
+    var boundListener, child, _i, _len, _ref;
+    if (depth == null) {
+      depth = 0;
+    }
+    if (fs.existsSync(filename)) {
+      if (stats == null) {
+        stats = fs.statSync(filename);
+      }
+      if (stats.nlink > 0) {
+        if (stats.isDirectory()) {
+          if (!util.isMatch(filename, options.exclude, false)) {
+            if (depth === 0 || options.recursive) {
+              _ref = fs.readdirSync(filename);
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                child = _ref[_i];
+                child = np.join(filename, child);
+                watchFile(child, depth + 1);
+              }
+            }
+          }
+        }
+        if (watchedFiles[filename] == null) {
+          boundListener = fsListener.bind(this, filename, depth);
+          watchedFiles[filename] = boundListener;
+          fs.watchFile(filename, options, boundListener);
+          if (initial) {
+            notifyListener(filename, stats, stats, initial, true);
+          }
+        }
+      }
+    }
+  };
+  initial = options.initial;
+  watchFile(dirname);
+  initial = 'created';
+  return function() {
+    var key, _results;
+    _results = [];
+    for (key in watchedFiles) {
+      _results.push(unwatchFile(key));
+    }
+    return _results;
+  };
+};
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/builder/watcher',_ion_builder_watcher_);
+    else
+      _ion_builder_watcher_.call(this, module, exports, require);
+  }
+  else {
+    _ion_builder_watcher_.call(this);
+  }
+}).call(this)
 void (function(){var _ion_compiler_astFunctions_ = function(module,exports,require){'use strict';
 const addStatement = exports.addStatement = function (node, statement, index, offset) {
         let body = node.body;
@@ -14556,7 +15625,7 @@ propertyStatements = function(node, context) {
   parent = context.parentNode();
   if (node.type === 'Property' && !(parent.type === 'ObjectExpression' || parent.type === 'ObjectPattern')) {
     createAssignments = function(path, value) {
-      var newPath, property, _i, _ref1;
+      var newPath, property, _i, _ref1, _ref2;
       if (value.type === 'ObjectExpression' && (value.objectType == null)) {
         _ref1 = value.properties;
         for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
@@ -14569,7 +15638,7 @@ propertyStatements = function(node, context) {
           };
           createAssignments(newPath, property.value);
         }
-        if (value.create !== false) {
+        if (value.create !== false && !(path.type === 'Identifier' && ((_ref2 = context.getVariableInfo(path.name)) != null ? _ref2.kind : void 0) === 'const')) {
           return context.addStatement({
             type: 'IfStatement',
             test: {
@@ -15019,20 +16088,13 @@ getExternalIdentifiers = function(node, callback) {
 };
 
 wrapTemplateInnerFunctions = function(node, context) {
-  var contextId, id, key, name, requiresWrapper, value, variables, _ref1, _ref2;
+  var contextId, id, name, requiresWrapper, variables;
   if (context.parentReactive()) {
     if (node.type === 'FunctionExpression' && (node.toLiteral == null)) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', (_ref1 = node.name) != null ? _ref1.name : void 0);
-      _ref2 = context.scope().variables;
-      for (key in _ref2) {
-        value = _ref2[key];
-        console.log('::::::::::::::::::::::::::::::::', key);
-      }
       variables = {};
       getExternalIdentifiers(node, function(id) {
-        var _ref3, _ref4;
-        console.log('ID: ' + id.name, context.getVariableInfo(id.name));
-        if (id.name !== ((_ref3 = node.id) != null ? _ref3.name : void 0) && (((_ref4 = context.scope()) != null ? _ref4.variables[id.name] : void 0) != null)) {
+        var _ref1, _ref2;
+        if (id.name !== ((_ref1 = node.id) != null ? _ref1.name : void 0) && (((_ref2 = context.scope()) != null ? _ref2.variables[id.name] : void 0) != null)) {
           return variables[id.name] = id;
         }
       });
@@ -16045,6 +17107,27 @@ const patch = exports.patch = function (target, values) {
         } else {
             return instance === type;
         }
+    }, makeReactive = exports.makeReactive = function (object, activate) {
+        let observeCount = 0;
+        let deactivate = null;
+        return Object.defineProperties(object, {
+            onObserved: {
+                value: function () {
+                    observeCount++;
+                    if (observeCount === 1) {
+                        deactivate = activate.call(object);
+                    }
+                }
+            },
+            unObserved: {
+                value: function () {
+                    observeCount--;
+                    if (observeCount === 0) {
+                        deactivate != null ? deactivate() : void 0;
+                    }
+                }
+            }
+        });
     }, test = exports.test = {
         defineClass: function () {
             const Foo = defineClass({
@@ -16638,7 +17721,7 @@ const Context = ion.defineClass({
                 return Factory.createRuntime(this, node);
             },
             get: function (name) {
-                let variable = this.variables[name];
+                let variable = this.getVariable(name);
                 if (!(variable != null)) {
                     throw new Error('Variable not found: \'' + name + '\'');
                 }
@@ -16654,9 +17737,13 @@ const Context = ion.defineClass({
                 }
                 return value;
             },
+            getVariable: function (name) {
+                return this.variables[name] != null ? this.variables[name] : this.parent != null ? this.parent.getVariable(name) : void 0;
+            },
             setVariable: function (name, node) {
                 if (name != null) {
-                    return this.variables[name] = this.createRuntime(node);
+                    let variable = this.variables[name] = this.createRuntime(node);
+                    return variable;
                 }
             },
             getVariableExpression: function (name) {
@@ -17505,7 +18592,7 @@ const Property = ion.defineClass({
                 this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
                 this.keyExpression.watch(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : function (key) {
                     if (key != null && this.valueExpression.setLeftValue != null) {
-                        let currentValue = ion.get(this.context.output, key);
+                        let currentValue = this.context.output ? ion.get(this.context.output, key) : this.context.get(key);
                         if (currentValue != null) {
                             this.valueExpression.setLeftValue(currentValue);
                         }
@@ -19126,6 +20213,100 @@ const templates = [
                     y: 2
                 }
             }
+        ],
+        [
+            function _template19(input, output) {
+                if (this != null && this.constructor === _template19) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'Property',
+                                key: {
+                                    type: 'Identifier',
+                                    name: 'output'
+                                },
+                                value: {
+                                    type: 'ObjectExpression',
+                                    objectType: null,
+                                    properties: [{
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'e'
+                                            },
+                                            value: {
+                                                type: 'BinaryExpression',
+                                                operator: '+',
+                                                left: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'input'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'a'
+                                                    }
+                                                },
+                                                right: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'input'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'b'
+                                                    }
+                                                }
+                                            },
+                                            kind: 'init'
+                                        }]
+                                },
+                                kind: 'init'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'Identifier',
+                                    name: 'output'
+                                }
+                            }
+                        ]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        input: input,
+                        output: output,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
+                }
+                if (output == null)
+                    output = {};
+                output.e = input.a + input.b;
+                return output;
+            },
+            [
+                {
+                    a: 1,
+                    b: 2
+                },
+                {
+                    c: 3,
+                    d: 4
+                }
+            ],
+            {
+                c: 3,
+                d: 4,
+                e: 3
+            }
         ]
     ];
 const test = exports.test = function () {
@@ -19344,7 +20525,7 @@ tests = {
     column: 13
   },
   "let x = 0 in Array\nlet y = \"foo\" instanceof String": "'use strict';\nlet x = 0 in Array;\nlet y = 'foo' instanceof String;",
-  "let name = \"Kris\"\nexport template ->\n    return {}\n        for key, value of foo\n            let x = 1\n            onclick: ->\n                alert('Hey ' + key)": null
+  "const output = {}\noutput:\n    x: 1\n    y: 2": "'use strict';\nconst output = {};\noutput.x = 1;\noutput.y = 2;"
 };
 
 if (global.window != null) {
@@ -20344,9 +21525,12 @@ module.exports = exports = function _template() {
                                                         },
                                                         value: {
                                                             type: 'Function',
-                                                            context: false,
-                                                            value: function () {
-                                                                alert('fuck you ' + name);
+                                                            context: true,
+                                                            value: function (_context) {
+                                                                return function () {
+                                                                    const name = _context.get('name');
+                                                                    alert('hello ' + name);
+                                                                };
                                                             }
                                                         },
                                                         kind: 'init'
@@ -20441,7 +21625,7 @@ module.exports = exports = function _template() {
                     _ref6.style.textDecoration = 'underline';
                     _ref6.style.cursor = 'pointer';
                     _ref6.onclick = function () {
-                        alert('fuck you ' + name);
+                        alert('hello ' + name);
                     };
                     ion.add(_ref6, name + ' ' + (age + data.offset));
                 }

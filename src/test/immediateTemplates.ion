@@ -113,6 +113,15 @@ const templates = []
             ->
                 @position = {x:1,y:2}
         {position:{x:10,y:2}}
+    []
+        template (input, output) ->
+            output:
+                e: input.a + input.b
+            return output
+        []
+            {a:1,b:2}
+            {c:3,d:4}
+        {c:3,d:4,e:3}
 
 export const
     test = ->

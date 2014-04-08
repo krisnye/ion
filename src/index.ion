@@ -161,6 +161,22 @@ export const
             return instance instanceof type
         else
             return instance is type
+    makeReactive = (object, activate) ->
+        let observeCount = 0
+        let deactivate = null
+        return (Object.defineProperties)
+            object
+            {}
+                onObserved:
+                    value: ->
+                        observeCount++
+                        if observeCount is 1
+                            deactivate = activate.call(object)
+                unObserved:
+                    value: ->
+                        observeCount--
+                        if observeCount is 0
+                            deactivate?()
     test =
         defineClass: ->
             const Foo = (defineClass)

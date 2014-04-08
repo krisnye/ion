@@ -14,7 +14,9 @@ export class Property extends Statement
             (@keyExpression.watch)
                 @keyWatcher ?= (key) =>
                     if key? and @valueExpression.setLeftValue?
-                        let currentValue = ion.get(@context.output, key)
+                        # if there is a context.output then get the current key from that
+                        # otherwise the key is probably referring to a variable
+                        let currentValue = @context.output ? ion.get(@context.output, key) : @context.get(key)
                         if currentValue?
                             @valueExpression.setLeftValue(currentValue)
 

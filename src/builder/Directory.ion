@@ -1,0 +1,73 @@
+
+const
+    fs = import 'fs'
+    np = import 'path'
+    utility = import './utility'
+    watcher = import './watcher'
+    File = import './File'
+    ion = import '../'
+
+export class Directory
+    constructor: (path) ->
+        if path?
+            @path = String(path)
+    properties:
+        exists:
+            # exists is not reactive
+            get: -> fs.existsSync(@path)
+        path: '.'
+        toString: -> @path
+        get: (path) ->
+            # allow us to get our own properties
+            if @hasOwnProperty(path) or @[path]?
+                return @[path]
+
+            path = @getAbsoluteName(path)
+            if fs.existsSync(path)
+                return utility.read(path)
+            else
+                return undefined
+        set: (path, content) ->
+            if @hasOwnProperty(path) or @[path]?
+                return @[path] = content
+
+            path = @getAbsoluteName(path)
+            if content?
+                console.log("Writing: " + path)
+            else
+                console.log("Deleting: " + path)
+            utility.write(path, content)
+            return content
+        getFile: (path) -> new File(@getAbsoluteName(path))
+        getDirectory: (path) -> new Directory(@getAbsoluteName(path))
+        getRelativeName: (path) -> np.relative(@path, String(path))
+        getAbsoluteName: (path) -> np.join(@path, String(path))
+        search: (include, exclude) ->
+            let options =
+                initial: false
+            if include?
+                options.include = include
+            if exclude?
+                options.exclude = exclude
+            let results = {}
+            (ion.makeReactive)
+                results
+                =>
+                    let unwatch = (watcher.watchDirectory)
+                        @path
+                        options
+                        (filename) =>
+                            let path = @getRelativeName(filename)
+                            if fs.existsSync(filename)
+                                if not results[path]?
+                                    results[path] = new File(filename)
+                            else
+                                delete results[path]
+                    return unwatch
+            let files = utility.list(@path, options)
+            for path in files
+                results[@getRelativeName(path)] = new File(path)
+            return results
+
+
+

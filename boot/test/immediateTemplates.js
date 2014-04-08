@@ -1444,6 +1444,100 @@ const templates = [
                     y: 2
                 }
             }
+        ],
+        [
+            function _template19(input, output) {
+                if (this != null && this.constructor === _template19) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'Property',
+                                key: {
+                                    type: 'Identifier',
+                                    name: 'output'
+                                },
+                                value: {
+                                    type: 'ObjectExpression',
+                                    objectType: null,
+                                    properties: [{
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'e'
+                                            },
+                                            value: {
+                                                type: 'BinaryExpression',
+                                                operator: '+',
+                                                left: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'input'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'a'
+                                                    }
+                                                },
+                                                right: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'input'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'b'
+                                                    }
+                                                }
+                                            },
+                                            kind: 'init'
+                                        }]
+                                },
+                                kind: 'init'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'Identifier',
+                                    name: 'output'
+                                }
+                            }
+                        ]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        input: input,
+                        output: output,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
+                }
+                if (output == null)
+                    output = {};
+                output.e = input.a + input.b;
+                return output;
+            },
+            [
+                {
+                    a: 1,
+                    b: 2
+                },
+                {
+                    c: 3,
+                    d: 4
+                }
+            ],
+            {
+                c: 3,
+                d: 4,
+                e: 3
+            }
         ]
     ];
 const test = exports.test = function () {

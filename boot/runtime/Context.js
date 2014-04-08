@@ -19,7 +19,7 @@ const Context = ion.defineClass({
                 return Factory.createRuntime(this, node);
             },
             get: function (name) {
-                let variable = this.variables[name];
+                let variable = this.getVariable(name);
                 if (!(variable != null)) {
                     throw new Error('Variable not found: \'' + name + '\'');
                 }
@@ -35,9 +35,13 @@ const Context = ion.defineClass({
                 }
                 return value;
             },
+            getVariable: function (name) {
+                return this.variables[name] != null ? this.variables[name] : this.parent != null ? this.parent.getVariable(name) : void 0;
+            },
             setVariable: function (name, node) {
                 if (name != null) {
-                    return this.variables[name] = this.createRuntime(node);
+                    let variable = this.variables[name] = this.createRuntime(node);
+                    return variable;
                 }
             },
             getVariableExpression: function (name) {
