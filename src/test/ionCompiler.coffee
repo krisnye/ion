@@ -601,13 +601,13 @@ tests =
             _ref.x = 0;
             _ref.y = 0;
         }
-        origin.a = _ref;
+        origin.a = ion.patch(origin.a, _ref);
         let _ref2 = new Point();
         {
             _ref2.x = 10;
             _ref2.y = 20;
         }
-        origin.b = _ref2;
+        origin.b = ion.patch(origin.b, _ref2);
     }
     """
     """
@@ -630,7 +630,7 @@ tests =
         _ref.x = 0;
         _ref.y = 0;
     }
-    ion.set(input, {
+    ion.patch(input, {
         x: 10,
         y: 20,
         z: {
@@ -1171,7 +1171,7 @@ tests =
     'use strict';
     const ion = require('ion');
     const output = {};
-    ion.set(output, {
+    ion.patch(output, {
         x: 1,
         y: 2
     });
@@ -1190,7 +1190,7 @@ tests =
             _ref[c] = d;
         }
     }
-    ion.set(output, _ref);
+    ion.patch(output, _ref);
     """
     """
     output: {}
@@ -1200,6 +1200,14 @@ tests =
     [output]:
         x: 1
     """: {line: 1, column: 2}
+    """
+    #
+    #
+
+    #
+    """: """
+    'use strict';
+    """
 
 if global.window?
     return
@@ -1209,7 +1217,7 @@ exports.test = ->
         if expected is null
             console.log '---------------------------------------------------'
             console.log JSON.stringify index.compile(input, {postprocess:false}), null, '  '
-            console.log '-Postprocessed------------------------------------'
+            console.log '-Postprocessed-------------------------------------'
             console.log JSON.stringify index.compile(input, {generate:false}), null, '  '
             console.log '---------------------------------------------------'
             console.log index.compile input, {loc:false}

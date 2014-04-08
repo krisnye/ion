@@ -1,10 +1,10 @@
 void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
 const ion = require('./'), isObject = function (a) {
         return a != null && typeof a === 'object';
-    };
-const apply = exports.apply = function (target, values, deleteNull) {
-        if (deleteNull == null)
-            deleteNull = true;
+    }, deleteValue = void 0;
+const apply = exports.apply = function (target, values, deleteUndefined) {
+        if (deleteUndefined == null)
+            deleteUndefined = true;
         if ((values != null ? values.constructor : void 0) !== Object) {
             return values;
         }
@@ -13,8 +13,8 @@ const apply = exports.apply = function (target, values, deleteNull) {
         }
         for (let key in values) {
             let value = values[key];
-            let patchedValue = apply(target[key], value, deleteNull);
-            if (deleteNull && !(value != null)) {
+            let patchedValue = apply(target[key], value, deleteUndefined);
+            if (deleteUndefined && value === deleteValue) {
                 delete target[key];
             } else {
                 target[key] = patchedValue;
@@ -56,7 +56,7 @@ const apply = exports.apply = function (target, values, deleteNull) {
                 pendingPatch = {};
                 for (let _i = 0; _i < changes.length; _i++) {
                     let change = changes[_i];
-                    pendingPatch[change.name] = object[change.name] != null ? object[change.name] : null;
+                    pendingPatch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
                 }
                 processPatch(pendingPatch);
                 ion.nextTick(function () {
@@ -229,21 +229,17 @@ const apply = exports.apply = function (target, values, deleteNull) {
                         done();
                         unwatch();
                     });
-                if (source == null)
-                    source = {};
-                source.name = 'Fred';
-                if (source.children == null)
-                    source.children = {};
-                if (source.children.Orion == null)
-                    source.children.Orion = {};
-                source.children.Orion.a = 1;
-                source.children.Orion.b = 2;
-                source.children.Orion.c = 12;
-                if (source.children.Sadera == null)
-                    source.children.Sadera = {};
-                if (source.children.Sadera.grandchildren == null)
-                    source.children.Sadera.grandchildren = {};
-                source.children.Sadera.grandchildren.three = 3;
+                ion.patch(source, {
+                    name: 'Fred',
+                    children: {
+                        Orion: {
+                            a: 1,
+                            b: 2,
+                            c: 12
+                        },
+                        Sadera: { grandchildren: { three: 3 } }
+                    }
+                });
                 delete source.children.Third;
             }
         };

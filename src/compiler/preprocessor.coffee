@@ -25,9 +25,13 @@ exports.preprocess = preprocess = (source, sourceMapping) ->
     totalIndent = 0
     indentStack = []
     lines = common.splitLines source
+    nonCommentCount = 0
     writeLine = (line, inputIndex) ->
         if inputIndex?
             sourceMapping?[output.length] = inputIndex
+        trimmed = line.trim()
+        if trimmed.length > 0 and line.trim()[0] isnt '#'
+            nonCommentCount++
         output.push line
     outdent = (inputIndex) ->
         indentStack.pop()
@@ -56,7 +60,10 @@ exports.preprocess = preprocess = (source, sourceMapping) ->
     while indentStack.length > 0
         outdent lines.length
 
-    return common.unindentString common.joinLines(output), sourceMapping
+    if nonCommentCount is 0
+        return ""
+    else
+        return common.unindentString common.joinLines(output), sourceMapping
 
 # sample = """
 

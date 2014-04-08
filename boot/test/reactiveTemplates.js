@@ -63,7 +63,7 @@ const templates = [
                 b: 2
             },
             {
-                b: null,
+                b: void 0,
                 c: 3
             },
             [
@@ -173,9 +173,11 @@ const templates = [
                     return a * 2;
                 }
                 let _ref5 = {};
-                for (let key in properties) {
-                    let value = properties[key];
-                    _ref5[key] = double(value);
+                {
+                    for (let key in properties) {
+                        let value = properties[key];
+                        _ref5[key] = double(value);
+                    }
                 }
                 return _ref5;
             },
@@ -367,10 +369,12 @@ const templates = [
                     return a * factor;
                 }
                 let _ref6 = {};
-                for (let key in properties) {
-                    let value = properties[key];
-                    if (key !== 'factor') {
-                        _ref6[key] = multiply(value);
+                {
+                    for (let key in properties) {
+                        let value = properties[key];
+                        if (key !== 'factor') {
+                            _ref6[key] = multiply(value);
+                        }
                     }
                 }
                 return _ref6;
@@ -381,7 +385,7 @@ const templates = [
             },
             {
                 x: 4,
-                y: null,
+                y: void 0,
                 z: 5,
                 factor: 10
             },
@@ -601,33 +605,35 @@ const templates = [
         ]
     ];
 let _ref7 = {};
-for (let _i2 = 0; _i2 < templates.length; _i2++) {
-    let _ref8 = templates[_i2];
-    let name = _ref8[0];
-    let templateType = _ref8[1];
-    let argument = _ref8[2];
-    let patch = _ref8[3];
-    let expected = _ref8[4];
-    if (expected != null) {
-        _ref7[name] = function (templateType, argument, patch, expected) {
-            return function (done) {
-                let template = new templateType(argument);
-                function checkIfDone(check) {
-                    if (JSON.stringify(check) === JSON.stringify(expected)) {
-                        template.deactivate();
-                        done();
+{
+    for (let _i2 = 0; _i2 < templates.length; _i2++) {
+        let _ref8 = templates[_i2];
+        let name = _ref8[0];
+        let templateType = _ref8[1];
+        let argument = _ref8[2];
+        let patch = _ref8[3];
+        let expected = _ref8[4];
+        if (expected != null) {
+            _ref7[name] = function (templateType, argument, patch, expected) {
+                return function (done) {
+                    let template = new templateType(argument);
+                    function checkIfDone(check) {
+                        if (JSON.stringify(check) === JSON.stringify(expected)) {
+                            template.deactivate();
+                            done();
+                        }
                     }
-                }
-                template.activate();
-                template.watch(function (value) {
-                    checkIfDone(value);
-                    ion.observe(value, function (changes) {
+                    template.activate();
+                    template.watch(function (value) {
                         checkIfDone(value);
+                        ion.observe(value, function (changes) {
+                            checkIfDone(value);
+                        });
                     });
-                });
-                ion.patch(argument, patch);
-            };
-        }(templateType, argument, patch, expected);
+                    ion.patch(argument, patch);
+                };
+            }(templateType, argument, patch, expected);
+        }
     }
 }
 module.exports = exports = { test: _ref7 };

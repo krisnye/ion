@@ -283,13 +283,13 @@ module.exports = exports = function _template() {
     let _ref3 = new div();
     {
         let _ref4 = new div();
-        ion.add(_ref4, 'Hello ' + data.name);
+        {
+            ion.add(_ref4, 'Hello ' + data.name);
+        }
         ion.add(_ref3, _ref4);
         let _ref5 = new div();
         {
-            if (_ref5.style == null)
-                _ref5.style = {};
-            _ref5.style.color = 'red';
+            _ref5.style = ion.patch(_ref5.style, { color: 'red' });
             ion.add(_ref5, 'red');
         }
         ion.add(_ref3, _ref5);
@@ -299,10 +299,10 @@ module.exports = exports = function _template() {
                 let age = _ref2[name];
                 let _ref6 = new div();
                 {
-                    if (_ref6.style == null)
-                        _ref6.style = {};
-                    _ref6.style.textDecoration = 'underline';
-                    _ref6.style.cursor = 'pointer';
+                    _ref6.style = ion.patch(_ref6.style, {
+                        textDecoration: 'underline',
+                        cursor: 'pointer'
+                    });
                     _ref6.onclick = function () {
                         alert('hello ' + name);
                     };

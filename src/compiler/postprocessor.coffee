@@ -569,6 +569,8 @@ typedObjectExpressions = (node, context) ->
                     object: subnode.output
                     property: subnode.key
                     computed: subnode.computed || subnode.key.type isnt 'Identifier'
+            else if isFunctionNode(subnode)
+                subcontext.skip()
             else if subnode.type is 'ExpressionStatement'
                 if not isArray
                     ensureIonVariable(context)
@@ -603,17 +605,33 @@ propertyStatements = (node, context) ->
     parent = context.parentNode()
     if node.type is 'Property' and not (parent.type is 'ObjectExpression' or parent.type is 'ObjectPattern')
         if node.output?
-            context.replace
-                type: 'ExpressionStatement'
-                expression:
-                    type: 'AssignmentExpression'
-                    operator: '='
-                    left:
-                        type: 'MemberExpression'
-                        object: node.output
-                        property: node.key
-                        computed: node.computed
-                    right: node.value
+            if node.value.type is 'ObjectExpression'
+                context.replace
+                    type: 'ExpressionStatement'
+                    expression:
+                        type: 'AssignmentExpression'
+                        operator: '='
+                        left: left =
+                            type: 'MemberExpression'
+                            object: node.output
+                            property: node.key
+                            computed: node.computed
+                        right:
+                            type: 'CallExpression'
+                            callee: getPathExpression 'ion.patch'
+                            arguments: [ion.clone(left, true), node.value]
+            else
+                context.replace
+                    type: 'ExpressionStatement'
+                    expression:
+                        type: 'AssignmentExpression'
+                        operator: '='
+                        left:
+                            type: 'MemberExpression'
+                            object: node.output
+                            property: node.key
+                            computed: node.computed
+                        right: node.value
         else
             if node.computed
                 throw context.error "dynamic property expression invalid here", node.key
@@ -624,7 +642,7 @@ propertyStatements = (node, context) ->
                 type: 'ExpressionStatement'
                 expression:
                     type: 'CallExpression'
-                    callee: getPathExpression 'ion.set'
+                    callee: getPathExpression 'ion.patch'
                     arguments: [node.key, node.value]
 
 classExpressions = (node, context) ->

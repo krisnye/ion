@@ -53,15 +53,15 @@ tests = {
   "(foo)\n    1\n    2": "'use strict';\nfoo(1, 2);",
   "(compile)\n    foo: 1\n    bar: 2\n    baz:\n        a: 1\n        b: 2": "'use strict';\ncompile({\n    foo: 1,\n    bar: 2,\n    baz: {\n        a: 1,\n        b: 2\n    }\n});",
   "let array = [1,2,3]\n    4\n    5\n    6": "'use strict';\nlet array = [\n        1,\n        2,\n        3,\n        4,\n        5,\n        6\n    ];",
-  "let point = new Point(10, 20)\n    z: 30": "'use strict';\nlet point = new Point(10, 20);\npoint.z = 30;",
-  "let object = {x:1, y:2}\n    z: 3": "'use strict';\nlet object = {\n        x: 1,\n        y: 2\n    };\nobject.z = 3;",
+  "let point = new Point(10, 20)\n    z: 30": "'use strict';\nlet point = new Point(10, 20);\n{\n    point.z = 30;\n}",
+  "let object = {x:1, y:2}\n    z: 3": "'use strict';\nlet object = {\n        x: 1,\n        y: 2\n    };\n{\n    object.z = 3;\n}",
   "let origin = Point\n    x: 1\n    y: 2": "'use strict';\nlet origin = new Point();\n{\n    origin.x = 1;\n    origin.y = 2;\n}",
-  "let origin = Line\n    a: Point\n        x: 0\n        y: 0\n    b: Point\n        x: 10\n        y: 20": "'use strict';\nlet origin = new Line();\n{\n    let _ref = new Point();\n    {\n        _ref.x = 0;\n        _ref.y = 0;\n    }\n    origin.a = _ref;\n    let _ref2 = new Point();\n    {\n        _ref2.x = 10;\n        _ref2.y = 20;\n    }\n    origin.b = _ref2;\n}",
-  "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: Point\n        x: 0\n        y: 0": "'use strict';\nif (input == null)\n    input = {};\ninput.x = 10;\ninput.y = 20;\nif (input.z == null)\n    input.z = {};\ninput.z.a = 1;\ninput.z.b = 2;\nlet _ref = new Point();\n{\n    _ref.x = 0;\n    _ref.y = 0;\n}\ninput.w = _ref;",
+  "let origin = Line\n    a: Point\n        x: 0\n        y: 0\n    b: Point\n        x: 10\n        y: 20": "'use strict';\nlet origin = new Line();\n{\n    let _ref = new Point();\n    {\n        _ref.x = 0;\n        _ref.y = 0;\n    }\n    origin.a = ion.patch(origin.a, _ref);\n    let _ref2 = new Point();\n    {\n        _ref2.x = 10;\n        _ref2.y = 20;\n    }\n    origin.b = ion.patch(origin.b, _ref2);\n}",
+  "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: Point\n        x: 0\n        y: 0": "'use strict';\nconst ion = require('ion');\nlet _ref = new Point();\n{\n    _ref.x = 0;\n    _ref.y = 0;\n}\nion.patch(input, {\n    x: 10,\n    y: 20,\n    z: {\n        a: 1,\n        b: 2\n    },\n    w: _ref\n});",
   "let point = Point\n    [x]: 1\n    [y]: 2": "'use strict';\nlet point = new Point();\n{\n    point[x] = 1;\n    point[y] = 2;\n}",
   "let self = @\nlet x = @x\nlet y = @.y\nlet z = this.z": "'use strict';\nlet self = this;\nlet x = this.x;\nlet y = this.y;\nlet z = this.z;",
-  "let x = {}\n    [key]: value": "'use strict';\nlet x = {};\nx[key] = value;",
-  "if foo\n    return {}\n        for key, value of object\n            [key]: value": "'use strict';\nif (foo) {\n    let _ref = {};\n    for (let key in object) {\n        let value = object[key];\n        _ref[key] = value;\n    }\n    return _ref;\n}",
+  "let x = {}\n    [key]: value": "'use strict';\nlet x = {};\n{\n    x[key] = value;\n}",
+  "if foo\n    return {}\n        for key, value of object\n            [key]: value": "'use strict';\nif (foo) {\n    let _ref = {};\n    {\n        for (let key in object) {\n            let value = object[key];\n            _ref[key] = value;\n        }\n    }\n    return _ref;\n}",
   "for x, y, z of foo\n    log(foo)": {
     line: 1,
     column: 11
@@ -112,9 +112,9 @@ tests = {
     column: 1
   },
   "let object =\n    double(a) -> a * 2\n    if a\n        [key]: value\n    else\n        foo: double(2)": "'use strict';\nlet object = {};\n{\n    function double(a) {\n        return a * 2;\n    }\n    if (a) {\n        object[key] = value;\n    } else {\n        object.foo = double(2);\n    }\n}",
-  "let items = []\n    for key, value of window\n        value": "'use strict';\nlet items = [];\nfor (let key in window) {\n    let value = window[key];\n    items.push(value);\n}",
-  "let foo = div\n    span\n        'Hello'": "'use strict';\nconst ion = require('ion');\nlet foo = new div();\nlet _ref = new span();\nion.add(_ref, 'Hello');\nion.add(foo, _ref);",
-  "const ion = import './'\nlet foo = div\n    span\n        'Hello'": "'use strict';\nconst ion = require('./');\nlet foo = new div();\nlet _ref = new span();\nion.add(_ref, 'Hello');\nion.add(foo, _ref);",
+  "let items = []\n    for key, value of window\n        value": "'use strict';\nlet items = [];\n{\n    for (let key in window) {\n        let value = window[key];\n        items.push(value);\n    }\n}",
+  "let foo = div\n    span\n        'Hello'": "'use strict';\nconst ion = require('ion');\nlet foo = new div();\n{\n    let _ref = new span();\n    {\n        ion.add(_ref, 'Hello');\n    }\n    ion.add(foo, _ref);\n}",
+  "const ion = import './'\nlet foo = div\n    span\n        'Hello'": "'use strict';\nconst ion = require('./');\nlet foo = new div();\n{\n    let _ref = new span();\n    {\n        ion.add(_ref, 'Hello');\n    }\n    ion.add(foo, _ref);\n}",
   "translate({x,y}) ->\n    x++\n    y++\n    return {x,y}": "'use strict';\nfunction translate(_ref) {\n    let x = _ref.x;\n    let y = _ref.y;\n    x++;\n    y++;\n    return {\n        x: x,\n        y: y\n    };\n}",
   "let x = (foo)\n    ''\n        multiline string literal\n    \"\"\n        multiline string template": "'use strict';\nlet x = foo('multiline string literal', 'multiline string template');",
   "assert x is 2": "'use strict';\nif (!(x === 2))\n    throw new Error('Assertion Failed: (x is 2)');",
@@ -174,7 +174,17 @@ tests = {
     column: 13
   },
   "let x = 0 in Array\nlet y = \"foo\" instanceof String": "'use strict';\nlet x = 0 in Array;\nlet y = 'foo' instanceof String;",
-  "const output = {}\noutput:\n    x: 1\n    y: 2": "'use strict';\nconst output = {};\noutput.x = 1;\noutput.y = 2;"
+  "const output = {}\noutput:\n    x: 1\n    y: 2": "'use strict';\nconst ion = require('ion');\nconst output = {};\nion.patch(output, {\n    x: 1,\n    y: 2\n});",
+  "output:\n    for a in b\n        [c]: d": "'use strict';\nconst ion = require('ion');\nlet _ref = {};\n{\n    for (let _i = 0; _i < b.length; _i++) {\n        let a = b[_i];\n        _ref[c] = d;\n    }\n}\nion.patch(output, _ref);",
+  "output: {}\n    x: 1": {
+    line: 1,
+    column: 9
+  },
+  "[output]:\n    x: 1": {
+    line: 1,
+    column: 2
+  },
+  "#\n#\n\n#": "'use strict';"
 };
 
 if (global.window != null) {
@@ -190,7 +200,7 @@ exports.test = function() {
       console.log(JSON.stringify(index.compile(input, {
         postprocess: false
       }), null, '  '));
-      console.log('-Postprocessed------------------------------------');
+      console.log('-Postprocessed-------------------------------------');
       console.log(JSON.stringify(index.compile(input, {
         generate: false
       }), null, '  '));

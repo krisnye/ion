@@ -20,15 +20,11 @@ module.exports = exports = {
   changeExtension: changeExtension = utility.changeExtension,
   normalizePath: normalizePath = utility.normalizePath,
   minify: minify = function(root, files, options) {
-    var cwd, e, file, result;
+    var cwd, file;
     cwd = process.cwd();
     process.chdir(root);
     try {
-      return require('uglify-js').minify(files, options);
-    } catch (_error) {
-      e = _error;
-      console.error(e);
-      result = {
+      return {
         code: ((function() {
           var _i, _len, _results;
           _results = [];
@@ -39,7 +35,6 @@ module.exports = exports = {
           return _results;
         })()).join('\n')
       };
-      return result;
     } finally {
       process.chdir(cwd);
     }

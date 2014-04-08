@@ -8,7 +8,8 @@ export template (inputName, outputName, options) ->
     let output = new Directory(outputName)
     let name = options?.name ? ''
 
-    for path, source of input.search('.coffee')
-        let targetPath = builder.changeExtension(path, ".js")
-        let moduleId = builder.getModuleId(name, path)
-        [targetPath]: builder.compileCoffeeScript(source, moduleId)
+    output:
+        for path, source of input.search('.coffee')
+            let targetPath = builder.changeExtension(path, ".js")
+            let moduleId = builder.getModuleId(name, path)
+            [targetPath]: builder.compileCoffeeScript(source, moduleId)

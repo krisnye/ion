@@ -19,147 +19,231 @@ const Factory = ion.defineClass({
     });
 Factory;
 let _ref = new Factory();
-_ref.runtime = './VariableDeclaration';
+{
+    _ref.runtime = './VariableDeclaration';
+}
 let _ref2 = new Factory();
-_ref2.createRuntime = function (context, ast) {
-    return context.getVariableExpression(ast.name);
-};
+{
+    _ref2.createRuntime = function (context, ast) {
+        return context.getVariableExpression(ast.name);
+    };
+}
 let _ref3 = new Factory();
-_ref3.createRuntime = function (context, ast) {
-    let value = ast.value;
-    if (ast.context) {
-        value = value(context);
-    }
-    return new Literal({ value: value });
-};
+{
+    _ref3.createRuntime = function (context, ast) {
+        let value = ast.value;
+        if (ast.context) {
+            value = value(context);
+        }
+        return new Literal({ value: value });
+    };
+}
 let _ref4 = new Factory();
-_ref4.runtime = './Template';
+{
+    _ref4.runtime = './Template';
+}
 let _ref5 = new Factory();
-_ref5.runtime = './Literal';
+{
+    _ref5.runtime = './Literal';
+}
 let _ref6 = new Factory();
-_ref6.runtime = './Property';
+{
+    _ref6.runtime = './Property';
+}
 let _ref7 = new Factory();
-_ref7.runtime = './IfStatement';
+{
+    _ref7.runtime = './IfStatement';
+}
 let _ref8 = new Factory();
-_ref8.runtime = './BlockStatement';
+{
+    _ref8.runtime = './BlockStatement';
+}
 let _ref9 = new Factory();
-_ref9.runtime = './ReturnStatement';
+{
+    _ref9.runtime = './ReturnStatement';
+}
 let _ref10 = new Factory();
-_ref10.runtime = './ObjectExpression';
+{
+    _ref10.runtime = './ObjectExpression';
+}
 let _ref11 = new Factory();
-_ref11.runtime = './ArrayExpression';
+{
+    _ref11.runtime = './ArrayExpression';
+}
 let _ref12 = new Factory();
-_ref12.runtime = './ExpressionStatement';
+{
+    _ref12.runtime = './ExpressionStatement';
+}
 let _ref13 = new Factory();
-_ref13.runtime = './ForInOfStatement';
+{
+    _ref13.runtime = './ForInOfStatement';
+}
 let _ref14 = new Factory();
-_ref14.runtime = './ForInOfStatement';
+{
+    _ref14.runtime = './ForInOfStatement';
+}
 let _ref15 = new Factory();
-_ref15.runtime = './MemberExpression';
+{
+    _ref15.runtime = './MemberExpression';
+}
 let _ref16 = new Factory();
-_ref16.runtime = './CallExpression';
+{
+    _ref16.runtime = './CallExpression';
+}
 let _ref17 = new Factory();
-_ref17.runtime = './CallExpression';
+{
+    _ref17.runtime = './CallExpression';
+}
 let _ref18 = new Factory();
-_ref18.evaluate = function (a) {
-    return !a;
-};
+{
+    _ref18.evaluate = function (a) {
+        return !a;
+    };
+}
 let _ref19 = new Factory();
-_ref19.evaluate = function (a) {
-    return typeof a;
-};
+{
+    _ref19.evaluate = function (a) {
+        return typeof a;
+    };
+}
 let _ref20 = new Factory();
-_ref20.evaluate = function (a) {
-    return void a;
-};
+{
+    _ref20.evaluate = function (a) {
+        return void a;
+    };
+}
 let _ref21 = new Factory();
-_ref21.evaluate = function (a) {
-    return -a;
-};
+{
+    _ref21.evaluate = function (a) {
+        return -a;
+    };
+}
 let _ref22 = new Factory();
-_ref22.evaluate = function (a) {
-    return +a;
-};
+{
+    _ref22.evaluate = function (a) {
+        return +a;
+    };
+}
 let _ref23 = new Factory();
-_ref23.evaluate = function (a) {
-    return ~a;
-};
+{
+    _ref23.evaluate = function (a) {
+        return ~a;
+    };
+}
 let _ref24 = new Factory();
-_ref24.evaluate = function (a) {
-    return a != null;
-};
+{
+    _ref24.evaluate = function (a) {
+        return a != null;
+    };
+}
 let _ref25 = new Factory();
-_ref25.evaluate = function (test, consequent, alternate) {
-    return test ? consequent : alternate;
-};
+{
+    _ref25.evaluate = function (test, consequent, alternate) {
+        return test ? consequent : alternate;
+    };
+}
 let _ref26 = new Factory();
-_ref26.evaluate = function (left, right) {
-    return left * right;
-};
+{
+    _ref26.evaluate = function (left, right) {
+        return left * right;
+    };
+}
 let _ref27 = new Factory();
-_ref27.evaluate = function (left, right) {
-    return left / right;
-};
+{
+    _ref27.evaluate = function (left, right) {
+        return left / right;
+    };
+}
 let _ref28 = new Factory();
-_ref28.evaluate = function (left, right) {
-    return left % right;
-};
+{
+    _ref28.evaluate = function (left, right) {
+        return left % right;
+    };
+}
 let _ref29 = new Factory();
-_ref29.evaluate = function (left, right) {
-    return left + right;
-};
+{
+    _ref29.evaluate = function (left, right) {
+        return left + right;
+    };
+}
 let _ref30 = new Factory();
-_ref30.evaluate = function (left, right) {
-    return left - right;
-};
+{
+    _ref30.evaluate = function (left, right) {
+        return left - right;
+    };
+}
 let _ref31 = new Factory();
-_ref31.evaluate = function (left, right) {
-    return left && right;
-};
+{
+    _ref31.evaluate = function (left, right) {
+        return left && right;
+    };
+}
 let _ref32 = new Factory();
-_ref32.evaluate = function (left, right) {
-    return left || right;
-};
+{
+    _ref32.evaluate = function (left, right) {
+        return left || right;
+    };
+}
 let _ref33 = new Factory();
-_ref33.evaluate = function (left, right) {
-    return left & right;
-};
+{
+    _ref33.evaluate = function (left, right) {
+        return left & right;
+    };
+}
 let _ref34 = new Factory();
-_ref34.evaluate = function (left, right) {
-    return left | right;
-};
+{
+    _ref34.evaluate = function (left, right) {
+        return left | right;
+    };
+}
 let _ref35 = new Factory();
-_ref35.evaluate = function (left, right) {
-    return left == right;
-};
+{
+    _ref35.evaluate = function (left, right) {
+        return left == right;
+    };
+}
 let _ref36 = new Factory();
-_ref36.evaluate = function (left, right) {
-    return left != right;
-};
+{
+    _ref36.evaluate = function (left, right) {
+        return left != right;
+    };
+}
 let _ref37 = new Factory();
-_ref37.evaluate = function (left, right) {
-    return left === right;
-};
+{
+    _ref37.evaluate = function (left, right) {
+        return left === right;
+    };
+}
 let _ref38 = new Factory();
-_ref38.evaluate = function (left, right) {
-    return left !== right;
-};
+{
+    _ref38.evaluate = function (left, right) {
+        return left !== right;
+    };
+}
 let _ref39 = new Factory();
-_ref39.evaluate = function (left, right) {
-    return left < right;
-};
+{
+    _ref39.evaluate = function (left, right) {
+        return left < right;
+    };
+}
 let _ref40 = new Factory();
-_ref40.evaluate = function (left, right) {
-    return left > right;
-};
+{
+    _ref40.evaluate = function (left, right) {
+        return left > right;
+    };
+}
 let _ref41 = new Factory();
-_ref41.evaluate = function (left, right) {
-    return left <= right;
-};
+{
+    _ref41.evaluate = function (left, right) {
+        return left <= right;
+    };
+}
 let _ref42 = new Factory();
-_ref42.evaluate = function (left, right) {
-    return left >= right;
-};
+{
+    _ref42.evaluate = function (left, right) {
+        return left >= right;
+    };
+}
 const lookup = {
         type: {
             VariableDeclaration: _ref,

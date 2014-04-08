@@ -38,17 +38,23 @@ exports.fixSourceLocations = fixSourceLocations = function(program, sourceMappin
 };
 
 exports.preprocess = preprocess = function(source, sourceMapping) {
-  var baseIndent, comment, indent, indentStack, index, isEmpty, isMarkdownCommented, line, lines, outdent, output, totalIndent, writeLine, _i, _len;
+  var baseIndent, comment, indent, indentStack, index, isEmpty, isMarkdownCommented, line, lines, nonCommentCount, outdent, output, totalIndent, writeLine, _i, _len;
   isMarkdownCommented = false;
   baseIndent = isMarkdownCommented ? 1 : 0;
   totalIndent = 0;
   indentStack = [];
   lines = common.splitLines(source);
+  nonCommentCount = 0;
   writeLine = function(line, inputIndex) {
+    var trimmed;
     if (inputIndex != null) {
       if (sourceMapping != null) {
         sourceMapping[output.length] = inputIndex;
       }
+    }
+    trimmed = line.trim();
+    if (trimmed.length > 0 && line.trim()[0] !== '#') {
+      nonCommentCount++;
     }
     return output.push(line);
   };
@@ -86,7 +92,11 @@ exports.preprocess = preprocess = function(source, sourceMapping) {
   while (indentStack.length > 0) {
     outdent(lines.length);
   }
-  return common.unindentString(common.joinLines(output), sourceMapping);
+  if (nonCommentCount === 0) {
+    return "";
+  } else {
+    return common.unindentString(common.joinLines(output), sourceMapping);
+  }
 };
 
   }

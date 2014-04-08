@@ -205,7 +205,7 @@ module.exports = exports = {
     return files;
   },
   makeDirectories: makeDirectories = function(dir) {
-    if (!Object.isString(dir)) {
+    if (typeof dir !== 'string') {
       throw new Error("dir is not a string: " + (JSON.stringify(dir)));
     }
     if (!fs.existsSync(dir)) {

@@ -1,16 +1,17 @@
 const
     ion = import './'
     isObject = (a) -> a? and typeof a is 'object'
+    deleteValue = undefined
 
 export const
-    apply = (target, values, deleteNull = true) ->
+    apply = (target, values, deleteUndefined = true) ->
         if values?.constructor isnt Object
             return values
         if not isObject(target)
             target = {}
         for key, value of values
-            let patchedValue = apply(target[key], value, deleteNull)
-            if deleteNull and not value?
+            let patchedValue = apply(target[key], value, deleteUndefined)
+            if deleteUndefined and value is deleteValue
                 delete target[key]
             else
                 target[key] = patchedValue
@@ -48,7 +49,7 @@ export const
                 pendingPatch = {}
                 for change in changes
                     # we convert undefined values from delete into explicit nulls
-                    pendingPatch[change.name] = object[change.name] ? null
+                    pendingPatch[change.name] = object[change.name] ? deleteValue
                 processPatch(pendingPatch)
                 (ion.nextTick)
                     ->
@@ -123,7 +124,7 @@ export const
                 let source =
                     name: 'Kris'
                     age: 41
-                    children:
+                    children: 
                         Sadera:
                             grandchildren:
                                 One: 1

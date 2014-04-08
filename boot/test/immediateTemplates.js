@@ -1427,9 +1427,9 @@ const templates = [
                     });
                 }
                 let _ref6 = new type();
-                if (_ref6.position == null)
-                    _ref6.position = {};
-                _ref6.position.x = 10;
+                {
+                    _ref6.position = ion.patch(_ref6.position, { x: 10 });
+                }
                 return _ref6;
             },
             [function () {
@@ -1518,9 +1518,7 @@ const templates = [
                         test: test
                     });
                 }
-                if (output == null)
-                    output = {};
-                output.e = input.a + input.b;
+                ion.patch(output, { e: input.a + input.b });
                 return output;
             },
             [

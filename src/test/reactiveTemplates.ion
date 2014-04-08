@@ -6,7 +6,7 @@ const templates = []
         template (properties) ->
             return [key for key of properties]
         {a:1,b:2}
-        {b:null,c:3}
+        {b:undefined,c:3}
         ['a','c']
     []
         "imperative functions"
@@ -27,7 +27,7 @@ const templates = []
                 for key, value of properties if key isnt 'factor'
                     [key]: multiply(value)
         {x:1,y:2}
-        {x:4,y:null,z:5,factor:10}
+        {x:4,y:undefined,z:5,factor:10}
         {x:40,z:50}
     []
         "reactive destructured parameters"

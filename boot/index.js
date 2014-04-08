@@ -65,8 +65,8 @@ const mergePatch = require('./mergePatch'), primitive = {
             return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
         }
     ];
-const patch = exports.patch = function (target, values) {
-        return mergePatch.apply(target, values);
+const patch = exports.patch = function (target, values, deleteNull) {
+        return mergePatch.apply(target, values, deleteNull);
     }, create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
     }, createRuntime = exports.createRuntime = function (ast, args) {
@@ -86,9 +86,11 @@ const patch = exports.patch = function (target, values) {
             deep = false;
         if ((object != null ? object.constructor : void 0) === Object) {
             let _ref2 = {};
-            for (let key in object) {
-                let value = object[key];
-                _ref2[key] = deep ? clone(value, deep) : value;
+            {
+                for (let key in object) {
+                    let value = object[key];
+                    _ref2[key] = deep ? clone(value, deep) : value;
+                }
             }
             return _ref2;
         } else if (Array.isArray(object)) {
@@ -194,6 +196,13 @@ const patch = exports.patch = function (target, values) {
         }
     }, set = exports.set = function (object, property, value) {
         if (object != null && property != null) {
+            if (arguments.length === 2) {
+                for (let k in property) {
+                    let v = property[k];
+                    set(object, k, v);
+                }
+                return;
+            }
             if (typeof object.set === 'function') {
                 object.set(property, value);
             } else if (value === void 0) {
