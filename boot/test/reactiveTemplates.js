@@ -1,4 +1,4 @@
-(function(){var _ion_test_reactiveTemplates_ = function(module,exports,require){'use strict';
+void (function(){var _test_reactiveTemplates_ = function(module,exports,require){'use strict';
 const ion = require('../');
 const templates = [
         [
@@ -640,11 +640,11 @@ module.exports = exports = { test: _ref7 };
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/test/reactiveTemplates',_ion_test_reactiveTemplates_);
+      require.register('test/reactiveTemplates',_test_reactiveTemplates_);
     else
-      _ion_test_reactiveTemplates_.call(this, module, exports, require);
+      _test_reactiveTemplates_.call(this, module, exports, require);
   }
   else {
-    _ion_test_reactiveTemplates_.call(this);
+    _test_reactiveTemplates_.call(this);
   }
 }).call(this)

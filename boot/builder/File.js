@@ -1,4 +1,4 @@
-(function(){var _ion_builder_File_ = function(module,exports,require){'use strict';
+void (function(){var _builder_File_ = function(module,exports,require){'use strict';
 const fs = require('fs'), np = require('path'), utility = require('./utility'), ion = require('../');
 const File = ion.defineClass({
         id: 'File',
@@ -33,6 +33,11 @@ const File = ion.defineClass({
             }.bind(this));
         },
         properties: {
+            directoryName: {
+                get: function () {
+                    return np.dirname(this.path);
+                }
+            },
             copyFrom: function (file) {
                 file = File(file);
                 this.write(file.read(null), null);
@@ -50,6 +55,9 @@ const File = ion.defineClass({
             },
             toString: function () {
                 return this.path;
+            },
+            valueOf: function () {
+                return this.path;
             }
         }
     });
@@ -57,11 +65,11 @@ module.exports = exports = File;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/builder/File',_ion_builder_File_);
+      require.register('builder/File',_builder_File_);
     else
-      _ion_builder_File_.call(this, module, exports, require);
+      _builder_File_.call(this, module, exports, require);
   }
   else {
-    _ion_builder_File_.call(this);
+    _builder_File_.call(this);
   }
 }).call(this)

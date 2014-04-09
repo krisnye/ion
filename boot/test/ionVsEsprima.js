@@ -1,13 +1,13 @@
-(function(){var _ion_test_ionVsEsprima_ = function(module,exports,require){
+void (function(){var _test_ionVsEsprima_ = function(module,exports,require){
 
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/test/ionVsEsprima',_ion_test_ionVsEsprima_);
+      require.register('test/ionVsEsprima',_test_ionVsEsprima_);
     else
-      _ion_test_ionVsEsprima_.call(this, module, exports, require);
+      _test_ionVsEsprima_.call(this, module, exports, require);
   }
   else {
-    _ion_test_ionVsEsprima_.call(this);
+    _test_ionVsEsprima_.call(this);
   }
 }).call(this)

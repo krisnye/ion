@@ -1,4 +1,4 @@
-(function(){var _ion_runtime_Property_ = function(module,exports,require){'use strict';
+void (function(){var _runtime_Property_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const Property = ion.defineClass({
         id: 'Property',
@@ -56,11 +56,11 @@ module.exports = exports = Property;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/runtime/Property',_ion_runtime_Property_);
+      require.register('runtime/Property',_runtime_Property_);
     else
-      _ion_runtime_Property_.call(this, module, exports, require);
+      _runtime_Property_.call(this, module, exports, require);
   }
   else {
-    _ion_runtime_Property_.call(this);
+    _runtime_Property_.call(this);
   }
 }).call(this)

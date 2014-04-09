@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_common_ = function(module,exports,require){'use strict';
+void (function(){var _compiler_common_ = function(module,exports,require){'use strict';
 const lineDelimiter = '\n', isEmpty = function (s) {
         return !(s != null) || s.length === 0 || (s.trim != null ? s.trim().length : void 0) === 0;
     };
@@ -39,11 +39,11 @@ const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdent
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/compiler/common',_ion_compiler_common_);
+      require.register('compiler/common',_compiler_common_);
     else
-      _ion_compiler_common_.call(this, module, exports, require);
+      _compiler_common_.call(this, module, exports, require);
   }
   else {
-    _ion_compiler_common_.call(this);
+    _compiler_common_.call(this);
   }
 }).call(this)

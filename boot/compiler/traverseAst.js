@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_traverseAst_ = function(module,exports,require){var addStatement, basicTraverse, nodes, trackVariableDeclaration, trackVariableDeclarations;
+void (function(){var _compiler_traverseAst_ = function(module,exports,require){var addStatement, basicTraverse, nodes, trackVariableDeclaration, trackVariableDeclarations;
 
 basicTraverse = require('./traverse');
 
@@ -294,11 +294,11 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/compiler/traverseAst',_ion_compiler_traverseAst_);
+      require.register('compiler/traverseAst',_compiler_traverseAst_);
     else
-      _ion_compiler_traverseAst_.call(this, module, exports, require);
+      _compiler_traverseAst_.call(this, module, exports, require);
   }
   else {
-    _ion_compiler_traverseAst_.call(this);
+    _compiler_traverseAst_.call(this);
   }
 }).call(this)

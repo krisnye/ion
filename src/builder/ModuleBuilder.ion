@@ -19,19 +19,30 @@ const
 export template (inputName, outputName, options) ->
     let input = new Directory(inputName)
     let output = new Directory(outputName)
-    let name = options?.name ? ''
+    let moduleName = options?.name ? ''
     output:
+        # build all source files
         for {extension,compile} in compilers
             for path, source of input.search(extension)
                 let targetPath = builder.changeExtension(path, '.js')
-                let moduleId = builder.getModuleId(name, path)
+                let moduleId = builder.getModuleId(moduleName, path)
                 [targetPath]: compile(source, moduleId)
 
         # build a manifest file with require.js at the top
-        let outputFiles = output.search(".js")
+        let outputFiles = output.search(".js", /^_/) # ignore output _browser.js
         let top = [key for key of outputFiles if key.endsWith('require.js')]
         let sortedFiles = top.concat([key for key of outputFiles if not builder.isPrivate(key) and top.indexOf(key) < 0])
+        let manifestFileName = "manifest.json"
         let manifest =
             modified: Math.max.apply(null, [file.modified for path, file of outputFiles])
-            files: sortedFiles.map(builder.normalizePath)
-        ["manifest.json"]: JSON.stringify(manifest, null, '  ')
+            files: [builder.normalizePath(path) for path in sortedFiles]
+        [manifestFileName]: JSON.stringify(manifest, null, '  ')
+
+        # build merged, minified file
+        let manifestFile = output.getFile(manifestFileName)
+        let minifiedFiles = builder.minifyFromManifest(manifestFile, {})
+        for path, content of minifiedFiles
+            [path]: content
+
+        # builder.test
+        builder.runTests(manifestFile, manifestFile.modified)

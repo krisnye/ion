@@ -1,4 +1,4 @@
-(function(){var _ion_builder_watcher_ = function(module,exports,require){var fs, np, util;
+void (function(){var _builder_watcher_ = function(module,exports,require){var fs, np, util;
 
 if (global.window) {
   return;
@@ -116,11 +116,11 @@ exports.watchDirectory = function(dirname, options, listener) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/builder/watcher',_ion_builder_watcher_);
+      require.register('builder/watcher',_builder_watcher_);
     else
-      _ion_builder_watcher_.call(this, module, exports, require);
+      _builder_watcher_.call(this, module, exports, require);
   }
   else {
-    _ion_builder_watcher_.call(this);
+    _builder_watcher_.call(this);
   }
 }).call(this)

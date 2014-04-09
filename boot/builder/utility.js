@@ -1,4 +1,4 @@
-(function(){var _ion_builder_utility_ = function(module,exports,require){var buildCoffee, changeExtension, copy, copyMetadata, cp, exec, exports, fixCommand, fs, getModified, isDirectory, isFile, isMatch, isWindows, list, makeDirectories, makeParentDirectories, normalizePath, np, read, removeExtension, spawn, touch, watchCoffee, write;
+void (function(){var _builder_utility_ = function(module,exports,require){var buildCoffee, changeExtension, copy, copyMetadata, cp, exec, exports, fixCommand, fs, getModified, isDirectory, isFile, isMatch, isWindows, list, makeDirectories, makeParentDirectories, normalizePath, np, read, removeExtension, spawn, touch, watchCoffee, write;
 
 if (global.window) {
   return;
@@ -282,11 +282,11 @@ module.exports = exports = {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/builder/utility',_ion_builder_utility_);
+      require.register('builder/utility',_builder_utility_);
     else
-      _ion_builder_utility_.call(this, module, exports, require);
+      _builder_utility_.call(this, module, exports, require);
   }
   else {
-    _ion_builder_utility_.call(this);
+    _builder_utility_.call(this);
   }
 }).call(this)

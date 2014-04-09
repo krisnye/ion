@@ -1,4 +1,4 @@
-(function(){var _ion_test_Todo_ = function(module,exports,require){'use strict';
+void (function(){var _test_Todo_ = function(module,exports,require){'use strict';
 const ion = require('ion');
 const _ref = require('ion/browser/html');
 let div = _ref.div;
@@ -317,11 +317,11 @@ module.exports = exports = function _template() {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/test/Todo',_ion_test_Todo_);
+      require.register('test/Todo',_test_Todo_);
     else
-      _ion_test_Todo_.call(this, module, exports, require);
+      _test_Todo_.call(this, module, exports, require);
   }
   else {
-    _ion_test_Todo_.call(this);
+    _test_Todo_.call(this);
   }
 }).call(this)

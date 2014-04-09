@@ -1,13 +1,13 @@
-(function(){var _ion_test_ionCustomParse_ = function(module,exports,require){
+void (function(){var _test_ionCustomParse_ = function(module,exports,require){
 
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/test/ionCustomParse',_ion_test_ionCustomParse_);
+      require.register('test/ionCustomParse',_test_ionCustomParse_);
     else
-      _ion_test_ionCustomParse_.call(this, module, exports, require);
+      _test_ionCustomParse_.call(this, module, exports, require);
   }
   else {
-    _ion_test_ionCustomParse_.call(this);
+    _test_ionCustomParse_.call(this);
   }
 }).call(this)

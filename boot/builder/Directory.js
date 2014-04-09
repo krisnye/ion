@@ -1,4 +1,4 @@
-(function(){var _ion_builder_Directory_ = function(module,exports,require){'use strict';
+void (function(){var _builder_Directory_ = function(module,exports,require){'use strict';
 const fs = require('fs'), np = require('path'), utility = require('./utility'), watcher = require('./watcher'), File = require('./File'), ion = require('../');
 const Directory = ion.defineClass({
         id: 'Directory',
@@ -88,11 +88,11 @@ module.exports = exports = Directory;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/builder/Directory',_ion_builder_Directory_);
+      require.register('builder/Directory',_builder_Directory_);
     else
-      _ion_builder_Directory_.call(this, module, exports, require);
+      _builder_Directory_.call(this, module, exports, require);
   }
   else {
-    _ion_builder_Directory_.call(this);
+    _builder_Directory_.call(this);
   }
 }).call(this)

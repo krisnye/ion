@@ -1,4 +1,4 @@
-(function(){var _ion_compiler_index_ = function(module,exports,require){'use strict';
+void (function(){var _compiler_index_ = function(module,exports,require){'use strict';
 const makePrettyError = function (e, source, id) {
     if (typeof e.line === 'number' && typeof e.column === 'number' && e.line > 0 && e.column > 0) {
         let line = source.split('\n')[e.line - 1];
@@ -48,11 +48,11 @@ const parse = exports.parse = function (content, options) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/compiler/index',_ion_compiler_index_);
+      require.register('compiler/index',_compiler_index_);
     else
-      _ion_compiler_index_.call(this, module, exports, require);
+      _compiler_index_.call(this, module, exports, require);
   }
   else {
-    _ion_compiler_index_.call(this);
+    _compiler_index_.call(this);
   }
 }).call(this)

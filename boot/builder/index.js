@@ -1,8 +1,10 @@
-(function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compilePegjs, exports, fs, getModuleId, isPrivate, minify, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility;
+void (function(){var _builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compilePegjs, exports, fs, getModuleId, isPrivate, minify, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _;
 
 if (global.window) {
   return;
 }
+
+_ = require('underscore');
 
 utility = require('./utility');
 
@@ -19,6 +21,27 @@ module.exports = exports = {
   removeExtension: removeExtension = utility.removeExtension,
   changeExtension: changeExtension = utility.changeExtension,
   normalizePath: normalizePath = utility.normalizePath,
+  minifyFromManifest: function(manifestFile, options) {
+    var allName, files, minified, result, _ref, _ref1, _ref2, _ref3, _ref4;
+    if (options == null) {
+      options = {};
+    }
+    allName = "_browser.js";
+    if (options.mangle == null) {
+      options.mangle = (_ref = options.compress) != null ? _ref : false;
+    }
+    if (options.compress == null) {
+      options.compress = (_ref1 = options.compress) != null ? _ref1 : false;
+    }
+    if (options.outSourceMap == null) {
+      options.outSourceMap = allName + ".map";
+    }
+    files = (_ref2 = (_ref3 = JSON.parse((_ref4 = manifestFile.read()) != null ? _ref4 : "null")) != null ? _ref3.files : void 0) != null ? _ref2 : [];
+    minified = minify(manifestFile.directoryName, files, options);
+    result = {};
+    result[allName] = "if (this.window == null) return;\n" + minified.code + "\n//# sourceMappingURL= " + options.outSourceMap;
+    return result;
+  },
   minify: minify = function(root, files, options) {
     var cwd, file;
     cwd = process.cwd();
@@ -63,9 +86,13 @@ module.exports = exports = {
     }
     return _results;
   },
-  runTests: function(manifestFile) {
-    return require('../browser/tester').spawnTests(manifestFile);
-  },
+  runTests: (function() {
+    var fn;
+    fn = function(manifestFile) {
+      return require('../browser/tester').spawnTests(manifestFile);
+    };
+    return _.debounce(_.throttle(fn, 100), 2000);
+  })(),
   buildScriptIncludeFile: function(files, base) {
     if (base == null) {
       base = '';
@@ -173,7 +200,7 @@ module.exports = exports = {
     }
   },
   compileIon: compileIon = function(source, packageObject) {
-    var e, filename, input, ionCompiler, moduleId, parser;
+    var e, filename, input, ionCompiler, moduleId;
     if (source.modified === 0) {
       return;
     }
@@ -183,7 +210,7 @@ module.exports = exports = {
       console.log("Compile: " + filename);
       ionCompiler = require('../compiler');
       input = source.read();
-      parser = ionCompiler.compile(input, {
+      source = ionCompiler.compile(input, {
         id: filename
       });
       source = addBrowserShim(source, moduleId);
@@ -214,11 +241,11 @@ module.exports = exports = {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/builder/index',_ion_builder_index_);
+      require.register('builder/index',_builder_index_);
     else
-      _ion_builder_index_.call(this, module, exports, require);
+      _builder_index_.call(this, module, exports, require);
   }
   else {
-    _ion_builder_index_.call(this);
+    _builder_index_.call(this);
   }
 }).call(this)

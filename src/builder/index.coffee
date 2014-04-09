@@ -1,5 +1,6 @@
 return if global.window
 
+_ = require 'underscore' # imported for debounce/throttle methods
 utility = require './utility'
 fs = require 'fs'
 np = require 'path'
@@ -12,6 +13,23 @@ module.exports = exports =
     removeExtension: removeExtension = utility.removeExtension
     changeExtension: changeExtension = utility.changeExtension
     normalizePath: normalizePath = utility.normalizePath
+    minifyFromManifest: (manifestFile, options = {}) ->
+        allName = "_browser.js"
+        options.mangle ?= options.compress ? false
+        options.compress ?= options.compress ? false
+        options.outSourceMap ?= allName + ".map"
+        # all = output.getFile allName
+        # map = output.getFile uglyOptions.outSourceMap
+        files = JSON.parse(manifestFile.read() ? "null")?.files ? []
+        minified = minify(manifestFile.directoryName, files, options)
+        result = {}
+        result[allName] =
+            """
+            if (this.window == null) return;
+            #{ minified.code }
+            //# sourceMappingURL= #{ options.outSourceMap }
+        """
+        return result
     minify: minify = (root, files, options) ->
         # we change cwd so uglify maps file names to sources correctly.
         cwd = process.cwd()
@@ -37,9 +55,11 @@ module.exports = exports =
             # existing file path needs to be relative to the link path
             existingPath = np.relative value, key
             console.log "link EXISTING: #{existing}  LINK: #{value}"
-    runTests: (manifestFile) ->
-        # convert the files to a name, moduleId map
-        require('../browser/tester').spawnTests manifestFile
+    runTests: do ->
+        fn = (manifestFile) ->
+            # convert the files to a name, moduleId map
+            require('../browser/tester').spawnTests manifestFile
+        return _.debounce(_.throttle(fn, 100), 2000)
 
     buildScriptIncludeFile: (files, base = '') ->
         files.map((x) -> "document.writeln(\"<script type='text/javascript' src='#{base}#{normalizePath x}'></script>\");").join('\n')
@@ -137,7 +157,7 @@ module.exports = exports =
             console.log "Compile: #{filename}"
             ionCompiler = require '../compiler'
             input = source.read()
-            parser = ionCompiler.compile(input, {id:filename})
+            source = ionCompiler.compile(input, {id:filename})
             source = addBrowserShim source, moduleId
             return source
         catch e
