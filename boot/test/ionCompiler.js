@@ -197,13 +197,6 @@ exports.test = function() {
     expected = tests[input];
     if (expected === null) {
       console.log('---------------------------------------------------');
-      console.log(JSON.stringify(index.compile(input, {
-        postprocess: false
-      }), null, '  '));
-      console.log('-Postprocessed-------------------------------------');
-      console.log(JSON.stringify(index.compile(input, {
-        generate: false
-      }), null, '  '));
       console.log('---------------------------------------------------');
       console.log(index.compile(input, {
         loc: false

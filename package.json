@@ -10,6 +10,6 @@
         "escodegen": "1.2.x"
     },
     "devDependencies": {
-        "pegjs": "0.7.x"
+        "pegjs": "0.8.x"
     }
 }

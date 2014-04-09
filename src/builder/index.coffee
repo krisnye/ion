@@ -116,11 +116,28 @@ module.exports = exports =
     compilePegjs: compilePegjs = (source, packageObject) ->
         return if source.modified is 0
         moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
+        filename = source.path
         try
             peg = require 'pegjs'
+            console.log "Building: #{filename}"
             input = source.read()
             parser = peg.buildParser input, {cache:true,output:"source"}
             source = "module.exports = " + parser
+            source = addBrowserShim source, moduleId
+            return source
+        catch e
+            console.error e
+
+    # this compiles ion and returns the result.  Does not write to the target file.
+    compileIon: compileIon = (source, packageObject) ->
+        return if source.modified is 0
+        moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
+        filename = source.path
+        try
+            console.log "Compile: #{filename}"
+            ionCompiler = require '../compiler'
+            input = source.read()
+            parser = ionCompiler.compile(input, {id:filename})
             source = addBrowserShim source, moduleId
             return source
         catch e

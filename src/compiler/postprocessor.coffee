@@ -26,6 +26,8 @@ ionExpression = Object.freeze
 thisExpression = Object.freeze
     type: 'ThisExpression'
 
+isPattern = (node) -> node.properties? or node.elements?
+
 getPathExpression = (path) ->
     steps = path.split '.'
 
@@ -81,10 +83,27 @@ block = (node) ->
             body: [node]
     return node
 
+extractReactiveForPatterns = (node, context) ->
+    return if not context.reactive
+
+    if node.type is 'ForOfStatement' or node.type is 'ForInStatement'
+        for declarator, index in node.left.declarations when isPattern declarator.id
+            ref = context.getNewInternalIdentifier()
+            # extract the object pattern into a destructuring assignment from a new variable
+            context.addStatement
+                type: 'VariableDeclaration'
+                declarations: [
+                    type: 'VariableDeclarator'
+                    id: declarator.id
+                    init: ref
+                ]
+            # replace it with a reference to the new variable
+            declarator.id = ref
+
 extractForLoopRightVariable = (node, context) ->
     return if context.reactive
 
-    if node.type is 'ForOfStatement' or node.type is 'ForInStatement' and node.left.declarations.length > 1
+    if node.type is 'ForOfStatement' or (node.type is 'ForInStatement' and node.left.declarations.length > 1)
         if node.left.declarations.length > 2
             throw context.error "too many declarations", node.left.declarations[2]
         right = node.right
@@ -246,7 +265,6 @@ nodejsModules = (node, context) ->
 #                 kind: node.kind
 
 destructuringAssignments = (node, context) ->
-    isPattern = (node) -> node.properties? or node.elements?
 
     # function parameters
     if isFunctionNode node
@@ -1052,10 +1070,10 @@ exports.postprocess = (program, options) ->
         [namedFunctions, superExpressions]
         [destructuringAssignments]
         [createTemplateFunctionClone, checkVariableDeclarations]
-        [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, callFunctionBindForFatArrows]
+        [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows]
         [validateTemplateNodes, classExpressions]
-        [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules]
-        [destructuringAssignments, existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5]
+        [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments]
+        [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5]
         [addUseStrictAndRequireIon]
         [nodejsModules, spreadExpressions, assertStatements]
     ]

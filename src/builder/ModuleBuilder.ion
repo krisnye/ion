@@ -2,14 +2,27 @@ const
     File = import './File'
     Directory = import './Directory'
     builder = import './'
+    compilers = []
+        {}
+            extension: '.coffee'
+            compile: builder.compileCoffeeScript
+        {}
+            extension: '.pegjs'
+            compile: builder.compilePegjs
+        {}
+            extension: '.js'
+            compile: builder.shimJavascript
+        {}
+            extension: '.ion'
+            compile: builder.compileIon
 
 export template (inputName, outputName, options) ->
     let input = new Directory(inputName)
     let output = new Directory(outputName)
     let name = options?.name ? ''
-
     output:
-        for path, source of input.search('.coffee')
-            let targetPath = builder.changeExtension(path, ".js")
-            let moduleId = builder.getModuleId(name, path)
-            [targetPath]: builder.compileCoffeeScript(source, moduleId)
+        for {extension,compile} in compilers
+            for path, source of input.search(extension)
+                let targetPath = builder.changeExtension(path, '.js')
+                let moduleId = builder.getModuleId(name, path)
+                [targetPath]: compile(source, moduleId)
