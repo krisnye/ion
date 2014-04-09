@@ -1,4 +1,4 @@
-void (function(){var _ion_runtime_MemberExpression_ = function(module,exports,require){'use strict';
+(function(){var _ion_runtime_MemberExpression_ = function(module,exports,require){'use strict';
 const ion = require('../'), DynamicExpression = require('./DynamicExpression');
 const MemberExpression = ion.defineClass({
         id: 'MemberExpression',

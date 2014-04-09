@@ -33,3 +33,5 @@ This should be an error:
 need to merge properties on output object so this works:
     style:
         color: 'red'
+
+why does ["manifest.json"]: work, but not "manifest.json":?

@@ -1,4 +1,4 @@
-void (function(){var _ion_compiler_common_ = function(module,exports,require){'use strict';
+(function(){var _ion_compiler_common_ = function(module,exports,require){'use strict';
 const lineDelimiter = '\n', isEmpty = function (s) {
         return !(s != null) || s.length === 0 || (s.trim != null ? s.trim().length : void 0) === 0;
     };

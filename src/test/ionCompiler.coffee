@@ -1208,6 +1208,116 @@ tests =
     """: """
     'use strict';
     """
+    """
+    [a for a in b]
+    [a for a in c]
+    """: """
+    'use strict';
+    let _ref = [];
+    for (let _i = 0; _i < b.length; _i++) {
+        let a = b[_i];
+        _ref.push(a);
+    }
+    _ref;
+    let _ref2 = [];
+    for (let _i2 = 0; _i2 < c.length; _i2++) {
+        let a = c[_i2];
+        _ref2.push(a);
+    }
+    _ref2;
+    """
+    """
+    template ->
+        for {extension} in compilers
+            extension
+    """: """
+    'use strict';
+    const ion = require('ion');
+    (function _template() {
+        if (this != null && this.constructor === _template) {
+            return ion.createRuntime({
+                type: 'Template',
+                body: [{
+                        type: 'ForOfStatement',
+                        left: {
+                            type: 'VariableDeclaration',
+                            declarations: [{
+                                    type: 'VariableDeclarator',
+                                    id: {
+                                        type: 'Identifier',
+                                        name: '_ref'
+                                    },
+                                    init: null
+                                }],
+                            kind: 'let'
+                        },
+                        right: {
+                            type: 'Identifier',
+                            name: 'compilers'
+                        },
+                        body: {
+                            type: 'BlockStatement',
+                            body: [
+                                {
+                                    type: 'VariableDeclaration',
+                                    declarations: [{
+                                            type: 'VariableDeclarator',
+                                            id: {
+                                                type: 'Identifier',
+                                                name: '_ref3'
+                                            },
+                                            init: {
+                                                type: 'Identifier',
+                                                name: '_ref'
+                                            }
+                                        }]
+                                },
+                                {
+                                    type: 'VariableDeclaration',
+                                    declarations: [{
+                                            type: 'VariableDeclarator',
+                                            id: {
+                                                type: 'Identifier',
+                                                name: 'extension'
+                                            },
+                                            init: {
+                                                type: 'MemberExpression',
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: '_ref3'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'extension'
+                                                },
+                                                computed: false
+                                            }
+                                        }],
+                                    kind: 'let'
+                                },
+                                {
+                                    type: 'ExpressionStatement',
+                                    expression: {
+                                        type: 'Identifier',
+                                        name: 'extension'
+                                    }
+                                }
+                            ]
+                        }
+                    }]
+            }, {
+                require: require,
+                module: module,
+                exports: exports
+            });
+        }
+        for (let _i = 0; _i < compilers.length; _i++) {
+            let _ref2 = compilers[_i];
+            let extension = _ref2.extension;
+            extension;
+        }
+    });
+    """
 
 if global.window?
     return

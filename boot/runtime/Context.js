@@ -1,4 +1,4 @@
-void (function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
+(function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
 const ion = require('ion');
 const Factory = require('./Factory'), Literal = require('./Literal');
 const Context = ion.defineClass({

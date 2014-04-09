@@ -1,4 +1,4 @@
-void (function(){var _ion_runtime_Property_ = function(module,exports,require){'use strict';
+(function(){var _ion_runtime_Property_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const Property = ion.defineClass({
         id: 'Property',

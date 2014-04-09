@@ -1,4 +1,4 @@
-void (function(){var _ion_runtime_IfStatement_ = function(module,exports,require){'use strict';
+(function(){var _ion_runtime_IfStatement_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const IfStatement = ion.defineClass({
         id: 'IfStatement',

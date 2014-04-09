@@ -1,4 +1,4 @@
-void (function(){var _ion_runtime_Node_ = function(module,exports,require){'use strict';
+(function(){var _ion_runtime_Node_ = function(module,exports,require){'use strict';
 const ion = require('ion');
 const Node = ion.defineClass({ id: 'Node' });
 module.exports = exports = Node;

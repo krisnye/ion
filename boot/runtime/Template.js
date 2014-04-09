@@ -1,4 +1,4 @@
-void (function(){var _ion_runtime_Template_ = function(module,exports,require){'use strict';
+(function(){var _ion_runtime_Template_ = function(module,exports,require){'use strict';
 const ion = require('ion');
 const BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression');
 const Template = ion.defineClass({

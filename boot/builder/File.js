@@ -1,4 +1,4 @@
-void (function(){var _ion_builder_File_ = function(module,exports,require){'use strict';
+(function(){var _ion_builder_File_ = function(module,exports,require){'use strict';
 const fs = require('fs'), np = require('path'), utility = require('./utility'), ion = require('../');
 const File = ion.defineClass({
         id: 'File',

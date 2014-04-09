@@ -1,4 +1,4 @@
-void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
+(function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
 const ion = require('./'), isObject = function (a) {
         return a != null && typeof a === 'object';
     }, deleteValue = void 0;

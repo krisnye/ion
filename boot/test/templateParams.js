@@ -1,4 +1,4 @@
-void (function(){var _ion_test_templateParams_ = function(module,exports,require){'use strict';
+(function(){var _ion_test_templateParams_ = function(module,exports,require){'use strict';
 const ion = require('ion');
 const firstTemplate = function _template(a, b) {
     if (this != null && this.constructor === _template) {

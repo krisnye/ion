@@ -1,4 +1,4 @@
-void (function(){var _ion_test_Todo_ = function(module,exports,require){'use strict';
+(function(){var _ion_test_Todo_ = function(module,exports,require){'use strict';
 const ion = require('ion');
 const _ref = require('ion/browser/html');
 let div = _ref.div;

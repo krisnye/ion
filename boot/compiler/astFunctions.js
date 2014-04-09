@@ -1,4 +1,4 @@
-void (function(){var _ion_compiler_astFunctions_ = function(module,exports,require){'use strict';
+(function(){var _ion_compiler_astFunctions_ = function(module,exports,require){'use strict';
 const addStatement = exports.addStatement = function (node, statement, index, offset) {
         let body = node.body;
         if (body.type === 'BlockStatement') {

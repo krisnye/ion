@@ -1,4 +1,4 @@
-void (function(){var _ion_runtime_VariableDeclaration_ = function(module,exports,require){'use strict';
+(function(){var _ion_runtime_VariableDeclaration_ = function(module,exports,require){'use strict';
 const ion = require('ion');
 const Statement = require('./Statement');
 const VariableDeclaration = ion.defineClass({

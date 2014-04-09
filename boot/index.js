@@ -1,4 +1,5 @@
-void (function(){var _ion_index_ = function(module,exports,require){'use strict';
+(function(){var _ion_index_ = function(module,exports,require){'use strict';
+require('./es6');
 const mergePatch = require('./mergePatch'), primitive = {
         string: true,
         number: true,

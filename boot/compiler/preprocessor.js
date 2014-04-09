@@ -1,4 +1,4 @@
-void (function(){var _ion_compiler_preprocessor_ = function(module,exports,require){var common, fixSourceLocation, fixSourceLocations, getSpace, preprocess;
+(function(){var _ion_compiler_preprocessor_ = function(module,exports,require){var common, fixSourceLocation, fixSourceLocations, getSpace, preprocess;
 
 common = require('./common');
 

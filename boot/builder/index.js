@@ -1,4 +1,4 @@
-void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compilePegjs, exports, fs, getModuleId, isPrivate, minify, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility;
+(function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compilePegjs, exports, fs, getModuleId, isPrivate, minify, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility;
 
 if (global.window) {
   return;
@@ -150,19 +150,42 @@ module.exports = exports = {
     }
   },
   compilePegjs: compilePegjs = function(source, packageObject) {
-    var e, input, moduleId, parser, peg;
+    var e, filename, input, moduleId, parser, peg;
     if (source.modified === 0) {
       return;
     }
     moduleId = typeof packageObject === 'string' ? packageObject : getModuleId(source, packageObject);
+    filename = source.path;
     try {
       peg = require('pegjs');
+      console.log("Building: " + filename);
       input = source.read();
       parser = peg.buildParser(input, {
         cache: true,
         output: "source"
       });
       source = "module.exports = " + parser;
+      source = addBrowserShim(source, moduleId);
+      return source;
+    } catch (_error) {
+      e = _error;
+      return console.error(e);
+    }
+  },
+  compileIon: compileIon = function(source, packageObject) {
+    var e, filename, input, ionCompiler, moduleId, parser;
+    if (source.modified === 0) {
+      return;
+    }
+    moduleId = typeof packageObject === 'string' ? packageObject : getModuleId(source, packageObject);
+    filename = source.path;
+    try {
+      console.log("Compile: " + filename);
+      ionCompiler = require('../compiler');
+      input = source.read();
+      parser = ionCompiler.compile(input, {
+        id: filename
+      });
       source = addBrowserShim(source, moduleId);
       return source;
     } catch (_error) {

@@ -1,4 +1,4 @@
-void (function(){var _ion_runtime_Literal_ = function(module,exports,require){'use strict';
+(function(){var _ion_runtime_Literal_ = function(module,exports,require){'use strict';
 const ion = require('ion');
 const Literal = ion.defineClass({
         id: 'Literal',

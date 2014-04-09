@@ -1,4 +1,4 @@
-void (function(){var _ion_compiler_nodes_ = function(module,exports,require){'use strict';
+(function(){var _ion_compiler_nodes_ = function(module,exports,require){'use strict';
 const BlockStatement = exports.BlockStatement = {
         isBlock: true,
         newScope: true

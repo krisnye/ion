@@ -1,4 +1,4 @@
-void (function(){var _ion_compiler_index_ = function(module,exports,require){'use strict';
+(function(){var _ion_compiler_index_ = function(module,exports,require){'use strict';
 const makePrettyError = function (e, source, id) {
     if (typeof e.line === 'number' && typeof e.column === 'number' && e.line > 0 && e.column > 0) {
         let line = source.split('\n')[e.line - 1];

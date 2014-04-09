@@ -1,5 +1,5 @@
 {
-    "modified": 1397002480813,
+    "modified": 1397023374561,
     "files": [
         "browser/require.js",
         "browser/html.js",
@@ -19,6 +19,7 @@
         "compiler/preprocessor.js",
         "compiler/traverse.js",
         "compiler/traverseAst.js",
+        "es6.js",
         "index.js",
         "mergePatch.js",
         "Object.js",

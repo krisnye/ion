@@ -1069,8 +1069,10 @@ exports.postprocess = (program, options) ->
     steps = [
         [namedFunctions, superExpressions]
         [destructuringAssignments]
-        [createTemplateFunctionClone, checkVariableDeclarations]
-        [javascriptExpressions, arrayComprehensionsToES5, extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows]
+        [createTemplateFunctionClone]
+        [javascriptExpressions, arrayComprehensionsToES5]
+        [checkVariableDeclarations]
+        [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows]
         [validateTemplateNodes, classExpressions]
         [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments]
         [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5]

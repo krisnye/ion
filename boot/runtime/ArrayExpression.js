@@ -1,4 +1,4 @@
-void (function(){var _ion_runtime_ArrayExpression_ = function(module,exports,require){'use strict';
+(function(){var _ion_runtime_ArrayExpression_ = function(module,exports,require){'use strict';
 const DynamicExpression = require('./DynamicExpression'), ion = require('../');
 const ArrayExpression = ion.defineClass({
         id: 'ArrayExpression',

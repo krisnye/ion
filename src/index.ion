@@ -1,3 +1,6 @@
+
+import './es6'
+
 const
     mergePatch = import './mergePatch'
     primitive = {string:true,number:true,boolean:true,function:true}

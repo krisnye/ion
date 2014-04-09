@@ -1,4 +1,4 @@
-void (function(){var _ion_builder_watcher_ = function(module,exports,require){var fs, np, util;
+(function(){var _ion_builder_watcher_ = function(module,exports,require){var fs, np, util;
 
 if (global.window) {
   return;

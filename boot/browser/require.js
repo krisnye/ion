@@ -1,4 +1,4 @@
-void (function(){var _ion_browser_require_ = function(module,exports,require){var modules, normalize, require, resolve;
+(function(){var _ion_browser_require_ = function(module,exports,require){var modules, normalize, require, resolve;
 
 if (this.global == null) {
   this.global = (function() {

@@ -30,6 +30,13 @@ Compile ion files
         var moduleId = builder.getModuleId(name, key)
         [target.path]: builder.addBrowserShim(newCompiler.compile(file.read()), moduleId)
 
+Shim Javascript files
+
+    for key, source of input.search(".js")
+        target = output.getFile key
+        moduleId = builder.getModuleId name, key
+        [target.path]: builder.shimJavascript source, moduleId
+
 Write a manifest.json file listing all of our modules with require.js at the top
 
     outputFiles = output.search(".js")

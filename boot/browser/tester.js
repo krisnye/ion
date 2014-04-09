@@ -1,4 +1,4 @@
-void (function(){var _ion_browser_tester_ = function(module,exports,require){var args, file, manifest, manifestFile, moduleId, modules, np, runTest, runTests, spawnTests, utility, _i, _len, _ref;
+(function(){var _ion_browser_tester_ = function(module,exports,require){var args, file, manifest, manifestFile, moduleId, modules, np, runTest, runTests, spawnTests, utility, _i, _len, _ref;
 
 runTest = function(name, test, callback) {
   var e, expectedCallbacks, key, result, value;

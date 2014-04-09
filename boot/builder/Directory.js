@@ -1,4 +1,4 @@
-void (function(){var _ion_builder_Directory_ = function(module,exports,require){'use strict';
+(function(){var _ion_builder_Directory_ = function(module,exports,require){'use strict';
 const fs = require('fs'), np = require('path'), utility = require('./utility'), watcher = require('./watcher'), File = require('./File'), ion = require('../');
 const Directory = ion.defineClass({
         id: 'Directory',
