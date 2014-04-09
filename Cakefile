@@ -12,4 +12,4 @@ build = (ionPath) ->
     new ModuleBuilder('src', 'lib').activate()
 
 task 'boot', "builds from the last stable version", -> build './boot'
-task 'watch', 'builds from the latest version', -> -> build './lib'
+task 'watch', 'builds from the latest version', -> build './lib'
