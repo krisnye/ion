@@ -1,5 +1,6 @@
 
 export const
+    ion = import '../'
     addStatement = (node, statement, index, offset) ->
         let body = node.body
         if body.type is "BlockStatement"

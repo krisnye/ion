@@ -1,4 +1,5 @@
-const {div,span,input,a,form,table,tbody,thead,tr,td,button,br} = import 'ion/browser/html'
+const ion = import '../'
+const {div,span,input,a,form,table,tbody,thead,tr,td,button,br} = import '../browser/html'
 
 global.data =
     name: 'Kris'

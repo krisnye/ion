@@ -1,6 +1,5 @@
-void (function(){var _runtime_Context_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const Factory = require('./Factory'), Literal = require('./Literal');
+void (function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
+const ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal');
 const Context = ion.defineClass({
         id: 'Context',
         constructor: function Context(parent, output) {
@@ -66,11 +65,11 @@ module.exports = exports = Context;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Context',_runtime_Context_);
+      require.register('ion/runtime/Context',_ion_runtime_Context_);
     else
-      _runtime_Context_.call(this, module, exports, require);
+      _ion_runtime_Context_.call(this, module, exports, require);
   }
   else {
-    _runtime_Context_.call(this);
+    _ion_runtime_Context_.call(this);
   }
 }).call(this)

@@ -1,4 +1,5 @@
 const
+    ion = import '../'
     Statement = import './Statement'
 
 export class BlockStatement extends Statement

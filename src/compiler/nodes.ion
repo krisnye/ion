@@ -1,3 +1,4 @@
+const ion = import '../'
 
 export const
     BlockStatement =

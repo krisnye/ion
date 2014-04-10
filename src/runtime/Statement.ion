@@ -1,3 +1,4 @@
+const ion = import '../'
 
 export class Statement extends import './Node'
     properties:

@@ -1,6 +1,5 @@
-void (function(){var _runtime_Template_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression');
+void (function(){var _ion_runtime_Template_ = function(module,exports,require){'use strict';
+const ion = require('../'), BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression');
 const Template = ion.defineClass({
         id: 'Template',
         constructor: function Template() {
@@ -23,11 +22,11 @@ module.exports = exports = Template;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Template',_runtime_Template_);
+      require.register('ion/runtime/Template',_ion_runtime_Template_);
     else
-      _runtime_Template_.call(this, module, exports, require);
+      _ion_runtime_Template_.call(this, module, exports, require);
   }
   else {
-    _runtime_Template_.call(this);
+    _ion_runtime_Template_.call(this);
   }
 }).call(this)

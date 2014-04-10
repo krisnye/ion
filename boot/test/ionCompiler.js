@@ -1,4 +1,4 @@
-void (function(){var _test_ionCompiler_ = function(module,exports,require){var index, tests;
+void (function(){var _ion_test_ionCompiler_ = function(module,exports,require){var index, tests;
 
 index = require('../compiler');
 
@@ -241,11 +241,11 @@ exports.test = function() {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('test/ionCompiler',_test_ionCompiler_);
+      require.register('ion/test/ionCompiler',_ion_test_ionCompiler_);
     else
-      _test_ionCompiler_.call(this, module, exports, require);
+      _ion_test_ionCompiler_.call(this, module, exports, require);
   }
   else {
-    _test_ionCompiler_.call(this);
+    _ion_test_ionCompiler_.call(this);
   }
 }).call(this)

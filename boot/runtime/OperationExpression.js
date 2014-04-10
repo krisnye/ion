@@ -1,6 +1,5 @@
-void (function(){var _runtime_OperationExpression_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const DynamicExpression = require('./DynamicExpression');
+void (function(){var _ion_runtime_OperationExpression_ = function(module,exports,require){'use strict';
+const ion = require('../'), DynamicExpression = require('./DynamicExpression');
 const OperationExpression = ion.defineClass({
         id: 'OperationExpression',
         constructor: function OperationExpression(properties) {
@@ -53,11 +52,11 @@ module.exports = OperationExpression;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/OperationExpression',_runtime_OperationExpression_);
+      require.register('ion/runtime/OperationExpression',_ion_runtime_OperationExpression_);
     else
-      _runtime_OperationExpression_.call(this, module, exports, require);
+      _ion_runtime_OperationExpression_.call(this, module, exports, require);
   }
   else {
-    _runtime_OperationExpression_.call(this);
+    _ion_runtime_OperationExpression_.call(this);
   }
 }).call(this)

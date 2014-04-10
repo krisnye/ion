@@ -1,4 +1,6 @@
+
 const
+    ion = import '../'
     File = import './File'
     Directory = import './Directory'
     builder = import './'
@@ -16,17 +18,18 @@ const
             extension: '.ion'
             compile: builder.compileIon
 
-export template (inputName, outputName, options) ->
-    let input = new Directory(inputName)
-    let output = new Directory(outputName)
-    let moduleName = options?.name ? ''
+export template () ->
+    let packageJson = JSON.parse(new File('package.json').read())
+    let input = new Directory(packageJson.directories.src)
+    let output = new Directory(packageJson.directories.lib)
+    let moduleName = packageJson.name ? ''
     output:
         # build all source files
         for {extension,compile} in compilers
             for path, source of input.search(extension)
                 let targetPath = builder.changeExtension(path, '.js')
                 let moduleId = builder.getModuleId(moduleName, path)
-                [targetPath]: compile(source, moduleId)
+                [targetPath]: compile(source, moduleId, packageJson)
 
         # build a manifest file with require.js at the top
         let outputFiles = output.search(".js", /^_/) # ignore output _browser.js

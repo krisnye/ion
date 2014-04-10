@@ -1,5 +1,5 @@
-void (function(){var _builder_File_ = function(module,exports,require){'use strict';
-const fs = require('fs'), np = require('path'), utility = require('./utility'), ion = require('../');
+void (function(){var _ion_builder_File_ = function(module,exports,require){'use strict';
+const ion = require('../'), fs = require('fs'), np = require('path'), utility = require('./utility');
 const File = ion.defineClass({
         id: 'File',
         constructor: function File(path) {
@@ -65,11 +65,11 @@ module.exports = exports = File;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('builder/File',_builder_File_);
+      require.register('ion/builder/File',_ion_builder_File_);
     else
-      _builder_File_.call(this, module, exports, require);
+      _ion_builder_File_.call(this, module, exports, require);
   }
   else {
-    _builder_File_.call(this);
+    _ion_builder_File_.call(this);
   }
 }).call(this)

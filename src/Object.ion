@@ -1,3 +1,4 @@
+const ion = import './'
 
 export class Object extends null
     constructor: (properties) ->

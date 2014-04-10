@@ -1,5 +1,5 @@
-void (function(){var _compiler_astFunctions_ = function(module,exports,require){'use strict';
-const addStatement = exports.addStatement = function (node, statement, index, offset) {
+void (function(){var _ion_compiler_astFunctions_ = function(module,exports,require){'use strict';
+const ion = exports.ion = require('../'), addStatement = exports.addStatement = function (node, statement, index, offset) {
         let body = node.body;
         if (body.type === 'BlockStatement') {
             body = body.body;
@@ -56,11 +56,11 @@ const addStatement = exports.addStatement = function (node, statement, index, of
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/astFunctions',_compiler_astFunctions_);
+      require.register('ion/compiler/astFunctions',_ion_compiler_astFunctions_);
     else
-      _compiler_astFunctions_.call(this, module, exports, require);
+      _ion_compiler_astFunctions_.call(this, module, exports, require);
   }
   else {
-    _compiler_astFunctions_.call(this);
+    _ion_compiler_astFunctions_.call(this);
   }
 }).call(this)

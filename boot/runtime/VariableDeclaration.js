@@ -1,5 +1,5 @@
-void (function(){var _runtime_VariableDeclaration_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+void (function(){var _ion_runtime_VariableDeclaration_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const Statement = require('./Statement');
 const VariableDeclaration = ion.defineClass({
         id: 'VariableDeclaration',
@@ -20,11 +20,11 @@ module.exports = exports = VariableDeclaration;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/VariableDeclaration',_runtime_VariableDeclaration_);
+      require.register('ion/runtime/VariableDeclaration',_ion_runtime_VariableDeclaration_);
     else
-      _runtime_VariableDeclaration_.call(this, module, exports, require);
+      _ion_runtime_VariableDeclaration_.call(this, module, exports, require);
   }
   else {
-    _runtime_VariableDeclaration_.call(this);
+    _ion_runtime_VariableDeclaration_.call(this);
   }
 }).call(this)

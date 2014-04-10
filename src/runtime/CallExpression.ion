@@ -12,6 +12,15 @@ module.exports = class CallExpression extends DynamicExpression
             (@calleeExpression.watch)
                 @calleeWatcher ?= (value) =>
                     @calleeValue = value
+                    # get thisArg and watch for changes
+                    let thisArg = @calleeExpression.objectExpression?.value
+                    if thisArg isnt @thisArg
+                        ion.unobserve(@thisarg, @thisObserver)
+                        @thisArg = thisArg
+                        (ion.observe)
+                            thisArg
+                            @thisObserver ?= (changes) =>
+                                @evaluate()
                     @evaluate()
             @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:true})
             (@argumentExpressions.watch)
@@ -29,7 +38,6 @@ module.exports = class CallExpression extends DynamicExpression
                     # create a new with variable args
                     value = ion.create(@calleeValue, @argumentsValue)
                 else # @type is 'CallExpression'
-                    let thisArg = @calleeExpression.objectExpression?.value
-                    value = @calleeValue.apply(thisArg, @argumentsValue)
+                    value = @calleeValue.apply(@thisArg, @argumentsValue)
 
             @setValue(value)

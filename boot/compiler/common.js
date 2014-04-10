@@ -1,5 +1,5 @@
-void (function(){var _compiler_common_ = function(module,exports,require){'use strict';
-const lineDelimiter = '\n', isEmpty = function (s) {
+void (function(){var _ion_compiler_common_ = function(module,exports,require){'use strict';
+const ion = require('../'), lineDelimiter = '\n', isEmpty = function (s) {
         return !(s != null) || s.length === 0 || (s.trim != null ? s.trim().length : void 0) === 0;
     };
 const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdentToken = '}}}}', splitLines = exports.splitLines = function (s) {
@@ -39,11 +39,11 @@ const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdent
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/common',_compiler_common_);
+      require.register('ion/compiler/common',_ion_compiler_common_);
     else
-      _compiler_common_.call(this, module, exports, require);
+      _ion_compiler_common_.call(this, module, exports, require);
   }
   else {
-    _compiler_common_.call(this);
+    _ion_compiler_common_.call(this);
   }
 }).call(this)

@@ -1,4 +1,5 @@
 const
+    ion = import '../'
     BlockStatement = import './BlockStatement'
     DynamicExpression = import './DynamicExpression'
 

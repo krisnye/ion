@@ -1,5 +1,5 @@
-void (function(){var _builder_Directory_ = function(module,exports,require){'use strict';
-const fs = require('fs'), np = require('path'), utility = require('./utility'), watcher = require('./watcher'), File = require('./File'), ion = require('../');
+void (function(){var _ion_builder_Directory_ = function(module,exports,require){'use strict';
+const ion = require('../'), fs = require('fs'), np = require('path'), utility = require('./utility'), watcher = require('./watcher'), File = require('./File');
 const Directory = ion.defineClass({
         id: 'Directory',
         constructor: function Directory(path) {
@@ -88,11 +88,11 @@ module.exports = exports = Directory;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('builder/Directory',_builder_Directory_);
+      require.register('ion/builder/Directory',_ion_builder_Directory_);
     else
-      _builder_Directory_.call(this, module, exports, require);
+      _ion_builder_Directory_.call(this, module, exports, require);
   }
   else {
-    _builder_Directory_.call(this);
+    _ion_builder_Directory_.call(this);
   }
 }).call(this)

@@ -1,5 +1,5 @@
-const
-    Statement = import './Statement'
+const ion = import '../'
+const Statement = import './Statement'
 
 export class VariableDeclaration extends Statement
     constructor: ->

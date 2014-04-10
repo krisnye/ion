@@ -1,5 +1,6 @@
 
 const
+    ion = import '../'
     lineDelimiter = '\n'
     isEmpty = (s) -> not s? or s.length is 0 or s.trim?().length is 0
 

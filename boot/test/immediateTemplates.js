@@ -1,4 +1,4 @@
-void (function(){var _test_immediateTemplates_ = function(module,exports,require){'use strict';
+void (function(){var _ion_test_immediateTemplates_ = function(module,exports,require){'use strict';
 const ion = require('../');
 const templates = [
         [
@@ -1570,11 +1570,11 @@ const test = exports.test = function () {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('test/immediateTemplates',_test_immediateTemplates_);
+      require.register('ion/test/immediateTemplates',_ion_test_immediateTemplates_);
     else
-      _test_immediateTemplates_.call(this, module, exports, require);
+      _ion_test_immediateTemplates_.call(this, module, exports, require);
   }
   else {
-    _test_immediateTemplates_.call(this);
+    _ion_test_immediateTemplates_.call(this);
   }
 }).call(this)

@@ -1,5 +1,5 @@
 if (this.window == null) return;
-void (function(){var _browser_require_ = function(module,exports,require){var modules, normalize, require, resolve;
+void (function(){var _ion_browser_require_ = function(module,exports,require){var modules, normalize, require, resolve;
 
 if (this.global == null) {
   this.global = (function() {
@@ -117,15 +117,15 @@ if (typeof module === "undefined") {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('browser/require',_browser_require_);
+      require.register('ion/browser/require',_ion_browser_require_);
     else
-      _browser_require_.call(this, module, exports, require);
+      _ion_browser_require_.call(this, module, exports, require);
   }
   else {
-    _browser_require_.call(this);
+    _ion_browser_require_.call(this);
   }
 }).call(this)
-void (function(){var _browser_html_ = function(module,exports,require){var name, _fn, _i, _len, _ref;
+void (function(){var _ion_browser_html_ = function(module,exports,require){var name, _fn, _i, _len, _ref;
 
 _ref = ["div", "span", "input", "a", "br", "button", "caption", "fieldset", "form", "frame", "frameset", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "legend", "menu", "option", "select", "script", "pre", "table", "tbody", "td", "tr", "thead"];
 _fn = function(name) {
@@ -149,15 +149,15 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('browser/html',_browser_html_);
+      require.register('ion/browser/html',_ion_browser_html_);
     else
-      _browser_html_.call(this, module, exports, require);
+      _ion_browser_html_.call(this, module, exports, require);
   }
   else {
-    _browser_html_.call(this);
+    _ion_browser_html_.call(this);
   }
 }).call(this)
-void (function(){var _browser_tester_ = function(module,exports,require){var args, file, manifest, manifestFile, moduleId, modules, np, runTest, runTests, spawnTests, utility, _i, _len, _ref;
+void (function(){var _ion_browser_tester_ = function(module,exports,require){var args, file, manifest, manifestFile, moduleId, modules, np, runTest, runTests, spawnTests, utility, _i, _len, _ref;
 
 runTest = function(name, test, callback) {
   var e, expectedCallbacks, key, result, value;
@@ -398,16 +398,16 @@ if (require.main === module) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('browser/tester',_browser_tester_);
+      require.register('ion/browser/tester',_ion_browser_tester_);
     else
-      _browser_tester_.call(this, module, exports, require);
+      _ion_browser_tester_.call(this, module, exports, require);
   }
   else {
-    _browser_tester_.call(this);
+    _ion_browser_tester_.call(this);
   }
 }).call(this)
-void (function(){var _builder_Directory_ = function(module,exports,require){'use strict';
-const fs = require('fs'), np = require('path'), utility = require('./utility'), watcher = require('./watcher'), File = require('./File'), ion = require('../');
+void (function(){var _ion_builder_Directory_ = function(module,exports,require){'use strict';
+const ion = require('../'), fs = require('fs'), np = require('path'), utility = require('./utility'), watcher = require('./watcher'), File = require('./File');
 const Directory = ion.defineClass({
         id: 'Directory',
         constructor: function Directory(path) {
@@ -496,16 +496,16 @@ module.exports = exports = Directory;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('builder/Directory',_builder_Directory_);
+      require.register('ion/builder/Directory',_ion_builder_Directory_);
     else
-      _builder_Directory_.call(this, module, exports, require);
+      _ion_builder_Directory_.call(this, module, exports, require);
   }
   else {
-    _builder_Directory_.call(this);
+    _ion_builder_Directory_.call(this);
   }
 }).call(this)
-void (function(){var _builder_File_ = function(module,exports,require){'use strict';
-const fs = require('fs'), np = require('path'), utility = require('./utility'), ion = require('../');
+void (function(){var _ion_builder_File_ = function(module,exports,require){'use strict';
+const ion = require('../'), fs = require('fs'), np = require('path'), utility = require('./utility');
 const File = ion.defineClass({
         id: 'File',
         constructor: function File(path) {
@@ -571,15 +571,15 @@ module.exports = exports = File;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('builder/File',_builder_File_);
+      require.register('ion/builder/File',_ion_builder_File_);
     else
-      _builder_File_.call(this, module, exports, require);
+      _ion_builder_File_.call(this, module, exports, require);
   }
   else {
-    _builder_File_.call(this);
+    _ion_builder_File_.call(this);
   }
 }).call(this)
-void (function(){var _builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compilePegjs, exports, fs, getModuleId, isPrivate, minify, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _;
+void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compilePegjs, exports, fs, getModuleId, isPrivate, minify, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _;
 
 if (global.window) {
   return;
@@ -822,17 +822,16 @@ module.exports = exports = {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('builder/index',_builder_index_);
+      require.register('ion/builder/index',_ion_builder_index_);
     else
-      _builder_index_.call(this, module, exports, require);
+      _ion_builder_index_.call(this, module, exports, require);
   }
   else {
-    _builder_index_.call(this);
+    _ion_builder_index_.call(this);
   }
 }).call(this)
-void (function(){var _builder_ModuleBuilder_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const File = require('./File'), Directory = require('./Directory'), builder = require('./'), compilers = [
+void (function(){var _ion_builder_ModuleBuilder_ = function(module,exports,require){'use strict';
+const ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), compilers = [
         {
             extension: '.coffee',
             compile: builder.compileCoffeeScript
@@ -850,11 +849,60 @@ const File = require('./File'), Directory = require('./Directory'), builder = re
             compile: builder.compileIon
         }
     ];
-module.exports = exports = function _template(inputName, outputName, options) {
+module.exports = exports = function _template() {
     if (this != null && this.constructor === _template) {
         return ion.createRuntime({
             type: 'Template',
             body: [
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'packageJson'
+                            },
+                            init: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'JSON'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'parse'
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'CallExpression',
+                                        callee: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'NewExpression',
+                                                callee: {
+                                                    type: 'Identifier',
+                                                    name: 'File'
+                                                },
+                                                arguments: [{
+                                                        type: 'Literal',
+                                                        value: 'package.json'
+                                                    }]
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'read'
+                                            }
+                                        },
+                                        arguments: []
+                                    }]
+                            }
+                        }],
+                    kind: 'let'
+                },
                 {
                     type: 'VariableDeclaration',
                     declarations: [{
@@ -870,8 +918,24 @@ module.exports = exports = function _template(inputName, outputName, options) {
                                     name: 'Directory'
                                 },
                                 arguments: [{
-                                        type: 'Identifier',
-                                        name: 'inputName'
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'packageJson'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'directories'
+                                            }
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'src'
+                                        }
                                     }]
                             }
                         }],
@@ -892,8 +956,24 @@ module.exports = exports = function _template(inputName, outputName, options) {
                                     name: 'Directory'
                                 },
                                 arguments: [{
-                                        type: 'Identifier',
-                                        name: 'outputName'
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'packageJson'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'directories'
+                                            }
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'lib'
+                                        }
                                     }]
                             }
                         }],
@@ -917,13 +997,12 @@ module.exports = exports = function _template(inputName, outputName, options) {
                                         computed: false,
                                         object: {
                                             type: 'Identifier',
-                                            name: 'options'
+                                            name: 'packageJson'
                                         },
                                         property: {
                                             type: 'Identifier',
                                             name: 'name'
-                                        },
-                                        existential: true
+                                        }
                                     },
                                     right: {
                                         type: 'Literal',
@@ -935,13 +1014,12 @@ module.exports = exports = function _template(inputName, outputName, options) {
                                     computed: false,
                                     object: {
                                         type: 'Identifier',
-                                        name: 'options'
+                                        name: 'packageJson'
                                     },
                                     property: {
                                         type: 'Identifier',
                                         name: 'name'
-                                    },
-                                    existential: true
+                                    }
                                 },
                                 alternate: {
                                     type: 'Literal',
@@ -1180,6 +1258,10 @@ module.exports = exports = function _template(inputName, outputName, options) {
                                                                 {
                                                                     type: 'Identifier',
                                                                     name: 'moduleId'
+                                                                },
+                                                                {
+                                                                    type: 'Identifier',
+                                                                    name: 'packageJson'
                                                                 }
                                                             ]
                                                         },
@@ -1792,18 +1874,17 @@ module.exports = exports = function _template(inputName, outputName, options) {
             require: require,
             module: module,
             exports: exports,
-            inputName: inputName,
-            outputName: outputName,
-            options: options,
+            ion: ion,
             File: File,
             Directory: Directory,
             builder: builder,
             compilers: compilers
         });
     }
-    let input = new Directory(inputName);
-    let output = new Directory(outputName);
-    let moduleName = (options != null ? options.name : void 0) != null ? options.name : '';
+    let packageJson = JSON.parse(new File('package.json').read());
+    let input = new Directory(packageJson.directories.src);
+    let output = new Directory(packageJson.directories.lib);
+    let moduleName = packageJson.name != null ? packageJson.name : '';
     let _ref = [];
     for (let key in outputFiles) {
         if (key.endsWith('require.js')) {
@@ -1838,7 +1919,7 @@ module.exports = exports = function _template(inputName, outputName, options) {
                     let source = _ref5[path];
                     let targetPath = builder.changeExtension(path, '.js');
                     let moduleId = builder.getModuleId(moduleName, path);
-                    _ref7[targetPath] = compile(source, moduleId);
+                    _ref7[targetPath] = compile(source, moduleId, packageJson);
                 }
             }
         }
@@ -1864,15 +1945,15 @@ module.exports = exports = function _template(inputName, outputName, options) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('builder/ModuleBuilder',_builder_ModuleBuilder_);
+      require.register('ion/builder/ModuleBuilder',_ion_builder_ModuleBuilder_);
     else
-      _builder_ModuleBuilder_.call(this, module, exports, require);
+      _ion_builder_ModuleBuilder_.call(this, module, exports, require);
   }
   else {
-    _builder_ModuleBuilder_.call(this);
+    _ion_builder_ModuleBuilder_.call(this);
   }
 }).call(this)
-void (function(){var _builder_utility_ = function(module,exports,require){var buildCoffee, changeExtension, copy, copyMetadata, cp, exec, exports, fixCommand, fs, getModified, isDirectory, isFile, isMatch, isWindows, list, makeDirectories, makeParentDirectories, normalizePath, np, read, removeExtension, spawn, touch, watchCoffee, write;
+void (function(){var _ion_builder_utility_ = function(module,exports,require){var buildCoffee, changeExtension, copy, copyMetadata, cp, exec, exports, fixCommand, fs, getModified, isDirectory, isFile, isMatch, isWindows, list, makeDirectories, makeParentDirectories, normalizePath, np, read, removeExtension, spawn, touch, watchCoffee, write;
 
 if (global.window) {
   return;
@@ -2156,15 +2237,15 @@ module.exports = exports = {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('builder/utility',_builder_utility_);
+      require.register('ion/builder/utility',_ion_builder_utility_);
     else
-      _builder_utility_.call(this, module, exports, require);
+      _ion_builder_utility_.call(this, module, exports, require);
   }
   else {
-    _builder_utility_.call(this);
+    _ion_builder_utility_.call(this);
   }
 }).call(this)
-void (function(){var _builder_watcher_ = function(module,exports,require){var fs, np, util;
+void (function(){var _ion_builder_watcher_ = function(module,exports,require){var fs, np, util;
 
 if (global.window) {
   return;
@@ -2282,16 +2363,16 @@ exports.watchDirectory = function(dirname, options, listener) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('builder/watcher',_builder_watcher_);
+      require.register('ion/builder/watcher',_ion_builder_watcher_);
     else
-      _builder_watcher_.call(this, module, exports, require);
+      _ion_builder_watcher_.call(this, module, exports, require);
   }
   else {
-    _builder_watcher_.call(this);
+    _ion_builder_watcher_.call(this);
   }
 }).call(this)
-void (function(){var _compiler_astFunctions_ = function(module,exports,require){'use strict';
-const addStatement = exports.addStatement = function (node, statement, index, offset) {
+void (function(){var _ion_compiler_astFunctions_ = function(module,exports,require){'use strict';
+const ion = exports.ion = require('../'), addStatement = exports.addStatement = function (node, statement, index, offset) {
         let body = node.body;
         if (body.type === 'BlockStatement') {
             body = body.body;
@@ -2348,16 +2429,16 @@ const addStatement = exports.addStatement = function (node, statement, index, of
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/astFunctions',_compiler_astFunctions_);
+      require.register('ion/compiler/astFunctions',_ion_compiler_astFunctions_);
     else
-      _compiler_astFunctions_.call(this, module, exports, require);
+      _ion_compiler_astFunctions_.call(this, module, exports, require);
   }
   else {
-    _compiler_astFunctions_.call(this);
+    _ion_compiler_astFunctions_.call(this);
   }
 }).call(this)
-void (function(){var _compiler_common_ = function(module,exports,require){'use strict';
-const lineDelimiter = '\n', isEmpty = function (s) {
+void (function(){var _ion_compiler_common_ = function(module,exports,require){'use strict';
+const ion = require('../'), lineDelimiter = '\n', isEmpty = function (s) {
         return !(s != null) || s.length === 0 || (s.trim != null ? s.trim().length : void 0) === 0;
     };
 const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdentToken = '}}}}', splitLines = exports.splitLines = function (s) {
@@ -2397,28 +2478,28 @@ const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdent
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/common',_compiler_common_);
+      require.register('ion/compiler/common',_ion_compiler_common_);
     else
-      _compiler_common_.call(this, module, exports, require);
+      _ion_compiler_common_.call(this, module, exports, require);
   }
   else {
-    _compiler_common_.call(this);
+    _ion_compiler_common_.call(this);
   }
 }).call(this)
-void (function(){var _compiler_index_ = function(module,exports,require){'use strict';
-const makePrettyError = function (e, source, id) {
-    if (typeof e.line === 'number' && typeof e.column === 'number' && e.line > 0 && e.column > 0) {
-        let line = source.split('\n')[e.line - 1];
-        let caret = '^';
-        for (let i = 1; i < e.column; i++) {
-            caret = ' ' + caret;
+void (function(){var _ion_compiler_index_ = function(module,exports,require){'use strict';
+const ion = require('../'), makePrettyError = function (e, source, id) {
+        if (typeof e.line === 'number' && typeof e.column === 'number' && e.line > 0 && e.column > 0) {
+            let line = source.split('\n')[e.line - 1];
+            let caret = '^';
+            for (let i = 1; i < e.column; i++) {
+                caret = ' ' + caret;
+            }
+            let newMessage = '' + (id != null ? id : '(anonymous)') + ':' + e.line + ':' + e.column + ': ' + e.message + '\n' + line + '\n' + caret;
+            e.originalMessage = e.message;
+            e.message = newMessage;
+            e.stack = newMessage;
         }
-        let newMessage = '' + (id != null ? id : '(anonymous)') + ':' + e.line + ':' + e.column + ': ' + e.message + '\n' + line + '\n' + caret;
-        e.originalMessage = e.message;
-        e.message = newMessage;
-        e.stack = newMessage;
-    }
-};
+    };
 const parse = exports.parse = function (content, options) {
         if (options == null)
             options = {};
@@ -2455,15 +2536,16 @@ const parse = exports.parse = function (content, options) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/index',_compiler_index_);
+      require.register('ion/compiler/index',_ion_compiler_index_);
     else
-      _compiler_index_.call(this, module, exports, require);
+      _ion_compiler_index_.call(this, module, exports, require);
   }
   else {
-    _compiler_index_.call(this);
+    _ion_compiler_index_.call(this);
   }
 }).call(this)
-void (function(){var _compiler_nodes_ = function(module,exports,require){'use strict';
+void (function(){var _ion_compiler_nodes_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const BlockStatement = exports.BlockStatement = {
         isBlock: true,
         newScope: true
@@ -2490,15 +2572,15 @@ const BlockStatement = exports.BlockStatement = {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/nodes',_compiler_nodes_);
+      require.register('ion/compiler/nodes',_ion_compiler_nodes_);
     else
-      _compiler_nodes_.call(this, module, exports, require);
+      _ion_compiler_nodes_.call(this, module, exports, require);
   }
   else {
-    _compiler_nodes_.call(this);
+    _ion_compiler_nodes_.call(this);
   }
 }).call(this)
-void (function(){var _compiler_parser_ = function(module,exports,require){module.exports = (function() {
+void (function(){var _ion_compiler_parser_ = function(module,exports,require){module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
    *
@@ -15614,15 +15696,15 @@ void (function(){var _compiler_parser_ = function(module,exports,require){module
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/parser',_compiler_parser_);
+      require.register('ion/compiler/parser',_ion_compiler_parser_);
     else
-      _compiler_parser_.call(this, module, exports, require);
+      _ion_compiler_parser_.call(this, module, exports, require);
   }
   else {
-    _compiler_parser_.call(this);
+    _ion_compiler_parser_.call(this);
   }
 }).call(this)
-void (function(){var _compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isSuperExpression, javascriptExpressions, namedFunctions, nodeToLiteral, nodejsModules, nodes, nullExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
+void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isSuperExpression, javascriptExpressions, namedFunctions, nodeToLiteral, nodejsModules, nodes, nullExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -17185,15 +17267,15 @@ exports.postprocess = function(program, options) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/postprocessor',_compiler_postprocessor_);
+      require.register('ion/compiler/postprocessor',_ion_compiler_postprocessor_);
     else
-      _compiler_postprocessor_.call(this, module, exports, require);
+      _ion_compiler_postprocessor_.call(this, module, exports, require);
   }
   else {
-    _compiler_postprocessor_.call(this);
+    _ion_compiler_postprocessor_.call(this);
   }
 }).call(this)
-void (function(){var _compiler_preprocessor_ = function(module,exports,require){var common, fixSourceLocation, fixSourceLocations, getSpace, preprocess;
+void (function(){var _ion_compiler_preprocessor_ = function(module,exports,require){var common, fixSourceLocation, fixSourceLocations, getSpace, preprocess;
 
 common = require('./common');
 
@@ -17297,15 +17379,15 @@ exports.preprocess = preprocess = function(source, sourceMapping) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/preprocessor',_compiler_preprocessor_);
+      require.register('ion/compiler/preprocessor',_ion_compiler_preprocessor_);
     else
-      _compiler_preprocessor_.call(this, module, exports, require);
+      _ion_compiler_preprocessor_.call(this, module, exports, require);
   }
   else {
-    _compiler_preprocessor_.call(this);
+    _ion_compiler_preprocessor_.call(this);
   }
 }).call(this)
-void (function(){var _compiler_traverse_ = function(module,exports,require){exports.traverse = function(graph, enterCallback, exitCallback) {
+void (function(){var _ion_compiler_traverse_ = function(module,exports,require){exports.traverse = function(graph, enterCallback, exitCallback) {
   var context, removed, result, skip, traverseNode;
   result = graph;
   skip = false;
@@ -17450,15 +17532,15 @@ exports.test = function() {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/traverse',_compiler_traverse_);
+      require.register('ion/compiler/traverse',_ion_compiler_traverse_);
     else
-      _compiler_traverse_.call(this, module, exports, require);
+      _ion_compiler_traverse_.call(this, module, exports, require);
   }
   else {
-    _compiler_traverse_.call(this);
+    _ion_compiler_traverse_.call(this);
   }
 }).call(this)
-void (function(){var _compiler_traverseAst_ = function(module,exports,require){var addStatement, basicTraverse, nodes, trackVariableDeclaration, trackVariableDeclarations;
+void (function(){var _ion_compiler_traverseAst_ = function(module,exports,require){var addStatement, basicTraverse, nodes, trackVariableDeclaration, trackVariableDeclarations;
 
 basicTraverse = require('./traverse');
 
@@ -17754,15 +17836,15 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/traverseAst',_compiler_traverseAst_);
+      require.register('ion/compiler/traverseAst',_ion_compiler_traverseAst_);
     else
-      _compiler_traverseAst_.call(this, module, exports, require);
+      _ion_compiler_traverseAst_.call(this, module, exports, require);
   }
   else {
-    _compiler_traverseAst_.call(this);
+    _ion_compiler_traverseAst_.call(this);
   }
 }).call(this)
-void (function(){var _es6_ = function(module,exports,require){
+void (function(){var _ion_es6_ = function(module,exports,require){void (function(){var _src_es6_ = function(module,exports,require){
 if (!String.prototype.endsWith) {
     Object.defineProperty(String.prototype, 'endsWith', {
         enumerable: false,
@@ -17799,15 +17881,27 @@ if ( !String.prototype.contains ) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('es6',_es6_);
+      require.register('src/es6',_src_es6_);
     else
-      _es6_.call(this, module, exports, require);
+      _src_es6_.call(this, module, exports, require);
   }
   else {
-    _es6_.call(this);
+    _src_es6_.call(this);
   }
 }).call(this)
-void (function(){var _index_ = function(module,exports,require){'use strict';
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/es6',_ion_es6_);
+    else
+      _ion_es6_.call(this, module, exports, require);
+  }
+  else {
+    _ion_es6_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_index_ = function(module,exports,require){'use strict';
+const ion = null;
 require('./es6');
 const mergePatch = require('./mergePatch'), primitive = {
         string: true,
@@ -18107,15 +18201,15 @@ const patch = exports.patch = function (target, values, deleteNull) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('index',_index_);
+      require.register('ion/index',_ion_index_);
     else
-      _index_.call(this, module, exports, require);
+      _ion_index_.call(this, module, exports, require);
   }
   else {
-    _index_.call(this);
+    _ion_index_.call(this);
   }
 }).call(this)
-void (function(){var _mergePatch_ = function(module,exports,require){'use strict';
+void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
 const ion = require('./'), isObject = function (a) {
         return a != null && typeof a === 'object';
     }, deleteValue = void 0;
@@ -18364,16 +18458,16 @@ const apply = exports.apply = function (target, values, deleteUndefined) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('mergePatch',_mergePatch_);
+      require.register('ion/mergePatch',_ion_mergePatch_);
     else
-      _mergePatch_.call(this, module, exports, require);
+      _ion_mergePatch_.call(this, module, exports, require);
   }
   else {
-    _mergePatch_.call(this);
+    _ion_mergePatch_.call(this);
   }
 }).call(this)
-void (function(){var _Object_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+void (function(){var _ion_Object_ = function(module,exports,require){'use strict';
+const ion = require('./');
 const Object = ion.defineClass({
         id: 'Object',
         constructor: function Object(properties) {
@@ -18407,16 +18501,16 @@ module.exports = exports = Object;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('Object',_Object_);
+      require.register('ion/Object',_ion_Object_);
     else
-      _Object_.call(this, module, exports, require);
+      _ion_Object_.call(this, module, exports, require);
   }
   else {
-    _Object_.call(this);
+    _ion_Object_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_ArrayExpression_ = function(module,exports,require){'use strict';
-const DynamicExpression = require('./DynamicExpression'), ion = require('../');
+void (function(){var _ion_runtime_ArrayExpression_ = function(module,exports,require){'use strict';
+const ion = require('../'), DynamicExpression = require('./DynamicExpression');
 const ArrayExpression = ion.defineClass({
         id: 'ArrayExpression',
         constructor: function ArrayExpression() {
@@ -18517,17 +18611,16 @@ module.exports = exports = ArrayExpression;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/ArrayExpression',_runtime_ArrayExpression_);
+      require.register('ion/runtime/ArrayExpression',_ion_runtime_ArrayExpression_);
     else
-      _runtime_ArrayExpression_.call(this, module, exports, require);
+      _ion_runtime_ArrayExpression_.call(this, module, exports, require);
   }
   else {
-    _runtime_ArrayExpression_.call(this);
+    _ion_runtime_ArrayExpression_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_BlockStatement_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const Statement = require('./Statement');
+void (function(){var _ion_runtime_BlockStatement_ = function(module,exports,require){'use strict';
+const ion = require('../'), Statement = require('./Statement');
 const BlockStatement = ion.defineClass({
         id: 'BlockStatement',
         properties: {
@@ -18565,15 +18658,15 @@ module.exports = exports = BlockStatement;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/BlockStatement',_runtime_BlockStatement_);
+      require.register('ion/runtime/BlockStatement',_ion_runtime_BlockStatement_);
     else
-      _runtime_BlockStatement_.call(this, module, exports, require);
+      _ion_runtime_BlockStatement_.call(this, module, exports, require);
   }
   else {
-    _runtime_BlockStatement_.call(this);
+    _ion_runtime_BlockStatement_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_CallExpression_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_CallExpression_ = function(module,exports,require){'use strict';
 const ion = require('../'), DynamicExpression = require('./DynamicExpression'), ArrayExpression = require('./ArrayExpression');
 const CallExpression = ion.defineClass({
         id: 'CallExpression',
@@ -18584,6 +18677,14 @@ const CallExpression = ion.defineClass({
                 this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
                 this.calleeExpression.watch(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : function (value) {
                     this.calleeValue = value;
+                    let thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
+                    if (thisArg !== this.thisArg) {
+                        ion.unobserve(this.thisarg, this.thisObserver);
+                        this.thisArg = thisArg;
+                        ion.observe(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : function (changes) {
+                            this.evaluate();
+                        }.bind(this));
+                    }
                     this.evaluate();
                 }.bind(this));
                 this.argumentExpressions = this.argumentExpressions != null ? this.argumentExpressions : this.context.createRuntime({
@@ -18607,8 +18708,7 @@ const CallExpression = ion.defineClass({
                     if (this.type === 'NewExpression') {
                         value = ion.create(this.calleeValue, this.argumentsValue);
                     } else {
-                        let thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
-                        value = this.calleeValue.apply(thisArg, this.argumentsValue);
+                        value = this.calleeValue.apply(this.thisArg, this.argumentsValue);
                     }
                 }
                 this.setValue(value);
@@ -18619,17 +18719,16 @@ module.exports = CallExpression;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/CallExpression',_runtime_CallExpression_);
+      require.register('ion/runtime/CallExpression',_ion_runtime_CallExpression_);
     else
-      _runtime_CallExpression_.call(this, module, exports, require);
+      _ion_runtime_CallExpression_.call(this, module, exports, require);
   }
   else {
-    _runtime_CallExpression_.call(this);
+    _ion_runtime_CallExpression_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_Context_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const Factory = require('./Factory'), Literal = require('./Literal');
+void (function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
+const ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal');
 const Context = ion.defineClass({
         id: 'Context',
         constructor: function Context(parent, output) {
@@ -18695,15 +18794,15 @@ module.exports = exports = Context;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Context',_runtime_Context_);
+      require.register('ion/runtime/Context',_ion_runtime_Context_);
     else
-      _runtime_Context_.call(this, module, exports, require);
+      _ion_runtime_Context_.call(this, module, exports, require);
   }
   else {
-    _runtime_Context_.call(this);
+    _ion_runtime_Context_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_DynamicExpression_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_DynamicExpression_ = function(module,exports,require){'use strict';
 const ion = require('../');
 const DynamicExpression = ion.defineClass({
         id: 'DynamicExpression',
@@ -18797,16 +18896,16 @@ module.exports = exports = DynamicExpression;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/DynamicExpression',_runtime_DynamicExpression_);
+      require.register('ion/runtime/DynamicExpression',_ion_runtime_DynamicExpression_);
     else
-      _runtime_DynamicExpression_.call(this, module, exports, require);
+      _ion_runtime_DynamicExpression_.call(this, module, exports, require);
   }
   else {
-    _runtime_DynamicExpression_.call(this);
+    _ion_runtime_DynamicExpression_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_Expression_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+void (function(){var _ion_runtime_Expression_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const Expression = ion.defineClass({
         id: 'Expression',
         properties: {
@@ -18822,15 +18921,15 @@ module.exports = exports = Expression;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Expression',_runtime_Expression_);
+      require.register('ion/runtime/Expression',_ion_runtime_Expression_);
     else
-      _runtime_Expression_.call(this, module, exports, require);
+      _ion_runtime_Expression_.call(this, module, exports, require);
   }
   else {
-    _runtime_Expression_.call(this);
+    _ion_runtime_Expression_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_ExpressionStatement_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_ExpressionStatement_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const ExpressionStatement = ion.defineClass({
         id: 'ExpressionStatement',
@@ -18859,15 +18958,15 @@ module.exports = exports = ExpressionStatement;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/ExpressionStatement',_runtime_ExpressionStatement_);
+      require.register('ion/runtime/ExpressionStatement',_ion_runtime_ExpressionStatement_);
     else
-      _runtime_ExpressionStatement_.call(this, module, exports, require);
+      _ion_runtime_ExpressionStatement_.call(this, module, exports, require);
   }
   else {
-    _runtime_ExpressionStatement_.call(this);
+    _ion_runtime_ExpressionStatement_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_Factory_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_Factory_ = function(module,exports,require){'use strict';
 const ion = require('../');
 const Literal = require('./Literal');
 const Factory = ion.defineClass({
@@ -19216,15 +19315,15 @@ const createRuntime = exports.createRuntime = function (context, ast) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Factory',_runtime_Factory_);
+      require.register('ion/runtime/Factory',_ion_runtime_Factory_);
     else
-      _runtime_Factory_.call(this, module, exports, require);
+      _ion_runtime_Factory_.call(this, module, exports, require);
   }
   else {
-    _runtime_Factory_.call(this);
+    _ion_runtime_Factory_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_ForInOfStatement_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_ForInOfStatement_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const ForInOfStatement = ion.defineClass({
         id: 'ForInOfStatement',
@@ -19321,15 +19420,15 @@ module.exports = exports = ForInOfStatement;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/ForInOfStatement',_runtime_ForInOfStatement_);
+      require.register('ion/runtime/ForInOfStatement',_ion_runtime_ForInOfStatement_);
     else
-      _runtime_ForInOfStatement_.call(this, module, exports, require);
+      _ion_runtime_ForInOfStatement_.call(this, module, exports, require);
   }
   else {
-    _runtime_ForInOfStatement_.call(this);
+    _ion_runtime_ForInOfStatement_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_IfStatement_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_IfStatement_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const IfStatement = ion.defineClass({
         id: 'IfStatement',
@@ -19371,16 +19470,16 @@ module.exports = exports = IfStatement;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/IfStatement',_runtime_IfStatement_);
+      require.register('ion/runtime/IfStatement',_ion_runtime_IfStatement_);
     else
-      _runtime_IfStatement_.call(this, module, exports, require);
+      _ion_runtime_IfStatement_.call(this, module, exports, require);
   }
   else {
-    _runtime_IfStatement_.call(this);
+    _ion_runtime_IfStatement_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_Literal_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+void (function(){var _ion_runtime_Literal_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const Literal = ion.defineClass({
         id: 'Literal',
         properties: {
@@ -19396,15 +19495,15 @@ module.exports = exports = Literal;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Literal',_runtime_Literal_);
+      require.register('ion/runtime/Literal',_ion_runtime_Literal_);
     else
-      _runtime_Literal_.call(this, module, exports, require);
+      _ion_runtime_Literal_.call(this, module, exports, require);
   }
   else {
-    _runtime_Literal_.call(this);
+    _ion_runtime_Literal_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_MemberExpression_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_MemberExpression_ = function(module,exports,require){'use strict';
 const ion = require('../'), DynamicExpression = require('./DynamicExpression');
 const MemberExpression = ion.defineClass({
         id: 'MemberExpression',
@@ -19451,31 +19550,31 @@ module.exports = exports = MemberExpression;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/MemberExpression',_runtime_MemberExpression_);
+      require.register('ion/runtime/MemberExpression',_ion_runtime_MemberExpression_);
     else
-      _runtime_MemberExpression_.call(this, module, exports, require);
+      _ion_runtime_MemberExpression_.call(this, module, exports, require);
   }
   else {
-    _runtime_MemberExpression_.call(this);
+    _ion_runtime_MemberExpression_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_Node_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+void (function(){var _ion_runtime_Node_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const Node = ion.defineClass({ id: 'Node' });
 module.exports = exports = Node;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Node',_runtime_Node_);
+      require.register('ion/runtime/Node',_ion_runtime_Node_);
     else
-      _runtime_Node_.call(this, module, exports, require);
+      _ion_runtime_Node_.call(this, module, exports, require);
   }
   else {
-    _runtime_Node_.call(this);
+    _ion_runtime_Node_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_ObjectExpression_ = function(module,exports,require){'use strict';
-const DynamicExpression = require('./DynamicExpression'), ion = require('../');
+void (function(){var _ion_runtime_ObjectExpression_ = function(module,exports,require){'use strict';
+const ion = require('../'), DynamicExpression = require('./DynamicExpression');
 const ObjectExpression = ion.defineClass({
         id: 'ObjectExpression',
         properties: {
@@ -19521,17 +19620,16 @@ module.exports = exports = ObjectExpression;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/ObjectExpression',_runtime_ObjectExpression_);
+      require.register('ion/runtime/ObjectExpression',_ion_runtime_ObjectExpression_);
     else
-      _runtime_ObjectExpression_.call(this, module, exports, require);
+      _ion_runtime_ObjectExpression_.call(this, module, exports, require);
   }
   else {
-    _runtime_ObjectExpression_.call(this);
+    _ion_runtime_ObjectExpression_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_OperationExpression_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const DynamicExpression = require('./DynamicExpression');
+void (function(){var _ion_runtime_OperationExpression_ = function(module,exports,require){'use strict';
+const ion = require('../'), DynamicExpression = require('./DynamicExpression');
 const OperationExpression = ion.defineClass({
         id: 'OperationExpression',
         constructor: function OperationExpression(properties) {
@@ -19584,15 +19682,15 @@ module.exports = OperationExpression;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/OperationExpression',_runtime_OperationExpression_);
+      require.register('ion/runtime/OperationExpression',_ion_runtime_OperationExpression_);
     else
-      _runtime_OperationExpression_.call(this, module, exports, require);
+      _ion_runtime_OperationExpression_.call(this, module, exports, require);
   }
   else {
-    _runtime_OperationExpression_.call(this);
+    _ion_runtime_OperationExpression_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_Property_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_Property_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const Property = ion.defineClass({
         id: 'Property',
@@ -19650,17 +19748,16 @@ module.exports = exports = Property;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Property',_runtime_Property_);
+      require.register('ion/runtime/Property',_ion_runtime_Property_);
     else
-      _runtime_Property_.call(this, module, exports, require);
+      _ion_runtime_Property_.call(this, module, exports, require);
   }
   else {
-    _runtime_Property_.call(this);
+    _ion_runtime_Property_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_ReturnStatement_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const Statement = require('./Statement');
+void (function(){var _ion_runtime_ReturnStatement_ = function(module,exports,require){'use strict';
+const ion = require('../'), Statement = require('./Statement');
 const ReturnStatement = ion.defineClass({
         id: 'ReturnStatement',
         properties: {
@@ -19681,16 +19778,16 @@ module.exports = exports = ReturnStatement;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/ReturnStatement',_runtime_ReturnStatement_);
+      require.register('ion/runtime/ReturnStatement',_ion_runtime_ReturnStatement_);
     else
-      _runtime_ReturnStatement_.call(this, module, exports, require);
+      _ion_runtime_ReturnStatement_.call(this, module, exports, require);
   }
   else {
-    _runtime_ReturnStatement_.call(this);
+    _ion_runtime_ReturnStatement_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_Statement_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+void (function(){var _ion_runtime_Statement_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const Statement = ion.defineClass({
         id: 'Statement',
         properties: {
@@ -19707,17 +19804,16 @@ module.exports = exports = Statement;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Statement',_runtime_Statement_);
+      require.register('ion/runtime/Statement',_ion_runtime_Statement_);
     else
-      _runtime_Statement_.call(this, module, exports, require);
+      _ion_runtime_Statement_.call(this, module, exports, require);
   }
   else {
-    _runtime_Statement_.call(this);
+    _ion_runtime_Statement_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_Template_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression');
+void (function(){var _ion_runtime_Template_ = function(module,exports,require){'use strict';
+const ion = require('../'), BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression');
 const Template = ion.defineClass({
         id: 'Template',
         constructor: function Template() {
@@ -19740,16 +19836,16 @@ module.exports = exports = Template;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Template',_runtime_Template_);
+      require.register('ion/runtime/Template',_ion_runtime_Template_);
     else
-      _runtime_Template_.call(this, module, exports, require);
+      _ion_runtime_Template_.call(this, module, exports, require);
   }
   else {
-    _runtime_Template_.call(this);
+    _ion_runtime_Template_.call(this);
   }
 }).call(this)
-void (function(){var _runtime_VariableDeclaration_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+void (function(){var _ion_runtime_VariableDeclaration_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const Statement = require('./Statement');
 const VariableDeclaration = ion.defineClass({
         id: 'VariableDeclaration',
@@ -19770,15 +19866,15 @@ module.exports = exports = VariableDeclaration;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/VariableDeclaration',_runtime_VariableDeclaration_);
+      require.register('ion/runtime/VariableDeclaration',_ion_runtime_VariableDeclaration_);
     else
-      _runtime_VariableDeclaration_.call(this, module, exports, require);
+      _ion_runtime_VariableDeclaration_.call(this, module, exports, require);
   }
   else {
-    _runtime_VariableDeclaration_.call(this);
+    _ion_runtime_VariableDeclaration_.call(this);
   }
 }).call(this)
-void (function(){var _test_immediateTemplates_ = function(module,exports,require){'use strict';
+void (function(){var _ion_test_immediateTemplates_ = function(module,exports,require){'use strict';
 const ion = require('../');
 const templates = [
         [
@@ -21350,15 +21446,15 @@ const test = exports.test = function () {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('test/immediateTemplates',_test_immediateTemplates_);
+      require.register('ion/test/immediateTemplates',_ion_test_immediateTemplates_);
     else
-      _test_immediateTemplates_.call(this, module, exports, require);
+      _ion_test_immediateTemplates_.call(this, module, exports, require);
   }
   else {
-    _test_immediateTemplates_.call(this);
+    _ion_test_immediateTemplates_.call(this);
   }
 }).call(this)
-void (function(){var _test_ionCompiler_ = function(module,exports,require){var index, tests;
+void (function(){var _ion_test_ionCompiler_ = function(module,exports,require){var index, tests;
 
 index = require('../compiler');
 
@@ -21601,41 +21697,41 @@ exports.test = function() {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('test/ionCompiler',_test_ionCompiler_);
+      require.register('ion/test/ionCompiler',_ion_test_ionCompiler_);
     else
-      _test_ionCompiler_.call(this, module, exports, require);
+      _ion_test_ionCompiler_.call(this, module, exports, require);
   }
   else {
-    _test_ionCompiler_.call(this);
+    _ion_test_ionCompiler_.call(this);
   }
 }).call(this)
-void (function(){var _test_ionCustomParse_ = function(module,exports,require){
+void (function(){var _ion_test_ionCustomParse_ = function(module,exports,require){
 
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('test/ionCustomParse',_test_ionCustomParse_);
+      require.register('ion/test/ionCustomParse',_ion_test_ionCustomParse_);
     else
-      _test_ionCustomParse_.call(this, module, exports, require);
+      _ion_test_ionCustomParse_.call(this, module, exports, require);
   }
   else {
-    _test_ionCustomParse_.call(this);
+    _ion_test_ionCustomParse_.call(this);
   }
 }).call(this)
-void (function(){var _test_ionVsEsprima_ = function(module,exports,require){
+void (function(){var _ion_test_ionVsEsprima_ = function(module,exports,require){
 
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('test/ionVsEsprima',_test_ionVsEsprima_);
+      require.register('ion/test/ionVsEsprima',_ion_test_ionVsEsprima_);
     else
-      _test_ionVsEsprima_.call(this, module, exports, require);
+      _ion_test_ionVsEsprima_.call(this, module, exports, require);
   }
   else {
-    _test_ionVsEsprima_.call(this);
+    _ion_test_ionVsEsprima_.call(this);
   }
 }).call(this)
-void (function(){var _test_reactiveTemplates_ = function(module,exports,require){'use strict';
+void (function(){var _ion_test_reactiveTemplates_ = function(module,exports,require){'use strict';
 const ion = require('../');
 const templates = [
         [
@@ -22239,6 +22335,53 @@ const templates = [
                 5,
                 7
             ]
+        ],
+        [
+            'changing object with function',
+            function _template6(object) {
+                if (this != null && this.constructor === _template6) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'object'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'sum'
+                                        }
+                                    },
+                                    arguments: []
+                                }
+                            }]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        object: object,
+                        ion: ion,
+                        templates: templates,
+                        _ref7: _ref7
+                    });
+                }
+                return object.sum();
+            },
+            {
+                sum: function () {
+                    return this.x + this.y;
+                },
+                x: 1,
+                y: 2
+            },
+            { x: 6 },
+            8
         ]
     ];
 let _ref7 = {};
@@ -22277,16 +22420,16 @@ module.exports = exports = { test: _ref7 };
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('test/reactiveTemplates',_test_reactiveTemplates_);
+      require.register('ion/test/reactiveTemplates',_ion_test_reactiveTemplates_);
     else
-      _test_reactiveTemplates_.call(this, module, exports, require);
+      _ion_test_reactiveTemplates_.call(this, module, exports, require);
   }
   else {
-    _test_reactiveTemplates_.call(this);
+    _ion_test_reactiveTemplates_.call(this);
   }
 }).call(this)
-void (function(){var _test_templateParams_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+void (function(){var _ion_test_templateParams_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const firstTemplate = function _template(a, b) {
     if (this != null && this.constructor === _template) {
         return ion.createRuntime({
@@ -22316,6 +22459,7 @@ const firstTemplate = function _template(a, b) {
             exports: exports,
             a: a,
             b: b,
+            ion: ion,
             firstTemplate: firstTemplate,
             test: test
         });
@@ -22338,17 +22482,17 @@ const test = exports.test = function () {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('test/templateParams',_test_templateParams_);
+      require.register('ion/test/templateParams',_ion_test_templateParams_);
     else
-      _test_templateParams_.call(this, module, exports, require);
+      _ion_test_templateParams_.call(this, module, exports, require);
   }
   else {
-    _test_templateParams_.call(this);
+    _ion_test_templateParams_.call(this);
   }
 }).call(this)
-void (function(){var _test_Todo_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const _ref = require('ion/browser/html');
+void (function(){var _ion_test_Todo_ = function(module,exports,require){'use strict';
+const ion = require('../');
+const _ref = require('../browser/html');
 let div = _ref.div;
 let span = _ref.span;
 let input = _ref.input;
@@ -22613,6 +22757,7 @@ module.exports = exports = function _template() {
             require: require,
             module: module,
             exports: exports,
+            ion: ion,
             _ref: _ref,
             div: div,
             span: span,
@@ -22665,12 +22810,12 @@ module.exports = exports = function _template() {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('test/Todo',_test_Todo_);
+      require.register('ion/test/Todo',_ion_test_Todo_);
     else
-      _test_Todo_.call(this, module, exports, require);
+      _ion_test_Todo_.call(this, module, exports, require);
   }
   else {
-    _test_Todo_.call(this);
+    _ion_test_Todo_.call(this);
   }
 }).call(this)
 //# sourceMappingURL= _browser.js.map

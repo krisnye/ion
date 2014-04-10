@@ -1,5 +1,5 @@
-void (function(){var _runtime_Expression_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+void (function(){var _ion_runtime_Expression_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const Expression = ion.defineClass({
         id: 'Expression',
         properties: {
@@ -15,11 +15,11 @@ module.exports = exports = Expression;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Expression',_runtime_Expression_);
+      require.register('ion/runtime/Expression',_ion_runtime_Expression_);
     else
-      _runtime_Expression_.call(this, module, exports, require);
+      _ion_runtime_Expression_.call(this, module, exports, require);
   }
   else {
-    _runtime_Expression_.call(this);
+    _ion_runtime_Expression_.call(this);
   }
 }).call(this)

@@ -1,4 +1,5 @@
-void (function(){var _compiler_nodes_ = function(module,exports,require){'use strict';
+void (function(){var _ion_compiler_nodes_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const BlockStatement = exports.BlockStatement = {
         isBlock: true,
         newScope: true
@@ -25,11 +26,11 @@ const BlockStatement = exports.BlockStatement = {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/nodes',_compiler_nodes_);
+      require.register('ion/compiler/nodes',_ion_compiler_nodes_);
     else
-      _compiler_nodes_.call(this, module, exports, require);
+      _ion_compiler_nodes_.call(this, module, exports, require);
   }
   else {
-    _compiler_nodes_.call(this);
+    _ion_compiler_nodes_.call(this);
   }
 }).call(this)

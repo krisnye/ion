@@ -1,4 +1,4 @@
-void (function(){var _browser_tester_ = function(module,exports,require){var args, file, manifest, manifestFile, moduleId, modules, np, runTest, runTests, spawnTests, utility, _i, _len, _ref;
+void (function(){var _ion_browser_tester_ = function(module,exports,require){var args, file, manifest, manifestFile, moduleId, modules, np, runTest, runTests, spawnTests, utility, _i, _len, _ref;
 
 runTest = function(name, test, callback) {
   var e, expectedCallbacks, key, result, value;
@@ -239,11 +239,11 @@ if (require.main === module) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('browser/tester',_browser_tester_);
+      require.register('ion/browser/tester',_ion_browser_tester_);
     else
-      _browser_tester_.call(this, module, exports, require);
+      _ion_browser_tester_.call(this, module, exports, require);
   }
   else {
-    _browser_tester_.call(this);
+    _ion_browser_tester_.call(this);
   }
 }).call(this)

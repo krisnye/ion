@@ -1,4 +1,4 @@
-void (function(){var _runtime_IfStatement_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_IfStatement_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const IfStatement = ion.defineClass({
         id: 'IfStatement',
@@ -40,11 +40,11 @@ module.exports = exports = IfStatement;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/IfStatement',_runtime_IfStatement_);
+      require.register('ion/runtime/IfStatement',_ion_runtime_IfStatement_);
     else
-      _runtime_IfStatement_.call(this, module, exports, require);
+      _ion_runtime_IfStatement_.call(this, module, exports, require);
   }
   else {
-    _runtime_IfStatement_.call(this);
+    _ion_runtime_IfStatement_.call(this);
   }
 }).call(this)

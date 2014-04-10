@@ -1,4 +1,4 @@
-void (function(){var _mergePatch_ = function(module,exports,require){'use strict';
+void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
 const ion = require('./'), isObject = function (a) {
         return a != null && typeof a === 'object';
     }, deleteValue = void 0;
@@ -247,11 +247,11 @@ const apply = exports.apply = function (target, values, deleteUndefined) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('mergePatch',_mergePatch_);
+      require.register('ion/mergePatch',_ion_mergePatch_);
     else
-      _mergePatch_.call(this, module, exports, require);
+      _ion_mergePatch_.call(this, module, exports, require);
   }
   else {
-    _mergePatch_.call(this);
+    _ion_mergePatch_.call(this);
   }
 }).call(this)

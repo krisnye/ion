@@ -1,4 +1,5 @@
-void (function(){var _index_ = function(module,exports,require){'use strict';
+void (function(){var _ion_index_ = function(module,exports,require){'use strict';
+const ion = null;
 require('./es6');
 const mergePatch = require('./mergePatch'), primitive = {
         string: true,
@@ -298,11 +299,11 @@ const patch = exports.patch = function (target, values, deleteNull) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('index',_index_);
+      require.register('ion/index',_ion_index_);
     else
-      _index_.call(this, module, exports, require);
+      _ion_index_.call(this, module, exports, require);
   }
   else {
-    _index_.call(this);
+    _ion_index_.call(this);
   }
 }).call(this)

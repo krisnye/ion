@@ -1,4 +1,4 @@
-void (function(){var _runtime_ExpressionStatement_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_ExpressionStatement_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const ExpressionStatement = ion.defineClass({
         id: 'ExpressionStatement',
@@ -27,11 +27,11 @@ module.exports = exports = ExpressionStatement;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/ExpressionStatement',_runtime_ExpressionStatement_);
+      require.register('ion/runtime/ExpressionStatement',_ion_runtime_ExpressionStatement_);
     else
-      _runtime_ExpressionStatement_.call(this, module, exports, require);
+      _ion_runtime_ExpressionStatement_.call(this, module, exports, require);
   }
   else {
-    _runtime_ExpressionStatement_.call(this);
+    _ion_runtime_ExpressionStatement_.call(this);
   }
 }).call(this)

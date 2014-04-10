@@ -1,5 +1,6 @@
 
 const
+    ion = import '../'
     makePrettyError = (e, source, id) ->
         if typeof e.line is 'number' and typeof e.column is 'number' and e.line > 0 and e.column > 0
             let line = source.split('\n')[e.line - 1]

@@ -1,4 +1,4 @@
-void (function(){var _browser_require_ = function(module,exports,require){var modules, normalize, require, resolve;
+void (function(){var _ion_browser_require_ = function(module,exports,require){var modules, normalize, require, resolve;
 
 if (this.global == null) {
   this.global = (function() {
@@ -116,11 +116,11 @@ if (typeof module === "undefined") {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('browser/require',_browser_require_);
+      require.register('ion/browser/require',_ion_browser_require_);
     else
-      _browser_require_.call(this, module, exports, require);
+      _ion_browser_require_.call(this, module, exports, require);
   }
   else {
-    _browser_require_.call(this);
+    _ion_browser_require_.call(this);
   }
 }).call(this)

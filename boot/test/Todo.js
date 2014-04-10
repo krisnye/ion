@@ -1,6 +1,6 @@
-void (function(){var _test_Todo_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const _ref = require('ion/browser/html');
+void (function(){var _ion_test_Todo_ = function(module,exports,require){'use strict';
+const ion = require('../');
+const _ref = require('../browser/html');
 let div = _ref.div;
 let span = _ref.span;
 let input = _ref.input;
@@ -265,6 +265,7 @@ module.exports = exports = function _template() {
             require: require,
             module: module,
             exports: exports,
+            ion: ion,
             _ref: _ref,
             div: div,
             span: span,
@@ -317,11 +318,11 @@ module.exports = exports = function _template() {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('test/Todo',_test_Todo_);
+      require.register('ion/test/Todo',_ion_test_Todo_);
     else
-      _test_Todo_.call(this, module, exports, require);
+      _ion_test_Todo_.call(this, module, exports, require);
   }
   else {
-    _test_Todo_.call(this);
+    _ion_test_Todo_.call(this);
   }
 }).call(this)

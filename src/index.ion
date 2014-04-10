@@ -1,3 +1,4 @@
+const ion = null # shouldn't depend on itself
 
 import './es6'
 

@@ -1,4 +1,4 @@
-void (function(){var _runtime_Factory_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_Factory_ = function(module,exports,require){'use strict';
 const ion = require('../');
 const Literal = require('./Literal');
 const Factory = ion.defineClass({
@@ -347,11 +347,11 @@ const createRuntime = exports.createRuntime = function (context, ast) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Factory',_runtime_Factory_);
+      require.register('ion/runtime/Factory',_ion_runtime_Factory_);
     else
-      _runtime_Factory_.call(this, module, exports, require);
+      _ion_runtime_Factory_.call(this, module, exports, require);
   }
   else {
-    _runtime_Factory_.call(this);
+    _ion_runtime_Factory_.call(this);
   }
 }).call(this)

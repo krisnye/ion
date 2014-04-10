@@ -1,4 +1,4 @@
-void (function(){var _runtime_CallExpression_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_CallExpression_ = function(module,exports,require){'use strict';
 const ion = require('../'), DynamicExpression = require('./DynamicExpression'), ArrayExpression = require('./ArrayExpression');
 const CallExpression = ion.defineClass({
         id: 'CallExpression',
@@ -9,6 +9,14 @@ const CallExpression = ion.defineClass({
                 this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
                 this.calleeExpression.watch(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : function (value) {
                     this.calleeValue = value;
+                    let thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
+                    if (thisArg !== this.thisArg) {
+                        ion.unobserve(this.thisarg, this.thisObserver);
+                        this.thisArg = thisArg;
+                        ion.observe(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : function (changes) {
+                            this.evaluate();
+                        }.bind(this));
+                    }
                     this.evaluate();
                 }.bind(this));
                 this.argumentExpressions = this.argumentExpressions != null ? this.argumentExpressions : this.context.createRuntime({
@@ -32,8 +40,7 @@ const CallExpression = ion.defineClass({
                     if (this.type === 'NewExpression') {
                         value = ion.create(this.calleeValue, this.argumentsValue);
                     } else {
-                        let thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
-                        value = this.calleeValue.apply(thisArg, this.argumentsValue);
+                        value = this.calleeValue.apply(this.thisArg, this.argumentsValue);
                     }
                 }
                 this.setValue(value);
@@ -44,11 +51,11 @@ module.exports = CallExpression;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/CallExpression',_runtime_CallExpression_);
+      require.register('ion/runtime/CallExpression',_ion_runtime_CallExpression_);
     else
-      _runtime_CallExpression_.call(this, module, exports, require);
+      _ion_runtime_CallExpression_.call(this, module, exports, require);
   }
   else {
-    _runtime_CallExpression_.call(this);
+    _ion_runtime_CallExpression_.call(this);
   }
 }).call(this)

@@ -1,4 +1,4 @@
-void (function(){var _browser_html_ = function(module,exports,require){var name, _fn, _i, _len, _ref;
+void (function(){var _ion_browser_html_ = function(module,exports,require){var name, _fn, _i, _len, _ref;
 
 _ref = ["div", "span", "input", "a", "br", "button", "caption", "fieldset", "form", "frame", "frameset", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "legend", "menu", "option", "select", "script", "pre", "table", "tbody", "td", "tr", "thead"];
 _fn = function(name) {
@@ -22,11 +22,11 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('browser/html',_browser_html_);
+      require.register('ion/browser/html',_ion_browser_html_);
     else
-      _browser_html_.call(this, module, exports, require);
+      _ion_browser_html_.call(this, module, exports, require);
   }
   else {
-    _browser_html_.call(this);
+    _ion_browser_html_.call(this);
   }
 }).call(this)

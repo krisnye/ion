@@ -1,4 +1,4 @@
-void (function(){var _compiler_traverse_ = function(module,exports,require){exports.traverse = function(graph, enterCallback, exitCallback) {
+void (function(){var _ion_compiler_traverse_ = function(module,exports,require){exports.traverse = function(graph, enterCallback, exitCallback) {
   var context, removed, result, skip, traverseNode;
   result = graph;
   skip = false;
@@ -143,11 +143,11 @@ exports.test = function() {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/traverse',_compiler_traverse_);
+      require.register('ion/compiler/traverse',_ion_compiler_traverse_);
     else
-      _compiler_traverse_.call(this, module, exports, require);
+      _ion_compiler_traverse_.call(this, module, exports, require);
   }
   else {
-    _compiler_traverse_.call(this);
+    _ion_compiler_traverse_.call(this);
   }
 }).call(this)

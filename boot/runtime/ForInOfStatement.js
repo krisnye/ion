@@ -1,4 +1,4 @@
-void (function(){var _runtime_ForInOfStatement_ = function(module,exports,require){'use strict';
+void (function(){var _ion_runtime_ForInOfStatement_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const ForInOfStatement = ion.defineClass({
         id: 'ForInOfStatement',
@@ -95,11 +95,11 @@ module.exports = exports = ForInOfStatement;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/ForInOfStatement',_runtime_ForInOfStatement_);
+      require.register('ion/runtime/ForInOfStatement',_ion_runtime_ForInOfStatement_);
     else
-      _runtime_ForInOfStatement_.call(this, module, exports, require);
+      _ion_runtime_ForInOfStatement_.call(this, module, exports, require);
   }
   else {
-    _runtime_ForInOfStatement_.call(this);
+    _ion_runtime_ForInOfStatement_.call(this);
   }
 }).call(this)

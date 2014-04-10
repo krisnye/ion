@@ -1,4 +1,4 @@
-void (function(){var _es6_ = function(module,exports,require){
+void (function(){var _ion_es6_ = function(module,exports,require){void (function(){var _src_es6_ = function(module,exports,require){
 if (!String.prototype.endsWith) {
     Object.defineProperty(String.prototype, 'endsWith', {
         enumerable: false,
@@ -35,11 +35,22 @@ if ( !String.prototype.contains ) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('es6',_es6_);
+      require.register('src/es6',_src_es6_);
     else
-      _es6_.call(this, module, exports, require);
+      _src_es6_.call(this, module, exports, require);
   }
   else {
-    _es6_.call(this);
+    _src_es6_.call(this);
+  }
+}).call(this)
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/es6',_ion_es6_);
+    else
+      _ion_es6_.call(this, module, exports, require);
+  }
+  else {
+    _ion_es6_.call(this);
   }
 }).call(this)

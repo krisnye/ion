@@ -1,4 +1,4 @@
-void (function(){var _test_reactiveTemplates_ = function(module,exports,require){'use strict';
+void (function(){var _ion_test_reactiveTemplates_ = function(module,exports,require){'use strict';
 const ion = require('../');
 const templates = [
         [
@@ -602,6 +602,53 @@ const templates = [
                 5,
                 7
             ]
+        ],
+        [
+            'changing object with function',
+            function _template6(object) {
+                if (this != null && this.constructor === _template6) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'object'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'sum'
+                                        }
+                                    },
+                                    arguments: []
+                                }
+                            }]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        object: object,
+                        ion: ion,
+                        templates: templates,
+                        _ref7: _ref7
+                    });
+                }
+                return object.sum();
+            },
+            {
+                sum: function () {
+                    return this.x + this.y;
+                },
+                x: 1,
+                y: 2
+            },
+            { x: 6 },
+            8
         ]
     ];
 let _ref7 = {};
@@ -640,11 +687,11 @@ module.exports = exports = { test: _ref7 };
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('test/reactiveTemplates',_test_reactiveTemplates_);
+      require.register('ion/test/reactiveTemplates',_ion_test_reactiveTemplates_);
     else
-      _test_reactiveTemplates_.call(this, module, exports, require);
+      _ion_test_reactiveTemplates_.call(this, module, exports, require);
   }
   else {
-    _test_reactiveTemplates_.call(this);
+    _ion_test_reactiveTemplates_.call(this);
   }
 }).call(this)

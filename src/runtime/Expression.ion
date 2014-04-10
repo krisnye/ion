@@ -1,3 +1,4 @@
+const ion = import '../'
 
 export class Expression extends import './Node'
     properties:

@@ -1,4 +1,5 @@
 const
+    ion = import '../'
     DynamicExpression = import './DynamicExpression'
 
 module.exports = class OperationExpression extends DynamicExpression

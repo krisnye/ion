@@ -41,6 +41,16 @@ const templates = []
         {items:[1,2,3]}
         {items:{3:4}}
         [1,3,5,7]
+    []
+        "changing object with function"
+        template (object) -> object.sum()
+        {}
+            sum: -> @x + @y
+            x: 1
+            y: 2
+        {}
+            x: 6
+        8
 
 export
     test:

@@ -1,6 +1,5 @@
-void (function(){var _builder_ModuleBuilder_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const File = require('./File'), Directory = require('./Directory'), builder = require('./'), compilers = [
+void (function(){var _ion_builder_ModuleBuilder_ = function(module,exports,require){'use strict';
+const ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), compilers = [
         {
             extension: '.coffee',
             compile: builder.compileCoffeeScript
@@ -18,11 +17,60 @@ const File = require('./File'), Directory = require('./Directory'), builder = re
             compile: builder.compileIon
         }
     ];
-module.exports = exports = function _template(inputName, outputName, options) {
+module.exports = exports = function _template() {
     if (this != null && this.constructor === _template) {
         return ion.createRuntime({
             type: 'Template',
             body: [
+                {
+                    type: 'VariableDeclaration',
+                    declarations: [{
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'packageJson'
+                            },
+                            init: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'JSON'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'parse'
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'CallExpression',
+                                        callee: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'NewExpression',
+                                                callee: {
+                                                    type: 'Identifier',
+                                                    name: 'File'
+                                                },
+                                                arguments: [{
+                                                        type: 'Literal',
+                                                        value: 'package.json'
+                                                    }]
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'read'
+                                            }
+                                        },
+                                        arguments: []
+                                    }]
+                            }
+                        }],
+                    kind: 'let'
+                },
                 {
                     type: 'VariableDeclaration',
                     declarations: [{
@@ -38,8 +86,24 @@ module.exports = exports = function _template(inputName, outputName, options) {
                                     name: 'Directory'
                                 },
                                 arguments: [{
-                                        type: 'Identifier',
-                                        name: 'inputName'
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'packageJson'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'directories'
+                                            }
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'src'
+                                        }
                                     }]
                             }
                         }],
@@ -60,8 +124,24 @@ module.exports = exports = function _template(inputName, outputName, options) {
                                     name: 'Directory'
                                 },
                                 arguments: [{
-                                        type: 'Identifier',
-                                        name: 'outputName'
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'packageJson'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'directories'
+                                            }
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'lib'
+                                        }
                                     }]
                             }
                         }],
@@ -85,13 +165,12 @@ module.exports = exports = function _template(inputName, outputName, options) {
                                         computed: false,
                                         object: {
                                             type: 'Identifier',
-                                            name: 'options'
+                                            name: 'packageJson'
                                         },
                                         property: {
                                             type: 'Identifier',
                                             name: 'name'
-                                        },
-                                        existential: true
+                                        }
                                     },
                                     right: {
                                         type: 'Literal',
@@ -103,13 +182,12 @@ module.exports = exports = function _template(inputName, outputName, options) {
                                     computed: false,
                                     object: {
                                         type: 'Identifier',
-                                        name: 'options'
+                                        name: 'packageJson'
                                     },
                                     property: {
                                         type: 'Identifier',
                                         name: 'name'
-                                    },
-                                    existential: true
+                                    }
                                 },
                                 alternate: {
                                     type: 'Literal',
@@ -348,6 +426,10 @@ module.exports = exports = function _template(inputName, outputName, options) {
                                                                 {
                                                                     type: 'Identifier',
                                                                     name: 'moduleId'
+                                                                },
+                                                                {
+                                                                    type: 'Identifier',
+                                                                    name: 'packageJson'
                                                                 }
                                                             ]
                                                         },
@@ -960,18 +1042,17 @@ module.exports = exports = function _template(inputName, outputName, options) {
             require: require,
             module: module,
             exports: exports,
-            inputName: inputName,
-            outputName: outputName,
-            options: options,
+            ion: ion,
             File: File,
             Directory: Directory,
             builder: builder,
             compilers: compilers
         });
     }
-    let input = new Directory(inputName);
-    let output = new Directory(outputName);
-    let moduleName = (options != null ? options.name : void 0) != null ? options.name : '';
+    let packageJson = JSON.parse(new File('package.json').read());
+    let input = new Directory(packageJson.directories.src);
+    let output = new Directory(packageJson.directories.lib);
+    let moduleName = packageJson.name != null ? packageJson.name : '';
     let _ref = [];
     for (let key in outputFiles) {
         if (key.endsWith('require.js')) {
@@ -1006,7 +1087,7 @@ module.exports = exports = function _template(inputName, outputName, options) {
                     let source = _ref5[path];
                     let targetPath = builder.changeExtension(path, '.js');
                     let moduleId = builder.getModuleId(moduleName, path);
-                    _ref7[targetPath] = compile(source, moduleId);
+                    _ref7[targetPath] = compile(source, moduleId, packageJson);
                 }
             }
         }
@@ -1032,11 +1113,11 @@ module.exports = exports = function _template(inputName, outputName, options) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('builder/ModuleBuilder',_builder_ModuleBuilder_);
+      require.register('ion/builder/ModuleBuilder',_ion_builder_ModuleBuilder_);
     else
-      _builder_ModuleBuilder_.call(this, module, exports, require);
+      _ion_builder_ModuleBuilder_.call(this, module, exports, require);
   }
   else {
-    _builder_ModuleBuilder_.call(this);
+    _ion_builder_ModuleBuilder_.call(this);
   }
 }).call(this)

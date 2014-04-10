@@ -1,5 +1,5 @@
-void (function(){var _test_templateParams_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+void (function(){var _ion_test_templateParams_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const firstTemplate = function _template(a, b) {
     if (this != null && this.constructor === _template) {
         return ion.createRuntime({
@@ -29,6 +29,7 @@ const firstTemplate = function _template(a, b) {
             exports: exports,
             a: a,
             b: b,
+            ion: ion,
             firstTemplate: firstTemplate,
             test: test
         });
@@ -51,11 +52,11 @@ const test = exports.test = function () {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('test/templateParams',_test_templateParams_);
+      require.register('ion/test/templateParams',_ion_test_templateParams_);
     else
-      _test_templateParams_.call(this, module, exports, require);
+      _ion_test_templateParams_.call(this, module, exports, require);
   }
   else {
-    _test_templateParams_.call(this);
+    _ion_test_templateParams_.call(this);
   }
 }).call(this)

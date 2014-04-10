@@ -1,6 +1,5 @@
-void (function(){var _runtime_BlockStatement_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const Statement = require('./Statement');
+void (function(){var _ion_runtime_BlockStatement_ = function(module,exports,require){'use strict';
+const ion = require('../'), Statement = require('./Statement');
 const BlockStatement = ion.defineClass({
         id: 'BlockStatement',
         properties: {
@@ -38,11 +37,11 @@ module.exports = exports = BlockStatement;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/BlockStatement',_runtime_BlockStatement_);
+      require.register('ion/runtime/BlockStatement',_ion_runtime_BlockStatement_);
     else
-      _runtime_BlockStatement_.call(this, module, exports, require);
+      _ion_runtime_BlockStatement_.call(this, module, exports, require);
   }
   else {
-    _runtime_BlockStatement_.call(this);
+    _ion_runtime_BlockStatement_.call(this);
   }
 }).call(this)

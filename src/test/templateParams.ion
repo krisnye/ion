@@ -1,3 +1,4 @@
+const ion = import '../'
 
 const firstTemplate = template (a, b) -> a + b
 

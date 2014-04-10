@@ -1,5 +1,5 @@
-void (function(){var _Object_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+void (function(){var _ion_Object_ = function(module,exports,require){'use strict';
+const ion = require('./');
 const Object = ion.defineClass({
         id: 'Object',
         constructor: function Object(properties) {
@@ -33,11 +33,11 @@ module.exports = exports = Object;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('Object',_Object_);
+      require.register('ion/Object',_ion_Object_);
     else
-      _Object_.call(this, module, exports, require);
+      _ion_Object_.call(this, module, exports, require);
   }
   else {
-    _Object_.call(this);
+    _ion_Object_.call(this);
   }
 }).call(this)

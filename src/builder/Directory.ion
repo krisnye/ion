@@ -1,11 +1,14 @@
 
+if global.Window
+    return
+
 const
+    ion = import '../'
     fs = import 'fs'
     np = import 'path'
     utility = import './utility'
     watcher = import './watcher'
     File = import './File'
-    ion = import '../'
 
 export class Directory
     constructor: (path) ->

@@ -1,4 +1,4 @@
-void (function(){var _builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compilePegjs, exports, fs, getModuleId, isPrivate, minify, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _;
+void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compilePegjs, exports, fs, getModuleId, isPrivate, minify, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _;
 
 if (global.window) {
   return;
@@ -241,11 +241,11 @@ module.exports = exports = {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('builder/index',_builder_index_);
+      require.register('ion/builder/index',_ion_builder_index_);
     else
-      _builder_index_.call(this, module, exports, require);
+      _ion_builder_index_.call(this, module, exports, require);
   }
   else {
-    _builder_index_.call(this);
+    _ion_builder_index_.call(this);
   }
 }).call(this)

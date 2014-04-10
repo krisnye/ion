@@ -1,6 +1,5 @@
-void (function(){var _runtime_ReturnStatement_ = function(module,exports,require){'use strict';
-const ion = require('ion');
-const Statement = require('./Statement');
+void (function(){var _ion_runtime_ReturnStatement_ = function(module,exports,require){'use strict';
+const ion = require('../'), Statement = require('./Statement');
 const ReturnStatement = ion.defineClass({
         id: 'ReturnStatement',
         properties: {
@@ -21,11 +20,11 @@ module.exports = exports = ReturnStatement;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/ReturnStatement',_runtime_ReturnStatement_);
+      require.register('ion/runtime/ReturnStatement',_ion_runtime_ReturnStatement_);
     else
-      _runtime_ReturnStatement_.call(this, module, exports, require);
+      _ion_runtime_ReturnStatement_.call(this, module, exports, require);
   }
   else {
-    _runtime_ReturnStatement_.call(this);
+    _ion_runtime_ReturnStatement_.call(this);
   }
 }).call(this)

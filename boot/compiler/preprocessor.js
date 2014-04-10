@@ -1,4 +1,4 @@
-void (function(){var _compiler_preprocessor_ = function(module,exports,require){var common, fixSourceLocation, fixSourceLocations, getSpace, preprocess;
+void (function(){var _ion_compiler_preprocessor_ = function(module,exports,require){var common, fixSourceLocation, fixSourceLocations, getSpace, preprocess;
 
 common = require('./common');
 
@@ -102,11 +102,11 @@ exports.preprocess = preprocess = function(source, sourceMapping) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('compiler/preprocessor',_compiler_preprocessor_);
+      require.register('ion/compiler/preprocessor',_ion_compiler_preprocessor_);
     else
-      _compiler_preprocessor_.call(this, module, exports, require);
+      _ion_compiler_preprocessor_.call(this, module, exports, require);
   }
   else {
-    _compiler_preprocessor_.call(this);
+    _ion_compiler_preprocessor_.call(this);
   }
 }).call(this)

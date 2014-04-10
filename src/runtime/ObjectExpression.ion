@@ -1,6 +1,6 @@
 const
-    DynamicExpression = import './DynamicExpression'
     ion = import '../'
+    DynamicExpression = import './DynamicExpression'
 
 export class ObjectExpression extends DynamicExpression
     properties:

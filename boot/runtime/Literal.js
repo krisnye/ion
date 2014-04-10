@@ -1,5 +1,5 @@
-void (function(){var _runtime_Literal_ = function(module,exports,require){'use strict';
-const ion = require('ion');
+void (function(){var _ion_runtime_Literal_ = function(module,exports,require){'use strict';
+const ion = require('../');
 const Literal = ion.defineClass({
         id: 'Literal',
         properties: {
@@ -15,11 +15,11 @@ module.exports = exports = Literal;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('runtime/Literal',_runtime_Literal_);
+      require.register('ion/runtime/Literal',_ion_runtime_Literal_);
     else
-      _runtime_Literal_.call(this, module, exports, require);
+      _ion_runtime_Literal_.call(this, module, exports, require);
   }
   else {
-    _runtime_Literal_.call(this);
+    _ion_runtime_Literal_.call(this);
   }
 }).call(this)

@@ -1,9 +1,12 @@
 
+if global.Window
+    return
+
 const
+    ion = import '../'
     fs = import 'fs'
     np = import 'path'
     utility = import './utility'
-    ion = import '../'
 
 export class File
     constructor: (path) ->
