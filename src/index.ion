@@ -40,6 +40,7 @@ const
         (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
 
 export const
+    bind = (fn, thisArg) -> fn.bind(thisArg)
     patch = (target, values, deleteNull) -> mergePatch.apply(target, values, deleteNull)
     create = (type, args) -> variableArgConstructs[args.length](type, args)
     createRuntime = (ast, args) ->

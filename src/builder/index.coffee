@@ -13,33 +13,6 @@ module.exports = exports =
     removeExtension: removeExtension = utility.removeExtension
     changeExtension: changeExtension = utility.changeExtension
     normalizePath: normalizePath = utility.normalizePath
-    minifyFromManifest: (manifestFile, options = {}) ->
-        allName = "_browser.js"
-        options.mangle ?= options.compress ? false
-        options.compress ?= options.compress ? false
-        options.outSourceMap ?= allName + ".map"
-        # all = output.getFile allName
-        # map = output.getFile uglyOptions.outSourceMap
-        files = JSON.parse(manifestFile.read() ? "null")?.files ? []
-        minified = minify(manifestFile.directoryName, files, options)
-        result = {}
-        result[allName] =
-            """
-            if (this.window == null) return;
-            #{ minified.code }
-            //# sourceMappingURL= #{ options.outSourceMap }
-        """
-        return result
-    minify: minify = (root, files, options) ->
-        # we change cwd so uglify maps file names to sources correctly.
-        cwd = process.cwd()
-        process.chdir root
-        try
-            return {
-                code:(fs.readFileSync(file, 'utf8') for file in files).join('\n')
-            }
-        finally
-            process.chdir cwd
     isPrivate: isPrivate = (path) ->
         return false unless path?
         path = normalizePath path

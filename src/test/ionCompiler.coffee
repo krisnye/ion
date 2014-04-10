@@ -246,9 +246,10 @@ tests =
     do (x, y) => x + y
     """: """
     'use strict';
-    (function (x, y) {
+    const ion = require('ion');
+    ion.bind(function (x, y) {
         return x + y;
-    }.bind(this)(x, y));
+    }, this)(x, y);
     """
     """
     const ion = import "ion"

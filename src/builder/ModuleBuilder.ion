@@ -18,7 +18,7 @@ const
             extension: '.ion'
             compile: builder.compileIon
 
-export template () ->
+export template (options) ->
     let packageJson = JSON.parse(new File('package.json').read())
     let input = new Directory(packageJson.directories.src)
     let output = new Directory(packageJson.directories.lib)
@@ -41,11 +41,10 @@ export template () ->
             files: [builder.normalizePath(path) for path in sortedFiles]
         [manifestFileName]: JSON.stringify(manifest, null, '  ')
 
-        # build merged, minified file
-        let manifestFile = output.getFile(manifestFileName)
-        let minifiedFiles = builder.minifyFromManifest(manifestFile, {})
-        for path, content of minifiedFiles
-            [path]: content
+        # build merged file, just so we can test locally with file:// protocol
+        if options?.merge?
+            [options.merge]: [outputFiles[name].read() for name in sortedFiles].join('\n')
 
         # builder.test
+        let manifestFile = output.getFile(manifestFileName)
         builder.runTests(manifestFile, manifestFile.modified)
