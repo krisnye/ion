@@ -39,12 +39,17 @@ export template (options) ->
         let manifest =
             modified: Math.max.apply(null, [file.modified for path, file of outputFiles])
             files: [builder.normalizePath(path) for path in sortedFiles]
-        [manifestFileName]: JSON.stringify(manifest, null, '  ')
+        [manifestFileName]: JSON.stringify(manifest, null, '  ', sortedFiles)
 
         # build merged file, just so we can test locally with file:// protocol
         if options?.merge?
             [options.merge]: [outputFiles[name].read() for name in sortedFiles].join('\n')
 
+        # copy the package.json to the lib directory
+        if options?.package
+            ['package.json']: JSON.stringify(packageJson, null, '    ')
+
         # builder.test
-        let manifestFile = output.getFile(manifestFileName)
-        builder.runTests(manifestFile, manifestFile.modified)
+        if options?.test isnt false
+            let manifestFile = output.getFile(manifestFileName)
+            builder.runTests(manifestFile, manifestFile.modified)

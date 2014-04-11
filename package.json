@@ -1,13 +1,14 @@
 {
     "name": "ion",
     "version": "0.0.0",
+    "main": "lib/index",
     "directories": {
         "lib": "lib",
         "src": "src"
     },
     "dependencies": {
-        "esprima": "1.0.x",
-        "escodegen": "1.2.x"
+        "esprima": "1.1.x",
+        "escodegen": "1.3.x"
     },
     "devDependencies": {
         "pegjs": "0.8.x",
