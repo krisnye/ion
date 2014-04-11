@@ -191,11 +191,15 @@ convertForInToForLength = (node, context) ->
 callFunctionBindForFatArrows = (node, context) ->
     if node.type is 'FunctionExpression' and node.bound
         delete node.bound
-        ensureIonVariable context
         context.replace
             type: "CallExpression"
-            callee: getPathExpression 'ion.bind'
-            arguments: [ node, thisExpression ]
+            callee:
+                type: "MemberExpression"
+                object: node
+                property:
+                    type: "Identifier"
+                    name: "bind"
+            arguments: [ { type:"ThisExpression" } ]
 
 nodejsModules = (node, context) ->
     # convert ImportExpression{name} into require(name)

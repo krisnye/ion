@@ -35,3 +35,11 @@ need to merge properties on output object so this works:
         color: 'red'
 
 why does ["manifest.json"]: work, but not "manifest.json":?
+
+X   import(foo).bar is currently compiled to require((foo).bar), should be require(foo).bar
+
+X   assert should work with multiline expressions.
+
+X   []
+        should, allow, adding
+        several, things, per line

@@ -246,10 +246,9 @@ tests =
     do (x, y) => x + y
     """: """
     'use strict';
-    const ion = require('ion');
-    ion.bind(function (x, y) {
+    (function (x, y) {
         return x + y;
-    }, this)(x, y);
+    }.bind(this)(x, y));
     """
     """
     const ion = import "ion"
@@ -1325,6 +1324,31 @@ tests =
     #     // #bar
     #     #baz
     # """: null
+    """
+    let array = []
+        1, 0, 0
+        0, 1, 0
+        0, 0, 1
+    """: """
+    'use strict';
+    let array = [
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1
+        ];
+    """
+    """
+    import(foo).bar
+    """: """
+    'use strict';
+    require(foo).bar;
+    """
 
 if global.window?
     return

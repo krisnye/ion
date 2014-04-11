@@ -116,13 +116,13 @@
 
 Program = start:start body:Statement* end:end { return node("Program", {body:body}, start, end) }
 
-Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement) eol { return a }
+Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement) (eol / _ ',') { return a }
 ExportStatement = start:start export _ value:(VariableDeclaration / RightHandSideExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
 ReturnStatement = start:start return _ argument:RightHandSideExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
 ThrowStatement = start:start throw _ argument:RightHandSideExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
 BreakStatement = start:start break end:end { return node("BreakStatement", {}, start, end) }
 ContinueStatement = start:start continue end:end { return node("ContinueStatement", {}, start, end) }
-AssertStatement = start:start assert _ properties:(a:InlineExpression {return {expression:a, text:text()}} ) end:end { return node('AssertStatement', properties, start, end) }
+AssertStatement = start:start assert _ properties:(a:Expression {return {expression:a, text:text()}} ) end:end { return node('AssertStatement', properties, start, end) }
 ExpressionStatement = start:start expression:Expression end:end { return node("ExpressionStatement", {expression:expression}, start, end) }
 IfStatement =
     start:start
@@ -266,7 +266,7 @@ argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { r
 MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 
 NewExpression = start:start new _ callee:MemberExpression args:arguments? end:end { return node("NewExpression", {callee:callee,arguments:args || []}, start, end) }
-ImportExpression = start:start import _ name:InlineExpression end:end { return node('ImportExpression', {name:name}, start, end) }
+ImportExpression = start:start import _ name:(GroupExpression / InlineExpression) end:end { return node('ImportExpression', {name:name}, start, end) }
 
 DoExpression = start:start do _ f:Expression end:end
     {
