@@ -784,7 +784,7 @@ tests =
     'use strict';
     const ion = require('ion');
     const Foo = ion.defineClass({
-            id: 'Foo',
+            name: 'Foo',
             constructor: function Foo(x, y) {
                 this.x = x;
                 this.y = y;
@@ -936,7 +936,7 @@ tests =
     'use strict';
     const ion = require('ion');
     const Point = ion.defineClass({
-            id: 'Point',
+            name: 'Point',
             constructor: function Point() {
                 Point.super.apply(this, arguments);
                 Point.super.call(this, width, height);
@@ -1064,7 +1064,7 @@ tests =
     'use strict';
     const ion = require('ion');
     const Foo = ion.defineClass({
-            id: 'Foo',
+            name: 'Foo',
             constructor: function Foo() {
                 if (properties != null) {
                     log(properties);
@@ -1097,7 +1097,7 @@ tests =
     'use strict';
     const ion = require('ion');
     const DynamicExpression = ion.defineClass({
-            id: 'DynamicExpression',
+            name: 'DynamicExpression',
             watch: function () {
                 let x = this.x = this.x != null ? this.x : [];
             }

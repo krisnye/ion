@@ -668,8 +668,8 @@ classExpressions = (node, context) ->
         hasIdentifierName = node.name? and not node.computed
         if node.name?
             name = if hasIdentifierName then {type:'Literal',value:node.name.name} else node.name
-            # add id to the properties
-            properties = [{type:'Property',key:{type:'Identifier',name:'id'},value:name}].concat properties
+            # add name to the properties
+            properties = [{type:'Property',key:{type:'Identifier',name:'name'},value:name}].concat properties
         # set the class name on the constructor function
         if hasIdentifierName
             for property in properties when property.key.name is 'constructor'
