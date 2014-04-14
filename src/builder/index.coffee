@@ -134,7 +134,7 @@ module.exports = exports =
             source = addBrowserShim source, moduleId
             return source
         catch e
-            console.error e
+            console.error(String(e))
 
     shimJavascript: shimJavascript = (source, packageObject) ->
         return if source.modified is 0

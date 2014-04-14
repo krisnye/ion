@@ -43,3 +43,5 @@ X   assert should work with multiline expressions.
 X   []
         should, allow, adding
         several, things, per line
+
+    replace ion.mergePatch with extra properties accessible but undocumented on ion.patch
