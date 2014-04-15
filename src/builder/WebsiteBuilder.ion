@@ -1,0 +1,53 @@
+const
+    builder = import './'
+    utility = import './utility'
+    Directory = import './Directory'
+    ModuleBuilder = import './ModuleBuilder'
+
+export template (options = {}) ->
+    const
+        {debug,clientModules,clientExclude,serverModules} = options
+        input = new Directory(options.input ? 'src')
+        output = new Directory(options.output ? 'debug')
+        clientOutput = output.getDirectory('js')
+        serverOutput = output.getDirectory('WEB-INF/js')
+        nodepath = 'node_modules/'
+
+    # Copy local development versions of glass-pages to input directory if available
+    # They will be copied from src to the build directory by ant
+    let glassPages = new Directory('../glass-pages/dist')
+    if glassPages.exists
+        let javaDirectory = input.getDirectory('WEB-INF/java')
+        for key, source of glassPages.search()
+            let target = javaDirectory.getFile(key)
+            if target.modified < source.modified
+                target.copyFrom(source)
+
+    # Copy client and server node modules to the output
+    for moduleName in clientModules
+        let directory = new Directory(nodepath + moduleName)
+        for key, source of directory.search(".js", ["node_modules"].concat(clientExclude))
+            clientOutput:
+                [source.path.substring(nodepath.length)]: source.read()
+    for moduleName in serverModules
+        let directory = new Directory(nodepath + moduleName)
+        for key, source of directory.search(".js", ["node_modules"])
+            serverOutput:
+                [source.path.substring(nodepath.length)]: source.read()
+
+    # # Build javascript
+    # new ModuleBuilder({browser:true,input:input+'/js',output:output+'/js'}).activate()
+    # new ModuleBuilder({input:input+'/WEB-INF/js',output:output+'/WEB-INF/js'})#.activate()
+
+# Copy all other files from src to output
+
+#     for key, source of input.search null, [".coffeepage",".coffee",".java",".class",".jar", ".ion"]
+#         target = output.getFile key
+#         [target.path]: source.read()
+
+# Compile coffeescript pages
+
+#     pageOutput = output.getDirectory 'WEB-INF/pages'
+#     for key, source of input.search ".coffeepage"
+#         target = pageOutput.getFile builder.changeExtension key, ".js"
+#         [target.path]: "(function(){" + builder.compileCoffeeScript(source) + "})"

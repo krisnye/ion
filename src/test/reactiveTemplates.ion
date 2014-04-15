@@ -51,7 +51,21 @@ const templates = []
         {}
             x: 6
         8
-
+    []
+        "nested templates"
+        do ->
+            let sum = template ({deep:{a,b}}) -> a + b
+            return template (object) -> sum(object.one, object.one.deep)
+        {}
+            one:
+                deep:
+                    a: 1
+                    b: 2
+        {}
+            one:
+                deep:
+                    a: 2
+        4
 export
     test:
         for [name, templateType,argument,patch,expected] in templates if expected?
