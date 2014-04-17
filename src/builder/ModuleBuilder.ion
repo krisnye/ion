@@ -18,10 +18,10 @@ const
             extension: '.ion'
             compile: builder.compileIon
 
-export template (options) ->
-    let packageJson = JSON.parse(new File('package.json').read())
-    let input = new Directory(packageJson.directories.src)
-    let output = new Directory(packageJson.directories.lib)
+export template (packagePatch) ->
+    let packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch ? {})
+    let input = new Directory(packageJson.directories.src ? 'src')
+    let output = new Directory(packageJson.directories.lib ? 'lib')
     let moduleName = packageJson.name ? ''
     output:
         # build all source files
@@ -30,9 +30,8 @@ export template (options) ->
                 let targetPath = builder.changeExtension(path, '.js')
                 let moduleId = builder.getModuleId(moduleName, path)
                 [targetPath]: compile(source, moduleId, packageJson)
-
         # build a manifest file with require.js at the top
-        let outputFiles = output.search(".js", /^_/) # ignore output _browser.js
+        let outputFiles = output.search(".js", [/^_/, 'node_modules']) # ignore output _browser.js and node_modules
         let top = [key for key of outputFiles if key.endsWith('require.js')]
         let sortedFiles = top.concat([key for key of outputFiles if not builder.isPrivate(key) and top.indexOf(key) < 0])
         let manifestFileName = "manifest.json"
@@ -42,14 +41,14 @@ export template (options) ->
         [manifestFileName]: JSON.stringify(manifest, null, '  ', sortedFiles)
 
         # build merged file, just so we can test locally with file:// protocol
-        if options?.merge?
-            [options.merge]: [outputFiles[name].read() for name in sortedFiles].join('\n')
+        if packageJson.build.merge?
+            [packageJson.build.merge]: [outputFiles[name].read() for name in sortedFiles].join('\n')
 
         # copy the package.json to the lib directory
-        if options?.package
-            ['package.json']: JSON.stringify(packageJson, null, '    ')
+        if packageJson.build.package
+            ['package.json']: JSON.stringify(ion.patch(ion.clone(packageJson), {main:undefined}), null, '    ')
 
         # builder.test
-        if options?.test isnt false
+        if packageJson.build.test isnt false
             let manifestFile = output.getFile(manifestFileName)
             builder.runTests(manifestFile, manifestFile.modified)

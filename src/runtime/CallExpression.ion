@@ -22,7 +22,7 @@ module.exports = class CallExpression extends DynamicExpression
                             @thisObserver ?= (changes) =>
                                 @evaluate()
                     @evaluate()
-            @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:true})
+            @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:not @calleeValue?.template})
             (@argumentExpressions.watch)
                 @argumentWatcher ?= (value) =>
                     @argumentsValue = value
@@ -31,13 +31,24 @@ module.exports = class CallExpression extends DynamicExpression
             super
             @calleeExpression.unwatch(@calleeWatcher)
             @argumentExpressions.unwatch(@argumentWatcher)
+            if @template?
+                @template.unwatch(@templateWatcher)
+                @template.deactivate()
+                delete @template
         evaluate: ->
             let value = undefined
             if @calleeValue? and @argumentsValue?
-                if @type is 'NewExpression'
-                    # create a new with variable args
-                    value = ion.create(@calleeValue, @argumentsValue)
-                else # @type is 'CallExpression'
-                    value = @calleeValue.apply(@thisArg, @argumentsValue)
-
-            @setValue(value)
+                if @calleeValue.template
+                    if @template?
+                        @template.unwatch(@templateWatcher)
+                    # always use new on templates
+                    @template = ion.create(@calleeValue, @argumentsValue)
+                    @template.activate()
+                    @template.watch(@templateWatcher ?= @setValue.bind(@))
+                else
+                    if @type is 'NewExpression'
+                        # create a new with variable args
+                        value = ion.create(@calleeValue, @argumentsValue)
+                    else # @type is 'CallExpression'
+                        value = @calleeValue.apply(@thisArg, @argumentsValue)
+                    @setValue(value)

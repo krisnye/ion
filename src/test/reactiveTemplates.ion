@@ -53,9 +53,10 @@ const templates = []
         8
     []
         "nested templates"
-        template (object) ->
+        do ->
             let sum = template ({deep:{a,b}}) -> a + b
-            return sum(object.one, object.one.deep)
+            return template (object) ->
+                return sum(object.one)
         {}
             one:
                 deep:

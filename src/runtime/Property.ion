@@ -38,9 +38,11 @@ export class Property extends Statement
                 @originalKey = undefined
                 @originalValue = undefined
         setProperty: (key = @keyValue, value = @valueValue) ->
-            if key? and value isnt undefined
+            # we must have a key, and the value must not be undefined UNLESS the value is explicitly undefined!
+            let explicitUndefined = @value.operator is 'void'
+            if key? and (value isnt undefined or explicitUndefined)
                 let currentValue = ion.get(@context.output, key)
-                if currentValue isnt value
+                if explicitUndefined or currentValue isnt value
                     @originalKey ?= key
                     @originalValue ?= currentValue
-                    ion.set(@context.output, key, value)
+                    ion.set(@context.output, key, value, not explicitUndefined)

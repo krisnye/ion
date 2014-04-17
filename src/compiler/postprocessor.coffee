@@ -758,9 +758,14 @@ namedFunctions = (node, context) ->
 
     # first, named functions expressions to function declarations
     if node.type is 'ExpressionStatement' and node.expression.type is 'FunctionExpression' and node.expression.id?
-        func = node.expression
-        func.type = 'FunctionDeclaration'
-        context.replace func
+        context.replace
+            type: 'VariableDeclaration'
+            kind: 'const'
+            declarations: [
+                type: 'VariableDeclarator'
+                id: node.expression.id
+                init: node.expression
+            ]
     # these names are used later by the classExpression rule
     # add an internal name to functions declared as variables
     if node.type is 'VariableDeclarator' and node.init?.type is 'FunctionExpression'
@@ -893,37 +898,10 @@ spreadExpressions = (node, context) ->
                     callee: getPathExpression 'Array.prototype.slice.call'
                     arguments: args
 
-createTemplateFunctionClone = (node, context) ->
-    if isFunctionNode(node) and node.template is true
-        if node.bound
-            throw context.error "Templates cannot use the fat arrow (=>) binding syntax", node
-        delete node.template
-        template = ion.clone node, true
-        template.type = 'Template'
-        delete template.id
-        delete template.defaults
-        delete template.bound
-        Object.defineProperties template,
-            type: {value:'Template'}
-        node.template = template
-
 validateTemplateNodes = (node, context) ->
     if context.reactive
         if nodes[node.type]?.allowedInReactive is false
             throw context.error node.type + " not allowed in templates", node
-
-    if context.parentReactive()
-        # also, convert FunctionDeclaration to variable declarations with function expression
-        if node.type is 'FunctionDeclaration'
-            node.type = 'FunctionExpression'
-            context.replace
-                type: 'VariableDeclaration'
-                kind: 'const'
-                declarations: [
-                    type: 'VariableDeclarator'
-                    id: node.id
-                    init: node
-                ]
 
     # if node.type is 'VariableDeclaration' and node.kind is 'let'
     #     throw context.error "only const variables are allowed in templates", node
@@ -992,6 +970,30 @@ wrapTemplateInnerFunctions = (node, context) ->
                 type: 'Function'
                 context: requiresWrapper
                 value: node
+
+createTemplateFunctionClone = (node, context) ->
+    if isFunctionNode(node) and node.template is true
+        # check that we aren't nested in another template
+        for ancestor in context.ancestorNodes by -1
+            if ancestor.template
+                throw context.error "Cannot nest templates", node
+        if node.bound
+            throw context.error "Templates cannot use the fat arrow (=>) binding syntax", node
+        delete node.template
+        template = ion.clone node, true
+        template.type = 'Template'
+        delete template.id
+        delete template.defaults
+        delete template.bound
+        Object.defineProperties template,
+            type: {value:'Template'}
+        node.template = template
+        # wrap the template in a call to ion.template
+        ensureIonVariable context
+        context.replace
+            type: 'CallExpression'
+            callee: getPathExpression 'ion.template'
+            arguments: [node]
 
 createTemplateRuntime = (node, context) ->
     if isFunctionNode(node) and node.template?
@@ -1065,6 +1067,13 @@ javascriptExpressions = (node, context) ->
             message = e.message.substring(e.message.indexOf(':') + 1).trim()
             throw context.error message, errorNode
 
+functionDeclarations = (node, context) ->
+    if node.type is 'VariableDeclaration' and node.declarations.length is 1 and node.declarations[0].init?.type is 'FunctionExpression' and node.declarations[0].init?.id?
+        # convert to a FunctionDeclaration for conciseness.
+        func = node.declarations[0].init
+        func.type = 'FunctionDeclaration'
+        context.replace func
+
 exports.postprocess = (program, options) ->
     steps = [
         [namedFunctions, superExpressions]
@@ -1077,7 +1086,7 @@ exports.postprocess = (program, options) ->
         [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments]
         [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5]
         [addUseStrictAndRequireIon]
-        [nodejsModules, spreadExpressions, assertStatements]
+        [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]
     ]
     previousContext = null
     for traversal in steps

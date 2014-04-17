@@ -1233,7 +1233,7 @@ tests =
     """: """
     'use strict';
     const ion = require('ion');
-    (function _template() {
+    ion.template(function _template() {
         if (this != null && this.constructor === _template) {
             return ion.createRuntime({
                 type: 'Template',
@@ -1349,6 +1349,10 @@ tests =
     'use strict';
     require(foo).bar;
     """
+    """
+    const outer = template ->
+        const inner = template ->
+    """: { line: 2, column: 19 }
 
 if global.window?
     return

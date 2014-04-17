@@ -1,4 +1,3 @@
-void (function(){var _src_es6_ = function(module,exports,require){
 if (!String.prototype.endsWith) {
     Object.defineProperty(String.prototype, 'endsWith', {
         enumerable: false,
@@ -25,21 +24,8 @@ if (!String.prototype.startsWith) {
   });
 }
 
-if ( !String.prototype.contains ) {
+if (!String.prototype.contains ) {
     String.prototype.contains = function() {
-        return String.prototype.indexOf.apply( this, arguments ) !== -1;
+        return this.indexOf(arguments) !== -1;
     };
 }
-
-
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('src/es6',_src_es6_);
-    else
-      _src_es6_.call(this, module, exports, require);
-  }
-  else {
-    _src_es6_.call(this);
-  }
-}).call(this)

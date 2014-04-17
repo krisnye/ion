@@ -42,6 +42,9 @@ export const
     mergePatch = import './mergePatch'
     patch = (target, values, deleteNull) -> mergePatch.apply(target, values, deleteNull)
     create = (type, args) -> variableArgConstructs[args.length](type, args)
+    template = (fn) ->
+        fn.template = true
+        return fn
     createRuntime = (ast, args) ->
         const Context = import './runtime/Context'
         const context = new Context()
@@ -137,22 +140,22 @@ export const
     get = (object, property) ->
         if not (object? and property?)
             return undefined
-        if typeof object.get is 'function'
+        if object isnt @ and typeof object.get is 'function'
             return object.get(property)
         else
             return object[property]
-    set = (object, property, value) ->
+    set = (object, property, value, deleteUndefined = true) ->
         # console.log 'core.set', property, value
-        if object? and property?
-            if arguments.length is 2
+        if object?
+            if arguments.length is 2 and property?
                 # set all properties
                 for k, v of property
                     set(object, k, v)
                 return
 
-            if typeof object.set is 'function'
+            if object isnt @ and typeof object.set is 'function'
                 object.set(property, value)
-            else if value is undefined
+            else if deleteUndefined and value is undefined
                 delete object[property]
             else
                 object[property] = value

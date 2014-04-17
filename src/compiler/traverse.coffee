@@ -43,12 +43,13 @@ exports.traverse = (graph, enterCallback, exitCallback) ->
                 skip = false
             else
                 # node may have been changed, in which case we have to get the new value
-                newNode = context.current()
-                if newNode isnt node
+                while node isnt (newNode = context.current())
                     exitCallback?(node, context)
                     node = newNode
                     if node?
                         enterCallback?(node, context)
+                    else
+                        break
                 if node? and typeof node is 'object'
                     context.ancestors.push node
                     if Array.isArray node

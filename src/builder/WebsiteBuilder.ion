@@ -1,48 +1,65 @@
 const
+    ion = import 'ion'
+    File = import './File'
+    Directory = import './Directory'
     builder = import './'
     utility = import './utility'
-    Directory = import './Directory'
     ModuleBuilder = import './ModuleBuilder'
+    clientJsDir = 'js'
+    serverJsDir = 'WEB-INF/js'
+    serverJavaDir = 'WEB-INF/java'
 
-export template (options = {}) ->
+export template (packagePatch) ->
     const
-        {debug,clientModules,clientExclude,serverModules} = options
-        input = new Directory(options.input ? 'src')
-        output = new Directory(options.output ? 'debug')
-        clientOutput = output.getDirectory('js')
-        serverOutput = output.getDirectory('WEB-INF/js')
+        packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch ? {})
+        input = new Directory(packageJson.directories.src ? 'src')
+        output = new Directory(packageJson.directories.www ? 'debug')
+        clientOutput = output.getDirectory(clientJsDir)
+        serverOutput = output.getDirectory(serverJsDir)
         nodepath = 'node_modules/'
 
     # Copy local development versions of glass-pages to input directory if available
     # They will be copied from src to the build directory by ant
     let glassPages = new Directory('../glass-pages/dist')
     if glassPages.exists
-        let javaDirectory = input.getDirectory('WEB-INF/java')
+        let javaDirectory = input.getDirectory(serverJavaDir)
         for key, source of glassPages.search()
             let target = javaDirectory.getFile(key)
             if target.modified < source.modified
                 target.copyFrom(source)
 
     # Copy client and server node modules to the output
-    for moduleName in clientModules
+    for moduleName in packageJson.build.client.modules
         let directory = new Directory(nodepath + moduleName)
-        for key, source of directory.search(".js", ["node_modules"].concat(clientExclude))
+        for key, source of directory.search(".js", ["node_modules"].concat(packageJson.build.client.exclude))
             clientOutput:
                 [source.path.substring(nodepath.length)]: source.read()
-    for moduleName in serverModules
+    for moduleName in packageJson.build.server.modules
         let directory = new Directory(nodepath + moduleName)
         for key, source of directory.search(".js", ["node_modules"])
             serverOutput:
                 [source.path.substring(nodepath.length)]: source.read()
 
-    # # Build javascript
-    # new ModuleBuilder({browser:true,input:input+'/js',output:output+'/js'}).activate()
-    # new ModuleBuilder({input:input+'/WEB-INF/js',output:output+'/WEB-INF/js'})#.activate()
+    # build client javascript
+    (ModuleBuilder)
+        directories:
+            src:input + '/' + clientJsDir
+            lib:output + '/' + clientJsDir
+        build:
+            test: false
+    # build server javascript
+    (ModuleBuilder)
+        directories:
+            src:input + '/' + serverJsDir
+            lib:output + '/' + serverJsDir
+        build:
+            test: false
 
 # Copy all other files from src to output
 
-#     for key, source of input.search null, [".coffeepage",".coffee",".java",".class",".jar", ".ion"]
-#         target = output.getFile key
+# for key, source of input.search(null, [".coffeepage",".coffee",".java",".class",".jar", ".ion"])
+#     let target = output.getFile(key)
+#     output:
 #         [target.path]: source.read()
 
 # Compile coffeescript pages
