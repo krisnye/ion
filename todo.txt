@@ -45,3 +45,13 @@ X   []
         several, things, per line
 
     replace ion.mergePatch with extra properties accessible but undocumented on ion.patch
+
+    investigate a const declaration in a loop not working within a for loop on rhino, may need Rhino unit tests.
+
+    This:
+        let keyHandler = (@handlers ?= {})[key] ?= {value:undefined,handlers:[]}
+    Expands to this bullshit:
+        let keyHandler = (this.handlers = this.handlers != null ? this.handlers : {})[key] = (this.handlers = this.handlers != null ? this.handlers : {})[key] != null ? (this.handlers = this.handlers != null ? this.handlers : {})[key] : {
+            value: void 0,
+            handlers: []
+        };

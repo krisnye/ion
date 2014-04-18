@@ -1353,6 +1353,81 @@ tests =
     const outer = template ->
         const inner = template ->
     """: { line: 2, column: 19 }
+    """
+    template ->
+        for key, task of tasks
+            onclick: -> data[key]
+    """: """
+    'use strict';
+    const ion = require('ion');
+    ion.template(function _template() {
+        if (this != null && this.constructor === _template) {
+            return ion.createRuntime({
+                type: 'Template',
+                body: [{
+                        type: 'ForInStatement',
+                        left: {
+                            type: 'VariableDeclaration',
+                            declarations: [
+                                {
+                                    type: 'VariableDeclarator',
+                                    id: {
+                                        type: 'Identifier',
+                                        name: 'key'
+                                    },
+                                    init: null
+                                },
+                                {
+                                    type: 'VariableDeclarator',
+                                    id: {
+                                        type: 'Identifier',
+                                        name: 'task'
+                                    },
+                                    init: null
+                                }
+                            ],
+                            kind: 'let'
+                        },
+                        right: {
+                            type: 'Identifier',
+                            name: 'tasks'
+                        },
+                        body: {
+                            type: 'BlockStatement',
+                            body: [{
+                                    type: 'Property',
+                                    key: {
+                                        type: 'Identifier',
+                                        name: 'onclick'
+                                    },
+                                    value: {
+                                        type: 'Function',
+                                        context: true,
+                                        value: function (_context) {
+                                            return function () {
+                                                const key = _context.get('key');
+                                                return data[key];
+                                            };
+                                        }
+                                    },
+                                    kind: 'init'
+                                }]
+                        }
+                    }]
+            }, {
+                require: require,
+                module: module,
+                exports: exports
+            });
+        }
+        for (let key in tasks) {
+            let task = tasks[key];
+            ion.patch(onclick, function () {
+                return data[key];
+            });
+        }
+    });
+    """
 
 if global.window?
     return

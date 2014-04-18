@@ -23,6 +23,7 @@ X   +Property     // compatible with ObjectExpression.properties type
         kind: "init"
         +computed: true / false
         +output: Identifier  // used while converting typed ObjectExpressions to imperative code
+        +bi: true / false    // used to indicate bidirectional property assignment
 X   ExpressionStatement
         +output: Identifier  // used while converting typed ObjectExpressions to imperative code
 X   +ExportDeclaration

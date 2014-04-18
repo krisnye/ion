@@ -7,6 +7,13 @@ export class MemberExpression extends DynamicExpression
         activate: ->
             super
             @objectExpression ?= @context.createRuntime(@object)
+            @propertyExpression ?= @context.createRuntime(@computed ? @property : @property.name)
+
+            (@propertyExpression.watch)
+                @propertyWatcher ?= (propertyValue) =>
+                    @propertyValue = propertyValue
+                    @updateValue()
+
             (@objectExpression.watch)
                 @objectWatcher ?= (objectValue) =>
                     @objectValue = objectValue
@@ -18,11 +25,7 @@ export class MemberExpression extends DynamicExpression
                             objectValue
                             (changes) =>
                                 @updateValue()
-            @propertyExpression ?= @context.createRuntime(@computed ? @property : @property.name)
-            (@propertyExpression.watch)
-                @propertyWatcher ?= (propertyValue) =>
-                    @propertyValue = propertyValue
-                    @updateValue()
+                            @propertyValue
         deactivate: ->
             super
             @objectExpression.unwatch(@objectWatcher)
@@ -34,5 +37,6 @@ export class MemberExpression extends DynamicExpression
             @setValue(value)
         # sets the underlying property value.  This may be used for two way binding.
         setMemberValue: (value) ->
+            # console.log('setMemberValue BITCHES!', @objectValue, @propertyValue, value)
             if @objectValue? and @propertyValue?
                 ion.set(@objectValue, @propertyValue, value)

@@ -36,35 +36,41 @@ export template (packagePatch) ->
                 [source.path.substring(nodepath.length)]: source.read()
     for moduleName in packageJson.build.server.modules
         let directory = new Directory(nodepath + moduleName)
-        for key, source of directory.search(".js", ["node_modules"])
+        for key, source of directory.search(".js", ["node_modules"].concat(packageJson.build.server.exclude))
             serverOutput:
                 [source.path.substring(nodepath.length)]: source.read()
 
     # build client javascript
     (ModuleBuilder)
         directories:
-            src:input + '/' + clientJsDir
+            src:input + '/js' # client side javascript
             lib:output + '/' + clientJsDir
         build:
             test: false
+
     # build server javascript
     (ModuleBuilder)
         directories:
-            src:input + '/' + serverJsDir
+            src:input + '/js' # server side javascript
             lib:output + '/' + serverJsDir
         build:
-            test: false
+            test: true
 
-# Copy all other files from src to output
+    # Copy all other files from src to output
+    for key, source of input.search(null, [".coffeepage",".coffee",".java",".class",".jar", ".ion"])
+        let target = output.getFile(key)
+        output:
+            [key]: source.read()
 
-# for key, source of input.search(null, [".coffeepage",".coffee",".java",".class",".jar", ".ion"])
-#     let target = output.getFile(key)
-#     output:
-#         [target.path]: source.read()
+    # Compile ion pages
+    let pageOutput = output.getDirectory('WEB-INF/pages')
+    for key, source of input.search(".ionpage")
+        let targetPath = builder.changeExtension(key, ".js")
+        pageOutput:
+            [targetPath]: "(function {{key.replace(/[\.\/\\]/g, '_')}}(){ {{builder.compileIon(source)}} })"
 
-# Compile coffeescript pages
-
-#     pageOutput = output.getDirectory 'WEB-INF/pages'
-#     for key, source of input.search ".coffeepage"
-#         target = pageOutput.getFile builder.changeExtension key, ".js"
-#         [target.path]: "(function(){" + builder.compileCoffeeScript(source) + "})"
+    # Compile coffee pages
+    for key, source of input.search(".coffeepage")
+        let targetPath = builder.changeExtension(key, ".js")
+        pageOutput:
+            [targetPath]: "(function {{key.replace(/[\.\/\\]/g, '_')}}(){ {{builder.compileCoffeeScript(source)}} })"

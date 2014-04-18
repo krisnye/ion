@@ -1,19 +1,19 @@
 const
     ion = import './'
     isObject = (a) -> a? and typeof a is 'object'
-    deleteValue = undefined
+    deleteValue = null
 
 export const
-    apply = (target, values, deleteUndefined = true) ->
+    apply = (target, values, deleteNull = true) ->
         if values?.constructor isnt Object
             return values
         if not isObject(target)
             target = {}
         for key, value of values
-            if deleteUndefined and value is deleteValue
+            if deleteNull and value is deleteValue
                 delete target[key]
             else
-                target[key] = apply(target[key], value, deleteUndefined)
+                target[key] = apply(target[key], value, deleteNull)
         return target
     # combines two patches to make a single patch
     combine = (patch1, patch2) -> apply(patch1, patch2, false)
@@ -43,17 +43,20 @@ export const
                             else
                                 handler(basePatch)
                         subWatchers[name] = watch(value, subHandler, false)
+        let pendingTimeout = null
         let watcher = (changes) ->
             try
-                pendingPatch = {}
+                pendingPatch ?= {}
                 for change in changes
                     # we convert undefined values from delete into explicit nulls
                     pendingPatch[change.name] = object[change.name] ? deleteValue
                 processPatch(pendingPatch)
-                (ion.nextTick)
+                pendingTimeout ?= (setTimeout)
                     ->
                         handler(pendingPatch)
                         pendingPatch = null
+                        pendingTimeout = null
+                    0
             catch e
                 # catch and log errors, because object observe callbacks suppress errors
                 console.error(e)
@@ -102,6 +105,8 @@ export const
                 assert equal({a:{b:2,c:3},d:4}, apply({a:{b:2}}, {a:{c:3},d:4}))
                 assert equal({b:2}, apply(null, {b:2}))
                 assert equal({a:1,b:2}, apply({a:1,b:2,c:3}, {c:undefined}))
+                let double = (x) -> x * 2
+                assert equal({a:double}, apply({},{a:double}))
             isChange: ->
                 assert isChange({a:1}, null)
                 assert not isChange(null, null)

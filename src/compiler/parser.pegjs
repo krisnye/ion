@@ -186,11 +186,11 @@ className
     / "[" _ name:InlineExpression _ "]" { return {name:name,computed:true} }
 classExtends = extends _ baseClasses:elementList { return baseClasses }
 path = head:Identifier tail:('.' a:Identifier {return a})+ { return [head].concat(tail) }
+propertyLeft = key:(path / Identifier / StringOrNumberLiteral) { return {key:key} }
+             / "[" _ key:InlineExpression _ "]" { return {key:key, computed: true} }
 PropertyDeclaration
-    = start:start key:(path / Identifier / StringOrNumberLiteral) _ ":" _ value:RightHandSideExpression end:end
-    { return node("Property", { key: key, value:value, kind: 'init'}, start, end) }
-    / start:start "[" _ key:InlineExpression _ "]" _ ":" _ value:RightHandSideExpression end:end
-    { return node("Property", { key: key, value:value, kind: 'init', computed: true}, start, end) }
+    = start:start left:propertyLeft _ ":" bi:":"? _ value:RightHandSideExpression end:end
+    { return node("Property", { key: left.key, value:value, kind: 'init', computed:left.computed, bi: bi ? true : undefined }, start, end) }
 VariableDeclaration = &variableKind a:VariableDeclarationKindOptional { return a }
 VariableDeclarationKindOptional = start:start kind:variableKind? _ declarations:variableDeclaratorList end:end
     { return node("VariableDeclaration", {declarations:declarations, kind:kind != null ? kind : "let"}, start, end) }

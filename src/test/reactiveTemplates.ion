@@ -67,6 +67,16 @@ const templates = []
                 deep:
                     a: 2
         4
+    []
+        "bidirectional properties"
+        template (object) ->
+            object:
+                x :: object.y
+            return object
+        {x:1,y:2}
+        {x:3}
+        {x:3,y:3}
+
 export
     test:
         for [name, templateType,argument,patch,expected] in templates if expected?

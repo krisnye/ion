@@ -916,11 +916,12 @@ removeLocationInfo = (node) ->
 getExternalIdentifiers = (node, callback) ->
     traverse node, (node, context) ->
         if node.type is 'Identifier'
+            parentNode = context.parentNode()
             # ignore member expression right hand identifiers
-            if context.parentNode()?.type is 'MemberExpression' and context.key() is 'property'
+            if parentNode?.type is 'MemberExpression' and not parentNode?.computed and context.key() is 'property'
                 return
             # ignore object property keys
-            if context.parentNode()?.type is 'Property' and context.key() is 'key'
+            if parentNode?.type is 'Property' and context.key() is 'key'
                 return
             # ignore internally defined variables
             if context.getVariableInfo(node.name)?

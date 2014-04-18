@@ -27,9 +27,23 @@ export class Property extends Statement
                 @valueWatcher ?= (value) =>
                     @valueValue = value
                     @setProperty()
+
+            if @bi
+                # then we need to observe the context output object for changes to the leftValue property.
+                # console.log('bidirectional!!!!!!!!!!!!!', @valueValue, @keyValue, @context.output)
+                (ion.observe)
+                    @context.output
+                    @contextObserver ?= =>
+                        # console.log('CALLBACK FROM OBSERVER', @valueValue)
+                        let value = ion.get(@context.output, @keyValue)
+                        if value isnt undefined
+                            @valueExpression.setMemberValue(value)
+                    @keyValue
+
         deactivate: ->
             super
             @restoreProperty()
+            ion.unobserve(@context.output, @contextObserver, @leftValue)
             @keyExpression.unwatch(@keyWatcher)
             @valueExpression.unwatch(@valueWatcher)
         restoreProperty: ->
