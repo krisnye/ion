@@ -52,6 +52,7 @@ exports.watchDirectory = (dirname, options, listener) ->
     unwatchFile = (filename) ->
         fs.unwatchFile filename, watchedFiles[filename]
         delete watchedFiles[filename]
+        allWatchers[filename]--
 
     watchFile = (filename, depth=0, stats) ->
         if fs.existsSync filename
@@ -67,6 +68,9 @@ exports.watchDirectory = (dirname, options, listener) ->
                                 watchFile child, depth + 1
 
                 if not watchedFiles[filename]?
+                    allWatchers[filename] ?= 0
+                    allWatchers[filename]++
+
                     boundListener = fsListener.bind @, filename, depth
                     watchedFiles[filename] = boundListener
                     fs.watchFile filename, options, boundListener
@@ -78,7 +82,15 @@ exports.watchDirectory = (dirname, options, listener) ->
     watchFile dirname
     initial = 'created'
 
+    # console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+    # console.log(JSON.stringify(allWatchers, null, '  '))
+    # console.log("================" + fs.setMaxListeners)
+    # console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+
     # return a function that will unwatch all watched files
     ->
         for key of watchedFiles
             unwatchFile key
+
+allWatchers = {}
+

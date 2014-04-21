@@ -4,18 +4,14 @@ const
     File = import './File'
     Directory = import './Directory'
     builder = import './'
-    compilers = []
-        {}
-            extension: '.coffee'
+    compilers =
+        ".coffee":
             compile: builder.compileCoffeeScript
-        {}
-            extension: '.pegjs'
+        ".pegjs":
             compile: builder.compilePegjs
-        {}
-            extension: '.js'
+        ".js":
             compile: builder.shimJavascript
-        {}
-            extension: '.ion'
+        ".ion":
             compile: builder.compileIon
 
 export template (packagePatch) ->
@@ -24,12 +20,13 @@ export template (packagePatch) ->
     let output = new Directory(packageJson.directories.lib ? 'lib')
     let moduleName = packageJson.name ? ''
     output:
-        # build all source files
-        for {extension,compile} in compilers
-            for path, source of input.search(extension)
-                let targetPath = builder.changeExtension(path, '.js')
-                let moduleId = builder.getModuleId(moduleName, path)
-                [targetPath]: compile(source, moduleId, packageJson)
+        # build all source files with a single search
+        let extensions = Object.keys(compilers)
+        for path, source of input.search(extensions)
+            let compiler = compilers[source.getExtension()]
+            let targetPath = builder.changeExtension(path, '.js')
+            let moduleId = builder.getModuleId(moduleName, path)
+            [targetPath]: compiler.compile(source, moduleId, packageJson)
         # build a manifest file with require.js at the top
         let outputFiles = output.search(".js", [/^_/, 'node_modules']) # ignore output _browser.js and node_modules
         let top = [key for key of outputFiles if key.endsWith('require.js')]

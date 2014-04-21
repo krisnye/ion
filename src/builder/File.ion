@@ -48,6 +48,9 @@ export class File
                 return utility.read(@path, encoding)
             else
                 return null
+        getExtension: ->
+            let index = @path.lastIndexOf('.')
+            return index < 0 ? "" : @path.substring(index)
         write: (content, encoding) -> utility.write(@path, content, encoding)
         toString: -> @path
         valueOf: -> @path
