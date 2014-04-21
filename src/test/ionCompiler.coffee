@@ -573,7 +573,7 @@ tests =
     }
     """
     """
-    let origin = Point
+    let origin = new Point
         x: 1
         y: 2
     """: """
@@ -585,11 +585,11 @@ tests =
     }
     """
     """
-    let origin = Line
-        a: Point
+    let origin = new Line
+        a: new Point
             x: 0
             y: 0
-        b: Point
+        b: new Point
             x: 10
             y: 20
     """: """
@@ -619,7 +619,7 @@ tests =
             # also ignore this one
             a: 1
             b: 2
-        w: Point
+        w: new Point
             x: 0
             y: 0
     """: """
@@ -641,7 +641,7 @@ tests =
     });
     """
     """
-    let point = Point
+    let point = new Point
         [x]: 1
         [y]: 2
     """: """
@@ -850,15 +850,15 @@ tests =
     }
     """
     """
-    let foo = div
-        span
+    let foo = div()
+        span()
             'Hello'
     """: """
     'use strict';
     const ion = require('ion');
-    let foo = new div();
+    let foo = div();
     {
-        let _ref = new span();
+        let _ref = span();
         {
             ion.add(_ref, 'Hello');
         }
@@ -868,15 +868,15 @@ tests =
     # we don't auto import ion if the user already declares an ion variable
     """
     const ion = import './'
-    let foo = div
-        span
+    let foo = div()
+        span()
             'Hello'
     """: """
     'use strict';
     const ion = require('./');
-    let foo = new div();
+    let foo = div();
     {
-        let _ref = new span();
+        let _ref = span();
         {
             ion.add(_ref, 'Hello');
         }

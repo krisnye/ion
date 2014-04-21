@@ -68,8 +68,7 @@ void (function(){var _ion_compiler_traverse_ = function(module,exports,require){
       if (skip) {
         skip = false;
       } else {
-        newNode = context.current();
-        if (newNode !== node) {
+        while (node !== (newNode = context.current())) {
           if (typeof exitCallback === "function") {
             exitCallback(node, context);
           }
@@ -78,6 +77,8 @@ void (function(){var _ion_compiler_traverse_ = function(module,exports,require){
             if (typeof enterCallback === "function") {
               enterCallback(node, context);
             }
+          } else {
+            break;
           }
         }
         if ((node != null) && typeof node === 'object') {

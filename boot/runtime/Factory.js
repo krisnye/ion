@@ -2,7 +2,7 @@ void (function(){var _ion_runtime_Factory_ = function(module,exports,require){'u
 const ion = require('../');
 const Literal = require('./Literal');
 const Factory = ion.defineClass({
-        id: 'Factory',
+        name: 'Factory',
         properties: {
             runtime: './OperationExpression',
             createRuntime: {

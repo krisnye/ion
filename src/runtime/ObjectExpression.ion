@@ -7,33 +7,16 @@ export class ObjectExpression extends DynamicExpression
         # this is called by a PropertyExpression to let us know the current left hand value.
         setLeftValue: (value) ->
             @value = value
-        createTypeRuntime: (ast) ->
-            # we convert identifier or member.expression references to new type() calls here.
-            # this is because CallExpression handles templates and we want to use that.
-            if ast?.type is 'Identifier' or ast?.type is 'MemberExpression'
-                ast =
-                    type: 'NewExpression'
-                    callee: ast
-                    arguments: []
-            return @context.createRuntime(ast ? null)
         activate: ->
             super
-            @typeExpression ?= @createTypeRuntime(@objectType)
+            @typeExpression ?= @context.createRuntime(@objectType ? null)
             (@typeExpression.watch)
                 @typeWatcher ?= (type) =>
                     let value
-                    if type is undefined
-                        value = undefined
-                    else if not ion.is(@value, type)
+                    if not ion.is(@value, type)
                         @statements?.deactivate()
                         @statements = null
-                        if type? and typeof type is 'object'
-                            # the type is actually an instance to use.
-                            value = type
-                        else
-                            # otherwise the type is a function to use as our constructor.
-                            # and... what if the type is a template function???
-                            value = new (type ? Object)
+                        value = type ? {}
                     else
                         # a default value could have been passed in
                         value = @value

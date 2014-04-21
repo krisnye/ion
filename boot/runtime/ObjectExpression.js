@@ -1,7 +1,7 @@
 void (function(){var _ion_runtime_ObjectExpression_ = function(module,exports,require){'use strict';
 const ion = require('../'), DynamicExpression = require('./DynamicExpression');
 const ObjectExpression = ion.defineClass({
-        id: 'ObjectExpression',
+        name: 'ObjectExpression',
         properties: {
             setLeftValue: function (value) {
                 this.value = value;
@@ -11,16 +11,10 @@ const ObjectExpression = ion.defineClass({
                 this.typeExpression = this.typeExpression != null ? this.typeExpression : this.context.createRuntime(this.objectType != null ? this.objectType : null);
                 this.typeExpression.watch(this.typeWatcher = this.typeWatcher != null ? this.typeWatcher : function (type) {
                     let value;
-                    if (type === void 0) {
-                        value = void 0;
-                    } else if (!ion.is(this.value, type)) {
+                    if (!ion.is(this.value, type)) {
                         this.statements != null ? this.statements.deactivate() : void 0;
                         this.statements = null;
-                        if (type != null && typeof type === 'object') {
-                            value = type;
-                        } else {
-                            value = new (type != null ? type : Object)();
-                        }
+                        value = type != null ? type : {};
                     } else {
                         value = this.value;
                     }

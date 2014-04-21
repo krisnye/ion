@@ -2,7 +2,7 @@ void (function(){var _ion_runtime_VariableDeclaration_ = function(module,exports
 const ion = require('../');
 const Statement = require('./Statement');
 const VariableDeclaration = ion.defineClass({
-        id: 'VariableDeclaration',
+        name: 'VariableDeclaration',
         constructor: function VariableDeclaration() {
             VariableDeclaration.super.apply(this, arguments);
             {

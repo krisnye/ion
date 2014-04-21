@@ -1,0 +1,20 @@
+{
+    "name": "ion",
+    "version": "0.0.0",
+    "directories": {
+        "lib": "lib",
+        "src": "src"
+    },
+    "build": {
+        "package": true,
+        "merge": "_browser.js"
+    },
+    "dependencies": {
+        "esprima": "1.1.x",
+        "escodegen": "1.3.x"
+    },
+    "devDependencies": {
+        "pegjs": "0.8.x",
+        "underscore": "1.6.x"
+    }
+}

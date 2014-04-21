@@ -1,7 +1,7 @@
 void (function(){var _ion_index_ = function(module,exports,require){'use strict';
 const ion = null;
 require('./es6');
-const mergePatch = require('./mergePatch'), primitive = {
+const primitive = {
         string: true,
         number: true,
         boolean: true,
@@ -67,10 +67,13 @@ const mergePatch = require('./mergePatch'), primitive = {
             return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
         }
     ];
-const patch = exports.patch = function (target, values, deleteNull) {
+const mergePatch = exports.mergePatch = require('./mergePatch'), patch = exports.patch = function (target, values, deleteNull) {
         return mergePatch.apply(target, values, deleteNull);
     }, create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
+    }, template = exports.template = function (fn) {
+        fn.template = true;
+        return fn;
     }, createRuntime = exports.createRuntime = function (ast, args) {
         const Context = require('./runtime/Context');
         const context = new Context();
@@ -175,11 +178,13 @@ const patch = exports.patch = function (target, values, deleteNull) {
             classFunction = eval('(function ' + name + '() {})');
         }
         for (let i = definitions.length - 1; i >= 0; i--) {
-            const definition = definitions[i];
+            let definition = definitions[i];
             for (let key in definition) {
                 let value = definition[key];
                 if (key !== 'test' || i === 0) {
-                    classFunction[key] = mergePatch.apply(classFunction[key], value);
+                    if ((value != null ? value.constructor : void 0) === Object || (Object.getOwnPropertyDescriptor(classFunction, key) != null ? Object.getOwnPropertyDescriptor(classFunction, key).writable : void 0) !== false) {
+                        classFunction[key] = mergePatch.apply(classFunction[key], value);
+                    }
                 }
             }
         }
@@ -191,23 +196,25 @@ const patch = exports.patch = function (target, values, deleteNull) {
         if (!(object != null && property != null)) {
             return void 0;
         }
-        if (typeof object.get === 'function') {
+        if (object !== this && typeof object.get === 'function') {
             return object.get(property);
         } else {
             return object[property];
         }
-    }, set = exports.set = function (object, property, value) {
-        if (object != null && property != null) {
-            if (arguments.length === 2) {
+    }, set = exports.set = function (object, property, value, deleteUndefined) {
+        if (deleteUndefined == null)
+            deleteUndefined = true;
+        if (object != null) {
+            if (arguments.length === 2 && property != null) {
                 for (let k in property) {
                     let v = property[k];
                     set(object, k, v);
                 }
                 return;
             }
-            if (typeof object.set === 'function') {
+            if (object !== this && typeof object.set === 'function') {
                 object.set(property, value);
-            } else if (value === void 0) {
+            } else if (deleteUndefined && value === void 0) {
                 delete object[property];
             } else {
                 object[property] = value;

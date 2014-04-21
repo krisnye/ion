@@ -22,7 +22,7 @@ global.data = {
         Galileo: 4
     }
 };
-module.exports = exports = function _template() {
+module.exports = exports = ion.template(function _template() {
     if (this != null && this.constructor === _template) {
         return ion.createRuntime({
             type: 'Template',
@@ -314,7 +314,7 @@ module.exports = exports = function _template() {
         }
     }
     return _ref3;
-};
+});
   }
   if (typeof require === 'function') {
     if (require.register)

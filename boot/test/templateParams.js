@@ -1,41 +1,41 @@
 void (function(){var _ion_test_templateParams_ = function(module,exports,require){'use strict';
 const ion = require('../');
-const firstTemplate = function _template(a, b) {
-    if (this != null && this.constructor === _template) {
-        return ion.createRuntime({
-            type: 'Template',
-            body: [{
-                    type: 'ReturnStatement',
-                    argument: {
-                        type: 'BinaryExpression',
-                        operator: '+',
-                        left: {
-                            type: 'Identifier',
-                            name: 'a'
-                        },
-                        right: {
-                            type: 'Identifier',
-                            name: 'b'
+const firstTemplate = ion.template(function _template(a, b) {
+        if (this != null && this.constructor === _template) {
+            return ion.createRuntime({
+                type: 'Template',
+                body: [{
+                        type: 'ReturnStatement',
+                        argument: {
+                            type: 'BinaryExpression',
+                            operator: '+',
+                            left: {
+                                type: 'Identifier',
+                                name: 'a'
+                            },
+                            right: {
+                                type: 'Identifier',
+                                name: 'b'
+                            }
                         }
-                    }
-                }],
-            name: {
-                type: 'Identifier',
-                name: 'firstTemplate'
-            }
-        }, {
-            require: require,
-            module: module,
-            exports: exports,
-            a: a,
-            b: b,
-            ion: ion,
-            firstTemplate: firstTemplate,
-            test: test
-        });
-    }
-    return a + b;
-};
+                    }],
+                name: {
+                    type: 'Identifier',
+                    name: 'firstTemplate'
+                }
+            }, {
+                require: require,
+                module: module,
+                exports: exports,
+                a: a,
+                b: b,
+                ion: ion,
+                firstTemplate: firstTemplate,
+                test: test
+            });
+        }
+        return a + b;
+    });
 const test = exports.test = function () {
         let template = new firstTemplate(1, 2);
         template.activate();

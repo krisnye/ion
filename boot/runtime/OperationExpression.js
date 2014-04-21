@@ -1,7 +1,7 @@
 void (function(){var _ion_runtime_OperationExpression_ = function(module,exports,require){'use strict';
 const ion = require('../'), DynamicExpression = require('./DynamicExpression');
 const OperationExpression = ion.defineClass({
-        id: 'OperationExpression',
+        name: 'OperationExpression',
         constructor: function OperationExpression(properties) {
             OperationExpression.super.apply(this, arguments);
             if (!(this.args != null)) {

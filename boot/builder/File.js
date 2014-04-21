@@ -1,7 +1,10 @@
 void (function(){var _ion_builder_File_ = function(module,exports,require){'use strict';
+if (global.Window) {
+    return;
+}
 const ion = require('../'), fs = require('fs'), np = require('path'), utility = require('./utility');
 const File = ion.defineClass({
-        id: 'File',
+        name: 'File',
         constructor: function File(path) {
             if ((path != null ? path.constructor : void 0) === File) {
                 return path;

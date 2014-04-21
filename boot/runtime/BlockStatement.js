@@ -1,7 +1,7 @@
 void (function(){var _ion_runtime_BlockStatement_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const BlockStatement = ion.defineClass({
-        id: 'BlockStatement',
+        name: 'BlockStatement',
         properties: {
             activate: function () {
                 BlockStatement.super.prototype.activate.apply(this, arguments);

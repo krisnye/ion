@@ -1,10 +1,10 @@
 void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
 const ion = require('./'), isObject = function (a) {
         return a != null && typeof a === 'object';
-    }, deleteValue = void 0;
-const apply = exports.apply = function (target, values, deleteUndefined) {
-        if (deleteUndefined == null)
-            deleteUndefined = true;
+    }, deleteValue = null;
+const apply = exports.apply = function (target, values, deleteNull) {
+        if (deleteNull == null)
+            deleteNull = true;
         if ((values != null ? values.constructor : void 0) !== Object) {
             return values;
         }
@@ -13,11 +13,10 @@ const apply = exports.apply = function (target, values, deleteUndefined) {
         }
         for (let key in values) {
             let value = values[key];
-            let patchedValue = apply(target[key], value, deleteUndefined);
-            if (deleteUndefined && value === deleteValue) {
+            if (deleteNull && value === deleteValue) {
                 delete target[key];
             } else {
-                target[key] = patchedValue;
+                target[key] = apply(target[key], value, deleteNull);
             }
         }
         return target;
@@ -51,18 +50,20 @@ const apply = exports.apply = function (target, values, deleteUndefined) {
                 }
             }
         };
+        let pendingTimeout = null;
         let watcher = function (changes) {
             try {
-                pendingPatch = {};
+                pendingPatch = pendingPatch != null ? pendingPatch : {};
                 for (let _i = 0; _i < changes.length; _i++) {
                     let change = changes[_i];
                     pendingPatch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
                 }
                 processPatch(pendingPatch);
-                ion.nextTick(function () {
+                pendingTimeout = pendingTimeout != null ? pendingTimeout : setTimeout(function () {
                     handler(pendingPatch);
                     pendingPatch = null;
-                });
+                    pendingTimeout = null;
+                }, 0);
             } catch (e) {
                 console.error(e);
             }
@@ -134,6 +135,20 @@ const apply = exports.apply = function (target, values, deleteUndefined) {
                     throw new Error('Assertion Failed: (equal({a:{b:2,c:3},d:4}, apply({a:{b:2}}, {a:{c:3},d:4})))');
                 if (!equal({ b: 2 }, apply(null, { b: 2 })))
                     throw new Error('Assertion Failed: (equal({b:2}, apply(null, {b:2})))');
+                if (!equal({
+                        a: 1,
+                        b: 2
+                    }, apply({
+                        a: 1,
+                        b: 2,
+                        c: 3
+                    }, { c: void 0 })))
+                    throw new Error('Assertion Failed: (equal({a:1,b:2}, apply({a:1,b:2,c:3}, {c:undefined})))');
+                let double = function (x) {
+                    return x * 2;
+                };
+                if (!equal({ a: double }, apply({}, { a: double })))
+                    throw new Error('Assertion Failed: (equal({a:double}, apply({},{a:double})))');
             },
             isChange: function () {
                 if (!isChange({ a: 1 }, null))

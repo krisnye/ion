@@ -1,7 +1,7 @@
 void (function(){var _ion_runtime_ForInOfStatement_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const ForInOfStatement = ion.defineClass({
-        id: 'ForInOfStatement',
+        name: 'ForInOfStatement',
         properties: {
             toKey: function (name) {
                 if (this.type === 'ForOfStatement') {

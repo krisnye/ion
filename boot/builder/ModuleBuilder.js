@@ -17,7 +17,7 @@ const ion = require('../'), File = require('./File'), Directory = require('./Dir
             compile: builder.compileIon
         }
     ];
-module.exports = exports = function _template() {
+module.exports = exports = ion.template(function _template(packagePatch) {
     if (this != null && this.constructor === _template) {
         return ion.createRuntime({
             type: 'Template',
@@ -37,36 +37,76 @@ module.exports = exports = function _template() {
                                     computed: false,
                                     object: {
                                         type: 'Identifier',
-                                        name: 'JSON'
+                                        name: 'ion'
                                     },
                                     property: {
                                         type: 'Identifier',
-                                        name: 'parse'
+                                        name: 'patch'
                                     }
                                 },
-                                arguments: [{
+                                arguments: [
+                                    {
                                         type: 'CallExpression',
                                         callee: {
                                             type: 'MemberExpression',
                                             computed: false,
                                             object: {
-                                                type: 'NewExpression',
-                                                callee: {
-                                                    type: 'Identifier',
-                                                    name: 'File'
-                                                },
-                                                arguments: [{
-                                                        type: 'Literal',
-                                                        value: 'package.json'
-                                                    }]
+                                                type: 'Identifier',
+                                                name: 'JSON'
                                             },
                                             property: {
                                                 type: 'Identifier',
-                                                name: 'read'
+                                                name: 'parse'
                                             }
                                         },
-                                        arguments: []
-                                    }]
+                                        arguments: [{
+                                                type: 'CallExpression',
+                                                callee: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'NewExpression',
+                                                        callee: {
+                                                            type: 'Identifier',
+                                                            name: 'File'
+                                                        },
+                                                        arguments: [{
+                                                                type: 'Literal',
+                                                                value: 'package.json'
+                                                            }]
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'read'
+                                                    }
+                                                },
+                                                arguments: []
+                                            }]
+                                    },
+                                    {
+                                        type: 'ConditionalExpression',
+                                        test: {
+                                            type: 'BinaryExpression',
+                                            operator: '!=',
+                                            left: {
+                                                type: 'Identifier',
+                                                name: 'packagePatch'
+                                            },
+                                            right: {
+                                                type: 'Literal',
+                                                value: null
+                                            }
+                                        },
+                                        consequent: {
+                                            type: 'Identifier',
+                                            name: 'packagePatch'
+                                        },
+                                        alternate: {
+                                            type: 'ObjectExpression',
+                                            properties: []
+                                        }
+                                    }
+                                ]
                             }
                         }],
                     kind: 'let'
@@ -86,23 +126,58 @@ module.exports = exports = function _template() {
                                     name: 'Directory'
                                 },
                                 arguments: [{
-                                        type: 'MemberExpression',
-                                        computed: false,
-                                        object: {
+                                        type: 'ConditionalExpression',
+                                        test: {
+                                            type: 'BinaryExpression',
+                                            operator: '!=',
+                                            left: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'packageJson'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'directories'
+                                                    }
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'src'
+                                                }
+                                            },
+                                            right: {
+                                                type: 'Literal',
+                                                value: null
+                                            }
+                                        },
+                                        consequent: {
                                             type: 'MemberExpression',
                                             computed: false,
                                             object: {
-                                                type: 'Identifier',
-                                                name: 'packageJson'
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'packageJson'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'directories'
+                                                }
                                             },
                                             property: {
                                                 type: 'Identifier',
-                                                name: 'directories'
+                                                name: 'src'
                                             }
                                         },
-                                        property: {
-                                            type: 'Identifier',
-                                            name: 'src'
+                                        alternate: {
+                                            type: 'Literal',
+                                            value: 'src'
                                         }
                                     }]
                             }
@@ -124,23 +199,58 @@ module.exports = exports = function _template() {
                                     name: 'Directory'
                                 },
                                 arguments: [{
-                                        type: 'MemberExpression',
-                                        computed: false,
-                                        object: {
+                                        type: 'ConditionalExpression',
+                                        test: {
+                                            type: 'BinaryExpression',
+                                            operator: '!=',
+                                            left: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'packageJson'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'directories'
+                                                    }
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'lib'
+                                                }
+                                            },
+                                            right: {
+                                                type: 'Literal',
+                                                value: null
+                                            }
+                                        },
+                                        consequent: {
                                             type: 'MemberExpression',
                                             computed: false,
                                             object: {
-                                                type: 'Identifier',
-                                                name: 'packageJson'
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'packageJson'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'directories'
+                                                }
                                             },
                                             property: {
                                                 type: 'Identifier',
-                                                name: 'directories'
+                                                name: 'lib'
                                             }
                                         },
-                                        property: {
-                                            type: 'Identifier',
-                                            name: 'lib'
+                                        alternate: {
+                                            type: 'Literal',
+                                            value: 'lib'
                                         }
                                     }]
                             }
@@ -215,7 +325,7 @@ module.exports = exports = function _template() {
                                             type: 'VariableDeclarator',
                                             id: {
                                                 type: 'Identifier',
-                                                name: '_ref6'
+                                                name: '_ref7'
                                             },
                                             init: null
                                         }],
@@ -234,11 +344,11 @@ module.exports = exports = function _template() {
                                                     type: 'VariableDeclarator',
                                                     id: {
                                                         type: 'Identifier',
-                                                        name: '_ref9'
+                                                        name: '_ref10'
                                                     },
                                                     init: {
                                                         type: 'Identifier',
-                                                        name: '_ref6'
+                                                        name: '_ref7'
                                                     }
                                                 }]
                                         },
@@ -254,7 +364,7 @@ module.exports = exports = function _template() {
                                                         type: 'MemberExpression',
                                                         object: {
                                                             type: 'Identifier',
-                                                            name: '_ref9'
+                                                            name: '_ref10'
                                                         },
                                                         property: {
                                                             type: 'Identifier',
@@ -277,7 +387,7 @@ module.exports = exports = function _template() {
                                                         type: 'MemberExpression',
                                                         object: {
                                                             type: 'Identifier',
-                                                            name: '_ref9'
+                                                            name: '_ref10'
                                                         },
                                                         property: {
                                                             type: 'Identifier',
@@ -470,8 +580,17 @@ module.exports = exports = function _template() {
                                                     value: '.js'
                                                 },
                                                 {
-                                                    type: 'Literal',
-                                                    value: /^_/
+                                                    type: 'ArrayExpression',
+                                                    elements: [
+                                                        {
+                                                            type: 'Literal',
+                                                            value: /^_/
+                                                        },
+                                                        {
+                                                            type: 'Literal',
+                                                            value: 'node_modules'
+                                                        }
+                                                    ]
                                                 }
                                             ]
                                         }
@@ -880,6 +999,10 @@ module.exports = exports = function _template() {
                                         {
                                             type: 'Literal',
                                             value: '  '
+                                        },
+                                        {
+                                            type: 'Identifier',
+                                            name: 'sortedFiles'
                                         }
                                     ]
                                 },
@@ -887,151 +1010,348 @@ module.exports = exports = function _template() {
                                 computed: true
                             },
                             {
-                                type: 'VariableDeclaration',
-                                declarations: [{
-                                        type: 'VariableDeclarator',
-                                        id: {
-                                            type: 'Identifier',
-                                            name: 'manifestFile'
-                                        },
-                                        init: {
-                                            type: 'CallExpression',
-                                            callee: {
-                                                type: 'MemberExpression',
-                                                computed: false,
-                                                object: {
-                                                    type: 'Identifier',
-                                                    name: 'output'
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'getFile'
-                                                }
-                                            },
-                                            arguments: [{
-                                                    type: 'Identifier',
-                                                    name: 'manifestFileName'
-                                                }]
-                                        }
-                                    }],
-                                kind: 'let'
-                            },
-                            {
-                                type: 'VariableDeclaration',
-                                declarations: [{
-                                        type: 'VariableDeclarator',
-                                        id: {
-                                            type: 'Identifier',
-                                            name: 'minifiedFiles'
-                                        },
-                                        init: {
-                                            type: 'CallExpression',
-                                            callee: {
-                                                type: 'MemberExpression',
-                                                computed: false,
-                                                object: {
-                                                    type: 'Identifier',
-                                                    name: 'builder'
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'minifyFromManifest'
-                                                }
-                                            },
-                                            arguments: [
-                                                {
-                                                    type: 'Identifier',
-                                                    name: 'manifestFile'
-                                                },
-                                                {
-                                                    type: 'ObjectExpression',
-                                                    properties: []
-                                                }
-                                            ]
-                                        }
-                                    }],
-                                kind: 'let'
-                            },
-                            {
-                                type: 'ForInStatement',
-                                left: {
-                                    type: 'VariableDeclaration',
-                                    declarations: [
-                                        {
-                                            type: 'VariableDeclarator',
-                                            id: {
-                                                type: 'Identifier',
-                                                name: 'path'
-                                            },
-                                            init: null
-                                        },
-                                        {
-                                            type: 'VariableDeclarator',
-                                            id: {
-                                                type: 'Identifier',
-                                                name: 'content'
-                                            },
-                                            init: null
-                                        }
-                                    ],
-                                    kind: 'let'
-                                },
-                                right: {
-                                    type: 'Identifier',
-                                    name: 'minifiedFiles'
-                                },
-                                body: {
-                                    type: 'BlockStatement',
-                                    body: [{
-                                            type: 'Property',
-                                            key: {
-                                                type: 'Identifier',
-                                                name: 'path'
-                                            },
-                                            value: {
-                                                type: 'Identifier',
-                                                name: 'content'
-                                            },
-                                            kind: 'init',
-                                            computed: true
-                                        }]
-                                }
-                            },
-                            {
-                                type: 'ExpressionStatement',
-                                expression: {
-                                    type: 'CallExpression',
-                                    callee: {
+                                type: 'IfStatement',
+                                test: {
+                                    type: 'UnaryExpression',
+                                    operator: '?',
+                                    argument: {
                                         type: 'MemberExpression',
                                         computed: false,
                                         object: {
-                                            type: 'Identifier',
-                                            name: 'builder'
-                                        },
-                                        property: {
-                                            type: 'Identifier',
-                                            name: 'runTests'
-                                        }
-                                    },
-                                    arguments: [
-                                        {
-                                            type: 'Identifier',
-                                            name: 'manifestFile'
-                                        },
-                                        {
                                             type: 'MemberExpression',
                                             computed: false,
                                             object: {
                                                 type: 'Identifier',
-                                                name: 'manifestFile'
+                                                name: 'packageJson'
                                             },
                                             property: {
                                                 type: 'Identifier',
-                                                name: 'modified'
+                                                name: 'build'
+                                            }
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'merge'
+                                        }
+                                    }
+                                },
+                                consequent: {
+                                    type: 'BlockStatement',
+                                    body: [{
+                                            type: 'Property',
+                                            key: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'packageJson'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'build'
+                                                    }
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'merge'
+                                                }
+                                            },
+                                            value: {
+                                                type: 'CallExpression',
+                                                callee: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'ObjectExpression',
+                                                        objectType: {
+                                                            type: 'ArrayExpression',
+                                                            elements: []
+                                                        },
+                                                        properties: [{
+                                                                type: 'ForOfStatement',
+                                                                left: {
+                                                                    type: 'VariableDeclaration',
+                                                                    declarations: [{
+                                                                            type: 'VariableDeclarator',
+                                                                            id: {
+                                                                                type: 'Identifier',
+                                                                                name: 'name'
+                                                                            },
+                                                                            init: null
+                                                                        }],
+                                                                    kind: 'let'
+                                                                },
+                                                                right: {
+                                                                    type: 'Identifier',
+                                                                    name: 'sortedFiles'
+                                                                },
+                                                                body: {
+                                                                    type: 'ExpressionStatement',
+                                                                    expression: {
+                                                                        type: 'CallExpression',
+                                                                        callee: {
+                                                                            type: 'MemberExpression',
+                                                                            computed: false,
+                                                                            object: {
+                                                                                type: 'MemberExpression',
+                                                                                computed: true,
+                                                                                object: {
+                                                                                    type: 'Identifier',
+                                                                                    name: 'outputFiles'
+                                                                                },
+                                                                                property: {
+                                                                                    type: 'Identifier',
+                                                                                    name: 'name'
+                                                                                }
+                                                                            },
+                                                                            property: {
+                                                                                type: 'Identifier',
+                                                                                name: 'read'
+                                                                            }
+                                                                        },
+                                                                        arguments: []
+                                                                    }
+                                                                }
+                                                            }]
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'join'
+                                                    }
+                                                },
+                                                arguments: [{
+                                                        type: 'Literal',
+                                                        value: '\n'
+                                                    }]
+                                            },
+                                            kind: 'init',
+                                            computed: true
+                                        }]
+                                },
+                                alternate: null
+                            },
+                            {
+                                type: 'IfStatement',
+                                test: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'packageJson'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'build'
+                                        }
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'package'
+                                    }
+                                },
+                                consequent: {
+                                    type: 'BlockStatement',
+                                    body: [{
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Literal',
+                                                value: 'package.json'
+                                            },
+                                            value: {
+                                                type: 'CallExpression',
+                                                callee: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'JSON'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'stringify'
+                                                    }
+                                                },
+                                                arguments: [
+                                                    {
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'ion'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'patch'
+                                                            }
+                                                        },
+                                                        arguments: [
+                                                            {
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
+                                                                        type: 'Identifier',
+                                                                        name: 'ion'
+                                                                    },
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'clone'
+                                                                    }
+                                                                },
+                                                                arguments: [{
+                                                                        type: 'Identifier',
+                                                                        name: 'packageJson'
+                                                                    }]
+                                                            },
+                                                            {
+                                                                type: 'ObjectExpression',
+                                                                properties: [{
+                                                                        type: 'Property',
+                                                                        key: {
+                                                                            type: 'Identifier',
+                                                                            name: 'main'
+                                                                        },
+                                                                        value: {
+                                                                            type: 'UnaryExpression',
+                                                                            operator: 'void',
+                                                                            prefix: true,
+                                                                            argument: {
+                                                                                type: 'Literal',
+                                                                                value: 0
+                                                                            }
+                                                                        },
+                                                                        kind: 'init'
+                                                                    }]
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        type: 'Literal',
+                                                        value: null
+                                                    },
+                                                    {
+                                                        type: 'Literal',
+                                                        value: '    '
+                                                    }
+                                                ]
+                                            },
+                                            kind: 'init',
+                                            computed: true
+                                        }]
+                                },
+                                alternate: null
+                            },
+                            {
+                                type: 'IfStatement',
+                                test: {
+                                    type: 'BinaryExpression',
+                                    operator: '!==',
+                                    left: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'packageJson'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'build'
+                                            }
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'test'
+                                        }
+                                    },
+                                    right: {
+                                        type: 'Literal',
+                                        value: false
+                                    }
+                                },
+                                consequent: {
+                                    type: 'BlockStatement',
+                                    body: [
+                                        {
+                                            type: 'VariableDeclaration',
+                                            declarations: [{
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'manifestFile'
+                                                    },
+                                                    init: {
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'output'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'getFile'
+                                                            }
+                                                        },
+                                                        arguments: [{
+                                                                type: 'Identifier',
+                                                                name: 'manifestFileName'
+                                                            }]
+                                                    }
+                                                }],
+                                            kind: 'let'
+                                        },
+                                        {
+                                            type: 'ExpressionStatement',
+                                            expression: {
+                                                type: 'CallExpression',
+                                                callee: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'builder'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'runTests'
+                                                    }
+                                                },
+                                                arguments: [
+                                                    {
+                                                        type: 'Identifier',
+                                                        name: 'manifestFile'
+                                                    },
+                                                    {
+                                                        type: 'MemberExpression',
+                                                        computed: false,
+                                                        object: {
+                                                            type: 'Identifier',
+                                                            name: 'manifestFile'
+                                                        },
+                                                        property: {
+                                                            type: 'Identifier',
+                                                            name: 'modified'
+                                                        }
+                                                    }
+                                                ]
                                             }
                                         }
                                     ]
-                                }
+                                },
+                                alternate: null
                             }
                         ]
                     },
@@ -1042,6 +1362,7 @@ module.exports = exports = function _template() {
             require: require,
             module: module,
             exports: exports,
+            packagePatch: packagePatch,
             ion: ion,
             File: File,
             Directory: Directory,
@@ -1049,9 +1370,9 @@ module.exports = exports = function _template() {
             compilers: compilers
         });
     }
-    let packageJson = JSON.parse(new File('package.json').read());
-    let input = new Directory(packageJson.directories.src);
-    let output = new Directory(packageJson.directories.lib);
+    let packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch != null ? packagePatch : {});
+    let input = new Directory(packageJson.directories.src != null ? packageJson.directories.src : 'src');
+    let output = new Directory(packageJson.directories.lib != null ? packageJson.directories.lib : 'lib');
     let moduleName = packageJson.name != null ? packageJson.name : '';
     let _ref = [];
     for (let key in outputFiles) {
@@ -1075,23 +1396,26 @@ module.exports = exports = function _template() {
         let path = sortedFiles[_i];
         _ref4.push(builder.normalizePath(path));
     }
-    let _ref7 = {};
+    let _ref8 = {};
     {
         for (let _i2 = 0; _i2 < compilers.length; _i2++) {
-            let _ref8 = compilers[_i2];
-            let extension = _ref8.extension;
-            let compile = _ref8.compile;
+            let _ref9 = compilers[_i2];
+            let extension = _ref9.extension;
+            let compile = _ref9.compile;
             {
-                let _ref5 = input.search(extension);
-                for (let path in _ref5) {
-                    let source = _ref5[path];
+                let _ref6 = input.search(extension);
+                for (let path in _ref6) {
+                    let source = _ref6[path];
                     let targetPath = builder.changeExtension(path, '.js');
                     let moduleId = builder.getModuleId(moduleName, path);
-                    _ref7[targetPath] = compile(source, moduleId, packageJson);
+                    _ref8[targetPath] = compile(source, moduleId, packageJson);
                 }
             }
         }
-        let outputFiles = output.search('.js', /^_/);
+        let outputFiles = output.search('.js', [
+                /^_/,
+                'node_modules'
+            ]);
         let top = _ref;
         let sortedFiles = top.concat(_ref2);
         let manifestFileName = 'manifest.json';
@@ -1099,17 +1423,25 @@ module.exports = exports = function _template() {
                 modified: Math.max.apply(null, _ref3),
                 files: _ref4
             };
-        _ref7[manifestFileName] = JSON.stringify(manifest, null, '  ');
-        let manifestFile = output.getFile(manifestFileName);
-        let minifiedFiles = builder.minifyFromManifest(manifestFile, {});
-        for (let path in minifiedFiles) {
-            let content = minifiedFiles[path];
-            _ref7[path] = content;
+        _ref8[manifestFileName] = JSON.stringify(manifest, null, '  ', sortedFiles);
+        if (packageJson.build.merge != null) {
+            let _ref5 = [];
+            for (let _i3 = 0; _i3 < sortedFiles.length; _i3++) {
+                let name = sortedFiles[_i3];
+                ion.add(_ref8, _ref5.push(outputFiles[name].read()));
+            }
+            _ref8[packageJson.build.merge] = _ref5.join('\n');
         }
-        ion.add(_ref7, builder.runTests(manifestFile, manifestFile.modified));
+        if (packageJson.build.package) {
+            _ref8['package.json'] = JSON.stringify(ion.patch(ion.clone(packageJson), { main: void 0 }), null, '    ');
+        }
+        if (packageJson.build.test !== false) {
+            let manifestFile = output.getFile(manifestFileName);
+            ion.add(_ref8, builder.runTests(manifestFile, manifestFile.modified));
+        }
     }
-    ion.patch(output, _ref7);
-};
+    ion.patch(output, _ref8);
+});
   }
   if (typeof require === 'function') {
     if (require.register)

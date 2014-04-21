@@ -2,7 +2,7 @@ void (function(){var _ion_test_immediateTemplates_ = function(module,exports,req
 const ion = require('../');
 const templates = [
         [
-            function _template() {
+            ion.template(function _template() {
                 if (this != null && this.constructor === _template) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -73,12 +73,12 @@ const templates = [
                 }
                 const a = 1, b = 2, c = a + b;
                 return c;
-            },
+            }),
             [],
             3
         ],
         [
-            function _template2() {
+            ion.template(function _template2() {
                 if (this != null && this.constructor === _template2) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -127,7 +127,7 @@ const templates = [
                     a: 1,
                     b: 2
                 };
-            },
+            }),
             [],
             {
                 a: 1,
@@ -135,7 +135,7 @@ const templates = [
             }
         ],
         [
-            function _template3() {
+            ion.template(function _template3() {
                 if (this != null && this.constructor === _template3) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -178,7 +178,7 @@ const templates = [
                     1,
                     2
                 ];
-            },
+            }),
             [],
             [
                 1,
@@ -186,7 +186,7 @@ const templates = [
             ]
         ],
         [
-            function _template4() {
+            ion.template(function _template4() {
                 if (this != null && this.constructor === _template4) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -321,7 +321,7 @@ const templates = [
                     }
                 }
                 return _ref4;
-            },
+            }),
             [],
             [
                 1,
@@ -330,7 +330,7 @@ const templates = [
             ]
         ],
         [
-            function _template5() {
+            ion.template(function _template5() {
                 if (this != null && this.constructor === _template5) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -455,7 +455,7 @@ const templates = [
                 }
                 let x = _ref2;
                 return x;
-            },
+            }),
             [],
             [
                 1,
@@ -464,7 +464,7 @@ const templates = [
             ]
         ],
         [
-            function _template6() {
+            ion.template(function _template6() {
                 if (this != null && this.constructor === _template6) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -612,7 +612,7 @@ const templates = [
                 }
                 let x = _ref3;
                 return x;
-            },
+            }),
             [],
             [
                 'a1',
@@ -621,7 +621,7 @@ const templates = [
             ]
         ],
         [
-            function _template7() {
+            ion.template(function _template7() {
                 if (this != null && this.constructor === _template7) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -698,12 +698,12 @@ const templates = [
                 }
                 let object = { a: { b: 1 } };
                 return object.a.b;
-            },
+            }),
             [],
             1
         ],
         [
-            function _template8() {
+            ion.template(function _template8() {
                 if (this != null && this.constructor === _template8) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -735,12 +735,12 @@ const templates = [
                     });
                 }
                 return false ? 1 : 2;
-            },
+            }),
             [],
             2
         ],
         [
-            function _template9() {
+            ion.template(function _template9() {
                 if (this != null && this.constructor === _template9) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -780,12 +780,12 @@ const templates = [
                     });
                 }
                 return null != null ? null : 2;
-            },
+            }),
             [],
             2
         ],
         [
-            function _template10() {
+            ion.template(function _template10() {
                 if (this != null && this.constructor === _template10) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -860,7 +860,7 @@ const templates = [
                     a != null,
                     b != null
                 ];
-            },
+            }),
             [],
             [
                 false,
@@ -868,7 +868,7 @@ const templates = [
             ]
         ],
         [
-            function _template11() {
+            ion.template(function _template11() {
                 if (this != null && this.constructor === _template11) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -910,12 +910,12 @@ const templates = [
                     });
                 }
                 return Math.min(1, 2);
-            },
+            }),
             [],
             1
         ],
         [
-            function _template12() {
+            ion.template(function _template12() {
                 if (this != null && this.constructor === _template12) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -969,12 +969,12 @@ const templates = [
                     });
                 }
                 return Math.min.call(null, 1, 2);
-            },
+            }),
             [],
             1
         ],
         [
-            function _template13() {
+            ion.template(function _template13() {
                 if (this != null && this.constructor === _template13) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -1012,12 +1012,12 @@ const templates = [
                     });
                 }
                 return new Date(2011, 10, 5);
-            },
+            }),
             [],
             new Date(2011, 10, 5)
         ],
         [
-            function _template14() {
+            ion.template(function _template14() {
                 if (this != null && this.constructor === _template14) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -1038,12 +1038,12 @@ const templates = [
                     });
                 }
                 return /foo/;
-            },
+            }),
             [],
             /foo/
         ],
         [
-            function _template15() {
+            ion.template(function _template15() {
                 if (this != null && this.constructor === _template15) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -1188,7 +1188,7 @@ const templates = [
                     y: 2,
                     z: _ref5
                 };
-            },
+            }),
             [],
             {
                 x: 1,
@@ -1201,7 +1201,7 @@ const templates = [
             }
         ],
         [
-            function _template16() {
+            ion.template(function _template16() {
                 if (this != null && this.constructor === _template16) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -1282,7 +1282,7 @@ const templates = [
                     null != null ? null : 1,
                     void 0 != null ? void 0 : 2
                 ];
-            },
+            }),
             [],
             [
                 1,
@@ -1290,7 +1290,7 @@ const templates = [
             ]
         ],
         [
-            function _template17(_ref) {
+            ion.template(function _template17(_ref) {
                 if (this != null && this.constructor === _template17) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -1370,7 +1370,7 @@ const templates = [
                 let a = _ref.a;
                 let b = _ref.b;
                 return a + b;
-            },
+            }),
             [{
                     a: 1,
                     b: 2
@@ -1378,7 +1378,7 @@ const templates = [
             3
         ],
         [
-            function _template18(type) {
+            ion.template(function _template18(type) {
                 if (this != null && this.constructor === _template18) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -1387,8 +1387,12 @@ const templates = [
                                 argument: {
                                     type: 'ObjectExpression',
                                     objectType: {
-                                        type: 'Identifier',
-                                        name: 'type'
+                                        type: 'NewExpression',
+                                        callee: {
+                                            type: 'Identifier',
+                                            name: 'type'
+                                        },
+                                        arguments: []
                                     },
                                     properties: [{
                                             type: 'Property',
@@ -1431,7 +1435,7 @@ const templates = [
                     _ref6.position = ion.patch(_ref6.position, { x: 10 });
                 }
                 return _ref6;
-            },
+            }),
             [function () {
                     this.position = {
                         x: 1,
@@ -1446,7 +1450,7 @@ const templates = [
             }
         ],
         [
-            function _template19(input, output) {
+            ion.template(function _template19(input, output) {
                 if (this != null && this.constructor === _template19) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -1520,7 +1524,7 @@ const templates = [
                 }
                 ion.patch(output, { e: input.a + input.b });
                 return output;
-            },
+            }),
             [
                 {
                     a: 1,
@@ -1536,6 +1540,40 @@ const templates = [
                 d: 4,
                 e: 3
             }
+        ],
+        [
+            ion.template(function _template20() {
+                if (this != null && this.constructor === _template20) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'ion'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'patch'
+                                    }
+                                }
+                            }]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        test: test
+                    });
+                }
+                return ion.patch;
+            }),
+            [],
+            ion.patch
         ]
     ];
 const test = exports.test = function () {
@@ -1552,10 +1590,10 @@ const test = exports.test = function () {
                     return reactiveResult = value;
                 });
                 try {
-                    if (!(JSON.stringify(reactiveResult) === JSON.stringify(expected)))
-                        throw new Error('Assertion Failed: (JSON.stringify(reactiveResult) is JSON.stringify(expected))');
+                    if (!(reactiveResult === expected || JSON.stringify(reactiveResult) === JSON.stringify(expected)))
+                        throw new Error('Assertion Failed: (reactiveResult is expected or JSON.stringify(reactiveResult) is JSON.stringify(expected))');
                 } catch (e) {
-                    console.log(JSON.stringify(reactiveResult), JSON.stringify(expected));
+                    console.log(reactiveResult, '!==', expected);
                     throw e;
                 }
                 template.deactivate();

@@ -1,7 +1,7 @@
 void (function(){var _ion_Object_ = function(module,exports,require){'use strict';
 const ion = require('./');
 const Object = ion.defineClass({
-        id: 'Object',
+        name: 'Object',
         constructor: function Object(properties) {
             if (properties != null) {
                 for (let key in properties) {
@@ -9,6 +9,9 @@ const Object = ion.defineClass({
                     this[key] = value;
                 }
             }
+        },
+        toString: function () {
+            return this.name;
         },
         properties: {
             toJSON: function () {

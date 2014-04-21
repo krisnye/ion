@@ -1,5 +1,5 @@
 {
-  "modified": 1397090349614,
+  "modified": 1397960248860,
   "files": [
     "browser/require.js",
     "browser/html.js",
@@ -10,6 +10,7 @@
     "builder/ModuleBuilder.js",
     "builder/utility.js",
     "builder/watcher.js",
+    "builder/WebsiteBuilder.js",
     "compiler/astFunctions.js",
     "compiler/common.js",
     "compiler/index.js",

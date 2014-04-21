@@ -1,4 +1,4 @@
-void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isSuperExpression, javascriptExpressions, namedFunctions, nodeToLiteral, nodejsModules, nodes, nullExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
+void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isSuperExpression, javascriptExpressions, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -765,14 +765,8 @@ typedObjectExpressions = function(node, context) {
         type: 'ObjectExpression',
         properties: []
       };
-    } else if (node.objectType.type === 'ArrayExpression' || node.objectType.type === 'NewExpression' || node.objectType.type === 'ObjectExpression') {
-      initialValue = node.objectType;
     } else {
-      initialValue = {
-        type: 'NewExpression',
-        callee: node.objectType,
-        "arguments": []
-      };
+      initialValue = node.objectType;
     }
     parentNode = context.parentNode();
     grandNode = context.ancestorNodes[context.ancestorNodes.length - 2];
@@ -936,7 +930,7 @@ classExpressions = function(node, context) {
           type: 'Property',
           key: {
             type: 'Identifier',
-            name: 'id'
+            name: 'name'
           },
           value: name
         }
@@ -1062,15 +1056,28 @@ isAncestorObjectExpression = function(context) {
   return false;
 };
 
-namedFunctions = function(node, context) {
-  var func, _base, _base1, _ref1;
+namedFunctionsAndNewArguments = function(node, context) {
+  var _base, _base1, _ref1;
   if (context.reactive) {
     return;
   }
+  if (node.type === 'NewExpression') {
+    if (node["arguments"] == null) {
+      node["arguments"] = [];
+    }
+  }
   if (node.type === 'ExpressionStatement' && node.expression.type === 'FunctionExpression' && (node.expression.id != null)) {
-    func = node.expression;
-    func.type = 'FunctionDeclaration';
-    context.replace(func);
+    context.replace({
+      type: 'VariableDeclaration',
+      kind: 'const',
+      declarations: [
+        {
+          type: 'VariableDeclarator',
+          id: node.expression.id,
+          init: node.expression
+        }
+      ]
+    });
   }
   if (node.type === 'VariableDeclarator' && ((_ref1 = node.init) != null ? _ref1.type : void 0) === 'FunctionExpression') {
     if ((_base = node.init).name == null) {
@@ -1256,48 +1263,11 @@ spreadExpressions = function(node, context) {
   }
 };
 
-createTemplateFunctionClone = function(node, context) {
-  var template;
-  if (isFunctionNode(node) && node.template === true) {
-    if (node.bound) {
-      throw context.error("Templates cannot use the fat arrow (=>) binding syntax", node);
-    }
-    delete node.template;
-    template = ion.clone(node, true);
-    template.type = 'Template';
-    delete template.id;
-    delete template.defaults;
-    delete template.bound;
-    Object.defineProperties(template, {
-      type: {
-        value: 'Template'
-      }
-    });
-    return node.template = template;
-  }
-};
-
 validateTemplateNodes = function(node, context) {
   var _ref1;
   if (context.reactive) {
     if (((_ref1 = nodes[node.type]) != null ? _ref1.allowedInReactive : void 0) === false) {
       throw context.error(node.type + " not allowed in templates", node);
-    }
-  }
-  if (context.parentReactive()) {
-    if (node.type === 'FunctionDeclaration') {
-      node.type = 'FunctionExpression';
-      return context.replace({
-        type: 'VariableDeclaration',
-        kind: 'const',
-        declarations: [
-          {
-            type: 'VariableDeclarator',
-            id: node.id,
-            init: node
-          }
-        ]
-      });
     }
   }
 };
@@ -1313,12 +1283,13 @@ removeLocationInfo = function(node) {
 
 getExternalIdentifiers = function(node, callback) {
   traverse(node, function(node, context) {
-    var _ref1, _ref2;
+    var parentNode;
     if (node.type === 'Identifier') {
-      if (((_ref1 = context.parentNode()) != null ? _ref1.type : void 0) === 'MemberExpression' && context.key() === 'property') {
+      parentNode = context.parentNode();
+      if ((parentNode != null ? parentNode.type : void 0) === 'MemberExpression' && !(parentNode != null ? parentNode.computed : void 0) && context.key() === 'property') {
         return;
       }
-      if (((_ref2 = context.parentNode()) != null ? _ref2.type : void 0) === 'Property' && context.key() === 'key') {
+      if ((parentNode != null ? parentNode.type : void 0) === 'Property' && context.key() === 'key') {
         return;
       }
       if (context.getVariableInfo(node.name) != null) {
@@ -1392,6 +1363,40 @@ wrapTemplateInnerFunctions = function(node, context) {
         value: node
       });
     }
+  }
+};
+
+createTemplateFunctionClone = function(node, context) {
+  var ancestor, template, _i, _ref1;
+  if (isFunctionNode(node) && node.template === true) {
+    _ref1 = context.ancestorNodes;
+    for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
+      ancestor = _ref1[_i];
+      if (ancestor.template) {
+        throw context.error("Cannot nest templates", node);
+      }
+    }
+    if (node.bound) {
+      throw context.error("Templates cannot use the fat arrow (=>) binding syntax", node);
+    }
+    delete node.template;
+    template = ion.clone(node, true);
+    template.type = 'Template';
+    delete template.id;
+    delete template.defaults;
+    delete template.bound;
+    Object.defineProperties(template, {
+      type: {
+        value: 'Template'
+      }
+    });
+    node.template = template;
+    ensureIonVariable(context);
+    return context.replace({
+      type: 'CallExpression',
+      callee: getPathExpression('ion.template'),
+      "arguments": [node]
+    });
   }
 };
 
@@ -1489,9 +1494,18 @@ javascriptExpressions = function(node, context) {
   }
 };
 
+functionDeclarations = function(node, context) {
+  var func, _ref1, _ref2;
+  if (node.type === 'VariableDeclaration' && node.declarations.length === 1 && ((_ref1 = node.declarations[0].init) != null ? _ref1.type : void 0) === 'FunctionExpression' && (((_ref2 = node.declarations[0].init) != null ? _ref2.id : void 0) != null)) {
+    func = node.declarations[0].init;
+    func.type = 'FunctionDeclaration';
+    return context.replace(func);
+  }
+};
+
 exports.postprocess = function(program, options) {
   var enter, exit, previousContext, steps, traversal, variable, _i, _len;
-  steps = [[namedFunctions, superExpressions], [destructuringAssignments], [createTemplateFunctionClone], [javascriptExpressions, arrayComprehensionsToES5], [checkVariableDeclarations], [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements]];
+  steps = [[namedFunctionsAndNewArguments, superExpressions], [destructuringAssignments], [createTemplateFunctionClone], [javascriptExpressions, arrayComprehensionsToES5], [checkVariableDeclarations], [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]];
   previousContext = null;
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];

@@ -1,7 +1,10 @@
 void (function(){var _ion_builder_Directory_ = function(module,exports,require){'use strict';
+if (global.Window) {
+    return;
+}
 const ion = require('../'), fs = require('fs'), np = require('path'), utility = require('./utility'), watcher = require('./watcher'), File = require('./File');
 const Directory = ion.defineClass({
-        id: 'Directory',
+        name: 'Directory',
         constructor: function Directory(path) {
             if (path != null) {
                 this.path = String(path);

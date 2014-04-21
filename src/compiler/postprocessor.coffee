@@ -533,14 +533,9 @@ typedObjectExpressions = (node, context) ->
             initialValue =
                 type: 'ObjectExpression'
                 properties: []
-        else if node.objectType.type is 'ArrayExpression' or node.objectType.type is 'NewExpression' or node.objectType.type is 'ObjectExpression'
-            initialValue =
-                node.objectType
         else
             initialValue =
-                type: 'NewExpression'
-                callee: node.objectType
-                arguments: []
+                node.objectType
 
         parentNode = context.parentNode()
         grandNode = context.ancestorNodes[context.ancestorNodes.length-2]
@@ -753,8 +748,11 @@ isAncestorObjectExpression = (context) ->
             return false
     return false
 
-namedFunctions = (node, context) ->
+namedFunctionsAndNewArguments = (node, context) ->
     return if context.reactive
+
+    if node.type is 'NewExpression'
+        node.arguments ?= []
 
     # first, named functions expressions to function declarations
     if node.type is 'ExpressionStatement' and node.expression.type is 'FunctionExpression' and node.expression.id?
@@ -1077,7 +1075,7 @@ functionDeclarations = (node, context) ->
 
 exports.postprocess = (program, options) ->
     steps = [
-        [namedFunctions, superExpressions]
+        [namedFunctionsAndNewArguments, superExpressions]
         [destructuringAssignments]
         [createTemplateFunctionClone]
         [javascriptExpressions, arrayComprehensionsToES5]

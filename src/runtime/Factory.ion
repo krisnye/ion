@@ -17,98 +17,98 @@ class Factory
 
 const lookup =
     type:
-        VariableDeclaration: Factory
+        VariableDeclaration: new Factory
             runtime: './VariableDeclaration'
-        Identifier: Factory
+        Identifier: new Factory
             createRuntime: (context, ast) -> context.getVariableExpression(ast.name)
-        Function: Factory
+        Function: new Factory
             createRuntime: (context, ast) ->
                 let value = ast.value
                 if ast.context
                     value = value(context)
                 return new Literal({value:value})
-        Template: Factory
+        Template: new Factory
             runtime: './Template'
-        Literal: Factory
+        Literal: new Factory
             runtime: './Literal'
-        Property: Factory
+        Property: new Factory
             runtime: './Property'
-        IfStatement: Factory
+        IfStatement: new Factory
             runtime: './IfStatement'
-        BlockStatement: Factory
+        BlockStatement: new Factory
             runtime: './BlockStatement'
-        ReturnStatement: Factory
+        ReturnStatement: new Factory
             runtime: './ReturnStatement'
-        ObjectExpression: Factory
+        ObjectExpression: new Factory
             runtime: './ObjectExpression'
-        ArrayExpression: Factory
+        ArrayExpression: new Factory
             runtime: './ArrayExpression'
-        ExpressionStatement: Factory
+        ExpressionStatement: new Factory
             runtime: './ExpressionStatement'
-        ForOfStatement: Factory
+        ForOfStatement: new Factory
             runtime: './ForInOfStatement'
-        ForInStatement: Factory
+        ForInStatement: new Factory
             runtime: './ForInOfStatement'
-        MemberExpression: Factory
+        MemberExpression: new Factory
             runtime: './MemberExpression'
-        CallExpression: Factory
+        CallExpression: new Factory
             runtime: './CallExpression'
-        NewExpression: Factory
+        NewExpression: new Factory
             runtime: './CallExpression'
         UnaryExpression:
             operator:
-                "!": Factory
+                "!": new Factory
                     evaluate: (a) -> not a
-                "typeof": Factory
+                "typeof": new Factory
                     evaluate: (a) -> typeof a
-                "void": Factory
+                "void": new Factory
                     evaluate: (a) -> void a
-                "-": Factory
+                "-": new Factory
                     evaluate: (a) -> - a
-                "+": Factory
+                "+": new Factory
                     evaluate: (a) -> + a
-                "~": Factory
+                "~": new Factory
                     evaluate: (a) -> ~ a
-                "?": Factory
+                "?": new Factory
                     evaluate: (a) -> a?
-        ConditionalExpression: Factory
+        ConditionalExpression: new Factory
             # unlike in imperative code, both consequent and alternate are always evaluated
             evaluate: (test, consequent, alternate) -> test ? consequent : alternate
         BinaryExpression:
             operator:
-                "*": Factory
+                "*": new Factory
                     evaluate: (left, right) -> left * right
-                "/": Factory
+                "/": new Factory
                     evaluate: (left, right) -> left / right
-                "%": Factory
+                "%": new Factory
                     evaluate: (left, right) -> left % right
-                "+": Factory
+                "+": new Factory
                     evaluate: (left, right) -> left + right
-                "-": Factory
+                "-": new Factory
                     evaluate: (left, right) -> left - right
-                "&&": Factory
+                "&&": new Factory
                     evaluate: (left, right) -> left and right
-                "||": Factory
+                "||": new Factory
                     evaluate: (left, right) -> left or right
-                "&": Factory
+                "&": new Factory
                     evaluate: (left, right) -> left & right
-                "|": Factory
+                "|": new Factory
                     evaluate: (left, right) -> left | right
-                "==": Factory
+                "==": new Factory
                     evaluate: (left, right) -> `left == right`
-                "!=": Factory
+                "!=": new Factory
                     evaluate: (left, right) -> `left != right`
-                "===": Factory
+                "===": new Factory
                     evaluate: (left, right) -> left is right
-                "!==": Factory
+                "!==": new Factory
                     evaluate: (left, right) -> left isnt right
-                "<": Factory
+                "<": new Factory
                     evaluate: (left, right) -> left < right
-                ">": Factory
+                ">": new Factory
                     evaluate: (left, right) -> left > right
-                "<=": Factory
+                "<=": new Factory
                     evaluate: (left, right) -> left <= right
-                ">=": Factory
+                ">=": new Factory
                     evaluate: (left, right) -> left >= right
 
 getFactory(ast, step = lookup) ->

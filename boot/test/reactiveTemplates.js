@@ -3,7 +3,7 @@ const ion = require('../');
 const templates = [
         [
             'array comprehension',
-            function _template(properties) {
+            ion.template(function _template(properties) {
                 if (this != null && this.constructor === _template) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -50,14 +50,14 @@ const templates = [
                         properties: properties,
                         ion: ion,
                         templates: templates,
-                        _ref7: _ref7
+                        _ref8: _ref8
                     });
                 }
-                let _ref3 = [];
+                let _ref4 = [];
                 for (let key in properties)
-                    _ref3.push(key);
-                return _ref3;
-            },
+                    _ref4.push(key);
+                return _ref4;
+            }),
             {
                 a: 1,
                 b: 2
@@ -73,7 +73,7 @@ const templates = [
         ],
         [
             'imperative functions',
-            function _template2(properties) {
+            ion.template(function _template2(properties) {
                 if (this != null && this.constructor === _template2) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -166,21 +166,21 @@ const templates = [
                         properties: properties,
                         ion: ion,
                         templates: templates,
-                        _ref7: _ref7
+                        _ref8: _ref8
                     });
                 }
                 function double(a) {
                     return a * 2;
                 }
-                let _ref5 = {};
+                let _ref6 = {};
                 {
                     for (let key in properties) {
                         let value = properties[key];
-                        _ref5[key] = double(value);
+                        _ref6[key] = double(value);
                     }
                 }
-                return _ref5;
-            },
+                return _ref6;
+            }),
             {
                 x: 1,
                 y: 2
@@ -197,7 +197,7 @@ const templates = [
         ],
         [
             'shared variables functions',
-            function _template3(properties) {
+            ion.template(function _template3(properties) {
                 if (this != null && this.constructor === _template3) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -361,24 +361,24 @@ const templates = [
                         properties: properties,
                         ion: ion,
                         templates: templates,
-                        _ref7: _ref7
+                        _ref8: _ref8
                     });
                 }
                 let factor = properties.factor != null ? properties.factor : 3;
                 function multiply(a) {
                     return a * factor;
                 }
-                let _ref6 = {};
+                let _ref7 = {};
                 {
                     for (let key in properties) {
                         let value = properties[key];
                         if (key !== 'factor') {
-                            _ref6[key] = multiply(value);
+                            _ref7[key] = multiply(value);
                         }
                     }
                 }
-                return _ref6;
-            },
+                return _ref7;
+            }),
             {
                 x: 1,
                 y: 2
@@ -396,7 +396,7 @@ const templates = [
         ],
         [
             'reactive destructured parameters',
-            function _template4(_ref) {
+            ion.template(function _template4(_ref) {
                 if (this != null && this.constructor === _template4) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -470,13 +470,13 @@ const templates = [
                         _ref: _ref,
                         ion: ion,
                         templates: templates,
-                        _ref7: _ref7
+                        _ref8: _ref8
                     });
                 }
                 let a = _ref.a;
                 let b = _ref.b;
                 return a + b;
-            },
+            }),
             {
                 a: 1,
                 b: 2
@@ -486,7 +486,7 @@ const templates = [
         ],
         [
             'array comprehensions',
-            function _template5(_ref2) {
+            ion.template(function _template5(_ref2) {
                 if (this != null && this.constructor === _template5) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -576,18 +576,18 @@ const templates = [
                         _ref2: _ref2,
                         ion: ion,
                         templates: templates,
-                        _ref7: _ref7
+                        _ref8: _ref8
                     });
                 }
                 let items = _ref2.items;
-                let _ref4 = [];
+                let _ref5 = [];
                 for (let _i = 0; _i < items.length; _i++) {
                     let i = _i;
                     let x = items[_i];
-                    _ref4.push(x + i);
+                    _ref5.push(x + i);
                 }
-                return _ref4;
-            },
+                return _ref5;
+            }),
             {
                 items: [
                     1,
@@ -605,7 +605,7 @@ const templates = [
         ],
         [
             'changing object with function',
-            function _template6(object) {
+            ion.template(function _template6(object) {
                 if (this != null && this.constructor === _template6) {
                     return ion.createRuntime({
                         type: 'Template',
@@ -635,11 +635,11 @@ const templates = [
                         object: object,
                         ion: ion,
                         templates: templates,
-                        _ref7: _ref7
+                        _ref8: _ref8
                     });
                 }
                 return object.sum();
-            },
+            }),
             {
                 sum: function () {
                     return this.x + this.y;
@@ -649,19 +649,246 @@ const templates = [
             },
             { x: 6 },
             8
+        ],
+        [
+            'nested templates',
+            function () {
+                let sum = ion.template(function _template7(_ref3) {
+                        if (this != null && this.constructor === _template7) {
+                            return ion.createRuntime({
+                                type: 'Template',
+                                body: [
+                                    {
+                                        type: 'VariableDeclaration',
+                                        declarations: [{
+                                                type: 'VariableDeclarator',
+                                                id: {
+                                                    type: 'Identifier',
+                                                    name: 'a'
+                                                },
+                                                init: {
+                                                    type: 'MemberExpression',
+                                                    object: {
+                                                        type: 'MemberExpression',
+                                                        object: {
+                                                            type: 'Identifier',
+                                                            name: '_ref3'
+                                                        },
+                                                        property: {
+                                                            type: 'Identifier',
+                                                            name: 'deep'
+                                                        },
+                                                        computed: false
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'a'
+                                                    },
+                                                    computed: false
+                                                }
+                                            }],
+                                        kind: 'let'
+                                    },
+                                    {
+                                        type: 'VariableDeclaration',
+                                        declarations: [{
+                                                type: 'VariableDeclarator',
+                                                id: {
+                                                    type: 'Identifier',
+                                                    name: 'b'
+                                                },
+                                                init: {
+                                                    type: 'MemberExpression',
+                                                    object: {
+                                                        type: 'MemberExpression',
+                                                        object: {
+                                                            type: 'Identifier',
+                                                            name: '_ref3'
+                                                        },
+                                                        property: {
+                                                            type: 'Identifier',
+                                                            name: 'deep'
+                                                        },
+                                                        computed: false
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'b'
+                                                    },
+                                                    computed: false
+                                                }
+                                            }],
+                                        kind: 'let'
+                                    },
+                                    {
+                                        type: 'ReturnStatement',
+                                        argument: {
+                                            type: 'BinaryExpression',
+                                            operator: '+',
+                                            left: {
+                                                type: 'Identifier',
+                                                name: 'a'
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'b'
+                                            }
+                                        }
+                                    }
+                                ],
+                                name: {
+                                    type: 'Identifier',
+                                    name: 'sum'
+                                }
+                            }, {
+                                require: require,
+                                module: module,
+                                exports: exports,
+                                _ref3: _ref3,
+                                sum: sum,
+                                ion: ion,
+                                templates: templates,
+                                _ref8: _ref8
+                            });
+                        }
+                        let a = _ref3.deep.a;
+                        let b = _ref3.deep.b;
+                        return a + b;
+                    });
+                return ion.template(function _template8(object) {
+                    if (this != null && this.constructor === _template8) {
+                        return ion.createRuntime({
+                            type: 'Template',
+                            body: [{
+                                    type: 'ReturnStatement',
+                                    argument: {
+                                        type: 'CallExpression',
+                                        callee: {
+                                            type: 'Identifier',
+                                            name: 'sum'
+                                        },
+                                        arguments: [{
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'object'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'one'
+                                                }
+                                            }]
+                                    }
+                                }]
+                        }, {
+                            require: require,
+                            module: module,
+                            exports: exports,
+                            object: object,
+                            sum: sum,
+                            ion: ion,
+                            templates: templates,
+                            _ref8: _ref8
+                        });
+                    }
+                    return sum(object.one);
+                });
+            }(),
+            {
+                one: {
+                    deep: {
+                        a: 1,
+                        b: 2
+                    }
+                }
+            },
+            { one: { deep: { a: 2 } } },
+            4
+        ],
+        [
+            'bidirectional properties',
+            ion.template(function _template9(object) {
+                if (this != null && this.constructor === _template9) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [
+                            {
+                                type: 'Property',
+                                key: {
+                                    type: 'Identifier',
+                                    name: 'object'
+                                },
+                                value: {
+                                    type: 'ObjectExpression',
+                                    objectType: null,
+                                    properties: [{
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'x'
+                                            },
+                                            value: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'object'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'y'
+                                                }
+                                            },
+                                            kind: 'init',
+                                            bi: true
+                                        }]
+                                },
+                                kind: 'init'
+                            },
+                            {
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'Identifier',
+                                    name: 'object'
+                                }
+                            }
+                        ]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        object: object,
+                        ion: ion,
+                        templates: templates,
+                        _ref8: _ref8
+                    });
+                }
+                ion.patch(object, { x: object.y });
+                return object;
+            }),
+            {
+                x: 1,
+                y: 2
+            },
+            { x: 3 },
+            {
+                x: 3,
+                y: 3
+            }
         ]
     ];
-let _ref7 = {};
+let _ref8 = {};
 {
     for (let _i2 = 0; _i2 < templates.length; _i2++) {
-        let _ref8 = templates[_i2];
-        let name = _ref8[0];
-        let templateType = _ref8[1];
-        let argument = _ref8[2];
-        let patch = _ref8[3];
-        let expected = _ref8[4];
+        let _ref9 = templates[_i2];
+        let name = _ref9[0];
+        let templateType = _ref9[1];
+        let argument = _ref9[2];
+        let patch = _ref9[3];
+        let expected = _ref9[4];
         if (expected != null) {
-            _ref7[name] = function (templateType, argument, patch, expected) {
+            _ref8[name] = function (templateType, argument, patch, expected) {
                 return function (done) {
                     let template = new templateType(argument);
                     function checkIfDone(check) {
@@ -683,7 +910,7 @@ let _ref7 = {};
         }
     }
 }
-module.exports = exports = { test: _ref7 };
+module.exports = exports = { test: _ref8 };
   }
   if (typeof require === 'function') {
     if (require.register)

@@ -1,7 +1,7 @@
 void (function(){var _ion_runtime_ArrayExpression_ = function(module,exports,require){'use strict';
 const ion = require('../'), DynamicExpression = require('./DynamicExpression');
 const ArrayExpression = ion.defineClass({
-        id: 'ArrayExpression',
+        name: 'ArrayExpression',
         constructor: function ArrayExpression() {
             ArrayExpression.super.apply(this, arguments);
             if (!(this.elements != null)) {

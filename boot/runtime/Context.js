@@ -1,7 +1,7 @@
 void (function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
 const ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal');
 const Context = ion.defineClass({
-        id: 'Context',
+        name: 'Context',
         constructor: function Context(parent, output) {
             this.output = output;
             this.parent = parent;

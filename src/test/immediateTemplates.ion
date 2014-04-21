@@ -106,7 +106,7 @@ const templates = []
         3
     []
         template (type) ->
-            return type
+            return new type
                 position:
                     x: 10
         []

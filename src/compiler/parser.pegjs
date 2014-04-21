@@ -223,7 +223,7 @@ multilineCallArguments
         { return [node("ObjectExpression", {properties:properties}, start, end)] }
 MultilineCallExpression = start:start callee:GroupExpression indent eol args:multilineCallArguments end:end outdent
     {
-        if (callee.type === 'NewExpression' && callee.arguments.length === 0)
+        if (callee.type === 'NewExpression' && callee.arguments == null)
             return node("NewExpression", {callee: callee.callee, arguments: args}, start, end)
         return node("CallExpression", {callee: callee, arguments: args}, start, end)
     }
@@ -265,7 +265,7 @@ argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { r
 
 MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 
-NewExpression = start:start new _ callee:MemberExpression args:arguments? end:end { return node("NewExpression", {callee:callee,arguments:args || []}, start, end) }
+NewExpression = start:start new _ callee:MemberExpression args:arguments? end:end { return node("NewExpression", {callee:callee,arguments:args || null}, start, end) }
 ImportExpression = start:start import _ name:(GroupExpression / InlineExpression) end:end { return node('ImportExpression', {name:name}, start, end) }
 
 DoExpression = start:start do _ f:Expression end:end
@@ -308,7 +308,7 @@ propertyAssignment
 TypedObjectExpression = start:start !"(" type:InlineExpression properties:BlockStatement end:end
     { return node("ObjectExpression", {objectType:type,properties:properties.body}, start, end) }
 ImpliedObjectExpression = start:start properties:BlockStatement end:end
-    { return node("ObjectExpression", {objectType:null,properties:properties.body}, start, end) }
+    { return node("ObjectExpression", {properties:properties.body}, start, end) }
 
 GroupExpression 'group' = "(" _ expression:InlineExpression _ ")" { return expression }
 Identifier = !reserved value:IdentifierName { return value }

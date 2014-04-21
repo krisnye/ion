@@ -1,7 +1,7 @@
 void (function(){var _ion_runtime_CallExpression_ = function(module,exports,require){'use strict';
 const ion = require('../'), DynamicExpression = require('./DynamicExpression'), ArrayExpression = require('./ArrayExpression');
 const CallExpression = ion.defineClass({
-        id: 'CallExpression',
+        name: 'CallExpression',
         properties: {
             args: null,
             activate: function () {
@@ -22,7 +22,7 @@ const CallExpression = ion.defineClass({
                 this.argumentExpressions = this.argumentExpressions != null ? this.argumentExpressions : this.context.createRuntime({
                     type: 'ArrayExpression',
                     elements: this.arguments,
-                    observeElements: true
+                    observeElements: !(this.calleeValue != null ? this.calleeValue.template : void 0)
                 });
                 this.argumentExpressions.watch(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : function (value) {
                     this.argumentsValue = value;
@@ -33,17 +33,31 @@ const CallExpression = ion.defineClass({
                 CallExpression.super.prototype.deactivate.apply(this, arguments);
                 this.calleeExpression.unwatch(this.calleeWatcher);
                 this.argumentExpressions.unwatch(this.argumentWatcher);
+                if (this.template != null) {
+                    this.template.unwatch(this.templateWatcher);
+                    this.template.deactivate();
+                    delete this.template;
+                }
             },
             evaluate: function () {
                 let value = void 0;
                 if (this.calleeValue != null && this.argumentsValue != null) {
-                    if (this.type === 'NewExpression') {
-                        value = ion.create(this.calleeValue, this.argumentsValue);
+                    if (this.calleeValue.template) {
+                        if (this.template != null) {
+                            this.template.unwatch(this.templateWatcher);
+                        }
+                        this.template = ion.create(this.calleeValue, this.argumentsValue);
+                        this.template.activate();
+                        this.template.watch(this.templateWatcher = this.templateWatcher != null ? this.templateWatcher : this.setValue.bind(this));
                     } else {
-                        value = this.calleeValue.apply(this.thisArg, this.argumentsValue);
+                        if (this.type === 'NewExpression') {
+                            value = ion.create(this.calleeValue, this.argumentsValue);
+                        } else {
+                            value = this.calleeValue.apply(this.thisArg, this.argumentsValue);
+                        }
+                        this.setValue(value);
                     }
                 }
-                this.setValue(value);
             }
         }
     }, DynamicExpression);

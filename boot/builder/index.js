@@ -1,4 +1,4 @@
-void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compilePegjs, exports, fs, getModuleId, isPrivate, minify, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _;
+void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compilePegjs, exports, fs, getModuleId, isPrivate, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _;
 
 if (global.window) {
   return;
@@ -21,47 +21,6 @@ module.exports = exports = {
   removeExtension: removeExtension = utility.removeExtension,
   changeExtension: changeExtension = utility.changeExtension,
   normalizePath: normalizePath = utility.normalizePath,
-  minifyFromManifest: function(manifestFile, options) {
-    var allName, files, minified, result, _ref, _ref1, _ref2, _ref3, _ref4;
-    if (options == null) {
-      options = {};
-    }
-    allName = "_browser.js";
-    if (options.mangle == null) {
-      options.mangle = (_ref = options.compress) != null ? _ref : false;
-    }
-    if (options.compress == null) {
-      options.compress = (_ref1 = options.compress) != null ? _ref1 : false;
-    }
-    if (options.outSourceMap == null) {
-      options.outSourceMap = allName + ".map";
-    }
-    files = (_ref2 = (_ref3 = JSON.parse((_ref4 = manifestFile.read()) != null ? _ref4 : "null")) != null ? _ref3.files : void 0) != null ? _ref2 : [];
-    minified = minify(manifestFile.directoryName, files, options);
-    result = {};
-    result[allName] = "if (this.window == null) return;\n" + minified.code + "\n//# sourceMappingURL= " + options.outSourceMap;
-    return result;
-  },
-  minify: minify = function(root, files, options) {
-    var cwd, file;
-    cwd = process.cwd();
-    process.chdir(root);
-    try {
-      return {
-        code: ((function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = files.length; _i < _len; _i++) {
-            file = files[_i];
-            _results.push(fs.readFileSync(file, 'utf8'));
-          }
-          return _results;
-        })()).join('\n')
-      };
-    } finally {
-      process.chdir(cwd);
-    }
-  },
   isPrivate: isPrivate = function(path) {
     var result;
     if (path == null) {
@@ -217,7 +176,7 @@ module.exports = exports = {
       return source;
     } catch (_error) {
       e = _error;
-      return console.error(e);
+      return console.error(String(e));
     }
   },
   shimJavascript: shimJavascript = function(source, packageObject) {

@@ -1,11 +1,16 @@
 void (function(){var _ion_runtime_MemberExpression_ = function(module,exports,require){'use strict';
 const ion = require('../'), DynamicExpression = require('./DynamicExpression');
 const MemberExpression = ion.defineClass({
-        id: 'MemberExpression',
+        name: 'MemberExpression',
         properties: {
             activate: function () {
                 MemberExpression.super.prototype.activate.apply(this, arguments);
                 this.objectExpression = this.objectExpression != null ? this.objectExpression : this.context.createRuntime(this.object);
+                this.propertyExpression = this.propertyExpression != null ? this.propertyExpression : this.context.createRuntime(this.computed ? this.property : this.property.name);
+                this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : function (propertyValue) {
+                    this.propertyValue = propertyValue;
+                    this.updateValue();
+                }.bind(this));
                 this.objectExpression.watch(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : function (objectValue) {
                     this.objectValue = objectValue;
                     this.updateValue();
@@ -13,13 +18,8 @@ const MemberExpression = ion.defineClass({
                     if (objectValue != null) {
                         this.objectObserver = ion.observe(objectValue, function (changes) {
                             this.updateValue();
-                        }.bind(this));
+                        }.bind(this), this.propertyValue);
                     }
-                }.bind(this));
-                this.propertyExpression = this.propertyExpression != null ? this.propertyExpression : this.context.createRuntime(this.computed ? this.property : this.property.name);
-                this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : function (propertyValue) {
-                    this.propertyValue = propertyValue;
-                    this.updateValue();
                 }.bind(this));
             },
             deactivate: function () {

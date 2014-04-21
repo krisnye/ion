@@ -1,7 +1,7 @@
 void (function(){var _ion_runtime_ReturnStatement_ = function(module,exports,require){'use strict';
 const ion = require('../'), Statement = require('./Statement');
 const ReturnStatement = ion.defineClass({
-        id: 'ReturnStatement',
+        name: 'ReturnStatement',
         properties: {
             activate: function () {
                 ReturnStatement.super.prototype.activate.apply(this, arguments);

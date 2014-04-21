@@ -1,7 +1,7 @@
 void (function(){var _ion_runtime_Expression_ = function(module,exports,require){'use strict';
 const ion = require('../');
 const Expression = ion.defineClass({
-        id: 'Expression',
+        name: 'Expression',
         properties: {
             watch: function (watcher) {
                 throw new Error('not implemented');
