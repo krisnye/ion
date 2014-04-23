@@ -821,7 +821,6 @@ const templates = [
                                 },
                                 value: {
                                     type: 'ObjectExpression',
-                                    objectType: null,
                                     properties: [{
                                             type: 'Property',
                                             key: {

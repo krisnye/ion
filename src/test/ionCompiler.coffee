@@ -594,6 +594,7 @@ tests =
             y: 20
     """: """
     'use strict';
+    const ion = require('ion');
     let origin = new Line();
     {
         let _ref = new Point();

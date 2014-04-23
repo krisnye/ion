@@ -1,4 +1,4 @@
-void (function(){var _ion_builder_watcher_ = function(module,exports,require){var fs, np, util;
+void (function(){var _ion_builder_watcher_ = function(module,exports,require){var allWatchers, fs, np, util;
 
 if (global.window) {
   return;
@@ -65,7 +65,8 @@ exports.watchDirectory = function(dirname, options, listener) {
   };
   unwatchFile = function(filename) {
     fs.unwatchFile(filename, watchedFiles[filename]);
-    return delete watchedFiles[filename];
+    delete watchedFiles[filename];
+    return allWatchers[filename]--;
   };
   watchFile = function(filename, depth, stats) {
     var boundListener, child, _i, _len, _ref;
@@ -90,6 +91,10 @@ exports.watchDirectory = function(dirname, options, listener) {
           }
         }
         if (watchedFiles[filename] == null) {
+          if (allWatchers[filename] == null) {
+            allWatchers[filename] = 0;
+          }
+          allWatchers[filename]++;
           boundListener = fsListener.bind(this, filename, depth);
           watchedFiles[filename] = boundListener;
           fs.watchFile(filename, options, boundListener);
@@ -112,6 +117,8 @@ exports.watchDirectory = function(dirname, options, listener) {
     return _results;
   };
 };
+
+allWatchers = {};
 
   }
   if (typeof require === 'function') {

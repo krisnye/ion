@@ -619,6 +619,7 @@ propertyStatements = (node, context) ->
     if node.type is 'Property' and not (parent.type is 'ObjectExpression' or parent.type is 'ObjectPattern')
         if node.output?
             if node.value.type is 'ObjectExpression'
+                ensureIonVariable(context)
                 context.replace
                     type: 'ExpressionStatement'
                     expression:

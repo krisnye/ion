@@ -1,22 +1,10 @@
 void (function(){var _ion_builder_ModuleBuilder_ = function(module,exports,require){'use strict';
-const ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), compilers = [
-        {
-            extension: '.coffee',
-            compile: builder.compileCoffeeScript
-        },
-        {
-            extension: '.pegjs',
-            compile: builder.compilePegjs
-        },
-        {
-            extension: '.js',
-            compile: builder.shimJavascript
-        },
-        {
-            extension: '.ion',
-            compile: builder.compileIon
-        }
-    ];
+const ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), compilers = {
+        '.coffee': { compile: builder.compileCoffeeScript },
+        '.pegjs': { compile: builder.compilePegjs },
+        '.js': { compile: builder.shimJavascript },
+        '.ion': { compile: builder.compileIon }
+    };
 module.exports = exports = ion.template(function _template(packagePatch) {
     if (this != null && this.constructor === _template) {
         return ion.createRuntime({
@@ -315,25 +303,79 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                     },
                     value: {
                         type: 'ObjectExpression',
-                        objectType: null,
                         properties: [
                             {
-                                type: 'ForOfStatement',
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'extensions'
+                                        },
+                                        init: {
+                                            type: 'CallExpression',
+                                            callee: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'Object'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'keys'
+                                                }
+                                            },
+                                            arguments: [{
+                                                    type: 'Identifier',
+                                                    name: 'compilers'
+                                                }]
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'ForInStatement',
                                 left: {
                                     type: 'VariableDeclaration',
-                                    declarations: [{
+                                    declarations: [
+                                        {
                                             type: 'VariableDeclarator',
                                             id: {
                                                 type: 'Identifier',
-                                                name: '_ref7'
+                                                name: 'path'
                                             },
                                             init: null
-                                        }],
+                                        },
+                                        {
+                                            type: 'VariableDeclarator',
+                                            id: {
+                                                type: 'Identifier',
+                                                name: 'source'
+                                            },
+                                            init: null
+                                        }
+                                    ],
                                     kind: 'let'
                                 },
                                 right: {
-                                    type: 'Identifier',
-                                    name: 'compilers'
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'input'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'search'
+                                        }
+                                    },
+                                    arguments: [{
+                                            type: 'Identifier',
+                                            name: 'extensions'
+                                        }]
                                 },
                                 body: {
                                     type: 'BlockStatement',
@@ -344,33 +386,31 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                                     type: 'VariableDeclarator',
                                                     id: {
                                                         type: 'Identifier',
-                                                        name: '_ref10'
-                                                    },
-                                                    init: {
-                                                        type: 'Identifier',
-                                                        name: '_ref7'
-                                                    }
-                                                }]
-                                        },
-                                        {
-                                            type: 'VariableDeclaration',
-                                            declarations: [{
-                                                    type: 'VariableDeclarator',
-                                                    id: {
-                                                        type: 'Identifier',
-                                                        name: 'extension'
+                                                        name: 'compiler'
                                                     },
                                                     init: {
                                                         type: 'MemberExpression',
+                                                        computed: true,
                                                         object: {
                                                             type: 'Identifier',
-                                                            name: '_ref10'
+                                                            name: 'compilers'
                                                         },
                                                         property: {
-                                                            type: 'Identifier',
-                                                            name: 'extension'
-                                                        },
-                                                        computed: false
+                                                            type: 'CallExpression',
+                                                            callee: {
+                                                                type: 'MemberExpression',
+                                                                computed: false,
+                                                                object: {
+                                                                    type: 'Identifier',
+                                                                    name: 'source'
+                                                                },
+                                                                property: {
+                                                                    type: 'Identifier',
+                                                                    name: 'getExtension'
+                                                                }
+                                                            },
+                                                            arguments: []
+                                                        }
                                                     }
                                                 }],
                                             kind: 'let'
@@ -381,173 +421,109 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                                     type: 'VariableDeclarator',
                                                     id: {
                                                         type: 'Identifier',
-                                                        name: 'compile'
+                                                        name: 'targetPath'
                                                     },
                                                     init: {
-                                                        type: 'MemberExpression',
-                                                        object: {
-                                                            type: 'Identifier',
-                                                            name: '_ref10'
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'builder'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'changeExtension'
+                                                            }
                                                         },
-                                                        property: {
-                                                            type: 'Identifier',
-                                                            name: 'compile'
-                                                        },
-                                                        computed: false
+                                                        arguments: [
+                                                            {
+                                                                type: 'Identifier',
+                                                                name: 'path'
+                                                            },
+                                                            {
+                                                                type: 'Literal',
+                                                                value: '.js'
+                                                            }
+                                                        ]
                                                     }
                                                 }],
                                             kind: 'let'
                                         },
                                         {
-                                            type: 'ForInStatement',
-                                            left: {
-                                                type: 'VariableDeclaration',
-                                                declarations: [
-                                                    {
-                                                        type: 'VariableDeclarator',
-                                                        id: {
-                                                            type: 'Identifier',
-                                                            name: 'path'
-                                                        },
-                                                        init: null
+                                            type: 'VariableDeclaration',
+                                            declarations: [{
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'moduleId'
                                                     },
-                                                    {
-                                                        type: 'VariableDeclarator',
-                                                        id: {
-                                                            type: 'Identifier',
-                                                            name: 'source'
+                                                    init: {
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'builder'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'getModuleId'
+                                                            }
                                                         },
-                                                        init: null
+                                                        arguments: [
+                                                            {
+                                                                type: 'Identifier',
+                                                                name: 'moduleName'
+                                                            },
+                                                            {
+                                                                type: 'Identifier',
+                                                                name: 'path'
+                                                            }
+                                                        ]
                                                     }
-                                                ],
-                                                kind: 'let'
+                                                }],
+                                            kind: 'let'
+                                        },
+                                        {
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'targetPath'
                                             },
-                                            right: {
+                                            value: {
                                                 type: 'CallExpression',
                                                 callee: {
                                                     type: 'MemberExpression',
                                                     computed: false,
                                                     object: {
                                                         type: 'Identifier',
-                                                        name: 'input'
+                                                        name: 'compiler'
                                                     },
                                                     property: {
                                                         type: 'Identifier',
-                                                        name: 'search'
+                                                        name: 'compile'
                                                     }
                                                 },
-                                                arguments: [{
+                                                arguments: [
+                                                    {
                                                         type: 'Identifier',
-                                                        name: 'extension'
-                                                    }]
-                                            },
-                                            body: {
-                                                type: 'BlockStatement',
-                                                body: [
-                                                    {
-                                                        type: 'VariableDeclaration',
-                                                        declarations: [{
-                                                                type: 'VariableDeclarator',
-                                                                id: {
-                                                                    type: 'Identifier',
-                                                                    name: 'targetPath'
-                                                                },
-                                                                init: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'Identifier',
-                                                                            name: 'builder'
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'changeExtension'
-                                                                        }
-                                                                    },
-                                                                    arguments: [
-                                                                        {
-                                                                            type: 'Identifier',
-                                                                            name: 'path'
-                                                                        },
-                                                                        {
-                                                                            type: 'Literal',
-                                                                            value: '.js'
-                                                                        }
-                                                                    ]
-                                                                }
-                                                            }],
-                                                        kind: 'let'
+                                                        name: 'source'
                                                     },
                                                     {
-                                                        type: 'VariableDeclaration',
-                                                        declarations: [{
-                                                                type: 'VariableDeclarator',
-                                                                id: {
-                                                                    type: 'Identifier',
-                                                                    name: 'moduleId'
-                                                                },
-                                                                init: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'Identifier',
-                                                                            name: 'builder'
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'getModuleId'
-                                                                        }
-                                                                    },
-                                                                    arguments: [
-                                                                        {
-                                                                            type: 'Identifier',
-                                                                            name: 'moduleName'
-                                                                        },
-                                                                        {
-                                                                            type: 'Identifier',
-                                                                            name: 'path'
-                                                                        }
-                                                                    ]
-                                                                }
-                                                            }],
-                                                        kind: 'let'
+                                                        type: 'Identifier',
+                                                        name: 'moduleId'
                                                     },
                                                     {
-                                                        type: 'Property',
-                                                        key: {
-                                                            type: 'Identifier',
-                                                            name: 'targetPath'
-                                                        },
-                                                        value: {
-                                                            type: 'CallExpression',
-                                                            callee: {
-                                                                type: 'Identifier',
-                                                                name: 'compile'
-                                                            },
-                                                            arguments: [
-                                                                {
-                                                                    type: 'Identifier',
-                                                                    name: 'source'
-                                                                },
-                                                                {
-                                                                    type: 'Identifier',
-                                                                    name: 'moduleId'
-                                                                },
-                                                                {
-                                                                    type: 'Identifier',
-                                                                    name: 'packageJson'
-                                                                }
-                                                            ]
-                                                        },
-                                                        kind: 'init',
-                                                        computed: true
+                                                        type: 'Identifier',
+                                                        name: 'packageJson'
                                                     }
                                                 ]
-                                            }
+                                            },
+                                            kind: 'init',
+                                            computed: true
                                         }
                                     ]
                                 }
@@ -816,7 +792,6 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                         },
                                         init: {
                                             type: 'ObjectExpression',
-                                            objectType: null,
                                             properties: [
                                                 {
                                                     type: 'Property',
@@ -1396,20 +1371,17 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         let path = sortedFiles[_i];
         _ref4.push(builder.normalizePath(path));
     }
-    let _ref8 = {};
+    let _ref7 = {};
     {
-        for (let _i2 = 0; _i2 < compilers.length; _i2++) {
-            let _ref9 = compilers[_i2];
-            let extension = _ref9.extension;
-            let compile = _ref9.compile;
-            {
-                let _ref6 = input.search(extension);
-                for (let path in _ref6) {
-                    let source = _ref6[path];
-                    let targetPath = builder.changeExtension(path, '.js');
-                    let moduleId = builder.getModuleId(moduleName, path);
-                    _ref8[targetPath] = compile(source, moduleId, packageJson);
-                }
+        let extensions = Object.keys(compilers);
+        {
+            let _ref6 = input.search(extensions);
+            for (let path in _ref6) {
+                let source = _ref6[path];
+                let compiler = compilers[source.getExtension()];
+                let targetPath = builder.changeExtension(path, '.js');
+                let moduleId = builder.getModuleId(moduleName, path);
+                _ref7[targetPath] = compiler.compile(source, moduleId, packageJson);
             }
         }
         let outputFiles = output.search('.js', [
@@ -1423,24 +1395,24 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                 modified: Math.max.apply(null, _ref3),
                 files: _ref4
             };
-        _ref8[manifestFileName] = JSON.stringify(manifest, null, '  ', sortedFiles);
+        _ref7[manifestFileName] = JSON.stringify(manifest, null, '  ', sortedFiles);
         if (packageJson.build.merge != null) {
             let _ref5 = [];
-            for (let _i3 = 0; _i3 < sortedFiles.length; _i3++) {
-                let name = sortedFiles[_i3];
-                ion.add(_ref8, _ref5.push(outputFiles[name].read()));
+            for (let _i2 = 0; _i2 < sortedFiles.length; _i2++) {
+                let name = sortedFiles[_i2];
+                ion.add(_ref7, _ref5.push(outputFiles[name].read()));
             }
-            _ref8[packageJson.build.merge] = _ref5.join('\n');
+            _ref7[packageJson.build.merge] = _ref5.join('\n');
         }
         if (packageJson.build.package) {
-            _ref8['package.json'] = JSON.stringify(ion.patch(ion.clone(packageJson), { main: void 0 }), null, '    ');
+            _ref7['package.json'] = JSON.stringify(ion.patch(ion.clone(packageJson), { main: void 0 }), null, '    ');
         }
         if (packageJson.build.test !== false) {
             let manifestFile = output.getFile(manifestFileName);
-            ion.add(_ref8, builder.runTests(manifestFile, manifestFile.modified));
+            ion.add(_ref7, builder.runTests(manifestFile, manifestFile.modified));
         }
     }
-    ion.patch(output, _ref8);
+    ion.patch(output, _ref7);
 });
   }
   if (typeof require === 'function') {

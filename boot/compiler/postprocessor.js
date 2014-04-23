@@ -860,6 +860,7 @@ propertyStatements = function(node, context) {
   if (node.type === 'Property' && !(parent.type === 'ObjectExpression' || parent.type === 'ObjectPattern')) {
     if (node.output != null) {
       if (node.value.type === 'ObjectExpression') {
+        ensureIonVariable(context);
         return context.replace({
           type: 'ExpressionStatement',
           expression: {

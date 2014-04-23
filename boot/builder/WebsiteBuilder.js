@@ -679,7 +679,6 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                             },
                                             value: {
                                                 type: 'ObjectExpression',
-                                                objectType: null,
                                                 properties: [{
                                                         type: 'Property',
                                                         key: {
@@ -920,7 +919,6 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                             },
                                             value: {
                                                 type: 'ObjectExpression',
-                                                objectType: null,
                                                 properties: [{
                                                         type: 'Property',
                                                         key: {
@@ -1004,7 +1002,6 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                         },
                                         value: {
                                             type: 'ObjectExpression',
-                                            objectType: null,
                                             properties: [
                                                 {
                                                     type: 'Property',
@@ -1066,7 +1063,6 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                         },
                                         value: {
                                             type: 'ObjectExpression',
-                                            objectType: null,
                                             properties: [{
                                                     type: 'Property',
                                                     key: {
@@ -1105,7 +1101,6 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                         },
                                         value: {
                                             type: 'ObjectExpression',
-                                            objectType: null,
                                             properties: [
                                                 {
                                                     type: 'Property',
@@ -1167,7 +1162,6 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                         },
                                         value: {
                                             type: 'ObjectExpression',
-                                            objectType: null,
                                             properties: [{
                                                     type: 'Property',
                                                     key: {
@@ -1302,7 +1296,6 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                 },
                                 value: {
                                     type: 'ObjectExpression',
-                                    objectType: null,
                                     properties: [{
                                             type: 'Property',
                                             key: {
@@ -1454,7 +1447,6 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                 },
                                 value: {
                                     type: 'ObjectExpression',
-                                    objectType: null,
                                     properties: [{
                                             type: 'Property',
                                             key: {
@@ -1632,7 +1624,6 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                 },
                                 value: {
                                     type: 'ObjectExpression',
-                                    objectType: null,
                                     properties: [{
                                             type: 'Property',
                                             key: {

@@ -53,6 +53,10 @@ const File = ion.defineClass({
                     return null;
                 }
             },
+            getExtension: function () {
+                let index = this.path.lastIndexOf('.');
+                return index < 0 ? '' : this.path.substring(index);
+            },
             write: function (content, encoding) {
                 return utility.write(this.path, content, encoding);
             },

@@ -85,7 +85,6 @@ module.exports = exports = ion.template(function _template() {
                                             },
                                             value: {
                                                 type: 'ObjectExpression',
-                                                objectType: null,
                                                 properties: [{
                                                         type: 'Property',
                                                         key: {
@@ -166,7 +165,6 @@ module.exports = exports = ion.template(function _template() {
                                                         },
                                                         value: {
                                                             type: 'ObjectExpression',
-                                                            objectType: null,
                                                             properties: [
                                                                 {
                                                                     type: 'Property',
@@ -281,14 +279,14 @@ module.exports = exports = ion.template(function _template() {
             br: br
         });
     }
-    let _ref3 = new div();
+    let _ref3 = div;
     {
-        let _ref4 = new div();
+        let _ref4 = div;
         {
             ion.add(_ref4, 'Hello ' + data.name);
         }
         ion.add(_ref3, _ref4);
-        let _ref5 = new div();
+        let _ref5 = div;
         {
             _ref5.style = ion.patch(_ref5.style, { color: 'red' });
             ion.add(_ref5, 'red');
@@ -298,7 +296,7 @@ module.exports = exports = ion.template(function _template() {
             let _ref2 = data.kids;
             for (let name in _ref2) {
                 let age = _ref2[name];
-                let _ref6 = new div();
+                let _ref6 = div;
                 {
                     _ref6.style = ion.patch(_ref6.style, {
                         textDecoration: 'underline',

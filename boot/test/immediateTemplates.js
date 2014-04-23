@@ -1051,7 +1051,6 @@ const templates = [
                                 type: 'ReturnStatement',
                                 argument: {
                                     type: 'ObjectExpression',
-                                    objectType: null,
                                     properties: [
                                         {
                                             type: 'Property',
@@ -1402,7 +1401,6 @@ const templates = [
                                             },
                                             value: {
                                                 type: 'ObjectExpression',
-                                                objectType: null,
                                                 properties: [{
                                                         type: 'Property',
                                                         key: {
@@ -1463,7 +1461,6 @@ const templates = [
                                 },
                                 value: {
                                     type: 'ObjectExpression',
-                                    objectType: null,
                                     properties: [{
                                             type: 'Property',
                                             key: {
