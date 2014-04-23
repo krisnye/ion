@@ -265,6 +265,8 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
         trackVariableDeclarations(context, node.params, nodeInfo.paramKind);
       } else if (node.type === 'ForInStatement' || node.type === 'ForOfStatement') {
         trackVariableDeclarations(context, node.left);
+      } else if (node.type === 'ObjectExpression') {
+        trackVariableDeclarations(context, node.properties);
       }
       if (typeof enterCallback === "function") {
         enterCallback(node, context);

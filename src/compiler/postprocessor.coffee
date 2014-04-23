@@ -915,6 +915,7 @@ removeLocationInfo = (node) ->
 getExternalIdentifiers = (node, callback) ->
     traverse node, (node, context) ->
         if node.type is 'Identifier'
+            # debug = node.name is 'checked'
             parentNode = context.parentNode()
             # ignore member expression right hand identifiers
             if parentNode?.type is 'MemberExpression' and not parentNode?.computed and context.key() is 'property'

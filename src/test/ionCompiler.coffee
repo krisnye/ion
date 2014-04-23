@@ -1429,6 +1429,84 @@ tests =
         }
     });
     """
+    """
+    export template ->
+        return td()
+            let checked = true
+            onclick: ->
+                console.log(tasks, checked)
+    """: """
+    'use strict';
+    const ion = require('ion');
+    module.exports = exports = ion.template(function _template() {
+        if (this != null && this.constructor === _template) {
+            return ion.createRuntime({
+                type: 'Template',
+                body: [{
+                        type: 'ReturnStatement',
+                        argument: {
+                            type: 'ObjectExpression',
+                            objectType: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'Identifier',
+                                    name: 'td'
+                                },
+                                arguments: []
+                            },
+                            properties: [
+                                {
+                                    type: 'VariableDeclaration',
+                                    declarations: [{
+                                            type: 'VariableDeclarator',
+                                            id: {
+                                                type: 'Identifier',
+                                                name: 'checked'
+                                            },
+                                            init: {
+                                                type: 'Literal',
+                                                value: true
+                                            }
+                                        }],
+                                    kind: 'let'
+                                },
+                                {
+                                    type: 'Property',
+                                    key: {
+                                        type: 'Identifier',
+                                        name: 'onclick'
+                                    },
+                                    value: {
+                                        type: 'Function',
+                                        context: true,
+                                        value: function (_context) {
+                                            return function () {
+                                                const checked = _context.get('checked');
+                                                console.log(tasks, checked);
+                                            };
+                                        }
+                                    },
+                                    kind: 'init'
+                                }
+                            ]
+                        }
+                    }]
+            }, {
+                require: require,
+                module: module,
+                exports: exports
+            });
+        }
+        let _ref = td();
+        {
+            let checked = true;
+            _ref.onclick = function () {
+                console.log(tasks, checked);
+            };
+        }
+        return _ref;
+    });
+    """
 
 if global.window?
     return

@@ -125,6 +125,8 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback, prev
                 trackVariableDeclarations context, node.params, nodeInfo.paramKind
             else if node.type is 'ForInStatement' or node.type is 'ForOfStatement'
                 trackVariableDeclarations context, node.left
+            else if node.type is 'ObjectExpression'
+                trackVariableDeclarations context, node.properties
             enterCallback?(node, context)
             context.ancestorNodes.push node
     ourExit = (node, context) ->

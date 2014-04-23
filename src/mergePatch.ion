@@ -3,6 +3,8 @@ const
     isObject = (a) -> a? and typeof a is 'object'
     deleteValue = null
 
+let count = 0
+
 export const
     apply = (target, values, deleteNull = true) ->
         if values?.constructor isnt Object
@@ -19,6 +21,7 @@ export const
     combine = (patch1, patch2) -> apply(patch1, patch2, false)
     # watches object for changes and calls the handler with patches
     watch = (object, handler, callInitial = true) ->
+        let id = count++
         if not isObject(object)
             throw new Error("Cannot watch: #{object}")
         # recurse watching and unwatching
@@ -38,18 +41,14 @@ export const
                         let subHandler = (patch) ->
                             let basePatch = {}
                             basePatch[name] = patch
-                            if pendingPatch?
-                                pendingPatch = combine(pendingPatch, basePatch)
-                            else
-                                handler(basePatch)
+                            queuePatch(basePatch)
                         subWatchers[name] = watch(value, subHandler, false)
         let pendingTimeout = null
-        let watcher = (changes) ->
-            try
-                pendingPatch ?= {}
-                for change in changes
-                    # we convert undefined values from delete into explicit nulls
-                    pendingPatch[change.name] = object[change.name] ? deleteValue
+        let queuePatch = (patch) ->
+            if not callInitial
+                handler(patch)
+            else
+                pendingPatch = combine(pendingPatch, patch)
                 processPatch(pendingPatch)
                 pendingTimeout ?= (setTimeout)
                     ->
@@ -57,6 +56,13 @@ export const
                         pendingPatch = null
                         pendingTimeout = null
                     0
+        let watcher = (changes) ->
+            try
+                let patch = {}
+                for change in changes
+                    # we convert undefined values from delete into explicit nulls
+                    patch[change.name] = object[change.name] ? deleteValue
+                queuePatch(patch)
             catch e
                 # catch and log errors, because object observe callbacks suppress errors
                 console.error(e)
