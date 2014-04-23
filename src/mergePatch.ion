@@ -2,10 +2,6 @@ const
     ion = import './'
     isObject = (a) -> a? and typeof a is 'object'
     deleteValue = null
-
-let count = 0
-
-export const
     apply = (target, values, deleteNull = true) ->
         if values?.constructor isnt Object
             return values
@@ -21,7 +17,6 @@ export const
     combine = (patch1, patch2) -> apply(patch1, patch2, false)
     # watches object for changes and calls the handler with patches
     watch = (object, handler, callInitial = true) ->
-        let id = count++
         if not isObject(object)
             throw new Error("Cannot watch: #{object}")
         # recurse watching and unwatching
@@ -104,7 +99,16 @@ export const
             return true
         return false
     isEmpty = (patch) -> patch is undefined or Object.isObject(patch) and Object.isEmpty(patch)
-    test = do ->
+
+# we export the apply method, but add the specialized internal methods to it
+export apply
+    apply: apply
+    combine: combine
+    watch: watch
+    diff: diff
+    isChange: isChange
+    isEmpty: isEmpty
+    test: do ->
         const equal = (a, b) -> not isChange(a, b) and not isChange(b, a)
         return
             apply: ->
