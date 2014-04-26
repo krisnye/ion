@@ -38,17 +38,21 @@ module.exports = class CallExpression extends DynamicExpression
         evaluate: ->
             let value = undefined
             if @calleeValue? and @argumentsValue?
-                if @calleeValue.template
-                    if @template?
-                        @template.unwatch(@templateWatcher)
-                    # always use new on templates
-                    @template = ion.create(@calleeValue, @argumentsValue)
-                    @template.activate()
-                    @template.watch(@templateWatcher ?= @setValue.bind(@))
-                else
-                    if @type is 'NewExpression'
-                        # create a new with variable args
-                        value = ion.create(@calleeValue, @argumentsValue)
-                    else # @type is 'CallExpression'
-                        value = @calleeValue.apply(@thisArg, @argumentsValue)
-                    @setValue(value)
+                try
+                    if @calleeValue.template
+                        if @template?
+                            @template.unwatch(@templateWatcher)
+                        # always use new on templates
+                        @template = ion.create(@calleeValue, @argumentsValue)
+                        @template.activate()
+                        @template.watch(@templateWatcher ?= @setValue.bind(@))
+                    else
+                        if @type is 'NewExpression'
+                            # create a new with variable args
+                            value = ion.create(@calleeValue, @argumentsValue)
+                        else # @type is 'CallExpression'
+                            value = @calleeValue.apply(@thisArg, @argumentsValue)
+                        @setValue(value)
+                catch e
+                    # if we don't catch the errors, they might not be logged when occuring in an Object.observe callback
+                    console.error(e)
