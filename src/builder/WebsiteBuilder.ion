@@ -46,6 +46,7 @@ export template (packagePatch) ->
             src:input + '/js' # client side javascript
             lib:output + '/' + clientJsDir
         build:
+            exclude: packageJson.build.client.exclude
             test: false
 
     # build server javascript
@@ -54,6 +55,7 @@ export template (packagePatch) ->
             src:input + '/js' # server side javascript
             lib:output + '/' + serverJsDir
         build:
+            exclude: packageJson.build.server.exclude
             test: true
 
     # Copy all other files from src to output
@@ -61,6 +63,12 @@ export template (packagePatch) ->
         let target = output.getFile(key)
         output:
             [key]: source.read()
+
+    # Compile plain ion files, while excluding the js directory
+    for key, source of input.search(".ion", "js")
+        let targetPath = builder.changeExtension(key, ".js")
+        output:
+            [targetPath]: builder.compileIon(source)
 
     # Compile ion pages
     let pageOutput = output.getDirectory('WEB-INF/pages')
@@ -70,6 +78,7 @@ export template (packagePatch) ->
             [targetPath]: "(function {{key.replace(/[\.\/\\]/g, '_')}}(){ {{builder.compileIon(source)}} })"
 
     # Compile coffee pages
+    # TODO: port all .coffeepages to .ionpages and delete this.
     for key, source of input.search(".coffeepage")
         let targetPath = builder.changeExtension(key, ".js")
         pageOutput:

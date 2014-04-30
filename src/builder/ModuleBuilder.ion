@@ -22,7 +22,8 @@ export template (packagePatch) ->
     output:
         # build all source files with a single search
         let extensions = Object.keys(compilers)
-        for path, source of input.search(extensions)
+        console.log('---------------------------------------------.................. ' + packageJson.build.exclude)
+        for path, source of input.search(extensions, packageJson.build.exclude)
             let compiler = compilers[source.getExtension()]
             let targetPath = builder.changeExtension(path, '.js')
             let moduleId = builder.getModuleId(moduleName, path)
