@@ -2,19 +2,26 @@ const
     ion = import './'
     isObject = (a) -> a? and typeof a is 'object'
     deleteValue = null
-    applyPatch = (target, values, deleteNull = true) ->
+    # current options
+    #   deleteNull: delete properties if value is null, default: true
+    #   factory: function to use when constructing new objects, defaults to using plain objects {}
+    applyPatch = (target, values, options) ->
+        let deleteNull = options?.deleteNull ? true
         if values?.constructor isnt Object
             return values
         if not isObject(target)
-            target = {}
+            if options?.factory?
+                target = options.factory(values)
+            else
+                target = {}
         for key, value of values
             if deleteNull and value is deleteValue
                 delete target[key]
             else
-                target[key] = applyPatch(target[key], value, deleteNull)
+                target[key] = applyPatch(target[key], value, options)
         return target
     # combines two patches to make a single patch
-    combine = (patch1, patch2) -> applyPatch(patch1, patch2, false)
+    combine = (patch1, patch2) -> applyPatch(patch1, patch2, {deleteNull:false})
     # watches object for changes and calls the handler with patches
     watch = (object, handler, callInitial = true) ->
         if not isObject(object)
