@@ -76,6 +76,13 @@ const templates = []
         {x:1,y:2}
         {x:3}
         {x:3,y:3}
+    []
+        "literal objects"
+        template () ->
+            return {touch:1,"touch-start":2}
+        {}
+        {}
+        {touch:1,"touch-start":2}
 
 export
     test:
