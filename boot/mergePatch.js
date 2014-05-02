@@ -1,28 +1,30 @@
 void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
 const ion = require('./'), isObject = function (a) {
         return a != null && typeof a === 'object';
-    }, deleteValue = null;
-const apply = exports.apply = function (target, values, deleteNull) {
-        if (deleteNull == null)
-            deleteNull = true;
+    }, deleteValue = null, applyPatch = function (target, values, options) {
+        let deleteNull = (options != null ? options.deleteNull : void 0) != null ? options.deleteNull : true;
         if ((values != null ? values.constructor : void 0) !== Object) {
             return values;
         }
         if (!isObject(target)) {
-            target = {};
+            if ((options != null ? options.factory : void 0) != null) {
+                target = options.factory(values);
+            } else {
+                target = {};
+            }
         }
         for (let key in values) {
             let value = values[key];
             if (deleteNull && value === deleteValue) {
                 delete target[key];
             } else {
-                target[key] = apply(target[key], value, deleteNull);
+                target[key] = applyPatch(target[key], value, options);
             }
         }
         return target;
-    }, combine = exports.combine = function (patch1, patch2) {
-        return apply(patch1, patch2, false);
-    }, watch = exports.watch = function (object, handler, callInitial) {
+    }, combine = function (patch1, patch2) {
+        return applyPatch(patch1, patch2, { deleteNull: false });
+    }, watch = function (object, handler, callInitial) {
         if (callInitial == null)
             callInitial = true;
         if (!isObject(object)) {
@@ -39,11 +41,7 @@ const apply = exports.apply = function (target, values, deleteNull) {
                         let subHandler = function (patch) {
                             let basePatch = {};
                             basePatch[name] = patch;
-                            if (pendingPatch != null) {
-                                pendingPatch = combine(pendingPatch, basePatch);
-                            } else {
-                                handler(basePatch);
-                            }
+                            queuePatch(basePatch);
                         };
                         subWatchers[name] = watch(value, subHandler, false);
                     }(name));
@@ -51,19 +49,27 @@ const apply = exports.apply = function (target, values, deleteNull) {
             }
         };
         let pendingTimeout = null;
-        let watcher = function (changes) {
-            try {
-                pendingPatch = pendingPatch != null ? pendingPatch : {};
-                for (let _i = 0; _i < changes.length; _i++) {
-                    let change = changes[_i];
-                    pendingPatch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
-                }
+        let queuePatch = function (patch) {
+            if (!callInitial) {
+                handler(patch);
+            } else {
+                pendingPatch = combine(pendingPatch, patch);
                 processPatch(pendingPatch);
                 pendingTimeout = pendingTimeout != null ? pendingTimeout : setTimeout(function () {
                     handler(pendingPatch);
                     pendingPatch = null;
                     pendingTimeout = null;
                 }, 0);
+            }
+        };
+        let watcher = function (changes) {
+            try {
+                let patch = {};
+                for (let _i = 0; _i < changes.length; _i++) {
+                    let change = changes[_i];
+                    patch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
+                }
+                queuePatch(patch);
             } catch (e) {
                 console.error(e);
             }
@@ -77,7 +83,7 @@ const apply = exports.apply = function (target, values, deleteNull) {
                 value();
             }
         };
-    }, diff = exports.diff = function (oldValue, newValue) {
+    }, diff = function (oldValue, newValue) {
         if (oldValue === newValue) {
             return void 0;
         }
@@ -101,7 +107,7 @@ const apply = exports.apply = function (target, values, deleteNull) {
             }
         }
         return patch;
-    }, isChange = exports.isChange = function (oldValue, newValue) {
+    }, isChange = function (oldValue, newValue) {
         if (oldValue === newValue) {
             return false;
         }
@@ -109,46 +115,57 @@ const apply = exports.apply = function (target, values, deleteNull) {
             return true;
         }
         for (let name in newValue) {
+            if (newValue[name] === null && !oldValue.hasOwnProperty(name)) {
+                continue;
+            }
             if (isChange(oldValue[name], newValue[name])) {
                 return true;
             }
         }
         return false;
-    }, isEmpty = exports.isEmpty = function (patch) {
+    }, isEmpty = function (patch) {
         return patch === void 0 || Object.isObject(patch) && Object.isEmpty(patch);
-    }, test = exports.test = function () {
+    };
+let _ref = applyPatch;
+{
+    _ref.combine = combine;
+    _ref.watch = watch;
+    _ref.diff = diff;
+    _ref.isChange = isChange;
+    _ref.isEmpty = isEmpty;
+    _ref.test = function () {
         const equal = function (a, b) {
             return !isChange(a, b) && !isChange(b, a);
         };
         return {
-            apply: function () {
+            applyPatch: function () {
                 if (!equal({
                         a: {
                             b: 2,
                             c: 3
                         },
                         d: 4
-                    }, apply({ a: { b: 2 } }, {
+                    }, applyPatch({ a: { b: 2 } }, {
                         a: { c: 3 },
                         d: 4
                     })))
-                    throw new Error('Assertion Failed: (equal({a:{b:2,c:3},d:4}, apply({a:{b:2}}, {a:{c:3},d:4})))');
-                if (!equal({ b: 2 }, apply(null, { b: 2 })))
-                    throw new Error('Assertion Failed: (equal({b:2}, apply(null, {b:2})))');
+                    throw new Error('Assertion Failed: (equal({a:{b:2,c:3},d:4}, applyPatch({a:{b:2}}, {a:{c:3},d:4})))');
+                if (!equal({ b: 2 }, applyPatch(null, { b: 2 })))
+                    throw new Error('Assertion Failed: (equal({b:2}, applyPatch(null, {b:2})))');
                 if (!equal({
                         a: 1,
                         b: 2
-                    }, apply({
+                    }, applyPatch({
                         a: 1,
                         b: 2,
                         c: 3
                     }, { c: void 0 })))
-                    throw new Error('Assertion Failed: (equal({a:1,b:2}, apply({a:1,b:2,c:3}, {c:undefined})))');
+                    throw new Error('Assertion Failed: (equal({a:1,b:2}, applyPatch({a:1,b:2,c:3}, {c:undefined})))');
                 let double = function (x) {
                     return x * 2;
                 };
-                if (!equal({ a: double }, apply({}, { a: double })))
-                    throw new Error('Assertion Failed: (equal({a:double}, apply({},{a:double})))');
+                if (!equal({ a: double }, applyPatch({}, { a: double })))
+                    throw new Error('Assertion Failed: (equal({a:double}, applyPatch({},{a:double})))');
             },
             isChange: function () {
                 if (!isChange({ a: 1 }, null))
@@ -170,6 +187,8 @@ const apply = exports.apply = function (target, values, deleteNull) {
                     throw new Error('Assertion Failed: (not isChange({a:{b:2,c:3}}, {a:{b:2}}))');
                 if (!isChange({ a: { b: 2 } }, { a: { b: 3 } }))
                     throw new Error('Assertion Failed: (isChange({a:{b:2}}, {a:{b:3}}))');
+                if (!!isChange({ a: 1 }, { b: null }))
+                    throw new Error('Assertion Failed: (not isChange({a:1}, {b:null}))');
             },
             diff: function () {
                 if (!equal({ b: 2 }, diff({ a: 1 }, {
@@ -238,7 +257,7 @@ const apply = exports.apply = function (target, values, deleteNull) {
                     };
                 let target = ion.clone(source, true);
                 let unwatch = watch(source, function (patch) {
-                        target = apply(target, patch);
+                        target = applyPatch(target, patch);
                         if (!equal(source, target))
                             throw new Error('Assertion Failed: (equal(source, target))');
                         done();
@@ -259,6 +278,8 @@ const apply = exports.apply = function (target, values, deleteNull) {
             }
         };
     }();
+}
+module.exports = exports = _ref;
   }
   if (typeof require === 'function') {
     if (require.register)

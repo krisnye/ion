@@ -67,9 +67,7 @@ const primitive = {
             return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
         }
     ];
-const mergePatch = exports.mergePatch = require('./mergePatch'), patch = exports.patch = function (target, values, deleteNull) {
-        return mergePatch.apply(target, values, deleteNull);
-    }, create = exports.create = function (type, args) {
+const patch = exports.patch = require('./mergePatch'), create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
     }, template = exports.template = function (fn) {
         fn.template = true;
@@ -121,7 +119,9 @@ const mergePatch = exports.mergePatch = require('./mergePatch'), patch = exports
         }
         object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
     }, add = exports.add = function (container, item) {
-        if (container.nodeType === 1) {
+        if (typeof item === 'function' && item.name.length > 0 && typeof container.addEventListener === 'function') {
+            container.addEventListener(item.name, item);
+        } else if (container.nodeType === 1) {
             if (typeof item === 'string') {
                 item = document.createTextNode(item);
             }
@@ -133,7 +133,9 @@ const mergePatch = exports.mergePatch = require('./mergePatch'), patch = exports
         }
         item.onAdded != null ? item.onAdded(container) : void 0;
         return function () {
-            if (container.nodeType === 1) {
+            if (typeof item === 'function' && item.name.length > 0 && typeof container.addEventListener === 'function') {
+                container.removeEventListener(item.name, item);
+            } else if (container.nodeType === 1) {
                 container.removeChild(item);
             } else if (container.lastIndexOf != null && container.removeAt != null) {
                 let index = container.lastIndexOf(item);
@@ -183,7 +185,7 @@ const mergePatch = exports.mergePatch = require('./mergePatch'), patch = exports
                 let value = definition[key];
                 if (key !== 'test' || i === 0) {
                     if ((value != null ? value.constructor : void 0) === Object || (Object.getOwnPropertyDescriptor(classFunction, key) != null ? Object.getOwnPropertyDescriptor(classFunction, key).writable : void 0) !== false) {
-                        classFunction[key] = mergePatch.apply(classFunction[key], value);
+                        classFunction[key] = patch(classFunction[key], value);
                     }
                 }
             }

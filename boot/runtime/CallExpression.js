@@ -42,20 +42,24 @@ const CallExpression = ion.defineClass({
             evaluate: function () {
                 let value = void 0;
                 if (this.calleeValue != null && this.argumentsValue != null) {
-                    if (this.calleeValue.template) {
-                        if (this.template != null) {
-                            this.template.unwatch(this.templateWatcher);
-                        }
-                        this.template = ion.create(this.calleeValue, this.argumentsValue);
-                        this.template.activate();
-                        this.template.watch(this.templateWatcher = this.templateWatcher != null ? this.templateWatcher : this.setValue.bind(this));
-                    } else {
-                        if (this.type === 'NewExpression') {
-                            value = ion.create(this.calleeValue, this.argumentsValue);
+                    try {
+                        if (this.calleeValue.template) {
+                            if (this.template != null) {
+                                this.template.unwatch(this.templateWatcher);
+                            }
+                            this.template = ion.create(this.calleeValue, this.argumentsValue);
+                            this.template.activate();
+                            this.template.watch(this.templateWatcher = this.templateWatcher != null ? this.templateWatcher : this.setValue.bind(this));
                         } else {
-                            value = this.calleeValue.apply(this.thisArg, this.argumentsValue);
+                            if (this.type === 'NewExpression') {
+                                value = ion.create(this.calleeValue, this.argumentsValue);
+                            } else {
+                                value = this.calleeValue.apply(this.thisArg, this.argumentsValue);
+                            }
+                            this.setValue(value);
                         }
-                        this.setValue(value);
+                    } catch (e) {
+                        console.error(e);
                     }
                 }
             }

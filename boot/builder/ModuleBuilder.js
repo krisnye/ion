@@ -372,10 +372,32 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                             name: 'search'
                                         }
                                     },
-                                    arguments: [{
+                                    arguments: [
+                                        {
                                             type: 'Identifier',
                                             name: 'extensions'
-                                        }]
+                                        },
+                                        {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'packageJson'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'build'
+                                                }
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'exclude'
+                                            }
+                                        }
+                                    ]
                                 },
                                 body: {
                                     type: 'BlockStatement',
@@ -1375,7 +1397,7 @@ module.exports = exports = ion.template(function _template(packagePatch) {
     {
         let extensions = Object.keys(compilers);
         {
-            let _ref6 = input.search(extensions);
+            let _ref6 = input.search(extensions, packageJson.build.exclude);
             for (let path in _ref6) {
                 let source = _ref6[path];
                 let compiler = compilers[source.getExtension()];

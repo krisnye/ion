@@ -50,7 +50,7 @@ export class ForInOfStatement extends Statement
             delete @statements[key]
         applyChanges: (changes) ->
             # console.log('changes', changes)
-            ignoreProperty(name) ->
+            const ignoreProperty(name) ->
                 if not name?
                     return true
                 if name[0] is '_'

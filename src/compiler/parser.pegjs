@@ -198,7 +198,9 @@ variableKind = let / const
 variableDeclaratorList = multilineVariableDeclaratorList / inlineVariableDeclaratorList
 inlineVariableDeclaratorList = head:VariableDeclarator tail:(_ "," _ a:VariableDeclarator {return a})* { return [head].concat(tail) }
 multilineVariableDeclaratorList = indent eol declarations:(_ a:VariableDeclarator eol? { return a })+ outdent { return declarations }
-VariableDeclarator = start:start pattern:Pattern _ init:variableInitializer? end:end { return node("VariableDeclarator", {id:pattern,init:init}, start, end) }
+VariableDeclarator
+    = start:start &Identifier func:FunctionExpression end:end { return node("VariableDeclarator", {id:func.id,init:func}, start, end) }
+    / start:start pattern:Pattern _ init:variableInitializer? end:end { return node("VariableDeclarator", {id:pattern,init:init}, start, end) }
 variableInitializer = "=" _ a:RightHandSideExpression { return a }
 Pattern = Identifier / ObjectPattern / ArrayPattern
 ObjectPattern = pattern:ObjectLiteral { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ObjectPattern"; return pattern }

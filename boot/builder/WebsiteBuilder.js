@@ -1063,7 +1063,44 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                         },
                                         value: {
                                             type: 'ObjectExpression',
-                                            properties: [{
+                                            properties: [
+                                                {
+                                                    type: 'Property',
+                                                    key: {
+                                                        type: 'Identifier',
+                                                        name: 'exclude'
+                                                    },
+                                                    value: {
+                                                        type: 'MemberExpression',
+                                                        computed: false,
+                                                        object: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'MemberExpression',
+                                                                computed: false,
+                                                                object: {
+                                                                    type: 'Identifier',
+                                                                    name: 'packageJson'
+                                                                },
+                                                                property: {
+                                                                    type: 'Identifier',
+                                                                    name: 'build'
+                                                                }
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'client'
+                                                            }
+                                                        },
+                                                        property: {
+                                                            type: 'Identifier',
+                                                            name: 'exclude'
+                                                        }
+                                                    },
+                                                    kind: 'init'
+                                                },
+                                                {
                                                     type: 'Property',
                                                     key: {
                                                         type: 'Identifier',
@@ -1074,7 +1111,8 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                                         value: false
                                                     },
                                                     kind: 'init'
-                                                }]
+                                                }
+                                            ]
                                         },
                                         kind: 'init'
                                     }
@@ -1162,7 +1200,44 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                         },
                                         value: {
                                             type: 'ObjectExpression',
-                                            properties: [{
+                                            properties: [
+                                                {
+                                                    type: 'Property',
+                                                    key: {
+                                                        type: 'Identifier',
+                                                        name: 'exclude'
+                                                    },
+                                                    value: {
+                                                        type: 'MemberExpression',
+                                                        computed: false,
+                                                        object: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'MemberExpression',
+                                                                computed: false,
+                                                                object: {
+                                                                    type: 'Identifier',
+                                                                    name: 'packageJson'
+                                                                },
+                                                                property: {
+                                                                    type: 'Identifier',
+                                                                    name: 'build'
+                                                                }
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'server'
+                                                            }
+                                                        },
+                                                        property: {
+                                                            type: 'Identifier',
+                                                            name: 'exclude'
+                                                        }
+                                                    },
+                                                    kind: 'init'
+                                                },
+                                                {
                                                     type: 'Property',
                                                     key: {
                                                         type: 'Identifier',
@@ -1173,7 +1248,8 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                                         value: true
                                                     },
                                                     kind: 'init'
-                                                }]
+                                                }
+                                            ]
                                         },
                                         kind: 'init'
                                     }
@@ -1317,6 +1393,136 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                                     }
                                                 },
                                                 arguments: []
+                                            },
+                                            kind: 'init',
+                                            computed: true
+                                        }]
+                                },
+                                kind: 'init'
+                            }
+                        ]
+                    }
+                },
+                {
+                    type: 'ForInStatement',
+                    left: {
+                        type: 'VariableDeclaration',
+                        declarations: [
+                            {
+                                type: 'VariableDeclarator',
+                                id: {
+                                    type: 'Identifier',
+                                    name: 'key'
+                                },
+                                init: null
+                            },
+                            {
+                                type: 'VariableDeclarator',
+                                id: {
+                                    type: 'Identifier',
+                                    name: 'source'
+                                },
+                                init: null
+                            }
+                        ],
+                        kind: 'let'
+                    },
+                    right: {
+                        type: 'CallExpression',
+                        callee: {
+                            type: 'MemberExpression',
+                            computed: false,
+                            object: {
+                                type: 'Identifier',
+                                name: 'input'
+                            },
+                            property: {
+                                type: 'Identifier',
+                                name: 'search'
+                            }
+                        },
+                        arguments: [
+                            {
+                                type: 'Literal',
+                                value: '.ion'
+                            },
+                            {
+                                type: 'Literal',
+                                value: 'js'
+                            }
+                        ]
+                    },
+                    body: {
+                        type: 'BlockStatement',
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'targetPath'
+                                        },
+                                        init: {
+                                            type: 'CallExpression',
+                                            callee: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'builder'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'changeExtension'
+                                                }
+                                            },
+                                            arguments: [
+                                                {
+                                                    type: 'Identifier',
+                                                    name: 'key'
+                                                },
+                                                {
+                                                    type: 'Literal',
+                                                    value: '.js'
+                                                }
+                                            ]
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'Property',
+                                key: {
+                                    type: 'Identifier',
+                                    name: 'output'
+                                },
+                                value: {
+                                    type: 'ObjectExpression',
+                                    properties: [{
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'targetPath'
+                                            },
+                                            value: {
+                                                type: 'CallExpression',
+                                                callee: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'builder'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'compileIon'
+                                                    }
+                                                },
+                                                arguments: [{
+                                                        type: 'Identifier',
+                                                        name: 'source'
+                                                    }]
                                             },
                                             kind: 'init',
                                             computed: true
@@ -1752,11 +1958,11 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                 let _ref3 = directory.search('.js', ['node_modules'].concat(packageJson.build.client.exclude));
                 for (let key in _ref3) {
                     let source = _ref3[key];
-                    let _ref9 = {};
+                    let _ref10 = {};
                     {
-                        _ref9[source.path.substring(nodepath.length)] = source.read();
+                        _ref10[source.path.substring(nodepath.length)] = source.read();
                     }
-                    ion.patch(clientOutput, _ref9);
+                    ion.patch(clientOutput, _ref10);
                 }
             }
         }
@@ -1770,11 +1976,11 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                 let _ref5 = directory.search('.js', ['node_modules'].concat(packageJson.build.server.exclude));
                 for (let key in _ref5) {
                     let source = _ref5[key];
-                    let _ref10 = {};
+                    let _ref11 = {};
                     {
-                        _ref10[source.path.substring(nodepath.length)] = source.read();
+                        _ref11[source.path.substring(nodepath.length)] = source.read();
                     }
-                    ion.patch(serverOutput, _ref10);
+                    ion.patch(serverOutput, _ref11);
                 }
             }
         }
@@ -1784,14 +1990,20 @@ module.exports = exports = ion.template(function _template(packagePatch) {
             src: input + '/js',
             lib: output + '/' + clientJsDir
         },
-        build: { test: false }
+        build: {
+            exclude: packageJson.build.client.exclude,
+            test: false
+        }
     });
     ModuleBuilder({
         directories: {
             src: input + '/js',
             lib: output + '/' + serverJsDir
         },
-        build: { test: true }
+        build: {
+            exclude: packageJson.build.server.exclude,
+            test: true
+        }
     });
     {
         let _ref6 = input.search(null, [
@@ -1805,36 +2017,48 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         for (let key in _ref6) {
             let source = _ref6[key];
             let target = output.getFile(key);
-            let _ref11 = {};
+            let _ref12 = {};
             {
-                _ref11[key] = source.read();
+                _ref12[key] = source.read();
             }
-            ion.patch(output, _ref11);
+            ion.patch(output, _ref12);
+        }
+    }
+    {
+        let _ref7 = input.search('.ion', 'js');
+        for (let key in _ref7) {
+            let source = _ref7[key];
+            let targetPath = builder.changeExtension(key, '.js');
+            let _ref13 = {};
+            {
+                _ref13[targetPath] = builder.compileIon(source);
+            }
+            ion.patch(output, _ref13);
         }
     }
     let pageOutput = output.getDirectory('WEB-INF/pages');
     {
-        let _ref7 = input.search('.ionpage');
-        for (let key in _ref7) {
-            let source = _ref7[key];
-            let targetPath = builder.changeExtension(key, '.js');
-            let _ref12 = {};
-            {
-                _ref12[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(source) + ' })';
-            }
-            ion.patch(pageOutput, _ref12);
-        }
-    }
-    {
-        let _ref8 = input.search('.coffeepage');
+        let _ref8 = input.search('.ionpage');
         for (let key in _ref8) {
             let source = _ref8[key];
             let targetPath = builder.changeExtension(key, '.js');
-            let _ref13 = {};
+            let _ref14 = {};
             {
-                _ref13[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(source) + ' })';
+                _ref14[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(source) + ' })';
             }
-            ion.patch(pageOutput, _ref13);
+            ion.patch(pageOutput, _ref14);
+        }
+    }
+    {
+        let _ref9 = input.search('.coffeepage');
+        for (let key in _ref9) {
+            let source = _ref9[key];
+            let targetPath = builder.changeExtension(key, '.js');
+            let _ref15 = {};
+            {
+                _ref15[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(source) + ' })';
+            }
+            ion.patch(pageOutput, _ref15);
         }
     }
 });

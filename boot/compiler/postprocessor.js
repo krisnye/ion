@@ -1067,19 +1067,6 @@ namedFunctionsAndNewArguments = function(node, context) {
       node["arguments"] = [];
     }
   }
-  if (node.type === 'ExpressionStatement' && node.expression.type === 'FunctionExpression' && (node.expression.id != null)) {
-    context.replace({
-      type: 'VariableDeclaration',
-      kind: 'const',
-      declarations: [
-        {
-          type: 'VariableDeclarator',
-          id: node.expression.id,
-          init: node.expression
-        }
-      ]
-    });
-  }
   if (node.type === 'VariableDeclarator' && ((_ref1 = node.init) != null ? _ref1.type : void 0) === 'FunctionExpression') {
     if ((_base = node.init).name == null) {
       _base.name = node.id;
@@ -1287,6 +1274,9 @@ getExternalIdentifiers = function(node, callback) {
     var parentNode;
     if (node.type === 'Identifier') {
       parentNode = context.parentNode();
+      if (isFunctionNode(parentNode)) {
+        return;
+      }
       if ((parentNode != null ? parentNode.type : void 0) === 'MemberExpression' && !(parentNode != null ? parentNode.computed : void 0) && context.key() === 'property') {
         return;
       }
@@ -1497,10 +1487,13 @@ javascriptExpressions = function(node, context) {
 
 functionDeclarations = function(node, context) {
   var func, _ref1, _ref2;
-  if (node.type === 'VariableDeclaration' && node.declarations.length === 1 && ((_ref1 = node.declarations[0].init) != null ? _ref1.type : void 0) === 'FunctionExpression' && (((_ref2 = node.declarations[0].init) != null ? _ref2.id : void 0) != null)) {
+  if (node.type === 'VariableDeclaration' && node.kind === 'const' && node.declarations.length === 1 && ((_ref1 = node.declarations[0].init) != null ? _ref1.type : void 0) === 'FunctionExpression' && ((_ref2 = node.declarations[0].init.id) != null ? _ref2.name : void 0) === node.declarations[0].id.name) {
     func = node.declarations[0].init;
     func.type = 'FunctionDeclaration';
-    return context.replace(func);
+    context.replace(func);
+  }
+  if (node.type === 'ExpressionStatement' && node.expression.type === 'FunctionExpression') {
+    throw context.error('Function Expression is a noop', node);
   }
 };
 

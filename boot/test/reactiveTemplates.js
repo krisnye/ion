@@ -80,7 +80,6 @@ const templates = [
                         body: [
                             {
                                 type: 'VariableDeclaration',
-                                kind: 'const',
                                 declarations: [{
                                         type: 'VariableDeclarator',
                                         id: {
@@ -94,7 +93,8 @@ const templates = [
                                                 return a * 2;
                                             }
                                         }
-                                    }]
+                                    }],
+                                kind: 'const'
                             },
                             {
                                 type: 'ReturnStatement',
@@ -254,7 +254,6 @@ const templates = [
                             },
                             {
                                 type: 'VariableDeclaration',
-                                kind: 'const',
                                 declarations: [{
                                         type: 'VariableDeclarator',
                                         id: {
@@ -271,7 +270,8 @@ const templates = [
                                                 };
                                             }
                                         }
-                                    }]
+                                    }],
+                                kind: 'const'
                             },
                             {
                                 type: 'ReturnStatement',

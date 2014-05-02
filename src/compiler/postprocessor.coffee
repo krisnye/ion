@@ -755,16 +755,6 @@ namedFunctionsAndNewArguments = (node, context) ->
     if node.type is 'NewExpression'
         node.arguments ?= []
 
-    # first, named functions expressions to function declarations
-    if node.type is 'ExpressionStatement' and node.expression.type is 'FunctionExpression' and node.expression.id?
-        context.replace
-            type: 'VariableDeclaration'
-            kind: 'const'
-            declarations: [
-                type: 'VariableDeclarator'
-                id: node.expression.id
-                init: node.expression
-            ]
     # these names are used later by the classExpression rule
     # add an internal name to functions declared as variables
     if node.type is 'VariableDeclarator' and node.init?.type is 'FunctionExpression'
@@ -917,6 +907,9 @@ getExternalIdentifiers = (node, callback) ->
         if node.type is 'Identifier'
             # debug = node.name is 'checked'
             parentNode = context.parentNode()
+            # ignore function names
+            if isFunctionNode(parentNode)
+                return
             # ignore member expression right hand identifiers
             if parentNode?.type is 'MemberExpression' and not parentNode?.computed and context.key() is 'property'
                 return
@@ -1069,11 +1062,15 @@ javascriptExpressions = (node, context) ->
             throw context.error message, errorNode
 
 functionDeclarations = (node, context) ->
-    if node.type is 'VariableDeclaration' and node.declarations.length is 1 and node.declarations[0].init?.type is 'FunctionExpression' and node.declarations[0].init?.id?
+    if node.type is 'VariableDeclaration' and node.kind is 'const' and node.declarations.length is 1 and node.declarations[0].init?.type is 'FunctionExpression' and node.declarations[0].init.id?.name is node.declarations[0].id.name
         # convert to a FunctionDeclaration for conciseness.
         func = node.declarations[0].init
         func.type = 'FunctionDeclaration'
         context.replace func
+
+    # make sure there are no empty function expression statements
+    if node.type is 'ExpressionStatement' and node.expression.type is 'FunctionExpression'
+        throw context.error 'Function Expression is a noop', node
 
 exports.postprocess = (program, options) ->
     steps = [

@@ -50,7 +50,7 @@ export class ArrayExpression extends DynamicExpression
                 {type:'Literal', value: 1}
                 {type:'Literal', value: 2}
         let result = undefined
-        watcher(value) ->
+        const watcher(value) ->
             result = value
         e.watch(watcher)
         assert JSON.stringify(result) is "[1,2]"

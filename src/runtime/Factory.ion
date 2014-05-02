@@ -111,7 +111,7 @@ const lookup =
                 ">=": new Factory
                     evaluate: (left, right) -> left >= right
 
-getFactory(ast, step = lookup) ->
+const getFactory(ast, step = lookup) ->
     for key, values of step
         let nodeValue = ast[key]
         let next = values[nodeValue]

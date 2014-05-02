@@ -11,7 +11,7 @@ const templates = []
     []
         "imperative functions"
         template (properties) ->
-            double(a) -> a * 2
+            const double(a) -> a * 2
             return {}
                 for key, value of properties
                     [key]: double(value)
@@ -22,7 +22,7 @@ const templates = []
         "shared variables functions"
         template (properties) ->
             let factor = properties.factor ? 3
-            multiply(a) -> a * factor
+            const multiply(a) -> a * factor
             return {}
                 for key, value of properties if key isnt 'factor'
                     [key]: multiply(value)
@@ -83,7 +83,7 @@ export
             [name]: do (templateType, argument, patch, expected) ->
                 return (done) ->
                     let template = new templateType(argument)
-                    checkIfDone (check) ->
+                    const checkIfDone (check) ->
                         if JSON.stringify(check) is JSON.stringify(expected)
                             template.deactivate()
                             done()

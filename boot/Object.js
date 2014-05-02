@@ -13,11 +13,12 @@ const Object = ion.defineClass({
         toString: function () {
             return this.name;
         },
+        typeKey: '$',
         properties: {
             toJSON: function () {
                 const properties = {};
                 if (this.constructor.id != null) {
-                    properties.$ = this.constructor.id;
+                    properties[this.constructor.typeKey] = this.constructor.id;
                 }
                 {
                     let _ref = this;

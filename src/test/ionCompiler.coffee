@@ -804,7 +804,7 @@ tests =
     module.exports = exports = Foo;
     """
     """
-    double(a) -> a * 2
+    const double(a) -> a * 2
     """: """
     'use strict';
     function double(a) {
@@ -812,12 +812,12 @@ tests =
     }
     """
     """
-    double(a) -> a * 2
+    const double(a) -> a * 2
     double = 12
     """: {line:2, column: 1}
     """
     let object =
-        double(a) -> a * 2
+        const double(a) -> a * 2
         if a
             [key]: value
         else
@@ -885,7 +885,7 @@ tests =
     }
     """
     """
-    translate({x,y}) ->
+    const translate({x,y}) ->
         x++
         y++
         return {x,y}
@@ -955,11 +955,11 @@ tests =
     module.exports = exports = Point;
     """
     """
-    spreadFunction1(a, b, ...c) ->
+    const spreadFunction1(a, b, ...c) ->
         log(1)
-    spreadFunction2(a, b, ...c, d, e) ->
+    const spreadFunction2(a, b, ...c, d, e) ->
         log(2)
-    spreadFunction3(a,b, ...c, {d,e}) ->
+    const spreadFunction3(a,b, ...c, {d,e}) ->
         log(3)
     """: """
     'use strict';
@@ -983,7 +983,7 @@ tests =
     """
     """
     # default value for a should be set before b
-    foo(a = 0, b = a) -> a + b
+    const foo(a = 0, b = a) -> a + b
     """: """
     'use strict';
     function foo(a, b) {
@@ -1082,7 +1082,7 @@ tests =
     const ctorName = this.constructor.name;
     """
     """
-    inlineThrow() -> throw new Error('inline throw')
+    const inlineThrow() -> throw new Error('inline throw')
     """: """
     'use strict';
     function inlineThrow() {
@@ -1227,98 +1227,6 @@ tests =
     }
     _ref2;
     """
-    """
-    template ->
-        for {extension} in compilers
-            extension
-    """: """
-    'use strict';
-    const ion = require('ion');
-    ion.template(function _template() {
-        if (this != null && this.constructor === _template) {
-            return ion.createRuntime({
-                type: 'Template',
-                body: [{
-                        type: 'ForOfStatement',
-                        left: {
-                            type: 'VariableDeclaration',
-                            declarations: [{
-                                    type: 'VariableDeclarator',
-                                    id: {
-                                        type: 'Identifier',
-                                        name: '_ref'
-                                    },
-                                    init: null
-                                }],
-                            kind: 'let'
-                        },
-                        right: {
-                            type: 'Identifier',
-                            name: 'compilers'
-                        },
-                        body: {
-                            type: 'BlockStatement',
-                            body: [
-                                {
-                                    type: 'VariableDeclaration',
-                                    declarations: [{
-                                            type: 'VariableDeclarator',
-                                            id: {
-                                                type: 'Identifier',
-                                                name: '_ref3'
-                                            },
-                                            init: {
-                                                type: 'Identifier',
-                                                name: '_ref'
-                                            }
-                                        }]
-                                },
-                                {
-                                    type: 'VariableDeclaration',
-                                    declarations: [{
-                                            type: 'VariableDeclarator',
-                                            id: {
-                                                type: 'Identifier',
-                                                name: 'extension'
-                                            },
-                                            init: {
-                                                type: 'MemberExpression',
-                                                object: {
-                                                    type: 'Identifier',
-                                                    name: '_ref3'
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'extension'
-                                                },
-                                                computed: false
-                                            }
-                                        }],
-                                    kind: 'let'
-                                },
-                                {
-                                    type: 'ExpressionStatement',
-                                    expression: {
-                                        type: 'Identifier',
-                                        name: 'extension'
-                                    }
-                                }
-                            ]
-                        }
-                    }]
-            }, {
-                require: require,
-                module: module,
-                exports: exports
-            });
-        }
-        for (let _i = 0; _i < compilers.length; _i++) {
-            let _ref2 = compilers[_i];
-            let extension = _ref2.extension;
-            extension;
-        }
-    });
-    """
     # """
     # let text = ""
     #     foo
@@ -1354,81 +1262,6 @@ tests =
     const outer = template ->
         const inner = template ->
     """: { line: 2, column: 19 }
-    """
-    template ->
-        for key, task of tasks
-            onclick: -> data[key]
-    """: """
-    'use strict';
-    const ion = require('ion');
-    ion.template(function _template() {
-        if (this != null && this.constructor === _template) {
-            return ion.createRuntime({
-                type: 'Template',
-                body: [{
-                        type: 'ForInStatement',
-                        left: {
-                            type: 'VariableDeclaration',
-                            declarations: [
-                                {
-                                    type: 'VariableDeclarator',
-                                    id: {
-                                        type: 'Identifier',
-                                        name: 'key'
-                                    },
-                                    init: null
-                                },
-                                {
-                                    type: 'VariableDeclarator',
-                                    id: {
-                                        type: 'Identifier',
-                                        name: 'task'
-                                    },
-                                    init: null
-                                }
-                            ],
-                            kind: 'let'
-                        },
-                        right: {
-                            type: 'Identifier',
-                            name: 'tasks'
-                        },
-                        body: {
-                            type: 'BlockStatement',
-                            body: [{
-                                    type: 'Property',
-                                    key: {
-                                        type: 'Identifier',
-                                        name: 'onclick'
-                                    },
-                                    value: {
-                                        type: 'Function',
-                                        context: true,
-                                        value: function (_context) {
-                                            return function () {
-                                                const key = _context.get('key');
-                                                return data[key];
-                                            };
-                                        }
-                                    },
-                                    kind: 'init'
-                                }]
-                        }
-                    }]
-            }, {
-                require: require,
-                module: module,
-                exports: exports
-            });
-        }
-        for (let key in tasks) {
-            let task = tasks[key];
-            ion.patch(onclick, function () {
-                return data[key];
-            });
-        }
-    });
-    """
     """
     export template ->
         return td()
@@ -1506,6 +1339,14 @@ tests =
         }
         return _ref;
     });
+    """
+    """
+    let x = []
+        ->
+    """: """
+    'use strict';
+    let x = [function () {
+            }];
     """
 
 if global.window?

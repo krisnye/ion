@@ -80,7 +80,9 @@ export const
             object.removeEventListener?('change', observer)
         object?.unObserved?(observer, property)
     add = (container, item) ->
-        if container.nodeType is 1
+        if typeof item is 'function' and item.name.length > 0 and typeof container.addEventListener is 'function'
+            container.addEventListener(item.name, item)
+        else if container.nodeType is 1
             if typeof item is 'string'
                 item = document.createTextNode(item)
             container.appendChild(item)
@@ -93,7 +95,9 @@ export const
 
         # returns a function which can be used to remove the item
         return ->
-            if container.nodeType is 1
+            if typeof item is 'function' and item.name.length > 0 and typeof container.addEventListener is 'function'
+                container.removeEventListener(item.name, item)
+            else if container.nodeType is 1
                 container.removeChild(item)
             else if container.lastIndexOf? and container.removeAt?
                 let index = container.lastIndexOf(item)
