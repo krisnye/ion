@@ -82,7 +82,7 @@ exports.createCallback = (options, html = global.window?) ->
             blue:  '<span style="color:blue;white-space:pre">'
             plain:  '<span>'
             endColor: '</span>'
-            log: (x) -> document.writeln x
+            log: (x) -> document.body.innerHTML += x
             beep: ''
             endLine: '<br>'
         else

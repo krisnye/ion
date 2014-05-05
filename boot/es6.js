@@ -29,7 +29,6 @@ if (!String.prototype.contains ) {
         return this.indexOf(arguments) !== -1;
     };
 }
-
   }
   if (typeof require === 'function') {
     if (require.register)

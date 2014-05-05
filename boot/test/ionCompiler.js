@@ -174,7 +174,7 @@ tests = {
     column: 13
   },
   "let x = 0 in Array\nlet y = \"foo\" instanceof String": "'use strict';\nlet x = 0 in Array;\nlet y = 'foo' instanceof String;",
-  "const output = {}\noutput:\n    x: 1\n    y: 2": "'use strict';\nconst ion = require('ion');\nconst output = {};\nion.patch(output, {\n    x: 1,\n    y: 2\n});",
+  "let output\noutput :=\n    x: 1\n    y: 2": "'use strict';\nconst ion = require('ion');\nlet output;\noutput = ion.patch(output, {\n    x: 1,\n    y: 2\n});",
   "output:\n    for a in b\n        [c]: d": "'use strict';\nconst ion = require('ion');\nlet _ref = {};\n{\n    for (let _i = 0; _i < b.length; _i++) {\n        let a = b[_i];\n        _ref[c] = d;\n    }\n}\nion.patch(output, _ref);",
   "output: {}\n    x: 1": {
     line: 1,

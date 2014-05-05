@@ -875,6 +875,65 @@ const templates = [
                 x: 3,
                 y: 3
             }
+        ],
+        [
+            'literal objects',
+            ion.template(function _template10() {
+                if (this != null && this.constructor === _template10) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    properties: [
+                                        {
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Identifier',
+                                                name: 'touch'
+                                            },
+                                            value: {
+                                                type: 'Literal',
+                                                value: 1
+                                            },
+                                            kind: 'init'
+                                        },
+                                        {
+                                            type: 'Property',
+                                            key: {
+                                                type: 'Literal',
+                                                value: 'touch-start'
+                                            },
+                                            value: {
+                                                type: 'Literal',
+                                                value: 2
+                                            },
+                                            kind: 'init'
+                                        }
+                                    ]
+                                }
+                            }]
+                    }, {
+                        require: require,
+                        module: module,
+                        exports: exports,
+                        ion: ion,
+                        templates: templates,
+                        _ref8: _ref8
+                    });
+                }
+                return {
+                    touch: 1,
+                    'touch-start': 2
+                };
+            }),
+            {},
+            {},
+            {
+                touch: 1,
+                'touch-start': 2
+            }
         ]
     ];
 let _ref8 = {};

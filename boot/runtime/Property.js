@@ -5,7 +5,7 @@ const Property = ion.defineClass({
         properties: {
             activate: function () {
                 Property.super.prototype.activate.apply(this, arguments);
-                this.keyExpression = this.keyExpression != null ? this.keyExpression : this.context.createRuntime(this.computed ? this.key : this.key.name);
+                this.keyExpression = this.keyExpression != null ? this.keyExpression : this.context.createRuntime(this.computed ? this.key : this.key.name != null ? this.key.name : this.key.value);
                 this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
                 this.keyExpression.watch(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : function (key) {
                     if (key != null && this.valueExpression.setLeftValue != null) {

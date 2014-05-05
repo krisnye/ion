@@ -123,8 +123,6 @@ const ion = require('./'), isObject = function (a) {
             }
         }
         return false;
-    }, isEmpty = function (patch) {
-        return patch === void 0 || Object.isObject(patch) && Object.isEmpty(patch);
     };
 let _ref = applyPatch;
 {
@@ -132,7 +130,6 @@ let _ref = applyPatch;
     _ref.watch = watch;
     _ref.diff = diff;
     _ref.isChange = isChange;
-    _ref.isEmpty = isEmpty;
     _ref.test = function () {
         const equal = function (a, b) {
             return !isChange(a, b) && !isChange(b, a);
@@ -258,10 +255,10 @@ let _ref = applyPatch;
                 let target = ion.clone(source, true);
                 let unwatch = watch(source, function (patch) {
                         target = applyPatch(target, patch);
-                        if (!equal(source, target))
-                            throw new Error('Assertion Failed: (equal(source, target))');
-                        done();
-                        unwatch();
+                        if (equal(source, target)) {
+                            done();
+                            unwatch();
+                        }
                     });
                 ion.patch(source, {
                     name: 'Fred',
@@ -275,6 +272,7 @@ let _ref = applyPatch;
                     }
                 });
                 delete source.children.Third;
+                Object.observe.checkForChanges != null ? Object.observe.checkForChanges() : void 0;
             }
         };
     }();

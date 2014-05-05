@@ -128,7 +128,7 @@ exports.createCallback = function(options, html) {
       plain: '<span>',
       endColor: '</span>',
       log: function(x) {
-        return document.writeln(x);
+        return document.body.innerHTML += x;
       },
       beep: '',
       endLine: '<br>'

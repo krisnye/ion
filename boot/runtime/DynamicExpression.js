@@ -22,7 +22,7 @@ const DynamicExpression = ion.defineClass({
                 }
             },
             unwatch: function (watcher) {
-                ion.remove(this._watchers, watcher);
+                this._watchers.splice(this._watchers.lastIndexOf(watcher), 1);
                 let value = this.getValue();
                 if (value !== void 0) {
                     this._notifyWatcher(watcher, void 0);

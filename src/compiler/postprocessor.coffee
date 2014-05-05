@@ -659,6 +659,18 @@ propertyStatements = (node, context) ->
                     callee: getPathExpression 'ion.patch'
                     arguments: [node.key, node.value]
 
+patchAssignmentExpression = (node, context) ->
+    if node.type is 'AssignmentExpression' and node.operator is ':='
+        ensureIonVariable context
+        context.replace
+            type: 'AssignmentExpression'
+            operator: '='
+            left: node.left
+            right:
+                type: 'CallExpression'
+                callee: getPathExpression 'ion.patch'
+                arguments: [node.left, node.right]
+
 classExpressions = (node, context) ->
 
     if node.type is 'ClassExpression'
@@ -1082,7 +1094,7 @@ exports.postprocess = (program, options) ->
         [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows]
         [validateTemplateNodes, classExpressions]
         [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments]
-        [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5]
+        [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression]
         [addUseStrictAndRequireIon]
         [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]
     ]

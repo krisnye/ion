@@ -230,7 +230,7 @@ MultilineCallExpression = start:start callee:GroupExpression indent eol args:mul
         return node("CallExpression", {callee: callee, arguments: args}, start, end)
     }
 InlineExpression = AssignmentExpression
-AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=") _ right:RightHandSideExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
+AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=" / ":=") _ right:RightHandSideExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
     / ConditionalOrDefaultExpression
 ConditionalOrDefaultExpression
     = start:start test:LogicalOrExpression _ "?" _ consequent:ConditionalOrDefaultExpression _ ":" _ alternate:ConditionalOrDefaultExpression end:end

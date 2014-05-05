@@ -108,7 +108,6 @@ const
             if isChange(oldValue[name], newValue[name])
                 return true
         return false
-    isEmpty = (patch) -> patch is undefined or Object.isObject(patch) and Object.isEmpty(patch)
 
 # we export the applyPatch method, but add the specialized internal methods to it
 export applyPatch
@@ -116,7 +115,6 @@ export applyPatch
     watch: watch
     diff: diff
     isChange: isChange
-    isEmpty: isEmpty
     test: do ->
         const equal = (a, b) -> not isChange(a, b) and not isChange(b, a)
         return
@@ -161,9 +159,10 @@ export applyPatch
                     source
                     (patch) ->
                         target = applyPatch(target, patch)
-                        assert equal(source, target)
-                        done()
-                        unwatch()
+                        # should be immediate assert
+                        if equal(source, target)
+                            done()
+                            unwatch()
                 source:
                     name: 'Fred'
                     children:
@@ -176,3 +175,5 @@ export applyPatch
                                 three: 3
                 # todo: delete a property in a literal?
                 delete source.children.Third
+                # temp requirement
+                Object.observe.checkForChanges?()

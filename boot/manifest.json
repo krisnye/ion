@@ -1,7 +1,8 @@
 {
-  "modified": 1398994108077,
+  "modified": 1399329508854,
   "files": [
     "browser/require.js",
+    "browser/elements.js",
     "browser/html.js",
     "browser/tester.js",
     "builder/Directory.js",
@@ -24,6 +25,7 @@
     "index.js",
     "mergePatch.js",
     "Object.js",
+    "Object.observe.js",
     "runtime/ArrayExpression.js",
     "runtime/BlockStatement.js",
     "runtime/CallExpression.js",

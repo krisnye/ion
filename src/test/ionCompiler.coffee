@@ -1164,15 +1164,15 @@ tests =
     let y = 'foo' instanceof String;
     """
     """
-    const output = {}
-    output:
+    let output
+    output :=
         x: 1
         y: 2
     """: """
     'use strict';
     const ion = require('ion');
-    const output = {};
-    ion.patch(output, {
+    let output;
+    output = ion.patch(output, {
         x: 1,
         y: 2
     });

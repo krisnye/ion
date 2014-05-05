@@ -1,6 +1,7 @@
 const ion = null # shouldn't depend on itself
 
 import './es6'
+import './Object.observe'
 
 const
     primitive = {string:true,number:true,boolean:true,function:true}
@@ -105,17 +106,12 @@ export const
                     container.removeAt(index)
             else if typeof container.remove is 'function'
                 container.remove(item)
-            else
-                remove(container, item)
+            else if Array.isArray(container)
+                let index = container.lastIndexOf(item)
+                if index >= 0
+                    container.splice(index, 1)
 
             item.onRemoved?(container)
-    remove = (array, item) ->
-        if array?
-            let index = array.lastIndexOf(item)
-            if index >= 0
-                array.splice(index, 1)
-                return index
-        return
     defineProperties = (object, properties) -> Object.defineProperties(object, normalizeProperties(properties))
     defineClass = (...definitions) ->
         const classDefinition = definitions[0]

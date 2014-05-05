@@ -1,0 +1,107 @@
+# no shim
+const ion = import './'
+
+const createObjectObserveAndUnobserve = ->
+    # multiple callbacks on same object.
+    let map = new Map()
+    let array = []
+
+    let observe = (object, callback) ->
+        # console.log('+observe', object, callback)
+        if object.nodeType is 1 or object is global.document
+            return
+        let meta = map.get(object)
+        if not meta?
+            meta =
+                object: object
+                clone: ion.clone(object)
+                callbacks: []
+            map.set(object, meta)
+            array.push(meta)
+        meta.callbacks.push(callback)
+    let unobserve = (object, callback) ->
+        # console.log('-unobserve', object, callback)
+        if object.nodeType is 1 or object is global.document
+            return
+        let meta = map.get(object)
+        if meta?
+            let index = meta.callbacks.lastIndexOf(callback)
+            if index >= 0
+                meta.callbacks.splice(index, 1)
+                if meta.callbacks.length is 0
+                    # remove no longer observed objects
+                    map.delete(object)
+                    array.splice(array.lastIndexOf(meta), 1)
+    let getChanges = (oldValue, newValue) ->
+        let changes = null
+        let change = (type, name, oldValue) ->
+            changes ?= []
+            changes.push({type,name,oldValue})
+            # console.log('change', type, name)
+        for name of oldValue if oldValue.hasOwnProperty(name)
+            let oldPropertyValue = oldValue[name]
+            if not newValue.hasOwnProperty(name)
+                change("delete", name, oldPropertyValue)
+            else
+                let newPropertyValue = newValue[name]
+                if newPropertyValue isnt oldPropertyValue
+                    change("update", name, oldPropertyValue)
+        for name of newValue if newValue.hasOwnProperty(name) and not oldValue.hasOwnProperty(name)
+            change("add", name)
+        return changes
+    observe.checkForChanges = ->
+        let maxCycles = 100
+        # we have to run multiple cycles in case callbacks cause further change propagation
+        for let i = 0; i < maxCycles; i++
+            let totalChanges = 0
+            let pendingChanges = []
+            # traverse all objects and find changes
+            for meta in array
+                let changes = getChanges(meta.clone, meta.object)
+                if changes?
+                    totalChanges++
+                    meta.clone = ion.clone(meta.object)
+                    # callbacks must be deferred until after ALL changes have been found
+                    pendingChanges.push([changes, ion.clone(meta.callbacks)])
+            if totalChanges is 0
+                return
+            for [changes, callbacks] in pendingChanges
+                for callback in callbacks
+                    callback(changes)
+
+        # we have hit max cycles, indicates a circular dependency error
+        throw new Error("Circular Object.observe dependency")
+
+    return [observe,unobserve,array]
+
+export const test = ->
+    let [observe,unobserve] = createObjectObserveAndUnobserve()
+    let object =
+        a: 1
+        b:
+            c: 2
+            d: 3
+    let changes
+    let handler = (c) ->
+        changes = c
+    observe(object, handler)
+    object.a = 2
+    delete object.b
+    object.c = 5
+    observe.checkForChanges()
+    assert JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1},{"type":"delete","name":"b","oldValue":{"c":2,"d":3}},{"type":"add","name":"c"}])
+    unobserve(object, handler)
+
+if not Object.observe? and global.Map?
+    let [observe,unobserve,array] = createObjectObserveAndUnobserve()
+    Object.observe = observe
+    Object.unobserve = unobserve
+    # temp debug
+    global.array = array
+
+
+
+
+
+
+

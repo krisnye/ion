@@ -2,13 +2,16 @@ void (function(){var _ion_browser_html_ = function(module,exports,require){var n
 
 _ref = ["div", "span", "input", "a", "br", "button", "caption", "fieldset", "form", "frame", "frameset", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "legend", "menu", "option", "select", "script", "pre", "table", "tbody", "td", "tr", "thead"];
 _fn = function(name) {
-  return exports[name] = function(properties) {
+  return exports[name] = function(attributes) {
     var element, key, value;
     element = document.createElement(name);
-    if (properties != null) {
-      for (key in properties) {
-        value = properties[key];
-        element[key] = value;
+    if (attributes != null) {
+      console.log('attributes', attributes);
+      for (key in attributes) {
+        value = attributes[key];
+        console.log('setAttribute: ' + key, value);
+        element.setAttribute(key, value);
+        console.log('getAttribute: ' + element.getAttribute(key));
       }
     }
     return element;

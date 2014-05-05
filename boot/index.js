@@ -1,6 +1,7 @@
 void (function(){var _ion_index_ = function(module,exports,require){'use strict';
 const ion = null;
 require('./es6');
+require('./Object.observe');
 const primitive = {
         string: true,
         number: true,
@@ -144,20 +145,14 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
                 }
             } else if (typeof container.remove === 'function') {
                 container.remove(item);
-            } else {
-                remove(container, item);
+            } else if (Array.isArray(container)) {
+                let index = container.lastIndexOf(item);
+                if (index >= 0) {
+                    container.splice(index, 1);
+                }
             }
             item.onRemoved != null ? item.onRemoved(container) : void 0;
         };
-    }, remove = exports.remove = function (array, item) {
-        if (array != null) {
-            let index = array.lastIndexOf(item);
-            if (index >= 0) {
-                array.splice(index, 1);
-                return index;
-            }
-        }
-        return;
     }, defineProperties = exports.defineProperties = function (object, properties) {
         return Object.defineProperties(object, normalizeProperties(properties));
     }, defineClass = exports.defineClass = function (___definitions) {
