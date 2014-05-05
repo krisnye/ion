@@ -54,12 +54,12 @@ export const
         return context.createRuntime(ast)
     nextTick = @process?.nextTick ? (fn) -> setTimeout(fn, 0)
     clone = (object, deep = false) ->
-        if object?.constructor is Object
+        if Array.isArray(object)
+            return [deep ? clone(item, deep) : item for item in object]
+        else if object? and typeof object is 'object'
             return {}
                 for key, value of object
                     [key]: deep ? clone(value, deep) : value
-        else if Array.isArray(object)
-            return [deep ? clone(item, deep) : item for item in object]
         else
             return object
     observe = (object, observer, property) ->
@@ -81,36 +81,46 @@ export const
             object.removeEventListener?('change', observer)
         object?.unObserved?(observer, property)
     add = (container, item) ->
+        let remove
         if typeof item is 'function' and item.name.length > 0 and typeof container.addEventListener is 'function'
-            container.addEventListener(item.name, item)
+            let name = item.name
+            # if this platform doesn't have native Object.observe
+            # then we wrap all event handlers and call checkForChanges after
+            if Object.observe?.checkForChanges?
+                let originalItem = item
+                item = ->
+                    originalItem.apply(@, arguments)
+                    Object.observe.checkForChanges()
+            container.addEventListener(name, item)
+            remove = ->
+                container.removeEventListener(name, item)
         else if container.nodeType is 1
             if typeof item is 'string'
                 item = document.createTextNode(item)
             container.appendChild(item)
-        else if container.push?
-            container.push(item)
+            remove = ->
+                container.removeChild(item)
         else
-            container.add(item)
+            if container.push?
+                container.push(item)
+            else
+                container.add(item)
+            remove = ->
+                if container.lastIndexOf? and container.removeAt?
+                    let index = container.lastIndexOf(item)
+                    if index >= 0
+                        container.removeAt(index)
+                else if typeof container.remove is 'function'
+                    container.remove(item)
+                else if Array.isArray(container)
+                    let index = container.lastIndexOf(item)
+                    if index >= 0
+                        container.splice(index, 1)
 
         item.onAdded?(container)
-
         # returns a function which can be used to remove the item
         return ->
-            if typeof item is 'function' and item.name.length > 0 and typeof container.addEventListener is 'function'
-                container.removeEventListener(item.name, item)
-            else if container.nodeType is 1
-                container.removeChild(item)
-            else if container.lastIndexOf? and container.removeAt?
-                let index = container.lastIndexOf(item)
-                if index >= 0
-                    container.removeAt(index)
-            else if typeof container.remove is 'function'
-                container.remove(item)
-            else if Array.isArray(container)
-                let index = container.lastIndexOf(item)
-                if index >= 0
-                    container.splice(index, 1)
-
+            remove()
             item.onRemoved?(container)
     defineProperties = (object, properties) -> Object.defineProperties(object, normalizeProperties(properties))
     defineClass = (...definitions) ->
