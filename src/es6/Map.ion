@@ -11,7 +11,7 @@ const MapShim(pairs) ->
             return "_" + key
         let id = key[idName]
         if not id?
-            id = --uniqueCounter
+            id = ++uniqueCounter
             Object.defineProperty(key, idName, {value:id})
         return id
     const methods =

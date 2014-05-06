@@ -13,6 +13,7 @@ const
             compile: builder.shimJavascript
         ".ion":
             compile: builder.compileIon
+            compileWithSourceMap: builder.compileIonWithSourceMap
 
 export template (packagePatch) ->
     let packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch ? {})
@@ -25,8 +26,14 @@ export template (packagePatch) ->
         for path, source of input.search(extensions, packageJson.build.exclude)
             let compiler = compilers[source.getExtension()]
             let targetPath = builder.changeExtension(path, '.js')
-            let moduleId = builder.getModuleId(moduleName, path)
-            [targetPath]: compiler.compile(source, moduleId, packageJson)
+            if compiler.compileWithSourceMap?
+                let mapPath = builder.changeExtension(path, '.map')
+                let mapName = mapPath.split(/[\/\\]/g).slice(-1)[0]
+                let [code,map] = compiler.compileWithSourceMap(source, packageJson)
+                [targetPath]: code + "\n//@ sourceMappingURL=./" + mapName
+                [mapPath]: map
+            else
+                [targetPath]: compiler.compile(source, packageJson)
         # build a manifest file with require.js at the top
         let outputFiles = output.search(".js", [/^_/, 'node_modules']) # ignore output _browser.js and node_modules
         let top = [key for key of outputFiles if key.endsWith('require.js')]

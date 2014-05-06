@@ -490,6 +490,24 @@ functionParameterDefaultValuesToES5 = (node, context) ->
                             right: defaultValue
                 node.defaults[index] = undefined
 
+isSimpleObjectExpression = (node) ->
+    if node.type isnt 'ObjectExpression'
+        return false
+
+    isArray = node.objectType?.type is "ArrayExpression"
+    isSimple = true
+    if node.properties?
+        for property in node.properties
+            if isArray
+                if property.type isnt 'ExpressionStatement'
+                    isSimple = false
+                    break
+            else
+                if property.type isnt 'Property' or property.computed
+                    isSimple = false
+                    break
+    return isSimple
+
 typedObjectExpressions = (node, context) ->
     # only for imperative code
     return if context.reactive
@@ -497,17 +515,7 @@ typedObjectExpressions = (node, context) ->
     if node.type is 'ObjectExpression' and node.simple isnt true
 
         isArray = node.objectType?.type is "ArrayExpression"
-        isSimple = true
-        if node.properties?
-            for property in node.properties
-                if isArray
-                    if property.type isnt 'ExpressionStatement'
-                        isSimple = false
-                        break
-                else
-                    if property.type isnt 'Property' or property.computed
-                        isSimple = false
-                        break
+        isSimple = isSimpleObjectExpression node
 
         # empty object expression without properties {}
         if isSimple
@@ -527,6 +535,21 @@ typedObjectExpressions = (node, context) ->
                 delete node.objectType
                 # set simple to true, but make it non-enumerable so we don't write it out
                 Object.defineProperty node, 'simple', {value:true}
+                return
+            # convert this simple expression to an ion.patch call
+            objectType = node.objectType
+            delete node.objectType
+            # if the objectType is simple as well, then merge them
+            if isSimpleObjectExpression objectType
+                node.properties = objectType.properties.concat(node.properties)
+                Object.defineProperty node, 'simple', {value:true}
+                return
+            else
+                ensureIonVariable context
+                context.replace
+                    type: 'CallExpression'
+                    callee: getPathExpression 'ion.patch'
+                    arguments: [objectType, node]
                 return
 
         if not node.objectType?
@@ -619,21 +642,26 @@ propertyStatements = (node, context) ->
     if node.type is 'Property' and not (parent.type is 'ObjectExpression' or parent.type is 'ObjectPattern')
         if node.output?
             if node.value.type is 'ObjectExpression'
-                ensureIonVariable(context)
+                left =
+                    type: 'MemberExpression'
+                    object: node.output
+                    property: node.key
+                    computed: node.computed
+                if node.value.type is 'ObjectExpression' and not node.value.objectType?
+                    ensureIonVariable(context)
+                    right =
+                        type: 'CallExpression'
+                        callee: getPathExpression 'ion.patch'
+                        arguments: [ion.clone(left, true), node.value]
+                else
+                    right = node.value
                 context.replace
                     type: 'ExpressionStatement'
                     expression:
                         type: 'AssignmentExpression'
                         operator: '='
-                        left: left =
-                            type: 'MemberExpression'
-                            object: node.output
-                            property: node.key
-                            computed: node.computed
-                        right:
-                            type: 'CallExpression'
-                            callee: getPathExpression 'ion.patch'
-                            arguments: [ion.clone(left, true), node.value]
+                        left: left
+                        right: right
             else
                 context.replace
                     type: 'ExpressionStatement'

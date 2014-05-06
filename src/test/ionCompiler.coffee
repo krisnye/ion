@@ -555,10 +555,8 @@ tests =
         z: 30
     """: """
     'use strict';
-    let point = new Point(10, 20);
-    {
-        point.z = 30;
-    }
+    const ion = require('ion');
+    let point = ion.patch(new Point(10, 20), { z: 30 });
     """
     """
     let object = {x:1, y:2}
@@ -567,11 +565,9 @@ tests =
     'use strict';
     let object = {
             x: 1,
-            y: 2
+            y: 2,
+            z: 3
         };
-    {
-        object.z = 3;
-    }
     """
     """
     let origin = new Point
@@ -579,11 +575,11 @@ tests =
         y: 2
     """: """
     'use strict';
-    let origin = new Point();
-    {
-        origin.x = 1;
-        origin.y = 2;
-    }
+    const ion = require('ion');
+    let origin = ion.patch(new Point(), {
+            x: 1,
+            y: 2
+        });
     """
     """
     let origin = new Line
@@ -596,21 +592,16 @@ tests =
     """: """
     'use strict';
     const ion = require('ion');
-    let origin = new Line();
-    {
-        let _ref = new Point();
-        {
-            _ref.x = 0;
-            _ref.y = 0;
-        }
-        origin.a = ion.patch(origin.a, _ref);
-        let _ref2 = new Point();
-        {
-            _ref2.x = 10;
-            _ref2.y = 20;
-        }
-        origin.b = ion.patch(origin.b, _ref2);
-    }
+    let origin = ion.patch(new Line(), {
+            a: ion.patch(new Point(), {
+                x: 0,
+                y: 0
+            }),
+            b: ion.patch(new Point(), {
+                x: 10,
+                y: 20
+            })
+        });
     """
     """
     input:
@@ -627,11 +618,6 @@ tests =
     """: """
     'use strict';
     const ion = require('ion');
-    let _ref = new Point();
-    {
-        _ref.x = 0;
-        _ref.y = 0;
-    }
     ion.patch(input, {
         x: 10,
         y: 20,
@@ -639,7 +625,10 @@ tests =
             a: 1,
             b: 2
         },
-        w: _ref
+        w: ion.patch(new Point(), {
+            x: 0,
+            y: 0
+        })
     });
     """
     """
@@ -1382,6 +1371,21 @@ tests =
     const ion = require('ion');
     ion.patch(x, { delete: true });
     """
+    """
+    return
+        style:
+            fontSize: "0.7em"
+        "delete"
+    """: """
+    'use strict';
+    const ion = require('ion');
+    let _ref = {};
+    {
+        _ref.style = ion.patch(_ref.style, { fontSize: '0.7em' });
+        ion.add(_ref, 'delete');
+    }
+    return _ref;
+    """
 
 if global.window?
     return
@@ -1391,9 +1395,9 @@ exports.test = ->
         options = {target:'es6'}
         if expected is null
             console.log '---------------------------------------------------'
-            console.log JSON.stringify index.compile(input, ion.patch({postprocess:false}, options)), null, '  '
+            console.log JSON.stringify index.compile(input, ion.patch({postprocess:false,loc:false}, options)), null, '  '
             console.log '-Postprocessed-------------------------------------'
-            console.log JSON.stringify index.compile(input, ion.patch({generate:false}, options)), null, '  '
+            console.log JSON.stringify index.compile(input, ion.patch({generate:false,loc:false}, options)), null, '  '
             console.log '---------------------------------------------------'
             console.log index.compile input, ion.patch({loc:false}, options)
         else if typeof expected is 'object'

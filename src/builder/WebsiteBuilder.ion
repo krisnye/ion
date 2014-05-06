@@ -31,12 +31,12 @@ export template (packagePatch) ->
     # Copy client and server node modules to the output
     for moduleName in packageJson.build.client.modules
         let directory = new Directory(nodepath + moduleName)
-        for key, source of directory.search(".js", ["node_modules"].concat(packageJson.build.client.exclude))
+        for key, source of directory.search([".js",".map"], ["node_modules"].concat(packageJson.build.client.exclude))
             clientOutput:
                 [source.path.substring(nodepath.length)]: source.read()
     for moduleName in packageJson.build.server.modules
         let directory = new Directory(nodepath + moduleName)
-        for key, source of directory.search(".js", ["node_modules"].concat(packageJson.build.server.exclude))
+        for key, source of directory.search([".js",".map"], ["node_modules"].concat(packageJson.build.server.exclude))
             serverOutput:
                 [source.path.substring(nodepath.length)]: source.read()
 

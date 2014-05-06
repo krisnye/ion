@@ -121,8 +121,10 @@ module.exports = exports =
         catch e
             console.error e
 
+    compileIon: compileIon = (source, packageObject) -> compileIonWithSourceMap(source, packageObject)[0]
+
     # this compiles ion and returns the result.  Does not write to the target file.
-    compileIon: compileIon = (source, packageObject) ->
+    compileIonWithSourceMap: compileIonWithSourceMap = (source, packageObject) ->
         return if source.modified is 0
         moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
         filename = source.path
@@ -130,9 +132,9 @@ module.exports = exports =
             console.log "Compile: #{filename}"
             ionCompiler = require '../compiler'
             input = source.read()
-            source = ionCompiler.compile(input, {id:filename})
+            [source,map] = ionCompiler.compileWithSourceMap(input, {id:filename,sourceMap:filename.split(/[\/\\]/).pop()})
             source = addBrowserShim source, moduleId
-            return source
+            return [source,map]
         catch e
             console.error(String(e))
 

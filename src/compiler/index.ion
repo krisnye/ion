@@ -18,6 +18,10 @@ export const
         return compile(content, options)
 
     compile = (content, options = {}) ->
+        return compileWithSourceMap(content, options)[0]
+
+    compileWithSourceMap = (content, options = {}) ->
+        options.id ?= "unknown"
         options.loc ?= true
         options.target ?= 'es5'
         const
@@ -28,6 +32,7 @@ export const
         let
             sourceMapping = {}
             result = preprocessor.preprocess(content, sourceMapping)
+            sourceMap = null
             preprocessed = result
             sourceLocationsFixed = false
         try
@@ -39,7 +44,13 @@ export const
             if options.postprocess isnt false
                 result = postprocessor.postprocess(result, options)
                 if options?.generate isnt false
-                    result = escodegen.generate(result)
+                    let generateOptions =
+                        sourceMapWithCode: true
+                        sourceMap: options.sourceMap ? options.id
+                        sourceContent: content
+                    let output = escodegen.generate(result, generateOptions)
+                    result = output.code
+                    sourceMap = output.map.toString()
         catch e
             if not sourceLocationsFixed
                 preprocessor.fixSourceLocation(e, sourceMapping)
@@ -47,4 +58,4 @@ export const
             # console.log(preprocessed)
             makePrettyError(e, content, options.id)
             throw e
-        return result
+        return [result,sourceMap]
