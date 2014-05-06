@@ -1,8 +1,8 @@
 void (function(){var _ion_compiler_common_ = function(module,exports,require){'use strict';
-const ion = require('../'), lineDelimiter = '\n', isEmpty = function (s) {
+var ion = require('../'), lineDelimiter = '\n', isEmpty = function (s) {
         return !(s != null) || s.length === 0 || (s.trim != null ? s.trim().length : void 0) === 0;
     };
-const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdentToken = '}}}}', splitLines = exports.splitLines = function (s) {
+var indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdentToken = '}}}}', splitLines = exports.splitLines = function (s) {
         return s.split(lineDelimiter);
     }, joinLines = exports.joinLines = function (array) {
         return array.join(lineDelimiter);
@@ -10,26 +10,26 @@ const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdent
         regex = regex != null ? regex : /^([ ]*)/;
         return (regex.exec(s) != null ? regex.exec(s)[1].length : void 0) != null ? regex.exec(s)[1].length : Number.MAX_VALUE;
     }, unindentString = exports.unindentString = function (s, sourceMapping) {
-        let lines = splitLines(s.trimRight());
-        let minIndent = unindentLines(lines);
+        var lines = splitLines(s.trimRight());
+        var minIndent = unindentLines(lines);
         if (sourceMapping != null) {
             sourceMapping.columnOffset = minIndent;
         }
         return joinLines(lines);
     }, getMinIndent = exports.getMinIndent = function (lines, regex) {
-        let minIndent = Number.MAX_VALUE;
-        for (let _i = 0; _i < lines.length; _i++) {
-            let line = lines[_i];
+        var minIndent = Number.MAX_VALUE;
+        for (var _i = 0; _i < lines.length; _i++) {
+            var line = lines[_i];
             if (typeof line === 'string' && !isEmpty(line)) {
                 minIndent = Math.min(minIndent, getIndent(line, regex));
             }
         }
         return minIndent;
     }, unindentLines = exports.unindentLines = function (lines) {
-        let minIndent = getMinIndent(lines);
-        for (let _i2 = 0; _i2 < lines.length; _i2++) {
-            let i = _i2;
-            let line = lines[_i2];
+        var minIndent = getMinIndent(lines);
+        for (var _i2 = 0; _i2 < lines.length; _i2++) {
+            var i = _i2;
+            var line = lines[_i2];
             if (typeof line === 'string') {
                 lines[i] = isEmpty(line) ? '' : line.substring(minIndent);
             }

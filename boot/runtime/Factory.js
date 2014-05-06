@@ -1,250 +1,250 @@
 void (function(){var _ion_runtime_Factory_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const Literal = require('./Literal');
-const Factory = ion.defineClass({
+var ion = require('../');
+var Literal = require('./Literal');
+var Factory = ion.defineClass({
         name: 'Factory',
         properties: {
             runtime: './OperationExpression',
             createRuntime: {
                 writable: true,
                 value: function (context, ast) {
-                    let properties = ion.clone(ast);
+                    var properties = ion.clone(ast);
                     properties.context = context;
                     properties.factory = this;
-                    let type = require(this.runtime);
+                    var type = require(this.runtime);
                     return new type(properties);
                 }
             }
         }
     });
 Factory;
-let _ref = new Factory();
+var _ref = new Factory();
 {
     _ref.runtime = './VariableDeclaration';
 }
-let _ref2 = new Factory();
+var _ref2 = new Factory();
 {
     _ref2.createRuntime = function (context, ast) {
         return context.getVariableExpression(ast.name);
     };
 }
-let _ref3 = new Factory();
+var _ref3 = new Factory();
 {
     _ref3.createRuntime = function (context, ast) {
-        let value = ast.value;
+        var value = ast.value;
         if (ast.context) {
             value = value(context);
         }
         return new Literal({ value: value });
     };
 }
-let _ref4 = new Factory();
+var _ref4 = new Factory();
 {
     _ref4.runtime = './Template';
 }
-let _ref5 = new Factory();
+var _ref5 = new Factory();
 {
     _ref5.runtime = './Literal';
 }
-let _ref6 = new Factory();
+var _ref6 = new Factory();
 {
     _ref6.runtime = './Property';
 }
-let _ref7 = new Factory();
+var _ref7 = new Factory();
 {
     _ref7.runtime = './IfStatement';
 }
-let _ref8 = new Factory();
+var _ref8 = new Factory();
 {
     _ref8.runtime = './BlockStatement';
 }
-let _ref9 = new Factory();
+var _ref9 = new Factory();
 {
     _ref9.runtime = './ReturnStatement';
 }
-let _ref10 = new Factory();
+var _ref10 = new Factory();
 {
     _ref10.runtime = './ObjectExpression';
 }
-let _ref11 = new Factory();
+var _ref11 = new Factory();
 {
     _ref11.runtime = './ArrayExpression';
 }
-let _ref12 = new Factory();
+var _ref12 = new Factory();
 {
     _ref12.runtime = './ExpressionStatement';
 }
-let _ref13 = new Factory();
+var _ref13 = new Factory();
 {
     _ref13.runtime = './ForInOfStatement';
 }
-let _ref14 = new Factory();
+var _ref14 = new Factory();
 {
     _ref14.runtime = './ForInOfStatement';
 }
-let _ref15 = new Factory();
+var _ref15 = new Factory();
 {
     _ref15.runtime = './MemberExpression';
 }
-let _ref16 = new Factory();
+var _ref16 = new Factory();
 {
     _ref16.runtime = './CallExpression';
 }
-let _ref17 = new Factory();
+var _ref17 = new Factory();
 {
     _ref17.runtime = './CallExpression';
 }
-let _ref18 = new Factory();
+var _ref18 = new Factory();
 {
     _ref18.evaluate = function (a) {
         return !a;
     };
 }
-let _ref19 = new Factory();
+var _ref19 = new Factory();
 {
     _ref19.evaluate = function (a) {
         return typeof a;
     };
 }
-let _ref20 = new Factory();
+var _ref20 = new Factory();
 {
     _ref20.evaluate = function (a) {
         return void a;
     };
 }
-let _ref21 = new Factory();
+var _ref21 = new Factory();
 {
     _ref21.evaluate = function (a) {
         return -a;
     };
 }
-let _ref22 = new Factory();
+var _ref22 = new Factory();
 {
     _ref22.evaluate = function (a) {
         return +a;
     };
 }
-let _ref23 = new Factory();
+var _ref23 = new Factory();
 {
     _ref23.evaluate = function (a) {
         return ~a;
     };
 }
-let _ref24 = new Factory();
+var _ref24 = new Factory();
 {
     _ref24.evaluate = function (a) {
         return a != null;
     };
 }
-let _ref25 = new Factory();
+var _ref25 = new Factory();
 {
     _ref25.evaluate = function (test, consequent, alternate) {
         return test ? consequent : alternate;
     };
 }
-let _ref26 = new Factory();
+var _ref26 = new Factory();
 {
     _ref26.evaluate = function (left, right) {
         return left * right;
     };
 }
-let _ref27 = new Factory();
+var _ref27 = new Factory();
 {
     _ref27.evaluate = function (left, right) {
         return left / right;
     };
 }
-let _ref28 = new Factory();
+var _ref28 = new Factory();
 {
     _ref28.evaluate = function (left, right) {
         return left % right;
     };
 }
-let _ref29 = new Factory();
+var _ref29 = new Factory();
 {
     _ref29.evaluate = function (left, right) {
         return left + right;
     };
 }
-let _ref30 = new Factory();
+var _ref30 = new Factory();
 {
     _ref30.evaluate = function (left, right) {
         return left - right;
     };
 }
-let _ref31 = new Factory();
+var _ref31 = new Factory();
 {
     _ref31.evaluate = function (left, right) {
         return left && right;
     };
 }
-let _ref32 = new Factory();
+var _ref32 = new Factory();
 {
     _ref32.evaluate = function (left, right) {
         return left || right;
     };
 }
-let _ref33 = new Factory();
+var _ref33 = new Factory();
 {
     _ref33.evaluate = function (left, right) {
         return left & right;
     };
 }
-let _ref34 = new Factory();
+var _ref34 = new Factory();
 {
     _ref34.evaluate = function (left, right) {
         return left | right;
     };
 }
-let _ref35 = new Factory();
+var _ref35 = new Factory();
 {
     _ref35.evaluate = function (left, right) {
         return left == right;
     };
 }
-let _ref36 = new Factory();
+var _ref36 = new Factory();
 {
     _ref36.evaluate = function (left, right) {
         return left != right;
     };
 }
-let _ref37 = new Factory();
+var _ref37 = new Factory();
 {
     _ref37.evaluate = function (left, right) {
         return left === right;
     };
 }
-let _ref38 = new Factory();
+var _ref38 = new Factory();
 {
     _ref38.evaluate = function (left, right) {
         return left !== right;
     };
 }
-let _ref39 = new Factory();
+var _ref39 = new Factory();
 {
     _ref39.evaluate = function (left, right) {
         return left < right;
     };
 }
-let _ref40 = new Factory();
+var _ref40 = new Factory();
 {
     _ref40.evaluate = function (left, right) {
         return left > right;
     };
 }
-let _ref41 = new Factory();
+var _ref41 = new Factory();
 {
     _ref41.evaluate = function (left, right) {
         return left <= right;
     };
 }
-let _ref42 = new Factory();
+var _ref42 = new Factory();
 {
     _ref42.evaluate = function (left, right) {
         return left >= right;
     };
 }
-const lookup = {
+var lookup = {
         type: {
             VariableDeclaration: _ref,
             Identifier: _ref2,
@@ -301,10 +301,10 @@ const lookup = {
 function getFactory(ast, step) {
     if (step == null)
         step = lookup;
-    for (let key in step) {
-        let values = step[key];
-        let nodeValue = ast[key];
-        let next = values[nodeValue];
+    for (var key in step) {
+        var values = step[key];
+        var nodeValue = ast[key];
+        var next = values[nodeValue];
         if (next != null) {
             if (next.constructor === Factory) {
                 return next;
@@ -314,20 +314,20 @@ function getFactory(ast, step) {
     }
     return null;
 }
-const createRuntime = exports.createRuntime = function (context, ast) {
+var createRuntime = exports.createRuntime = function (context, ast) {
         if (typeof (ast != null ? ast.type : void 0) !== 'string') {
             ast = {
                 type: 'Literal',
                 value: ast
             };
         }
-        let factory = getFactory(ast);
+        var factory = getFactory(ast);
         if (!(factory != null)) {
             throw new Error('Factory not found for ast:\n' + JSON.stringify(ast, null, '  '));
         }
         return factory.createRuntime(context, ast);
     }, test = exports.test = function () {
-        let factory = getFactory({
+        var factory = getFactory({
                 type: 'BinaryExpression',
                 operator: '>',
                 left: {

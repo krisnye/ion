@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_MemberExpression_ = function(module,exports,require){'use strict';
-const ion = require('../'), DynamicExpression = require('./DynamicExpression');
-const MemberExpression = ion.defineClass({
+var ion = require('../'), DynamicExpression = require('./DynamicExpression');
+var MemberExpression = ion.defineClass({
         name: 'MemberExpression',
         properties: {
             activate: function () {
@@ -28,7 +28,7 @@ const MemberExpression = ion.defineClass({
                 this.propertyExpression.unwatch(this.propertyWatcher);
             },
             updateValue: function () {
-                let value = void 0;
+                var value = void 0;
                 if (this.objectValue != null && this.propertyValue != null) {
                     value = ion.get(this.objectValue, this.propertyValue);
                 }

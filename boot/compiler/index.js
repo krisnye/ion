@@ -1,18 +1,18 @@
 void (function(){var _ion_compiler_index_ = function(module,exports,require){'use strict';
-const ion = require('../'), makePrettyError = function (e, source, id) {
+var ion = require('../'), makePrettyError = function (e, source, id) {
         if (typeof e.line === 'number' && typeof e.column === 'number' && e.line > 0 && e.column > 0) {
-            let line = source.split('\n')[e.line - 1];
-            let caret = '^';
-            for (let i = 1; i < e.column; i++) {
+            var line = source.split('\n')[e.line - 1];
+            var caret = '^';
+            for (var i = 1; i < e.column; i++) {
                 caret = ' ' + caret;
             }
-            let newMessage = '' + (id != null ? id : '(anonymous)') + ':' + e.line + ':' + e.column + ': ' + e.message + '\n' + line + '\n' + caret;
+            var newMessage = '' + (id != null ? id : '(anonymous)') + ':' + e.line + ':' + e.column + ': ' + e.message + '\n' + line + '\n' + caret;
             e.originalMessage = e.message;
             e.message = newMessage;
             e.stack = newMessage;
         }
     };
-const parse = exports.parse = function (content, options) {
+var parse = exports.parse = function (content, options) {
         if (options == null)
             options = {};
         options.generate = false;
@@ -21,10 +21,11 @@ const parse = exports.parse = function (content, options) {
         if (options == null)
             options = {};
         options.loc = options.loc != null ? options.loc : true;
-        const preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('escodegen');
-        let sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), preprocessed = result, sourceLocationsFixed = false;
+        options.target = options.target != null ? options.target : 'es5';
+        var preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('escodegen');
+        var sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), preprocessed = result, sourceLocationsFixed = false;
         try {
-            result = parser.parse(result, options != null ? options : {});
+            result = parser.parse(result, options);
             if (options.loc) {
                 result.loc.source = content;
             }

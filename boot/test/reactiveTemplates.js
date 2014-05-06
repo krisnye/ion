@@ -1,6 +1,6 @@
 void (function(){var _ion_test_reactiveTemplates_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const templates = [
+var ion = require('../');
+var templates = [
         [
             'array comprehension',
             ion.template(function _template(properties) {
@@ -53,8 +53,8 @@ const templates = [
                         _ref8: _ref8
                     });
                 }
-                let _ref4 = [];
-                for (let key in properties)
+                var _ref4 = [];
+                for (var key in properties)
                     _ref4.push(key);
                 return _ref4;
             }),
@@ -172,10 +172,10 @@ const templates = [
                 function double(a) {
                     return a * 2;
                 }
-                let _ref6 = {};
+                var _ref6 = {};
                 {
-                    for (let key in properties) {
-                        let value = properties[key];
+                    for (var key in properties) {
+                        var value = properties[key];
                         _ref6[key] = double(value);
                     }
                 }
@@ -265,7 +265,7 @@ const templates = [
                                             context: true,
                                             value: function (_context) {
                                                 return function multiply(a) {
-                                                    const factor = _context.get('factor');
+                                                    var factor = _context.get('factor');
                                                     return a * factor;
                                                 };
                                             }
@@ -364,14 +364,14 @@ const templates = [
                         _ref8: _ref8
                     });
                 }
-                let factor = properties.factor != null ? properties.factor : 3;
+                var factor = properties.factor != null ? properties.factor : 3;
                 function multiply(a) {
                     return a * factor;
                 }
-                let _ref7 = {};
+                var _ref7 = {};
                 {
-                    for (let key in properties) {
-                        let value = properties[key];
+                    for (var key in properties) {
+                        var value = properties[key];
                         if (key !== 'factor') {
                             _ref7[key] = multiply(value);
                         }
@@ -473,8 +473,8 @@ const templates = [
                         _ref8: _ref8
                     });
                 }
-                let a = _ref.a;
-                let b = _ref.b;
+                var a = _ref.a;
+                var b = _ref.b;
                 return a + b;
             }),
             {
@@ -579,11 +579,11 @@ const templates = [
                         _ref8: _ref8
                     });
                 }
-                let items = _ref2.items;
-                let _ref5 = [];
-                for (let _i = 0; _i < items.length; _i++) {
-                    let i = _i;
-                    let x = items[_i];
+                var items = _ref2.items;
+                var _ref5 = [];
+                for (var _i = 0; _i < items.length; _i++) {
+                    var i = _i;
+                    var x = items[_i];
                     _ref5.push(x + i);
                 }
                 return _ref5;
@@ -653,7 +653,7 @@ const templates = [
         [
             'nested templates',
             function () {
-                let sum = ion.template(function _template7(_ref3) {
+                var sum = ion.template(function _template7(_ref3) {
                         if (this != null && this.constructor === _template7) {
                             return ion.createRuntime({
                                 type: 'Template',
@@ -751,8 +751,8 @@ const templates = [
                                 _ref8: _ref8
                             });
                         }
-                        let a = _ref3.deep.a;
-                        let b = _ref3.deep.b;
+                        var a = _ref3.deep.a;
+                        var b = _ref3.deep.b;
                         return a + b;
                     });
                 return ion.template(function _template8(object) {
@@ -936,19 +936,19 @@ const templates = [
             }
         ]
     ];
-let _ref8 = {};
+var _ref8 = {};
 {
-    for (let _i2 = 0; _i2 < templates.length; _i2++) {
-        let _ref9 = templates[_i2];
-        let name = _ref9[0];
-        let templateType = _ref9[1];
-        let argument = _ref9[2];
-        let patch = _ref9[3];
-        let expected = _ref9[4];
+    for (var _i2 = 0; _i2 < templates.length; _i2++) {
+        var _ref9 = templates[_i2];
+        var name = _ref9[0];
+        var templateType = _ref9[1];
+        var argument = _ref9[2];
+        var patch = _ref9[3];
+        var expected = _ref9[4];
         if (expected != null) {
             _ref8[name] = function (templateType, argument, patch, expected) {
                 return function (done) {
-                    let template = new templateType(argument);
+                    var template = new templateType(argument);
                     function checkIfDone(check) {
                         if (JSON.stringify(check) === JSON.stringify(expected)) {
                             template.deactivate();

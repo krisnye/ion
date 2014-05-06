@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_ForInOfStatement_ = function(module,exports,require){'use strict';
-const ion = require('../'), Statement = require('./Statement');
-const ForInOfStatement = ion.defineClass({
+var ion = require('../'), Statement = require('./Statement');
+var ForInOfStatement = ion.defineClass({
         name: 'ForInOfStatement',
         properties: {
             toKey: function (name) {
@@ -12,13 +12,13 @@ const ForInOfStatement = ion.defineClass({
             },
             forEach: function (collection, callback) {
                 if (this.type === 'ForOfStatement') {
-                    for (let key = 0; key < collection.length; key++) {
-                        let value = collection[key];
+                    for (var key = 0; key < collection.length; key++) {
+                        var value = collection[key];
                         callback(key, value);
                     }
                 } else {
-                    for (let key in collection) {
-                        let value = collection[key];
+                    for (var key in collection) {
+                        var value = collection[key];
                         callback(key, value);
                     }
                 }
@@ -47,15 +47,15 @@ const ForInOfStatement = ion.defineClass({
             },
             addItem: function (key, value) {
                 if (value !== void 0) {
-                    let newContext = this.context.newContext();
+                    var newContext = this.context.newContext();
                     newContext.setVariable(this.left.declarations[this.type === 'ForOfStatement' ? 0 : 1] != null ? this.left.declarations[this.type === 'ForOfStatement' ? 0 : 1].id.name : void 0, value);
                     newContext.setVariable(this.left.declarations[this.type === 'ForOfStatement' ? 1 : 0] != null ? this.left.declarations[this.type === 'ForOfStatement' ? 1 : 0].id.name : void 0, key);
-                    let statement = this.statements[key] = newContext.createRuntime(this.body);
+                    var statement = this.statements[key] = newContext.createRuntime(this.body);
                     statement.activate();
                 }
             },
             removeItem: function (key, value) {
-                let statement = this.statements[key];
+                var statement = this.statements[key];
                 statement != null ? statement.deactivate() : void 0;
                 delete this.statements[key];
             },
@@ -72,14 +72,14 @@ const ForInOfStatement = ion.defineClass({
                     }
                     return false;
                 }
-                for (let _i = 0; _i < changes.length; _i++) {
-                    let _ref = changes[_i];
-                    let name = _ref.name;
-                    let oldValue = _ref.oldValue;
-                    let ignore = ignoreProperty(name);
+                for (var _i = 0; _i < changes.length; _i++) {
+                    var _ref = changes[_i];
+                    var name = _ref.name;
+                    var oldValue = _ref.oldValue;
+                    var ignore = ignoreProperty(name);
                     if (!ignore) {
-                        let newValue = this.collection[name];
-                        let key = this.toKey(name);
+                        var newValue = this.collection[name];
+                        var key = this.toKey(name);
                         if (oldValue !== void 0) {
                             this.removeItem(key, oldValue);
                         }

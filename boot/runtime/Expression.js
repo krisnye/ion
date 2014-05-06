@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_Expression_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const Expression = ion.defineClass({
+var ion = require('../');
+var Expression = ion.defineClass({
         name: 'Expression',
         properties: {
             watch: function (watcher) {

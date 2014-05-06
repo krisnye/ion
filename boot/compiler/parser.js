@@ -2306,7 +2306,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s0 = peg$currPos;
       s1 = peg$parsepath();
       if (s1 === peg$FAILED) {
-        s1 = peg$parseIdentifier();
+        s1 = peg$parseIdentifierName();
         if (s1 === peg$FAILED) {
           s1 = peg$parseStringOrNumberLiteral();
         }

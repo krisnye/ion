@@ -1,16 +1,16 @@
 void (function(){var _ion_runtime_VariableDeclaration_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const Statement = require('./Statement');
-const VariableDeclaration = ion.defineClass({
+var ion = require('../');
+var Statement = require('./Statement');
+var VariableDeclaration = ion.defineClass({
         name: 'VariableDeclaration',
         constructor: function VariableDeclaration() {
             VariableDeclaration.super.apply(this, arguments);
             {
-                let _ref = this.declarations;
-                for (let _i = 0; _i < _ref.length; _i++) {
-                    let _ref2 = _ref[_i];
-                    let name = _ref2.id.name;
-                    let init = _ref2.init;
+                var _ref = this.declarations;
+                for (var _i = 0; _i < _ref.length; _i++) {
+                    var _ref2 = _ref[_i];
+                    var name = _ref2.id.name;
+                    var init = _ref2.init;
                     this.context.setVariable(name, init);
                 }
             }

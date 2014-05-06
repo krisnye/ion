@@ -1,8 +1,8 @@
 void (function(){var _ion_browser_elements_ = function(module,exports,require){'use strict';
-let _ref2 = {};
+var _ref2 = {};
 {
     {
-        let _ref = [
+        var _ref = [
                 'div',
                 'span',
                 'input',
@@ -33,14 +33,14 @@ let _ref2 = {};
                 'tr',
                 'thead'
             ];
-        for (let _i = 0; _i < _ref.length; _i++) {
-            let name = _ref[_i];
+        for (var _i = 0; _i < _ref.length; _i++) {
+            var name = _ref[_i];
             _ref2[name] = function (name) {
                 return function (attributes) {
-                    let element = document.createElement(name);
+                    var element = document.createElement(name);
                     if (attributes != null) {
-                        for (let key in attributes) {
-                            let value = attributes[key];
+                        for (var key in attributes) {
+                            var value = attributes[key];
                             element.setAttribute(key, value);
                         }
                     }

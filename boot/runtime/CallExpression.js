@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_CallExpression_ = function(module,exports,require){'use strict';
-const ion = require('../'), DynamicExpression = require('./DynamicExpression'), ArrayExpression = require('./ArrayExpression');
-const CallExpression = ion.defineClass({
+var ion = require('../'), DynamicExpression = require('./DynamicExpression'), ArrayExpression = require('./ArrayExpression');
+var CallExpression = ion.defineClass({
         name: 'CallExpression',
         properties: {
             args: null,
@@ -9,7 +9,7 @@ const CallExpression = ion.defineClass({
                 this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
                 this.calleeExpression.watch(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : function (value) {
                     this.calleeValue = value;
-                    let thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
+                    var thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
                     if (thisArg !== this.thisArg) {
                         ion.unobserve(this.thisarg, this.thisObserver);
                         this.thisArg = thisArg;
@@ -40,7 +40,7 @@ const CallExpression = ion.defineClass({
                 }
             },
             evaluate: function () {
-                let value = void 0;
+                var value = void 0;
                 if (this.calleeValue != null && this.argumentsValue != null) {
                     try {
                         if (this.calleeValue.template) {

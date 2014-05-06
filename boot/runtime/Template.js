@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_Template_ = function(module,exports,require){'use strict';
-const ion = require('../'), BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression');
-const Template = ion.defineClass({
+var ion = require('../'), BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression');
+var Template = ion.defineClass({
         name: 'Template',
         constructor: function Template() {
             Template.super.apply(this, arguments);

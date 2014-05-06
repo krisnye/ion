@@ -1,6 +1,6 @@
 void (function(){var _ion_compiler_nodes_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const BlockStatement = exports.BlockStatement = {
+var ion = require('../');
+var BlockStatement = exports.BlockStatement = {
         isBlock: true,
         newScope: true
     }, Program = exports.Program = {

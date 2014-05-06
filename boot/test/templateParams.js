@@ -1,6 +1,6 @@
 void (function(){var _ion_test_templateParams_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const firstTemplate = ion.template(function _template(a, b) {
+var ion = require('../');
+var firstTemplate = ion.template(function _template(a, b) {
         if (this != null && this.constructor === _template) {
             return ion.createRuntime({
                 type: 'Template',
@@ -36,10 +36,10 @@ const firstTemplate = ion.template(function _template(a, b) {
         }
         return a + b;
     });
-const test = exports.test = function () {
-        let template = new firstTemplate(1, 2);
+var test = exports.test = function () {
+        var template = new firstTemplate(1, 2);
         template.activate();
-        let result = null;
+        var result = null;
         template.watch(function (value) {
             return result = value;
         });

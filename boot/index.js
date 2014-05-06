@@ -1,8 +1,7 @@
 void (function(){var _ion_index_ = function(module,exports,require){'use strict';
-const ion = null;
+var ion = null;
 require('./es6');
-require('./Object.observe');
-const primitive = {
+var primitive = {
         string: true,
         number: true,
         boolean: true,
@@ -28,8 +27,8 @@ const primitive = {
     }, normalizeProperties = function (properties) {
         if (properties == null)
             properties = {};
-        for (let name in properties) {
-            let property = properties[name];
+        for (var name in properties) {
+            var property = properties[name];
             properties[name] = normalizeProperty(property);
         }
         return properties;
@@ -68,17 +67,17 @@ const primitive = {
             return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
         }
     ];
-const patch = exports.patch = require('./mergePatch'), create = exports.create = function (type, args) {
+var patch = exports.patch = require('./mergePatch'), create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
     }, template = exports.template = function (fn) {
         fn.template = true;
         return fn;
     }, createRuntime = exports.createRuntime = function (ast, args) {
-        const Context = require('./runtime/Context');
-        const context = new Context();
+        var Context = require('./runtime/Context');
+        var context = new Context();
         if (args != null) {
-            for (let name in args) {
-                let value = args[name];
+            for (var name in args) {
+                var value = args[name];
                 context.setVariable(name, value);
             }
         }
@@ -89,17 +88,17 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
         if (deep == null)
             deep = false;
         if (Array.isArray(object)) {
-            let _ref = [];
-            for (let _i = 0; _i < object.length; _i++) {
-                let item = object[_i];
+            var _ref = [];
+            for (var _i = 0; _i < object.length; _i++) {
+                var item = object[_i];
                 _ref.push(deep ? clone(item, deep) : item);
             }
             return _ref;
         } else if ((object != null ? object.constructor : void 0) === Object) {
-            let _ref2 = {};
+            var _ref2 = {};
             {
-                for (let key in object) {
-                    let value = object[key];
+                for (var key in object) {
+                    var value = object[key];
                     _ref2[key] = deep ? clone(value, deep) : value;
                 }
             }
@@ -120,11 +119,11 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
         }
         object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
     }, add = exports.add = function (container, item) {
-        let remove;
+        var remove;
         if (typeof item === 'function' && item.name.length > 0 && typeof container.addEventListener === 'function') {
-            let name = item.name;
+            var name = item.name;
             if ((Object.observe != null ? Object.observe.checkForChanges : void 0) != null) {
-                let originalItem = item;
+                var originalItem = item;
                 item = function () {
                     originalItem.apply(this, arguments);
                     Object.observe.checkForChanges();
@@ -150,14 +149,14 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
             }
             remove = function () {
                 if (container.lastIndexOf != null && container.removeAt != null) {
-                    let index = container.lastIndexOf(item);
+                    var index = container.lastIndexOf(item);
                     if (index >= 0) {
                         container.removeAt(index);
                     }
                 } else if (typeof container.remove === 'function') {
                     container.remove(item);
                 } else if (Array.isArray(container)) {
-                    let index = container.lastIndexOf(item);
+                    var index = container.lastIndexOf(item);
                     if (index >= 0) {
                         container.splice(index, 1);
                     }
@@ -172,17 +171,17 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
     }, defineProperties = exports.defineProperties = function (object, properties) {
         return Object.defineProperties(object, normalizeProperties(properties));
     }, defineClass = exports.defineClass = function (___definitions) {
-        let definitions = Array.prototype.slice.call(arguments, 0);
-        const classDefinition = definitions[0];
+        var definitions = Array.prototype.slice.call(arguments, 0);
+        var classDefinition = definitions[0];
         if (definitions[1] === void 0) {
             definitions[1] = require('./Object');
         }
         classDefinition.super = definitions[1];
-        const name = classDefinition.name != null ? classDefinition.name : classDefinition.id != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i) != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i)[1] : void 0 : void 0;
+        var name = classDefinition.name != null ? classDefinition.name : classDefinition.id != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i) != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i)[1] : void 0 : void 0;
         if (!(name != null)) {
             throw new Error('missing name property');
         }
-        let classFunction;
+        var classFunction;
         if (classDefinition.hasOwnProperty('constructor')) {
             classFunction = classDefinition.constructor;
         } else if (classDefinition.super != null) {
@@ -190,10 +189,10 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
         } else {
             classFunction = eval('(function ' + name + '() {})');
         }
-        for (let i = definitions.length - 1; i >= 0; i--) {
-            let definition = definitions[i];
-            for (let key in definition) {
-                let value = definition[key];
+        for (var i = definitions.length - 1; i >= 0; i--) {
+            var definition = definitions[i];
+            for (var key in definition) {
+                var value = definition[key];
                 if (key !== 'test' || i === 0) {
                     if ((value != null ? value.constructor : void 0) === Object || (Object.getOwnPropertyDescriptor(classFunction, key) != null ? Object.getOwnPropertyDescriptor(classFunction, key).writable : void 0) !== false) {
                         classFunction[key] = patch(classFunction[key], value);
@@ -219,8 +218,8 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
             deleteUndefined = true;
         if (object != null) {
             if (arguments.length === 2 && property != null) {
-                for (let k in property) {
-                    let v = property[k];
+                for (var k in property) {
+                    var v = property[k];
                     set(object, k, v);
                 }
                 return;
@@ -251,8 +250,8 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
             return instance === type;
         }
     }, makeReactive = exports.makeReactive = function (object, activate) {
-        let observeCount = 0;
-        let deactivate = null;
+        var observeCount = 0;
+        var deactivate = null;
         return Object.defineProperties(object, {
             onObserved: {
                 value: function () {
@@ -273,7 +272,7 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
         });
     }, test = exports.test = {
         defineClass: function () {
-            const Foo = defineClass({
+            var Foo = defineClass({
                     id: 'Foo',
                     constructor: function (number) {
                         this.number = number;
@@ -289,8 +288,8 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
         },
         defineProperties: {
             'should allow primitive values': function () {
-                const object = {};
-                const result = defineProperties(object, {
+                var object = {};
+                var result = defineProperties(object, {
                         f: function () {
                             return 'function';
                         },

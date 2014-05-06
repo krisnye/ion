@@ -913,25 +913,38 @@ removeLocationInfo = (node) ->
             delete node.loc
         return node
 
+isReferenceNode = (node, context) ->
+    if node.type isnt 'Identifier'
+        return false
+    parentNode = context.parentNode()
+    # ignore function names
+    if isFunctionNode(parentNode)
+        return false
+    # ignore variable declarations
+    if parentNode?.type is 'VariableDeclarator'
+        return false
+    # ignore member expression right hand identifiers
+    if parentNode?.type is 'MemberExpression' and not parentNode?.computed and context.key() is 'property'
+        return false
+    # ignore object property keys
+    if parentNode?.type is 'Property' and context.key() is 'key'
+        return false
+    return true
+
+# gets all identifiers, except member access properties
+getReferenceIdentifiers = (node, callback) ->
+    traverse node, (node, context) ->
+        if isReferenceNode(node, context)
+            callback(node, context)
+    return
+
 # gets all identifiers, except member access properties
 getExternalIdentifiers = (node, callback) ->
-    traverse node, (node, context) ->
-        if node.type is 'Identifier'
-            # debug = node.name is 'checked'
-            parentNode = context.parentNode()
-            # ignore function names
-            if isFunctionNode(parentNode)
-                return
-            # ignore member expression right hand identifiers
-            if parentNode?.type is 'MemberExpression' and not parentNode?.computed and context.key() is 'property'
-                return
-            # ignore object property keys
-            if parentNode?.type is 'Property' and context.key() is 'key'
-                return
+    getReferenceIdentifiers node, (node, context) ->
             # ignore internally defined variables
             if context.getVariableInfo(node.name)?
                 return
-            callback(node)
+            callback(node, context)
     return
 
 wrapTemplateInnerFunctions = (node, context) ->
@@ -1084,6 +1097,10 @@ functionDeclarations = (node, context) ->
     if node.type is 'ExpressionStatement' and node.expression.type is 'FunctionExpression'
         throw context.error 'Function Expression is a noop', node
 
+letAndConstToVar = (node, context) ->
+    if node.type is 'VariableDeclaration' and node.kind isnt 'var'
+        node.kind = 'var'
+
 exports.postprocess = (program, options) ->
     steps = [
         [namedFunctionsAndNewArguments, superExpressions]
@@ -1098,6 +1115,8 @@ exports.postprocess = (program, options) ->
         [addUseStrictAndRequireIon]
         [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]
     ]
+    if (options?.target is 'es5')
+        steps.push [letAndConstToVar]
     previousContext = null
     for traversal in steps
         enter = (node, context) ->

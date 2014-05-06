@@ -125,10 +125,10 @@ if (typeof module === "undefined") {
   }
 }).call(this)
 void (function(){var _ion_browser_elements_ = function(module,exports,require){'use strict';
-let _ref2 = {};
+var _ref2 = {};
 {
     {
-        let _ref = [
+        var _ref = [
                 'div',
                 'span',
                 'input',
@@ -159,14 +159,14 @@ let _ref2 = {};
                 'tr',
                 'thead'
             ];
-        for (let _i = 0; _i < _ref.length; _i++) {
-            let name = _ref[_i];
+        for (var _i = 0; _i < _ref.length; _i++) {
+            var name = _ref[_i];
             _ref2[name] = function (name) {
                 return function (attributes) {
-                    let element = document.createElement(name);
+                    var element = document.createElement(name);
                     if (attributes != null) {
-                        for (let key in attributes) {
-                            let value = attributes[key];
+                        for (var key in attributes) {
+                            var value = attributes[key];
                             element.setAttribute(key, value);
                         }
                     }
@@ -441,8 +441,8 @@ void (function(){var _ion_builder_Directory_ = function(module,exports,require){
 if (global.Window) {
     return;
 }
-const ion = require('../'), fs = require('fs'), np = require('path'), utility = require('./utility'), watcher = require('./watcher'), File = require('./File');
-const Directory = ion.defineClass({
+var ion = require('../'), fs = require('fs'), np = require('path'), utility = require('./utility'), watcher = require('./watcher'), File = require('./File');
+var Directory = ion.defineClass({
         name: 'Directory',
         constructor: function Directory(path) {
             if (path != null) {
@@ -496,17 +496,17 @@ const Directory = ion.defineClass({
                 return np.join(this.path, String(path));
             },
             search: function (include, exclude) {
-                let options = { initial: false };
+                var options = { initial: false };
                 if (include != null) {
                     options.include = include;
                 }
                 if (exclude != null) {
                     options.exclude = exclude;
                 }
-                let results = {};
+                var results = {};
                 ion.makeReactive(results, function () {
-                    let unwatch = watcher.watchDirectory(this.path, options, function (filename) {
-                            let path = this.getRelativeName(filename);
+                    var unwatch = watcher.watchDirectory(this.path, options, function (filename) {
+                            var path = this.getRelativeName(filename);
                             if (fs.existsSync(filename)) {
                                 if (!(results[path] != null)) {
                                     results[path] = new File(filename);
@@ -517,9 +517,9 @@ const Directory = ion.defineClass({
                         }.bind(this));
                     return unwatch;
                 }.bind(this));
-                let files = utility.list(this.path, options);
-                for (let _i = 0; _i < files.length; _i++) {
-                    let path = files[_i];
+                var files = utility.list(this.path, options);
+                for (var _i = 0; _i < files.length; _i++) {
+                    var path = files[_i];
                     results[this.getRelativeName(path)] = new File(path);
                 }
                 return results;
@@ -542,8 +542,8 @@ void (function(){var _ion_builder_File_ = function(module,exports,require){'use 
 if (global.Window) {
     return;
 }
-const ion = require('../'), fs = require('fs'), np = require('path'), utility = require('./utility');
-const File = ion.defineClass({
+var ion = require('../'), fs = require('fs'), np = require('path'), utility = require('./utility');
+var File = ion.defineClass({
         name: 'File',
         constructor: function File(path) {
             if ((path != null ? path.constructor : void 0) === File) {
@@ -564,7 +564,7 @@ const File = ion.defineClass({
             });
             this.modified = utility.getModified(path);
             ion.makeReactive(this, function () {
-                let watcher;
+                var watcher;
                 if (fs.existsSync(this.path)) {
                     watcher = fs.watch(this.path, function () {
                         this.modified = utility.getModified(this.path);
@@ -594,7 +594,7 @@ const File = ion.defineClass({
                 }
             },
             getExtension: function () {
-                let index = this.path.lastIndexOf('.');
+                var index = this.path.lastIndexOf('.');
                 return index < 0 ? '' : this.path.substring(index);
             },
             write: function (content, encoding) {
@@ -831,7 +831,7 @@ module.exports = exports = {
   }
 }).call(this)
 void (function(){var _ion_builder_ModuleBuilder_ = function(module,exports,require){'use strict';
-const ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), compilers = {
+var ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), compilers = {
         '.coffee': { compile: builder.compileCoffeeScript },
         '.pegjs': { compile: builder.compilePegjs },
         '.js': { compile: builder.shimJavascript },
@@ -2199,61 +2199,61 @@ module.exports = exports = ion.template(function _template(packagePatch) {
             compilers: compilers
         });
     }
-    let packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch != null ? packagePatch : {});
-    let input = new Directory(packageJson.directories.src != null ? packageJson.directories.src : 'src');
-    let output = new Directory(packageJson.directories.lib != null ? packageJson.directories.lib : 'lib');
-    let moduleName = packageJson.name != null ? packageJson.name : '';
-    let _ref = [];
-    for (let key in outputFiles) {
+    var packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch != null ? packagePatch : {});
+    var input = new Directory(packageJson.directories.src != null ? packageJson.directories.src : 'src');
+    var output = new Directory(packageJson.directories.lib != null ? packageJson.directories.lib : 'lib');
+    var moduleName = packageJson.name != null ? packageJson.name : '';
+    var _ref = [];
+    for (var key in outputFiles) {
         if (key.endsWith('require.js')) {
             _ref.push(key);
         }
     }
-    let _ref2 = [];
-    for (let key in outputFiles) {
+    var _ref2 = [];
+    for (var key in outputFiles) {
         if (!builder.isPrivate(key) && top.indexOf(key) < 0) {
             _ref2.push(key);
         }
     }
-    let _ref3 = [];
-    for (let path in outputFiles) {
-        let file = outputFiles[path];
+    var _ref3 = [];
+    for (var path in outputFiles) {
+        var file = outputFiles[path];
         _ref3.push(file.modified);
     }
-    let _ref4 = [];
-    for (let _i = 0; _i < sortedFiles.length; _i++) {
-        let path = sortedFiles[_i];
+    var _ref4 = [];
+    for (var _i = 0; _i < sortedFiles.length; _i++) {
+        var path = sortedFiles[_i];
         _ref4.push(builder.normalizePath(path));
     }
-    let _ref7 = {};
+    var _ref7 = {};
     {
-        let extensions = Object.keys(compilers);
+        var extensions = Object.keys(compilers);
         {
-            let _ref6 = input.search(extensions, packageJson.build.exclude);
-            for (let path in _ref6) {
-                let source = _ref6[path];
-                let compiler = compilers[source.getExtension()];
-                let targetPath = builder.changeExtension(path, '.js');
-                let moduleId = builder.getModuleId(moduleName, path);
+            var _ref6 = input.search(extensions, packageJson.build.exclude);
+            for (var path in _ref6) {
+                var source = _ref6[path];
+                var compiler = compilers[source.getExtension()];
+                var targetPath = builder.changeExtension(path, '.js');
+                var moduleId = builder.getModuleId(moduleName, path);
                 _ref7[targetPath] = compiler.compile(source, moduleId, packageJson);
             }
         }
-        let outputFiles = output.search('.js', [
+        var outputFiles = output.search('.js', [
                 /^_/,
                 'node_modules'
             ]);
-        let top = _ref;
-        let sortedFiles = top.concat(_ref2);
-        let manifestFileName = 'manifest.json';
-        let manifest = {
+        var top = _ref;
+        var sortedFiles = top.concat(_ref2);
+        var manifestFileName = 'manifest.json';
+        var manifest = {
                 modified: Math.max.apply(null, _ref3),
                 files: _ref4
             };
         _ref7[manifestFileName] = JSON.stringify(manifest, null, '  ', sortedFiles);
         if (packageJson.build.merge != null) {
-            let _ref5 = [];
-            for (let _i2 = 0; _i2 < sortedFiles.length; _i2++) {
-                let name = sortedFiles[_i2];
+            var _ref5 = [];
+            for (var _i2 = 0; _i2 < sortedFiles.length; _i2++) {
+                var name = sortedFiles[_i2];
                 ion.add(_ref7, _ref5.push(outputFiles[name].read()));
             }
             _ref7[packageJson.build.merge] = _ref5.join('\n');
@@ -2262,7 +2262,7 @@ module.exports = exports = ion.template(function _template(packagePatch) {
             _ref7['package.json'] = JSON.stringify(ion.patch(ion.clone(packageJson), { main: void 0 }), null, '    ');
         }
         if (packageJson.build.test !== false) {
-            let manifestFile = output.getFile(manifestFileName);
+            var manifestFile = output.getFile(manifestFileName);
             ion.add(_ref7, builder.runTests(manifestFile, manifestFile.modified));
         }
     }
@@ -2705,7 +2705,7 @@ allWatchers = {};
   }
 }).call(this)
 void (function(){var _ion_builder_WebsiteBuilder_ = function(module,exports,require){'use strict';
-const ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), utility = require('./utility'), ModuleBuilder = require('./ModuleBuilder'), clientJsDir = 'js', serverJsDir = 'WEB-INF/js', serverJavaDir = 'WEB-INF/java';
+var ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), utility = require('./utility'), ModuleBuilder = require('./ModuleBuilder'), clientJsDir = 'js', serverJsDir = 'WEB-INF/js', serverJavaDir = 'WEB-INF/java';
 module.exports = exports = ion.template(function _template(packagePatch) {
     if (this != null && this.constructor === _template) {
         return ion.createRuntime({
@@ -4011,6 +4011,10 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                 elements: [
                                     {
                                         type: 'Literal',
+                                        value: '.ionpage'
+                                    },
+                                    {
+                                        type: 'Literal',
                                         value: '.coffeepage'
                                     },
                                     {
@@ -4352,103 +4356,6 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                 kind: 'let'
                             },
                             {
-                                type: 'ExpressionStatement',
-                                expression: {
-                                    type: 'CallExpression',
-                                    callee: {
-                                        type: 'MemberExpression',
-                                        computed: false,
-                                        object: {
-                                            type: 'Identifier',
-                                            name: 'console'
-                                        },
-                                        property: {
-                                            type: 'Identifier',
-                                            name: 'log'
-                                        }
-                                    },
-                                    arguments: [{
-                                            type: 'BinaryExpression',
-                                            operator: '+',
-                                            left: {
-                                                type: 'Literal',
-                                                value: '>>>>>>>>>>>>>>>>>>>>1 '
-                                            },
-                                            right: {
-                                                type: 'Identifier',
-                                                name: 'key'
-                                            }
-                                        }]
-                                }
-                            },
-                            {
-                                type: 'ExpressionStatement',
-                                expression: {
-                                    type: 'CallExpression',
-                                    callee: {
-                                        type: 'MemberExpression',
-                                        computed: false,
-                                        object: {
-                                            type: 'Identifier',
-                                            name: 'console'
-                                        },
-                                        property: {
-                                            type: 'Identifier',
-                                            name: 'log'
-                                        }
-                                    },
-                                    arguments: [{
-                                            type: 'BinaryExpression',
-                                            operator: '+',
-                                            left: {
-                                                type: 'Literal',
-                                                value: '>>>>>>>>>>>>>>>>>>>>2 '
-                                            },
-                                            right: {
-                                                type: 'Literal',
-                                                value: /[\.\/\\]/
-                                            }
-                                        }]
-                                }
-                            },
-                            {
-                                type: 'ExpressionStatement',
-                                expression: {
-                                    type: 'CallExpression',
-                                    callee: {
-                                        type: 'MemberExpression',
-                                        computed: false,
-                                        object: {
-                                            type: 'Identifier',
-                                            name: 'console'
-                                        },
-                                        property: {
-                                            type: 'Identifier',
-                                            name: 'log'
-                                        }
-                                    },
-                                    arguments: [{
-                                            type: 'BinaryExpression',
-                                            operator: '+',
-                                            left: {
-                                                type: 'Literal',
-                                                value: '>>>>>>>>>>>>>>>>>>>>3 '
-                                            },
-                                            right: {
-                                                type: 'NewExpression',
-                                                callee: {
-                                                    type: 'Identifier',
-                                                    name: 'RegExp'
-                                                },
-                                                arguments: [{
-                                                        type: 'Literal',
-                                                        value: '\\b'
-                                                    }]
-                                            }
-                                        }]
-                                }
-                            },
-                            {
                                 type: 'Property',
                                 key: {
                                     type: 'Identifier',
@@ -4737,15 +4644,15 @@ module.exports = exports = ion.template(function _template(packagePatch) {
             serverJavaDir: serverJavaDir
         });
     }
-    const packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch != null ? packagePatch : {}), input = new Directory(packageJson.directories.src != null ? packageJson.directories.src : 'src'), output = new Directory(packageJson.directories.www != null ? packageJson.directories.www : 'debug'), clientOutput = output.getDirectory(clientJsDir), serverOutput = output.getDirectory(serverJsDir), nodepath = 'node_modules/';
-    let glassPages = new Directory('../glass-pages/dist');
+    var packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch != null ? packagePatch : {}), input = new Directory(packageJson.directories.src != null ? packageJson.directories.src : 'src'), output = new Directory(packageJson.directories.www != null ? packageJson.directories.www : 'debug'), clientOutput = output.getDirectory(clientJsDir), serverOutput = output.getDirectory(serverJsDir), nodepath = 'node_modules/';
+    var glassPages = new Directory('../glass-pages/dist');
     if (glassPages.exists) {
-        let javaDirectory = input.getDirectory(serverJavaDir);
+        var javaDirectory = input.getDirectory(serverJavaDir);
         {
-            let _ref = glassPages.search();
-            for (let key in _ref) {
-                let source = _ref[key];
-                let target = javaDirectory.getFile(key);
+            var _ref = glassPages.search();
+            for (var key in _ref) {
+                var source = _ref[key];
+                var target = javaDirectory.getFile(key);
                 if (target.modified < source.modified) {
                     target.copyFrom(source);
                 }
@@ -4753,15 +4660,15 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         }
     }
     {
-        let _ref2 = packageJson.build.client.modules;
-        for (let _i = 0; _i < _ref2.length; _i++) {
-            let moduleName = _ref2[_i];
-            let directory = new Directory(nodepath + moduleName);
+        var _ref2 = packageJson.build.client.modules;
+        for (var _i = 0; _i < _ref2.length; _i++) {
+            var moduleName = _ref2[_i];
+            var directory = new Directory(nodepath + moduleName);
             {
-                let _ref3 = directory.search('.js', ['node_modules'].concat(packageJson.build.client.exclude));
-                for (let key in _ref3) {
-                    let source = _ref3[key];
-                    let _ref10 = {};
+                var _ref3 = directory.search('.js', ['node_modules'].concat(packageJson.build.client.exclude));
+                for (var key in _ref3) {
+                    var source = _ref3[key];
+                    var _ref10 = {};
                     {
                         _ref10[source.path.substring(nodepath.length)] = source.read();
                     }
@@ -4771,15 +4678,15 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         }
     }
     {
-        let _ref4 = packageJson.build.server.modules;
-        for (let _i2 = 0; _i2 < _ref4.length; _i2++) {
-            let moduleName = _ref4[_i2];
-            let directory = new Directory(nodepath + moduleName);
+        var _ref4 = packageJson.build.server.modules;
+        for (var _i2 = 0; _i2 < _ref4.length; _i2++) {
+            var moduleName = _ref4[_i2];
+            var directory = new Directory(nodepath + moduleName);
             {
-                let _ref5 = directory.search('.js', ['node_modules'].concat(packageJson.build.server.exclude));
-                for (let key in _ref5) {
-                    let source = _ref5[key];
-                    let _ref11 = {};
+                var _ref5 = directory.search('.js', ['node_modules'].concat(packageJson.build.server.exclude));
+                for (var key in _ref5) {
+                    var source = _ref5[key];
+                    var _ref11 = {};
                     {
                         _ref11[source.path.substring(nodepath.length)] = source.read();
                     }
@@ -4809,7 +4716,8 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         }
     });
     {
-        let _ref6 = input.search(null, [
+        var _ref6 = input.search(null, [
+                '.ionpage',
                 '.coffeepage',
                 '.coffee',
                 '.java',
@@ -4817,10 +4725,10 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                 '.jar',
                 '.ion'
             ]);
-        for (let key in _ref6) {
-            let source = _ref6[key];
-            let target = output.getFile(key);
-            let _ref12 = {};
+        for (var key in _ref6) {
+            var source = _ref6[key];
+            var target = output.getFile(key);
+            var _ref12 = {};
             {
                 _ref12[key] = source.read();
             }
@@ -4828,27 +4736,24 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         }
     }
     {
-        let _ref7 = input.search('.ion', 'js');
-        for (let key in _ref7) {
-            let source = _ref7[key];
-            let targetPath = builder.changeExtension(key, '.js');
-            let _ref13 = {};
+        var _ref7 = input.search('.ion', 'js');
+        for (var key in _ref7) {
+            var source = _ref7[key];
+            var targetPath = builder.changeExtension(key, '.js');
+            var _ref13 = {};
             {
                 _ref13[targetPath] = builder.compileIon(source);
             }
             ion.patch(output, _ref13);
         }
     }
-    let pageOutput = output.getDirectory('WEB-INF/pages');
+    var pageOutput = output.getDirectory('WEB-INF/pages');
     {
-        let _ref8 = input.search('.ionpage');
-        for (let key in _ref8) {
-            let source = _ref8[key];
-            let targetPath = builder.changeExtension(key, '.js');
-            console.log('>>>>>>>>>>>>>>>>>>>>1 ' + key);
-            console.log('>>>>>>>>>>>>>>>>>>>>2 ' + /[\.\/\\]/);
-            console.log('>>>>>>>>>>>>>>>>>>>>3 ' + new RegExp('\\b'));
-            let _ref14 = {};
+        var _ref8 = input.search('.ionpage');
+        for (var key in _ref8) {
+            var source = _ref8[key];
+            var targetPath = builder.changeExtension(key, '.js');
+            var _ref14 = {};
             {
                 _ref14[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(source) + ' })';
             }
@@ -4856,11 +4761,11 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         }
     }
     {
-        let _ref9 = input.search('.coffeepage');
-        for (let key in _ref9) {
-            let source = _ref9[key];
-            let targetPath = builder.changeExtension(key, '.js');
-            let _ref15 = {};
+        var _ref9 = input.search('.coffeepage');
+        for (var key in _ref9) {
+            var source = _ref9[key];
+            var targetPath = builder.changeExtension(key, '.js');
+            var _ref15 = {};
             {
                 _ref15[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(source) + ' })';
             }
@@ -4880,8 +4785,8 @@ module.exports = exports = ion.template(function _template(packagePatch) {
   }
 }).call(this)
 void (function(){var _ion_compiler_astFunctions_ = function(module,exports,require){'use strict';
-const ion = exports.ion = require('../'), addStatement = exports.addStatement = function (node, statement, index, offset) {
-        let body = node.body;
+var ion = exports.ion = require('../'), addStatement = exports.addStatement = function (node, statement, index, offset) {
+        var body = node.body;
         if (body.type === 'BlockStatement') {
             body = body.body;
         } else if (!Array.isArray(body)) {
@@ -4902,11 +4807,11 @@ const ion = exports.ion = require('../'), addStatement = exports.addStatement = 
             callback(pattern, expression);
         } else if (pattern.properties != null) {
             {
-                let _ref = pattern.properties;
-                for (let _i = 0; _i < _ref.length; _i++) {
-                    let _ref3 = _ref[_i];
-                    let key = _ref3.key;
-                    let value = _ref3.value;
+                var _ref = pattern.properties;
+                for (var _i = 0; _i < _ref.length; _i++) {
+                    var _ref3 = _ref[_i];
+                    var key = _ref3.key;
+                    var value = _ref3.value;
                     forEachDestructuringAssignment(value, {
                         type: 'MemberExpression',
                         object: expression,
@@ -4917,10 +4822,10 @@ const ion = exports.ion = require('../'), addStatement = exports.addStatement = 
             }
         } else if (pattern.elements != null) {
             {
-                let _ref2 = pattern.elements;
-                for (let _i2 = 0; _i2 < _ref2.length; _i2++) {
-                    let index = _i2;
-                    let value = _ref2[_i2];
+                var _ref2 = pattern.elements;
+                for (var _i2 = 0; _i2 < _ref2.length; _i2++) {
+                    var index = _i2;
+                    var value = _ref2[_i2];
                     forEachDestructuringAssignment(value, {
                         type: 'MemberExpression',
                         object: expression,
@@ -4946,10 +4851,10 @@ const ion = exports.ion = require('../'), addStatement = exports.addStatement = 
   }
 }).call(this)
 void (function(){var _ion_compiler_common_ = function(module,exports,require){'use strict';
-const ion = require('../'), lineDelimiter = '\n', isEmpty = function (s) {
+var ion = require('../'), lineDelimiter = '\n', isEmpty = function (s) {
         return !(s != null) || s.length === 0 || (s.trim != null ? s.trim().length : void 0) === 0;
     };
-const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdentToken = '}}}}', splitLines = exports.splitLines = function (s) {
+var indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdentToken = '}}}}', splitLines = exports.splitLines = function (s) {
         return s.split(lineDelimiter);
     }, joinLines = exports.joinLines = function (array) {
         return array.join(lineDelimiter);
@@ -4957,26 +4862,26 @@ const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdent
         regex = regex != null ? regex : /^([ ]*)/;
         return (regex.exec(s) != null ? regex.exec(s)[1].length : void 0) != null ? regex.exec(s)[1].length : Number.MAX_VALUE;
     }, unindentString = exports.unindentString = function (s, sourceMapping) {
-        let lines = splitLines(s.trimRight());
-        let minIndent = unindentLines(lines);
+        var lines = splitLines(s.trimRight());
+        var minIndent = unindentLines(lines);
         if (sourceMapping != null) {
             sourceMapping.columnOffset = minIndent;
         }
         return joinLines(lines);
     }, getMinIndent = exports.getMinIndent = function (lines, regex) {
-        let minIndent = Number.MAX_VALUE;
-        for (let _i = 0; _i < lines.length; _i++) {
-            let line = lines[_i];
+        var minIndent = Number.MAX_VALUE;
+        for (var _i = 0; _i < lines.length; _i++) {
+            var line = lines[_i];
             if (typeof line === 'string' && !isEmpty(line)) {
                 minIndent = Math.min(minIndent, getIndent(line, regex));
             }
         }
         return minIndent;
     }, unindentLines = exports.unindentLines = function (lines) {
-        let minIndent = getMinIndent(lines);
-        for (let _i2 = 0; _i2 < lines.length; _i2++) {
-            let i = _i2;
-            let line = lines[_i2];
+        var minIndent = getMinIndent(lines);
+        for (var _i2 = 0; _i2 < lines.length; _i2++) {
+            var i = _i2;
+            var line = lines[_i2];
             if (typeof line === 'string') {
                 lines[i] = isEmpty(line) ? '' : line.substring(minIndent);
             }
@@ -4995,20 +4900,20 @@ const indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdent
   }
 }).call(this)
 void (function(){var _ion_compiler_index_ = function(module,exports,require){'use strict';
-const ion = require('../'), makePrettyError = function (e, source, id) {
+var ion = require('../'), makePrettyError = function (e, source, id) {
         if (typeof e.line === 'number' && typeof e.column === 'number' && e.line > 0 && e.column > 0) {
-            let line = source.split('\n')[e.line - 1];
-            let caret = '^';
-            for (let i = 1; i < e.column; i++) {
+            var line = source.split('\n')[e.line - 1];
+            var caret = '^';
+            for (var i = 1; i < e.column; i++) {
                 caret = ' ' + caret;
             }
-            let newMessage = '' + (id != null ? id : '(anonymous)') + ':' + e.line + ':' + e.column + ': ' + e.message + '\n' + line + '\n' + caret;
+            var newMessage = '' + (id != null ? id : '(anonymous)') + ':' + e.line + ':' + e.column + ': ' + e.message + '\n' + line + '\n' + caret;
             e.originalMessage = e.message;
             e.message = newMessage;
             e.stack = newMessage;
         }
     };
-const parse = exports.parse = function (content, options) {
+var parse = exports.parse = function (content, options) {
         if (options == null)
             options = {};
         options.generate = false;
@@ -5017,10 +4922,11 @@ const parse = exports.parse = function (content, options) {
         if (options == null)
             options = {};
         options.loc = options.loc != null ? options.loc : true;
-        const preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('escodegen');
-        let sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), preprocessed = result, sourceLocationsFixed = false;
+        options.target = options.target != null ? options.target : 'es5';
+        var preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('escodegen');
+        var sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), preprocessed = result, sourceLocationsFixed = false;
         try {
-            result = parser.parse(result, options != null ? options : {});
+            result = parser.parse(result, options);
             if (options.loc) {
                 result.loc.source = content;
             }
@@ -5053,8 +4959,8 @@ const parse = exports.parse = function (content, options) {
   }
 }).call(this)
 void (function(){var _ion_compiler_nodes_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const BlockStatement = exports.BlockStatement = {
+var ion = require('../');
+var BlockStatement = exports.BlockStatement = {
         isBlock: true,
         newScope: true
     }, Program = exports.Program = {
@@ -7396,7 +7302,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s0 = peg$currPos;
       s1 = peg$parsepath();
       if (s1 === peg$FAILED) {
-        s1 = peg$parseIdentifier();
+        s1 = peg$parseIdentifierName();
         if (s1 === peg$FAILED) {
           s1 = peg$parseStringOrNumberLiteral();
         }
@@ -18287,7 +18193,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     _ion_compiler_parser_.call(this);
   }
 }).call(this)
-void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isSuperExpression, javascriptExpressions, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, patchAssignmentExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
+void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, getReferenceIdentifiers, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isReferenceNode, isSuperExpression, javascriptExpressions, letAndConstToVar, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, patchAssignmentExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -19574,25 +19480,41 @@ removeLocationInfo = function(node) {
   });
 };
 
-getExternalIdentifiers = function(node, callback) {
+isReferenceNode = function(node, context) {
+  var parentNode;
+  if (node.type !== 'Identifier') {
+    return false;
+  }
+  parentNode = context.parentNode();
+  if (isFunctionNode(parentNode)) {
+    return false;
+  }
+  if ((parentNode != null ? parentNode.type : void 0) === 'VariableDeclarator') {
+    return false;
+  }
+  if ((parentNode != null ? parentNode.type : void 0) === 'MemberExpression' && !(parentNode != null ? parentNode.computed : void 0) && context.key() === 'property') {
+    return false;
+  }
+  if ((parentNode != null ? parentNode.type : void 0) === 'Property' && context.key() === 'key') {
+    return false;
+  }
+  return true;
+};
+
+getReferenceIdentifiers = function(node, callback) {
   traverse(node, function(node, context) {
-    var parentNode;
-    if (node.type === 'Identifier') {
-      parentNode = context.parentNode();
-      if (isFunctionNode(parentNode)) {
-        return;
-      }
-      if ((parentNode != null ? parentNode.type : void 0) === 'MemberExpression' && !(parentNode != null ? parentNode.computed : void 0) && context.key() === 'property') {
-        return;
-      }
-      if ((parentNode != null ? parentNode.type : void 0) === 'Property' && context.key() === 'key') {
-        return;
-      }
-      if (context.getVariableInfo(node.name) != null) {
-        return;
-      }
-      return callback(node);
+    if (isReferenceNode(node, context)) {
+      return callback(node, context);
     }
+  });
+};
+
+getExternalIdentifiers = function(node, callback) {
+  getReferenceIdentifiers(node, function(node, context) {
+    if (context.getVariableInfo(node.name) != null) {
+      return;
+    }
+    return callback(node, context);
   });
 };
 
@@ -19802,9 +19724,18 @@ functionDeclarations = function(node, context) {
   }
 };
 
+letAndConstToVar = function(node, context) {
+  if (node.type === 'VariableDeclaration' && node.kind !== 'var') {
+    return node.kind = 'var';
+  }
+};
+
 exports.postprocess = function(program, options) {
   var enter, exit, previousContext, steps, traversal, variable, _i, _len;
   steps = [[namedFunctionsAndNewArguments, superExpressions], [destructuringAssignments], [createTemplateFunctionClone], [javascriptExpressions, arrayComprehensionsToES5], [checkVariableDeclarations], [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]];
+  if ((options != null ? options.target : void 0) === 'es5') {
+    steps.push([letAndConstToVar]);
+  }
   previousContext = null;
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];
@@ -20454,7 +20385,236 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     _ion_compiler_traverseAst_.call(this);
   }
 }).call(this)
-void (function(){var _ion_es6_ = function(module,exports,require){if (!String.prototype.endsWith) {
+void (function(){var _ion_es6_index_ = function(module,exports,require){'use strict';
+require('./String');
+require('./Map');
+require('./Object.observe');
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/es6/index',_ion_es6_index_);
+    else
+      _ion_es6_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_es6_index_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_es6_Map_ = function(module,exports,require){'use strict';
+if (!(global.Map != null)) {
+    function MapShim(pairs) {
+        if (pairs != null) {
+            for (var _i = 0; _i < pairs.length; _i++) {
+                var _ref = pairs[_i];
+                var key = _ref[0];
+                var value = _ref[1];
+                this.set(key, value);
+            }
+        }
+        this.get = function (key) {
+        };
+        this.set = function (key, value) {
+        };
+        this.has = function (key) {
+        };
+        this.delete = function (key) {
+        };
+        this.clear = function () {
+        };
+    }
+    global.Map = MapShim;
+}
+var test = exports.test = function () {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>> MAP HERE: ' + global.Map);
+    };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/es6/Map',_ion_es6_Map_);
+    else
+      _ion_es6_Map_.call(this, module, exports, require);
+  }
+  else {
+    _ion_es6_Map_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_es6_Object_observe_ = function(module,exports,require){'use strict';
+var clone = function (object) {
+    var _ref3 = {};
+    {
+        for (var key in object) {
+            var value = object[key];
+            _ref3[key] = value;
+        }
+    }
+    return _ref3;
+};
+var createObjectObserveAndUnobserve = function () {
+    var map = new Map();
+    var array = [];
+    var observe = function (object, callback) {
+        if (object.nodeType === 1 || object === global.document) {
+            return;
+        }
+        var meta = map.get(object);
+        if (!(meta != null)) {
+            meta = {
+                object: object,
+                clone: clone(object),
+                callbacks: []
+            };
+            map.set(object, meta);
+            array.push(meta);
+        }
+        meta.callbacks.push(callback);
+    };
+    var unobserve = function (object, callback) {
+        if (object.nodeType === 1 || object === global.document) {
+            return;
+        }
+        var meta = map.get(object);
+        if (meta != null) {
+            var index = meta.callbacks.lastIndexOf(callback);
+            if (index >= 0) {
+                meta.callbacks.splice(index, 1);
+                if (meta.callbacks.length === 0) {
+                    map.delete(object);
+                    array.splice(array.lastIndexOf(meta), 1);
+                }
+            }
+        }
+    };
+    var getChanges = function (oldValue, newValue) {
+        var changes = null;
+        var change = function (type, name, oldValue) {
+            changes = changes != null ? changes : [];
+            changes.push({
+                type: type,
+                name: name,
+                oldValue: oldValue
+            });
+        };
+        for (var name in oldValue) {
+            if (oldValue.hasOwnProperty(name)) {
+                var oldPropertyValue = oldValue[name];
+                if (!newValue.hasOwnProperty(name)) {
+                    change('delete', name, oldPropertyValue);
+                } else {
+                    var newPropertyValue = newValue[name];
+                    if (newPropertyValue !== oldPropertyValue) {
+                        change('update', name, oldPropertyValue);
+                    }
+                }
+            }
+        }
+        for (var name in newValue) {
+            if (newValue.hasOwnProperty(name) && !oldValue.hasOwnProperty(name)) {
+                change('add', name);
+            }
+        }
+        return changes;
+    };
+    observe.checkForChanges = function () {
+        var maxCycles = 100;
+        for (var i = 0; i < maxCycles; i++) {
+            var totalChanges = 0;
+            var pendingChanges = [];
+            for (var _i = 0; _i < array.length; _i++) {
+                var meta = array[_i];
+                var changes = getChanges(meta.clone, meta.object);
+                if (changes != null) {
+                    totalChanges++;
+                    meta.clone = clone(meta.object);
+                    pendingChanges.push([
+                        changes,
+                        meta.callbacks.slice(0)
+                    ]);
+                }
+            }
+            if (totalChanges === 0) {
+                return;
+            }
+            for (var _i2 = 0; _i2 < pendingChanges.length; _i2++) {
+                var _ref4 = pendingChanges[_i2];
+                var changes = _ref4[0];
+                var callbacks = _ref4[1];
+                for (var _i3 = 0; _i3 < callbacks.length; _i3++) {
+                    var callback = callbacks[_i3];
+                    callback(changes);
+                }
+            }
+        }
+        throw new Error('Circular Object.observe dependency');
+    };
+    return [
+        observe,
+        unobserve,
+        array
+    ];
+};
+var test = exports.test = function () {
+        var _ref = createObjectObserveAndUnobserve();
+        var observe = _ref[0];
+        var unobserve = _ref[1];
+        var object = {
+                a: 1,
+                b: {
+                    c: 2,
+                    d: 3
+                }
+            };
+        var changes;
+        var handler = function (c) {
+            changes = c;
+        };
+        observe(object, handler);
+        object.a = 2;
+        delete object.b;
+        object.c = 5;
+        observe.checkForChanges();
+        if (!(JSON.stringify(changes) === JSON.stringify([
+                {
+                    'type': 'update',
+                    'name': 'a',
+                    'oldValue': 1
+                },
+                {
+                    'type': 'delete',
+                    'name': 'b',
+                    'oldValue': {
+                        'c': 2,
+                        'd': 3
+                    }
+                },
+                {
+                    'type': 'add',
+                    'name': 'c'
+                }
+            ])))
+            throw new Error('Assertion Failed: (JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1},{"type":"delete","name":"b","oldValue":{"c":2,"d":3}},{"type":"add","name":"c"}]))');
+        unobserve(object, handler);
+    };
+if (!(Object.observe != null) && global.Map != null) {
+    var _ref2 = createObjectObserveAndUnobserve();
+    var observe = _ref2[0];
+    var unobserve = _ref2[1];
+    var array = _ref2[2];
+    Object.observe = observe;
+    Object.unobserve = unobserve;
+    global.array = array;
+}
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/es6/Object.observe',_ion_es6_Object_observe_);
+    else
+      _ion_es6_Object_observe_.call(this, module, exports, require);
+  }
+  else {
+    _ion_es6_Object_observe_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_es6_String_ = function(module,exports,require){if (!String.prototype.endsWith) {
     Object.defineProperty(String.prototype, 'endsWith', {
         enumerable: false,
         configurable: false,
@@ -20488,19 +20648,18 @@ if (!String.prototype.contains ) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/es6',_ion_es6_);
+      require.register('ion/es6/String',_ion_es6_String_);
     else
-      _ion_es6_.call(this, module, exports, require);
+      _ion_es6_String_.call(this, module, exports, require);
   }
   else {
-    _ion_es6_.call(this);
+    _ion_es6_String_.call(this);
   }
 }).call(this)
 void (function(){var _ion_index_ = function(module,exports,require){'use strict';
-const ion = null;
+var ion = null;
 require('./es6');
-require('./Object.observe');
-const primitive = {
+var primitive = {
         string: true,
         number: true,
         boolean: true,
@@ -20526,8 +20685,8 @@ const primitive = {
     }, normalizeProperties = function (properties) {
         if (properties == null)
             properties = {};
-        for (let name in properties) {
-            let property = properties[name];
+        for (var name in properties) {
+            var property = properties[name];
             properties[name] = normalizeProperty(property);
         }
         return properties;
@@ -20566,17 +20725,17 @@ const primitive = {
             return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
         }
     ];
-const patch = exports.patch = require('./mergePatch'), create = exports.create = function (type, args) {
+var patch = exports.patch = require('./mergePatch'), create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
     }, template = exports.template = function (fn) {
         fn.template = true;
         return fn;
     }, createRuntime = exports.createRuntime = function (ast, args) {
-        const Context = require('./runtime/Context');
-        const context = new Context();
+        var Context = require('./runtime/Context');
+        var context = new Context();
         if (args != null) {
-            for (let name in args) {
-                let value = args[name];
+            for (var name in args) {
+                var value = args[name];
                 context.setVariable(name, value);
             }
         }
@@ -20587,17 +20746,17 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
         if (deep == null)
             deep = false;
         if (Array.isArray(object)) {
-            let _ref = [];
-            for (let _i = 0; _i < object.length; _i++) {
-                let item = object[_i];
+            var _ref = [];
+            for (var _i = 0; _i < object.length; _i++) {
+                var item = object[_i];
                 _ref.push(deep ? clone(item, deep) : item);
             }
             return _ref;
         } else if ((object != null ? object.constructor : void 0) === Object) {
-            let _ref2 = {};
+            var _ref2 = {};
             {
-                for (let key in object) {
-                    let value = object[key];
+                for (var key in object) {
+                    var value = object[key];
                     _ref2[key] = deep ? clone(value, deep) : value;
                 }
             }
@@ -20618,11 +20777,11 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
         }
         object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
     }, add = exports.add = function (container, item) {
-        let remove;
+        var remove;
         if (typeof item === 'function' && item.name.length > 0 && typeof container.addEventListener === 'function') {
-            let name = item.name;
+            var name = item.name;
             if ((Object.observe != null ? Object.observe.checkForChanges : void 0) != null) {
-                let originalItem = item;
+                var originalItem = item;
                 item = function () {
                     originalItem.apply(this, arguments);
                     Object.observe.checkForChanges();
@@ -20648,14 +20807,14 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
             }
             remove = function () {
                 if (container.lastIndexOf != null && container.removeAt != null) {
-                    let index = container.lastIndexOf(item);
+                    var index = container.lastIndexOf(item);
                     if (index >= 0) {
                         container.removeAt(index);
                     }
                 } else if (typeof container.remove === 'function') {
                     container.remove(item);
                 } else if (Array.isArray(container)) {
-                    let index = container.lastIndexOf(item);
+                    var index = container.lastIndexOf(item);
                     if (index >= 0) {
                         container.splice(index, 1);
                     }
@@ -20670,17 +20829,17 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
     }, defineProperties = exports.defineProperties = function (object, properties) {
         return Object.defineProperties(object, normalizeProperties(properties));
     }, defineClass = exports.defineClass = function (___definitions) {
-        let definitions = Array.prototype.slice.call(arguments, 0);
-        const classDefinition = definitions[0];
+        var definitions = Array.prototype.slice.call(arguments, 0);
+        var classDefinition = definitions[0];
         if (definitions[1] === void 0) {
             definitions[1] = require('./Object');
         }
         classDefinition.super = definitions[1];
-        const name = classDefinition.name != null ? classDefinition.name : classDefinition.id != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i) != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i)[1] : void 0 : void 0;
+        var name = classDefinition.name != null ? classDefinition.name : classDefinition.id != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i) != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i)[1] : void 0 : void 0;
         if (!(name != null)) {
             throw new Error('missing name property');
         }
-        let classFunction;
+        var classFunction;
         if (classDefinition.hasOwnProperty('constructor')) {
             classFunction = classDefinition.constructor;
         } else if (classDefinition.super != null) {
@@ -20688,10 +20847,10 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
         } else {
             classFunction = eval('(function ' + name + '() {})');
         }
-        for (let i = definitions.length - 1; i >= 0; i--) {
-            let definition = definitions[i];
-            for (let key in definition) {
-                let value = definition[key];
+        for (var i = definitions.length - 1; i >= 0; i--) {
+            var definition = definitions[i];
+            for (var key in definition) {
+                var value = definition[key];
                 if (key !== 'test' || i === 0) {
                     if ((value != null ? value.constructor : void 0) === Object || (Object.getOwnPropertyDescriptor(classFunction, key) != null ? Object.getOwnPropertyDescriptor(classFunction, key).writable : void 0) !== false) {
                         classFunction[key] = patch(classFunction[key], value);
@@ -20717,8 +20876,8 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
             deleteUndefined = true;
         if (object != null) {
             if (arguments.length === 2 && property != null) {
-                for (let k in property) {
-                    let v = property[k];
+                for (var k in property) {
+                    var v = property[k];
                     set(object, k, v);
                 }
                 return;
@@ -20749,8 +20908,8 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
             return instance === type;
         }
     }, makeReactive = exports.makeReactive = function (object, activate) {
-        let observeCount = 0;
-        let deactivate = null;
+        var observeCount = 0;
+        var deactivate = null;
         return Object.defineProperties(object, {
             onObserved: {
                 value: function () {
@@ -20771,7 +20930,7 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
         });
     }, test = exports.test = {
         defineClass: function () {
-            const Foo = defineClass({
+            var Foo = defineClass({
                     id: 'Foo',
                     constructor: function (number) {
                         this.number = number;
@@ -20787,8 +20946,8 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
         },
         defineProperties: {
             'should allow primitive values': function () {
-                const object = {};
-                const result = defineProperties(object, {
+                var object = {};
+                var result = defineProperties(object, {
                         f: function () {
                             return 'function';
                         },
@@ -20826,10 +20985,10 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
   }
 }).call(this)
 void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
-const ion = require('./'), isObject = function (a) {
+var ion = require('./'), isObject = function (a) {
         return a != null && typeof a === 'object';
     }, deleteValue = null, applyPatch = function (target, values, options) {
-        let deleteNull = (options != null ? options.deleteNull : void 0) != null ? options.deleteNull : true;
+        var deleteNull = (options != null ? options.deleteNull : void 0) != null ? options.deleteNull : true;
         if ((values != null ? values.constructor : void 0) !== Object) {
             return values;
         }
@@ -20840,8 +20999,8 @@ const ion = require('./'), isObject = function (a) {
                 target = {};
             }
         }
-        for (let key in values) {
-            let value = values[key];
+        for (var key in values) {
+            var value = values[key];
             if (deleteNull && value === deleteValue) {
                 delete target[key];
             } else {
@@ -20857,16 +21016,16 @@ const ion = require('./'), isObject = function (a) {
         if (!isObject(object)) {
             throw new Error('Cannot watch: #{object}');
         }
-        let subWatchers = {};
-        let pendingPatch = null;
-        let processPatch = function (patchValues) {
-            for (let name in patchValues) {
+        var subWatchers = {};
+        var pendingPatch = null;
+        var processPatch = function (patchValues) {
+            for (var name in patchValues) {
                 subWatchers[name] != null ? subWatchers[name]() : void 0;
-                let value = object[name];
+                var value = object[name];
                 if (isObject(value)) {
                     (function (name) {
-                        let subHandler = function (patch) {
-                            let basePatch = {};
+                        var subHandler = function (patch) {
+                            var basePatch = {};
                             basePatch[name] = patch;
                             queuePatch(basePatch);
                         };
@@ -20875,8 +21034,8 @@ const ion = require('./'), isObject = function (a) {
                 }
             }
         };
-        let pendingTimeout = null;
-        let queuePatch = function (patch) {
+        var pendingTimeout = null;
+        var queuePatch = function (patch) {
             if (!callInitial) {
                 handler(patch);
             } else {
@@ -20889,11 +21048,11 @@ const ion = require('./'), isObject = function (a) {
                 }, 0);
             }
         };
-        let watcher = function (changes) {
+        var watcher = function (changes) {
             try {
-                let patch = {};
-                for (let _i = 0; _i < changes.length; _i++) {
-                    let change = changes[_i];
+                var patch = {};
+                for (var _i = 0; _i < changes.length; _i++) {
+                    var change = changes[_i];
                     patch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
                 }
                 queuePatch(patch);
@@ -20905,8 +21064,8 @@ const ion = require('./'), isObject = function (a) {
         ion.observe(object, watcher);
         return function () {
             ion.unobserve(object, watcher);
-            for (let key in subWatchers) {
-                let value = subWatchers[key];
+            for (var key in subWatchers) {
+                var value = subWatchers[key];
                 value();
             }
         };
@@ -20917,17 +21076,17 @@ const ion = require('./'), isObject = function (a) {
         if (!(oldValue != null && newValue != null && typeof newValue === 'object' && typeof oldValue === 'object')) {
             return newValue != null ? newValue : null;
         }
-        let patch = void 0;
-        for (let name in oldValue) {
+        var patch = void 0;
+        for (var name in oldValue) {
             if (oldValue.hasOwnProperty(name)) {
-                let propertyDiff = diff(oldValue[name], newValue[name]);
+                var propertyDiff = diff(oldValue[name], newValue[name]);
                 if (propertyDiff !== void 0) {
                     patch = patch != null ? patch : {};
                     patch[name] = propertyDiff;
                 }
             }
         }
-        for (let name in newValue) {
+        for (var name in newValue) {
             if (newValue.hasOwnProperty(name) && !oldValue.hasOwnProperty(name)) {
                 patch = patch != null ? patch : {};
                 patch[name] = newValue[name];
@@ -20941,7 +21100,7 @@ const ion = require('./'), isObject = function (a) {
         if (!(oldValue != null && newValue != null && typeof newValue === 'object' && typeof oldValue === 'object')) {
             return true;
         }
-        for (let name in newValue) {
+        for (var name in newValue) {
             if (newValue[name] === null && !oldValue.hasOwnProperty(name)) {
                 continue;
             }
@@ -20951,14 +21110,14 @@ const ion = require('./'), isObject = function (a) {
         }
         return false;
     };
-let _ref = applyPatch;
+var _ref = applyPatch;
 {
     _ref.combine = combine;
     _ref.watch = watch;
     _ref.diff = diff;
     _ref.isChange = isChange;
     _ref.test = function () {
-        const equal = function (a, b) {
+        var equal = function (a, b) {
             return !isChange(a, b) && !isChange(b, a);
         };
         return {
@@ -20985,7 +21144,7 @@ let _ref = applyPatch;
                         c: 3
                     }, { c: void 0 })))
                     throw new Error('Assertion Failed: (equal({a:1,b:2}, applyPatch({a:1,b:2,c:3}, {c:undefined})))');
-                let double = function (x) {
+                var double = function (x) {
                     return x * 2;
                 };
                 if (!equal({ a: double }, applyPatch({}, { a: double })))
@@ -21065,7 +21224,7 @@ let _ref = applyPatch;
                 if (!(Object.observe != null)) {
                     return done(null, 'Object.observe missing.');
                 }
-                let source = {
+                var source = {
                         name: 'Kris',
                         age: 41,
                         children: {
@@ -21079,8 +21238,8 @@ let _ref = applyPatch;
                             Third: {}
                         }
                     };
-                let target = ion.clone(source, true);
-                let unwatch = watch(source, function (patch) {
+                var target = ion.clone(source, true);
+                var unwatch = watch(source, function (patch) {
                         target = applyPatch(target, patch);
                         if (equal(source, target)) {
                             done();
@@ -21117,13 +21276,13 @@ module.exports = exports = _ref;
   }
 }).call(this)
 void (function(){var _ion_Object_ = function(module,exports,require){'use strict';
-const ion = require('./');
-const Object = ion.defineClass({
+var ion = require('./');
+var Object = ion.defineClass({
         name: 'Object',
         constructor: function Object(properties) {
             if (properties != null) {
-                for (let key in properties) {
-                    let value = properties[key];
+                for (var key in properties) {
+                    var value = properties[key];
                     this[key] = value;
                 }
             }
@@ -21134,14 +21293,14 @@ const Object = ion.defineClass({
         typeKey: '$',
         properties: {
             toJSON: function () {
-                const properties = {};
+                var properties = {};
                 if (this.constructor.id != null) {
                     properties[this.constructor.typeKey] = this.constructor.id;
                 }
                 {
-                    let _ref = this;
-                    for (let key in _ref) {
-                        let value = _ref[key];
+                    var _ref = this;
+                    for (var key in _ref) {
+                        var value = _ref[key];
                         if (this.hasOwnProperty(key)) {
                             properties[key] = value;
                         }
@@ -21163,185 +21322,9 @@ module.exports = exports = Object;
     _ion_Object_.call(this);
   }
 }).call(this)
-void (function(){var _ion_Object_observe_ = function(module,exports,require){'use strict';
-const clone = function (object) {
-    let _ref3 = {};
-    {
-        for (let key in object) {
-            let value = object[key];
-            _ref3[key] = value;
-        }
-    }
-    return _ref3;
-};
-const createObjectObserveAndUnobserve = function () {
-    let map = new Map();
-    let array = [];
-    let observe = function (object, callback) {
-        if (object.nodeType === 1 || object === global.document) {
-            return;
-        }
-        let meta = map.get(object);
-        if (!(meta != null)) {
-            meta = {
-                object: object,
-                clone: clone(object),
-                callbacks: []
-            };
-            map.set(object, meta);
-            array.push(meta);
-        }
-        meta.callbacks.push(callback);
-    };
-    let unobserve = function (object, callback) {
-        if (object.nodeType === 1 || object === global.document) {
-            return;
-        }
-        let meta = map.get(object);
-        if (meta != null) {
-            let index = meta.callbacks.lastIndexOf(callback);
-            if (index >= 0) {
-                meta.callbacks.splice(index, 1);
-                if (meta.callbacks.length === 0) {
-                    map.delete(object);
-                    array.splice(array.lastIndexOf(meta), 1);
-                }
-            }
-        }
-    };
-    let getChanges = function (oldValue, newValue) {
-        let changes = null;
-        let change = function (type, name, oldValue) {
-            changes = changes != null ? changes : [];
-            changes.push({
-                type: type,
-                name: name,
-                oldValue: oldValue
-            });
-        };
-        for (let name in oldValue) {
-            if (oldValue.hasOwnProperty(name)) {
-                let oldPropertyValue = oldValue[name];
-                if (!newValue.hasOwnProperty(name)) {
-                    change('delete', name, oldPropertyValue);
-                } else {
-                    let newPropertyValue = newValue[name];
-                    if (newPropertyValue !== oldPropertyValue) {
-                        change('update', name, oldPropertyValue);
-                    }
-                }
-            }
-        }
-        for (let name in newValue) {
-            if (newValue.hasOwnProperty(name) && !oldValue.hasOwnProperty(name)) {
-                change('add', name);
-            }
-        }
-        return changes;
-    };
-    observe.checkForChanges = function () {
-        let maxCycles = 100;
-        for (let i = 0; i < maxCycles; i++) {
-            let totalChanges = 0;
-            let pendingChanges = [];
-            for (let _i = 0; _i < array.length; _i++) {
-                let meta = array[_i];
-                let changes = getChanges(meta.clone, meta.object);
-                if (changes != null) {
-                    totalChanges++;
-                    meta.clone = clone(meta.object);
-                    pendingChanges.push([
-                        changes,
-                        meta.callbacks.slice(0)
-                    ]);
-                }
-            }
-            if (totalChanges === 0) {
-                return;
-            }
-            for (let _i2 = 0; _i2 < pendingChanges.length; _i2++) {
-                let _ref4 = pendingChanges[_i2];
-                let changes = _ref4[0];
-                let callbacks = _ref4[1];
-                for (let _i3 = 0; _i3 < callbacks.length; _i3++) {
-                    let callback = callbacks[_i3];
-                    callback(changes);
-                }
-            }
-        }
-        throw new Error('Circular Object.observe dependency');
-    };
-    return [
-        observe,
-        unobserve,
-        array
-    ];
-};
-const test = exports.test = function () {
-        let _ref = createObjectObserveAndUnobserve();
-        let observe = _ref[0];
-        let unobserve = _ref[1];
-        let object = {
-                a: 1,
-                b: {
-                    c: 2,
-                    d: 3
-                }
-            };
-        let changes;
-        let handler = function (c) {
-            changes = c;
-        };
-        observe(object, handler);
-        object.a = 2;
-        delete object.b;
-        object.c = 5;
-        observe.checkForChanges();
-        if (!(JSON.stringify(changes) === JSON.stringify([
-                {
-                    'type': 'update',
-                    'name': 'a',
-                    'oldValue': 1
-                },
-                {
-                    'type': 'delete',
-                    'name': 'b',
-                    'oldValue': {
-                        'c': 2,
-                        'd': 3
-                    }
-                },
-                {
-                    'type': 'add',
-                    'name': 'c'
-                }
-            ])))
-            throw new Error('Assertion Failed: (JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1},{"type":"delete","name":"b","oldValue":{"c":2,"d":3}},{"type":"add","name":"c"}]))');
-        unobserve(object, handler);
-    };
-if (!(Object.observe != null) && global.Map != null) {
-    let _ref2 = createObjectObserveAndUnobserve();
-    let observe = _ref2[0];
-    let unobserve = _ref2[1];
-    let array = _ref2[2];
-    Object.observe = observe;
-    Object.unobserve = unobserve;
-    global.array = array;
-}
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('ion/Object.observe',_ion_Object_observe_);
-    else
-      _ion_Object_observe_.call(this, module, exports, require);
-  }
-  else {
-    _ion_Object_observe_.call(this);
-  }
-}).call(this)
 void (function(){var _ion_runtime_ArrayExpression_ = function(module,exports,require){'use strict';
-const ion = require('../'), DynamicExpression = require('./DynamicExpression');
-const ArrayExpression = ion.defineClass({
+var ion = require('../'), DynamicExpression = require('./DynamicExpression');
+var ArrayExpression = ion.defineClass({
         name: 'ArrayExpression',
         constructor: function ArrayExpression() {
             ArrayExpression.super.apply(this, arguments);
@@ -21375,26 +21358,26 @@ const ArrayExpression = ion.defineClass({
             },
             activate: function () {
                 if (!(this.argumentValues != null)) {
-                    let _ref = [];
+                    var _ref = [];
                     {
-                        let _ref2 = this.elements;
-                        for (let _i = 0; _i < _ref2.length; _i++) {
-                            let item = _ref2[_i];
+                        var _ref2 = this.elements;
+                        for (var _i = 0; _i < _ref2.length; _i++) {
+                            var item = _ref2[_i];
                             _ref.push(this.context.createRuntime(item));
                         }
                     }
                     this.expressions = _ref;
                     this.argumentValues = [];
                     this.expressionWatchers = [];
-                    for (let key = 0; key < this.expressions.length; key++) {
+                    for (var key = 0; key < this.expressions.length; key++) {
                         this.expressionWatchers[key] = this.setArgumentValue.bind(this, key);
                     }
                 }
                 {
-                    let _ref3 = this.expressions;
-                    for (let _i2 = 0; _i2 < _ref3.length; _i2++) {
-                        let key = _i2;
-                        let expression = _ref3[_i2];
+                    var _ref3 = this.expressions;
+                    for (var _i2 = 0; _i2 < _ref3.length; _i2++) {
+                        var key = _i2;
+                        var expression = _ref3[_i2];
                         expression.watch(this.expressionWatchers[key]);
                     }
                 }
@@ -21403,10 +21386,10 @@ const ArrayExpression = ion.defineClass({
             },
             deactivate: function () {
                 {
-                    let _ref4 = this.expressions;
-                    for (let _i3 = 0; _i3 < _ref4.length; _i3++) {
-                        let key = _i3;
-                        let expression = _ref4[_i3];
+                    var _ref4 = this.expressions;
+                    for (var _i3 = 0; _i3 < _ref4.length; _i3++) {
+                        var key = _i3;
+                        var expression = _ref4[_i3];
                         expression.unwatch(this.expressionWatchers[key]);
                     }
                 }
@@ -21414,8 +21397,8 @@ const ArrayExpression = ion.defineClass({
             }
         },
         test: function () {
-            const Context = require('./Context');
-            let e = new ArrayExpression({
+            var Context = require('./Context');
+            var e = new ArrayExpression({
                     context: new Context(),
                     elements: [
                         {
@@ -21428,7 +21411,7 @@ const ArrayExpression = ion.defineClass({
                         }
                     ]
                 });
-            let result = void 0;
+            var result = void 0;
             function watcher(value) {
                 result = value;
             }
@@ -21450,35 +21433,35 @@ module.exports = exports = ArrayExpression;
   }
 }).call(this)
 void (function(){var _ion_runtime_BlockStatement_ = function(module,exports,require){'use strict';
-const ion = require('../'), Statement = require('./Statement');
-const BlockStatement = ion.defineClass({
+var ion = require('../'), Statement = require('./Statement');
+var BlockStatement = ion.defineClass({
         name: 'BlockStatement',
         properties: {
             activate: function () {
                 BlockStatement.super.prototype.activate.apply(this, arguments);
                 if (!(this.statements != null)) {
-                    let _ref = [];
+                    var _ref = [];
                     {
-                        let _ref2 = this.body;
-                        for (let _i = 0; _i < _ref2.length; _i++) {
-                            let s = _ref2[_i];
+                        var _ref2 = this.body;
+                        for (var _i = 0; _i < _ref2.length; _i++) {
+                            var s = _ref2[_i];
                             _ref.push(this.context.createRuntime(s));
                         }
                     }
                     this.statements = _ref;
                 }
                 {
-                    let _ref3 = this.statements;
-                    for (let _i2 = 0; _i2 < _ref3.length; _i2++) {
-                        let statement = _ref3[_i2];
+                    var _ref3 = this.statements;
+                    for (var _i2 = 0; _i2 < _ref3.length; _i2++) {
+                        var statement = _ref3[_i2];
                         statement.activate();
                     }
                 }
             },
             deactivate: function () {
                 BlockStatement.super.prototype.deactivate.apply(this, arguments);
-                for (let i = this.statements.length - 1; i >= 0; i--) {
-                    let statement = this.statements[i];
+                for (var i = this.statements.length - 1; i >= 0; i--) {
+                    var statement = this.statements[i];
                     statement.deactivate();
                 }
             }
@@ -21497,8 +21480,8 @@ module.exports = exports = BlockStatement;
   }
 }).call(this)
 void (function(){var _ion_runtime_CallExpression_ = function(module,exports,require){'use strict';
-const ion = require('../'), DynamicExpression = require('./DynamicExpression'), ArrayExpression = require('./ArrayExpression');
-const CallExpression = ion.defineClass({
+var ion = require('../'), DynamicExpression = require('./DynamicExpression'), ArrayExpression = require('./ArrayExpression');
+var CallExpression = ion.defineClass({
         name: 'CallExpression',
         properties: {
             args: null,
@@ -21507,7 +21490,7 @@ const CallExpression = ion.defineClass({
                 this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
                 this.calleeExpression.watch(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : function (value) {
                     this.calleeValue = value;
-                    let thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
+                    var thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
                     if (thisArg !== this.thisArg) {
                         ion.unobserve(this.thisarg, this.thisObserver);
                         this.thisArg = thisArg;
@@ -21538,7 +21521,7 @@ const CallExpression = ion.defineClass({
                 }
             },
             evaluate: function () {
-                let value = void 0;
+                var value = void 0;
                 if (this.calleeValue != null && this.argumentsValue != null) {
                     try {
                         if (this.calleeValue.template) {
@@ -21576,8 +21559,8 @@ module.exports = CallExpression;
   }
 }).call(this)
 void (function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
-const ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal');
-const Context = ion.defineClass({
+var ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal');
+var Context = ion.defineClass({
         name: 'Context',
         constructor: function Context(parent, output) {
             this.output = output;
@@ -21595,13 +21578,13 @@ const Context = ion.defineClass({
                 return Factory.createRuntime(this, node);
             },
             get: function (name) {
-                let variable = this.getVariable(name);
+                var variable = this.getVariable(name);
                 if (!(variable != null)) {
                     throw new Error('Variable not found: \'' + name + '\'');
                 }
-                let value = variable.value;
+                var value = variable.value;
                 if (value === void 0) {
-                    let watcher = function (a) {
+                    var watcher = function (a) {
                         if (a !== void 0) {
                             value = a;
                         }
@@ -21616,14 +21599,14 @@ const Context = ion.defineClass({
             },
             setVariable: function (name, node) {
                 if (name != null) {
-                    let variable = this.variables[name] = this.createRuntime(node);
+                    var variable = this.variables[name] = this.createRuntime(node);
                     return variable;
                 }
             },
             getVariableExpression: function (name) {
-                let context = this, value;
+                var context = this, value;
                 while (context != null) {
-                    let variable = context.variables[name];
+                    var variable = context.variables[name];
                     if (variable != null) {
                         return variable;
                     }
@@ -21633,7 +21616,7 @@ const Context = ion.defineClass({
                 if (value === void 0) {
                     throw new Error('Variable not found: \'' + name + '\'');
                 }
-                let cachedGlobals = this.root.globals = this.root.globals != null ? this.root.globals : {};
+                var cachedGlobals = this.root.globals = this.root.globals != null ? this.root.globals : {};
                 return cachedGlobals[name] = cachedGlobals[name] != null ? cachedGlobals[name] : new Literal({ value: value });
             }
         }
@@ -21651,8 +21634,8 @@ module.exports = exports = Context;
   }
 }).call(this)
 void (function(){var _ion_runtime_DynamicExpression_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const DynamicExpression = ion.defineClass({
+var ion = require('../');
+var DynamicExpression = ion.defineClass({
         name: 'DynamicExpression',
         properties: {
             isActive: false,
@@ -21663,19 +21646,19 @@ const DynamicExpression = ion.defineClass({
                 this.isActive = false;
             },
             watch: function (watcher) {
-                let watchers = this._watchers = this._watchers != null ? this._watchers : [];
+                var watchers = this._watchers = this._watchers != null ? this._watchers : [];
                 if (watchers.length === 0) {
                     this.activate();
                 }
                 watchers.push(watcher);
-                let value = this.getValue();
+                var value = this.getValue();
                 if (value !== void 0) {
                     this._notifyWatcher(watcher, value);
                 }
             },
             unwatch: function (watcher) {
                 this._watchers.splice(this._watchers.lastIndexOf(watcher), 1);
-                let value = this.getValue();
+                var value = this.getValue();
                 if (value !== void 0) {
                     this._notifyWatcher(watcher, void 0);
                 }
@@ -21688,11 +21671,11 @@ const DynamicExpression = ion.defineClass({
             },
             notify: function () {
                 if (this._watchers != null) {
-                    let value = this.getValue();
+                    var value = this.getValue();
                     {
-                        let _ref = this._watchers;
-                        for (let _i = 0; _i < _ref.length; _i++) {
-                            let watcher = _ref[_i];
+                        var _ref = this._watchers;
+                        for (var _i = 0; _i < _ref.length; _i++) {
+                            var watcher = _ref[_i];
                             this._notifyWatcher(watcher, value);
                         }
                     }
@@ -21711,12 +21694,12 @@ const DynamicExpression = ion.defineClass({
             }
         },
         test: function () {
-            const d = new DynamicExpression();
+            var d = new DynamicExpression();
             if (d.getValue() !== void 0) {
                 throw 'd.getValue() != undefined';
             }
-            let total = 10;
-            const watcher = function (value) {
+            var total = 10;
+            var watcher = function (value) {
                 if (value !== void 0) {
                     total += value;
                 }
@@ -21753,8 +21736,8 @@ module.exports = exports = DynamicExpression;
   }
 }).call(this)
 void (function(){var _ion_runtime_Expression_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const Expression = ion.defineClass({
+var ion = require('../');
+var Expression = ion.defineClass({
         name: 'Expression',
         properties: {
             watch: function (watcher) {
@@ -21778,8 +21761,8 @@ module.exports = exports = Expression;
   }
 }).call(this)
 void (function(){var _ion_runtime_ExpressionStatement_ = function(module,exports,require){'use strict';
-const ion = require('../'), Statement = require('./Statement');
-const ExpressionStatement = ion.defineClass({
+var ion = require('../'), Statement = require('./Statement');
+var ExpressionStatement = ion.defineClass({
         name: 'ExpressionStatement',
         properties: {
             activate: function () {
@@ -21815,252 +21798,252 @@ module.exports = exports = ExpressionStatement;
   }
 }).call(this)
 void (function(){var _ion_runtime_Factory_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const Literal = require('./Literal');
-const Factory = ion.defineClass({
+var ion = require('../');
+var Literal = require('./Literal');
+var Factory = ion.defineClass({
         name: 'Factory',
         properties: {
             runtime: './OperationExpression',
             createRuntime: {
                 writable: true,
                 value: function (context, ast) {
-                    let properties = ion.clone(ast);
+                    var properties = ion.clone(ast);
                     properties.context = context;
                     properties.factory = this;
-                    let type = require(this.runtime);
+                    var type = require(this.runtime);
                     return new type(properties);
                 }
             }
         }
     });
 Factory;
-let _ref = new Factory();
+var _ref = new Factory();
 {
     _ref.runtime = './VariableDeclaration';
 }
-let _ref2 = new Factory();
+var _ref2 = new Factory();
 {
     _ref2.createRuntime = function (context, ast) {
         return context.getVariableExpression(ast.name);
     };
 }
-let _ref3 = new Factory();
+var _ref3 = new Factory();
 {
     _ref3.createRuntime = function (context, ast) {
-        let value = ast.value;
+        var value = ast.value;
         if (ast.context) {
             value = value(context);
         }
         return new Literal({ value: value });
     };
 }
-let _ref4 = new Factory();
+var _ref4 = new Factory();
 {
     _ref4.runtime = './Template';
 }
-let _ref5 = new Factory();
+var _ref5 = new Factory();
 {
     _ref5.runtime = './Literal';
 }
-let _ref6 = new Factory();
+var _ref6 = new Factory();
 {
     _ref6.runtime = './Property';
 }
-let _ref7 = new Factory();
+var _ref7 = new Factory();
 {
     _ref7.runtime = './IfStatement';
 }
-let _ref8 = new Factory();
+var _ref8 = new Factory();
 {
     _ref8.runtime = './BlockStatement';
 }
-let _ref9 = new Factory();
+var _ref9 = new Factory();
 {
     _ref9.runtime = './ReturnStatement';
 }
-let _ref10 = new Factory();
+var _ref10 = new Factory();
 {
     _ref10.runtime = './ObjectExpression';
 }
-let _ref11 = new Factory();
+var _ref11 = new Factory();
 {
     _ref11.runtime = './ArrayExpression';
 }
-let _ref12 = new Factory();
+var _ref12 = new Factory();
 {
     _ref12.runtime = './ExpressionStatement';
 }
-let _ref13 = new Factory();
+var _ref13 = new Factory();
 {
     _ref13.runtime = './ForInOfStatement';
 }
-let _ref14 = new Factory();
+var _ref14 = new Factory();
 {
     _ref14.runtime = './ForInOfStatement';
 }
-let _ref15 = new Factory();
+var _ref15 = new Factory();
 {
     _ref15.runtime = './MemberExpression';
 }
-let _ref16 = new Factory();
+var _ref16 = new Factory();
 {
     _ref16.runtime = './CallExpression';
 }
-let _ref17 = new Factory();
+var _ref17 = new Factory();
 {
     _ref17.runtime = './CallExpression';
 }
-let _ref18 = new Factory();
+var _ref18 = new Factory();
 {
     _ref18.evaluate = function (a) {
         return !a;
     };
 }
-let _ref19 = new Factory();
+var _ref19 = new Factory();
 {
     _ref19.evaluate = function (a) {
         return typeof a;
     };
 }
-let _ref20 = new Factory();
+var _ref20 = new Factory();
 {
     _ref20.evaluate = function (a) {
         return void a;
     };
 }
-let _ref21 = new Factory();
+var _ref21 = new Factory();
 {
     _ref21.evaluate = function (a) {
         return -a;
     };
 }
-let _ref22 = new Factory();
+var _ref22 = new Factory();
 {
     _ref22.evaluate = function (a) {
         return +a;
     };
 }
-let _ref23 = new Factory();
+var _ref23 = new Factory();
 {
     _ref23.evaluate = function (a) {
         return ~a;
     };
 }
-let _ref24 = new Factory();
+var _ref24 = new Factory();
 {
     _ref24.evaluate = function (a) {
         return a != null;
     };
 }
-let _ref25 = new Factory();
+var _ref25 = new Factory();
 {
     _ref25.evaluate = function (test, consequent, alternate) {
         return test ? consequent : alternate;
     };
 }
-let _ref26 = new Factory();
+var _ref26 = new Factory();
 {
     _ref26.evaluate = function (left, right) {
         return left * right;
     };
 }
-let _ref27 = new Factory();
+var _ref27 = new Factory();
 {
     _ref27.evaluate = function (left, right) {
         return left / right;
     };
 }
-let _ref28 = new Factory();
+var _ref28 = new Factory();
 {
     _ref28.evaluate = function (left, right) {
         return left % right;
     };
 }
-let _ref29 = new Factory();
+var _ref29 = new Factory();
 {
     _ref29.evaluate = function (left, right) {
         return left + right;
     };
 }
-let _ref30 = new Factory();
+var _ref30 = new Factory();
 {
     _ref30.evaluate = function (left, right) {
         return left - right;
     };
 }
-let _ref31 = new Factory();
+var _ref31 = new Factory();
 {
     _ref31.evaluate = function (left, right) {
         return left && right;
     };
 }
-let _ref32 = new Factory();
+var _ref32 = new Factory();
 {
     _ref32.evaluate = function (left, right) {
         return left || right;
     };
 }
-let _ref33 = new Factory();
+var _ref33 = new Factory();
 {
     _ref33.evaluate = function (left, right) {
         return left & right;
     };
 }
-let _ref34 = new Factory();
+var _ref34 = new Factory();
 {
     _ref34.evaluate = function (left, right) {
         return left | right;
     };
 }
-let _ref35 = new Factory();
+var _ref35 = new Factory();
 {
     _ref35.evaluate = function (left, right) {
         return left == right;
     };
 }
-let _ref36 = new Factory();
+var _ref36 = new Factory();
 {
     _ref36.evaluate = function (left, right) {
         return left != right;
     };
 }
-let _ref37 = new Factory();
+var _ref37 = new Factory();
 {
     _ref37.evaluate = function (left, right) {
         return left === right;
     };
 }
-let _ref38 = new Factory();
+var _ref38 = new Factory();
 {
     _ref38.evaluate = function (left, right) {
         return left !== right;
     };
 }
-let _ref39 = new Factory();
+var _ref39 = new Factory();
 {
     _ref39.evaluate = function (left, right) {
         return left < right;
     };
 }
-let _ref40 = new Factory();
+var _ref40 = new Factory();
 {
     _ref40.evaluate = function (left, right) {
         return left > right;
     };
 }
-let _ref41 = new Factory();
+var _ref41 = new Factory();
 {
     _ref41.evaluate = function (left, right) {
         return left <= right;
     };
 }
-let _ref42 = new Factory();
+var _ref42 = new Factory();
 {
     _ref42.evaluate = function (left, right) {
         return left >= right;
     };
 }
-const lookup = {
+var lookup = {
         type: {
             VariableDeclaration: _ref,
             Identifier: _ref2,
@@ -22117,10 +22100,10 @@ const lookup = {
 function getFactory(ast, step) {
     if (step == null)
         step = lookup;
-    for (let key in step) {
-        let values = step[key];
-        let nodeValue = ast[key];
-        let next = values[nodeValue];
+    for (var key in step) {
+        var values = step[key];
+        var nodeValue = ast[key];
+        var next = values[nodeValue];
         if (next != null) {
             if (next.constructor === Factory) {
                 return next;
@@ -22130,20 +22113,20 @@ function getFactory(ast, step) {
     }
     return null;
 }
-const createRuntime = exports.createRuntime = function (context, ast) {
+var createRuntime = exports.createRuntime = function (context, ast) {
         if (typeof (ast != null ? ast.type : void 0) !== 'string') {
             ast = {
                 type: 'Literal',
                 value: ast
             };
         }
-        let factory = getFactory(ast);
+        var factory = getFactory(ast);
         if (!(factory != null)) {
             throw new Error('Factory not found for ast:\n' + JSON.stringify(ast, null, '  '));
         }
         return factory.createRuntime(context, ast);
     }, test = exports.test = function () {
-        let factory = getFactory({
+        var factory = getFactory({
                 type: 'BinaryExpression',
                 operator: '>',
                 left: {
@@ -22172,8 +22155,8 @@ const createRuntime = exports.createRuntime = function (context, ast) {
   }
 }).call(this)
 void (function(){var _ion_runtime_ForInOfStatement_ = function(module,exports,require){'use strict';
-const ion = require('../'), Statement = require('./Statement');
-const ForInOfStatement = ion.defineClass({
+var ion = require('../'), Statement = require('./Statement');
+var ForInOfStatement = ion.defineClass({
         name: 'ForInOfStatement',
         properties: {
             toKey: function (name) {
@@ -22185,13 +22168,13 @@ const ForInOfStatement = ion.defineClass({
             },
             forEach: function (collection, callback) {
                 if (this.type === 'ForOfStatement') {
-                    for (let key = 0; key < collection.length; key++) {
-                        let value = collection[key];
+                    for (var key = 0; key < collection.length; key++) {
+                        var value = collection[key];
                         callback(key, value);
                     }
                 } else {
-                    for (let key in collection) {
-                        let value = collection[key];
+                    for (var key in collection) {
+                        var value = collection[key];
                         callback(key, value);
                     }
                 }
@@ -22220,15 +22203,15 @@ const ForInOfStatement = ion.defineClass({
             },
             addItem: function (key, value) {
                 if (value !== void 0) {
-                    let newContext = this.context.newContext();
+                    var newContext = this.context.newContext();
                     newContext.setVariable(this.left.declarations[this.type === 'ForOfStatement' ? 0 : 1] != null ? this.left.declarations[this.type === 'ForOfStatement' ? 0 : 1].id.name : void 0, value);
                     newContext.setVariable(this.left.declarations[this.type === 'ForOfStatement' ? 1 : 0] != null ? this.left.declarations[this.type === 'ForOfStatement' ? 1 : 0].id.name : void 0, key);
-                    let statement = this.statements[key] = newContext.createRuntime(this.body);
+                    var statement = this.statements[key] = newContext.createRuntime(this.body);
                     statement.activate();
                 }
             },
             removeItem: function (key, value) {
-                let statement = this.statements[key];
+                var statement = this.statements[key];
                 statement != null ? statement.deactivate() : void 0;
                 delete this.statements[key];
             },
@@ -22245,14 +22228,14 @@ const ForInOfStatement = ion.defineClass({
                     }
                     return false;
                 }
-                for (let _i = 0; _i < changes.length; _i++) {
-                    let _ref = changes[_i];
-                    let name = _ref.name;
-                    let oldValue = _ref.oldValue;
-                    let ignore = ignoreProperty(name);
+                for (var _i = 0; _i < changes.length; _i++) {
+                    var _ref = changes[_i];
+                    var name = _ref.name;
+                    var oldValue = _ref.oldValue;
+                    var ignore = ignoreProperty(name);
                     if (!ignore) {
-                        let newValue = this.collection[name];
-                        let key = this.toKey(name);
+                        var newValue = this.collection[name];
+                        var key = this.toKey(name);
                         if (oldValue !== void 0) {
                             this.removeItem(key, oldValue);
                         }
@@ -22277,8 +22260,8 @@ module.exports = exports = ForInOfStatement;
   }
 }).call(this)
 void (function(){var _ion_runtime_IfStatement_ = function(module,exports,require){'use strict';
-const ion = require('../'), Statement = require('./Statement');
-const IfStatement = ion.defineClass({
+var ion = require('../'), Statement = require('./Statement');
+var IfStatement = ion.defineClass({
         name: 'IfStatement',
         properties: {
             activate: function () {
@@ -22327,8 +22310,8 @@ module.exports = exports = IfStatement;
   }
 }).call(this)
 void (function(){var _ion_runtime_Literal_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const Literal = ion.defineClass({
+var ion = require('../');
+var Literal = ion.defineClass({
         name: 'Literal',
         properties: {
             watch: function (watcher) {
@@ -22352,8 +22335,8 @@ module.exports = exports = Literal;
   }
 }).call(this)
 void (function(){var _ion_runtime_MemberExpression_ = function(module,exports,require){'use strict';
-const ion = require('../'), DynamicExpression = require('./DynamicExpression');
-const MemberExpression = ion.defineClass({
+var ion = require('../'), DynamicExpression = require('./DynamicExpression');
+var MemberExpression = ion.defineClass({
         name: 'MemberExpression',
         properties: {
             activate: function () {
@@ -22381,7 +22364,7 @@ const MemberExpression = ion.defineClass({
                 this.propertyExpression.unwatch(this.propertyWatcher);
             },
             updateValue: function () {
-                let value = void 0;
+                var value = void 0;
                 if (this.objectValue != null && this.propertyValue != null) {
                     value = ion.get(this.objectValue, this.propertyValue);
                 }
@@ -22407,8 +22390,8 @@ module.exports = exports = MemberExpression;
   }
 }).call(this)
 void (function(){var _ion_runtime_Node_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const Node = ion.defineClass({ name: 'Node' });
+var ion = require('../');
+var Node = ion.defineClass({ name: 'Node' });
 module.exports = exports = Node;
   }
   if (typeof require === 'function') {
@@ -22422,8 +22405,8 @@ module.exports = exports = Node;
   }
 }).call(this)
 void (function(){var _ion_runtime_ObjectExpression_ = function(module,exports,require){'use strict';
-const ion = require('../'), DynamicExpression = require('./DynamicExpression');
-const ObjectExpression = ion.defineClass({
+var ion = require('../'), DynamicExpression = require('./DynamicExpression');
+var ObjectExpression = ion.defineClass({
         name: 'ObjectExpression',
         properties: {
             setLeftValue: function (value) {
@@ -22433,7 +22416,7 @@ const ObjectExpression = ion.defineClass({
                 ObjectExpression.super.prototype.activate.apply(this, arguments);
                 this.typeExpression = this.typeExpression != null ? this.typeExpression : this.context.createRuntime(this.objectType != null ? this.objectType : null);
                 this.typeExpression.watch(this.typeWatcher = this.typeWatcher != null ? this.typeWatcher : function (type) {
-                    let value;
+                    var value;
                     if (!ion.is(this.value, type)) {
                         this.statements != null ? this.statements.deactivate() : void 0;
                         this.statements = null;
@@ -22442,7 +22425,7 @@ const ObjectExpression = ion.defineClass({
                         value = this.value;
                     }
                     if (value != null && !(this.statements != null)) {
-                        let newContext = this.context.newContext(value);
+                        var newContext = this.context.newContext(value);
                         this.statements = newContext.createRuntime({
                             type: 'BlockStatement',
                             body: this.properties
@@ -22471,8 +22454,8 @@ module.exports = exports = ObjectExpression;
   }
 }).call(this)
 void (function(){var _ion_runtime_OperationExpression_ = function(module,exports,require){'use strict';
-const ion = require('../'), DynamicExpression = require('./DynamicExpression');
-const OperationExpression = ion.defineClass({
+var ion = require('../'), DynamicExpression = require('./DynamicExpression');
+var OperationExpression = ion.defineClass({
         name: 'OperationExpression',
         constructor: function OperationExpression(properties) {
             OperationExpression.super.apply(this, arguments);
@@ -22515,7 +22498,7 @@ const OperationExpression = ion.defineClass({
                 if (!(this.factory.evaluate != null)) {
                     throw new Error('evaluate method not defined for operation: ' + this.factory);
                 }
-                let value = this.factory.evaluate.apply(this.context, this.argumentValues);
+                var value = this.factory.evaluate.apply(this.context, this.argumentValues);
                 this.setValue(value);
             }
         }
@@ -22533,8 +22516,8 @@ module.exports = OperationExpression;
   }
 }).call(this)
 void (function(){var _ion_runtime_Property_ = function(module,exports,require){'use strict';
-const ion = require('../'), Statement = require('./Statement');
-const Property = ion.defineClass({
+var ion = require('../'), Statement = require('./Statement');
+var Property = ion.defineClass({
         name: 'Property',
         properties: {
             activate: function () {
@@ -22543,7 +22526,7 @@ const Property = ion.defineClass({
                 this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
                 this.keyExpression.watch(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : function (key) {
                     if (key != null && this.valueExpression.setLeftValue != null) {
-                        let currentValue = this.context.output ? ion.get(this.context.output, key) : this.context.get(key);
+                        var currentValue = this.context.output ? ion.get(this.context.output, key) : this.context.get(key);
                         if (currentValue != null) {
                             this.valueExpression.setLeftValue(currentValue);
                         }
@@ -22558,7 +22541,7 @@ const Property = ion.defineClass({
                 }.bind(this));
                 if (this.bi) {
                     ion.observe(this.context.output, this.contextObserver = this.contextObserver != null ? this.contextObserver : function () {
-                        let value = ion.get(this.context.output, this.keyValue);
+                        var value = ion.get(this.context.output, this.keyValue);
                         if (value !== void 0) {
                             this.valueExpression.setMemberValue(value);
                         }
@@ -22584,9 +22567,9 @@ const Property = ion.defineClass({
                     key = this.keyValue;
                 if (value == null)
                     value = this.valueValue;
-                let explicitUndefined = this.value.operator === 'void';
+                var explicitUndefined = this.value.operator === 'void';
                 if (key != null && (value !== void 0 || explicitUndefined)) {
-                    let currentValue = ion.get(this.context.output, key);
+                    var currentValue = ion.get(this.context.output, key);
                     if (explicitUndefined || currentValue !== value) {
                         this.originalKey = this.originalKey != null ? this.originalKey : key;
                         this.originalValue = this.originalValue != null ? this.originalValue : currentValue;
@@ -22609,8 +22592,8 @@ module.exports = exports = Property;
   }
 }).call(this)
 void (function(){var _ion_runtime_ReturnStatement_ = function(module,exports,require){'use strict';
-const ion = require('../'), Statement = require('./Statement');
-const ReturnStatement = ion.defineClass({
+var ion = require('../'), Statement = require('./Statement');
+var ReturnStatement = ion.defineClass({
         name: 'ReturnStatement',
         properties: {
             activate: function () {
@@ -22639,8 +22622,8 @@ module.exports = exports = ReturnStatement;
   }
 }).call(this)
 void (function(){var _ion_runtime_Statement_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const Statement = ion.defineClass({
+var ion = require('../');
+var Statement = ion.defineClass({
         name: 'Statement',
         properties: {
             isActive: false,
@@ -22665,8 +22648,8 @@ module.exports = exports = Statement;
   }
 }).call(this)
 void (function(){var _ion_runtime_Template_ = function(module,exports,require){'use strict';
-const ion = require('../'), BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression');
-const Template = ion.defineClass({
+var ion = require('../'), BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression');
+var Template = ion.defineClass({
         name: 'Template',
         constructor: function Template() {
             Template.super.apply(this, arguments);
@@ -22697,18 +22680,18 @@ module.exports = exports = Template;
   }
 }).call(this)
 void (function(){var _ion_runtime_VariableDeclaration_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const Statement = require('./Statement');
-const VariableDeclaration = ion.defineClass({
+var ion = require('../');
+var Statement = require('./Statement');
+var VariableDeclaration = ion.defineClass({
         name: 'VariableDeclaration',
         constructor: function VariableDeclaration() {
             VariableDeclaration.super.apply(this, arguments);
             {
-                let _ref = this.declarations;
-                for (let _i = 0; _i < _ref.length; _i++) {
-                    let _ref2 = _ref[_i];
-                    let name = _ref2.id.name;
-                    let init = _ref2.init;
+                var _ref = this.declarations;
+                for (var _i = 0; _i < _ref.length; _i++) {
+                    var _ref2 = _ref[_i];
+                    var name = _ref2.id.name;
+                    var init = _ref2.init;
                     this.context.setVariable(name, init);
                 }
             }
@@ -22727,8 +22710,8 @@ module.exports = exports = VariableDeclaration;
   }
 }).call(this)
 void (function(){var _ion_test_immediateTemplates_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const templates = [
+var ion = require('../');
+var templates = [
         [
             ion.template(function _template() {
                 if (this != null && this.constructor === _template) {
@@ -22799,7 +22782,7 @@ const templates = [
                         test: test
                     });
                 }
-                const a = 1, b = 2, c = a + b;
+                var a = 1, b = 2, c = a + b;
                 return c;
             }),
             [],
@@ -23036,9 +23019,9 @@ const templates = [
                         test: test
                     });
                 }
-                let a = 1;
-                let b = 2;
-                let _ref4 = [];
+                var a = 1;
+                var b = 2;
+                var _ref4 = [];
                 {
                     _ref4.push(a);
                     _ref4.push(b);
@@ -23170,18 +23153,18 @@ const templates = [
                         test: test
                     });
                 }
-                let items = [
+                var items = [
                         1,
                         2,
                         3
                     ];
-                let _ref2 = [];
-                for (let _i = 0; _i < items.length; _i++) {
-                    let index = _i;
-                    let item = items[_i];
+                var _ref2 = [];
+                for (var _i = 0; _i < items.length; _i++) {
+                    var index = _i;
+                    var item = items[_i];
                     _ref2.push(item + index);
                 }
-                let x = _ref2;
+                var x = _ref2;
                 return x;
             }),
             [],
@@ -23328,17 +23311,17 @@ const templates = [
                         test: test
                     });
                 }
-                let items = {
+                var items = {
                         a: 1,
                         b: 2,
                         c: 3
                     };
-                let _ref3 = [];
-                for (let key in items) {
-                    let value = items[key];
+                var _ref3 = [];
+                for (var key in items) {
+                    var value = items[key];
                     _ref3.push(key + value);
                 }
-                let x = _ref3;
+                var x = _ref3;
                 return x;
             }),
             [],
@@ -23424,7 +23407,7 @@ const templates = [
                         test: test
                     });
                 }
-                let object = { a: { b: 1 } };
+                var object = { a: { b: 1 } };
                 return object.a.b;
             }),
             [],
@@ -23582,8 +23565,8 @@ const templates = [
                         test: test
                     });
                 }
-                let a = null;
-                let b = 2;
+                var a = null;
+                var b = 2;
                 return [
                     a != null,
                     b != null
@@ -23898,15 +23881,15 @@ const templates = [
                         test: test
                     });
                 }
-                let _ref5 = [];
+                var _ref5 = [];
                 {
-                    let items = [
+                    var items = [
                             3,
                             2,
                             1
                         ];
-                    for (let _i2 = 0; _i2 < items.length; _i2++) {
-                        let item = items[_i2];
+                    for (var _i2 = 0; _i2 < items.length; _i2++) {
+                        var item = items[_i2];
                         _ref5.push(item * 2);
                     }
                 }
@@ -24094,8 +24077,8 @@ const templates = [
                         test: test
                     });
                 }
-                let a = _ref.a;
-                let b = _ref.b;
+                var a = _ref.a;
+                var b = _ref.b;
                 return a + b;
             }),
             [{
@@ -24156,7 +24139,7 @@ const templates = [
                         test: test
                     });
                 }
-                let _ref6 = new type();
+                var _ref6 = new type();
                 {
                     _ref6.position = ion.patch(_ref6.position, { x: 10 });
                 }
@@ -24301,16 +24284,16 @@ const templates = [
             ion.patch
         ]
     ];
-const test = exports.test = function () {
-        for (let _i3 = 0; _i3 < templates.length; _i3++) {
-            let _ref7 = templates[_i3];
-            let templateType = _ref7[0];
-            let args = _ref7[1];
-            let expected = _ref7[2];
+var test = exports.test = function () {
+        for (var _i3 = 0; _i3 < templates.length; _i3++) {
+            var _ref7 = templates[_i3];
+            var templateType = _ref7[0];
+            var args = _ref7[1];
+            var expected = _ref7[2];
             if (expected != null) {
-                let template = ion.create(templateType, args);
+                var template = ion.create(templateType, args);
                 template.activate();
-                let reactiveResult = null;
+                var reactiveResult = null;
                 template.watch(function (value) {
                     return reactiveResult = value;
                 });
@@ -24324,7 +24307,7 @@ const test = exports.test = function () {
                 template.deactivate();
                 if (!(reactiveResult === void 0))
                     throw new Error('Assertion Failed: (reactiveResult is undefined)');
-                let imperativeResult = templateType.apply(null, args);
+                var imperativeResult = templateType.apply(null, args);
                 if (!(JSON.stringify(imperativeResult) === JSON.stringify(expected)))
                     throw new Error('Assertion Failed: (JSON.stringify(imperativeResult) is JSON.stringify(expected))');
             }
@@ -24341,7 +24324,9 @@ const test = exports.test = function () {
     _ion_test_immediateTemplates_.call(this);
   }
 }).call(this)
-void (function(){var _ion_test_ionCompiler_ = function(module,exports,require){var index, tests;
+void (function(){var _ion_test_ionCompiler_ = function(module,exports,require){var index, ion, tests;
+
+ion = require('../');
 
 index = require('../compiler');
 
@@ -24537,7 +24522,8 @@ tests = {
   },
   "export template ->\n    return td()\n        let checked = true\n        onclick: ->\n            console.log(tasks, checked)": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function _template() {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [{\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'ObjectExpression',\n                        objectType: {\n                            type: 'CallExpression',\n                            callee: {\n                                type: 'Identifier',\n                                name: 'td'\n                            },\n                            arguments: []\n                        },\n                        properties: [\n                            {\n                                type: 'VariableDeclaration',\n                                declarations: [{\n                                        type: 'VariableDeclarator',\n                                        id: {\n                                            type: 'Identifier',\n                                            name: 'checked'\n                                        },\n                                        init: {\n                                            type: 'Literal',\n                                            value: true\n                                        }\n                                    }],\n                                kind: 'let'\n                            },\n                            {\n                                type: 'Property',\n                                key: {\n                                    type: 'Identifier',\n                                    name: 'onclick'\n                                },\n                                value: {\n                                    type: 'Function',\n                                    context: true,\n                                    value: function (_context) {\n                                        return function () {\n                                            const checked = _context.get('checked');\n                                            console.log(tasks, checked);\n                                        };\n                                    }\n                                },\n                                kind: 'init'\n                            }\n                        ]\n                    }\n                }]\n        }, {\n            require: require,\n            module: module,\n            exports: exports\n        });\n    }\n    let _ref = td();\n    {\n        let checked = true;\n        _ref.onclick = function () {\n            console.log(tasks, checked);\n        };\n    }\n    return _ref;\n});",
   "let x = []\n    ->": "'use strict';\nlet x = [function () {\n        }];",
-  "export template -> /a/": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function _template() {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [{\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'Literal',\n                        value: /a/\n                    }\n                }]\n        }, {\n            require: require,\n            module: module,\n            exports: exports\n        });\n    }\n    return /a/;\n});"
+  "export template -> /a/": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function _template() {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [{\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'Literal',\n                        value: /a/\n                    }\n                }]\n        }, {\n            require: require,\n            module: module,\n            exports: exports\n        });\n    }\n    return /a/;\n});",
+  "x:\n    delete: true": "'use strict';\nconst ion = require('ion');\nion.patch(x, { delete: true });"
 };
 
 if (global.window != null) {
@@ -24545,26 +24531,29 @@ if (global.window != null) {
 }
 
 exports.test = function() {
-  var e, error, expected, input, key, output, value;
+  var e, error, expected, input, key, options, output, value;
   for (input in tests) {
     expected = tests[input];
+    options = {
+      target: 'es6'
+    };
     if (expected === null) {
       console.log('---------------------------------------------------');
-      console.log(JSON.stringify(index.compile(input, {
+      console.log(JSON.stringify(index.compile(input, ion.patch({
         postprocess: false
-      }), null, '  '));
+      }, options)), null, '  '));
       console.log('-Postprocessed-------------------------------------');
-      console.log(JSON.stringify(index.compile(input, {
+      console.log(JSON.stringify(index.compile(input, ion.patch({
         generate: false
-      }), null, '  '));
+      }, options)), null, '  '));
       console.log('---------------------------------------------------');
-      console.log(index.compile(input, {
+      console.log(index.compile(input, ion.patch({
         loc: false
-      }));
+      }, options)));
     } else if (typeof expected === 'object') {
       error = null;
       try {
-        index.compile(input);
+        index.compile(input, options);
       } catch (_error) {
         e = _error;
         error = e;
@@ -24579,7 +24568,7 @@ exports.test = function() {
         throw new Error("Expected an error: " + (JSON.stringify(expected)));
       }
     } else {
-      output = index.compile(input);
+      output = index.compile(input, options);
       if (output.trim() !== expected.trim()) {
         console.log('-Output---------------------------------------------');
         console.log(output);
@@ -24598,6 +24587,80 @@ exports.test = function() {
   }
   else {
     _ion_test_ionCompiler_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_test_ionCompilerES5_ = function(module,exports,require){var index, ion, tests;
+
+ion = require('../');
+
+index = require('../compiler');
+
+tests = {
+  "let x = 10": "'use strict';\nvar x = 10;",
+  "let x = 10\nif foo\n    let y = 20\nif bar\n    const y = 30": "'use strict';\nvar x = 10;\nif (foo) {\n    var y = 20;\n}\nif (bar) {\n    var y = 30;\n}"
+};
+
+if (global.window != null) {
+  return;
+}
+
+exports.test = function() {
+  var e, error, expected, input, key, options, output, value;
+  for (input in tests) {
+    expected = tests[input];
+    options = {
+      target: 'es5'
+    };
+    if (expected === null) {
+      console.log('---------------------------------------------------');
+      console.log(JSON.stringify(index.compile(input, ion.patch({
+        postprocess: false
+      }, options)), null, '  '));
+      console.log('-Postprocessed-------------------------------------');
+      console.log(JSON.stringify(index.compile(input, ion.patch({
+        generate: false
+      }, options)), null, '  '));
+      console.log('---------------------------------------------------');
+      console.log(index.compile(input, ion.patch({
+        loc: false
+      }, options)));
+    } else if (typeof expected === 'object') {
+      error = null;
+      try {
+        index.compile(input, options);
+      } catch (_error) {
+        e = _error;
+        error = e;
+        for (key in expected) {
+          value = expected[key];
+          if (value !== e[key]) {
+            throw new Error("\n" + (JSON.stringify(e)) + "\n!=\n" + (JSON.stringify(expected)));
+          }
+        }
+      }
+      if (error == null) {
+        throw new Error("Expected an error: " + (JSON.stringify(expected)));
+      }
+    } else {
+      output = index.compile(input, options);
+      if (output.trim() !== expected.trim()) {
+        console.log('-Output---------------------------------------------');
+        console.log(output);
+        throw new Error("\n" + output + "\n!=\n" + expected);
+      }
+    }
+  }
+};
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/test/ionCompilerES5',_ion_test_ionCompilerES5_);
+    else
+      _ion_test_ionCompilerES5_.call(this, module, exports, require);
+  }
+  else {
+    _ion_test_ionCompilerES5_.call(this);
   }
 }).call(this)
 void (function(){var _ion_test_ionCustomParse_ = function(module,exports,require){
@@ -24627,8 +24690,8 @@ void (function(){var _ion_test_ionVsEsprima_ = function(module,exports,require){
   }
 }).call(this)
 void (function(){var _ion_test_reactiveTemplates_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const templates = [
+var ion = require('../');
+var templates = [
         [
             'array comprehension',
             ion.template(function _template(properties) {
@@ -24681,8 +24744,8 @@ const templates = [
                         _ref8: _ref8
                     });
                 }
-                let _ref4 = [];
-                for (let key in properties)
+                var _ref4 = [];
+                for (var key in properties)
                     _ref4.push(key);
                 return _ref4;
             }),
@@ -24800,10 +24863,10 @@ const templates = [
                 function double(a) {
                     return a * 2;
                 }
-                let _ref6 = {};
+                var _ref6 = {};
                 {
-                    for (let key in properties) {
-                        let value = properties[key];
+                    for (var key in properties) {
+                        var value = properties[key];
                         _ref6[key] = double(value);
                     }
                 }
@@ -24893,7 +24956,7 @@ const templates = [
                                             context: true,
                                             value: function (_context) {
                                                 return function multiply(a) {
-                                                    const factor = _context.get('factor');
+                                                    var factor = _context.get('factor');
                                                     return a * factor;
                                                 };
                                             }
@@ -24992,14 +25055,14 @@ const templates = [
                         _ref8: _ref8
                     });
                 }
-                let factor = properties.factor != null ? properties.factor : 3;
+                var factor = properties.factor != null ? properties.factor : 3;
                 function multiply(a) {
                     return a * factor;
                 }
-                let _ref7 = {};
+                var _ref7 = {};
                 {
-                    for (let key in properties) {
-                        let value = properties[key];
+                    for (var key in properties) {
+                        var value = properties[key];
                         if (key !== 'factor') {
                             _ref7[key] = multiply(value);
                         }
@@ -25101,8 +25164,8 @@ const templates = [
                         _ref8: _ref8
                     });
                 }
-                let a = _ref.a;
-                let b = _ref.b;
+                var a = _ref.a;
+                var b = _ref.b;
                 return a + b;
             }),
             {
@@ -25207,11 +25270,11 @@ const templates = [
                         _ref8: _ref8
                     });
                 }
-                let items = _ref2.items;
-                let _ref5 = [];
-                for (let _i = 0; _i < items.length; _i++) {
-                    let i = _i;
-                    let x = items[_i];
+                var items = _ref2.items;
+                var _ref5 = [];
+                for (var _i = 0; _i < items.length; _i++) {
+                    var i = _i;
+                    var x = items[_i];
                     _ref5.push(x + i);
                 }
                 return _ref5;
@@ -25281,7 +25344,7 @@ const templates = [
         [
             'nested templates',
             function () {
-                let sum = ion.template(function _template7(_ref3) {
+                var sum = ion.template(function _template7(_ref3) {
                         if (this != null && this.constructor === _template7) {
                             return ion.createRuntime({
                                 type: 'Template',
@@ -25379,8 +25442,8 @@ const templates = [
                                 _ref8: _ref8
                             });
                         }
-                        let a = _ref3.deep.a;
-                        let b = _ref3.deep.b;
+                        var a = _ref3.deep.a;
+                        var b = _ref3.deep.b;
                         return a + b;
                     });
                 return ion.template(function _template8(object) {
@@ -25564,19 +25627,19 @@ const templates = [
             }
         ]
     ];
-let _ref8 = {};
+var _ref8 = {};
 {
-    for (let _i2 = 0; _i2 < templates.length; _i2++) {
-        let _ref9 = templates[_i2];
-        let name = _ref9[0];
-        let templateType = _ref9[1];
-        let argument = _ref9[2];
-        let patch = _ref9[3];
-        let expected = _ref9[4];
+    for (var _i2 = 0; _i2 < templates.length; _i2++) {
+        var _ref9 = templates[_i2];
+        var name = _ref9[0];
+        var templateType = _ref9[1];
+        var argument = _ref9[2];
+        var patch = _ref9[3];
+        var expected = _ref9[4];
         if (expected != null) {
             _ref8[name] = function (templateType, argument, patch, expected) {
                 return function (done) {
-                    let template = new templateType(argument);
+                    var template = new templateType(argument);
                     function checkIfDone(check) {
                         if (JSON.stringify(check) === JSON.stringify(expected)) {
                             template.deactivate();
@@ -25609,8 +25672,8 @@ module.exports = exports = { test: _ref8 };
   }
 }).call(this)
 void (function(){var _ion_test_templateParams_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const firstTemplate = ion.template(function _template(a, b) {
+var ion = require('../');
+var firstTemplate = ion.template(function _template(a, b) {
         if (this != null && this.constructor === _template) {
             return ion.createRuntime({
                 type: 'Template',
@@ -25646,10 +25709,10 @@ const firstTemplate = ion.template(function _template(a, b) {
         }
         return a + b;
     });
-const test = exports.test = function () {
-        let template = new firstTemplate(1, 2);
+var test = exports.test = function () {
+        var template = new firstTemplate(1, 2);
         template.activate();
-        let result = null;
+        var result = null;
         template.watch(function (value) {
             return result = value;
         });

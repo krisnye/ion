@@ -1,5 +1,5 @@
 void (function(){var _ion_builder_ModuleBuilder_ = function(module,exports,require){'use strict';
-const ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), compilers = {
+var ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), compilers = {
         '.coffee': { compile: builder.compileCoffeeScript },
         '.pegjs': { compile: builder.compilePegjs },
         '.js': { compile: builder.shimJavascript },
@@ -1367,61 +1367,61 @@ module.exports = exports = ion.template(function _template(packagePatch) {
             compilers: compilers
         });
     }
-    let packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch != null ? packagePatch : {});
-    let input = new Directory(packageJson.directories.src != null ? packageJson.directories.src : 'src');
-    let output = new Directory(packageJson.directories.lib != null ? packageJson.directories.lib : 'lib');
-    let moduleName = packageJson.name != null ? packageJson.name : '';
-    let _ref = [];
-    for (let key in outputFiles) {
+    var packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch != null ? packagePatch : {});
+    var input = new Directory(packageJson.directories.src != null ? packageJson.directories.src : 'src');
+    var output = new Directory(packageJson.directories.lib != null ? packageJson.directories.lib : 'lib');
+    var moduleName = packageJson.name != null ? packageJson.name : '';
+    var _ref = [];
+    for (var key in outputFiles) {
         if (key.endsWith('require.js')) {
             _ref.push(key);
         }
     }
-    let _ref2 = [];
-    for (let key in outputFiles) {
+    var _ref2 = [];
+    for (var key in outputFiles) {
         if (!builder.isPrivate(key) && top.indexOf(key) < 0) {
             _ref2.push(key);
         }
     }
-    let _ref3 = [];
-    for (let path in outputFiles) {
-        let file = outputFiles[path];
+    var _ref3 = [];
+    for (var path in outputFiles) {
+        var file = outputFiles[path];
         _ref3.push(file.modified);
     }
-    let _ref4 = [];
-    for (let _i = 0; _i < sortedFiles.length; _i++) {
-        let path = sortedFiles[_i];
+    var _ref4 = [];
+    for (var _i = 0; _i < sortedFiles.length; _i++) {
+        var path = sortedFiles[_i];
         _ref4.push(builder.normalizePath(path));
     }
-    let _ref7 = {};
+    var _ref7 = {};
     {
-        let extensions = Object.keys(compilers);
+        var extensions = Object.keys(compilers);
         {
-            let _ref6 = input.search(extensions, packageJson.build.exclude);
-            for (let path in _ref6) {
-                let source = _ref6[path];
-                let compiler = compilers[source.getExtension()];
-                let targetPath = builder.changeExtension(path, '.js');
-                let moduleId = builder.getModuleId(moduleName, path);
+            var _ref6 = input.search(extensions, packageJson.build.exclude);
+            for (var path in _ref6) {
+                var source = _ref6[path];
+                var compiler = compilers[source.getExtension()];
+                var targetPath = builder.changeExtension(path, '.js');
+                var moduleId = builder.getModuleId(moduleName, path);
                 _ref7[targetPath] = compiler.compile(source, moduleId, packageJson);
             }
         }
-        let outputFiles = output.search('.js', [
+        var outputFiles = output.search('.js', [
                 /^_/,
                 'node_modules'
             ]);
-        let top = _ref;
-        let sortedFiles = top.concat(_ref2);
-        let manifestFileName = 'manifest.json';
-        let manifest = {
+        var top = _ref;
+        var sortedFiles = top.concat(_ref2);
+        var manifestFileName = 'manifest.json';
+        var manifest = {
                 modified: Math.max.apply(null, _ref3),
                 files: _ref4
             };
         _ref7[manifestFileName] = JSON.stringify(manifest, null, '  ', sortedFiles);
         if (packageJson.build.merge != null) {
-            let _ref5 = [];
-            for (let _i2 = 0; _i2 < sortedFiles.length; _i2++) {
-                let name = sortedFiles[_i2];
+            var _ref5 = [];
+            for (var _i2 = 0; _i2 < sortedFiles.length; _i2++) {
+                var name = sortedFiles[_i2];
                 ion.add(_ref7, _ref5.push(outputFiles[name].read()));
             }
             _ref7[packageJson.build.merge] = _ref5.join('\n');
@@ -1430,7 +1430,7 @@ module.exports = exports = ion.template(function _template(packagePatch) {
             _ref7['package.json'] = JSON.stringify(ion.patch(ion.clone(packageJson), { main: void 0 }), null, '    ');
         }
         if (packageJson.build.test !== false) {
-            let manifestFile = output.getFile(manifestFileName);
+            var manifestFile = output.getFile(manifestFileName);
             ion.add(_ref7, builder.runTests(manifestFile, manifestFile.modified));
         }
     }

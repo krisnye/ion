@@ -1,11 +1,11 @@
 void (function(){var _ion_Object_ = function(module,exports,require){'use strict';
-const ion = require('./');
-const Object = ion.defineClass({
+var ion = require('./');
+var Object = ion.defineClass({
         name: 'Object',
         constructor: function Object(properties) {
             if (properties != null) {
-                for (let key in properties) {
-                    let value = properties[key];
+                for (var key in properties) {
+                    var value = properties[key];
                     this[key] = value;
                 }
             }
@@ -16,14 +16,14 @@ const Object = ion.defineClass({
         typeKey: '$',
         properties: {
             toJSON: function () {
-                const properties = {};
+                var properties = {};
                 if (this.constructor.id != null) {
                     properties[this.constructor.typeKey] = this.constructor.id;
                 }
                 {
-                    let _ref = this;
-                    for (let key in _ref) {
-                        let value = _ref[key];
+                    var _ref = this;
+                    for (var key in _ref) {
+                        var value = _ref[key];
                         if (this.hasOwnProperty(key)) {
                             properties[key] = value;
                         }

@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_Literal_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const Literal = ion.defineClass({
+var ion = require('../');
+var Literal = ion.defineClass({
         name: 'Literal',
         properties: {
             watch: function (watcher) {

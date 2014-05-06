@@ -1,5 +1,5 @@
 void (function(){var _ion_builder_WebsiteBuilder_ = function(module,exports,require){'use strict';
-const ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), utility = require('./utility'), ModuleBuilder = require('./ModuleBuilder'), clientJsDir = 'js', serverJsDir = 'WEB-INF/js', serverJavaDir = 'WEB-INF/java';
+var ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), utility = require('./utility'), ModuleBuilder = require('./ModuleBuilder'), clientJsDir = 'js', serverJsDir = 'WEB-INF/js', serverJavaDir = 'WEB-INF/java';
 module.exports = exports = ion.template(function _template(packagePatch) {
     if (this != null && this.constructor === _template) {
         return ion.createRuntime({
@@ -1305,6 +1305,10 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                 elements: [
                                     {
                                         type: 'Literal',
+                                        value: '.ionpage'
+                                    },
+                                    {
+                                        type: 'Literal',
                                         value: '.coffeepage'
                                     },
                                     {
@@ -1646,103 +1650,6 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                 kind: 'let'
                             },
                             {
-                                type: 'ExpressionStatement',
-                                expression: {
-                                    type: 'CallExpression',
-                                    callee: {
-                                        type: 'MemberExpression',
-                                        computed: false,
-                                        object: {
-                                            type: 'Identifier',
-                                            name: 'console'
-                                        },
-                                        property: {
-                                            type: 'Identifier',
-                                            name: 'log'
-                                        }
-                                    },
-                                    arguments: [{
-                                            type: 'BinaryExpression',
-                                            operator: '+',
-                                            left: {
-                                                type: 'Literal',
-                                                value: '>>>>>>>>>>>>>>>>>>>>1 '
-                                            },
-                                            right: {
-                                                type: 'Identifier',
-                                                name: 'key'
-                                            }
-                                        }]
-                                }
-                            },
-                            {
-                                type: 'ExpressionStatement',
-                                expression: {
-                                    type: 'CallExpression',
-                                    callee: {
-                                        type: 'MemberExpression',
-                                        computed: false,
-                                        object: {
-                                            type: 'Identifier',
-                                            name: 'console'
-                                        },
-                                        property: {
-                                            type: 'Identifier',
-                                            name: 'log'
-                                        }
-                                    },
-                                    arguments: [{
-                                            type: 'BinaryExpression',
-                                            operator: '+',
-                                            left: {
-                                                type: 'Literal',
-                                                value: '>>>>>>>>>>>>>>>>>>>>2 '
-                                            },
-                                            right: {
-                                                type: 'Literal',
-                                                value: /[\.\/\\]/
-                                            }
-                                        }]
-                                }
-                            },
-                            {
-                                type: 'ExpressionStatement',
-                                expression: {
-                                    type: 'CallExpression',
-                                    callee: {
-                                        type: 'MemberExpression',
-                                        computed: false,
-                                        object: {
-                                            type: 'Identifier',
-                                            name: 'console'
-                                        },
-                                        property: {
-                                            type: 'Identifier',
-                                            name: 'log'
-                                        }
-                                    },
-                                    arguments: [{
-                                            type: 'BinaryExpression',
-                                            operator: '+',
-                                            left: {
-                                                type: 'Literal',
-                                                value: '>>>>>>>>>>>>>>>>>>>>3 '
-                                            },
-                                            right: {
-                                                type: 'NewExpression',
-                                                callee: {
-                                                    type: 'Identifier',
-                                                    name: 'RegExp'
-                                                },
-                                                arguments: [{
-                                                        type: 'Literal',
-                                                        value: '\\b'
-                                                    }]
-                                            }
-                                        }]
-                                }
-                            },
-                            {
                                 type: 'Property',
                                 key: {
                                     type: 'Identifier',
@@ -2031,15 +1938,15 @@ module.exports = exports = ion.template(function _template(packagePatch) {
             serverJavaDir: serverJavaDir
         });
     }
-    const packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch != null ? packagePatch : {}), input = new Directory(packageJson.directories.src != null ? packageJson.directories.src : 'src'), output = new Directory(packageJson.directories.www != null ? packageJson.directories.www : 'debug'), clientOutput = output.getDirectory(clientJsDir), serverOutput = output.getDirectory(serverJsDir), nodepath = 'node_modules/';
-    let glassPages = new Directory('../glass-pages/dist');
+    var packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch != null ? packagePatch : {}), input = new Directory(packageJson.directories.src != null ? packageJson.directories.src : 'src'), output = new Directory(packageJson.directories.www != null ? packageJson.directories.www : 'debug'), clientOutput = output.getDirectory(clientJsDir), serverOutput = output.getDirectory(serverJsDir), nodepath = 'node_modules/';
+    var glassPages = new Directory('../glass-pages/dist');
     if (glassPages.exists) {
-        let javaDirectory = input.getDirectory(serverJavaDir);
+        var javaDirectory = input.getDirectory(serverJavaDir);
         {
-            let _ref = glassPages.search();
-            for (let key in _ref) {
-                let source = _ref[key];
-                let target = javaDirectory.getFile(key);
+            var _ref = glassPages.search();
+            for (var key in _ref) {
+                var source = _ref[key];
+                var target = javaDirectory.getFile(key);
                 if (target.modified < source.modified) {
                     target.copyFrom(source);
                 }
@@ -2047,15 +1954,15 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         }
     }
     {
-        let _ref2 = packageJson.build.client.modules;
-        for (let _i = 0; _i < _ref2.length; _i++) {
-            let moduleName = _ref2[_i];
-            let directory = new Directory(nodepath + moduleName);
+        var _ref2 = packageJson.build.client.modules;
+        for (var _i = 0; _i < _ref2.length; _i++) {
+            var moduleName = _ref2[_i];
+            var directory = new Directory(nodepath + moduleName);
             {
-                let _ref3 = directory.search('.js', ['node_modules'].concat(packageJson.build.client.exclude));
-                for (let key in _ref3) {
-                    let source = _ref3[key];
-                    let _ref10 = {};
+                var _ref3 = directory.search('.js', ['node_modules'].concat(packageJson.build.client.exclude));
+                for (var key in _ref3) {
+                    var source = _ref3[key];
+                    var _ref10 = {};
                     {
                         _ref10[source.path.substring(nodepath.length)] = source.read();
                     }
@@ -2065,15 +1972,15 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         }
     }
     {
-        let _ref4 = packageJson.build.server.modules;
-        for (let _i2 = 0; _i2 < _ref4.length; _i2++) {
-            let moduleName = _ref4[_i2];
-            let directory = new Directory(nodepath + moduleName);
+        var _ref4 = packageJson.build.server.modules;
+        for (var _i2 = 0; _i2 < _ref4.length; _i2++) {
+            var moduleName = _ref4[_i2];
+            var directory = new Directory(nodepath + moduleName);
             {
-                let _ref5 = directory.search('.js', ['node_modules'].concat(packageJson.build.server.exclude));
-                for (let key in _ref5) {
-                    let source = _ref5[key];
-                    let _ref11 = {};
+                var _ref5 = directory.search('.js', ['node_modules'].concat(packageJson.build.server.exclude));
+                for (var key in _ref5) {
+                    var source = _ref5[key];
+                    var _ref11 = {};
                     {
                         _ref11[source.path.substring(nodepath.length)] = source.read();
                     }
@@ -2103,7 +2010,8 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         }
     });
     {
-        let _ref6 = input.search(null, [
+        var _ref6 = input.search(null, [
+                '.ionpage',
                 '.coffeepage',
                 '.coffee',
                 '.java',
@@ -2111,10 +2019,10 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                 '.jar',
                 '.ion'
             ]);
-        for (let key in _ref6) {
-            let source = _ref6[key];
-            let target = output.getFile(key);
-            let _ref12 = {};
+        for (var key in _ref6) {
+            var source = _ref6[key];
+            var target = output.getFile(key);
+            var _ref12 = {};
             {
                 _ref12[key] = source.read();
             }
@@ -2122,27 +2030,24 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         }
     }
     {
-        let _ref7 = input.search('.ion', 'js');
-        for (let key in _ref7) {
-            let source = _ref7[key];
-            let targetPath = builder.changeExtension(key, '.js');
-            let _ref13 = {};
+        var _ref7 = input.search('.ion', 'js');
+        for (var key in _ref7) {
+            var source = _ref7[key];
+            var targetPath = builder.changeExtension(key, '.js');
+            var _ref13 = {};
             {
                 _ref13[targetPath] = builder.compileIon(source);
             }
             ion.patch(output, _ref13);
         }
     }
-    let pageOutput = output.getDirectory('WEB-INF/pages');
+    var pageOutput = output.getDirectory('WEB-INF/pages');
     {
-        let _ref8 = input.search('.ionpage');
-        for (let key in _ref8) {
-            let source = _ref8[key];
-            let targetPath = builder.changeExtension(key, '.js');
-            console.log('>>>>>>>>>>>>>>>>>>>>1 ' + key);
-            console.log('>>>>>>>>>>>>>>>>>>>>2 ' + /[\.\/\\]/);
-            console.log('>>>>>>>>>>>>>>>>>>>>3 ' + new RegExp('\\b'));
-            let _ref14 = {};
+        var _ref8 = input.search('.ionpage');
+        for (var key in _ref8) {
+            var source = _ref8[key];
+            var targetPath = builder.changeExtension(key, '.js');
+            var _ref14 = {};
             {
                 _ref14[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(source) + ' })';
             }
@@ -2150,11 +2055,11 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         }
     }
     {
-        let _ref9 = input.search('.coffeepage');
-        for (let key in _ref9) {
-            let source = _ref9[key];
-            let targetPath = builder.changeExtension(key, '.js');
-            let _ref15 = {};
+        var _ref9 = input.search('.coffeepage');
+        for (var key in _ref9) {
+            var source = _ref9[key];
+            var targetPath = builder.changeExtension(key, '.js');
+            var _ref15 = {};
             {
                 _ref15[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(source) + ' })';
             }

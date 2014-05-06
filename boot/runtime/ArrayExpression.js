@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_ArrayExpression_ = function(module,exports,require){'use strict';
-const ion = require('../'), DynamicExpression = require('./DynamicExpression');
-const ArrayExpression = ion.defineClass({
+var ion = require('../'), DynamicExpression = require('./DynamicExpression');
+var ArrayExpression = ion.defineClass({
         name: 'ArrayExpression',
         constructor: function ArrayExpression() {
             ArrayExpression.super.apply(this, arguments);
@@ -34,26 +34,26 @@ const ArrayExpression = ion.defineClass({
             },
             activate: function () {
                 if (!(this.argumentValues != null)) {
-                    let _ref = [];
+                    var _ref = [];
                     {
-                        let _ref2 = this.elements;
-                        for (let _i = 0; _i < _ref2.length; _i++) {
-                            let item = _ref2[_i];
+                        var _ref2 = this.elements;
+                        for (var _i = 0; _i < _ref2.length; _i++) {
+                            var item = _ref2[_i];
                             _ref.push(this.context.createRuntime(item));
                         }
                     }
                     this.expressions = _ref;
                     this.argumentValues = [];
                     this.expressionWatchers = [];
-                    for (let key = 0; key < this.expressions.length; key++) {
+                    for (var key = 0; key < this.expressions.length; key++) {
                         this.expressionWatchers[key] = this.setArgumentValue.bind(this, key);
                     }
                 }
                 {
-                    let _ref3 = this.expressions;
-                    for (let _i2 = 0; _i2 < _ref3.length; _i2++) {
-                        let key = _i2;
-                        let expression = _ref3[_i2];
+                    var _ref3 = this.expressions;
+                    for (var _i2 = 0; _i2 < _ref3.length; _i2++) {
+                        var key = _i2;
+                        var expression = _ref3[_i2];
                         expression.watch(this.expressionWatchers[key]);
                     }
                 }
@@ -62,10 +62,10 @@ const ArrayExpression = ion.defineClass({
             },
             deactivate: function () {
                 {
-                    let _ref4 = this.expressions;
-                    for (let _i3 = 0; _i3 < _ref4.length; _i3++) {
-                        let key = _i3;
-                        let expression = _ref4[_i3];
+                    var _ref4 = this.expressions;
+                    for (var _i3 = 0; _i3 < _ref4.length; _i3++) {
+                        var key = _i3;
+                        var expression = _ref4[_i3];
                         expression.unwatch(this.expressionWatchers[key]);
                     }
                 }
@@ -73,8 +73,8 @@ const ArrayExpression = ion.defineClass({
             }
         },
         test: function () {
-            const Context = require('./Context');
-            let e = new ArrayExpression({
+            var Context = require('./Context');
+            var e = new ArrayExpression({
                     context: new Context(),
                     elements: [
                         {
@@ -87,7 +87,7 @@ const ArrayExpression = ion.defineClass({
                         }
                     ]
                 });
-            let result = void 0;
+            var result = void 0;
             function watcher(value) {
                 result = value;
             }

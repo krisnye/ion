@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_OperationExpression_ = function(module,exports,require){'use strict';
-const ion = require('../'), DynamicExpression = require('./DynamicExpression');
-const OperationExpression = ion.defineClass({
+var ion = require('../'), DynamicExpression = require('./DynamicExpression');
+var OperationExpression = ion.defineClass({
         name: 'OperationExpression',
         constructor: function OperationExpression(properties) {
             OperationExpression.super.apply(this, arguments);
@@ -43,7 +43,7 @@ const OperationExpression = ion.defineClass({
                 if (!(this.factory.evaluate != null)) {
                     throw new Error('evaluate method not defined for operation: ' + this.factory);
                 }
-                let value = this.factory.evaluate.apply(this.context, this.argumentValues);
+                var value = this.factory.evaluate.apply(this.context, this.argumentValues);
                 this.setValue(value);
             }
         }

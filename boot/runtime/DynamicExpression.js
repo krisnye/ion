@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_DynamicExpression_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const DynamicExpression = ion.defineClass({
+var ion = require('../');
+var DynamicExpression = ion.defineClass({
         name: 'DynamicExpression',
         properties: {
             isActive: false,
@@ -11,19 +11,19 @@ const DynamicExpression = ion.defineClass({
                 this.isActive = false;
             },
             watch: function (watcher) {
-                let watchers = this._watchers = this._watchers != null ? this._watchers : [];
+                var watchers = this._watchers = this._watchers != null ? this._watchers : [];
                 if (watchers.length === 0) {
                     this.activate();
                 }
                 watchers.push(watcher);
-                let value = this.getValue();
+                var value = this.getValue();
                 if (value !== void 0) {
                     this._notifyWatcher(watcher, value);
                 }
             },
             unwatch: function (watcher) {
                 this._watchers.splice(this._watchers.lastIndexOf(watcher), 1);
-                let value = this.getValue();
+                var value = this.getValue();
                 if (value !== void 0) {
                     this._notifyWatcher(watcher, void 0);
                 }
@@ -36,11 +36,11 @@ const DynamicExpression = ion.defineClass({
             },
             notify: function () {
                 if (this._watchers != null) {
-                    let value = this.getValue();
+                    var value = this.getValue();
                     {
-                        let _ref = this._watchers;
-                        for (let _i = 0; _i < _ref.length; _i++) {
-                            let watcher = _ref[_i];
+                        var _ref = this._watchers;
+                        for (var _i = 0; _i < _ref.length; _i++) {
+                            var watcher = _ref[_i];
                             this._notifyWatcher(watcher, value);
                         }
                     }
@@ -59,12 +59,12 @@ const DynamicExpression = ion.defineClass({
             }
         },
         test: function () {
-            const d = new DynamicExpression();
+            var d = new DynamicExpression();
             if (d.getValue() !== void 0) {
                 throw 'd.getValue() != undefined';
             }
-            let total = 10;
-            const watcher = function (value) {
+            var total = 10;
+            var watcher = function (value) {
                 if (value !== void 0) {
                     total += value;
                 }

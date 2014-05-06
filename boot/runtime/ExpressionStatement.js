@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_ExpressionStatement_ = function(module,exports,require){'use strict';
-const ion = require('../'), Statement = require('./Statement');
-const ExpressionStatement = ion.defineClass({
+var ion = require('../'), Statement = require('./Statement');
+var ExpressionStatement = ion.defineClass({
         name: 'ExpressionStatement',
         properties: {
             activate: function () {

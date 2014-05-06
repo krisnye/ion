@@ -1,4 +1,4 @@
-void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isSuperExpression, javascriptExpressions, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, patchAssignmentExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
+void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, getReferenceIdentifiers, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isReferenceNode, isSuperExpression, javascriptExpressions, letAndConstToVar, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, patchAssignmentExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -1285,25 +1285,41 @@ removeLocationInfo = function(node) {
   });
 };
 
-getExternalIdentifiers = function(node, callback) {
+isReferenceNode = function(node, context) {
+  var parentNode;
+  if (node.type !== 'Identifier') {
+    return false;
+  }
+  parentNode = context.parentNode();
+  if (isFunctionNode(parentNode)) {
+    return false;
+  }
+  if ((parentNode != null ? parentNode.type : void 0) === 'VariableDeclarator') {
+    return false;
+  }
+  if ((parentNode != null ? parentNode.type : void 0) === 'MemberExpression' && !(parentNode != null ? parentNode.computed : void 0) && context.key() === 'property') {
+    return false;
+  }
+  if ((parentNode != null ? parentNode.type : void 0) === 'Property' && context.key() === 'key') {
+    return false;
+  }
+  return true;
+};
+
+getReferenceIdentifiers = function(node, callback) {
   traverse(node, function(node, context) {
-    var parentNode;
-    if (node.type === 'Identifier') {
-      parentNode = context.parentNode();
-      if (isFunctionNode(parentNode)) {
-        return;
-      }
-      if ((parentNode != null ? parentNode.type : void 0) === 'MemberExpression' && !(parentNode != null ? parentNode.computed : void 0) && context.key() === 'property') {
-        return;
-      }
-      if ((parentNode != null ? parentNode.type : void 0) === 'Property' && context.key() === 'key') {
-        return;
-      }
-      if (context.getVariableInfo(node.name) != null) {
-        return;
-      }
-      return callback(node);
+    if (isReferenceNode(node, context)) {
+      return callback(node, context);
     }
+  });
+};
+
+getExternalIdentifiers = function(node, callback) {
+  getReferenceIdentifiers(node, function(node, context) {
+    if (context.getVariableInfo(node.name) != null) {
+      return;
+    }
+    return callback(node, context);
   });
 };
 
@@ -1513,9 +1529,18 @@ functionDeclarations = function(node, context) {
   }
 };
 
+letAndConstToVar = function(node, context) {
+  if (node.type === 'VariableDeclaration' && node.kind !== 'var') {
+    return node.kind = 'var';
+  }
+};
+
 exports.postprocess = function(program, options) {
   var enter, exit, previousContext, steps, traversal, variable, _i, _len;
   steps = [[namedFunctionsAndNewArguments, superExpressions], [destructuringAssignments], [createTemplateFunctionClone], [javascriptExpressions, arrayComprehensionsToES5], [checkVariableDeclarations], [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]];
+  if ((options != null ? options.target : void 0) === 'es5') {
+    steps.push([letAndConstToVar]);
+  }
   previousContext = null;
   for (_i = 0, _len = steps.length; _i < _len; _i++) {
     traversal = steps[_i];

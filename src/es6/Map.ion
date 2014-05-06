@@ -1,0 +1,45 @@
+# don't depend on ion for this.
+
+const MapShim(pairs) ->
+    let lookup = {}
+    let uniqueCounter = 0
+    const idName = "__Map_id"
+    const getId = (key) ->
+        if not key?
+            return String(key)
+        if typeof key is 'string' or typeof key is 'number' or typeof key is 'boolean'
+            return "_" + key
+        let id = key[idName]
+        if not id?
+            id = --uniqueCounter
+            Object.defineProperty(key, idName, {value:id})
+        return id
+    const methods =
+        get: get(key) -> lookup[getId(key)]
+        set: set(key, value) -> lookup[getId(key)] = value
+        has: has(key) -> lookup.hasOwnProperty(getId(key))
+        delete: del(key) -> delete lookup[getId(key)]
+        clear: clear ->
+            lookup = {}
+    for key, value of methods
+        Object.defineProperty(@, key, {value})
+    if pairs?
+        for [key, value] in pairs
+            @set(key, value)
+
+if not global.Map?
+    global.Map = MapShim
+
+export const test = ->
+    const Map = MapShim
+    let map = new Map([['a', 1], ['b', 2]])
+    assert Object.keys(map).length is 0
+    assert map.has('a')
+    assert not map.has('c')
+    assert map.get('a') is 1
+    assert map.get('b') is 2
+    assert map.get('c') is undefined
+    let mykey1 = {}
+    map.set(mykey1, "one")
+    assert Object.keys(mykey1).length is 0
+    assert map.get(mykey1) is "one"

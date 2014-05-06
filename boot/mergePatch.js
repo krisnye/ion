@@ -1,8 +1,8 @@
 void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
-const ion = require('./'), isObject = function (a) {
+var ion = require('./'), isObject = function (a) {
         return a != null && typeof a === 'object';
     }, deleteValue = null, applyPatch = function (target, values, options) {
-        let deleteNull = (options != null ? options.deleteNull : void 0) != null ? options.deleteNull : true;
+        var deleteNull = (options != null ? options.deleteNull : void 0) != null ? options.deleteNull : true;
         if ((values != null ? values.constructor : void 0) !== Object) {
             return values;
         }
@@ -13,8 +13,8 @@ const ion = require('./'), isObject = function (a) {
                 target = {};
             }
         }
-        for (let key in values) {
-            let value = values[key];
+        for (var key in values) {
+            var value = values[key];
             if (deleteNull && value === deleteValue) {
                 delete target[key];
             } else {
@@ -30,16 +30,16 @@ const ion = require('./'), isObject = function (a) {
         if (!isObject(object)) {
             throw new Error('Cannot watch: #{object}');
         }
-        let subWatchers = {};
-        let pendingPatch = null;
-        let processPatch = function (patchValues) {
-            for (let name in patchValues) {
+        var subWatchers = {};
+        var pendingPatch = null;
+        var processPatch = function (patchValues) {
+            for (var name in patchValues) {
                 subWatchers[name] != null ? subWatchers[name]() : void 0;
-                let value = object[name];
+                var value = object[name];
                 if (isObject(value)) {
                     (function (name) {
-                        let subHandler = function (patch) {
-                            let basePatch = {};
+                        var subHandler = function (patch) {
+                            var basePatch = {};
                             basePatch[name] = patch;
                             queuePatch(basePatch);
                         };
@@ -48,8 +48,8 @@ const ion = require('./'), isObject = function (a) {
                 }
             }
         };
-        let pendingTimeout = null;
-        let queuePatch = function (patch) {
+        var pendingTimeout = null;
+        var queuePatch = function (patch) {
             if (!callInitial) {
                 handler(patch);
             } else {
@@ -62,11 +62,11 @@ const ion = require('./'), isObject = function (a) {
                 }, 0);
             }
         };
-        let watcher = function (changes) {
+        var watcher = function (changes) {
             try {
-                let patch = {};
-                for (let _i = 0; _i < changes.length; _i++) {
-                    let change = changes[_i];
+                var patch = {};
+                for (var _i = 0; _i < changes.length; _i++) {
+                    var change = changes[_i];
                     patch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
                 }
                 queuePatch(patch);
@@ -78,8 +78,8 @@ const ion = require('./'), isObject = function (a) {
         ion.observe(object, watcher);
         return function () {
             ion.unobserve(object, watcher);
-            for (let key in subWatchers) {
-                let value = subWatchers[key];
+            for (var key in subWatchers) {
+                var value = subWatchers[key];
                 value();
             }
         };
@@ -90,17 +90,17 @@ const ion = require('./'), isObject = function (a) {
         if (!(oldValue != null && newValue != null && typeof newValue === 'object' && typeof oldValue === 'object')) {
             return newValue != null ? newValue : null;
         }
-        let patch = void 0;
-        for (let name in oldValue) {
+        var patch = void 0;
+        for (var name in oldValue) {
             if (oldValue.hasOwnProperty(name)) {
-                let propertyDiff = diff(oldValue[name], newValue[name]);
+                var propertyDiff = diff(oldValue[name], newValue[name]);
                 if (propertyDiff !== void 0) {
                     patch = patch != null ? patch : {};
                     patch[name] = propertyDiff;
                 }
             }
         }
-        for (let name in newValue) {
+        for (var name in newValue) {
             if (newValue.hasOwnProperty(name) && !oldValue.hasOwnProperty(name)) {
                 patch = patch != null ? patch : {};
                 patch[name] = newValue[name];
@@ -114,7 +114,7 @@ const ion = require('./'), isObject = function (a) {
         if (!(oldValue != null && newValue != null && typeof newValue === 'object' && typeof oldValue === 'object')) {
             return true;
         }
-        for (let name in newValue) {
+        for (var name in newValue) {
             if (newValue[name] === null && !oldValue.hasOwnProperty(name)) {
                 continue;
             }
@@ -124,14 +124,14 @@ const ion = require('./'), isObject = function (a) {
         }
         return false;
     };
-let _ref = applyPatch;
+var _ref = applyPatch;
 {
     _ref.combine = combine;
     _ref.watch = watch;
     _ref.diff = diff;
     _ref.isChange = isChange;
     _ref.test = function () {
-        const equal = function (a, b) {
+        var equal = function (a, b) {
             return !isChange(a, b) && !isChange(b, a);
         };
         return {
@@ -158,7 +158,7 @@ let _ref = applyPatch;
                         c: 3
                     }, { c: void 0 })))
                     throw new Error('Assertion Failed: (equal({a:1,b:2}, applyPatch({a:1,b:2,c:3}, {c:undefined})))');
-                let double = function (x) {
+                var double = function (x) {
                     return x * 2;
                 };
                 if (!equal({ a: double }, applyPatch({}, { a: double })))
@@ -238,7 +238,7 @@ let _ref = applyPatch;
                 if (!(Object.observe != null)) {
                     return done(null, 'Object.observe missing.');
                 }
-                let source = {
+                var source = {
                         name: 'Kris',
                         age: 41,
                         children: {
@@ -252,8 +252,8 @@ let _ref = applyPatch;
                             Third: {}
                         }
                     };
-                let target = ion.clone(source, true);
-                let unwatch = watch(source, function (patch) {
+                var target = ion.clone(source, true);
+                var unwatch = watch(source, function (patch) {
                         target = applyPatch(target, patch);
                         if (equal(source, target)) {
                             done();

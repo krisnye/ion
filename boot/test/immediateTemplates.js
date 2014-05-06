@@ -1,6 +1,6 @@
 void (function(){var _ion_test_immediateTemplates_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const templates = [
+var ion = require('../');
+var templates = [
         [
             ion.template(function _template() {
                 if (this != null && this.constructor === _template) {
@@ -71,7 +71,7 @@ const templates = [
                         test: test
                     });
                 }
-                const a = 1, b = 2, c = a + b;
+                var a = 1, b = 2, c = a + b;
                 return c;
             }),
             [],
@@ -308,9 +308,9 @@ const templates = [
                         test: test
                     });
                 }
-                let a = 1;
-                let b = 2;
-                let _ref4 = [];
+                var a = 1;
+                var b = 2;
+                var _ref4 = [];
                 {
                     _ref4.push(a);
                     _ref4.push(b);
@@ -442,18 +442,18 @@ const templates = [
                         test: test
                     });
                 }
-                let items = [
+                var items = [
                         1,
                         2,
                         3
                     ];
-                let _ref2 = [];
-                for (let _i = 0; _i < items.length; _i++) {
-                    let index = _i;
-                    let item = items[_i];
+                var _ref2 = [];
+                for (var _i = 0; _i < items.length; _i++) {
+                    var index = _i;
+                    var item = items[_i];
                     _ref2.push(item + index);
                 }
-                let x = _ref2;
+                var x = _ref2;
                 return x;
             }),
             [],
@@ -600,17 +600,17 @@ const templates = [
                         test: test
                     });
                 }
-                let items = {
+                var items = {
                         a: 1,
                         b: 2,
                         c: 3
                     };
-                let _ref3 = [];
-                for (let key in items) {
-                    let value = items[key];
+                var _ref3 = [];
+                for (var key in items) {
+                    var value = items[key];
                     _ref3.push(key + value);
                 }
-                let x = _ref3;
+                var x = _ref3;
                 return x;
             }),
             [],
@@ -696,7 +696,7 @@ const templates = [
                         test: test
                     });
                 }
-                let object = { a: { b: 1 } };
+                var object = { a: { b: 1 } };
                 return object.a.b;
             }),
             [],
@@ -854,8 +854,8 @@ const templates = [
                         test: test
                     });
                 }
-                let a = null;
-                let b = 2;
+                var a = null;
+                var b = 2;
                 return [
                     a != null,
                     b != null
@@ -1170,15 +1170,15 @@ const templates = [
                         test: test
                     });
                 }
-                let _ref5 = [];
+                var _ref5 = [];
                 {
-                    let items = [
+                    var items = [
                             3,
                             2,
                             1
                         ];
-                    for (let _i2 = 0; _i2 < items.length; _i2++) {
-                        let item = items[_i2];
+                    for (var _i2 = 0; _i2 < items.length; _i2++) {
+                        var item = items[_i2];
                         _ref5.push(item * 2);
                     }
                 }
@@ -1366,8 +1366,8 @@ const templates = [
                         test: test
                     });
                 }
-                let a = _ref.a;
-                let b = _ref.b;
+                var a = _ref.a;
+                var b = _ref.b;
                 return a + b;
             }),
             [{
@@ -1428,7 +1428,7 @@ const templates = [
                         test: test
                     });
                 }
-                let _ref6 = new type();
+                var _ref6 = new type();
                 {
                     _ref6.position = ion.patch(_ref6.position, { x: 10 });
                 }
@@ -1573,16 +1573,16 @@ const templates = [
             ion.patch
         ]
     ];
-const test = exports.test = function () {
-        for (let _i3 = 0; _i3 < templates.length; _i3++) {
-            let _ref7 = templates[_i3];
-            let templateType = _ref7[0];
-            let args = _ref7[1];
-            let expected = _ref7[2];
+var test = exports.test = function () {
+        for (var _i3 = 0; _i3 < templates.length; _i3++) {
+            var _ref7 = templates[_i3];
+            var templateType = _ref7[0];
+            var args = _ref7[1];
+            var expected = _ref7[2];
             if (expected != null) {
-                let template = ion.create(templateType, args);
+                var template = ion.create(templateType, args);
                 template.activate();
-                let reactiveResult = null;
+                var reactiveResult = null;
                 template.watch(function (value) {
                     return reactiveResult = value;
                 });
@@ -1596,7 +1596,7 @@ const test = exports.test = function () {
                 template.deactivate();
                 if (!(reactiveResult === void 0))
                     throw new Error('Assertion Failed: (reactiveResult is undefined)');
-                let imperativeResult = templateType.apply(null, args);
+                var imperativeResult = templateType.apply(null, args);
                 if (!(JSON.stringify(imperativeResult) === JSON.stringify(expected)))
                     throw new Error('Assertion Failed: (JSON.stringify(imperativeResult) is JSON.stringify(expected))');
             }

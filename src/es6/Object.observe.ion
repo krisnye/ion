@@ -1,4 +1,3 @@
-# no shim
 
 const clone = (object) ->
     return {}

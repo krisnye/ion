@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_Statement_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const Statement = ion.defineClass({
+var ion = require('../');
+var Statement = ion.defineClass({
         name: 'Statement',
         properties: {
             isActive: false,

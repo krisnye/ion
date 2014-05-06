@@ -1,3 +1,4 @@
+ion = require '../'
 index = require '../compiler'
 
 tests =
@@ -1373,24 +1374,33 @@ tests =
         return /a/;
     });
     """
+    """
+    x:
+        delete: true
+    """: """
+    'use strict';
+    const ion = require('ion');
+    ion.patch(x, { delete: true });
+    """
 
 if global.window?
     return
 
 exports.test = ->
     for input, expected of tests
+        options = {target:'es6'}
         if expected is null
             console.log '---------------------------------------------------'
-            console.log JSON.stringify index.compile(input, {postprocess:false}), null, '  '
+            console.log JSON.stringify index.compile(input, ion.patch({postprocess:false}, options)), null, '  '
             console.log '-Postprocessed-------------------------------------'
-            console.log JSON.stringify index.compile(input, {generate:false}), null, '  '
+            console.log JSON.stringify index.compile(input, ion.patch({generate:false}, options)), null, '  '
             console.log '---------------------------------------------------'
-            console.log index.compile input, {loc:false}
+            console.log index.compile input, ion.patch({loc:false}, options)
         else if typeof expected is 'object'
             # expected to throw an error
             error = null
             try
-                index.compile input
+                index.compile input, options
             catch e
                 error = e
                 # check equivalent fields
@@ -1400,7 +1410,7 @@ exports.test = ->
             if not error?
                 throw new Error "Expected an error: #{JSON.stringify expected}"
         else
-            output = index.compile input
+            output = index.compile input, options
             if output.trim() isnt expected.trim()
                 console.log '-Output---------------------------------------------'
                 console.log output

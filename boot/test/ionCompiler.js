@@ -1,4 +1,6 @@
-void (function(){var _ion_test_ionCompiler_ = function(module,exports,require){var index, tests;
+void (function(){var _ion_test_ionCompiler_ = function(module,exports,require){var index, ion, tests;
+
+ion = require('../');
 
 index = require('../compiler');
 
@@ -194,7 +196,8 @@ tests = {
   },
   "export template ->\n    return td()\n        let checked = true\n        onclick: ->\n            console.log(tasks, checked)": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function _template() {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [{\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'ObjectExpression',\n                        objectType: {\n                            type: 'CallExpression',\n                            callee: {\n                                type: 'Identifier',\n                                name: 'td'\n                            },\n                            arguments: []\n                        },\n                        properties: [\n                            {\n                                type: 'VariableDeclaration',\n                                declarations: [{\n                                        type: 'VariableDeclarator',\n                                        id: {\n                                            type: 'Identifier',\n                                            name: 'checked'\n                                        },\n                                        init: {\n                                            type: 'Literal',\n                                            value: true\n                                        }\n                                    }],\n                                kind: 'let'\n                            },\n                            {\n                                type: 'Property',\n                                key: {\n                                    type: 'Identifier',\n                                    name: 'onclick'\n                                },\n                                value: {\n                                    type: 'Function',\n                                    context: true,\n                                    value: function (_context) {\n                                        return function () {\n                                            const checked = _context.get('checked');\n                                            console.log(tasks, checked);\n                                        };\n                                    }\n                                },\n                                kind: 'init'\n                            }\n                        ]\n                    }\n                }]\n        }, {\n            require: require,\n            module: module,\n            exports: exports\n        });\n    }\n    let _ref = td();\n    {\n        let checked = true;\n        _ref.onclick = function () {\n            console.log(tasks, checked);\n        };\n    }\n    return _ref;\n});",
   "let x = []\n    ->": "'use strict';\nlet x = [function () {\n        }];",
-  "export template -> /a/": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function _template() {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [{\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'Literal',\n                        value: /a/\n                    }\n                }]\n        }, {\n            require: require,\n            module: module,\n            exports: exports\n        });\n    }\n    return /a/;\n});"
+  "export template -> /a/": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function _template() {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [{\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'Literal',\n                        value: /a/\n                    }\n                }]\n        }, {\n            require: require,\n            module: module,\n            exports: exports\n        });\n    }\n    return /a/;\n});",
+  "x:\n    delete: true": "'use strict';\nconst ion = require('ion');\nion.patch(x, { delete: true });"
 };
 
 if (global.window != null) {
@@ -202,26 +205,29 @@ if (global.window != null) {
 }
 
 exports.test = function() {
-  var e, error, expected, input, key, output, value;
+  var e, error, expected, input, key, options, output, value;
   for (input in tests) {
     expected = tests[input];
+    options = {
+      target: 'es6'
+    };
     if (expected === null) {
       console.log('---------------------------------------------------');
-      console.log(JSON.stringify(index.compile(input, {
+      console.log(JSON.stringify(index.compile(input, ion.patch({
         postprocess: false
-      }), null, '  '));
+      }, options)), null, '  '));
       console.log('-Postprocessed-------------------------------------');
-      console.log(JSON.stringify(index.compile(input, {
+      console.log(JSON.stringify(index.compile(input, ion.patch({
         generate: false
-      }), null, '  '));
+      }, options)), null, '  '));
       console.log('---------------------------------------------------');
-      console.log(index.compile(input, {
+      console.log(index.compile(input, ion.patch({
         loc: false
-      }));
+      }, options)));
     } else if (typeof expected === 'object') {
       error = null;
       try {
-        index.compile(input);
+        index.compile(input, options);
       } catch (_error) {
         e = _error;
         error = e;
@@ -236,7 +242,7 @@ exports.test = function() {
         throw new Error("Expected an error: " + (JSON.stringify(expected)));
       }
     } else {
-      output = index.compile(input);
+      output = index.compile(input, options);
       if (output.trim() !== expected.trim()) {
         console.log('-Output---------------------------------------------');
         console.log(output);

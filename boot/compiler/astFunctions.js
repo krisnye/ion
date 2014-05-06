@@ -1,6 +1,6 @@
 void (function(){var _ion_compiler_astFunctions_ = function(module,exports,require){'use strict';
-const ion = exports.ion = require('../'), addStatement = exports.addStatement = function (node, statement, index, offset) {
-        let body = node.body;
+var ion = exports.ion = require('../'), addStatement = exports.addStatement = function (node, statement, index, offset) {
+        var body = node.body;
         if (body.type === 'BlockStatement') {
             body = body.body;
         } else if (!Array.isArray(body)) {
@@ -21,11 +21,11 @@ const ion = exports.ion = require('../'), addStatement = exports.addStatement = 
             callback(pattern, expression);
         } else if (pattern.properties != null) {
             {
-                let _ref = pattern.properties;
-                for (let _i = 0; _i < _ref.length; _i++) {
-                    let _ref3 = _ref[_i];
-                    let key = _ref3.key;
-                    let value = _ref3.value;
+                var _ref = pattern.properties;
+                for (var _i = 0; _i < _ref.length; _i++) {
+                    var _ref3 = _ref[_i];
+                    var key = _ref3.key;
+                    var value = _ref3.value;
                     forEachDestructuringAssignment(value, {
                         type: 'MemberExpression',
                         object: expression,
@@ -36,10 +36,10 @@ const ion = exports.ion = require('../'), addStatement = exports.addStatement = 
             }
         } else if (pattern.elements != null) {
             {
-                let _ref2 = pattern.elements;
-                for (let _i2 = 0; _i2 < _ref2.length; _i2++) {
-                    let index = _i2;
-                    let value = _ref2[_i2];
+                var _ref2 = pattern.elements;
+                for (var _i2 = 0; _i2 < _ref2.length; _i2++) {
+                    var index = _i2;
+                    var value = _ref2[_i2];
                     forEachDestructuringAssignment(value, {
                         type: 'MemberExpression',
                         object: expression,

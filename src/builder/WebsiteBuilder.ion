@@ -59,7 +59,7 @@ export template (packagePatch) ->
             test: true
 
     # Copy all other files from src to output
-    for key, source of input.search(null, [".coffeepage",".coffee",".java",".class",".jar", ".ion"])
+    for key, source of input.search(null, [".ionpage",".coffeepage",".coffee",".java",".class",".jar", ".ion"])
         let target = output.getFile(key)
         output:
             [key]: source.read()

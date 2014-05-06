@@ -2,8 +2,8 @@ void (function(){var _ion_builder_Directory_ = function(module,exports,require){
 if (global.Window) {
     return;
 }
-const ion = require('../'), fs = require('fs'), np = require('path'), utility = require('./utility'), watcher = require('./watcher'), File = require('./File');
-const Directory = ion.defineClass({
+var ion = require('../'), fs = require('fs'), np = require('path'), utility = require('./utility'), watcher = require('./watcher'), File = require('./File');
+var Directory = ion.defineClass({
         name: 'Directory',
         constructor: function Directory(path) {
             if (path != null) {
@@ -57,17 +57,17 @@ const Directory = ion.defineClass({
                 return np.join(this.path, String(path));
             },
             search: function (include, exclude) {
-                let options = { initial: false };
+                var options = { initial: false };
                 if (include != null) {
                     options.include = include;
                 }
                 if (exclude != null) {
                     options.exclude = exclude;
                 }
-                let results = {};
+                var results = {};
                 ion.makeReactive(results, function () {
-                    let unwatch = watcher.watchDirectory(this.path, options, function (filename) {
-                            let path = this.getRelativeName(filename);
+                    var unwatch = watcher.watchDirectory(this.path, options, function (filename) {
+                            var path = this.getRelativeName(filename);
                             if (fs.existsSync(filename)) {
                                 if (!(results[path] != null)) {
                                     results[path] = new File(filename);
@@ -78,9 +78,9 @@ const Directory = ion.defineClass({
                         }.bind(this));
                     return unwatch;
                 }.bind(this));
-                let files = utility.list(this.path, options);
-                for (let _i = 0; _i < files.length; _i++) {
-                    let path = files[_i];
+                var files = utility.list(this.path, options);
+                for (var _i = 0; _i < files.length; _i++) {
+                    var path = files[_i];
                     results[this.getRelativeName(path)] = new File(path);
                 }
                 return results;

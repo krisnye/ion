@@ -1,7 +1,6 @@
 const ion = null # shouldn't depend on itself
 
 import './es6'
-import './Object.observe'
 
 const
     primitive = {string:true,number:true,boolean:true,function:true}

@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
-const ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal');
-const Context = ion.defineClass({
+var ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal');
+var Context = ion.defineClass({
         name: 'Context',
         constructor: function Context(parent, output) {
             this.output = output;
@@ -18,13 +18,13 @@ const Context = ion.defineClass({
                 return Factory.createRuntime(this, node);
             },
             get: function (name) {
-                let variable = this.getVariable(name);
+                var variable = this.getVariable(name);
                 if (!(variable != null)) {
                     throw new Error('Variable not found: \'' + name + '\'');
                 }
-                let value = variable.value;
+                var value = variable.value;
                 if (value === void 0) {
-                    let watcher = function (a) {
+                    var watcher = function (a) {
                         if (a !== void 0) {
                             value = a;
                         }
@@ -39,14 +39,14 @@ const Context = ion.defineClass({
             },
             setVariable: function (name, node) {
                 if (name != null) {
-                    let variable = this.variables[name] = this.createRuntime(node);
+                    var variable = this.variables[name] = this.createRuntime(node);
                     return variable;
                 }
             },
             getVariableExpression: function (name) {
-                let context = this, value;
+                var context = this, value;
                 while (context != null) {
-                    let variable = context.variables[name];
+                    var variable = context.variables[name];
                     if (variable != null) {
                         return variable;
                     }
@@ -56,7 +56,7 @@ const Context = ion.defineClass({
                 if (value === void 0) {
                     throw new Error('Variable not found: \'' + name + '\'');
                 }
-                let cachedGlobals = this.root.globals = this.root.globals != null ? this.root.globals : {};
+                var cachedGlobals = this.root.globals = this.root.globals != null ? this.root.globals : {};
                 return cachedGlobals[name] = cachedGlobals[name] != null ? cachedGlobals[name] : new Literal({ value: value });
             }
         }

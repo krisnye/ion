@@ -1,22 +1,22 @@
-void (function(){var _ion_Object_observe_ = function(module,exports,require){'use strict';
-const clone = function (object) {
-    let _ref3 = {};
+void (function(){var _ion_es6_Object_observe_ = function(module,exports,require){'use strict';
+var clone = function (object) {
+    var _ref3 = {};
     {
-        for (let key in object) {
-            let value = object[key];
+        for (var key in object) {
+            var value = object[key];
             _ref3[key] = value;
         }
     }
     return _ref3;
 };
-const createObjectObserveAndUnobserve = function () {
-    let map = new Map();
-    let array = [];
-    let observe = function (object, callback) {
+var createObjectObserveAndUnobserve = function () {
+    var map = new Map();
+    var array = [];
+    var observe = function (object, callback) {
         if (object.nodeType === 1 || object === global.document) {
             return;
         }
-        let meta = map.get(object);
+        var meta = map.get(object);
         if (!(meta != null)) {
             meta = {
                 object: object,
@@ -28,13 +28,13 @@ const createObjectObserveAndUnobserve = function () {
         }
         meta.callbacks.push(callback);
     };
-    let unobserve = function (object, callback) {
+    var unobserve = function (object, callback) {
         if (object.nodeType === 1 || object === global.document) {
             return;
         }
-        let meta = map.get(object);
+        var meta = map.get(object);
         if (meta != null) {
-            let index = meta.callbacks.lastIndexOf(callback);
+            var index = meta.callbacks.lastIndexOf(callback);
             if (index >= 0) {
                 meta.callbacks.splice(index, 1);
                 if (meta.callbacks.length === 0) {
@@ -44,9 +44,9 @@ const createObjectObserveAndUnobserve = function () {
             }
         }
     };
-    let getChanges = function (oldValue, newValue) {
-        let changes = null;
-        let change = function (type, name, oldValue) {
+    var getChanges = function (oldValue, newValue) {
+        var changes = null;
+        var change = function (type, name, oldValue) {
             changes = changes != null ? changes : [];
             changes.push({
                 type: type,
@@ -54,20 +54,20 @@ const createObjectObserveAndUnobserve = function () {
                 oldValue: oldValue
             });
         };
-        for (let name in oldValue) {
+        for (var name in oldValue) {
             if (oldValue.hasOwnProperty(name)) {
-                let oldPropertyValue = oldValue[name];
+                var oldPropertyValue = oldValue[name];
                 if (!newValue.hasOwnProperty(name)) {
                     change('delete', name, oldPropertyValue);
                 } else {
-                    let newPropertyValue = newValue[name];
+                    var newPropertyValue = newValue[name];
                     if (newPropertyValue !== oldPropertyValue) {
                         change('update', name, oldPropertyValue);
                     }
                 }
             }
         }
-        for (let name in newValue) {
+        for (var name in newValue) {
             if (newValue.hasOwnProperty(name) && !oldValue.hasOwnProperty(name)) {
                 change('add', name);
             }
@@ -75,13 +75,13 @@ const createObjectObserveAndUnobserve = function () {
         return changes;
     };
     observe.checkForChanges = function () {
-        let maxCycles = 100;
-        for (let i = 0; i < maxCycles; i++) {
-            let totalChanges = 0;
-            let pendingChanges = [];
-            for (let _i = 0; _i < array.length; _i++) {
-                let meta = array[_i];
-                let changes = getChanges(meta.clone, meta.object);
+        var maxCycles = 100;
+        for (var i = 0; i < maxCycles; i++) {
+            var totalChanges = 0;
+            var pendingChanges = [];
+            for (var _i = 0; _i < array.length; _i++) {
+                var meta = array[_i];
+                var changes = getChanges(meta.clone, meta.object);
                 if (changes != null) {
                     totalChanges++;
                     meta.clone = clone(meta.object);
@@ -94,12 +94,12 @@ const createObjectObserveAndUnobserve = function () {
             if (totalChanges === 0) {
                 return;
             }
-            for (let _i2 = 0; _i2 < pendingChanges.length; _i2++) {
-                let _ref4 = pendingChanges[_i2];
-                let changes = _ref4[0];
-                let callbacks = _ref4[1];
-                for (let _i3 = 0; _i3 < callbacks.length; _i3++) {
-                    let callback = callbacks[_i3];
+            for (var _i2 = 0; _i2 < pendingChanges.length; _i2++) {
+                var _ref4 = pendingChanges[_i2];
+                var changes = _ref4[0];
+                var callbacks = _ref4[1];
+                for (var _i3 = 0; _i3 < callbacks.length; _i3++) {
+                    var callback = callbacks[_i3];
                     callback(changes);
                 }
             }
@@ -112,19 +112,19 @@ const createObjectObserveAndUnobserve = function () {
         array
     ];
 };
-const test = exports.test = function () {
-        let _ref = createObjectObserveAndUnobserve();
-        let observe = _ref[0];
-        let unobserve = _ref[1];
-        let object = {
+var test = exports.test = function () {
+        var _ref = createObjectObserveAndUnobserve();
+        var observe = _ref[0];
+        var unobserve = _ref[1];
+        var object = {
                 a: 1,
                 b: {
                     c: 2,
                     d: 3
                 }
             };
-        let changes;
-        let handler = function (c) {
+        var changes;
+        var handler = function (c) {
             changes = c;
         };
         observe(object, handler);
@@ -155,10 +155,10 @@ const test = exports.test = function () {
         unobserve(object, handler);
     };
 if (!(Object.observe != null) && global.Map != null) {
-    let _ref2 = createObjectObserveAndUnobserve();
-    let observe = _ref2[0];
-    let unobserve = _ref2[1];
-    let array = _ref2[2];
+    var _ref2 = createObjectObserveAndUnobserve();
+    var observe = _ref2[0];
+    var unobserve = _ref2[1];
+    var array = _ref2[2];
     Object.observe = observe;
     Object.unobserve = unobserve;
     global.array = array;
@@ -166,11 +166,11 @@ if (!(Object.observe != null) && global.Map != null) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/Object.observe',_ion_Object_observe_);
+      require.register('ion/es6/Object.observe',_ion_es6_Object_observe_);
     else
-      _ion_Object_observe_.call(this, module, exports, require);
+      _ion_es6_Object_observe_.call(this, module, exports, require);
   }
   else {
-    _ion_Object_observe_.call(this);
+    _ion_es6_Object_observe_.call(this);
   }
 }).call(this)

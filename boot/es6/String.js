@@ -1,4 +1,4 @@
-void (function(){var _ion_es6_ = function(module,exports,require){if (!String.prototype.endsWith) {
+void (function(){var _ion_es6_String_ = function(module,exports,require){if (!String.prototype.endsWith) {
     Object.defineProperty(String.prototype, 'endsWith', {
         enumerable: false,
         configurable: false,
@@ -32,11 +32,11 @@ if (!String.prototype.contains ) {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/es6',_ion_es6_);
+      require.register('ion/es6/String',_ion_es6_String_);
     else
-      _ion_es6_.call(this, module, exports, require);
+      _ion_es6_String_.call(this, module, exports, require);
   }
   else {
-    _ion_es6_.call(this);
+    _ion_es6_String_.call(this);
   }
 }).call(this)

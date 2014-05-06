@@ -186,7 +186,7 @@ className
     / "[" _ name:InlineExpression _ "]" { return {name:name,computed:true} }
 classExtends = extends _ baseClasses:elementList { return baseClasses }
 path = head:Identifier tail:('.' a:Identifier {return a})+ { return [head].concat(tail) }
-propertyLeft = key:(path / Identifier / StringOrNumberLiteral) { return {key:key} }
+propertyLeft = key:(path / IdentifierName / StringOrNumberLiteral) { return {key:key} }
              / "[" _ key:InlineExpression _ "]" { return {key:key, computed: true} }
 PropertyDeclaration
     = start:start left:propertyLeft _ ":" bi:":"? _ value:RightHandSideExpression end:end

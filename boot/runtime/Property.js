@@ -1,6 +1,6 @@
 void (function(){var _ion_runtime_Property_ = function(module,exports,require){'use strict';
-const ion = require('../'), Statement = require('./Statement');
-const Property = ion.defineClass({
+var ion = require('../'), Statement = require('./Statement');
+var Property = ion.defineClass({
         name: 'Property',
         properties: {
             activate: function () {
@@ -9,7 +9,7 @@ const Property = ion.defineClass({
                 this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
                 this.keyExpression.watch(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : function (key) {
                     if (key != null && this.valueExpression.setLeftValue != null) {
-                        let currentValue = this.context.output ? ion.get(this.context.output, key) : this.context.get(key);
+                        var currentValue = this.context.output ? ion.get(this.context.output, key) : this.context.get(key);
                         if (currentValue != null) {
                             this.valueExpression.setLeftValue(currentValue);
                         }
@@ -24,7 +24,7 @@ const Property = ion.defineClass({
                 }.bind(this));
                 if (this.bi) {
                     ion.observe(this.context.output, this.contextObserver = this.contextObserver != null ? this.contextObserver : function () {
-                        let value = ion.get(this.context.output, this.keyValue);
+                        var value = ion.get(this.context.output, this.keyValue);
                         if (value !== void 0) {
                             this.valueExpression.setMemberValue(value);
                         }
@@ -50,9 +50,9 @@ const Property = ion.defineClass({
                     key = this.keyValue;
                 if (value == null)
                     value = this.valueValue;
-                let explicitUndefined = this.value.operator === 'void';
+                var explicitUndefined = this.value.operator === 'void';
                 if (key != null && (value !== void 0 || explicitUndefined)) {
-                    let currentValue = ion.get(this.context.output, key);
+                    var currentValue = ion.get(this.context.output, key);
                     if (explicitUndefined || currentValue !== value) {
                         this.originalKey = this.originalKey != null ? this.originalKey : key;
                         this.originalValue = this.originalValue != null ? this.originalValue : currentValue;
