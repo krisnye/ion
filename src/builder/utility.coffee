@@ -72,7 +72,7 @@ module.exports = exports =
         value = normalizePath value
         return value.substring(value.length-match.length) is match if typeof match is 'string'
         value = value.split(/[\/\\]/g).pop()
-        return match.test value
+        return match.test?(value)
     defaultFileExclude: ["node_modules","www"]
     removeExtension: removeExtension = (file) ->
         dot = file.lastIndexOf '.'

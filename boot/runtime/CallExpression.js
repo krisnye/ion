@@ -59,7 +59,7 @@ const CallExpression = ion.defineClass({
                             this.setValue(value);
                         }
                     } catch (e) {
-                        console.error(e);
+                        console.error(e.stack != null ? e.stack : e);
                     }
                 }
             }

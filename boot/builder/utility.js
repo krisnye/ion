@@ -135,7 +135,7 @@ module.exports = exports = {
       return value.substring(value.length - match.length) === match;
     }
     value = value.split(/[\/\\]/g).pop();
-    return match.test(value);
+    return typeof match.test === "function" ? match.test(value) : void 0;
   },
   defaultFileExclude: ["node_modules", "www"],
   removeExtension: removeExtension = function(file) {

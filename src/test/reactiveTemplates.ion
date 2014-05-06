@@ -1,6 +1,14 @@
 const ion = import '../'
 
 const templates = []
+    # []
+    #     "regular expression"
+    #     template (properties) ->
+    #         console.log("%%%%%%%%%%%%%%%%%%% " + /a/g)
+    #         return properties.name.replace(/a/g, 'b')
+    #     {name:"alpha"}
+    #     {}
+    #     "blphb"
     []
         "array comprehension"
         template (properties) ->

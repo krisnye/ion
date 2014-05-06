@@ -188,41 +188,6 @@ module.exports = exports = _ref2;
     _ion_browser_elements_.call(this);
   }
 }).call(this)
-void (function(){var _ion_browser_html_ = function(module,exports,require){var name, _fn, _i, _len, _ref;
-
-_ref = ["div", "span", "input", "a", "br", "button", "caption", "fieldset", "form", "frame", "frameset", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "legend", "menu", "option", "select", "script", "pre", "table", "tbody", "td", "tr", "thead"];
-_fn = function(name) {
-  return exports[name] = function(attributes) {
-    var element, key, value;
-    element = document.createElement(name);
-    if (attributes != null) {
-      console.log('attributes', attributes);
-      for (key in attributes) {
-        value = attributes[key];
-        console.log('setAttribute: ' + key, value);
-        element.setAttribute(key, value);
-        console.log('getAttribute: ' + element.getAttribute(key));
-      }
-    }
-    return element;
-  };
-};
-for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-  name = _ref[_i];
-  _fn(name);
-}
-
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('ion/browser/html',_ion_browser_html_);
-    else
-      _ion_browser_html_.call(this, module, exports, require);
-  }
-  else {
-    _ion_browser_html_.call(this);
-  }
-}).call(this)
 void (function(){var _ion_browser_tester_ = function(module,exports,require){var args, file, manifest, manifestFile, moduleId, modules, np, runTest, runTests, spawnTests, utility, _i, _len, _ref;
 
 runTest = function(name, test, callback) {
@@ -2451,7 +2416,7 @@ module.exports = exports = {
       return value.substring(value.length - match.length) === match;
     }
     value = value.split(/[\/\\]/g).pop();
-    return match.test(value);
+    return typeof match.test === "function" ? match.test(value) : void 0;
   },
   defaultFileExclude: ["node_modules", "www"],
   removeExtension: removeExtension = function(file) {
@@ -2740,7 +2705,7 @@ allWatchers = {};
   }
 }).call(this)
 void (function(){var _ion_builder_WebsiteBuilder_ = function(module,exports,require){'use strict';
-const ion = require('ion'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), utility = require('./utility'), ModuleBuilder = require('./ModuleBuilder'), clientJsDir = 'js', serverJsDir = 'WEB-INF/js', serverJavaDir = 'WEB-INF/java';
+const ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), utility = require('./utility'), ModuleBuilder = require('./ModuleBuilder'), clientJsDir = 'js', serverJsDir = 'WEB-INF/js', serverJavaDir = 'WEB-INF/java';
 module.exports = exports = ion.template(function _template(packagePatch) {
     if (this != null && this.constructor === _template) {
         return ion.createRuntime({
@@ -4387,6 +4352,103 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                 kind: 'let'
                             },
                             {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'console'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'log'
+                                        }
+                                    },
+                                    arguments: [{
+                                            type: 'BinaryExpression',
+                                            operator: '+',
+                                            left: {
+                                                type: 'Literal',
+                                                value: '>>>>>>>>>>>>>>>>>>>>1 '
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'key'
+                                            }
+                                        }]
+                                }
+                            },
+                            {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'console'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'log'
+                                        }
+                                    },
+                                    arguments: [{
+                                            type: 'BinaryExpression',
+                                            operator: '+',
+                                            left: {
+                                                type: 'Literal',
+                                                value: '>>>>>>>>>>>>>>>>>>>>2 '
+                                            },
+                                            right: {
+                                                type: 'Literal',
+                                                value: /[\.\/\\]/
+                                            }
+                                        }]
+                                }
+                            },
+                            {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'console'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'log'
+                                        }
+                                    },
+                                    arguments: [{
+                                            type: 'BinaryExpression',
+                                            operator: '+',
+                                            left: {
+                                                type: 'Literal',
+                                                value: '>>>>>>>>>>>>>>>>>>>>3 '
+                                            },
+                                            right: {
+                                                type: 'NewExpression',
+                                                callee: {
+                                                    type: 'Identifier',
+                                                    name: 'RegExp'
+                                                },
+                                                arguments: [{
+                                                        type: 'Literal',
+                                                        value: '\\b'
+                                                    }]
+                                            }
+                                        }]
+                                }
+                            },
+                            {
                                 type: 'Property',
                                 key: {
                                     type: 'Identifier',
@@ -4783,6 +4845,9 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         for (let key in _ref8) {
             let source = _ref8[key];
             let targetPath = builder.changeExtension(key, '.js');
+            console.log('>>>>>>>>>>>>>>>>>>>>1 ' + key);
+            console.log('>>>>>>>>>>>>>>>>>>>>2 ' + /[\.\/\\]/);
+            console.log('>>>>>>>>>>>>>>>>>>>>3 ' + new RegExp('\\b'));
             let _ref14 = {};
             {
                 _ref14[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(source) + ' })';
@@ -19149,7 +19214,7 @@ patchAssignmentExpression = function(node, context) {
       right: {
         type: 'CallExpression',
         callee: getPathExpression('ion.patch'),
-        "arguments": [node.left, node.right]
+        "arguments": [ion.clone(node.left, true), node.right]
       }
     });
   }
@@ -20521,7 +20586,14 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
     }, clone = exports.clone = function (object, deep) {
         if (deep == null)
             deep = false;
-        if ((object != null ? object.constructor : void 0) === Object) {
+        if (Array.isArray(object)) {
+            let _ref = [];
+            for (let _i = 0; _i < object.length; _i++) {
+                let item = object[_i];
+                _ref.push(deep ? clone(item, deep) : item);
+            }
+            return _ref;
+        } else if ((object != null ? object.constructor : void 0) === Object) {
             let _ref2 = {};
             {
                 for (let key in object) {
@@ -20530,13 +20602,6 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
                 }
             }
             return _ref2;
-        } else if (Array.isArray(object)) {
-            let _ref = [];
-            for (let _i = 0; _i < object.length; _i++) {
-                let item = object[_i];
-                _ref.push(deep ? clone(item, deep) : item);
-            }
-            return _ref;
         } else {
             return object;
         }
@@ -20553,37 +20618,53 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
         }
         object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
     }, add = exports.add = function (container, item) {
+        let remove;
         if (typeof item === 'function' && item.name.length > 0 && typeof container.addEventListener === 'function') {
-            container.addEventListener(item.name, item);
+            let name = item.name;
+            if ((Object.observe != null ? Object.observe.checkForChanges : void 0) != null) {
+                let originalItem = item;
+                item = function () {
+                    originalItem.apply(this, arguments);
+                    Object.observe.checkForChanges();
+                };
+            }
+            container.addEventListener(name, item);
+            remove = function () {
+                container.removeEventListener(name, item);
+            };
         } else if (container.nodeType === 1) {
             if (typeof item === 'string') {
                 item = document.createTextNode(item);
             }
             container.appendChild(item);
-        } else if (container.push != null) {
-            container.push(item);
+            remove = function () {
+                container.removeChild(item);
+            };
         } else {
-            container.add(item);
+            if (container.push != null) {
+                container.push(item);
+            } else {
+                container.add(item);
+            }
+            remove = function () {
+                if (container.lastIndexOf != null && container.removeAt != null) {
+                    let index = container.lastIndexOf(item);
+                    if (index >= 0) {
+                        container.removeAt(index);
+                    }
+                } else if (typeof container.remove === 'function') {
+                    container.remove(item);
+                } else if (Array.isArray(container)) {
+                    let index = container.lastIndexOf(item);
+                    if (index >= 0) {
+                        container.splice(index, 1);
+                    }
+                }
+            };
         }
         item.onAdded != null ? item.onAdded(container) : void 0;
         return function () {
-            if (typeof item === 'function' && item.name.length > 0 && typeof container.addEventListener === 'function') {
-                container.removeEventListener(item.name, item);
-            } else if (container.nodeType === 1) {
-                container.removeChild(item);
-            } else if (container.lastIndexOf != null && container.removeAt != null) {
-                let index = container.lastIndexOf(item);
-                if (index >= 0) {
-                    container.removeAt(index);
-                }
-            } else if (typeof container.remove === 'function') {
-                container.remove(item);
-            } else if (Array.isArray(container)) {
-                let index = container.lastIndexOf(item);
-                if (index >= 0) {
-                    container.splice(index, 1);
-                }
-            }
+            remove();
             item.onRemoved != null ? item.onRemoved(container) : void 0;
         };
     }, defineProperties = exports.defineProperties = function (object, properties) {
@@ -21083,7 +21164,16 @@ module.exports = exports = Object;
   }
 }).call(this)
 void (function(){var _ion_Object_observe_ = function(module,exports,require){'use strict';
-const ion = require('./');
+const clone = function (object) {
+    let _ref3 = {};
+    {
+        for (let key in object) {
+            let value = object[key];
+            _ref3[key] = value;
+        }
+    }
+    return _ref3;
+};
 const createObjectObserveAndUnobserve = function () {
     let map = new Map();
     let array = [];
@@ -21095,7 +21185,7 @@ const createObjectObserveAndUnobserve = function () {
         if (!(meta != null)) {
             meta = {
                 object: object,
-                clone: ion.clone(object),
+                clone: clone(object),
                 callbacks: []
             };
             map.set(object, meta);
@@ -21159,10 +21249,10 @@ const createObjectObserveAndUnobserve = function () {
                 let changes = getChanges(meta.clone, meta.object);
                 if (changes != null) {
                     totalChanges++;
-                    meta.clone = ion.clone(meta.object);
+                    meta.clone = clone(meta.object);
                     pendingChanges.push([
                         changes,
-                        ion.clone(meta.callbacks)
+                        meta.callbacks.slice(0)
                     ]);
                 }
             }
@@ -21170,9 +21260,9 @@ const createObjectObserveAndUnobserve = function () {
                 return;
             }
             for (let _i2 = 0; _i2 < pendingChanges.length; _i2++) {
-                let _ref3 = pendingChanges[_i2];
-                let changes = _ref3[0];
-                let callbacks = _ref3[1];
+                let _ref4 = pendingChanges[_i2];
+                let changes = _ref4[0];
+                let callbacks = _ref4[1];
                 for (let _i3 = 0; _i3 < callbacks.length; _i3++) {
                     let callback = callbacks[_i3];
                     callback(changes);
@@ -21467,7 +21557,7 @@ const CallExpression = ion.defineClass({
                             this.setValue(value);
                         }
                     } catch (e) {
-                        console.error(e);
+                        console.error(e.stack != null ? e.stack : e);
                     }
                 }
             }
@@ -24446,7 +24536,8 @@ tests = {
     column: 19
   },
   "export template ->\n    return td()\n        let checked = true\n        onclick: ->\n            console.log(tasks, checked)": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function _template() {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [{\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'ObjectExpression',\n                        objectType: {\n                            type: 'CallExpression',\n                            callee: {\n                                type: 'Identifier',\n                                name: 'td'\n                            },\n                            arguments: []\n                        },\n                        properties: [\n                            {\n                                type: 'VariableDeclaration',\n                                declarations: [{\n                                        type: 'VariableDeclarator',\n                                        id: {\n                                            type: 'Identifier',\n                                            name: 'checked'\n                                        },\n                                        init: {\n                                            type: 'Literal',\n                                            value: true\n                                        }\n                                    }],\n                                kind: 'let'\n                            },\n                            {\n                                type: 'Property',\n                                key: {\n                                    type: 'Identifier',\n                                    name: 'onclick'\n                                },\n                                value: {\n                                    type: 'Function',\n                                    context: true,\n                                    value: function (_context) {\n                                        return function () {\n                                            const checked = _context.get('checked');\n                                            console.log(tasks, checked);\n                                        };\n                                    }\n                                },\n                                kind: 'init'\n                            }\n                        ]\n                    }\n                }]\n        }, {\n            require: require,\n            module: module,\n            exports: exports\n        });\n    }\n    let _ref = td();\n    {\n        let checked = true;\n        _ref.onclick = function () {\n            console.log(tasks, checked);\n        };\n    }\n    return _ref;\n});",
-  "let x = []\n    ->": "'use strict';\nlet x = [function () {\n        }];"
+  "let x = []\n    ->": "'use strict';\nlet x = [function () {\n        }];",
+  "export template -> /a/": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function _template() {\n    if (this != null && this.constructor === _template) {\n        return ion.createRuntime({\n            type: 'Template',\n            body: [{\n                    type: 'ReturnStatement',\n                    argument: {\n                        type: 'Literal',\n                        value: /a/\n                    }\n                }]\n        }, {\n            require: require,\n            module: module,\n            exports: exports\n        });\n    }\n    return /a/;\n});"
 };
 
 if (global.window != null) {
@@ -25577,331 +25668,5 @@ const test = exports.test = function () {
   }
   else {
     _ion_test_templateParams_.call(this);
-  }
-}).call(this)
-void (function(){var _ion_test_Todo_ = function(module,exports,require){'use strict';
-const ion = require('../');
-const _ref = require('../browser/html');
-let div = _ref.div;
-let span = _ref.span;
-let input = _ref.input;
-let a = _ref.a;
-let form = _ref.form;
-let table = _ref.table;
-let tbody = _ref.tbody;
-let thead = _ref.thead;
-let tr = _ref.tr;
-let td = _ref.td;
-let button = _ref.button;
-let br = _ref.br;
-global.data = {
-    name: 'Kris',
-    offset: 0,
-    kids: {
-        Sadera: 18,
-        Orion: 15,
-        Galileo: 4
-    }
-};
-module.exports = exports = ion.template(function _template() {
-    if (this != null && this.constructor === _template) {
-        return ion.createRuntime({
-            type: 'Template',
-            body: [{
-                    type: 'ReturnStatement',
-                    argument: {
-                        type: 'ObjectExpression',
-                        objectType: {
-                            type: 'Identifier',
-                            name: 'div'
-                        },
-                        properties: [
-                            {
-                                type: 'ExpressionStatement',
-                                expression: {
-                                    type: 'ObjectExpression',
-                                    objectType: {
-                                        type: 'Identifier',
-                                        name: 'div'
-                                    },
-                                    properties: [{
-                                            type: 'ExpressionStatement',
-                                            expression: {
-                                                type: 'BinaryExpression',
-                                                operator: '+',
-                                                left: {
-                                                    type: 'Literal',
-                                                    value: 'Hello '
-                                                },
-                                                right: {
-                                                    type: 'MemberExpression',
-                                                    computed: false,
-                                                    object: {
-                                                        type: 'Identifier',
-                                                        name: 'data'
-                                                    },
-                                                    property: {
-                                                        type: 'Identifier',
-                                                        name: 'name'
-                                                    }
-                                                }
-                                            }
-                                        }]
-                                }
-                            },
-                            {
-                                type: 'ExpressionStatement',
-                                expression: {
-                                    type: 'ObjectExpression',
-                                    objectType: {
-                                        type: 'Identifier',
-                                        name: 'div'
-                                    },
-                                    properties: [
-                                        {
-                                            type: 'Property',
-                                            key: {
-                                                type: 'Identifier',
-                                                name: 'style'
-                                            },
-                                            value: {
-                                                type: 'ObjectExpression',
-                                                properties: [{
-                                                        type: 'Property',
-                                                        key: {
-                                                            type: 'Identifier',
-                                                            name: 'color'
-                                                        },
-                                                        value: {
-                                                            type: 'Literal',
-                                                            value: 'red'
-                                                        },
-                                                        kind: 'init'
-                                                    }]
-                                            },
-                                            kind: 'init'
-                                        },
-                                        {
-                                            type: 'ExpressionStatement',
-                                            expression: {
-                                                type: 'Literal',
-                                                value: 'red'
-                                            }
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                type: 'ForInStatement',
-                                left: {
-                                    type: 'VariableDeclaration',
-                                    declarations: [
-                                        {
-                                            type: 'VariableDeclarator',
-                                            id: {
-                                                type: 'Identifier',
-                                                name: 'name'
-                                            },
-                                            init: null
-                                        },
-                                        {
-                                            type: 'VariableDeclarator',
-                                            id: {
-                                                type: 'Identifier',
-                                                name: 'age'
-                                            },
-                                            init: null
-                                        }
-                                    ],
-                                    kind: 'let'
-                                },
-                                right: {
-                                    type: 'MemberExpression',
-                                    computed: false,
-                                    object: {
-                                        type: 'Identifier',
-                                        name: 'data'
-                                    },
-                                    property: {
-                                        type: 'Identifier',
-                                        name: 'kids'
-                                    }
-                                },
-                                body: {
-                                    type: 'BlockStatement',
-                                    body: [{
-                                            type: 'ExpressionStatement',
-                                            expression: {
-                                                type: 'ObjectExpression',
-                                                objectType: {
-                                                    type: 'Identifier',
-                                                    name: 'div'
-                                                },
-                                                properties: [
-                                                    {
-                                                        type: 'Property',
-                                                        key: {
-                                                            type: 'Identifier',
-                                                            name: 'style'
-                                                        },
-                                                        value: {
-                                                            type: 'ObjectExpression',
-                                                            properties: [
-                                                                {
-                                                                    type: 'Property',
-                                                                    key: {
-                                                                        type: 'Identifier',
-                                                                        name: 'textDecoration'
-                                                                    },
-                                                                    value: {
-                                                                        type: 'Literal',
-                                                                        value: 'underline'
-                                                                    },
-                                                                    kind: 'init'
-                                                                },
-                                                                {
-                                                                    type: 'Property',
-                                                                    key: {
-                                                                        type: 'Identifier',
-                                                                        name: 'cursor'
-                                                                    },
-                                                                    value: {
-                                                                        type: 'Literal',
-                                                                        value: 'pointer'
-                                                                    },
-                                                                    kind: 'init'
-                                                                }
-                                                            ]
-                                                        },
-                                                        kind: 'init'
-                                                    },
-                                                    {
-                                                        type: 'Property',
-                                                        key: {
-                                                            type: 'Identifier',
-                                                            name: 'onclick'
-                                                        },
-                                                        value: {
-                                                            type: 'Function',
-                                                            context: true,
-                                                            value: function (_context) {
-                                                                return function () {
-                                                                    const name = _context.get('name');
-                                                                    alert('hello ' + name);
-                                                                };
-                                                            }
-                                                        },
-                                                        kind: 'init'
-                                                    },
-                                                    {
-                                                        type: 'ExpressionStatement',
-                                                        expression: {
-                                                            type: 'BinaryExpression',
-                                                            operator: '+',
-                                                            left: {
-                                                                type: 'BinaryExpression',
-                                                                operator: '+',
-                                                                left: {
-                                                                    type: 'Identifier',
-                                                                    name: 'name'
-                                                                },
-                                                                right: {
-                                                                    type: 'Literal',
-                                                                    value: ' '
-                                                                }
-                                                            },
-                                                            right: {
-                                                                type: 'BinaryExpression',
-                                                                operator: '+',
-                                                                left: {
-                                                                    type: 'Identifier',
-                                                                    name: 'age'
-                                                                },
-                                                                right: {
-                                                                    type: 'MemberExpression',
-                                                                    computed: false,
-                                                                    object: {
-                                                                        type: 'Identifier',
-                                                                        name: 'data'
-                                                                    },
-                                                                    property: {
-                                                                        type: 'Identifier',
-                                                                        name: 'offset'
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                ]
-                                            }
-                                        }]
-                                }
-                            }
-                        ]
-                    }
-                }]
-        }, {
-            require: require,
-            module: module,
-            exports: exports,
-            ion: ion,
-            _ref: _ref,
-            div: div,
-            span: span,
-            input: input,
-            a: a,
-            form: form,
-            table: table,
-            tbody: tbody,
-            thead: thead,
-            tr: tr,
-            td: td,
-            button: button,
-            br: br
-        });
-    }
-    let _ref3 = div;
-    {
-        let _ref4 = div;
-        {
-            ion.add(_ref4, 'Hello ' + data.name);
-        }
-        ion.add(_ref3, _ref4);
-        let _ref5 = div;
-        {
-            _ref5.style = ion.patch(_ref5.style, { color: 'red' });
-            ion.add(_ref5, 'red');
-        }
-        ion.add(_ref3, _ref5);
-        {
-            let _ref2 = data.kids;
-            for (let name in _ref2) {
-                let age = _ref2[name];
-                let _ref6 = div;
-                {
-                    _ref6.style = ion.patch(_ref6.style, {
-                        textDecoration: 'underline',
-                        cursor: 'pointer'
-                    });
-                    _ref6.onclick = function () {
-                        alert('hello ' + name);
-                    };
-                    ion.add(_ref6, name + ' ' + (age + data.offset));
-                }
-                ion.add(_ref3, _ref6);
-            }
-        }
-    }
-    return _ref3;
-});
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('ion/test/Todo',_ion_test_Todo_);
-    else
-      _ion_test_Todo_.call(this, module, exports, require);
-  }
-  else {
-    _ion_test_Todo_.call(this);
   }
 }).call(this)

@@ -925,7 +925,7 @@ patchAssignmentExpression = function(node, context) {
       right: {
         type: 'CallExpression',
         callee: getPathExpression('ion.patch'),
-        "arguments": [node.left, node.right]
+        "arguments": [ion.clone(node.left, true), node.right]
       }
     });
   }

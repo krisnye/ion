@@ -56,7 +56,7 @@ export const
     clone = (object, deep = false) ->
         if Array.isArray(object)
             return [deep ? clone(item, deep) : item for item in object]
-        else if object? and typeof object is 'object'
+        else if object?.constructor is Object
             return {}
                 for key, value of object
                     [key]: deep ? clone(value, deep) : value

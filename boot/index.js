@@ -88,7 +88,14 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
     }, clone = exports.clone = function (object, deep) {
         if (deep == null)
             deep = false;
-        if ((object != null ? object.constructor : void 0) === Object) {
+        if (Array.isArray(object)) {
+            let _ref = [];
+            for (let _i = 0; _i < object.length; _i++) {
+                let item = object[_i];
+                _ref.push(deep ? clone(item, deep) : item);
+            }
+            return _ref;
+        } else if ((object != null ? object.constructor : void 0) === Object) {
             let _ref2 = {};
             {
                 for (let key in object) {
@@ -97,13 +104,6 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
                 }
             }
             return _ref2;
-        } else if (Array.isArray(object)) {
-            let _ref = [];
-            for (let _i = 0; _i < object.length; _i++) {
-                let item = object[_i];
-                _ref.push(deep ? clone(item, deep) : item);
-            }
-            return _ref;
         } else {
             return object;
         }
@@ -120,37 +120,53 @@ const patch = exports.patch = require('./mergePatch'), create = exports.create =
         }
         object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
     }, add = exports.add = function (container, item) {
+        let remove;
         if (typeof item === 'function' && item.name.length > 0 && typeof container.addEventListener === 'function') {
-            container.addEventListener(item.name, item);
+            let name = item.name;
+            if ((Object.observe != null ? Object.observe.checkForChanges : void 0) != null) {
+                let originalItem = item;
+                item = function () {
+                    originalItem.apply(this, arguments);
+                    Object.observe.checkForChanges();
+                };
+            }
+            container.addEventListener(name, item);
+            remove = function () {
+                container.removeEventListener(name, item);
+            };
         } else if (container.nodeType === 1) {
             if (typeof item === 'string') {
                 item = document.createTextNode(item);
             }
             container.appendChild(item);
-        } else if (container.push != null) {
-            container.push(item);
+            remove = function () {
+                container.removeChild(item);
+            };
         } else {
-            container.add(item);
+            if (container.push != null) {
+                container.push(item);
+            } else {
+                container.add(item);
+            }
+            remove = function () {
+                if (container.lastIndexOf != null && container.removeAt != null) {
+                    let index = container.lastIndexOf(item);
+                    if (index >= 0) {
+                        container.removeAt(index);
+                    }
+                } else if (typeof container.remove === 'function') {
+                    container.remove(item);
+                } else if (Array.isArray(container)) {
+                    let index = container.lastIndexOf(item);
+                    if (index >= 0) {
+                        container.splice(index, 1);
+                    }
+                }
+            };
         }
         item.onAdded != null ? item.onAdded(container) : void 0;
         return function () {
-            if (typeof item === 'function' && item.name.length > 0 && typeof container.addEventListener === 'function') {
-                container.removeEventListener(item.name, item);
-            } else if (container.nodeType === 1) {
-                container.removeChild(item);
-            } else if (container.lastIndexOf != null && container.removeAt != null) {
-                let index = container.lastIndexOf(item);
-                if (index >= 0) {
-                    container.removeAt(index);
-                }
-            } else if (typeof container.remove === 'function') {
-                container.remove(item);
-            } else if (Array.isArray(container)) {
-                let index = container.lastIndexOf(item);
-                if (index >= 0) {
-                    container.splice(index, 1);
-                }
-            }
+            remove();
             item.onRemoved != null ? item.onRemoved(container) : void 0;
         };
     }, defineProperties = exports.defineProperties = function (object, properties) {

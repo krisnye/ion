@@ -1348,6 +1348,31 @@ tests =
     let x = [function () {
             }];
     """
+    """
+    export template -> /a/
+    """: """
+    'use strict';
+    const ion = require('ion');
+    module.exports = exports = ion.template(function _template() {
+        if (this != null && this.constructor === _template) {
+            return ion.createRuntime({
+                type: 'Template',
+                body: [{
+                        type: 'ReturnStatement',
+                        argument: {
+                            type: 'Literal',
+                            value: /a/
+                        }
+                    }]
+            }, {
+                require: require,
+                module: module,
+                exports: exports
+            });
+        }
+        return /a/;
+    });
+    """
 
 if global.window?
     return

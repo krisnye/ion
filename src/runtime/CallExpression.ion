@@ -55,4 +55,4 @@ module.exports = class CallExpression extends DynamicExpression
                         @setValue(value)
                 catch e
                     # if we don't catch the errors, they might not be logged when occuring in an Object.observe callback
-                    console.error(e)
+                    console.error(e.stack ? e)

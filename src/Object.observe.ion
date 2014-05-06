@@ -1,5 +1,9 @@
 # no shim
-const ion = import './'
+
+const clone = (object) ->
+    return {}
+        for key, value of object
+            [key]: value
 
 const createObjectObserveAndUnobserve = ->
     # multiple callbacks on same object.
@@ -14,7 +18,7 @@ const createObjectObserveAndUnobserve = ->
         if not meta?
             meta =
                 object: object
-                clone: ion.clone(object)
+                clone: clone(object)
                 callbacks: []
             map.set(object, meta)
             array.push(meta)
@@ -60,9 +64,9 @@ const createObjectObserveAndUnobserve = ->
                 let changes = getChanges(meta.clone, meta.object)
                 if changes?
                     totalChanges++
-                    meta.clone = ion.clone(meta.object)
+                    meta.clone = clone(meta.object)
                     # callbacks must be deferred until after ALL changes have been found
-                    pendingChanges.push([changes, ion.clone(meta.callbacks)])
+                    pendingChanges.push([changes, meta.callbacks.slice(0)])
             if totalChanges is 0
                 return
             for [changes, callbacks] in pendingChanges

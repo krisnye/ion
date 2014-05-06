@@ -1,5 +1,14 @@
 void (function(){var _ion_Object_observe_ = function(module,exports,require){'use strict';
-const ion = require('./');
+const clone = function (object) {
+    let _ref3 = {};
+    {
+        for (let key in object) {
+            let value = object[key];
+            _ref3[key] = value;
+        }
+    }
+    return _ref3;
+};
 const createObjectObserveAndUnobserve = function () {
     let map = new Map();
     let array = [];
@@ -11,7 +20,7 @@ const createObjectObserveAndUnobserve = function () {
         if (!(meta != null)) {
             meta = {
                 object: object,
-                clone: ion.clone(object),
+                clone: clone(object),
                 callbacks: []
             };
             map.set(object, meta);
@@ -75,10 +84,10 @@ const createObjectObserveAndUnobserve = function () {
                 let changes = getChanges(meta.clone, meta.object);
                 if (changes != null) {
                     totalChanges++;
-                    meta.clone = ion.clone(meta.object);
+                    meta.clone = clone(meta.object);
                     pendingChanges.push([
                         changes,
-                        ion.clone(meta.callbacks)
+                        meta.callbacks.slice(0)
                     ]);
                 }
             }
@@ -86,9 +95,9 @@ const createObjectObserveAndUnobserve = function () {
                 return;
             }
             for (let _i2 = 0; _i2 < pendingChanges.length; _i2++) {
-                let _ref3 = pendingChanges[_i2];
-                let changes = _ref3[0];
-                let callbacks = _ref3[1];
+                let _ref4 = pendingChanges[_i2];
+                let changes = _ref4[0];
+                let callbacks = _ref4[1];
                 for (let _i3 = 0; _i3 < callbacks.length; _i3++) {
                     let callback = callbacks[_i3];
                     callback(changes);

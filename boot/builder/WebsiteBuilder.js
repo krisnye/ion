@@ -1,5 +1,5 @@
 void (function(){var _ion_builder_WebsiteBuilder_ = function(module,exports,require){'use strict';
-const ion = require('ion'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), utility = require('./utility'), ModuleBuilder = require('./ModuleBuilder'), clientJsDir = 'js', serverJsDir = 'WEB-INF/js', serverJavaDir = 'WEB-INF/java';
+const ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), utility = require('./utility'), ModuleBuilder = require('./ModuleBuilder'), clientJsDir = 'js', serverJsDir = 'WEB-INF/js', serverJavaDir = 'WEB-INF/java';
 module.exports = exports = ion.template(function _template(packagePatch) {
     if (this != null && this.constructor === _template) {
         return ion.createRuntime({
@@ -1646,6 +1646,103 @@ module.exports = exports = ion.template(function _template(packagePatch) {
                                 kind: 'let'
                             },
                             {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'console'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'log'
+                                        }
+                                    },
+                                    arguments: [{
+                                            type: 'BinaryExpression',
+                                            operator: '+',
+                                            left: {
+                                                type: 'Literal',
+                                                value: '>>>>>>>>>>>>>>>>>>>>1 '
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'key'
+                                            }
+                                        }]
+                                }
+                            },
+                            {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'console'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'log'
+                                        }
+                                    },
+                                    arguments: [{
+                                            type: 'BinaryExpression',
+                                            operator: '+',
+                                            left: {
+                                                type: 'Literal',
+                                                value: '>>>>>>>>>>>>>>>>>>>>2 '
+                                            },
+                                            right: {
+                                                type: 'Literal',
+                                                value: /[\.\/\\]/
+                                            }
+                                        }]
+                                }
+                            },
+                            {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'console'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'log'
+                                        }
+                                    },
+                                    arguments: [{
+                                            type: 'BinaryExpression',
+                                            operator: '+',
+                                            left: {
+                                                type: 'Literal',
+                                                value: '>>>>>>>>>>>>>>>>>>>>3 '
+                                            },
+                                            right: {
+                                                type: 'NewExpression',
+                                                callee: {
+                                                    type: 'Identifier',
+                                                    name: 'RegExp'
+                                                },
+                                                arguments: [{
+                                                        type: 'Literal',
+                                                        value: '\\b'
+                                                    }]
+                                            }
+                                        }]
+                                }
+                            },
+                            {
                                 type: 'Property',
                                 key: {
                                     type: 'Identifier',
@@ -2042,6 +2139,9 @@ module.exports = exports = ion.template(function _template(packagePatch) {
         for (let key in _ref8) {
             let source = _ref8[key];
             let targetPath = builder.changeExtension(key, '.js');
+            console.log('>>>>>>>>>>>>>>>>>>>>1 ' + key);
+            console.log('>>>>>>>>>>>>>>>>>>>>2 ' + /[\.\/\\]/);
+            console.log('>>>>>>>>>>>>>>>>>>>>3 ' + new RegExp('\\b'));
             let _ref14 = {};
             {
                 _ref14[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(source) + ' })';

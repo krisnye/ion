@@ -1,9 +1,8 @@
 {
-  "modified": 1399329508854,
+  "modified": 1399338214353,
   "files": [
     "browser/require.js",
     "browser/elements.js",
-    "browser/html.js",
     "browser/tester.js",
     "builder/Directory.js",
     "builder/File.js",
@@ -51,7 +50,6 @@
     "test/ionCustomParse.js",
     "test/ionVsEsprima.js",
     "test/reactiveTemplates.js",
-    "test/templateParams.js",
-    "test/Todo.js"
+    "test/templateParams.js"
   ]
 }
