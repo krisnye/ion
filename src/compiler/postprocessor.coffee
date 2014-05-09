@@ -191,15 +191,11 @@ convertForInToForLength = (node, context) ->
 callFunctionBindForFatArrows = (node, context) ->
     if node.type is 'FunctionExpression' and node.bound
         delete node.bound
+        ensureIonVariable context
         context.replace
             type: "CallExpression"
-            callee:
-                type: "MemberExpression"
-                object: node
-                property:
-                    type: "Identifier"
-                    name: "bind"
-            arguments: [ { type:"ThisExpression" } ]
+            callee: getPathExpression 'ion.bind'
+            arguments: [ node, thisExpression ]
 
 nodejsModules = (node, context) ->
     # convert ImportExpression{name} into require(name)
@@ -981,7 +977,7 @@ wrapTemplateInnerFunctions = (node, context) ->
             # see if we need to replace any properties in this function or not.
             variables = {}
             getExternalIdentifiers node, (id) ->
-                if id.name isnt node.id?.name and context.scope()?.variables[id.name]?
+                if id.name is 'ion' or (id.name isnt node.id?.name and context.scope()?.variables[id.name]?)
                     variables[id.name] = id
             requiresWrapper = Object.keys(variables).length > 0
             if requiresWrapper
@@ -1029,32 +1025,29 @@ createTemplateFunctionClone = (node, context) ->
         delete node.template
         template = ion.clone node, true
         template.type = 'Template'
-        delete template.id
-        delete template.defaults
-        delete template.bound
+        # delete template.id
         Object.defineProperties template,
             type: {value:'Template'}
-        node.template = template
+        # node.template = template
         # wrap the template in a call to ion.template
         ensureIonVariable context
         context.replace
             type: 'CallExpression'
             callee: getPathExpression 'ion.template'
-            arguments: [node]
+            arguments: [node,template]
 
 createTemplateRuntime = (node, context) ->
-    if isFunctionNode(node) and node.template?
-        templateId = node.id ?= context.getNewInternalIdentifier('_template')
-        template = removeLocationInfo node.template
-        ensureIonVariable context
+    if node.type is 'Template'
+        template = removeLocationInfo node
 
         # create an arguments object that contains all the parameter values.
         args =
             type: 'ObjectExpression'
             properties: []
-        variables = {}
+        variables =
+            this: thisExpression
         # if nodejs, add built in ids
-        for name in ['require', 'module', 'exports']
+        for name in ['require', 'module', 'exports', 'ion']
             variables[name] = { type: 'Identifier', name: name }
         for id in template.params
             variables[id.name] = id
@@ -1068,37 +1061,28 @@ createTemplateRuntime = (node, context) ->
                 value: id
                 kind: 'init'
 
-        # now delete template params because we don't need them at runtime
-        delete template.params
-        # move the template.body.body just to template.body
+        params = template.params
+        # remove the extra blockStatement.
         template.body = template.body.body
+        delete template.id
+        delete template.params
+        delete template.defaults
 
-        context.addStatement
-            type: 'IfStatement'
-            # test for if this is a new object thingy.
-            test:
-                type: 'BinaryExpression'
-                operator: '&&'
-                left:
-                    type: 'BinaryExpression'
-                    operator: '!='
-                    left: thisExpression
-                    right: nullExpression
-                right:
-                    type: 'BinaryExpression'
-                    operator: '==='
-                    left: getPathExpression 'this.constructor'
-                    right: templateId
-            consequent: block
-                type: 'ReturnStatement'
-                argument:
-                    type: 'CallExpression'
-                    callee: getPathExpression 'ion.createRuntime'
-                    arguments: [
-                        nodeToLiteral template
-                        args
-                    ]
-        delete node.template
+        context.replace
+            type: 'FunctionExpression'
+            params: params
+            body:
+                type: 'BlockStatement'
+                body: [
+                    type: 'ReturnStatement'
+                    argument:
+                        type: 'CallExpression'
+                        callee: getPathExpression 'ion.createRuntime'
+                        arguments: [
+                            nodeToLiteral template
+                            args
+                        ]
+                ]
 
 javascriptExpressions = (node, context) ->
     if node.type is 'JavascriptExpression'

@@ -247,9 +247,10 @@ tests =
     do (x, y) => x + y
     """: """
     'use strict';
-    (function (x, y) {
+    const ion = require('ion');
+    ion.bind(function (x, y) {
         return x + y;
-    }.bind(this)(x, y));
+    }, this)(x, y);
     """
     """
     const ion = import "ion"
@@ -1249,119 +1250,12 @@ tests =
     require(foo).bar;
     """
     """
-    const outer = template ->
-        const inner = template ->
-    """: { line: 2, column: 19 }
-    """
-    export template ->
-        return td()
-            let checked = true
-            onclick: ->
-                console.log(tasks, checked)
-    """: """
-    'use strict';
-    const ion = require('ion');
-    module.exports = exports = ion.template(function _template() {
-        if (this != null && this.constructor === _template) {
-            return ion.createRuntime({
-                type: 'Template',
-                body: [{
-                        type: 'ReturnStatement',
-                        argument: {
-                            type: 'ObjectExpression',
-                            objectType: {
-                                type: 'CallExpression',
-                                callee: {
-                                    type: 'Identifier',
-                                    name: 'td'
-                                },
-                                arguments: []
-                            },
-                            properties: [
-                                {
-                                    type: 'VariableDeclaration',
-                                    declarations: [{
-                                            type: 'VariableDeclarator',
-                                            id: {
-                                                type: 'Identifier',
-                                                name: 'checked'
-                                            },
-                                            init: {
-                                                type: 'Literal',
-                                                value: true
-                                            }
-                                        }],
-                                    kind: 'let'
-                                },
-                                {
-                                    type: 'Property',
-                                    key: {
-                                        type: 'Identifier',
-                                        name: 'onclick'
-                                    },
-                                    value: {
-                                        type: 'Function',
-                                        context: true,
-                                        value: function (_context) {
-                                            return function () {
-                                                const checked = _context.get('checked');
-                                                console.log(tasks, checked);
-                                            };
-                                        }
-                                    },
-                                    kind: 'init'
-                                }
-                            ]
-                        }
-                    }]
-            }, {
-                require: require,
-                module: module,
-                exports: exports
-            });
-        }
-        let _ref = td();
-        {
-            let checked = true;
-            _ref.onclick = function () {
-                console.log(tasks, checked);
-            };
-        }
-        return _ref;
-    });
-    """
-    """
     let x = []
         ->
     """: """
     'use strict';
     let x = [function () {
             }];
-    """
-    """
-    export template -> /a/
-    """: """
-    'use strict';
-    const ion = require('ion');
-    module.exports = exports = ion.template(function _template() {
-        if (this != null && this.constructor === _template) {
-            return ion.createRuntime({
-                type: 'Template',
-                body: [{
-                        type: 'ReturnStatement',
-                        argument: {
-                            type: 'Literal',
-                            value: /a/
-                        }
-                    }]
-            }, {
-                require: require,
-                module: module,
-                exports: exports
-            });
-        }
-        return /a/;
-    });
     """
     """
     x:
@@ -1385,6 +1279,43 @@ tests =
         ion.add(_ref, 'delete');
     }
     return _ref;
+    """
+    """
+    export template add(x,y) -> x + y
+    """: """
+    'use strict';
+    const ion = require('ion');
+    module.exports = exports = ion.template(function add(x, y) {
+        return x + y;
+    }, function (x, y) {
+        return ion.createRuntime({
+            type: 'Template',
+            body: [{
+                    type: 'ReturnStatement',
+                    argument: {
+                        type: 'BinaryExpression',
+                        operator: '+',
+                        left: {
+                            type: 'Identifier',
+                            name: 'x'
+                        },
+                        right: {
+                            type: 'Identifier',
+                            name: 'y'
+                        }
+                    }
+                }],
+            bound: false
+        }, {
+            this: this,
+            require: require,
+            module: module,
+            exports: exports,
+            ion: ion,
+            x: x,
+            y: y
+        });
+    });
     """
 
 if global.window?

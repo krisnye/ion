@@ -20,10 +20,15 @@ var parse = exports.parse = function (content, options) {
     }, compile = exports.compile = function (content, options) {
         if (options == null)
             options = {};
+        return compileWithSourceMap(content, options)[0];
+    }, compileWithSourceMap = exports.compileWithSourceMap = function (content, options) {
+        if (options == null)
+            options = {};
+        options.id = options.id != null ? options.id : 'unknown';
         options.loc = options.loc != null ? options.loc : true;
         options.target = options.target != null ? options.target : 'es5';
         var preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('escodegen');
-        var sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), preprocessed = result, sourceLocationsFixed = false;
+        var sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), sourceMap = null, preprocessed = result, sourceLocationsFixed = false;
         try {
             result = parser.parse(result, options);
             if (options.loc) {
@@ -34,7 +39,14 @@ var parse = exports.parse = function (content, options) {
             if (options.postprocess !== false) {
                 result = postprocessor.postprocess(result, options);
                 if ((options != null ? options.generate : void 0) !== false) {
-                    result = escodegen.generate(result);
+                    var generateOptions = {
+                            sourceMapWithCode: true,
+                            sourceMap: options.sourceMap != null ? options.sourceMap : options.id,
+                            sourceContent: content
+                        };
+                    var output = escodegen.generate(result, generateOptions);
+                    result = output.code;
+                    sourceMap = output.map.toString();
                 }
             }
         } catch (e) {
@@ -44,7 +56,10 @@ var parse = exports.parse = function (content, options) {
             makePrettyError(e, content, options.id);
             throw e;
         }
-        return result;
+        return [
+            result,
+            sourceMap
+        ];
     };
   }
   if (typeof require === 'function') {
@@ -57,3 +72,4 @@ var parse = exports.parse = function (content, options) {
     _ion_compiler_index_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./index.map

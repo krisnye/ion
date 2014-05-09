@@ -59,6 +59,7 @@ export class ForInOfStatement extends Statement
                     return true
                 return false
             # this will be an N performance algorithm for ARRAY insertions/deletions.
+            # we can improve this later by looking for "slice" events and seeing if index is not relevant.
             # console.log('changes', changes)
             for {name,oldValue} in changes
                 let ignore = ignoreProperty(name)

@@ -30,10 +30,10 @@ var OperationExpression = ion.defineClass({
                     elements: this.args,
                     observeElements: this.factory.observe
                 });
-                this.argumentExpressions.watch(this.watcher = this.watcher != null ? this.watcher : function (value) {
+                this.argumentExpressions.watch(this.watcher = this.watcher != null ? this.watcher : ion.bind(function (value) {
                     this.argumentValues = value;
                     this.evaluate();
-                }.bind(this));
+                }, this));
             },
             deactivate: function () {
                 OperationExpression.super.prototype.deactivate.apply(this, arguments);
@@ -60,3 +60,4 @@ module.exports = OperationExpression;
     _ion_runtime_OperationExpression_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./OperationExpression.map

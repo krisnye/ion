@@ -1,7 +1,8 @@
 void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
 var ion = require('./'), isObject = function (a) {
         return a != null && typeof a === 'object';
-    }, deleteValue = null, applyPatch = function (target, values, options) {
+    }, deleteValue = null;
+var merge = exports.merge = function (target, values, options) {
         var deleteNull = (options != null ? options.deleteNull : void 0) != null ? options.deleteNull : true;
         if ((values != null ? values.constructor : void 0) !== Object) {
             return values;
@@ -18,13 +19,13 @@ var ion = require('./'), isObject = function (a) {
             if (deleteNull && value === deleteValue) {
                 delete target[key];
             } else {
-                target[key] = applyPatch(target[key], value, options);
+                target[key] = merge(target[key], value, options);
             }
         }
         return target;
-    }, combine = function (patch1, patch2) {
-        return applyPatch(patch1, patch2, { deleteNull: false });
-    }, watch = function (object, handler, callInitial) {
+    }, combine = exports.combine = function (patch1, patch2) {
+        return merge(patch1, patch2, { deleteNull: false });
+    }, watch = exports.watch = function (object, handler, callInitial) {
         if (callInitial == null)
             callInitial = true;
         if (!isObject(object)) {
@@ -83,7 +84,7 @@ var ion = require('./'), isObject = function (a) {
                 value();
             }
         };
-    }, diff = function (oldValue, newValue) {
+    }, diff = exports.diff = function (oldValue, newValue) {
         if (oldValue === newValue) {
             return void 0;
         }
@@ -107,7 +108,7 @@ var ion = require('./'), isObject = function (a) {
             }
         }
         return patch;
-    }, isChange = function (oldValue, newValue) {
+    }, isChange = exports.isChange = function (oldValue, newValue) {
         if (oldValue === newValue) {
             return false;
         }
@@ -123,46 +124,39 @@ var ion = require('./'), isObject = function (a) {
             }
         }
         return false;
-    };
-var _ref = applyPatch;
-{
-    _ref.combine = combine;
-    _ref.watch = watch;
-    _ref.diff = diff;
-    _ref.isChange = isChange;
-    _ref.test = function () {
+    }, test = exports.test = function () {
         var equal = function (a, b) {
             return !isChange(a, b) && !isChange(b, a);
         };
         return {
-            applyPatch: function () {
+            merge: function () {
                 if (!equal({
                         a: {
                             b: 2,
                             c: 3
                         },
                         d: 4
-                    }, applyPatch({ a: { b: 2 } }, {
+                    }, merge({ a: { b: 2 } }, {
                         a: { c: 3 },
                         d: 4
                     })))
-                    throw new Error('Assertion Failed: (equal({a:{b:2,c:3},d:4}, applyPatch({a:{b:2}}, {a:{c:3},d:4})))');
-                if (!equal({ b: 2 }, applyPatch(null, { b: 2 })))
-                    throw new Error('Assertion Failed: (equal({b:2}, applyPatch(null, {b:2})))');
+                    throw new Error('Assertion Failed: (equal({a:{b:2,c:3},d:4}, merge({a:{b:2}}, {a:{c:3},d:4})))');
+                if (!equal({ b: 2 }, merge(null, { b: 2 })))
+                    throw new Error('Assertion Failed: (equal({b:2}, merge(null, {b:2})))');
                 if (!equal({
                         a: 1,
                         b: 2
-                    }, applyPatch({
+                    }, merge({
                         a: 1,
                         b: 2,
                         c: 3
                     }, { c: void 0 })))
-                    throw new Error('Assertion Failed: (equal({a:1,b:2}, applyPatch({a:1,b:2,c:3}, {c:undefined})))');
+                    throw new Error('Assertion Failed: (equal({a:1,b:2}, merge({a:1,b:2,c:3}, {c:undefined})))');
                 var double = function (x) {
                     return x * 2;
                 };
-                if (!equal({ a: double }, applyPatch({}, { a: double })))
-                    throw new Error('Assertion Failed: (equal({a:double}, applyPatch({},{a:double})))');
+                if (!equal({ a: double }, merge({}, { a: double })))
+                    throw new Error('Assertion Failed: (equal({a:double}, merge({},{a:double})))');
             },
             isChange: function () {
                 if (!isChange({ a: 1 }, null))
@@ -254,7 +248,7 @@ var _ref = applyPatch;
                     };
                 var target = ion.clone(source, true);
                 var unwatch = watch(source, function (patch) {
-                        target = applyPatch(target, patch);
+                        target = merge(target, patch);
                         if (equal(source, target)) {
                             done();
                             unwatch();
@@ -276,8 +270,6 @@ var _ref = applyPatch;
             }
         };
     }();
-}
-module.exports = exports = _ref;
   }
   if (typeof require === 'function') {
     if (require.register)
@@ -289,3 +281,4 @@ module.exports = exports = _ref;
     _ion_mergePatch_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./mergePatch.map

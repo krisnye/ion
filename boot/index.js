@@ -67,10 +67,21 @@ var primitive = {
             return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
         }
     ];
-var patch = exports.patch = require('./mergePatch'), create = exports.create = function (type, args) {
+var patch = exports.patch = function () {
+        var mergePatch = require('./mergePatch');
+        var patch = function (object, patch, add, remove) {
+            var result = mergePatch.merge(object, patch);
+            return result;
+        };
+        for (var key in mergePatch) {
+            var value = mergePatch[key];
+            patch[key] = value;
+        }
+        return patch;
+    }(), create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
-    }, template = exports.template = function (fn) {
-        fn.template = true;
+    }, template = exports.template = function (fn, template) {
+        fn.template = template;
         return fn;
     }, createRuntime = exports.createRuntime = function (ast, args) {
         var Context = require('./runtime/Context');
@@ -118,10 +129,16 @@ var patch = exports.patch = require('./mergePatch'), create = exports.create = f
             object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
         }
         object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
+    }, bind = exports.bind = function (fn, thisArg) {
+        var newFn = fn.bind(thisArg);
+        if (fn.name.length > 0) {
+            newFn.id = fn.id != null ? fn.id : fn.name;
+        }
+        return newFn;
     }, add = exports.add = function (container, item) {
         var remove;
-        if (typeof item === 'function' && item.name.length > 0 && typeof container.addEventListener === 'function') {
-            var name = item.name;
+        if (typeof item === 'function' && (item.name.length > 0 || item.id != null) && typeof container.addEventListener === 'function') {
+            var name = item.id != null ? item.id : item.name;
             if ((Object.observe != null ? Object.observe.checkForChanges : void 0) != null) {
                 var originalItem = item;
                 item = function () {
@@ -134,6 +151,9 @@ var patch = exports.patch = require('./mergePatch'), create = exports.create = f
                 container.removeEventListener(name, item);
             };
         } else if (container.nodeType === 1) {
+            if (typeof item !== 'string' && !(item.nodeType != null)) {
+                item = JSON.stringify(item);
+            }
             if (typeof item === 'string') {
                 item = document.createTextNode(item);
             }
@@ -270,6 +290,30 @@ var patch = exports.patch = require('./mergePatch'), create = exports.create = f
                 }
             }
         });
+    }, serialize = exports.serialize = function (object) {
+        return JSON.stringify(object);
+    }, deserialize = exports.deserialize = function (object) {
+        if (typeof object === 'string') {
+            object = JSON.parse(object);
+        }
+        var typeKey = require('ion/Object').typeKey;
+        var typeName = object[typeKey];
+        if (typeName != null) {
+            var type = require(typeName);
+            if (!type.serializable) {
+                throw new Error('Type is not serializable: ' + typeName);
+            }
+            var typedObject = new type();
+            for (var key in object) {
+                var value = object[key];
+                if (key !== typeKey) {
+                    typedObject[key] = object[key];
+                }
+            }
+            return typedObject;
+        } else {
+            return object;
+        }
     }, test = exports.test = {
         defineClass: function () {
             var Foo = defineClass({
@@ -326,3 +370,4 @@ var patch = exports.patch = require('./mergePatch'), create = exports.create = f
     _ion_index_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./index.map

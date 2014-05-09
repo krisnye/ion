@@ -1,4 +1,4 @@
-void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compilePegjs, exports, fs, getModuleId, isPrivate, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _;
+void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compileIonWithSourceMap, compilePegjs, exports, fs, getModuleId, isPrivate, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _;
 
 if (global.window) {
   return;
@@ -159,7 +159,10 @@ module.exports = exports = {
     }
   },
   compileIon: compileIon = function(source, packageObject) {
-    var e, filename, input, ionCompiler, moduleId;
+    return compileIonWithSourceMap(source, packageObject)[0];
+  },
+  compileIonWithSourceMap: compileIonWithSourceMap = function(source, packageObject) {
+    var e, filename, input, ionCompiler, map, moduleId, _ref;
     if (source.modified === 0) {
       return;
     }
@@ -169,11 +172,12 @@ module.exports = exports = {
       console.log("Compile: " + filename);
       ionCompiler = require('../compiler');
       input = source.read();
-      source = ionCompiler.compile(input, {
-        id: filename
-      });
+      _ref = ionCompiler.compileWithSourceMap(input, {
+        id: filename,
+        sourceMap: filename.split(/[\/\\]/).pop()
+      }), source = _ref[0], map = _ref[1];
       source = addBrowserShim(source, moduleId);
-      return source;
+      return [source, map];
     } catch (_error) {
       e = _error;
       return console.error(String(e));

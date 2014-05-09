@@ -6,7 +6,7 @@ var IfStatement = ion.defineClass({
             activate: function () {
                 IfStatement.super.prototype.activate.apply(this, arguments);
                 this.testExpression = this.testExpression != null ? this.testExpression : this.context.createRuntime(this.test);
-                this.testExpression.watch(this.testExpressionWatcher = this.testExpressionWatcher != null ? this.testExpressionWatcher : function (value) {
+                this.testExpression.watch(this.testExpressionWatcher = this.testExpressionWatcher != null ? this.testExpressionWatcher : ion.bind(function (value) {
                     if (value) {
                         if (this.alternateStatement != null ? this.alternateStatement.isActive : void 0) {
                             this.alternateStatement != null ? this.alternateStatement.deactivate() : void 0;
@@ -22,7 +22,7 @@ var IfStatement = ion.defineClass({
                             this.alternateStatement.activate();
                         }
                     }
-                }.bind(this));
+                }, this));
             },
             deactivate: function () {
                 IfStatement.super.prototype.deactivate.apply(this, arguments);
@@ -48,3 +48,4 @@ module.exports = exports = IfStatement;
     _ion_runtime_IfStatement_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./IfStatement.map

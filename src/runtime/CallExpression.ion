@@ -17,10 +17,11 @@ module.exports = class CallExpression extends DynamicExpression
                     if thisArg isnt @thisArg
                         ion.unobserve(@thisarg, @thisObserver)
                         @thisArg = thisArg
-                        (ion.observe)
-                            thisArg
-                            @thisObserver ?= (changes) =>
-                                @evaluate()
+                        if not @calleeValue?.template # we don't need to watch the thisArg if the callee is a template
+                            (ion.observe)
+                                thisArg
+                                @thisObserver ?= (changes) =>
+                                    @evaluate()
                     @evaluate()
             @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:not @calleeValue?.template})
             (@argumentExpressions.watch)
@@ -43,7 +44,7 @@ module.exports = class CallExpression extends DynamicExpression
                         if @template?
                             @template.unwatch(@templateWatcher)
                         # always use new on templates
-                        @template = ion.create(@calleeValue, @argumentsValue)
+                        @template = @calleeValue.template.apply(@thisArg, @argumentsValue)
                         @template.activate()
                         @template.watch(@templateWatcher ?= @setValue.bind(@))
                     else

@@ -7,7 +7,7 @@ var Property = ion.defineClass({
                 Property.super.prototype.activate.apply(this, arguments);
                 this.keyExpression = this.keyExpression != null ? this.keyExpression : this.context.createRuntime(this.computed ? this.key : this.key.name != null ? this.key.name : this.key.value);
                 this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
-                this.keyExpression.watch(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : function (key) {
+                this.keyExpression.watch(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : ion.bind(function (key) {
                     if (key != null && this.valueExpression.setLeftValue != null) {
                         var currentValue = this.context.output ? ion.get(this.context.output, key) : this.context.get(key);
                         if (currentValue != null) {
@@ -17,18 +17,18 @@ var Property = ion.defineClass({
                     this.restoreProperty();
                     this.keyValue = key;
                     this.setProperty();
-                }.bind(this));
-                this.valueExpression.watch(this.valueWatcher = this.valueWatcher != null ? this.valueWatcher : function (value) {
+                }, this));
+                this.valueExpression.watch(this.valueWatcher = this.valueWatcher != null ? this.valueWatcher : ion.bind(function (value) {
                     this.valueValue = value;
                     this.setProperty();
-                }.bind(this));
+                }, this));
                 if (this.bi) {
-                    ion.observe(this.context.output, this.contextObserver = this.contextObserver != null ? this.contextObserver : function () {
+                    ion.observe(this.context.output, this.contextObserver = this.contextObserver != null ? this.contextObserver : ion.bind(function () {
                         var value = ion.get(this.context.output, this.keyValue);
                         if (value !== void 0) {
                             this.valueExpression.setMemberValue(value);
                         }
-                    }.bind(this), this.keyValue);
+                    }, this), this.keyValue);
                 }
             },
             deactivate: function () {
@@ -74,3 +74,4 @@ module.exports = exports = Property;
     _ion_runtime_Property_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./Property.map

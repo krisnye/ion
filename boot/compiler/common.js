@@ -47,3 +47,4 @@ var indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdentTo
     _ion_compiler_common_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./common.map

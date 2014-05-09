@@ -13,3 +13,4 @@ require('./Object.observe');
     _ion_es6_index_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./index.map

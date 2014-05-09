@@ -23,17 +23,17 @@ var File = ion.defineClass({
                 }
             });
             this.modified = utility.getModified(path);
-            ion.makeReactive(this, function () {
+            ion.makeReactive(this, ion.bind(function () {
                 var watcher;
                 if (fs.existsSync(this.path)) {
-                    watcher = fs.watch(this.path, function () {
+                    watcher = fs.watch(this.path, ion.bind(function () {
                         this.modified = utility.getModified(this.path);
-                    }.bind(this));
+                    }, this));
                 }
                 return function () {
                     return watcher != null ? watcher.close() : void 0;
                 };
-            }.bind(this));
+            }, this));
         },
         properties: {
             directoryName: {
@@ -80,3 +80,4 @@ module.exports = exports = File;
     _ion_builder_File_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./File.map

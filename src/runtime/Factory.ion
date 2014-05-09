@@ -19,6 +19,8 @@ const lookup =
     type:
         VariableDeclaration: new Factory
             runtime: './VariableDeclaration'
+        ThisExpression: new Factory
+            createRuntime: (context, ast) -> context.getVariableExpression('this')
         Identifier: new Factory
             createRuntime: (context, ast) -> context.getVariableExpression(ast.name)
         Function: new Factory

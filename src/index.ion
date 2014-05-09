@@ -49,8 +49,8 @@ export const
             patch[key] = value
         return patch
     create = (type, args) -> variableArgConstructs[args.length](type, args)
-    template = (fn) ->
-        fn.template = true
+    template = (fn, template) ->
+        fn.template = template
         return fn
     createRuntime = (ast, args) ->
         const Context = import './runtime/Context'
@@ -87,10 +87,19 @@ export const
             # unwatch change on dom elements
             object.removeEventListener?('change', observer)
         object?.unObserved?(observer, property)
+    bind = (fn, thisArg) ->
+        let newFn = fn.bind(thisArg)
+        # the function name has semantic meaning for us when adding a function to an element
+        # (see add function below)
+        # so we copy the function name to the new bound function id property when binding
+        # (function.name is readonly)
+        if fn.name.length > 0
+            newFn.id = fn.id ? fn.name
+        return newFn
     add = (container, item) ->
         let remove
-        if typeof item is 'function' and item.name.length > 0 and typeof container.addEventListener is 'function'
-            let name = item.name
+        if typeof item is 'function' and (item.name.length > 0 or item.id?) and typeof container.addEventListener is 'function'
+            let name = item.id ? item.name
             # if this platform doesn't have native Object.observe
             # then we wrap all event handlers and call checkForChanges after
             if Object.observe?.checkForChanges?
@@ -102,6 +111,8 @@ export const
             remove = ->
                 container.removeEventListener(name, item)
         else if container.nodeType is 1
+            if typeof item isnt 'string' and not item.nodeType?
+                item = JSON.stringify(item)
             if typeof item is 'string'
                 item = document.createTextNode(item)
             container.appendChild(item)
@@ -211,6 +222,23 @@ export const
                         observeCount--
                         if observeCount is 0
                             deactivate?()
+    serialize = (object) -> JSON.stringify(object)
+    deserialize = (object) ->
+        if typeof object is 'string'
+            object = JSON.parse(object)
+        let typeKey = import('ion/Object').typeKey
+        # we should strongly type our objects when created, so make a factory
+        let typeName = object[typeKey]
+        if typeName?
+            let type = import(typeName)
+            if not type.serializable
+                throw new Error("Type is not serializable: {{ typeName }}")
+            let typedObject = new type
+            for key, value of object if key isnt typeKey
+                typedObject[key] = object[key]
+            return typedObject
+        else
+            return object
     test =
         defineClass: ->
             const Foo = (defineClass)

@@ -9,7 +9,7 @@ var ObjectExpression = ion.defineClass({
             activate: function () {
                 ObjectExpression.super.prototype.activate.apply(this, arguments);
                 this.typeExpression = this.typeExpression != null ? this.typeExpression : this.context.createRuntime(this.objectType != null ? this.objectType : null);
-                this.typeExpression.watch(this.typeWatcher = this.typeWatcher != null ? this.typeWatcher : function (type) {
+                this.typeExpression.watch(this.typeWatcher = this.typeWatcher != null ? this.typeWatcher : ion.bind(function (type) {
                     var value;
                     if (!ion.is(this.value, type)) {
                         this.statements != null ? this.statements.deactivate() : void 0;
@@ -27,7 +27,7 @@ var ObjectExpression = ion.defineClass({
                         this.statements.activate();
                     }
                     this.setValue(value);
-                }.bind(this));
+                }, this));
             },
             deactivate: function () {
                 ObjectExpression.super.prototype.deactivate.apply(this, arguments);
@@ -47,3 +47,4 @@ module.exports = exports = ObjectExpression;
     _ion_runtime_ObjectExpression_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./ObjectExpression.map

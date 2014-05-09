@@ -65,8 +65,8 @@ var Directory = ion.defineClass({
                     options.exclude = exclude;
                 }
                 var results = {};
-                ion.makeReactive(results, function () {
-                    var unwatch = watcher.watchDirectory(this.path, options, function (filename) {
+                ion.makeReactive(results, ion.bind(function () {
+                    var unwatch = watcher.watchDirectory(this.path, options, ion.bind(function (filename) {
                             var path = this.getRelativeName(filename);
                             if (fs.existsSync(filename)) {
                                 if (!(results[path] != null)) {
@@ -75,9 +75,9 @@ var Directory = ion.defineClass({
                             } else {
                                 delete results[path];
                             }
-                        }.bind(this));
+                        }, this));
                     return unwatch;
-                }.bind(this));
+                }, this));
                 var files = utility.list(this.path, options);
                 for (var _i = 0; _i < files.length; _i++) {
                     var path = files[_i];
@@ -99,3 +99,4 @@ module.exports = exports = Directory;
     _ion_builder_Directory_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./Directory.map

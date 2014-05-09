@@ -34,3 +34,4 @@ var BlockStatement = exports.BlockStatement = {
     _ion_compiler_nodes_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./nodes.map

@@ -7,27 +7,27 @@ var CallExpression = ion.defineClass({
             activate: function () {
                 CallExpression.super.prototype.activate.apply(this, arguments);
                 this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
-                this.calleeExpression.watch(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : function (value) {
+                this.calleeExpression.watch(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : ion.bind(function (value) {
                     this.calleeValue = value;
                     var thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
                     if (thisArg !== this.thisArg) {
                         ion.unobserve(this.thisarg, this.thisObserver);
                         this.thisArg = thisArg;
-                        ion.observe(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : function (changes) {
+                        ion.observe(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (changes) {
                             this.evaluate();
-                        }.bind(this));
+                        }, this));
                     }
                     this.evaluate();
-                }.bind(this));
+                }, this));
                 this.argumentExpressions = this.argumentExpressions != null ? this.argumentExpressions : this.context.createRuntime({
                     type: 'ArrayExpression',
                     elements: this.arguments,
                     observeElements: !(this.calleeValue != null ? this.calleeValue.template : void 0)
                 });
-                this.argumentExpressions.watch(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : function (value) {
+                this.argumentExpressions.watch(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
                     this.argumentsValue = value;
                     this.evaluate();
-                }.bind(this));
+                }, this));
             },
             deactivate: function () {
                 CallExpression.super.prototype.deactivate.apply(this, arguments);
@@ -47,7 +47,7 @@ var CallExpression = ion.defineClass({
                             if (this.template != null) {
                                 this.template.unwatch(this.templateWatcher);
                             }
-                            this.template = ion.create(this.calleeValue, this.argumentsValue);
+                            this.template = this.calleeValue.template.apply(this.thisArg, this.argumentsValue);
                             this.template.activate();
                             this.template.watch(this.templateWatcher = this.templateWatcher != null ? this.templateWatcher : this.setValue.bind(this));
                         } else {
@@ -77,3 +77,4 @@ module.exports = CallExpression;
     _ion_runtime_CallExpression_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./CallExpression.map

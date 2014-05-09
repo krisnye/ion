@@ -1,4 +1,4 @@
-void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, getReferenceIdentifiers, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isReferenceNode, isSuperExpression, javascriptExpressions, letAndConstToVar, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, patchAssignmentExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
+void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, getReferenceIdentifiers, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isReferenceNode, isSimpleObjectExpression, isSuperExpression, javascriptExpressions, letAndConstToVar, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, patchAssignmentExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -300,21 +300,11 @@ convertForInToForLength = function(node, context) {
 callFunctionBindForFatArrows = function(node, context) {
   if (node.type === 'FunctionExpression' && node.bound) {
     delete node.bound;
+    ensureIonVariable(context);
     return context.replace({
       type: "CallExpression",
-      callee: {
-        type: "MemberExpression",
-        object: node,
-        property: {
-          type: "Identifier",
-          name: "bind"
-        }
-      },
-      "arguments": [
-        {
-          type: "ThisExpression"
-        }
-      ]
+      callee: getPathExpression('ion.bind'),
+      "arguments": [node, thisExpression]
     });
   }
 };
@@ -706,44 +696,54 @@ functionParameterDefaultValuesToES5 = function(node, context) {
   }
 };
 
+isSimpleObjectExpression = function(node) {
+  var isArray, isSimple, property, _i, _len, _ref1, _ref2;
+  if (node.type !== 'ObjectExpression') {
+    return false;
+  }
+  isArray = ((_ref1 = node.objectType) != null ? _ref1.type : void 0) === "ArrayExpression";
+  isSimple = true;
+  if (node.properties != null) {
+    _ref2 = node.properties;
+    for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+      property = _ref2[_i];
+      if (isArray) {
+        if (property.type !== 'ExpressionStatement') {
+          isSimple = false;
+          break;
+        }
+      } else {
+        if (property.type !== 'Property' || property.computed) {
+          isSimple = false;
+          break;
+        }
+      }
+    }
+  }
+  return isSimple;
+};
+
 typedObjectExpressions = function(node, context) {
-  var addPosition, element, elements, expressionStatement, getExistingObjectIdIfTempVarNotNeeded, grandNode, initialValue, isArray, isSimple, objectId, parentNode, property, statements, subnodeEnter, subnodeExit, _i, _j, _k, _len, _len1, _len2, _ref1, _ref2, _ref3, _ref4;
+  var addPosition, element, elements, expressionStatement, getExistingObjectIdIfTempVarNotNeeded, grandNode, initialValue, isArray, isSimple, objectId, objectType, parentNode, statements, subnodeEnter, subnodeExit, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
   if (context.reactive) {
     return;
   }
   if (node.type === 'ObjectExpression' && node.simple !== true) {
     isArray = ((_ref1 = node.objectType) != null ? _ref1.type : void 0) === "ArrayExpression";
-    isSimple = true;
-    if (node.properties != null) {
-      _ref2 = node.properties;
-      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-        property = _ref2[_i];
-        if (isArray) {
-          if (property.type !== 'ExpressionStatement') {
-            isSimple = false;
-            break;
-          }
-        } else {
-          if (property.type !== 'Property' || property.computed) {
-            isSimple = false;
-            break;
-          }
-        }
-      }
-    }
+    isSimple = isSimpleObjectExpression(node);
     if (isSimple) {
       if (isArray) {
         elements = [];
         if (node.objectType != null) {
-          _ref3 = node.objectType.elements;
-          for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
-            element = _ref3[_j];
+          _ref2 = node.objectType.elements;
+          for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+            element = _ref2[_i];
             elements.push(element);
           }
         }
-        _ref4 = node.properties;
-        for (_k = 0, _len2 = _ref4.length; _k < _len2; _k++) {
-          expressionStatement = _ref4[_k];
+        _ref3 = node.properties;
+        for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
+          expressionStatement = _ref3[_j];
           elements.push(expressionStatement.expression);
         }
         context.replace({
@@ -756,6 +756,23 @@ typedObjectExpressions = function(node, context) {
         delete node.objectType;
         Object.defineProperty(node, 'simple', {
           value: true
+        });
+        return;
+      }
+      objectType = node.objectType;
+      delete node.objectType;
+      if (isSimpleObjectExpression(objectType)) {
+        node.properties = objectType.properties.concat(node.properties);
+        Object.defineProperty(node, 'simple', {
+          value: true
+        });
+        return;
+      } else {
+        ensureIonVariable(context);
+        context.replace({
+          type: 'CallExpression',
+          callee: getPathExpression('ion.patch'),
+          "arguments": [objectType, node]
         });
         return;
       }
@@ -852,7 +869,7 @@ typedObjectExpressions = function(node, context) {
 };
 
 propertyStatements = function(node, context) {
-  var left, parent;
+  var left, parent, right;
   if (context.reactive) {
     return;
   }
@@ -860,23 +877,29 @@ propertyStatements = function(node, context) {
   if (node.type === 'Property' && !(parent.type === 'ObjectExpression' || parent.type === 'ObjectPattern')) {
     if (node.output != null) {
       if (node.value.type === 'ObjectExpression') {
-        ensureIonVariable(context);
+        left = {
+          type: 'MemberExpression',
+          object: node.output,
+          property: node.key,
+          computed: node.computed
+        };
+        if (node.value.type === 'ObjectExpression' && (node.value.objectType == null)) {
+          ensureIonVariable(context);
+          right = {
+            type: 'CallExpression',
+            callee: getPathExpression('ion.patch'),
+            "arguments": [ion.clone(left, true), node.value]
+          };
+        } else {
+          right = node.value;
+        }
         return context.replace({
           type: 'ExpressionStatement',
           expression: {
             type: 'AssignmentExpression',
             operator: '=',
-            left: left = {
-              type: 'MemberExpression',
-              object: node.output,
-              property: node.key,
-              computed: node.computed
-            },
-            right: {
-              type: 'CallExpression',
-              callee: getPathExpression('ion.patch'),
-              "arguments": [ion.clone(left, true), node.value]
-            }
+            left: left,
+            right: right
           }
         });
       } else {
@@ -1330,7 +1353,7 @@ wrapTemplateInnerFunctions = function(node, context) {
       variables = {};
       getExternalIdentifiers(node, function(id) {
         var _ref1, _ref2;
-        if (id.name !== ((_ref1 = node.id) != null ? _ref1.name : void 0) && (((_ref2 = context.scope()) != null ? _ref2.variables[id.name] : void 0) != null)) {
+        if (id.name === 'ion' || (id.name !== ((_ref1 = node.id) != null ? _ref1.name : void 0) && (((_ref2 = context.scope()) != null ? _ref2.variables[id.name] : void 0) != null))) {
           return variables[id.name] = id;
         }
       });
@@ -1405,36 +1428,32 @@ createTemplateFunctionClone = function(node, context) {
     delete node.template;
     template = ion.clone(node, true);
     template.type = 'Template';
-    delete template.id;
-    delete template.defaults;
-    delete template.bound;
     Object.defineProperties(template, {
       type: {
         value: 'Template'
       }
     });
-    node.template = template;
     ensureIonVariable(context);
     return context.replace({
       type: 'CallExpression',
       callee: getPathExpression('ion.template'),
-      "arguments": [node]
+      "arguments": [node, template]
     });
   }
 };
 
 createTemplateRuntime = function(node, context) {
-  var args, id, key, name, template, templateId, value, variables, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
-  if (isFunctionNode(node) && (node.template != null)) {
-    templateId = node.id != null ? node.id : node.id = context.getNewInternalIdentifier('_template');
-    template = removeLocationInfo(node.template);
-    ensureIonVariable(context);
+  var args, id, key, name, params, template, value, variables, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
+  if (node.type === 'Template') {
+    template = removeLocationInfo(node);
     args = {
       type: 'ObjectExpression',
       properties: []
     };
-    variables = {};
-    _ref1 = ['require', 'module', 'exports'];
+    variables = {
+      "this": thisExpression
+    };
+    _ref1 = ['require', 'module', 'exports', 'ion'];
     for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
       name = _ref1[_i];
       variables[name] = {
@@ -1461,36 +1480,28 @@ createTemplateRuntime = function(node, context) {
         kind: 'init'
       });
     }
-    delete template.params;
+    params = template.params;
     template.body = template.body.body;
-    context.addStatement({
-      type: 'IfStatement',
-      test: {
-        type: 'BinaryExpression',
-        operator: '&&',
-        left: {
-          type: 'BinaryExpression',
-          operator: '!=',
-          left: thisExpression,
-          right: nullExpression
-        },
-        right: {
-          type: 'BinaryExpression',
-          operator: '===',
-          left: getPathExpression('this.constructor'),
-          right: templateId
-        }
-      },
-      consequent: block({
-        type: 'ReturnStatement',
-        argument: {
-          type: 'CallExpression',
-          callee: getPathExpression('ion.createRuntime'),
-          "arguments": [nodeToLiteral(template), args]
-        }
-      })
+    delete template.id;
+    delete template.params;
+    delete template.defaults;
+    return context.replace({
+      type: 'FunctionExpression',
+      params: params,
+      body: {
+        type: 'BlockStatement',
+        body: [
+          {
+            type: 'ReturnStatement',
+            argument: {
+              type: 'CallExpression',
+              callee: getPathExpression('ion.createRuntime'),
+              "arguments": [nodeToLiteral(template), args]
+            }
+          }
+        ]
+      }
     });
-    return delete node.template;
   }
 };
 

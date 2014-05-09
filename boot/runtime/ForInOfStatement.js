@@ -27,7 +27,7 @@ var ForInOfStatement = ion.defineClass({
                 ForInOfStatement.super.prototype.activate.apply(this, arguments);
                 this.statements = this.statements != null ? this.statements : {};
                 this.collectionExpression = this.collectionExpression != null ? this.collectionExpression : this.context.createRuntime(this.right);
-                this.collectionExpression.watch(this.collectionWatcher = this.collectionWatcher != null ? this.collectionWatcher : function (collection) {
+                this.collectionExpression.watch(this.collectionWatcher = this.collectionWatcher != null ? this.collectionWatcher : ion.bind(function (collection) {
                     if (this.collection !== collection) {
                         if (this.collection != null) {
                             this.forEach(this.collection, this.removeItem.bind(this));
@@ -39,7 +39,7 @@ var ForInOfStatement = ion.defineClass({
                             ion.observe(this.collection, this.collectionObserver = this.collectionObserver != null ? this.collectionObserver : this.applyChanges.bind(this));
                         }
                     }
-                }.bind(this));
+                }, this));
             },
             deactivate: function () {
                 ForInOfStatement.super.prototype.deactivate.apply(this, arguments);
@@ -103,3 +103,4 @@ module.exports = exports = ForInOfStatement;
     _ion_runtime_ForInOfStatement_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./ForInOfStatement.map

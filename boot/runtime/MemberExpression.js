@@ -7,20 +7,20 @@ var MemberExpression = ion.defineClass({
                 MemberExpression.super.prototype.activate.apply(this, arguments);
                 this.objectExpression = this.objectExpression != null ? this.objectExpression : this.context.createRuntime(this.object);
                 this.propertyExpression = this.propertyExpression != null ? this.propertyExpression : this.context.createRuntime(this.computed ? this.property : this.property.name);
-                this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : function (propertyValue) {
+                this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : ion.bind(function (propertyValue) {
                     this.propertyValue = propertyValue;
                     this.updateValue();
-                }.bind(this));
-                this.objectExpression.watch(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : function (objectValue) {
+                }, this));
+                this.objectExpression.watch(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : ion.bind(function (objectValue) {
                     this.objectValue = objectValue;
                     this.updateValue();
                     this.objectObserver != null ? this.objectObserver() : void 0;
                     if (objectValue != null) {
-                        this.objectObserver = ion.observe(objectValue, function (changes) {
+                        this.objectObserver = ion.observe(objectValue, ion.bind(function (changes) {
                             this.updateValue();
-                        }.bind(this), this.propertyValue);
+                        }, this), this.propertyValue);
                     }
-                }.bind(this));
+                }, this));
             },
             deactivate: function () {
                 MemberExpression.super.prototype.deactivate.apply(this, arguments);
@@ -53,3 +53,4 @@ module.exports = exports = MemberExpression;
     _ion_runtime_MemberExpression_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./MemberExpression.map

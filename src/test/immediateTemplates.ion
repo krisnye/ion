@@ -130,7 +130,7 @@ const templates = []
 export const
     test = ->
         for [templateType, args, expected] in templates if expected?
-            let template = ion.create(templateType, args)
+            let template = templateType.template.apply(this, args)
             template.activate()
             let reactiveResult = null
             (template.watch)
@@ -140,7 +140,7 @@ export const
             catch e
                 console.log(reactiveResult, "!==", expected)
                 throw e
-            
+
             template.deactivate()
             assert reactiveResult is undefined
             # also, call the template function imperatively and see that it's still the expected value

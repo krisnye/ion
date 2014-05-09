@@ -25,9 +25,9 @@ var ArrayExpression = ion.defineClass({
                     }
                     this.argumentValues[key] = value;
                     if (this.observeElements) {
-                        ion.observe(value, this.itemObserver = this.itemObserver != null ? this.itemObserver : function () {
+                        ion.observe(value, this.itemObserver = this.itemObserver != null ? this.itemObserver : ion.bind(function () {
                             this.notifyIfActive();
-                        }.bind(this));
+                        }, this));
                     }
                     this.notifyIfActive();
                 }
@@ -108,3 +108,4 @@ module.exports = exports = ArrayExpression;
     _ion_runtime_ArrayExpression_.call(this);
   }
 }).call(this)
+//@ sourceMappingURL=./ArrayExpression.map
