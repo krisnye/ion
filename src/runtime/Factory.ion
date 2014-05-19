@@ -20,9 +20,9 @@ const lookup =
         VariableDeclaration: new Factory
             runtime: './VariableDeclaration'
         ThisExpression: new Factory
-            createRuntime: (context, ast) -> context.getVariableExpression('this')
+            createRuntime: (context, ast) -> context.getVariable('this')
         Identifier: new Factory
-            createRuntime: (context, ast) -> context.getVariableExpression(ast.name)
+            createRuntime: (context, ast) -> context.getVariable(ast.name)
         Function: new Factory
             createRuntime: (context, ast) ->
                 let value = ast.value

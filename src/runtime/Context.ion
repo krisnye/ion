@@ -29,12 +29,7 @@ export class Context
                 variable.watch(watcher)
                 variable.unwatch(watcher)
             return value
-        getVariable: (name) -> @variables[name] ? @parent?.getVariable(name)
-        setVariable: (name, node) ->
-            if name?
-                let variable = @variables[name] = @createRuntime(node)
-                return variable
-        getVariableExpression: (name) ->
+        getVariable: (name) ->
             let context = @, value
             while context?
                 let variable = context.variables[name]
@@ -50,4 +45,8 @@ export class Context
             # we could consider caching these values within the context.
             let cachedGlobals = @root.globals ?= {}
             return cachedGlobals[name] ?= new Literal({value:value})
+        setVariable: (name, node) ->
+            if name?
+                let variable = @variables[name] = @createRuntime(node)
+                return variable
 

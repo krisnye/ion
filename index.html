@@ -3,9 +3,64 @@
     <title>Tests</title>
 </head>
 <body>
+    <div id='content'></div>
 </body>
+<script id='template' type='ion'>
+const compiler = import 'ion/compiler'
+const {div,span,input,a,form,table,tbody,thead,tr,td,button,br,hr,textarea} = import 'ion/browser/elements'
+const samples = []
+    {}
+        title: "Variable Declarations"
+        ion: ""
+            let x
+            let y = 10, z = 9
+            const one = 1
+            const two = 2
+            const three = 3
+
+const compile = (code) ->
+    try
+        return compiler.compile(code)
+    catch e
+        return e.toString()
+const hasError = (code) ->
+    try
+        compiler.compile(code)
+        return false
+    catch e
+        return true
+
+activate template ->
+    content:
+        div()
+            'Samples'
+            for sample in samples
+                div()
+                    sample.title
+                textarea()
+                    keyup(e) ->
+                        sample.ion = @value
+                    style:
+                        display: 'inline-block'
+                        margin: '2px'
+                        verticalAlign: 'top'
+                    rows: sample.ion.split('\n').length
+                    sample.ion
+                div()
+                    style:
+                        display: 'inline-block'
+                        border: 'solid gray 1px'
+                        whiteSpace: 'pre'
+                        margin: '2px'
+                        color: hasError(sample.ion) ? 'red' : 'initial'
+                    compile(sample.ion)
+
+</script>
 <script src="lib/_browser.js"></script>
 <script>
 var compiler = require('ion/compiler')
+var compiled = compiler.compile(template.innerHTML)
+// console.log(compiled)
+eval(compiled)
 </script>
 </html>

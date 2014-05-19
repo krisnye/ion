@@ -619,18 +619,18 @@ tests =
     """: """
     'use strict';
     const ion = require('ion');
-    ion.patch(input, {
-        x: 10,
-        y: 20,
-        z: {
+    {
+        input.x = 10;
+        input.y = 20;
+        input.z = ion.patch(input.z, {
             a: 1,
             b: 2
-        },
-        w: ion.patch(new Point(), {
+        });
+        input.w = ion.patch(new Point(), {
             x: 0,
             y: 0
-        })
-    });
+        });
+    }
     """
     """
     let point = new Point
@@ -662,9 +662,7 @@ tests =
     """: """
     'use strict';
     let x = {};
-    {
-        x[key] = value;
-    }
+    x[key] = value;
     """
     """
     if foo
@@ -675,11 +673,9 @@ tests =
     'use strict';
     if (foo) {
         let _ref = {};
-        {
-            for (let key in object) {
-                let value = object[key];
-                _ref[key] = value;
-            }
+        for (let key in object) {
+            let value = object[key];
+            _ref[key] = value;
         }
         return _ref;
     }
@@ -834,11 +830,9 @@ tests =
     """: """
     'use strict';
     let items = [];
-    {
-        for (let key in window) {
-            let value = window[key];
-            items.push(value);
-        }
+    for (let key in window) {
+        let value = window[key];
+        items.push(value);
     }
     """
     """
@@ -849,13 +843,9 @@ tests =
     'use strict';
     const ion = require('ion');
     let foo = div();
-    {
-        let _ref = span();
-        {
-            ion.add(_ref, 'Hello');
-        }
-        ion.add(foo, _ref);
-    }
+    let _ref = span();
+    ion.add(_ref, 'Hello');
+    ion.add(foo, _ref);
     """
     # we don't auto import ion if the user already declares an ion variable
     """
@@ -867,13 +857,9 @@ tests =
     'use strict';
     const ion = require('./');
     let foo = div();
-    {
-        let _ref = span();
-        {
-            ion.add(_ref, 'Hello');
-        }
-        ion.add(foo, _ref);
-    }
+    let _ref = span();
+    ion.add(_ref, 'Hello');
+    ion.add(foo, _ref);
     """
     """
     const translate({x,y}) ->
@@ -1174,15 +1160,10 @@ tests =
             [c]: d
     """: """
     'use strict';
-    const ion = require('ion');
-    let _ref = {};
-    {
-        for (let _i = 0; _i < b.length; _i++) {
-            let a = b[_i];
-            _ref[c] = d;
-        }
+    for (let _i = 0; _i < b.length; _i++) {
+        let a = b[_i];
+        output[c] = d;
     }
-    ion.patch(output, _ref);
     """
     """
     output: {}
@@ -1262,8 +1243,7 @@ tests =
         delete: true
     """: """
     'use strict';
-    const ion = require('ion');
-    ion.patch(x, { delete: true });
+    x.delete = true;
     """
     """
     return
@@ -1308,10 +1288,6 @@ tests =
             bound: false
         }, {
             this: this,
-            require: require,
-            module: module,
-            exports: exports,
-            ion: ion,
             x: x,
             y: y
         });
@@ -1328,14 +1304,22 @@ tests =
             type: 'Template',
             body: [],
             bound: false
-        }, {
-            this: this,
-            require: require,
-            module: module,
-            exports: exports,
-            ion: ion
-        });
+        }, { this: this });
     })).template().activate();
+    """
+    """
+    content:
+        name: 'foo'
+        1
+        2
+    """: """
+    'use strict';
+    const ion = require('ion');
+    {
+        content.name = 'foo';
+        ion.add(content, 1);
+        ion.add(content, 2);
+    }
     """
 
 if global.window?

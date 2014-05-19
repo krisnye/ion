@@ -585,51 +585,57 @@ typedObjectExpressions = (node, context) ->
             context.replace objectId
 
         statements = []
+        setNodeOutputValues context, node.properties, objectId, statements, isArray
 
-        # traverse all properties and expression statements
-        # add a new property that indicates their output scope
-        subnodeEnter = (subnode, subcontext) ->
-            subcontext.outputStack ?= [objectId]
-            if subnode.type is 'ObjectExpression' or subnode.type is 'ArrayExpression'
-                return subcontext.skip()
-            if subnode.type is 'Property' #or subnode.type is 'ExpressionStatement'
-                # we convert the node to a Property: ObjectExpression node
-                # it will be handled correctly by the later propertyStatements rule
-                subnode.output = subcontext.outputStack[subcontext.outputStack.length - 1]
-                subcontext.outputStack.push
-                    type: 'MemberExpression'
-                    object: subnode.output
-                    property: subnode.key
-                    computed: subnode.computed || subnode.key.type isnt 'Identifier'
-            else if isFunctionNode(subnode)
-                subcontext.skip()
-            else if subnode.type is 'ExpressionStatement'
-                if not isArray
-                    ensureIonVariable(context)
-                subnode = subcontext.replace
-                    type: 'ExpressionStatement'
-                    expression:
-                        type: 'CallExpression'
-                        callee:
-                            type: 'MemberExpression'
-                            object: if isArray then objectId else ionExpression
-                            property:
-                                type: 'Identifier'
-                                name: if isArray then 'push' else 'add'
-                        arguments: if isArray then [subnode.expression] else [objectId, subnode.expression]
-                subcontext.skip()
-
-            if not subcontext.parentNode()?
-                # add this statement to the current context
-                statements.push subnode
         if statements.length is 1
             context.addStatement statements[0], addPosition
         else
             context.addStatement {type:'BlockStatement',body:statements}, addPosition
-        subnodeExit = (subnode, subcontext) ->
-            if subnode.type is 'Property'
-                subcontext.outputStack.pop()
-    traverse node.properties, subnodeEnter, subnodeExit
+
+setNodeOutputValues = (context, nodes, outputId, statements = [], isArray) ->
+    # traverse all properties and expression statements
+    # add a new property that indicates their output scope
+    subnodeEnter = (subnode, subcontext) ->
+        subcontext.outputStack ?= [outputId]
+        if subnode.type is 'ObjectExpression' or subnode.type is 'ArrayExpression'
+            return subcontext.skip()
+        if subnode.type is 'Property' #or subnode.type is 'ExpressionStatement'
+            # we convert the node to a Property: ObjectExpression node
+            # it will be handled correctly by the later propertyStatements rule
+            subnode.output = subcontext.outputStack[subcontext.outputStack.length - 1]
+            subcontext.outputStack.push
+                type: 'MemberExpression'
+                object: subnode.output
+                property: subnode.key
+                computed: subnode.computed || subnode.key.type isnt 'Identifier'
+        else if isFunctionNode(subnode)
+            subcontext.skip()
+        else if subnode.type is 'ExpressionStatement'
+            if not isArray
+                ensureIonVariable(context)
+            subnode = subcontext.replace
+                type: 'ExpressionStatement'
+                expression:
+                    type: 'CallExpression'
+                    callee:
+                        type: 'MemberExpression'
+                        object: if isArray then outputId else ionExpression
+                        property:
+                            type: 'Identifier'
+                            name: if isArray then 'push' else 'add'
+                    arguments: if isArray then [subnode.expression] else [outputId, subnode.expression]
+            subcontext.skip()
+
+        if not subcontext.parentNode()?
+            # add this statement to the current context
+            statements.push subnode
+    subnodeExit = (subnode, subcontext) ->
+        if subnode.type is 'Property'
+            subcontext.outputStack.pop()
+
+    traverse nodes, subnodeEnter, subnodeExit
+
+    return statements
 
 propertyStatements = (node, context) ->
     return if context.reactive
@@ -675,13 +681,15 @@ propertyStatements = (node, context) ->
                 throw context.error "dynamic property expression invalid here", node.key
             if node.value.objectType?
                 throw context.error "type not allowed on set expression", node.value
-            ensureIonVariable context
-            context.replace
-                type: 'ExpressionStatement'
-                expression:
-                    type: 'CallExpression'
-                    callee: getPathExpression 'ion.patch'
-                    arguments: [node.key, node.value]
+            # set node output values on this
+            statements = []
+            setNodeOutputValues context, node.value.properties, node.key, statements
+            if statements.length is 1
+                context.replace statements[0]
+            else
+                context.replace
+                    type: 'BlockStatement'
+                    body: statements
 
 patchAssignmentExpression = (node, context) ->
     if node.type is 'AssignmentExpression' and node.operator is ':='
@@ -957,10 +965,13 @@ isReferenceNode = (node, context) ->
 
 # gets all identifiers, except member access properties
 getReferenceIdentifiers = (node, callback) ->
+    results = {}
+    callback ?= (node) ->
+        results[node.name] = node
     traverse node, (node, context) ->
         if isReferenceNode(node, context)
             callback(node, context)
-    return
+    return results
 
 # gets all identifiers, except member access properties
 getExternalIdentifiers = (node, callback) ->
@@ -1046,9 +1057,12 @@ createTemplateRuntime = (node, context) ->
             properties: []
         variables =
             this: thisExpression
-        # if nodejs, add built in ids
+        # get all reference identifiers
+        referenceIds = getReferenceIdentifiers(node)
+        # if nodejs, add built in ids (but only if we use them)
         for name in ['require', 'module', 'exports', 'ion']
-            variables[name] = { type: 'Identifier', name: name }
+            if referenceIds[name]?
+                variables[name] = { type: 'Identifier', name: name }
         for id in template.params
             variables[id.name] = id
         # also add any variables in scope

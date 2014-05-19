@@ -39,15 +39,7 @@ const
         (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
 
 export const
-    patch = do ->
-        let mergePatch = import './mergePatch'
-        let patch = (object, patch, add, remove) ->
-            let result = mergePatch.merge(object, patch)
-            return result
-        # we add more specific mergePatch methods to the function for undocumented usage
-        for key, value of mergePatch
-            patch[key] = value
-        return patch
+    patch = import('./mergePatch').merge
     create = (type, args) -> variableArgConstructs[args.length](type, args)
     template = (fn, template) ->
         fn.template = template
