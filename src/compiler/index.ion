@@ -28,7 +28,7 @@ export const
             preprocessor = import './preprocessor'
             parser = import './parser'
             postprocessor = import './postprocessor'
-            escodegen = import 'escodegen'
+            escodegen = import './escodegen'
         let
             sourceMapping = {}
             result = preprocessor.preprocess(content, sourceMapping)
@@ -46,11 +46,13 @@ export const
                 if options?.generate isnt false
                     let generateOptions =
                         sourceMapWithCode: true
-                        sourceMap: options.sourceMap ? options.id
+                        if not global.window?
+                            sourceMap: options.sourceMap ? options.id
                         sourceContent: content
+                        verbatim: 'verbatim'
                     let output = escodegen.generate(result, generateOptions)
                     result = output.code
-                    sourceMap = output.map.toString()
+                    sourceMap = output.map?.toString()
         catch e
             if not sourceLocationsFixed
                 preprocessor.fixSourceLocation(e, sourceMapping)

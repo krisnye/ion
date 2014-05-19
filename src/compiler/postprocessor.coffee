@@ -1086,7 +1086,14 @@ createTemplateRuntime = (node, context) ->
 
 javascriptExpressions = (node, context) ->
     if node.type is 'JavascriptExpression'
-        esprima = require 'esprima'
+        try
+            esprima = require 'esprima'
+        catch e
+            # no esprima, so lets do a raw node.
+            node.type = 'VerbatimExpression'
+            node.verbatim = node.text
+            return
+
         try
             program = esprima.parse node.text
             expression = program.body[0].expression
