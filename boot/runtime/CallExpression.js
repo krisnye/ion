@@ -13,9 +13,11 @@ var CallExpression = ion.defineClass({
                     if (thisArg !== this.thisArg) {
                         ion.unobserve(this.thisarg, this.thisObserver);
                         this.thisArg = thisArg;
-                        ion.observe(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (changes) {
-                            this.evaluate();
-                        }, this));
+                        if (!(this.calleeValue != null ? this.calleeValue.template : void 0)) {
+                            ion.observe(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (changes) {
+                                this.evaluate();
+                            }, this));
+                        }
                     }
                     this.evaluate();
                 }, this));

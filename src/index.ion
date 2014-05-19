@@ -223,22 +223,37 @@ export const
                         if observeCount is 0
                             deactivate?()
     serialize = (object) -> JSON.stringify(object)
-    deserialize = (object) ->
-        if typeof object is 'string'
-            object = JSON.parse(object)
-        let typeKey = import('ion/Object').typeKey
-        # we should strongly type our objects when created, so make a factory
-        let typeName = object[typeKey]
-        if typeName?
+    deserialize = do ->
+        let extractType = (object) ->
+            let typeKey = import('ion/Object').typeKey
+            # we should strongly type our objects when created, so make a factory
+            let typeName = object[typeKey]
+            if not typeName?
+                return Object
             let type = import(typeName)
             if not type.serializable
                 throw new Error("Type is not serializable: {{ typeName }}")
-            let typedObject = new type
-            for key, value of object if key isnt typeKey
-                typedObject[key] = object[key]
-            return typedObject
-        else
-            return object
+            # remove the type field from the source object
+            delete object[typeKey]
+            return type
+        let deserialize = (object) ->
+            if typeof object is 'string'
+                object = JSON.parse(object)
+            let typeKey = import('ion/Object').typeKey
+            # we should strongly type our objects when created, so make a factory
+            let typeName = object[typeKey]
+            if typeName?
+                let type = import(typeName)
+                if not type.serializable
+                    throw new Error("Type is not serializable: {{ typeName }}")
+                let typedObject = new type
+                for key, value of object if key isnt typeKey
+                    typedObject[key] = object[key]
+                return typedObject
+            else
+                return object
+        deserialize.extractType = extractType
+        return deserialize
     test =
         defineClass: ->
             const Foo = (defineClass)

@@ -1,4 +1,5 @@
 
+X   ActivateStatement   // converted to ExpressionStatement in compiler
 X   ForOfStatement
         left: VariableDeclaration can have 2 declarations, second is index
 X   ForInStatement  // ion "for of"

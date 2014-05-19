@@ -1113,9 +1113,31 @@ letAndConstToVar = (node, context) ->
     if node.type is 'VariableDeclaration' and node.kind isnt 'var'
         node.kind = 'var'
 
+activateStatements = (node, context) ->
+    if node.type is 'ActivateStatement'
+        context.replace
+            type: 'ExpressionStatement'
+            expression:
+                type: 'CallExpression'
+                callee:
+                    type: 'MemberExpression'
+                    object:
+                        type: 'NewExpression'
+                        callee:
+                            type: 'MemberExpression'
+                            object: node.argument
+                            property:
+                                type: 'Identifier'
+                                name: 'template'
+                        arguments: []
+                    property:
+                        type: 'Identifier'
+                        name: 'activate'
+                arguments: []
+
 exports.postprocess = (program, options) ->
     steps = [
-        [namedFunctionsAndNewArguments, superExpressions]
+        [namedFunctionsAndNewArguments, superExpressions, activateStatements]
         [destructuringAssignments]
         [createTemplateFunctionClone]
         [javascriptExpressions, arrayComprehensionsToES5]

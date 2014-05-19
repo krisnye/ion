@@ -1381,8 +1381,8 @@ var templates = [
                     require: require,
                     module: module,
                     exports: exports,
-                    _ref: _ref,
                     ion: ion,
+                    _ref: _ref,
                     templates: templates,
                     test: test
                 });
@@ -1442,8 +1442,8 @@ var templates = [
                     require: require,
                     module: module,
                     exports: exports,
-                    type: type,
                     ion: ion,
+                    type: type,
                     templates: templates,
                     test: test
                 });
@@ -1530,9 +1530,9 @@ var templates = [
                     require: require,
                     module: module,
                     exports: exports,
+                    ion: ion,
                     input: input,
                     output: output,
-                    ion: ion,
                     templates: templates,
                     test: test
                 });

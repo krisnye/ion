@@ -1317,6 +1317,26 @@ tests =
         });
     });
     """
+    """
+    activate template ->
+    """: """
+    'use strict';
+    const ion = require('ion');
+    new (ion.template(function () {
+    }, function () {
+        return ion.createRuntime({
+            type: 'Template',
+            body: [],
+            bound: false
+        }, {
+            this: this,
+            require: require,
+            module: module,
+            exports: exports,
+            ion: ion
+        });
+    })).template().activate();
+    """
 
 if global.window?
     return

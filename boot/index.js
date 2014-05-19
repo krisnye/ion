@@ -292,29 +292,46 @@ var patch = exports.patch = function () {
         });
     }, serialize = exports.serialize = function (object) {
         return JSON.stringify(object);
-    }, deserialize = exports.deserialize = function (object) {
-        if (typeof object === 'string') {
-            object = JSON.parse(object);
-        }
-        var typeKey = require('ion/Object').typeKey;
-        var typeName = object[typeKey];
-        if (typeName != null) {
+    }, deserialize = exports.deserialize = function () {
+        var extractType = function (object) {
+            var typeKey = require('ion/Object').typeKey;
+            var typeName = object[typeKey];
+            if (!(typeName != null)) {
+                return Object;
+            }
             var type = require(typeName);
             if (!type.serializable) {
                 throw new Error('Type is not serializable: ' + typeName);
             }
-            var typedObject = new type();
-            for (var key in object) {
-                var value = object[key];
-                if (key !== typeKey) {
-                    typedObject[key] = object[key];
-                }
+            delete object[typeKey];
+            return type;
+        };
+        var deserialize = function (object) {
+            if (typeof object === 'string') {
+                object = JSON.parse(object);
             }
-            return typedObject;
-        } else {
-            return object;
-        }
-    }, test = exports.test = {
+            var typeKey = require('ion/Object').typeKey;
+            var typeName = object[typeKey];
+            if (typeName != null) {
+                var type = require(typeName);
+                if (!type.serializable) {
+                    throw new Error('Type is not serializable: ' + typeName);
+                }
+                var typedObject = new type();
+                for (var key in object) {
+                    var value = object[key];
+                    if (key !== typeKey) {
+                        typedObject[key] = object[key];
+                    }
+                }
+                return typedObject;
+            } else {
+                return object;
+            }
+        };
+        deserialize.extractType = extractType;
+        return deserialize;
+    }(), test = exports.test = {
         defineClass: function () {
             var Foo = defineClass({
                     id: 'Foo',

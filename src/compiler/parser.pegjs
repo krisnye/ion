@@ -116,7 +116,7 @@
 
 Program = start:start body:Statement* end:end { return node("Program", {body:body}, start, end) }
 
-Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ExpressionStatement) (eol / _ ',') { return a }
+Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ActivateStatement / ExpressionStatement) (eol / _ ',') { return a }
 ExportStatement = start:start export _ value:(VariableDeclaration / RightHandSideExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
 ReturnStatement = start:start return _ argument:RightHandSideExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
 ThrowStatement = start:start throw _ argument:RightHandSideExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
@@ -124,6 +124,7 @@ BreakStatement = start:start break end:end { return node("BreakStatement", {}, s
 ContinueStatement = start:start continue end:end { return node("ContinueStatement", {}, start, end) }
 AssertStatement = start:start assert _ properties:(a:Expression {return {expression:a, text:text()}} ) end:end { return node('AssertStatement', properties, start, end) }
 ExpressionStatement = start:start expression:Expression end:end { return node("ExpressionStatement", {expression:expression}, start, end) }
+ActivateStatement = start:start activate _ &template f:FunctionExpression end:end { return node("ActivateStatement", {argument: f}, start, end) }
 IfStatement =
     start:start
     if _ test:InlineExpression
@@ -419,6 +420,7 @@ class = "class" !identifierPart
 extends = "extends" !identifierPart
 assert = "assert" !identifierPart
 template = "template" !identifierPart
+activate = "activate" !identifierPart
 
 //  white space
 indent 'INDENT' = eol? _ "{{{{"
