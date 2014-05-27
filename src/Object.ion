@@ -6,7 +6,6 @@ export class Object extends null
         if properties?
             for key, value of properties
                 @[key] = value
-    toString: -> @name
     typeKey: '$'
     properties:
         toJSON: ->

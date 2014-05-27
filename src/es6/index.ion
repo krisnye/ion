@@ -2,3 +2,4 @@
 import './String'
 import './Map'
 import './Object.observe'
+import './Function'

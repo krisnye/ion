@@ -10,6 +10,7 @@ export class ForInOfStatement extends Statement
             else
                 return name
         forEach: (collection, callback) ->
+            # console.log('forEach', collection)
             if @type is 'ForOfStatement'
                 for let key = 0; key < collection.length; key++
                     let value = collection[key]
@@ -21,9 +22,11 @@ export class ForInOfStatement extends Statement
             super
             @statements ?= {}
             # we must create new contexts for every item in the list thingy.
+            # console.log('ForEachStatement.activate', @)
             @collectionExpression ?= @context.createRuntime(@right)
             (@collectionExpression.watch)
                 @collectionWatcher ?= (collection) =>
+                    # console.log('collectionWatcher', collection)
                     if @collection isnt collection
                         if @collection?
                             @forEach(@collection, @removeItem.bind(@))
@@ -49,8 +52,7 @@ export class ForInOfStatement extends Statement
             statement?.deactivate()
             delete @statements[key]
         applyChanges: (changes) ->
-            # console.log('changes', changes)
-            const ignoreProperty(name) ->
+            let ignoreProperty = (name) =>
                 if not name?
                     return true
                 if name[0] is '_'

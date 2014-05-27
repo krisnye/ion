@@ -39,7 +39,12 @@ const
         (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
 
 export const
-    patch = import('./mergePatch').merge
+    patch = do ->
+        let mergePatch = import './mergePatch'
+        let patch = (object, patch) -> mergePatch.merge(object, patch)
+        for key, value of mergePatch
+            patch[key] = value
+        return patch
     create = (type, args) -> variableArgConstructs[args.length](type, args)
     template = (fn, template) ->
         fn.template = template
@@ -62,6 +67,8 @@ export const
         else
             return object
     observe = (object, observer, property) ->
+        if object is global or object is console
+            return
         # property is optional
         # if object?.nodeType?
         #     console.log('observe', object, observer, property)
@@ -85,12 +92,12 @@ export const
         # (see add function below)
         # so we copy the function name to the new bound function id property when binding
         # (function.name is readonly)
-        if fn.name.length > 0
+        if fn.name?.length > 0
             newFn.id = fn.id ? fn.name
         return newFn
     add = (container, item) ->
         let remove
-        if typeof item is 'function' and (item.name.length > 0 or item.id?) and typeof container.addEventListener is 'function'
+        if typeof item is 'function' and (item.name?.length > 0 or item.id?) and typeof container.addEventListener is 'function'
             let name = item.id ? item.name
             # if this platform doesn't have native Object.observe
             # then we wrap all event handlers and call checkForChanges after
@@ -151,10 +158,16 @@ export const
             classFunction = eval("(function {{name}}() {})")
 
         # successively merge patch the definitions onto the new class
+        let canSetClassProperty = (key) ->
+            if key is 'name'
+                return false
+            let descriptor = Object.getOwnPropertyDescriptor(classFunction, key)
+            return not descriptor? or descriptor.writable or not descriptor.get?
+
         for let i = definitions.length - 1; i >= 0; i--
             let definition = definitions[i]
             for key, value of definition if key isnt 'test' or i is 0
-                if value?.constructor is Object or Object.getOwnPropertyDescriptor(classFunction, key)?.writable isnt false
+                if canSetClassProperty(key)
                     classFunction[key] = patch(classFunction[key], value)
 
         if classFunction.properties?
