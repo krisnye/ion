@@ -37,6 +37,7 @@ const
         (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7])
         (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8])
         (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
+    nodeObserveShim = Object.observe?.checkForChanges ? Object : import('./es6/Object.observe').createShim()
 
 export const
     patch = do ->
@@ -70,22 +71,27 @@ export const
         if object is global or object is console
             return
         # property is optional
-        # if object?.nodeType?
-        #     console.log('observe', object, observer, property)
-        if object? and observer? and Object.observe? and typeof object is 'object'
+        if object?.nodeType?
+            nodeObserveShim.observe(object, observer, property)
+        else if object? and observer? and Object.observe? and typeof object is 'object'
             Object.observe(object, observer)
             # watch change on dom elements
             object.addEventListener?('change', observer)
         object?.onObserved?(observer, property)
     unobserve = (object, observer, property) ->
         # property is optional
-        # if object?.nodeType?
-        #     console.log('unobserve', object, observer, property)
-        if object? and observer? and Object.unobserve? and typeof object is 'object'
+        if object?.nodeType?
+            nodeObserveShim.unobserve(object, observer, property)
+        else if object? and observer? and Object.unobserve? and typeof object is 'object'
             Object.unobserve(object, observer)
             # unwatch change on dom elements
             object.removeEventListener?('change', observer)
         object?.unObserved?(observer, property)
+    checkForChanges = ->
+        if Object.observe.checkForChanges?
+            Object.observe.checkForChanges()
+        else
+            nodeObserveShim.observe.checkForChanges()
     bind = (fn, thisArg) ->
         let newFn = fn.bind(thisArg)
         # the function name has semantic meaning for us when adding a function to an element
@@ -288,3 +294,10 @@ export const
                 assert Array.isArray(object.a)
                 assert object.s is 'hello'
 
+# if window, then on resize, check for changes
+if global.window?
+    (global.window.addEventListener)
+        'resize'
+        ->
+            console.log('window resized')
+            checkForChanges()

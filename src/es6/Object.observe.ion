@@ -1,31 +1,42 @@
 
-const clone = (object) ->
-    return {}
-        for key, value of object
-            [key]: value
+const clone = (object, properties) ->
+    if properties?
+        return {}
+            for key of properties
+                [key]: object[key]
+    else
+        return {}
+            for key, value of object
+                [key]: value
 
-const createObjectObserveAndUnobserve = ->
+export const createShim = ->
     # multiple callbacks on same object.
     let map = new Map()
-    let array = []
+    let observers = []
 
-    let observe = (object, callback) ->
-        # console.log('+observe', object, callback)
+    let observe = (object, callback, property) ->
+        # console.log('+observe', property)
         if object.nodeType is 1 or object is global.document
-            return
+            if not property?
+                throw new Error("You can only observe specific properties on an element")
         let meta = map.get(object)
         if not meta?
             meta =
                 object: object
-                clone: clone(object)
+                properties: {}
+                all: 0
+                clone: clone(object, property ? {[property]:0} : null)
                 callbacks: []
             map.set(object, meta)
-            array.push(meta)
+            observers.push(meta)
+        if property?
+            meta.properties[property] ?= 0
+            meta.properties[property]++
+        else
+            meta.all++
         meta.callbacks.push(callback)
-    let unobserve = (object, callback) ->
+    let unobserve = (object, callback, property) ->
         # console.log('-unobserve', object, callback)
-        if object.nodeType is 1 or object is global.document
-            return
         let meta = map.get(object)
         if meta?
             let index = meta.callbacks.lastIndexOf(callback)
@@ -34,51 +45,72 @@ const createObjectObserveAndUnobserve = ->
                 if meta.callbacks.length is 0
                     # remove no longer observed objects
                     map.delete(object)
-                    array.splice(array.lastIndexOf(meta), 1)
-    let getChanges = (oldValue, newValue) ->
+                    observers.splice(observers.lastIndexOf(meta), 1)
+            if property?
+                meta.properties[property]--
+                if meta.properties[property] is 0
+                    delete meta.properties[property]
+            else
+                meta.all--
+
+    let getChanges = (oldValue, newValue, properties) ->
         let changes = null
         let change = (type, name, oldValue) ->
             changes ?= []
             changes.push({type,name,oldValue})
             # console.log('change', type, name)
-        for name of oldValue if oldValue.hasOwnProperty(name)
-            let oldPropertyValue = oldValue[name]
-            if not newValue.hasOwnProperty(name)
-                change("delete", name, oldPropertyValue)
-            else
-                let newPropertyValue = newValue[name]
-                if newPropertyValue isnt oldPropertyValue
-                    change("update", name, oldPropertyValue)
-        for name of newValue if newValue.hasOwnProperty(name) and not oldValue.hasOwnProperty(name)
-            change("add", name)
+        let checkForChange = (property) ->
+            if oldValue.hasOwnProperty(name)
+                let oldPropertyValue = oldValue[name]
+                if not newValue.hasOwnProperty(name)
+                    change("delete", name, oldPropertyValue)
+                else
+                    let newPropertyValue = newValue[name]
+                    if newPropertyValue isnt oldPropertyValue
+                        change("update", name, oldPropertyValue)
+            else if newValue.hasOwnProperty(name)
+                change("add", name)
+
+        if properties?
+            for name of properties
+                checkForChange(name)
+        else
+            for name of oldValue
+                checkForChange(name)
+            for name of newValue
+                if not oldValue.hasOwnProperty(name)
+                    checkForChange(name)
         return changes
     observe.checkForChanges = ->
-        let maxCycles = 100
+        let maxCycles = 10
         # we have to run multiple cycles in case callbacks cause further change propagation
         for let i = 0; i < maxCycles; i++
             let totalChanges = 0
             let pendingChanges = []
             # traverse all objects and find changes
-            for meta in array
-                let changes = getChanges(meta.clone, meta.object)
+            for meta in observers
+                let properties = meta.all > 0 ? null : meta.properties
+                let changes = getChanges(meta.clone, meta.object, properties)
                 if changes?
                     totalChanges++
-                    meta.clone = clone(meta.object)
+                    meta.clone = clone(meta.object, properties)
                     # callbacks must be deferred until after ALL changes have been found
                     pendingChanges.push([changes, meta.callbacks.slice(0)])
             if totalChanges is 0
                 return
             for [changes, callbacks] in pendingChanges
+                # console.log(i, changes)
                 for callback in callbacks
                     callback(changes)
 
         # we have hit max cycles, indicates a circular dependency error
         throw new Error("Circular Object.observe dependency")
 
-    return [observe,unobserve,array]
+    observe.observers = observers
+    return {observe,unobserve}
 
 export const test = ->
-    let [observe,unobserve] = createObjectObserveAndUnobserve()
+    let {observe,unobserve} = createShim()
     let object =
         a: 1
         b:
@@ -96,15 +128,5 @@ export const test = ->
     unobserve(object, handler)
 
 if not Object.observe? and global.Map?
-    let [observe,unobserve,array] = createObjectObserveAndUnobserve()
-    Object.observe = observe
-    Object.unobserve = unobserve
-    # temp debug
-    global.array = array
-
-
-
-
-
-
-
+    for key, value of createShim()
+        Object[key] = value

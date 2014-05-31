@@ -171,4 +171,4 @@ export const
                 # todo: delete a property in a literal?
                 delete source.children.Third
                 # temp requirement
-                Object.observe.checkForChanges?()
+                ion.checkForChanges()
