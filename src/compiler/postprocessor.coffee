@@ -1156,12 +1156,22 @@ activateStatements = (node, context) ->
                         name: 'activate'
                 arguments: []
 
+variableDeclarationExpressions = (node, context) ->
+    if node.type is 'VariableDeclarationExpression'
+        # extract the variable declaration statement
+        context.addStatement 0,
+            type: 'VariableDeclaration'
+            declarations: node.declarations
+            kind: node.kind
+        # replace this with a reference to the declared variable
+        context.replace node.declarations[0].id
+
 exports.postprocess = (program, options) ->
     steps = [
         [namedFunctionsAndNewArguments, superExpressions, activateStatements]
         [destructuringAssignments]
         [createTemplateFunctionClone]
-        [javascriptExpressions, arrayComprehensionsToES5]
+        [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions]
         [checkVariableDeclarations]
         [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows]
         [validateTemplateNodes, classExpressions]

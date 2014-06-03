@@ -16,9 +16,6 @@ export const createShim = ->
 
     let observe = (object, callback, property) ->
         # console.log('+observe', property)
-        if object.nodeType is 1 or object is global.document
-            if not property?
-                throw new Error("You can only observe specific properties on an element")
         let meta = map.get(object)
         if not meta?
             meta =
@@ -60,16 +57,25 @@ export const createShim = ->
             changes.push({type,name,oldValue})
             # console.log('change', type, name)
         let checkForChange = (property) ->
-            if oldValue.hasOwnProperty(name)
+            # we only check add/delete on plain old javascript objects
+            if newValue.constructor is Object
+                if oldValue.hasOwnProperty(name)
+                    let oldPropertyValue = oldValue[name]
+                    if not newValue.hasOwnProperty(name)
+                        if oldPropertyValue isnt undefined
+                            change("delete", name, oldPropertyValue)
+                    else
+                        let newPropertyValue = newValue[name]
+                        if newPropertyValue isnt oldPropertyValue
+                            change("update", name, oldPropertyValue)
+                else if newValue.hasOwnProperty(name)
+                    change("add", name)
+            else
+                # for everything else, we only check current property values
                 let oldPropertyValue = oldValue[name]
-                if not newValue.hasOwnProperty(name)
-                    change("delete", name, oldPropertyValue)
-                else
-                    let newPropertyValue = newValue[name]
-                    if newPropertyValue isnt oldPropertyValue
-                        change("update", name, oldPropertyValue)
-            else if newValue.hasOwnProperty(name)
-                change("add", name)
+                let newPropertyValue = newValue[name]
+                if newPropertyValue isnt oldPropertyValue
+                    change("update", name, oldPropertyValue)
 
         if properties?
             for name of properties
@@ -95,7 +101,7 @@ export const createShim = ->
                     totalChanges++
                     meta.clone = clone(meta.object, properties)
                     # callbacks must be deferred until after ALL changes have been found
-                    pendingChanges.push([changes, meta.callbacks.slice(0)])
+                    pendingChanges.push([changes, meta.callbacks.slice(0), meta])
             if totalChanges is 0
                 return
             for [changes, callbacks] in pendingChanges

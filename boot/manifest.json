@@ -1,5 +1,5 @@
 {
-  "modified": 1399930054640,
+  "modified": 1401817544913,
   "files": [
     "browser/require.js",
     "browser/elements.js",
@@ -13,6 +13,11 @@
     "builder/WebsiteBuilder.js",
     "compiler/astFunctions.js",
     "compiler/common.js",
+    "compiler/escodegen/index.js",
+    "compiler/estraverse/index.js",
+    "compiler/esutils/code.js",
+    "compiler/esutils/index.js",
+    "compiler/esutils/keyword.js",
     "compiler/index.js",
     "compiler/nodes.js",
     "compiler/parser.js",
@@ -20,6 +25,7 @@
     "compiler/preprocessor.js",
     "compiler/traverse.js",
     "compiler/traverseAst.js",
+    "es6/Function.js",
     "es6/index.js",
     "es6/Map.js",
     "es6/Object.observe.js",

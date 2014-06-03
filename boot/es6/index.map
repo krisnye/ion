@@ -1,1 +1,1 @@
-{"version":3,"sources":["index.ion"],"names":[],"mappings":"aAAA;OACA,CAAO,UAAP,EADA;OAEA,CAAO,OAAP,EAFA;OAGA,CAAO,kBAAP","sourcesContent":["\r\nimport './String'\r\nimport './Map'\r\nimport './Object.observe'"]}
+{"version":3,"sources":["index.ion"],"names":[],"mappings":"aAAA;OACA,CAAO,UAAP,EADA;OAEA,CAAO,OAAP,EAFA;OAGA,CAAO,kBAAP,EAHA;OAIA,CAAO,YAAP","sourcesContent":["\r\nimport './String'\r\nimport './Map'\r\nimport './Object.observe'\r\nimport './Function'"]}

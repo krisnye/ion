@@ -1,4 +1,4 @@
-void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var activateStatements, addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, getReferenceIdentifiers, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isReferenceNode, isSimpleObjectExpression, isSuperExpression, javascriptExpressions, letAndConstToVar, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, patchAssignmentExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
+void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var activateStatements, addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, getReferenceIdentifiers, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isReferenceNode, isSimpleObjectExpression, isSuperExpression, javascriptExpressions, letAndConstToVar, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, patchAssignmentExpression, propertyStatements, removeLocationInfo, setNodeOutputValues, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, variableDeclarationExpressions, wrapTemplateInnerFunctions, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -724,7 +724,7 @@ isSimpleObjectExpression = function(node) {
 };
 
 typedObjectExpressions = function(node, context) {
-  var addPosition, element, elements, expressionStatement, getExistingObjectIdIfTempVarNotNeeded, grandNode, initialValue, isArray, isSimple, objectId, objectType, parentNode, statements, subnodeEnter, subnodeExit, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
+  var addPosition, element, elements, expressionStatement, getExistingObjectIdIfTempVarNotNeeded, grandNode, initialValue, isArray, isSimple, objectId, objectType, parentNode, statements, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
   if (context.reactive) {
     return;
   }
@@ -809,67 +809,76 @@ typedObjectExpressions = function(node, context) {
       context.replace(objectId);
     }
     statements = [];
-    subnodeEnter = function(subnode, subcontext) {
-      if (subcontext.outputStack == null) {
-        subcontext.outputStack = [objectId];
-      }
-      if (subnode.type === 'ObjectExpression' || subnode.type === 'ArrayExpression') {
-        return subcontext.skip();
-      }
-      if (subnode.type === 'Property') {
-        subnode.output = subcontext.outputStack[subcontext.outputStack.length - 1];
-        subcontext.outputStack.push({
-          type: 'MemberExpression',
-          object: subnode.output,
-          property: subnode.key,
-          computed: subnode.computed || subnode.key.type !== 'Identifier'
-        });
-      } else if (isFunctionNode(subnode)) {
-        subcontext.skip();
-      } else if (subnode.type === 'ExpressionStatement') {
-        if (!isArray) {
-          ensureIonVariable(context);
-        }
-        subnode = subcontext.replace({
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'CallExpression',
-            callee: {
-              type: 'MemberExpression',
-              object: isArray ? objectId : ionExpression,
-              property: {
-                type: 'Identifier',
-                name: isArray ? 'push' : 'add'
-              }
-            },
-            "arguments": isArray ? [subnode.expression] : [objectId, subnode.expression]
-          }
-        });
-        subcontext.skip();
-      }
-      if (subcontext.parentNode() == null) {
-        return statements.push(subnode);
-      }
-    };
+    setNodeOutputValues(context, node.properties, objectId, statements, isArray);
     if (statements.length === 1) {
-      context.addStatement(statements[0], addPosition);
+      return context.addStatement(statements[0], addPosition);
     } else {
-      context.addStatement({
+      return context.addStatement({
         type: 'BlockStatement',
         body: statements
       }, addPosition);
     }
-    subnodeExit = function(subnode, subcontext) {
-      if (subnode.type === 'Property') {
-        return subcontext.outputStack.pop();
-      }
-    };
   }
-  return traverse(node.properties, subnodeEnter, subnodeExit);
+};
+
+setNodeOutputValues = function(context, nodes, outputId, statements, isArray) {
+  var subnodeEnter, subnodeExit;
+  if (statements == null) {
+    statements = [];
+  }
+  subnodeEnter = function(subnode, subcontext) {
+    if (subcontext.outputStack == null) {
+      subcontext.outputStack = [outputId];
+    }
+    if (subnode.type === 'ObjectExpression' || subnode.type === 'ArrayExpression') {
+      return subcontext.skip();
+    }
+    if (subnode.type === 'Property') {
+      subnode.output = subcontext.outputStack[subcontext.outputStack.length - 1];
+      subcontext.outputStack.push({
+        type: 'MemberExpression',
+        object: subnode.output,
+        property: subnode.key,
+        computed: subnode.computed || subnode.key.type !== 'Identifier'
+      });
+    } else if (isFunctionNode(subnode)) {
+      subcontext.skip();
+    } else if (subnode.type === 'ExpressionStatement') {
+      if (!isArray) {
+        ensureIonVariable(context);
+      }
+      subnode = subcontext.replace({
+        type: 'ExpressionStatement',
+        expression: {
+          type: 'CallExpression',
+          callee: {
+            type: 'MemberExpression',
+            object: isArray ? outputId : ionExpression,
+            property: {
+              type: 'Identifier',
+              name: isArray ? 'push' : 'add'
+            }
+          },
+          "arguments": isArray ? [subnode.expression] : [outputId, subnode.expression]
+        }
+      });
+      subcontext.skip();
+    }
+    if (subcontext.parentNode() == null) {
+      return statements.push(subnode);
+    }
+  };
+  subnodeExit = function(subnode, subcontext) {
+    if (subnode.type === 'Property') {
+      return subcontext.outputStack.pop();
+    }
+  };
+  traverse(nodes, subnodeEnter, subnodeExit);
+  return statements;
 };
 
 propertyStatements = function(node, context) {
-  var left, parent, right;
+  var left, parent, right, statements;
   if (context.reactive) {
     return;
   }
@@ -925,15 +934,16 @@ propertyStatements = function(node, context) {
       if (node.value.objectType != null) {
         throw context.error("type not allowed on set expression", node.value);
       }
-      ensureIonVariable(context);
-      return context.replace({
-        type: 'ExpressionStatement',
-        expression: {
-          type: 'CallExpression',
-          callee: getPathExpression('ion.patch'),
-          "arguments": [node.key, node.value]
-        }
-      });
+      statements = [];
+      setNodeOutputValues(context, node.value.properties, node.key, statements);
+      if (statements.length === 1) {
+        return context.replace(statements[0]);
+      } else {
+        return context.replace({
+          type: 'BlockStatement',
+          body: statements
+        });
+      }
     }
   }
 };
@@ -1330,11 +1340,19 @@ isReferenceNode = function(node, context) {
 };
 
 getReferenceIdentifiers = function(node, callback) {
+  var results;
+  results = {};
+  if (callback == null) {
+    callback = function(node) {
+      return results[node.name] = node;
+    };
+  }
   traverse(node, function(node, context) {
     if (isReferenceNode(node, context)) {
       return callback(node, context);
     }
   });
+  return results;
 };
 
 getExternalIdentifiers = function(node, callback) {
@@ -1443,7 +1461,7 @@ createTemplateFunctionClone = function(node, context) {
 };
 
 createTemplateRuntime = function(node, context) {
-  var args, id, key, name, params, template, value, variables, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
+  var args, id, key, name, params, referenceIds, template, value, variables, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
   if (node.type === 'Template') {
     template = removeLocationInfo(node);
     args = {
@@ -1453,13 +1471,16 @@ createTemplateRuntime = function(node, context) {
     variables = {
       "this": thisExpression
     };
+    referenceIds = getReferenceIdentifiers(node);
     _ref1 = ['require', 'module', 'exports', 'ion'];
     for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
       name = _ref1[_i];
-      variables[name] = {
-        type: 'Identifier',
-        name: name
-      };
+      if (referenceIds[name] != null) {
+        variables[name] = {
+          type: 'Identifier',
+          name: name
+        };
+      }
     }
     _ref2 = template.params;
     for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
@@ -1508,7 +1529,14 @@ createTemplateRuntime = function(node, context) {
 javascriptExpressions = function(node, context) {
   var e, errorNode, esprima, expression, message, program, _ref1, _ref2;
   if (node.type === 'JavascriptExpression') {
-    esprima = require('esprima');
+    try {
+      esprima = require('esprima');
+    } catch (_error) {
+      e = _error;
+      node.type = 'VerbatimExpression';
+      node.verbatim = node.text;
+      return;
+    }
     try {
       program = esprima.parse(node.text);
       expression = program.body[0].expression;
@@ -1577,9 +1605,20 @@ activateStatements = function(node, context) {
   }
 };
 
+variableDeclarationExpressions = function(node, context) {
+  if (node.type === 'VariableDeclarationExpression') {
+    context.addStatement(0, {
+      type: 'VariableDeclaration',
+      declarations: node.declarations,
+      kind: node.kind
+    });
+    return context.replace(node.declarations[0].id);
+  }
+};
+
 exports.postprocess = function(program, options) {
   var enter, exit, previousContext, steps, traversal, variable, _i, _len;
-  steps = [[namedFunctionsAndNewArguments, superExpressions, activateStatements], [destructuringAssignments], [createTemplateFunctionClone], [javascriptExpressions, arrayComprehensionsToES5], [checkVariableDeclarations], [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]];
+  steps = [[namedFunctionsAndNewArguments, superExpressions, activateStatements], [destructuringAssignments], [createTemplateFunctionClone], [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions], [checkVariableDeclarations], [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]];
   if ((options != null ? options.target : void 0) === 'es5') {
     steps.push([letAndConstToVar]);
   }

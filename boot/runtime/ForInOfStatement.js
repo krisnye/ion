@@ -60,18 +60,18 @@ var ForInOfStatement = ion.defineClass({
                 delete this.statements[key];
             },
             applyChanges: function (changes) {
-                function ignoreProperty(name) {
-                    if (!(name != null)) {
-                        return true;
-                    }
-                    if (name[0] === '_') {
-                        return true;
-                    }
-                    if (name === 'length' && this.type === 'ForOfStatement') {
-                        return true;
-                    }
-                    return false;
-                }
+                var ignoreProperty = ion.bind(function (name) {
+                        if (!(name != null)) {
+                            return true;
+                        }
+                        if (name[0] === '_') {
+                            return true;
+                        }
+                        if (name === 'length' && this.type === 'ForOfStatement') {
+                            return true;
+                        }
+                        return false;
+                    }, this);
                 for (var _i = 0; _i < changes.length; _i++) {
                     var _ref = changes[_i];
                     var name = _ref.name;

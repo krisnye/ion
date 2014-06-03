@@ -27,7 +27,7 @@ var parse = exports.parse = function (content, options) {
         options.id = options.id != null ? options.id : 'unknown';
         options.loc = options.loc != null ? options.loc : true;
         options.target = options.target != null ? options.target : 'es5';
-        var preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('escodegen');
+        var preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('./escodegen');
         var sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), sourceMap = null, preprocessed = result, sourceLocationsFixed = false;
         try {
             result = parser.parse(result, options);
@@ -39,14 +39,18 @@ var parse = exports.parse = function (content, options) {
             if (options.postprocess !== false) {
                 result = postprocessor.postprocess(result, options);
                 if ((options != null ? options.generate : void 0) !== false) {
-                    var generateOptions = {
-                            sourceMapWithCode: true,
-                            sourceMap: options.sourceMap != null ? options.sourceMap : options.id,
-                            sourceContent: content
-                        };
+                    var generateOptions = {};
+                    {
+                        generateOptions.sourceMapWithCode = true;
+                        if (!(global.window != null)) {
+                            generateOptions.sourceMap = options.sourceMap != null ? options.sourceMap : options.id;
+                        }
+                        generateOptions.sourceContent = content;
+                        generateOptions.verbatim = 'verbatim';
+                    }
                     var output = escodegen.generate(result, generateOptions);
                     result = output.code;
-                    sourceMap = output.map.toString();
+                    sourceMap = output.map != null ? output.map.toString() : void 0;
                 }
             }
         } catch (e) {

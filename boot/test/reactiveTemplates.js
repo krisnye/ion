@@ -41,11 +41,8 @@ var _ref8 = [];
             bound: false
         }, {
             this: this,
-            require: require,
-            module: module,
-            exports: exports,
-            ion: ion,
             object: object,
+            ion: ion,
             _ref8: _ref8,
             templates: templates,
             _ref9: _ref9
@@ -103,11 +100,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     properties: properties,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -167,11 +161,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     properties: properties,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -198,12 +189,10 @@ var templates = [
                     return a * 2;
                 }
                 var _ref6 = {};
-                {
-                    for (var key in properties) {
-                        var value = properties[key];
-                        var value = properties[key];
-                        _ref6[key] = double(value);
-                    }
+                for (var key in properties) {
+                    var value = properties[key];
+                    var value = properties[key];
+                    _ref6[key] = double(value);
                 }
                 return _ref6;
             }, function (properties) {
@@ -294,11 +283,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     properties: properties,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -327,13 +313,11 @@ var templates = [
                     return a * factor;
                 }
                 var _ref7 = {};
-                {
-                    for (var key in properties) {
-                        var value = properties[key];
-                        var value = properties[key];
-                        if (key !== 'factor') {
-                            _ref7[key] = multiply(value);
-                        }
+                for (var key in properties) {
+                    var value = properties[key];
+                    var value = properties[key];
+                    if (key !== 'factor') {
+                        _ref7[key] = multiply(value);
                     }
                 }
                 return _ref7;
@@ -496,11 +480,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     properties: properties,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -597,11 +578,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     _ref: _ref,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -711,11 +689,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     _ref2: _ref2,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -766,11 +741,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     object: object,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -883,12 +855,9 @@ var templates = [
                             }
                         }, {
                             this: this,
-                            require: require,
-                            module: module,
-                            exports: exports,
-                            ion: ion,
                             _ref3: _ref3,
                             sum: sum,
+                            ion: ion,
                             _ref8: _ref8,
                             templates: templates,
                             _ref9: _ref9
@@ -924,12 +893,9 @@ var templates = [
                         bound: false
                     }, {
                         this: this,
-                        require: require,
-                        module: module,
-                        exports: exports,
-                        ion: ion,
                         object: object,
                         sum: sum,
+                        ion: ion,
                         _ref8: _ref8,
                         templates: templates,
                         _ref9: _ref9
@@ -951,7 +917,7 @@ var templates = [
             'bidirectional properties',
             {},
             ion.template(function (object) {
-                ion.patch(object, { x: object.y });
+                object.x = object.y;
                 return object;
             }, function (object) {
                 return ion.createRuntime({
@@ -1000,11 +966,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     object: object,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -1066,9 +1029,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     _ref8: _ref8,
                     templates: templates,
@@ -1085,36 +1045,34 @@ var templates = [
         _ref8
     ];
 var _ref9 = {};
-{
-    for (var _i2 = 0; _i2 < templates.length; _i2++) {
-        var _ref10 = templates[_i2];
-        var name = _ref10[0];
-        var thisArg = _ref10[1];
-        var templateType = _ref10[2];
-        var argument = _ref10[3];
-        var patch = _ref10[4];
-        var expected = _ref10[5];
-        if (expected != null) {
-            _ref9[name] = function (thisArg, templateType, argument, patch, expected) {
-                return function (done) {
-                    var template = templateType.template.call(thisArg, argument);
-                    function checkIfDone(check) {
-                        if (JSON.stringify(check) === JSON.stringify(expected)) {
-                            template.deactivate();
-                            done();
-                        }
+for (var _i2 = 0; _i2 < templates.length; _i2++) {
+    var _ref10 = templates[_i2];
+    var name = _ref10[0];
+    var thisArg = _ref10[1];
+    var templateType = _ref10[2];
+    var argument = _ref10[3];
+    var patch = _ref10[4];
+    var expected = _ref10[5];
+    if (expected != null) {
+        _ref9[name] = function (thisArg, templateType, argument, patch, expected) {
+            return function (done) {
+                var template = templateType.template.call(thisArg, argument);
+                function checkIfDone(check) {
+                    if (JSON.stringify(check) === JSON.stringify(expected)) {
+                        template.deactivate();
+                        done();
                     }
-                    template.activate();
-                    template.watch(function (value) {
+                }
+                template.activate();
+                template.watch(function (value) {
+                    checkIfDone(value);
+                    ion.observe(value, function (changes) {
                         checkIfDone(value);
-                        ion.observe(value, function (changes) {
-                            checkIfDone(value);
-                        });
                     });
-                    ion.patch(argument, patch);
-                };
-            }(thisArg, templateType, argument, patch, expected);
-        }
+                });
+                ion.patch(argument, patch);
+            };
+        }(thisArg, templateType, argument, patch, expected);
     }
 }
 module.exports = exports = { test: _ref9 };

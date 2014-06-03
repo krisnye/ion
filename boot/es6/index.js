@@ -2,6 +2,7 @@ void (function(){var _ion_es6_index_ = function(module,exports,require){'use str
 require('./String');
 require('./Map');
 require('./Object.observe');
+require('./Function');
   }
   if (typeof require === 'function') {
     if (require.register)

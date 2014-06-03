@@ -59,11 +59,11 @@ tests = {
   "let object = {x:1, y:2}\n    z: 3": "'use strict';\nlet object = {\n        x: 1,\n        y: 2,\n        z: 3\n    };",
   "let origin = new Point\n    x: 1\n    y: 2": "'use strict';\nconst ion = require('ion');\nlet origin = ion.patch(new Point(), {\n        x: 1,\n        y: 2\n    });",
   "let origin = new Line\n    a: new Point\n        x: 0\n        y: 0\n    b: new Point\n        x: 10\n        y: 20": "'use strict';\nconst ion = require('ion');\nlet origin = ion.patch(new Line(), {\n        a: ion.patch(new Point(), {\n            x: 0,\n            y: 0\n        }),\n        b: ion.patch(new Point(), {\n            x: 10,\n            y: 20\n        })\n    });",
-  "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: new Point\n        x: 0\n        y: 0": "'use strict';\nconst ion = require('ion');\nion.patch(input, {\n    x: 10,\n    y: 20,\n    z: {\n        a: 1,\n        b: 2\n    },\n    w: ion.patch(new Point(), {\n        x: 0,\n        y: 0\n    })\n});",
+  "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: new Point\n        x: 0\n        y: 0": "'use strict';\nconst ion = require('ion');\n{\n    input.x = 10;\n    input.y = 20;\n    input.z = ion.patch(input.z, {\n        a: 1,\n        b: 2\n    });\n    input.w = ion.patch(new Point(), {\n        x: 0,\n        y: 0\n    });\n}",
   "let point = new Point\n    [x]: 1\n    [y]: 2": "'use strict';\nlet point = new Point();\n{\n    point[x] = 1;\n    point[y] = 2;\n}",
   "let self = @\nlet x = @x\nlet y = @.y\nlet z = this.z": "'use strict';\nlet self = this;\nlet x = this.x;\nlet y = this.y;\nlet z = this.z;",
-  "let x = {}\n    [key]: value": "'use strict';\nlet x = {};\n{\n    x[key] = value;\n}",
-  "if foo\n    return {}\n        for key, value of object\n            [key]: value": "'use strict';\nif (foo) {\n    let _ref = {};\n    {\n        for (let key in object) {\n            let value = object[key];\n            _ref[key] = value;\n        }\n    }\n    return _ref;\n}",
+  "let x = {}\n    [key]: value": "'use strict';\nlet x = {};\nx[key] = value;",
+  "if foo\n    return {}\n        for key, value of object\n            [key]: value": "'use strict';\nif (foo) {\n    let _ref = {};\n    for (let key in object) {\n        let value = object[key];\n        _ref[key] = value;\n    }\n    return _ref;\n}",
   "for x, y, z of foo\n    log(foo)": {
     line: 1,
     column: 11
@@ -114,9 +114,9 @@ tests = {
     column: 1
   },
   "let object =\n    const double(a) -> a * 2\n    if a\n        [key]: value\n    else\n        foo: double(2)": "'use strict';\nlet object = {};\n{\n    function double(a) {\n        return a * 2;\n    }\n    if (a) {\n        object[key] = value;\n    } else {\n        object.foo = double(2);\n    }\n}",
-  "let items = []\n    for key, value of window\n        value": "'use strict';\nlet items = [];\n{\n    for (let key in window) {\n        let value = window[key];\n        items.push(value);\n    }\n}",
-  "let foo = div()\n    span()\n        'Hello'": "'use strict';\nconst ion = require('ion');\nlet foo = div();\n{\n    let _ref = span();\n    {\n        ion.add(_ref, 'Hello');\n    }\n    ion.add(foo, _ref);\n}",
-  "const ion = import './'\nlet foo = div()\n    span()\n        'Hello'": "'use strict';\nconst ion = require('./');\nlet foo = div();\n{\n    let _ref = span();\n    {\n        ion.add(_ref, 'Hello');\n    }\n    ion.add(foo, _ref);\n}",
+  "let items = []\n    for key, value of window\n        value": "'use strict';\nlet items = [];\nfor (let key in window) {\n    let value = window[key];\n    items.push(value);\n}",
+  "let foo = div()\n    span()\n        'Hello'": "'use strict';\nconst ion = require('ion');\nlet foo = div();\nlet _ref = span();\nion.add(_ref, 'Hello');\nion.add(foo, _ref);",
+  "const ion = import './'\nlet foo = div()\n    span()\n        'Hello'": "'use strict';\nconst ion = require('./');\nlet foo = div();\nlet _ref = span();\nion.add(_ref, 'Hello');\nion.add(foo, _ref);",
   "const translate({x,y}) ->\n    x++\n    y++\n    return {x,y}": "'use strict';\nfunction translate(_ref) {\n    let x = _ref.x;\n    let y = _ref.y;\n    x++;\n    y++;\n    return {\n        x: x,\n        y: y\n    };\n}",
   "let x = (foo)\n    ''\n        multiline string literal\n    \"\"\n        multiline string template": "'use strict';\nlet x = foo('multiline string literal', 'multiline string template');",
   "assert x is 2": "'use strict';\nif (!(x === 2))\n    throw new Error('Assertion Failed: (x is 2)');",
@@ -177,7 +177,7 @@ tests = {
   },
   "let x = 0 in Array\nlet y = \"foo\" instanceof String": "'use strict';\nlet x = 0 in Array;\nlet y = 'foo' instanceof String;",
   "let output\noutput :=\n    x: 1\n    y: 2": "'use strict';\nconst ion = require('ion');\nlet output;\noutput = ion.patch(output, {\n    x: 1,\n    y: 2\n});",
-  "output:\n    for a in b\n        [c]: d": "'use strict';\nconst ion = require('ion');\nlet _ref = {};\n{\n    for (let _i = 0; _i < b.length; _i++) {\n        let a = b[_i];\n        _ref[c] = d;\n    }\n}\nion.patch(output, _ref);",
+  "output:\n    for a in b\n        [c]: d": "'use strict';\nfor (let _i = 0; _i < b.length; _i++) {\n    let a = b[_i];\n    output[c] = d;\n}",
   "output: {}\n    x: 1": {
     line: 1,
     column: 9
@@ -191,10 +191,11 @@ tests = {
   "let array = []\n    1, 0, 0\n    0, 1, 0\n    0, 0, 1": "'use strict';\nlet array = [\n        1,\n        0,\n        0,\n        0,\n        1,\n        0,\n        0,\n        0,\n        1\n    ];",
   "import(foo).bar": "'use strict';\nrequire(foo).bar;",
   "let x = []\n    ->": "'use strict';\nlet x = [function () {\n        }];",
-  "x:\n    delete: true": "'use strict';\nconst ion = require('ion');\nion.patch(x, { delete: true });",
+  "x:\n    delete: true": "'use strict';\nx.delete = true;",
   "return\n    style:\n        fontSize: \"0.7em\"\n    \"delete\"": "'use strict';\nconst ion = require('ion');\nlet _ref = {};\n{\n    _ref.style = ion.patch(_ref.style, { fontSize: '0.7em' });\n    ion.add(_ref, 'delete');\n}\nreturn _ref;",
-  "export template add(x,y) -> x + y": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function add(x, y) {\n    return x + y;\n}, function (x, y) {\n    return ion.createRuntime({\n        type: 'Template',\n        body: [{\n                type: 'ReturnStatement',\n                argument: {\n                    type: 'BinaryExpression',\n                    operator: '+',\n                    left: {\n                        type: 'Identifier',\n                        name: 'x'\n                    },\n                    right: {\n                        type: 'Identifier',\n                        name: 'y'\n                    }\n                }\n            }],\n        bound: false\n    }, {\n        this: this,\n        require: require,\n        module: module,\n        exports: exports,\n        ion: ion,\n        x: x,\n        y: y\n    });\n});",
-  "activate template ->": "'use strict';\nconst ion = require('ion');\nnew (ion.template(function () {\n}, function () {\n    return ion.createRuntime({\n        type: 'Template',\n        body: [],\n        bound: false\n    }, {\n        this: this,\n        require: require,\n        module: module,\n        exports: exports,\n        ion: ion\n    });\n})).template().activate();"
+  "export template add(x,y) -> x + y": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function add(x, y) {\n    return x + y;\n}, function (x, y) {\n    return ion.createRuntime({\n        type: 'Template',\n        body: [{\n                type: 'ReturnStatement',\n                argument: {\n                    type: 'BinaryExpression',\n                    operator: '+',\n                    left: {\n                        type: 'Identifier',\n                        name: 'x'\n                    },\n                    right: {\n                        type: 'Identifier',\n                        name: 'y'\n                    }\n                }\n            }],\n        bound: false\n    }, {\n        this: this,\n        x: x,\n        y: y\n    });\n});",
+  "activate template ->": "'use strict';\nconst ion = require('ion');\nnew (ion.template(function () {\n}, function () {\n    return ion.createRuntime({\n        type: 'Template',\n        body: [],\n        bound: false\n    }, { this: this });\n})).template().activate();",
+  "content:\n    name: 'foo'\n    1\n    2": "'use strict';\nconst ion = require('ion');\n{\n    content.name = 'foo';\n    ion.add(content, 1);\n    ion.add(content, 2);\n}"
 };
 
 if (global.window != null) {

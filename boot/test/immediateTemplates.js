@@ -67,9 +67,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -122,9 +119,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -174,9 +168,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -318,9 +309,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -453,9 +441,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -611,9 +596,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -698,9 +680,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -736,9 +715,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -782,9 +758,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -863,9 +836,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -914,9 +884,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -974,9 +941,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -1018,9 +982,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -1045,9 +1006,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -1195,9 +1153,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -1290,9 +1245,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -1378,11 +1330,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     _ref: _ref,
+                    ion: ion,
                     templates: templates,
                     test: test
                 });
@@ -1439,11 +1388,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     type: type,
+                    ion: ion,
                     templates: templates,
                     test: test
                 });
@@ -1463,7 +1409,7 @@ var templates = [
         ],
         [
             ion.template(function (input, output) {
-                ion.patch(output, { e: input.a + input.b });
+                output.e = input.a + input.b;
                 return output;
             }, function (input, output) {
                 return ion.createRuntime({
@@ -1527,12 +1473,9 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     input: input,
                     output: output,
+                    ion: ion,
                     templates: templates,
                     test: test
                 });
@@ -1577,9 +1520,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test

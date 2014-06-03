@@ -38,6 +38,13 @@ const
         (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8])
         (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
     nodeObserveShim = Object.observe?.checkForChanges ? Object : import('./es6/Object.observe').createShim()
+    isObjectObservable = do ->
+        let Node = global.Node ? ->
+        let NodeList = global.NodeList ? ->
+        return (a) ->
+            if a instanceof Node or a instanceof NodeList
+                return false
+            return true
 
 export const
     patch = do ->
@@ -71,16 +78,22 @@ export const
         if object is global or object is console
             return
         # property is optional
-        if object?.nodeType?
+        if not isObjectObservable(object)
+            if not property?
+                return
             nodeObserveShim.observe(object, observer, property)
         else if object? and observer? and Object.observe? and typeof object is 'object'
+            if object.nodeType?
+                debugger
             Object.observe(object, observer)
             # watch change on dom elements
             object.addEventListener?('change', observer)
         object?.onObserved?(observer, property)
     unobserve = (object, observer, property) ->
         # property is optional
-        if object?.nodeType?
+        if not isObjectObservable(object)
+            if not property?
+                return
             nodeObserveShim.unobserve(object, observer, property)
         else if object? and observer? and Object.unobserve? and typeof object is 'object'
             Object.unobserve(object, observer)

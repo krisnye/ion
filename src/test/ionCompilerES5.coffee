@@ -24,6 +24,21 @@ tests =
         var y = 30;
     }
     """
+    """
+    return let grid = div()
+        child1(grid)
+        child2(grid)
+    """: """
+    'use strict';
+    var ion = require('ion');
+    var grid = div();
+    var _ref = grid;
+    {
+        ion.add(_ref, child1(grid));
+        ion.add(_ref, child2(grid));
+    }
+    return _ref;
+    """
 
 if global.window?
     return

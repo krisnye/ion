@@ -127,53 +127,52 @@ if (typeof module === "undefined") {
 void (function(){var _ion_browser_elements_ = function(module,exports,require){'use strict';
 var _ref2 = {};
 {
-    {
-        var _ref = [
-                'div',
-                'span',
-                'input',
-                'a',
-                'br',
-                'button',
-                'caption',
-                'fieldset',
-                'form',
-                'frame',
-                'frameset',
-                'h1',
-                'h2',
-                'h3',
-                'h4',
-                'h5',
-                'h6',
-                'hr',
-                'legend',
-                'menu',
-                'option',
-                'select',
-                'script',
-                'pre',
-                'table',
-                'tbody',
-                'td',
-                'tr',
-                'thead'
-            ];
-        for (var _i = 0; _i < _ref.length; _i++) {
-            var name = _ref[_i];
-            _ref2[name] = function (name) {
-                return function (attributes) {
-                    var element = document.createElement(name);
-                    if (attributes != null) {
-                        for (var key in attributes) {
-                            var value = attributes[key];
-                            element.setAttribute(key, value);
-                        }
+    var _ref = [
+            'div',
+            'span',
+            'input',
+            'textarea',
+            'a',
+            'br',
+            'button',
+            'caption',
+            'fieldset',
+            'form',
+            'frame',
+            'frameset',
+            'h1',
+            'h2',
+            'h3',
+            'h4',
+            'h5',
+            'h6',
+            'hr',
+            'legend',
+            'menu',
+            'option',
+            'select',
+            'script',
+            'pre',
+            'table',
+            'tbody',
+            'td',
+            'tr',
+            'thead'
+        ];
+    for (var _i = 0; _i < _ref.length; _i++) {
+        var name = _ref[_i];
+        _ref2[name] = function (name) {
+            return function (attributes) {
+                var element = document.createElement(name);
+                if (attributes != null) {
+                    for (var key in attributes) {
+                        var value = attributes[key];
+                        element.setAttribute(key, value);
                     }
-                    return element;
-                };
-            }(name);
-        }
+                }
+                return element;
+            };
+        }(name);
     }
 }
 module.exports = exports = _ref2;
@@ -874,7 +873,6 @@ module.exports = exports = ion.template(function (packagePatch) {
         var path = sortedFiles[_i];
         _ref5.push(builder.normalizePath(path));
     }
-    var _ref8 = {};
     {
         var extensions = Object.keys(compilers);
         {
@@ -889,10 +887,10 @@ module.exports = exports = ion.template(function (packagePatch) {
                     var _ref = compiler.compileWithSourceMap(source, packageJson);
                     var code = _ref[0];
                     var map = _ref[1];
-                    _ref8[targetPath] = code + '\n//@ sourceMappingURL=./' + mapName;
-                    _ref8[mapPath] = map;
+                    output[targetPath] = code + '\n//@ sourceMappingURL=./' + mapName;
+                    output[mapPath] = map;
                 } else {
-                    _ref8[targetPath] = compiler.compile(source, packageJson);
+                    output[targetPath] = compiler.compile(source, packageJson);
                 }
             }
         }
@@ -907,24 +905,23 @@ module.exports = exports = ion.template(function (packagePatch) {
                 modified: Math.max.apply(null, _ref4),
                 files: _ref5
             };
-        _ref8[manifestFileName] = JSON.stringify(manifest, null, '  ', sortedFiles);
+        output[manifestFileName] = JSON.stringify(manifest, null, '  ', sortedFiles);
         if (packageJson.build.merge != null) {
             var _ref6 = [];
             for (var _i2 = 0; _i2 < sortedFiles.length; _i2++) {
                 var name = sortedFiles[_i2];
-                ion.add(_ref8, _ref6.push(outputFiles[name].read()));
+                ion.add(output, _ref6.push(outputFiles[name].read()));
             }
-            _ref8[packageJson.build.merge] = _ref6.join('\n');
+            output[packageJson.build.merge] = _ref6.join('\n');
         }
         if (packageJson.build.package) {
-            _ref8['package.json'] = JSON.stringify(ion.patch(ion.clone(packageJson), { main: void 0 }), null, '    ');
+            output['package.json'] = JSON.stringify(ion.patch(ion.clone(packageJson), { main: void 0 }), null, '    ');
         }
         if (packageJson.build.test !== false) {
             var manifestFile = output.getFile(manifestFileName);
-            ion.add(_ref8, builder.runTests(manifestFile, manifestFile.modified));
+            ion.add(output, builder.runTests(manifestFile, manifestFile.modified));
         }
     }
-    ion.patch(output, _ref8);
 }, function (packagePatch) {
     return ion.createRuntime({
         type: 'Template',
@@ -2481,9 +2478,6 @@ module.exports = exports = ion.template(function (packagePatch) {
         bound: false
     }, {
         this: this,
-        require: require,
-        module: module,
-        exports: exports,
         ion: ion,
         packagePatch: packagePatch,
         File: File,
@@ -2959,11 +2953,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                     ], ['node_modules'].concat(packageJson.build.client.exclude));
                 for (var key in _ref3) {
                     var source = _ref3[key];
-                    var _ref10 = {};
-                    {
-                        _ref10[source.path.substring(nodepath.length)] = source.read();
-                    }
-                    ion.patch(clientOutput, _ref10);
+                    clientOutput[source.path.substring(nodepath.length)] = source.read();
                 }
             }
         }
@@ -2980,11 +2970,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                     ], ['node_modules'].concat(packageJson.build.server.exclude));
                 for (var key in _ref5) {
                     var source = _ref5[key];
-                    var _ref11 = {};
-                    {
-                        _ref11[source.path.substring(nodepath.length)] = source.read();
-                    }
-                    ion.patch(serverOutput, _ref11);
+                    serverOutput[source.path.substring(nodepath.length)] = source.read();
                 }
             }
         }
@@ -3022,11 +3008,7 @@ module.exports = exports = ion.template(function (packagePatch) {
         for (var key in _ref6) {
             var source = _ref6[key];
             var target = output.getFile(key);
-            var _ref12 = {};
-            {
-                _ref12[key] = source.read();
-            }
-            ion.patch(output, _ref12);
+            output[key] = source.read();
         }
     }
     {
@@ -3034,11 +3016,7 @@ module.exports = exports = ion.template(function (packagePatch) {
         for (var key in _ref7) {
             var source = _ref7[key];
             var targetPath = builder.changeExtension(key, '.js');
-            var _ref13 = {};
-            {
-                _ref13[targetPath] = builder.compileIon(source);
-            }
-            ion.patch(output, _ref13);
+            output[targetPath] = builder.compileIon(source);
         }
     }
     var pageOutput = output.getDirectory('WEB-INF/pages');
@@ -3047,11 +3025,7 @@ module.exports = exports = ion.template(function (packagePatch) {
         for (var key in _ref8) {
             var source = _ref8[key];
             var targetPath = builder.changeExtension(key, '.js');
-            var _ref14 = {};
-            {
-                _ref14[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(source) + ' })';
-            }
-            ion.patch(pageOutput, _ref14);
+            pageOutput[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(source) + ' })';
         }
     }
     {
@@ -3059,11 +3033,7 @@ module.exports = exports = ion.template(function (packagePatch) {
         for (var key in _ref9) {
             var source = _ref9[key];
             var targetPath = builder.changeExtension(key, '.js');
-            var _ref15 = {};
-            {
-                _ref15[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(source) + ' })';
-            }
-            ion.patch(pageOutput, _ref15);
+            pageOutput[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(source) + ' })';
         }
     }
 }, function (packagePatch) {
@@ -5008,9 +4978,6 @@ module.exports = exports = ion.template(function (packagePatch) {
         bound: false
     }, {
         this: this,
-        require: require,
-        module: module,
-        exports: exports,
         ion: ion,
         packagePatch: packagePatch,
         File: File,
@@ -5152,6 +5119,3271 @@ var indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdentTo
   }
 }).call(this)
 //@ sourceMappingURL=./common.map
+void (function(){var _ion_compiler_escodegen_index_ = function(module,exports,require){/*
+  Copyright (C) 2012-2013 Yusuke Suzuki <utatane.tea@gmail.com>
+  Copyright (C) 2012-2013 Michael Ficarra <escodegen.copyright@michael.ficarra.me>
+  Copyright (C) 2012-2013 Mathias Bynens <mathias@qiwi.be>
+  Copyright (C) 2013 Irakli Gozalishvili <rfobic@gmail.com>
+  Copyright (C) 2012 Robert Gust-Bardon <donate@robert.gust-bardon.org>
+  Copyright (C) 2012 John Freeman <jfreeman08@gmail.com>
+  Copyright (C) 2011-2012 Ariya Hidayat <ariya.hidayat@gmail.com>
+  Copyright (C) 2012 Joost-Wim Boekesteijn <joost-wim@boekesteijn.nl>
+  Copyright (C) 2012 Kris Kowal <kris.kowal@cixar.com>
+  Copyright (C) 2012 Arpad Borsos <arpad.borsos@googlemail.com>
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*global exports:true, generateStatement:true, generateExpression:true, require:true, global:true*/
+(function () {
+    'use strict';
+
+    var Syntax,
+        Precedence,
+        BinaryPrecedence,
+        SourceNode,
+        estraverse,
+        esutils,
+        isArray,
+        base,
+        indent,
+        json,
+        renumber,
+        hexadecimal,
+        quotes,
+        escapeless,
+        newline,
+        space,
+        parentheses,
+        semicolons,
+        safeConcatenation,
+        directive,
+        extra,
+        parse,
+        sourceMap,
+        FORMAT_MINIFY,
+        FORMAT_DEFAULTS;
+
+    estraverse = require('../estraverse');
+    esutils = require('../esutils');
+
+    Syntax = {
+        AssignmentExpression: 'AssignmentExpression',
+        ArrayExpression: 'ArrayExpression',
+        ArrayPattern: 'ArrayPattern',
+        ArrowFunctionExpression: 'ArrowFunctionExpression',
+        BlockStatement: 'BlockStatement',
+        BinaryExpression: 'BinaryExpression',
+        BreakStatement: 'BreakStatement',
+        CallExpression: 'CallExpression',
+        CatchClause: 'CatchClause',
+        ComprehensionBlock: 'ComprehensionBlock',
+        ComprehensionExpression: 'ComprehensionExpression',
+        ConditionalExpression: 'ConditionalExpression',
+        ContinueStatement: 'ContinueStatement',
+        DirectiveStatement: 'DirectiveStatement',
+        DoWhileStatement: 'DoWhileStatement',
+        DebuggerStatement: 'DebuggerStatement',
+        EmptyStatement: 'EmptyStatement',
+        ExportDeclaration: 'ExportDeclaration',
+        ExpressionStatement: 'ExpressionStatement',
+        ForStatement: 'ForStatement',
+        ForInStatement: 'ForInStatement',
+        ForOfStatement: 'ForOfStatement',
+        FunctionDeclaration: 'FunctionDeclaration',
+        FunctionExpression: 'FunctionExpression',
+        GeneratorExpression: 'GeneratorExpression',
+        Identifier: 'Identifier',
+        IfStatement: 'IfStatement',
+        ImportDeclaration: 'ImportDeclaration',
+        Literal: 'Literal',
+        LabeledStatement: 'LabeledStatement',
+        LogicalExpression: 'LogicalExpression',
+        MemberExpression: 'MemberExpression',
+        NewExpression: 'NewExpression',
+        ObjectExpression: 'ObjectExpression',
+        ObjectPattern: 'ObjectPattern',
+        Program: 'Program',
+        Property: 'Property',
+        ReturnStatement: 'ReturnStatement',
+        SequenceExpression: 'SequenceExpression',
+        SwitchStatement: 'SwitchStatement',
+        SwitchCase: 'SwitchCase',
+        ThisExpression: 'ThisExpression',
+        ThrowStatement: 'ThrowStatement',
+        TryStatement: 'TryStatement',
+        UnaryExpression: 'UnaryExpression',
+        UpdateExpression: 'UpdateExpression',
+        VariableDeclaration: 'VariableDeclaration',
+        VariableDeclarator: 'VariableDeclarator',
+        WhileStatement: 'WhileStatement',
+        WithStatement: 'WithStatement',
+        YieldExpression: 'YieldExpression'
+    };
+
+    Precedence = {
+        Sequence: 0,
+        Yield: 1,
+        Assignment: 1,
+        Conditional: 2,
+        ArrowFunction: 2,
+        LogicalOR: 3,
+        LogicalAND: 4,
+        BitwiseOR: 5,
+        BitwiseXOR: 6,
+        BitwiseAND: 7,
+        Equality: 8,
+        Relational: 9,
+        BitwiseSHIFT: 10,
+        Additive: 11,
+        Multiplicative: 12,
+        Unary: 13,
+        Postfix: 14,
+        Call: 15,
+        New: 16,
+        Member: 17,
+        Primary: 18
+    };
+
+    BinaryPrecedence = {
+        '||': Precedence.LogicalOR,
+        '&&': Precedence.LogicalAND,
+        '|': Precedence.BitwiseOR,
+        '^': Precedence.BitwiseXOR,
+        '&': Precedence.BitwiseAND,
+        '==': Precedence.Equality,
+        '!=': Precedence.Equality,
+        '===': Precedence.Equality,
+        '!==': Precedence.Equality,
+        'is': Precedence.Equality,
+        'isnt': Precedence.Equality,
+        '<': Precedence.Relational,
+        '>': Precedence.Relational,
+        '<=': Precedence.Relational,
+        '>=': Precedence.Relational,
+        'in': Precedence.Relational,
+        'instanceof': Precedence.Relational,
+        '<<': Precedence.BitwiseSHIFT,
+        '>>': Precedence.BitwiseSHIFT,
+        '>>>': Precedence.BitwiseSHIFT,
+        '+': Precedence.Additive,
+        '-': Precedence.Additive,
+        '*': Precedence.Multiplicative,
+        '%': Precedence.Multiplicative,
+        '/': Precedence.Multiplicative
+    };
+
+    function getDefaultOptions() {
+        // default options
+        return {
+            indent: null,
+            base: null,
+            parse: null,
+            comment: false,
+            format: {
+                indent: {
+                    style: '    ',
+                    base: 0,
+                    adjustMultilineComment: false
+                },
+                newline: '\n',
+                space: ' ',
+                json: false,
+                renumber: false,
+                hexadecimal: false,
+                quotes: 'single',
+                escapeless: false,
+                compact: false,
+                parentheses: true,
+                semicolons: true,
+                safeConcatenation: false
+            },
+            moz: {
+                comprehensionExpressionStartsWithAssignment: false,
+                starlessGenerator: false,
+                parenthesizedComprehensionBlock: false
+            },
+            sourceMap: null,
+            sourceMapRoot: null,
+            sourceMapWithCode: false,
+            directive: false,
+            raw: true,
+            verbatim: null
+        };
+    }
+
+    function stringRepeat(str, num) {
+        var result = '';
+
+        for (num |= 0; num > 0; num >>>= 1, str += str) {
+            if (num & 1) {
+                result += str;
+            }
+        }
+
+        return result;
+    }
+
+    isArray = Array.isArray;
+    if (!isArray) {
+        isArray = function isArray(array) {
+            return Object.prototype.toString.call(array) === '[object Array]';
+        };
+    }
+
+    function hasLineTerminator(str) {
+        return (/[\r\n]/g).test(str);
+    }
+
+    function endsWithLineTerminator(str) {
+        var len = str.length;
+        return len && esutils.code.isLineTerminator(str.charCodeAt(len - 1));
+    }
+
+    function updateDeeply(target, override) {
+        var key, val;
+
+        function isHashObject(target) {
+            return typeof target === 'object' && target instanceof Object && !(target instanceof RegExp);
+        }
+
+        for (key in override) {
+            if (override.hasOwnProperty(key)) {
+                val = override[key];
+                if (isHashObject(val)) {
+                    if (isHashObject(target[key])) {
+                        updateDeeply(target[key], val);
+                    } else {
+                        target[key] = updateDeeply({}, val);
+                    }
+                } else {
+                    target[key] = val;
+                }
+            }
+        }
+        return target;
+    }
+
+    function generateNumber(value) {
+        var result, point, temp, exponent, pos;
+
+        if (value !== value) {
+            throw new Error('Numeric literal whose value is NaN');
+        }
+        if (value < 0 || (value === 0 && 1 / value < 0)) {
+            throw new Error('Numeric literal whose value is negative');
+        }
+
+        if (value === 1 / 0) {
+            return json ? 'null' : renumber ? '1e400' : '1e+400';
+        }
+
+        result = '' + value;
+        if (!renumber || result.length < 3) {
+            return result;
+        }
+
+        point = result.indexOf('.');
+        if (!json && result.charCodeAt(0) === 0x30  /* 0 */ && point === 1) {
+            point = 0;
+            result = result.slice(1);
+        }
+        temp = result;
+        result = result.replace('e+', 'e');
+        exponent = 0;
+        if ((pos = temp.indexOf('e')) > 0) {
+            exponent = +temp.slice(pos + 1);
+            temp = temp.slice(0, pos);
+        }
+        if (point >= 0) {
+            exponent -= temp.length - point - 1;
+            temp = +(temp.slice(0, point) + temp.slice(point + 1)) + '';
+        }
+        pos = 0;
+        while (temp.charCodeAt(temp.length + pos - 1) === 0x30  /* 0 */) {
+            --pos;
+        }
+        if (pos !== 0) {
+            exponent -= pos;
+            temp = temp.slice(0, pos);
+        }
+        if (exponent !== 0) {
+            temp += 'e' + exponent;
+        }
+        if ((temp.length < result.length ||
+                    (hexadecimal && value > 1e12 && Math.floor(value) === value && (temp = '0x' + value.toString(16)).length < result.length)) &&
+                +temp === value) {
+            result = temp;
+        }
+
+        return result;
+    }
+
+    // Generate valid RegExp expression.
+    // This function is based on https://github.com/Constellation/iv Engine
+
+    function escapeRegExpCharacter(ch, previousIsBackslash) {
+        // not handling '\' and handling \u2028 or \u2029 to unicode escape sequence
+        if ((ch & ~1) === 0x2028) {
+            return (previousIsBackslash ? 'u' : '\\u') + ((ch === 0x2028) ? '2028' : '2029');
+        } else if (ch === 10 || ch === 13) {  // \n, \r
+            return (previousIsBackslash ? '' : '\\') + ((ch === 10) ? 'n' : 'r');
+        }
+        return String.fromCharCode(ch);
+    }
+
+    function generateRegExp(reg) {
+        var match, result, flags, i, iz, ch, characterInBrack, previousIsBackslash;
+
+        result = reg.toString();
+
+        if (reg.source) {
+            // extract flag from toString result
+            match = result.match(/\/([^/]*)$/);
+            if (!match) {
+                return result;
+            }
+
+            flags = match[1];
+            result = '';
+
+            characterInBrack = false;
+            previousIsBackslash = false;
+            for (i = 0, iz = reg.source.length; i < iz; ++i) {
+                ch = reg.source.charCodeAt(i);
+
+                if (!previousIsBackslash) {
+                    if (characterInBrack) {
+                        if (ch === 93) {  // ]
+                            characterInBrack = false;
+                        }
+                    } else {
+                        if (ch === 47) {  // /
+                            result += '\\';
+                        } else if (ch === 91) {  // [
+                            characterInBrack = true;
+                        }
+                    }
+                    result += escapeRegExpCharacter(ch, previousIsBackslash);
+                    previousIsBackslash = ch === 92;  // \
+                } else {
+                    // if new RegExp("\\\n') is provided, create /\n/
+                    result += escapeRegExpCharacter(ch, previousIsBackslash);
+                    // prevent like /\\[/]/
+                    previousIsBackslash = false;
+                }
+            }
+
+            return '/' + result + '/' + flags;
+        }
+
+        return result;
+    }
+
+    function escapeAllowedCharacter(code, next) {
+        var hex, result = '\\';
+
+        switch (code) {
+        case 0x08  /* \b */:
+            result += 'b';
+            break;
+        case 0x0C  /* \f */:
+            result += 'f';
+            break;
+        case 0x09  /* \t */:
+            result += 't';
+            break;
+        default:
+            hex = code.toString(16).toUpperCase();
+            if (json || code > 0xFF) {
+                result += 'u' + '0000'.slice(hex.length) + hex;
+            } else if (code === 0x0000 && !esutils.code.isDecimalDigit(next)) {
+                result += '0';
+            } else if (code === 0x000B  /* \v */) { // '\v'
+                result += 'x0B';
+            } else {
+                result += 'x' + '00'.slice(hex.length) + hex;
+            }
+            break;
+        }
+
+        return result;
+    }
+
+    function escapeDisallowedCharacter(code) {
+        var result = '\\';
+        switch (code) {
+        case 0x5C  /* \ */:
+            result += '\\';
+            break;
+        case 0x0A  /* \n */:
+            result += 'n';
+            break;
+        case 0x0D  /* \r */:
+            result += 'r';
+            break;
+        case 0x2028:
+            result += 'u2028';
+            break;
+        case 0x2029:
+            result += 'u2029';
+            break;
+        default:
+            throw new Error('Incorrectly classified character');
+        }
+
+        return result;
+    }
+
+    function escapeDirective(str) {
+        var i, iz, code, quote;
+
+        quote = quotes === 'double' ? '"' : '\'';
+        for (i = 0, iz = str.length; i < iz; ++i) {
+            code = str.charCodeAt(i);
+            if (code === 0x27  /* ' */) {
+                quote = '"';
+                break;
+            } else if (code === 0x22  /* " */) {
+                quote = '\'';
+                break;
+            } else if (code === 0x5C  /* \ */) {
+                ++i;
+            }
+        }
+
+        return quote + str + quote;
+    }
+
+    function escapeString(str) {
+        var result = '', i, len, code, singleQuotes = 0, doubleQuotes = 0, single, quote;
+
+        for (i = 0, len = str.length; i < len; ++i) {
+            code = str.charCodeAt(i);
+            if (code === 0x27  /* ' */) {
+                ++singleQuotes;
+            } else if (code === 0x22  /* " */) {
+                ++doubleQuotes;
+            } else if (code === 0x2F  /* / */ && json) {
+                result += '\\';
+            } else if (esutils.code.isLineTerminator(code) || code === 0x5C  /* \ */) {
+                result += escapeDisallowedCharacter(code);
+                continue;
+            } else if ((json && code < 0x20  /* SP */) || !(json || escapeless || (code >= 0x20  /* SP */ && code <= 0x7E  /* ~ */))) {
+                result += escapeAllowedCharacter(code, str.charCodeAt(i + 1));
+                continue;
+            }
+            result += String.fromCharCode(code);
+        }
+
+        single = !(quotes === 'double' || (quotes === 'auto' && doubleQuotes < singleQuotes));
+        quote = single ? '\'' : '"';
+
+        if (!(single ? singleQuotes : doubleQuotes)) {
+            return quote + result + quote;
+        }
+
+        str = result;
+        result = quote;
+
+        for (i = 0, len = str.length; i < len; ++i) {
+            code = str.charCodeAt(i);
+            if ((code === 0x27  /* ' */ && single) || (code === 0x22  /* " */ && !single)) {
+                result += '\\';
+            }
+            result += String.fromCharCode(code);
+        }
+
+        return result + quote;
+    }
+
+    /**
+     * flatten an array to a string, where the array can contain
+     * either strings or nested arrays
+     */
+    function flattenToString(arr) {
+        var i, iz, elem, result = '';
+        for (i = 0, iz = arr.length; i < iz; ++i) {
+            elem = arr[i];
+            result += isArray(elem) ? flattenToString(elem) : elem;
+        }
+        return result;
+    }
+
+    /**
+     * convert generated to a SourceNode when source maps are enabled.
+     */
+    function toSourceNodeWhenNeeded(generated, node) {
+        if (!sourceMap) {
+            // with no source maps, generated is either an
+            // array or a string.  if an array, flatten it.
+            // if a string, just return it
+            if (isArray(generated)) {
+                return flattenToString(generated);
+            } else {
+                return generated;
+            }
+        }
+        if (node == null) {
+            if (generated instanceof SourceNode) {
+                return generated;
+            } else {
+                node = {};
+            }
+        }
+        if (node.loc == null) {
+            return new SourceNode(null, null, sourceMap, generated, node.name || null);
+        }
+        return new SourceNode(node.loc.start.line, node.loc.start.column, (sourceMap === true ? node.loc.source || null : sourceMap), generated, node.name || null);
+    }
+
+    function noEmptySpace() {
+        return (space) ? space : ' ';
+    }
+
+    function join(left, right) {
+        var leftSource = toSourceNodeWhenNeeded(left).toString(),
+            rightSource = toSourceNodeWhenNeeded(right).toString(),
+            leftCharCode = leftSource.charCodeAt(leftSource.length - 1),
+            rightCharCode = rightSource.charCodeAt(0);
+
+        if ((leftCharCode === 0x2B  /* + */ || leftCharCode === 0x2D  /* - */) && leftCharCode === rightCharCode ||
+        esutils.code.isIdentifierPart(leftCharCode) && esutils.code.isIdentifierPart(rightCharCode) ||
+        leftCharCode === 0x2F  /* / */ && rightCharCode === 0x69  /* i */) { // infix word operators all start with `i`
+            return [left, noEmptySpace(), right];
+        } else if (esutils.code.isWhiteSpace(leftCharCode) || esutils.code.isLineTerminator(leftCharCode) ||
+                esutils.code.isWhiteSpace(rightCharCode) || esutils.code.isLineTerminator(rightCharCode)) {
+            return [left, right];
+        }
+        return [left, space, right];
+    }
+
+    function addIndent(stmt) {
+        return [base, stmt];
+    }
+
+    function withIndent(fn) {
+        var previousBase, result;
+        previousBase = base;
+        base += indent;
+        result = fn.call(this, base);
+        base = previousBase;
+        return result;
+    }
+
+    function calculateSpaces(str) {
+        var i;
+        for (i = str.length - 1; i >= 0; --i) {
+            if (esutils.code.isLineTerminator(str.charCodeAt(i))) {
+                break;
+            }
+        }
+        return (str.length - 1) - i;
+    }
+
+    function adjustMultilineComment(value, specialBase) {
+        var array, i, len, line, j, spaces, previousBase, sn;
+
+        array = value.split(/\r\n|[\r\n]/);
+        spaces = Number.MAX_VALUE;
+
+        // first line doesn't have indentation
+        for (i = 1, len = array.length; i < len; ++i) {
+            line = array[i];
+            j = 0;
+            while (j < line.length && esutils.code.isWhiteSpace(line.charCodeAt(j))) {
+                ++j;
+            }
+            if (spaces > j) {
+                spaces = j;
+            }
+        }
+
+        if (typeof specialBase !== 'undefined') {
+            // pattern like
+            // {
+            //   var t = 20;  /*
+            //                 * this is comment
+            //                 */
+            // }
+            previousBase = base;
+            if (array[1][spaces] === '*') {
+                specialBase += ' ';
+            }
+            base = specialBase;
+        } else {
+            if (spaces & 1) {
+                // /*
+                //  *
+                //  */
+                // If spaces are odd number, above pattern is considered.
+                // We waste 1 space.
+                --spaces;
+            }
+            previousBase = base;
+        }
+
+        for (i = 1, len = array.length; i < len; ++i) {
+            sn = toSourceNodeWhenNeeded(addIndent(array[i].slice(spaces)));
+            array[i] = sourceMap ? sn.join('') : sn;
+        }
+
+        base = previousBase;
+
+        return array.join('\n');
+    }
+
+    function generateComment(comment, specialBase) {
+        if (comment.type === 'Line') {
+            if (endsWithLineTerminator(comment.value)) {
+                return '//' + comment.value;
+            } else {
+                // Always use LineTerminator
+                return '//' + comment.value + '\n';
+            }
+        }
+        if (extra.format.indent.adjustMultilineComment && /[\n\r]/.test(comment.value)) {
+            return adjustMultilineComment('/*' + comment.value + '*/', specialBase);
+        }
+        return '/*' + comment.value + '*/';
+    }
+
+    function addComments(stmt, result) {
+        var i, len, comment, save, tailingToStatement, specialBase, fragment;
+
+        if (stmt.leadingComments && stmt.leadingComments.length > 0) {
+            save = result;
+
+            comment = stmt.leadingComments[0];
+            result = [];
+            if (safeConcatenation && stmt.type === Syntax.Program && stmt.body.length === 0) {
+                result.push('\n');
+            }
+            result.push(generateComment(comment));
+            if (!endsWithLineTerminator(toSourceNodeWhenNeeded(result).toString())) {
+                result.push('\n');
+            }
+
+            for (i = 1, len = stmt.leadingComments.length; i < len; ++i) {
+                comment = stmt.leadingComments[i];
+                fragment = [generateComment(comment)];
+                if (!endsWithLineTerminator(toSourceNodeWhenNeeded(fragment).toString())) {
+                    fragment.push('\n');
+                }
+                result.push(addIndent(fragment));
+            }
+
+            result.push(addIndent(save));
+        }
+
+        if (stmt.trailingComments) {
+            tailingToStatement = !endsWithLineTerminator(toSourceNodeWhenNeeded(result).toString());
+            specialBase = stringRepeat(' ', calculateSpaces(toSourceNodeWhenNeeded([base, result, indent]).toString()));
+            for (i = 0, len = stmt.trailingComments.length; i < len; ++i) {
+                comment = stmt.trailingComments[i];
+                if (tailingToStatement) {
+                    // We assume target like following script
+                    //
+                    // var t = 20;  /**
+                    //               * This is comment of t
+                    //               */
+                    if (i === 0) {
+                        // first case
+                        result = [result, indent];
+                    } else {
+                        result = [result, specialBase];
+                    }
+                    result.push(generateComment(comment, specialBase));
+                } else {
+                    result = [result, addIndent(generateComment(comment))];
+                }
+                if (i !== len - 1 && !endsWithLineTerminator(toSourceNodeWhenNeeded(result).toString())) {
+                    result = [result, '\n'];
+                }
+            }
+        }
+
+        return result;
+    }
+
+    function parenthesize(text, current, should) {
+        if (current < should) {
+            return ['(', text, ')'];
+        }
+        return text;
+    }
+
+    function maybeBlock(stmt, semicolonOptional, functionBody) {
+        var result, noLeadingComment;
+
+        noLeadingComment = !extra.comment || !stmt.leadingComments;
+
+        if (stmt.type === Syntax.BlockStatement && noLeadingComment) {
+            return [space, generateStatement(stmt, { functionBody: functionBody })];
+        }
+
+        if (stmt.type === Syntax.EmptyStatement && noLeadingComment) {
+            return ';';
+        }
+
+        withIndent(function () {
+            result = [newline, addIndent(generateStatement(stmt, { semicolonOptional: semicolonOptional, functionBody: functionBody }))];
+        });
+
+        return result;
+    }
+
+    function maybeBlockSuffix(stmt, result) {
+        var ends = endsWithLineTerminator(toSourceNodeWhenNeeded(result).toString());
+        if (stmt.type === Syntax.BlockStatement && (!extra.comment || !stmt.leadingComments) && !ends) {
+            return [result, space];
+        }
+        if (ends) {
+            return [result, base];
+        }
+        return [result, newline, base];
+    }
+
+    function generateVerbatimString(string) {
+        var i, iz, result;
+        result = string.split(/\r\n|\n/);
+        for (i = 1, iz = result.length; i < iz; i++) {
+            result[i] = newline + base + result[i];
+        }
+        return result;
+    }
+
+    function generateVerbatim(expr, option) {
+        var verbatim, result, prec;
+        verbatim = expr[extra.verbatim];
+
+        if (typeof verbatim === 'string') {
+            result = parenthesize(generateVerbatimString(verbatim), Precedence.Sequence, option.precedence);
+        } else {
+            // verbatim is object
+            result = generateVerbatimString(verbatim.content);
+            prec = (verbatim.precedence != null) ? verbatim.precedence : Precedence.Sequence;
+            result = parenthesize(result, prec, option.precedence);
+        }
+
+        return toSourceNodeWhenNeeded(result, expr);
+    }
+
+    function generateIdentifier(node) {
+        return toSourceNodeWhenNeeded(node.name, node);
+    }
+
+    function generatePattern(node, options) {
+        var result;
+
+        if (node.type === Syntax.Identifier) {
+            result = generateIdentifier(node);
+        } else {
+            result = generateExpression(node, {
+                precedence: options.precedence,
+                allowIn: options.allowIn,
+                allowCall: true
+            });
+        }
+
+        return result;
+    }
+
+    function generateFunctionBody(node) {
+        var result, i, len, expr, arrow;
+
+        arrow = node.type === Syntax.ArrowFunctionExpression;
+
+        if (arrow && node.params.length === 1 && node.params[0].type === Syntax.Identifier) {
+            // arg => { } case
+            result = [generateIdentifier(node.params[0])];
+        } else {
+            result = ['('];
+            for (i = 0, len = node.params.length; i < len; ++i) {
+                result.push(generatePattern(node.params[i], {
+                    precedence: Precedence.Assignment,
+                    allowIn: true
+                }));
+                if (i + 1 < len) {
+                    result.push(',' + space);
+                }
+            }
+            result.push(')');
+        }
+
+        if (arrow) {
+            result.push(space);
+            result.push('=>');
+        }
+
+        if (node.expression) {
+            result.push(space);
+            expr = generateExpression(node.body, {
+                precedence: Precedence.Assignment,
+                allowIn: true,
+                allowCall: true
+            });
+            if (expr.toString().charAt(0) === '{') {
+                expr = ['(', expr, ')'];
+            }
+            result.push(expr);
+        } else {
+            result.push(maybeBlock(node.body, false, true));
+        }
+        return result;
+    }
+
+    function generateIterationForStatement(operator, stmt, semicolonIsNotNeeded) {
+        var result = ['for' + space + '('];
+        withIndent(function () {
+            if (stmt.left.type === Syntax.VariableDeclaration) {
+                withIndent(function () {
+                    result.push(stmt.left.kind + noEmptySpace());
+                    result.push(generateStatement(stmt.left.declarations[0], {
+                        allowIn: false
+                    }));
+                });
+            } else {
+                result.push(generateExpression(stmt.left, {
+                    precedence: Precedence.Call,
+                    allowIn: true,
+                    allowCall: true
+                }));
+            }
+
+            result = join(result, operator);
+            result = [join(
+                result,
+                generateExpression(stmt.right, {
+                    precedence: Precedence.Sequence,
+                    allowIn: true,
+                    allowCall: true
+                })
+            ), ')'];
+        });
+        result.push(maybeBlock(stmt.body, semicolonIsNotNeeded));
+        return result;
+    }
+
+    function generateLiteral(expr) {
+        var raw;
+        if (expr.hasOwnProperty('raw') && parse && extra.raw) {
+            try {
+                raw = parse(expr.raw).body[0].expression;
+                if (raw.type === Syntax.Literal) {
+                    if (raw.value === expr.value) {
+                        return expr.raw;
+                    }
+                }
+            } catch (e) {
+                // not use raw property
+            }
+        }
+
+        if (expr.value === null) {
+            return 'null';
+        }
+
+        if (typeof expr.value === 'string') {
+            return escapeString(expr.value);
+        }
+
+        if (typeof expr.value === 'number') {
+            return generateNumber(expr.value);
+        }
+
+        if (typeof expr.value === 'boolean') {
+            return expr.value ? 'true' : 'false';
+        }
+
+        return generateRegExp(expr.value);
+    }
+
+    function generateExpression(expr, option) {
+        var result,
+            precedence,
+            type,
+            currentPrecedence,
+            i,
+            len,
+            fragment,
+            multiline,
+            leftCharCode,
+            leftSource,
+            rightCharCode,
+            allowIn,
+            allowCall,
+            allowUnparenthesizedNew,
+            property,
+            isGenerator;
+
+        precedence = option.precedence;
+        allowIn = option.allowIn;
+        allowCall = option.allowCall;
+        type = expr.type || option.type;
+
+        if (extra.verbatim && expr.hasOwnProperty(extra.verbatim)) {
+            return generateVerbatim(expr, option);
+        }
+
+        switch (type) {
+        case Syntax.SequenceExpression:
+            result = [];
+            allowIn |= (Precedence.Sequence < precedence);
+            for (i = 0, len = expr.expressions.length; i < len; ++i) {
+                result.push(generateExpression(expr.expressions[i], {
+                    precedence: Precedence.Assignment,
+                    allowIn: allowIn,
+                    allowCall: true
+                }));
+                if (i + 1 < len) {
+                    result.push(',' + space);
+                }
+            }
+            result = parenthesize(result, Precedence.Sequence, precedence);
+            break;
+
+        case Syntax.AssignmentExpression:
+            allowIn |= (Precedence.Assignment < precedence);
+            result = parenthesize(
+                [
+                    generateExpression(expr.left, {
+                        precedence: Precedence.Call,
+                        allowIn: allowIn,
+                        allowCall: true
+                    }),
+                    space + expr.operator + space,
+                    generateExpression(expr.right, {
+                        precedence: Precedence.Assignment,
+                        allowIn: allowIn,
+                        allowCall: true
+                    })
+                ],
+                Precedence.Assignment,
+                precedence
+            );
+            break;
+
+        case Syntax.ArrowFunctionExpression:
+            allowIn |= (Precedence.ArrowFunction < precedence);
+            result = parenthesize(generateFunctionBody(expr), Precedence.ArrowFunction, precedence);
+            break;
+
+        case Syntax.ConditionalExpression:
+            allowIn |= (Precedence.Conditional < precedence);
+            result = parenthesize(
+                [
+                    generateExpression(expr.test, {
+                        precedence: Precedence.LogicalOR,
+                        allowIn: allowIn,
+                        allowCall: true
+                    }),
+                    space + '?' + space,
+                    generateExpression(expr.consequent, {
+                        precedence: Precedence.Assignment,
+                        allowIn: allowIn,
+                        allowCall: true
+                    }),
+                    space + ':' + space,
+                    generateExpression(expr.alternate, {
+                        precedence: Precedence.Assignment,
+                        allowIn: allowIn,
+                        allowCall: true
+                    })
+                ],
+                Precedence.Conditional,
+                precedence
+            );
+            break;
+
+        case Syntax.LogicalExpression:
+        case Syntax.BinaryExpression:
+            currentPrecedence = BinaryPrecedence[expr.operator];
+
+            allowIn |= (currentPrecedence < precedence);
+
+            fragment = generateExpression(expr.left, {
+                precedence: currentPrecedence,
+                allowIn: allowIn,
+                allowCall: true
+            });
+
+            leftSource = fragment.toString();
+
+            if (leftSource.charCodeAt(leftSource.length - 1) === 0x2F /* / */ && esutils.code.isIdentifierPart(expr.operator.charCodeAt(0))) {
+                result = [fragment, noEmptySpace(), expr.operator];
+            } else {
+                result = join(fragment, expr.operator);
+            }
+
+            fragment = generateExpression(expr.right, {
+                precedence: currentPrecedence + 1,
+                allowIn: allowIn,
+                allowCall: true
+            });
+
+            if (expr.operator === '/' && fragment.toString().charAt(0) === '/' ||
+            expr.operator.slice(-1) === '<' && fragment.toString().slice(0, 3) === '!--') {
+                // If '/' concats with '/' or `<` concats with `!--`, it is interpreted as comment start
+                result.push(noEmptySpace());
+                result.push(fragment);
+            } else {
+                result = join(result, fragment);
+            }
+
+            if (expr.operator === 'in' && !allowIn) {
+                result = ['(', result, ')'];
+            } else {
+                result = parenthesize(result, currentPrecedence, precedence);
+            }
+
+            break;
+
+        case Syntax.CallExpression:
+            result = [generateExpression(expr.callee, {
+                precedence: Precedence.Call,
+                allowIn: true,
+                allowCall: true,
+                allowUnparenthesizedNew: false
+            })];
+
+            result.push('(');
+            for (i = 0, len = expr['arguments'].length; i < len; ++i) {
+                result.push(generateExpression(expr['arguments'][i], {
+                    precedence: Precedence.Assignment,
+                    allowIn: true,
+                    allowCall: true
+                }));
+                if (i + 1 < len) {
+                    result.push(',' + space);
+                }
+            }
+            result.push(')');
+
+            if (!allowCall) {
+                result = ['(', result, ')'];
+            } else {
+                result = parenthesize(result, Precedence.Call, precedence);
+            }
+            break;
+
+        case Syntax.NewExpression:
+            len = expr['arguments'].length;
+            allowUnparenthesizedNew = option.allowUnparenthesizedNew === undefined || option.allowUnparenthesizedNew;
+
+            result = join(
+                'new',
+                generateExpression(expr.callee, {
+                    precedence: Precedence.New,
+                    allowIn: true,
+                    allowCall: false,
+                    allowUnparenthesizedNew: allowUnparenthesizedNew && !parentheses && len === 0
+                })
+            );
+
+            if (!allowUnparenthesizedNew || parentheses || len > 0) {
+                result.push('(');
+                for (i = 0; i < len; ++i) {
+                    result.push(generateExpression(expr['arguments'][i], {
+                        precedence: Precedence.Assignment,
+                        allowIn: true,
+                        allowCall: true
+                    }));
+                    if (i + 1 < len) {
+                        result.push(',' + space);
+                    }
+                }
+                result.push(')');
+            }
+
+            result = parenthesize(result, Precedence.New, precedence);
+            break;
+
+        case Syntax.MemberExpression:
+            result = [generateExpression(expr.object, {
+                precedence: Precedence.Call,
+                allowIn: true,
+                allowCall: allowCall,
+                allowUnparenthesizedNew: false
+            })];
+
+            if (expr.computed) {
+                result.push('[');
+                result.push(generateExpression(expr.property, {
+                    precedence: Precedence.Sequence,
+                    allowIn: true,
+                    allowCall: allowCall
+                }));
+                result.push(']');
+            } else {
+                if (expr.object.type === Syntax.Literal && typeof expr.object.value === 'number') {
+                    fragment = toSourceNodeWhenNeeded(result).toString();
+                    // When the following conditions are all true,
+                    //   1. No floating point
+                    //   2. Don't have exponents
+                    //   3. The last character is a decimal digit
+                    //   4. Not hexadecimal OR octal number literal
+                    // we should add a floating point.
+                    if (
+                            fragment.indexOf('.') < 0 &&
+                            !/[eExX]/.test(fragment) &&
+                            esutils.code.isDecimalDigit(fragment.charCodeAt(fragment.length - 1)) &&
+                            !(fragment.length >= 2 && fragment.charCodeAt(0) === 48)  // '0'
+                            ) {
+                        result.push('.');
+                    }
+                }
+                result.push('.');
+                result.push(generateIdentifier(expr.property));
+            }
+
+            result = parenthesize(result, Precedence.Member, precedence);
+            break;
+
+        case Syntax.UnaryExpression:
+            fragment = generateExpression(expr.argument, {
+                precedence: Precedence.Unary,
+                allowIn: true,
+                allowCall: true
+            });
+
+            if (space === '') {
+                result = join(expr.operator, fragment);
+            } else {
+                result = [expr.operator];
+                if (expr.operator.length > 2) {
+                    // delete, void, typeof
+                    // get `typeof []`, not `typeof[]`
+                    result = join(result, fragment);
+                } else {
+                    // Prevent inserting spaces between operator and argument if it is unnecessary
+                    // like, `!cond`
+                    leftSource = toSourceNodeWhenNeeded(result).toString();
+                    leftCharCode = leftSource.charCodeAt(leftSource.length - 1);
+                    rightCharCode = fragment.toString().charCodeAt(0);
+
+                    if (((leftCharCode === 0x2B  /* + */ || leftCharCode === 0x2D  /* - */) && leftCharCode === rightCharCode) ||
+                            (esutils.code.isIdentifierPart(leftCharCode) && esutils.code.isIdentifierPart(rightCharCode))) {
+                        result.push(noEmptySpace());
+                        result.push(fragment);
+                    } else {
+                        result.push(fragment);
+                    }
+                }
+            }
+            result = parenthesize(result, Precedence.Unary, precedence);
+            break;
+
+        case Syntax.YieldExpression:
+            if (expr.delegate) {
+                result = 'yield*';
+            } else {
+                result = 'yield';
+            }
+            if (expr.argument) {
+                result = join(
+                    result,
+                    generateExpression(expr.argument, {
+                        precedence: Precedence.Yield,
+                        allowIn: true,
+                        allowCall: true
+                    })
+                );
+            }
+            result = parenthesize(result, Precedence.Yield, precedence);
+            break;
+
+        case Syntax.UpdateExpression:
+            if (expr.prefix) {
+                result = parenthesize(
+                    [
+                        expr.operator,
+                        generateExpression(expr.argument, {
+                            precedence: Precedence.Unary,
+                            allowIn: true,
+                            allowCall: true
+                        })
+                    ],
+                    Precedence.Unary,
+                    precedence
+                );
+            } else {
+                result = parenthesize(
+                    [
+                        generateExpression(expr.argument, {
+                            precedence: Precedence.Postfix,
+                            allowIn: true,
+                            allowCall: true
+                        }),
+                        expr.operator
+                    ],
+                    Precedence.Postfix,
+                    precedence
+                );
+            }
+            break;
+
+        case Syntax.FunctionExpression:
+            isGenerator = expr.generator && !extra.moz.starlessGenerator;
+            result = isGenerator ? 'function*' : 'function';
+
+            if (expr.id) {
+                result = [result, (isGenerator) ? space : noEmptySpace(),
+                          generateIdentifier(expr.id),
+                          generateFunctionBody(expr)];
+            } else {
+                result = [result + space, generateFunctionBody(expr)];
+            }
+
+            break;
+
+        case Syntax.ArrayPattern:
+        case Syntax.ArrayExpression:
+            if (!expr.elements.length) {
+                result = '[]';
+                break;
+            }
+            multiline = expr.elements.length > 1;
+            result = ['[', multiline ? newline : ''];
+            withIndent(function (indent) {
+                for (i = 0, len = expr.elements.length; i < len; ++i) {
+                    if (!expr.elements[i]) {
+                        if (multiline) {
+                            result.push(indent);
+                        }
+                        if (i + 1 === len) {
+                            result.push(',');
+                        }
+                    } else {
+                        result.push(multiline ? indent : '');
+                        result.push(generateExpression(expr.elements[i], {
+                            precedence: Precedence.Assignment,
+                            allowIn: true,
+                            allowCall: true
+                        }));
+                    }
+                    if (i + 1 < len) {
+                        result.push(',' + (multiline ? newline : space));
+                    }
+                }
+            });
+            if (multiline && !endsWithLineTerminator(toSourceNodeWhenNeeded(result).toString())) {
+                result.push(newline);
+            }
+            result.push(multiline ? base : '');
+            result.push(']');
+            break;
+
+        case Syntax.Property:
+            if (expr.kind === 'get' || expr.kind === 'set') {
+                result = [
+                    expr.kind, noEmptySpace(),
+                    generateExpression(expr.key, {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    }),
+                    generateFunctionBody(expr.value)
+                ];
+            } else {
+                if (expr.shorthand) {
+                    result = generateExpression(expr.key, {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    });
+                } else if (expr.method) {
+                    result = [];
+                    if (expr.value.generator) {
+                        result.push('*');
+                    }
+                    result.push(generateExpression(expr.key, {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    }));
+                    result.push(generateFunctionBody(expr.value));
+                } else {
+                    result = [
+                        generateExpression(expr.key, {
+                            precedence: Precedence.Sequence,
+                            allowIn: true,
+                            allowCall: true
+                        }),
+                        ':' + space,
+                        generateExpression(expr.value, {
+                            precedence: Precedence.Assignment,
+                            allowIn: true,
+                            allowCall: true
+                        })
+                    ];
+                }
+            }
+            break;
+
+        case Syntax.ObjectExpression:
+            if (!expr.properties.length) {
+                result = '{}';
+                break;
+            }
+            multiline = expr.properties.length > 1;
+
+            withIndent(function () {
+                fragment = generateExpression(expr.properties[0], {
+                    precedence: Precedence.Sequence,
+                    allowIn: true,
+                    allowCall: true,
+                    type: Syntax.Property
+                });
+            });
+
+            if (!multiline) {
+                // issues 4
+                // Do not transform from
+                //   dejavu.Class.declare({
+                //       method2: function () {}
+                //   });
+                // to
+                //   dejavu.Class.declare({method2: function () {
+                //       }});
+                if (!hasLineTerminator(toSourceNodeWhenNeeded(fragment).toString())) {
+                    result = [ '{', space, fragment, space, '}' ];
+                    break;
+                }
+            }
+
+            withIndent(function (indent) {
+                result = [ '{', newline, indent, fragment ];
+
+                if (multiline) {
+                    result.push(',' + newline);
+                    for (i = 1, len = expr.properties.length; i < len; ++i) {
+                        result.push(indent);
+                        result.push(generateExpression(expr.properties[i], {
+                            precedence: Precedence.Sequence,
+                            allowIn: true,
+                            allowCall: true,
+                            type: Syntax.Property
+                        }));
+                        if (i + 1 < len) {
+                            result.push(',' + newline);
+                        }
+                    }
+                }
+            });
+
+            if (!endsWithLineTerminator(toSourceNodeWhenNeeded(result).toString())) {
+                result.push(newline);
+            }
+            result.push(base);
+            result.push('}');
+            break;
+
+        case Syntax.ObjectPattern:
+            if (!expr.properties.length) {
+                result = '{}';
+                break;
+            }
+
+            multiline = false;
+            if (expr.properties.length === 1) {
+                property = expr.properties[0];
+                if (property.value.type !== Syntax.Identifier) {
+                    multiline = true;
+                }
+            } else {
+                for (i = 0, len = expr.properties.length; i < len; ++i) {
+                    property = expr.properties[i];
+                    if (!property.shorthand) {
+                        multiline = true;
+                        break;
+                    }
+                }
+            }
+            result = ['{', multiline ? newline : '' ];
+
+            withIndent(function (indent) {
+                for (i = 0, len = expr.properties.length; i < len; ++i) {
+                    result.push(multiline ? indent : '');
+                    result.push(generateExpression(expr.properties[i], {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    }));
+                    if (i + 1 < len) {
+                        result.push(',' + (multiline ? newline : space));
+                    }
+                }
+            });
+
+            if (multiline && !endsWithLineTerminator(toSourceNodeWhenNeeded(result).toString())) {
+                result.push(newline);
+            }
+            result.push(multiline ? base : '');
+            result.push('}');
+            break;
+
+        case Syntax.ThisExpression:
+            result = 'this';
+            break;
+
+        case Syntax.Identifier:
+            result = generateIdentifier(expr);
+            break;
+
+        case Syntax.Literal:
+            result = generateLiteral(expr);
+            break;
+
+        case Syntax.GeneratorExpression:
+        case Syntax.ComprehensionExpression:
+            // GeneratorExpression should be parenthesized with (...), ComprehensionExpression with [...]
+            // Due to https://bugzilla.mozilla.org/show_bug.cgi?id=883468 position of expr.body can differ in Spidermonkey and ES6
+            result = (type === Syntax.GeneratorExpression) ? ['('] : ['['];
+
+            if (extra.moz.comprehensionExpressionStartsWithAssignment) {
+                fragment = generateExpression(expr.body, {
+                    precedence: Precedence.Assignment,
+                    allowIn: true,
+                    allowCall: true
+                });
+
+                result.push(fragment);
+            }
+
+            if (expr.blocks) {
+                withIndent(function () {
+                    for (i = 0, len = expr.blocks.length; i < len; ++i) {
+                        fragment = generateExpression(expr.blocks[i], {
+                            precedence: Precedence.Sequence,
+                            allowIn: true,
+                            allowCall: true
+                        });
+
+                        if (i > 0 || extra.moz.comprehensionExpressionStartsWithAssignment) {
+                            result = join(result, fragment);
+                        } else {
+                            result.push(fragment);
+                        }
+                    }
+                });
+            }
+
+            if (expr.filter) {
+                result = join(result, 'if' + space);
+                fragment = generateExpression(expr.filter, {
+                    precedence: Precedence.Sequence,
+                    allowIn: true,
+                    allowCall: true
+                });
+                if (extra.moz.parenthesizedComprehensionBlock) {
+                    result = join(result, [ '(', fragment, ')' ]);
+                } else {
+                    result = join(result, fragment);
+                }
+            }
+
+            if (!extra.moz.comprehensionExpressionStartsWithAssignment) {
+                fragment = generateExpression(expr.body, {
+                    precedence: Precedence.Assignment,
+                    allowIn: true,
+                    allowCall: true
+                });
+
+                result = join(result, fragment);
+            }
+
+            result.push((type === Syntax.GeneratorExpression) ? ')' : ']');
+            break;
+
+        case Syntax.ComprehensionBlock:
+            if (expr.left.type === Syntax.VariableDeclaration) {
+                fragment = [
+                    expr.left.kind, noEmptySpace(),
+                    generateStatement(expr.left.declarations[0], {
+                        allowIn: false
+                    })
+                ];
+            } else {
+                fragment = generateExpression(expr.left, {
+                    precedence: Precedence.Call,
+                    allowIn: true,
+                    allowCall: true
+                });
+            }
+
+            fragment = join(fragment, expr.of ? 'of' : 'in');
+            fragment = join(fragment, generateExpression(expr.right, {
+                precedence: Precedence.Sequence,
+                allowIn: true,
+                allowCall: true
+            }));
+
+            if (extra.moz.parenthesizedComprehensionBlock) {
+                result = [ 'for' + space + '(', fragment, ')' ];
+            } else {
+                result = join('for' + space, fragment);
+            }
+            break;
+
+        default:
+            throw new Error('Unknown expression type: ' + expr.type);
+        }
+
+        if (extra.comment) {
+            result = addComments(expr,result);
+        }
+        return toSourceNodeWhenNeeded(result, expr);
+    }
+
+    function generateStatement(stmt, option) {
+        var i,
+            len,
+            result,
+            node,
+            specifier,
+            allowIn,
+            functionBody,
+            directiveContext,
+            fragment,
+            semicolon,
+            isGenerator;
+
+        allowIn = true;
+        semicolon = ';';
+        functionBody = false;
+        directiveContext = false;
+        if (option) {
+            allowIn = option.allowIn === undefined || option.allowIn;
+            if (!semicolons && option.semicolonOptional === true) {
+                semicolon = '';
+            }
+            functionBody = option.functionBody;
+            directiveContext = option.directiveContext;
+        }
+
+        switch (stmt.type) {
+        case Syntax.BlockStatement:
+            result = ['{', newline];
+
+            withIndent(function () {
+                for (i = 0, len = stmt.body.length; i < len; ++i) {
+                    fragment = addIndent(generateStatement(stmt.body[i], {
+                        semicolonOptional: i === len - 1,
+                        directiveContext: functionBody
+                    }));
+                    result.push(fragment);
+                    if (!endsWithLineTerminator(toSourceNodeWhenNeeded(fragment).toString())) {
+                        result.push(newline);
+                    }
+                }
+            });
+
+            result.push(addIndent('}'));
+            break;
+
+        case Syntax.BreakStatement:
+            if (stmt.label) {
+                result = 'break ' + stmt.label.name + semicolon;
+            } else {
+                result = 'break' + semicolon;
+            }
+            break;
+
+        case Syntax.ContinueStatement:
+            if (stmt.label) {
+                result = 'continue ' + stmt.label.name + semicolon;
+            } else {
+                result = 'continue' + semicolon;
+            }
+            break;
+
+        case Syntax.DirectiveStatement:
+            if (extra.raw && stmt.raw) {
+                result = stmt.raw + semicolon;
+            } else {
+                result = escapeDirective(stmt.directive) + semicolon;
+            }
+            break;
+
+        case Syntax.DoWhileStatement:
+            // Because `do 42 while (cond)` is Syntax Error. We need semicolon.
+            result = join('do', maybeBlock(stmt.body));
+            result = maybeBlockSuffix(stmt.body, result);
+            result = join(result, [
+                'while' + space + '(',
+                generateExpression(stmt.test, {
+                    precedence: Precedence.Sequence,
+                    allowIn: true,
+                    allowCall: true
+                }),
+                ')' + semicolon
+            ]);
+            break;
+
+        case Syntax.CatchClause:
+            withIndent(function () {
+                var guard;
+
+                result = [
+                    'catch' + space + '(',
+                    generateExpression(stmt.param, {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    }),
+                    ')'
+                ];
+
+                if (stmt.guard) {
+                    guard = generateExpression(stmt.guard, {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    });
+
+                    result.splice(2, 0, ' if ', guard);
+                }
+            });
+            result.push(maybeBlock(stmt.body));
+            break;
+
+        case Syntax.DebuggerStatement:
+            result = 'debugger' + semicolon;
+            break;
+
+        case Syntax.EmptyStatement:
+            result = ';';
+            break;
+
+        case Syntax.ExportDeclaration:
+            result = 'export ';
+            if (stmt.declaration) {
+                // FunctionDeclaration or VariableDeclaration
+                result = [result, generateStatement(stmt.declaration, { semicolonOptional: semicolon === '' })];
+                break;
+            }
+            break;
+
+        case Syntax.ExpressionStatement:
+            result = [generateExpression(stmt.expression, {
+                precedence: Precedence.Sequence,
+                allowIn: true,
+                allowCall: true
+            })];
+            // 12.4 '{', 'function' is not allowed in this position.
+            // wrap expression with parentheses
+            fragment = toSourceNodeWhenNeeded(result).toString();
+            if (fragment.charAt(0) === '{' ||  // ObjectExpression
+                    (fragment.slice(0, 8) === 'function' && '* ('.indexOf(fragment.charAt(8)) >= 0) ||  // function or generator
+                    (directive && directiveContext && stmt.expression.type === Syntax.Literal && typeof stmt.expression.value === 'string')) {
+                result = ['(', result, ')' + semicolon];
+            } else {
+                result.push(semicolon);
+            }
+            break;
+
+        case Syntax.ImportDeclaration:
+            // ES6: 15.2.1 valid import declarations:
+            //     - import ImportClause FromClause ;
+            //     - import ModuleSpecifier ;
+            // If no ImportClause is present,
+            // this should be `import ModuleSpecifier` so skip `from`
+            //
+            // ModuleSpecifier is StringLiteral.
+            if (stmt.specifiers.length === 0) {
+                // import ModuleSpecifier ;
+                result = [
+                    'import',
+                    space,
+                    generateLiteral(stmt.source)
+                ];
+            } else {
+                // import ImportClause FromClause ;
+                if (stmt.kind === 'default') {
+                    // import ... from "...";
+                    result = [
+                        'import',
+                        noEmptySpace(),
+                        stmt.specifiers[0].id.name,
+                        noEmptySpace()
+                    ];
+                } else {
+                    // stmt.kind === 'named'
+                    result = [
+                        'import',
+                        space,
+                        '{',
+                    ];
+
+                    if (stmt.specifiers.length === 1) {
+                        // import { ... } from "...";
+                        specifier = stmt.specifiers[0];
+                        result.push(space + specifier.id.name);
+                        if (specifier.name) {
+                            result.push(noEmptySpace() + 'as' + noEmptySpace() + specifier.name.name);
+                        }
+                        result.push(space + '}' + space);
+                    } else {
+                        // import {
+                        //    ...,
+                        //    ...,
+                        // } from "...";
+                        withIndent(function (indent) {
+                            var i, iz;
+                            result.push(newline);
+                            for (i = 0, iz = stmt.specifiers.length; i < iz; ++i) {
+                                specifier = stmt.specifiers[i];
+                                result.push(indent + specifier.id.name);
+                                if (specifier.name) {
+                                    result.push(noEmptySpace() + 'as' + noEmptySpace() + specifier.name.name);
+                                }
+
+                                if (i + 1 < iz) {
+                                    result.push(',' + newline);
+                                }
+                            }
+                        });
+                        if (!endsWithLineTerminator(toSourceNodeWhenNeeded(result).toString())) {
+                            result.push(newline);
+                        }
+                        result.push(base + '}' + space);
+                    }
+                }
+
+                result.push('from' + space);
+                result.push(generateLiteral(stmt.source));
+            }
+            result.push(semicolon);
+            break;
+
+        case Syntax.VariableDeclarator:
+            if (stmt.init) {
+                result = [
+                    generateExpression(stmt.id, {
+                        precedence: Precedence.Assignment,
+                        allowIn: allowIn,
+                        allowCall: true
+                    }),
+                    space,
+                    '=',
+                    space,
+                    generateExpression(stmt.init, {
+                        precedence: Precedence.Assignment,
+                        allowIn: allowIn,
+                        allowCall: true
+                    })
+                ];
+            } else {
+                result = generatePattern(stmt.id, {
+                    precedence: Precedence.Assignment,
+                    allowIn: allowIn
+                });
+            }
+            break;
+
+        case Syntax.VariableDeclaration:
+            result = [stmt.kind];
+            // special path for
+            // var x = function () {
+            // };
+            if (stmt.declarations.length === 1 && stmt.declarations[0].init &&
+                    stmt.declarations[0].init.type === Syntax.FunctionExpression) {
+                result.push(noEmptySpace());
+                result.push(generateStatement(stmt.declarations[0], {
+                    allowIn: allowIn
+                }));
+            } else {
+                // VariableDeclarator is typed as Statement,
+                // but joined with comma (not LineTerminator).
+                // So if comment is attached to target node, we should specialize.
+                withIndent(function () {
+                    node = stmt.declarations[0];
+                    if (extra.comment && node.leadingComments) {
+                        result.push('\n');
+                        result.push(addIndent(generateStatement(node, {
+                            allowIn: allowIn
+                        })));
+                    } else {
+                        result.push(noEmptySpace());
+                        result.push(generateStatement(node, {
+                            allowIn: allowIn
+                        }));
+                    }
+
+                    for (i = 1, len = stmt.declarations.length; i < len; ++i) {
+                        node = stmt.declarations[i];
+                        if (extra.comment && node.leadingComments) {
+                            result.push(',' + newline);
+                            result.push(addIndent(generateStatement(node, {
+                                allowIn: allowIn
+                            })));
+                        } else {
+                            result.push(',' + space);
+                            result.push(generateStatement(node, {
+                                allowIn: allowIn
+                            }));
+                        }
+                    }
+                });
+            }
+            result.push(semicolon);
+            break;
+
+        case Syntax.ThrowStatement:
+            result = [join(
+                'throw',
+                generateExpression(stmt.argument, {
+                    precedence: Precedence.Sequence,
+                    allowIn: true,
+                    allowCall: true
+                })
+            ), semicolon];
+            break;
+
+        case Syntax.TryStatement:
+            result = ['try', maybeBlock(stmt.block)];
+            result = maybeBlockSuffix(stmt.block, result);
+
+            if (stmt.handlers) {
+                // old interface
+                for (i = 0, len = stmt.handlers.length; i < len; ++i) {
+                    result = join(result, generateStatement(stmt.handlers[i]));
+                    if (stmt.finalizer || i + 1 !== len) {
+                        result = maybeBlockSuffix(stmt.handlers[i].body, result);
+                    }
+                }
+            } else {
+                stmt.guardedHandlers = stmt.guardedHandlers || [];
+
+                for (i = 0, len = stmt.guardedHandlers.length; i < len; ++i) {
+                    result = join(result, generateStatement(stmt.guardedHandlers[i]));
+                    if (stmt.finalizer || i + 1 !== len) {
+                        result = maybeBlockSuffix(stmt.guardedHandlers[i].body, result);
+                    }
+                }
+
+                // new interface
+                if (stmt.handler) {
+                    if (isArray(stmt.handler)) {
+                        for (i = 0, len = stmt.handler.length; i < len; ++i) {
+                            result = join(result, generateStatement(stmt.handler[i]));
+                            if (stmt.finalizer || i + 1 !== len) {
+                                result = maybeBlockSuffix(stmt.handler[i].body, result);
+                            }
+                        }
+                    } else {
+                        result = join(result, generateStatement(stmt.handler));
+                        if (stmt.finalizer) {
+                            result = maybeBlockSuffix(stmt.handler.body, result);
+                        }
+                    }
+                }
+            }
+            if (stmt.finalizer) {
+                result = join(result, ['finally', maybeBlock(stmt.finalizer)]);
+            }
+            break;
+
+        case Syntax.SwitchStatement:
+            withIndent(function () {
+                result = [
+                    'switch' + space + '(',
+                    generateExpression(stmt.discriminant, {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    }),
+                    ')' + space + '{' + newline
+                ];
+            });
+            if (stmt.cases) {
+                for (i = 0, len = stmt.cases.length; i < len; ++i) {
+                    fragment = addIndent(generateStatement(stmt.cases[i], {semicolonOptional: i === len - 1}));
+                    result.push(fragment);
+                    if (!endsWithLineTerminator(toSourceNodeWhenNeeded(fragment).toString())) {
+                        result.push(newline);
+                    }
+                }
+            }
+            result.push(addIndent('}'));
+            break;
+
+        case Syntax.SwitchCase:
+            withIndent(function () {
+                if (stmt.test) {
+                    result = [
+                        join('case', generateExpression(stmt.test, {
+                            precedence: Precedence.Sequence,
+                            allowIn: true,
+                            allowCall: true
+                        })),
+                        ':'
+                    ];
+                } else {
+                    result = ['default:'];
+                }
+
+                i = 0;
+                len = stmt.consequent.length;
+                if (len && stmt.consequent[0].type === Syntax.BlockStatement) {
+                    fragment = maybeBlock(stmt.consequent[0]);
+                    result.push(fragment);
+                    i = 1;
+                }
+
+                if (i !== len && !endsWithLineTerminator(toSourceNodeWhenNeeded(result).toString())) {
+                    result.push(newline);
+                }
+
+                for (; i < len; ++i) {
+                    fragment = addIndent(generateStatement(stmt.consequent[i], {semicolonOptional: i === len - 1 && semicolon === ''}));
+                    result.push(fragment);
+                    if (i + 1 !== len && !endsWithLineTerminator(toSourceNodeWhenNeeded(fragment).toString())) {
+                        result.push(newline);
+                    }
+                }
+            });
+            break;
+
+        case Syntax.IfStatement:
+            withIndent(function () {
+                result = [
+                    'if' + space + '(',
+                    generateExpression(stmt.test, {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    }),
+                    ')'
+                ];
+            });
+            if (stmt.alternate) {
+                result.push(maybeBlock(stmt.consequent));
+                result = maybeBlockSuffix(stmt.consequent, result);
+                if (stmt.alternate.type === Syntax.IfStatement) {
+                    result = join(result, ['else ', generateStatement(stmt.alternate, {semicolonOptional: semicolon === ''})]);
+                } else {
+                    result = join(result, join('else', maybeBlock(stmt.alternate, semicolon === '')));
+                }
+            } else {
+                result.push(maybeBlock(stmt.consequent, semicolon === ''));
+            }
+            break;
+
+        case Syntax.ForStatement:
+            withIndent(function () {
+                result = ['for' + space + '('];
+                if (stmt.init) {
+                    if (stmt.init.type === Syntax.VariableDeclaration) {
+                        result.push(generateStatement(stmt.init, {allowIn: false}));
+                    } else {
+                        result.push(generateExpression(stmt.init, {
+                            precedence: Precedence.Sequence,
+                            allowIn: false,
+                            allowCall: true
+                        }));
+                        result.push(';');
+                    }
+                } else {
+                    result.push(';');
+                }
+
+                if (stmt.test) {
+                    result.push(space);
+                    result.push(generateExpression(stmt.test, {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    }));
+                    result.push(';');
+                } else {
+                    result.push(';');
+                }
+
+                if (stmt.update) {
+                    result.push(space);
+                    result.push(generateExpression(stmt.update, {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    }));
+                    result.push(')');
+                } else {
+                    result.push(')');
+                }
+            });
+
+            result.push(maybeBlock(stmt.body, semicolon === ''));
+            break;
+
+        case Syntax.ForInStatement:
+            result = generateIterationForStatement('in', stmt, semicolon === '');
+            break;
+
+        case Syntax.ForOfStatement:
+            result = generateIterationForStatement('of', stmt, semicolon === '');
+            break;
+
+        case Syntax.LabeledStatement:
+            result = [stmt.label.name + ':', maybeBlock(stmt.body, semicolon === '')];
+            break;
+
+        case Syntax.Program:
+            len = stmt.body.length;
+            result = [safeConcatenation && len > 0 ? '\n' : ''];
+            for (i = 0; i < len; ++i) {
+                fragment = addIndent(
+                    generateStatement(stmt.body[i], {
+                        semicolonOptional: !safeConcatenation && i === len - 1,
+                        directiveContext: true
+                    })
+                );
+                result.push(fragment);
+                if (i + 1 < len && !endsWithLineTerminator(toSourceNodeWhenNeeded(fragment).toString())) {
+                    result.push(newline);
+                }
+            }
+            break;
+
+        case Syntax.FunctionDeclaration:
+            isGenerator = stmt.generator && !extra.moz.starlessGenerator;
+            result = [
+                (isGenerator ? 'function*' : 'function'),
+                (isGenerator ? space : noEmptySpace()),
+                generateIdentifier(stmt.id),
+                generateFunctionBody(stmt)
+            ];
+            break;
+
+        case Syntax.ReturnStatement:
+            if (stmt.argument) {
+                result = [join(
+                    'return',
+                    generateExpression(stmt.argument, {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    })
+                ), semicolon];
+            } else {
+                result = ['return' + semicolon];
+            }
+            break;
+
+        case Syntax.WhileStatement:
+            withIndent(function () {
+                result = [
+                    'while' + space + '(',
+                    generateExpression(stmt.test, {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    }),
+                    ')'
+                ];
+            });
+            result.push(maybeBlock(stmt.body, semicolon === ''));
+            break;
+
+        case Syntax.WithStatement:
+            withIndent(function () {
+                result = [
+                    'with' + space + '(',
+                    generateExpression(stmt.object, {
+                        precedence: Precedence.Sequence,
+                        allowIn: true,
+                        allowCall: true
+                    }),
+                    ')'
+                ];
+            });
+            result.push(maybeBlock(stmt.body, semicolon === ''));
+            break;
+
+        default:
+            throw new Error('Unknown statement type: ' + stmt.type);
+        }
+
+        // Attach comments
+
+        if (extra.comment) {
+            result = addComments(stmt, result);
+        }
+
+        fragment = toSourceNodeWhenNeeded(result).toString();
+        if (stmt.type === Syntax.Program && !safeConcatenation && newline === '' &&  fragment.charAt(fragment.length - 1) === '\n') {
+            result = sourceMap ? toSourceNodeWhenNeeded(result).replaceRight(/\s+$/, '') : fragment.replace(/\s+$/, '');
+        }
+
+        return toSourceNodeWhenNeeded(result, stmt);
+    }
+
+    function generate(node, options) {
+        var defaultOptions = getDefaultOptions(), result, pair;
+
+        if (options != null) {
+            // Obsolete options
+            //
+            //   `options.indent`
+            //   `options.base`
+            //
+            // Instead of them, we can use `option.format.indent`.
+            if (typeof options.indent === 'string') {
+                defaultOptions.format.indent.style = options.indent;
+            }
+            if (typeof options.base === 'number') {
+                defaultOptions.format.indent.base = options.base;
+            }
+            options = updateDeeply(defaultOptions, options);
+            indent = options.format.indent.style;
+            if (typeof options.base === 'string') {
+                base = options.base;
+            } else {
+                base = stringRepeat(indent, options.format.indent.base);
+            }
+        } else {
+            options = defaultOptions;
+            indent = options.format.indent.style;
+            base = stringRepeat(indent, options.format.indent.base);
+        }
+        json = options.format.json;
+        renumber = options.format.renumber;
+        hexadecimal = json ? false : options.format.hexadecimal;
+        quotes = json ? 'double' : options.format.quotes;
+        escapeless = options.format.escapeless;
+        newline = options.format.newline;
+        space = options.format.space;
+        if (options.format.compact) {
+            newline = space = indent = base = '';
+        }
+        parentheses = options.format.parentheses;
+        semicolons = options.format.semicolons;
+        safeConcatenation = options.format.safeConcatenation;
+        directive = options.directive;
+        parse = json ? null : options.parse;
+        sourceMap = options.sourceMap;
+        extra = options;
+
+        if (sourceMap) {
+            if (!global.window) {
+                // We assume environment is node.js
+                // And prevent from including source-map by browserify
+                SourceNode = require('source-map').SourceNode;
+            } else {
+                SourceNode = global.sourceMap.SourceNode;
+            }
+        }
+
+        switch (node.type) {
+        case Syntax.BlockStatement:
+        case Syntax.BreakStatement:
+        case Syntax.CatchClause:
+        case Syntax.ContinueStatement:
+        case Syntax.DirectiveStatement:
+        case Syntax.DoWhileStatement:
+        case Syntax.DebuggerStatement:
+        case Syntax.EmptyStatement:
+        case Syntax.ExpressionStatement:
+        case Syntax.ForStatement:
+        case Syntax.ForInStatement:
+        case Syntax.ForOfStatement:
+        case Syntax.FunctionDeclaration:
+        case Syntax.IfStatement:
+        case Syntax.LabeledStatement:
+        case Syntax.Program:
+        case Syntax.ReturnStatement:
+        case Syntax.SwitchStatement:
+        case Syntax.SwitchCase:
+        case Syntax.ThrowStatement:
+        case Syntax.TryStatement:
+        case Syntax.VariableDeclaration:
+        case Syntax.VariableDeclarator:
+        case Syntax.WhileStatement:
+        case Syntax.WithStatement:
+            result = generateStatement(node);
+            break;
+
+        case Syntax.AssignmentExpression:
+        case Syntax.ArrayExpression:
+        case Syntax.ArrayPattern:
+        case Syntax.BinaryExpression:
+        case Syntax.CallExpression:
+        case Syntax.ConditionalExpression:
+        case Syntax.FunctionExpression:
+        case Syntax.Identifier:
+        case Syntax.Literal:
+        case Syntax.LogicalExpression:
+        case Syntax.MemberExpression:
+        case Syntax.NewExpression:
+        case Syntax.ObjectExpression:
+        case Syntax.ObjectPattern:
+        case Syntax.Property:
+        case Syntax.SequenceExpression:
+        case Syntax.ThisExpression:
+        case Syntax.UnaryExpression:
+        case Syntax.UpdateExpression:
+        case Syntax.YieldExpression:
+
+            result = generateExpression(node, {
+                precedence: Precedence.Sequence,
+                allowIn: true,
+                allowCall: true
+            });
+            break;
+
+        default:
+            throw new Error('Unknown node type: ' + node.type);
+        }
+
+        if (!sourceMap) {
+            pair = {code: result.toString(), map: null};
+            return options.sourceMapWithCode ? pair : pair.code;
+        }
+
+
+        pair = result.toStringWithSourceMap({
+            file: options.file,
+            sourceRoot: options.sourceMapRoot
+        });
+
+        if (options.sourceContent) {
+            pair.map.setSourceContent(options.sourceMap,
+                                      options.sourceContent);
+        }
+
+        if (options.sourceMapWithCode) {
+            return pair;
+        }
+
+        return pair.map.toString();
+    }
+
+    FORMAT_MINIFY = {
+        indent: {
+            style: '',
+            base: 0
+        },
+        renumber: true,
+        hexadecimal: true,
+        quotes: 'auto',
+        escapeless: true,
+        compact: true,
+        parentheses: false,
+        semicolons: false
+    };
+
+    FORMAT_DEFAULTS = getDefaultOptions().format;
+
+    exports.generate = generate;
+    exports.attachComments = estraverse.attachComments;
+    exports.Precedence = updateDeeply({}, Precedence);
+    exports.browser = false;
+    exports.FORMAT_MINIFY = FORMAT_MINIFY;
+    exports.FORMAT_DEFAULTS = FORMAT_DEFAULTS;
+}());
+/* vim: set sw=4 ts=4 et tw=80 : */
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/escodegen/index',_ion_compiler_escodegen_index_);
+    else
+      _ion_compiler_escodegen_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_escodegen_index_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_compiler_estraverse_index_ = function(module,exports,require){/*
+  Copyright (C) 2012-2013 Yusuke Suzuki <utatane.tea@gmail.com>
+  Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+/*jslint vars:false, bitwise:true*/
+/*jshint indent:4*/
+/*global exports:true, define:true*/
+(function (root, factory) {
+    'use strict';
+
+    // Universal Module Definition (UMD) to support AMD, CommonJS/Node.js,
+    // and plain browser loading,
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], factory);
+    } else if (typeof exports !== 'undefined') {
+        factory(exports);
+    } else {
+        factory((root.estraverse = {}));
+    }
+}(this, function (exports) {
+    'use strict';
+
+    var Syntax,
+        isArray,
+        VisitorOption,
+        VisitorKeys,
+        BREAK,
+        SKIP;
+
+    Syntax = {
+        AssignmentExpression: 'AssignmentExpression',
+        ArrayExpression: 'ArrayExpression',
+        ArrayPattern: 'ArrayPattern',
+        ArrowFunctionExpression: 'ArrowFunctionExpression',
+        BlockStatement: 'BlockStatement',
+        BinaryExpression: 'BinaryExpression',
+        BreakStatement: 'BreakStatement',
+        CallExpression: 'CallExpression',
+        CatchClause: 'CatchClause',
+        ClassBody: 'ClassBody',
+        ClassDeclaration: 'ClassDeclaration',
+        ClassExpression: 'ClassExpression',
+        ConditionalExpression: 'ConditionalExpression',
+        ContinueStatement: 'ContinueStatement',
+        DebuggerStatement: 'DebuggerStatement',
+        DirectiveStatement: 'DirectiveStatement',
+        DoWhileStatement: 'DoWhileStatement',
+        EmptyStatement: 'EmptyStatement',
+        ExpressionStatement: 'ExpressionStatement',
+        ForStatement: 'ForStatement',
+        ForInStatement: 'ForInStatement',
+        FunctionDeclaration: 'FunctionDeclaration',
+        FunctionExpression: 'FunctionExpression',
+        Identifier: 'Identifier',
+        IfStatement: 'IfStatement',
+        Literal: 'Literal',
+        LabeledStatement: 'LabeledStatement',
+        LogicalExpression: 'LogicalExpression',
+        MemberExpression: 'MemberExpression',
+        MethodDefinition: 'MethodDefinition',
+        NewExpression: 'NewExpression',
+        ObjectExpression: 'ObjectExpression',
+        ObjectPattern: 'ObjectPattern',
+        Program: 'Program',
+        Property: 'Property',
+        ReturnStatement: 'ReturnStatement',
+        SequenceExpression: 'SequenceExpression',
+        SwitchStatement: 'SwitchStatement',
+        SwitchCase: 'SwitchCase',
+        ThisExpression: 'ThisExpression',
+        ThrowStatement: 'ThrowStatement',
+        TryStatement: 'TryStatement',
+        UnaryExpression: 'UnaryExpression',
+        UpdateExpression: 'UpdateExpression',
+        VariableDeclaration: 'VariableDeclaration',
+        VariableDeclarator: 'VariableDeclarator',
+        WhileStatement: 'WhileStatement',
+        WithStatement: 'WithStatement',
+        YieldExpression: 'YieldExpression'
+    };
+
+    function ignoreJSHintError() { }
+
+    isArray = Array.isArray;
+    if (!isArray) {
+        isArray = function isArray(array) {
+            return Object.prototype.toString.call(array) === '[object Array]';
+        };
+    }
+
+    function deepCopy(obj) {
+        var ret = {}, key, val;
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                val = obj[key];
+                if (typeof val === 'object' && val !== null) {
+                    ret[key] = deepCopy(val);
+                } else {
+                    ret[key] = val;
+                }
+            }
+        }
+        return ret;
+    }
+
+    function shallowCopy(obj) {
+        var ret = {}, key;
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                ret[key] = obj[key];
+            }
+        }
+        return ret;
+    }
+    ignoreJSHintError(shallowCopy);
+
+    // based on LLVM libc++ upper_bound / lower_bound
+    // MIT License
+
+    function upperBound(array, func) {
+        var diff, len, i, current;
+
+        len = array.length;
+        i = 0;
+
+        while (len) {
+            diff = len >>> 1;
+            current = i + diff;
+            if (func(array[current])) {
+                len = diff;
+            } else {
+                i = current + 1;
+                len -= diff + 1;
+            }
+        }
+        return i;
+    }
+
+    function lowerBound(array, func) {
+        var diff, len, i, current;
+
+        len = array.length;
+        i = 0;
+
+        while (len) {
+            diff = len >>> 1;
+            current = i + diff;
+            if (func(array[current])) {
+                i = current + 1;
+                len -= diff + 1;
+            } else {
+                len = diff;
+            }
+        }
+        return i;
+    }
+    ignoreJSHintError(lowerBound);
+
+    VisitorKeys = {
+        AssignmentExpression: ['left', 'right'],
+        ArrayExpression: ['elements'],
+        ArrayPattern: ['elements'],
+        ArrowFunctionExpression: ['params', 'defaults', 'rest', 'body'],
+        BlockStatement: ['body'],
+        BinaryExpression: ['left', 'right'],
+        BreakStatement: ['label'],
+        CallExpression: ['callee', 'arguments'],
+        CatchClause: ['param', 'body'],
+        ClassBody: ['body'],
+        ClassDeclaration: ['id', 'body', 'superClass'],
+        ClassExpression: ['id', 'body', 'superClass'],
+        ConditionalExpression: ['test', 'consequent', 'alternate'],
+        ContinueStatement: ['label'],
+        DebuggerStatement: [],
+        DirectiveStatement: [],
+        DoWhileStatement: ['body', 'test'],
+        EmptyStatement: [],
+        ExpressionStatement: ['expression'],
+        ForStatement: ['init', 'test', 'update', 'body'],
+        ForInStatement: ['left', 'right', 'body'],
+        ForOfStatement: ['left', 'right', 'body'],
+        FunctionDeclaration: ['id', 'params', 'defaults', 'rest', 'body'],
+        FunctionExpression: ['id', 'params', 'defaults', 'rest', 'body'],
+        Identifier: [],
+        IfStatement: ['test', 'consequent', 'alternate'],
+        Literal: [],
+        LabeledStatement: ['label', 'body'],
+        LogicalExpression: ['left', 'right'],
+        MemberExpression: ['object', 'property'],
+        MethodDefinition: ['key', 'value'],
+        NewExpression: ['callee', 'arguments'],
+        ObjectExpression: ['properties'],
+        ObjectPattern: ['properties'],
+        Program: ['body'],
+        Property: ['key', 'value'],
+        ReturnStatement: ['argument'],
+        SequenceExpression: ['expressions'],
+        SwitchStatement: ['discriminant', 'cases'],
+        SwitchCase: ['test', 'consequent'],
+        ThisExpression: [],
+        ThrowStatement: ['argument'],
+        TryStatement: ['block', 'handlers', 'handler', 'guardedHandlers', 'finalizer'],
+        UnaryExpression: ['argument'],
+        UpdateExpression: ['argument'],
+        VariableDeclaration: ['declarations'],
+        VariableDeclarator: ['id', 'init'],
+        WhileStatement: ['test', 'body'],
+        WithStatement: ['object', 'body'],
+        YieldExpression: ['argument']
+    };
+
+    // unique id
+    BREAK = {};
+    SKIP = {};
+
+    VisitorOption = {
+        Break: BREAK,
+        Skip: SKIP
+    };
+
+    function Reference(parent, key) {
+        this.parent = parent;
+        this.key = key;
+    }
+
+    Reference.prototype.replace = function replace(node) {
+        this.parent[this.key] = node;
+    };
+
+    function Element(node, path, wrap, ref) {
+        this.node = node;
+        this.path = path;
+        this.wrap = wrap;
+        this.ref = ref;
+    }
+
+    function Controller() { }
+
+    // API:
+    // return property path array from root to current node
+    Controller.prototype.path = function path() {
+        var i, iz, j, jz, result, element;
+
+        function addToPath(result, path) {
+            if (isArray(path)) {
+                for (j = 0, jz = path.length; j < jz; ++j) {
+                    result.push(path[j]);
+                }
+            } else {
+                result.push(path);
+            }
+        }
+
+        // root node
+        if (!this.__current.path) {
+            return null;
+        }
+
+        // first node is sentinel, second node is root element
+        result = [];
+        for (i = 2, iz = this.__leavelist.length; i < iz; ++i) {
+            element = this.__leavelist[i];
+            addToPath(result, element.path);
+        }
+        addToPath(result, this.__current.path);
+        return result;
+    };
+
+    // API:
+    // return array of parent elements
+    Controller.prototype.parents = function parents() {
+        var i, iz, result;
+
+        // first node is sentinel
+        result = [];
+        for (i = 1, iz = this.__leavelist.length; i < iz; ++i) {
+            result.push(this.__leavelist[i].node);
+        }
+
+        return result;
+    };
+
+    // API:
+    // return current node
+    Controller.prototype.current = function current() {
+        return this.__current.node;
+    };
+
+    Controller.prototype.__execute = function __execute(callback, element) {
+        var previous, result;
+
+        result = undefined;
+
+        previous  = this.__current;
+        this.__current = element;
+        this.__state = null;
+        if (callback) {
+            result = callback.call(this, element.node, this.__leavelist[this.__leavelist.length - 1].node);
+        }
+        this.__current = previous;
+
+        return result;
+    };
+
+    // API:
+    // notify control skip / break
+    Controller.prototype.notify = function notify(flag) {
+        this.__state = flag;
+    };
+
+    // API:
+    // skip child nodes of current node
+    Controller.prototype.skip = function () {
+        this.notify(SKIP);
+    };
+
+    // API:
+    // break traversals
+    Controller.prototype['break'] = function () {
+        this.notify(BREAK);
+    };
+
+    Controller.prototype.__initialize = function(root, visitor) {
+        this.visitor = visitor;
+        this.root = root;
+        this.__worklist = [];
+        this.__leavelist = [];
+        this.__current = null;
+        this.__state = null;
+    };
+
+    Controller.prototype.traverse = function traverse(root, visitor) {
+        var worklist,
+            leavelist,
+            element,
+            node,
+            nodeType,
+            ret,
+            key,
+            current,
+            current2,
+            candidates,
+            candidate,
+            sentinel;
+
+        this.__initialize(root, visitor);
+
+        sentinel = {};
+
+        // reference
+        worklist = this.__worklist;
+        leavelist = this.__leavelist;
+
+        // initialize
+        worklist.push(new Element(root, null, null, null));
+        leavelist.push(new Element(null, null, null, null));
+
+        while (worklist.length) {
+            element = worklist.pop();
+
+            if (element === sentinel) {
+                element = leavelist.pop();
+
+                ret = this.__execute(visitor.leave, element);
+
+                if (this.__state === BREAK || ret === BREAK) {
+                    return;
+                }
+                continue;
+            }
+
+            if (element.node) {
+
+                ret = this.__execute(visitor.enter, element);
+
+                if (this.__state === BREAK || ret === BREAK) {
+                    return;
+                }
+
+                worklist.push(sentinel);
+                leavelist.push(element);
+
+                if (this.__state === SKIP || ret === SKIP) {
+                    continue;
+                }
+
+                node = element.node;
+                nodeType = element.wrap || node.type;
+                candidates = VisitorKeys[nodeType];
+
+                current = candidates.length;
+                while ((current -= 1) >= 0) {
+                    key = candidates[current];
+                    candidate = node[key];
+                    if (!candidate) {
+                        continue;
+                    }
+
+                    if (!isArray(candidate)) {
+                        worklist.push(new Element(candidate, key, null, null));
+                        continue;
+                    }
+
+                    current2 = candidate.length;
+                    while ((current2 -= 1) >= 0) {
+                        if (!candidate[current2]) {
+                            continue;
+                        }
+                        if ((nodeType === Syntax.ObjectExpression || nodeType === Syntax.ObjectPattern) && 'properties' === candidates[current]) {
+                            element = new Element(candidate[current2], [key, current2], 'Property', null);
+                        } else {
+                            element = new Element(candidate[current2], [key, current2], null, null);
+                        }
+                        worklist.push(element);
+                    }
+                }
+            }
+        }
+    };
+
+    Controller.prototype.replace = function replace(root, visitor) {
+        var worklist,
+            leavelist,
+            node,
+            nodeType,
+            target,
+            element,
+            current,
+            current2,
+            candidates,
+            candidate,
+            sentinel,
+            outer,
+            key;
+
+        this.__initialize(root, visitor);
+
+        sentinel = {};
+
+        // reference
+        worklist = this.__worklist;
+        leavelist = this.__leavelist;
+
+        // initialize
+        outer = {
+            root: root
+        };
+        element = new Element(root, null, null, new Reference(outer, 'root'));
+        worklist.push(element);
+        leavelist.push(element);
+
+        while (worklist.length) {
+            element = worklist.pop();
+
+            if (element === sentinel) {
+                element = leavelist.pop();
+
+                target = this.__execute(visitor.leave, element);
+
+                // node may be replaced with null,
+                // so distinguish between undefined and null in this place
+                if (target !== undefined && target !== BREAK && target !== SKIP) {
+                    // replace
+                    element.ref.replace(target);
+                }
+
+                if (this.__state === BREAK || target === BREAK) {
+                    return outer.root;
+                }
+                continue;
+            }
+
+            target = this.__execute(visitor.enter, element);
+
+            // node may be replaced with null,
+            // so distinguish between undefined and null in this place
+            if (target !== undefined && target !== BREAK && target !== SKIP) {
+                // replace
+                element.ref.replace(target);
+                element.node = target;
+            }
+
+            if (this.__state === BREAK || target === BREAK) {
+                return outer.root;
+            }
+
+            // node may be null
+            node = element.node;
+            if (!node) {
+                continue;
+            }
+
+            worklist.push(sentinel);
+            leavelist.push(element);
+
+            if (this.__state === SKIP || target === SKIP) {
+                continue;
+            }
+
+            nodeType = element.wrap || node.type;
+            candidates = VisitorKeys[nodeType];
+
+            current = candidates.length;
+            while ((current -= 1) >= 0) {
+                key = candidates[current];
+                candidate = node[key];
+                if (!candidate) {
+                    continue;
+                }
+
+                if (!isArray(candidate)) {
+                    worklist.push(new Element(candidate, key, null, new Reference(node, key)));
+                    continue;
+                }
+
+                current2 = candidate.length;
+                while ((current2 -= 1) >= 0) {
+                    if (!candidate[current2]) {
+                        continue;
+                    }
+                    if (nodeType === Syntax.ObjectExpression && 'properties' === candidates[current]) {
+                        element = new Element(candidate[current2], [key, current2], 'Property', new Reference(candidate, current2));
+                    } else {
+                        element = new Element(candidate[current2], [key, current2], null, new Reference(candidate, current2));
+                    }
+                    worklist.push(element);
+                }
+            }
+        }
+
+        return outer.root;
+    };
+
+    function traverse(root, visitor) {
+        var controller = new Controller();
+        return controller.traverse(root, visitor);
+    }
+
+    function replace(root, visitor) {
+        var controller = new Controller();
+        return controller.replace(root, visitor);
+    }
+
+    function extendCommentRange(comment, tokens) {
+        var target;
+
+        target = upperBound(tokens, function search(token) {
+            return token.range[0] > comment.range[0];
+        });
+
+        comment.extendedRange = [comment.range[0], comment.range[1]];
+
+        if (target !== tokens.length) {
+            comment.extendedRange[1] = tokens[target].range[0];
+        }
+
+        target -= 1;
+        if (target >= 0) {
+            comment.extendedRange[0] = tokens[target].range[1];
+        }
+
+        return comment;
+    }
+
+    function attachComments(tree, providedComments, tokens) {
+        // At first, we should calculate extended comment ranges.
+        var comments = [], comment, len, i, cursor;
+
+        if (!tree.range) {
+            throw new Error('attachComments needs range information');
+        }
+
+        // tokens array is empty, we attach comments to tree as 'leadingComments'
+        if (!tokens.length) {
+            if (providedComments.length) {
+                for (i = 0, len = providedComments.length; i < len; i += 1) {
+                    comment = deepCopy(providedComments[i]);
+                    comment.extendedRange = [0, tree.range[0]];
+                    comments.push(comment);
+                }
+                tree.leadingComments = comments;
+            }
+            return tree;
+        }
+
+        for (i = 0, len = providedComments.length; i < len; i += 1) {
+            comments.push(extendCommentRange(deepCopy(providedComments[i]), tokens));
+        }
+
+        // This is based on John Freeman's implementation.
+        cursor = 0;
+        traverse(tree, {
+            enter: function (node) {
+                var comment;
+
+                while (cursor < comments.length) {
+                    comment = comments[cursor];
+                    if (comment.extendedRange[1] > node.range[0]) {
+                        break;
+                    }
+
+                    if (comment.extendedRange[1] === node.range[0]) {
+                        if (!node.leadingComments) {
+                            node.leadingComments = [];
+                        }
+                        node.leadingComments.push(comment);
+                        comments.splice(cursor, 1);
+                    } else {
+                        cursor += 1;
+                    }
+                }
+
+                // already out of owned node
+                if (cursor === comments.length) {
+                    return VisitorOption.Break;
+                }
+
+                if (comments[cursor].extendedRange[0] > node.range[1]) {
+                    return VisitorOption.Skip;
+                }
+            }
+        });
+
+        cursor = 0;
+        traverse(tree, {
+            leave: function (node) {
+                var comment;
+
+                while (cursor < comments.length) {
+                    comment = comments[cursor];
+                    if (node.range[1] < comment.extendedRange[0]) {
+                        break;
+                    }
+
+                    if (node.range[1] === comment.extendedRange[0]) {
+                        if (!node.trailingComments) {
+                            node.trailingComments = [];
+                        }
+                        node.trailingComments.push(comment);
+                        comments.splice(cursor, 1);
+                    } else {
+                        cursor += 1;
+                    }
+                }
+
+                // already out of owned node
+                if (cursor === comments.length) {
+                    return VisitorOption.Break;
+                }
+
+                if (comments[cursor].extendedRange[0] > node.range[1]) {
+                    return VisitorOption.Skip;
+                }
+            }
+        });
+
+        return tree;
+    }
+
+    exports.version = '1.5.1-dev';
+    exports.Syntax = Syntax;
+    exports.traverse = traverse;
+    exports.replace = replace;
+    exports.attachComments = attachComments;
+    exports.VisitorKeys = VisitorKeys;
+    exports.VisitorOption = VisitorOption;
+    exports.Controller = Controller;
+}));
+/* vim: set sw=4 ts=4 et tw=80 : */
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/estraverse/index',_ion_compiler_estraverse_index_);
+    else
+      _ion_compiler_estraverse_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_estraverse_index_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_compiler_esutils_code_ = function(module,exports,require){/*
+  Copyright (C) 2013 Yusuke Suzuki <utatane.tea@gmail.com>
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+(function () {
+    'use strict';
+
+    var Regex;
+
+    // See `tools/generate-identifier-regex.js`.
+    Regex = {
+        NonAsciiIdentifierStart: new RegExp('[\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F0\u1700-\u170C\u170E-\u1711\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6EF\uA717-\uA71F\uA722-\uA788\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]'),
+        NonAsciiIdentifierPart: new RegExp('[\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0300-\u0374\u0376\u0377\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u0483-\u0487\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u05D0-\u05EA\u05F0-\u05F2\u0610-\u061A\u0620-\u0669\u066E-\u06D3\u06D5-\u06DC\u06DF-\u06E8\u06EA-\u06FC\u06FF\u0710-\u074A\u074D-\u07B1\u07C0-\u07F5\u07FA\u0800-\u082D\u0840-\u085B\u08A0\u08A2-\u08AC\u08E4-\u08FE\u0900-\u0963\u0966-\u096F\u0971-\u0977\u0979-\u097F\u0981-\u0983\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BC-\u09C4\u09C7\u09C8\u09CB-\u09CE\u09D7\u09DC\u09DD\u09DF-\u09E3\u09E6-\u09F1\u0A01-\u0A03\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A59-\u0A5C\u0A5E\u0A66-\u0A75\u0A81-\u0A83\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABC-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AD0\u0AE0-\u0AE3\u0AE6-\u0AEF\u0B01-\u0B03\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3C-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B56\u0B57\u0B5C\u0B5D\u0B5F-\u0B63\u0B66-\u0B6F\u0B71\u0B82\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD0\u0BD7\u0BE6-\u0BEF\u0C01-\u0C03\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C58\u0C59\u0C60-\u0C63\u0C66-\u0C6F\u0C82\u0C83\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBC-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CDE\u0CE0-\u0CE3\u0CE6-\u0CEF\u0CF1\u0CF2\u0D02\u0D03\u0D05-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D-\u0D44\u0D46-\u0D48\u0D4A-\u0D4E\u0D57\u0D60-\u0D63\u0D66-\u0D6F\u0D7A-\u0D7F\u0D82\u0D83\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DF2\u0DF3\u0E01-\u0E3A\u0E40-\u0E4E\u0E50-\u0E59\u0E81\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB9\u0EBB-\u0EBD\u0EC0-\u0EC4\u0EC6\u0EC8-\u0ECD\u0ED0-\u0ED9\u0EDC-\u0EDF\u0F00\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E-\u0F47\u0F49-\u0F6C\u0F71-\u0F84\u0F86-\u0F97\u0F99-\u0FBC\u0FC6\u1000-\u1049\u1050-\u109D\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u135D-\u135F\u1380-\u138F\u13A0-\u13F4\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F0\u1700-\u170C\u170E-\u1714\u1720-\u1734\u1740-\u1753\u1760-\u176C\u176E-\u1770\u1772\u1773\u1780-\u17D3\u17D7\u17DC\u17DD\u17E0-\u17E9\u180B-\u180D\u1810-\u1819\u1820-\u1877\u1880-\u18AA\u18B0-\u18F5\u1900-\u191C\u1920-\u192B\u1930-\u193B\u1946-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u19D0-\u19D9\u1A00-\u1A1B\u1A20-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AA7\u1B00-\u1B4B\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1BF3\u1C00-\u1C37\u1C40-\u1C49\u1C4D-\u1C7D\u1CD0-\u1CD2\u1CD4-\u1CF6\u1D00-\u1DE6\u1DFC-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u200C\u200D\u203F\u2040\u2054\u2071\u207F\u2090-\u209C\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D7F-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2DE0-\u2DFF\u2E2F\u3005-\u3007\u3021-\u302F\u3031-\u3035\u3038-\u303C\u3041-\u3096\u3099\u309A\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA62B\uA640-\uA66F\uA674-\uA67D\uA67F-\uA697\uA69F-\uA6F1\uA717-\uA71F\uA722-\uA788\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA827\uA840-\uA873\uA880-\uA8C4\uA8D0-\uA8D9\uA8E0-\uA8F7\uA8FB\uA900-\uA92D\uA930-\uA953\uA960-\uA97C\uA980-\uA9C0\uA9CF-\uA9D9\uAA00-\uAA36\uAA40-\uAA4D\uAA50-\uAA59\uAA60-\uAA76\uAA7A\uAA7B\uAA80-\uAAC2\uAADB-\uAADD\uAAE0-\uAAEF\uAAF2-\uAAF6\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uABC0-\uABEA\uABEC\uABED\uABF0-\uABF9\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE00-\uFE0F\uFE20-\uFE26\uFE33\uFE34\uFE4D-\uFE4F\uFE70-\uFE74\uFE76-\uFEFC\uFF10-\uFF19\uFF21-\uFF3A\uFF3F\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]')
+    };
+
+    function isDecimalDigit(ch) {
+        return (ch >= 48 && ch <= 57);   // 0..9
+    }
+
+    function isHexDigit(ch) {
+        return isDecimalDigit(ch) || (97 <= ch && ch <= 102) || (65 <= ch && ch <= 70);
+    }
+
+    function isOctalDigit(ch) {
+        return (ch >= 48 && ch <= 55);   // 0..7
+    }
+
+    // 7.2 White Space
+
+    function isWhiteSpace(ch) {
+        return (ch === 0x20) || (ch === 0x09) || (ch === 0x0B) || (ch === 0x0C) || (ch === 0xA0) ||
+            (ch >= 0x1680 && [0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF].indexOf(ch) >= 0);
+    }
+
+    // 7.3 Line Terminators
+
+    function isLineTerminator(ch) {
+        return (ch === 0x0A) || (ch === 0x0D) || (ch === 0x2028) || (ch === 0x2029);
+    }
+
+    // 7.6 Identifier Names and Identifiers
+
+    function isIdentifierStart(ch) {
+        return (ch === 36) || (ch === 95) ||  // $ (dollar) and _ (underscore)
+            (ch >= 65 && ch <= 90) ||         // A..Z
+            (ch >= 97 && ch <= 122) ||        // a..z
+            (ch === 92) ||                    // \ (backslash)
+            ((ch >= 0x80) && Regex.NonAsciiIdentifierStart.test(String.fromCharCode(ch)));
+    }
+
+    function isIdentifierPart(ch) {
+        return (ch === 36) || (ch === 95) ||  // $ (dollar) and _ (underscore)
+            (ch >= 65 && ch <= 90) ||         // A..Z
+            (ch >= 97 && ch <= 122) ||        // a..z
+            (ch >= 48 && ch <= 57) ||         // 0..9
+            (ch === 92) ||                    // \ (backslash)
+            ((ch >= 0x80) && Regex.NonAsciiIdentifierPart.test(String.fromCharCode(ch)));
+    }
+
+    module.exports = {
+        isDecimalDigit: isDecimalDigit,
+        isHexDigit: isHexDigit,
+        isOctalDigit: isOctalDigit,
+        isWhiteSpace: isWhiteSpace,
+        isLineTerminator: isLineTerminator,
+        isIdentifierStart: isIdentifierStart,
+        isIdentifierPart: isIdentifierPart
+    };
+}());
+/* vim: set sw=4 ts=4 et tw=80 : */
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/esutils/code',_ion_compiler_esutils_code_);
+    else
+      _ion_compiler_esutils_code_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_esutils_code_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_compiler_esutils_index_ = function(module,exports,require){/*
+  Copyright (C) 2013 Yusuke Suzuki <utatane.tea@gmail.com>
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+
+(function () {
+    'use strict';
+
+    exports.code = require('./code');
+    exports.keyword = require('./keyword');
+}());
+/* vim: set sw=4 ts=4 et tw=80 : */
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/esutils/index',_ion_compiler_esutils_index_);
+    else
+      _ion_compiler_esutils_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_esutils_index_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_compiler_esutils_keyword_ = function(module,exports,require){/*
+  Copyright (C) 2013 Yusuke Suzuki <utatane.tea@gmail.com>
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+(function () {
+    'use strict';
+
+    var code = require('./code');
+
+    function isStrictModeReservedWordES6(id) {
+        switch (id) {
+        case 'implements':
+        case 'interface':
+        case 'package':
+        case 'private':
+        case 'protected':
+        case 'public':
+        case 'static':
+        case 'let':
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    function isKeywordES5(id, strict) {
+        // yield should not be treated as keyword under non-strict mode.
+        if (!strict && id === 'yield') {
+            return false;
+        }
+        return isKeywordES6(id, strict);
+    }
+
+    function isKeywordES6(id, strict) {
+        if (strict && isStrictModeReservedWordES6(id)) {
+            return true;
+        }
+
+        switch (id.length) {
+        case 2:
+            return (id === 'if') || (id === 'in') || (id === 'do');
+        case 3:
+            return (id === 'var') || (id === 'for') || (id === 'new') || (id === 'try');
+        case 4:
+            return (id === 'this') || (id === 'else') || (id === 'case') ||
+                (id === 'void') || (id === 'with') || (id === 'enum');
+        case 5:
+            return (id === 'while') || (id === 'break') || (id === 'catch') ||
+                (id === 'throw') || (id === 'const') || (id === 'yield') ||
+                (id === 'class') || (id === 'super');
+        case 6:
+            return (id === 'return') || (id === 'typeof') || (id === 'delete') ||
+                (id === 'switch') || (id === 'export') || (id === 'import');
+        case 7:
+            return (id === 'default') || (id === 'finally') || (id === 'extends');
+        case 8:
+            return (id === 'function') || (id === 'continue') || (id === 'debugger');
+        case 10:
+            return (id === 'instanceof');
+        default:
+            return false;
+        }
+    }
+
+    function isRestrictedWord(id) {
+        return id === 'eval' || id === 'arguments';
+    }
+
+    function isIdentifierName(id) {
+        var i, iz, ch;
+
+        if (id.length === 0) {
+            return false;
+        }
+
+        ch = id.charCodeAt(0);
+        if (!code.isIdentifierStart(ch) || ch === 92) {  // \ (backslash)
+            return false;
+        }
+
+        for (i = 1, iz = id.length; i < iz; ++i) {
+            ch = id.charCodeAt(i);
+            if (!code.isIdentifierPart(ch) || ch === 92) {  // \ (backslash)
+                return false;
+            }
+        }
+        return true;
+    }
+
+    module.exports = {
+        isKeywordES5: isKeywordES5,
+        isKeywordES6: isKeywordES6,
+        isRestrictedWord: isRestrictedWord,
+        isIdentifierName: isIdentifierName
+    };
+}());
+/* vim: set sw=4 ts=4 et tw=80 : */
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/compiler/esutils/keyword',_ion_compiler_esutils_keyword_);
+    else
+      _ion_compiler_esutils_keyword_.call(this, module, exports, require);
+  }
+  else {
+    _ion_compiler_esutils_keyword_.call(this);
+  }
+}).call(this)
 void (function(){var _ion_compiler_index_ = function(module,exports,require){'use strict';
 var ion = require('../'), makePrettyError = function (e, source, id) {
         if (typeof e.line === 'number' && typeof e.column === 'number' && e.line > 0 && e.column > 0) {
@@ -5181,7 +8413,7 @@ var parse = exports.parse = function (content, options) {
         options.id = options.id != null ? options.id : 'unknown';
         options.loc = options.loc != null ? options.loc : true;
         options.target = options.target != null ? options.target : 'es5';
-        var preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('escodegen');
+        var preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('./escodegen');
         var sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), sourceMap = null, preprocessed = result, sourceLocationsFixed = false;
         try {
             result = parser.parse(result, options);
@@ -5193,14 +8425,18 @@ var parse = exports.parse = function (content, options) {
             if (options.postprocess !== false) {
                 result = postprocessor.postprocess(result, options);
                 if ((options != null ? options.generate : void 0) !== false) {
-                    var generateOptions = {
-                            sourceMapWithCode: true,
-                            sourceMap: options.sourceMap != null ? options.sourceMap : options.id,
-                            sourceContent: content
-                        };
+                    var generateOptions = {};
+                    {
+                        generateOptions.sourceMapWithCode = true;
+                        if (!(global.window != null)) {
+                            generateOptions.sourceMap = options.sourceMap != null ? options.sourceMap : options.id;
+                        }
+                        generateOptions.sourceContent = content;
+                        generateOptions.verbatim = 'verbatim';
+                    }
                     var output = escodegen.generate(result, generateOptions);
                     result = output.code;
-                    sourceMap = output.map.toString();
+                    sourceMap = output.map != null ? output.map.toString() : void 0;
                 }
             }
         } catch (e) {
@@ -5836,10 +9072,34 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     _ion_compiler_traverseAst_.call(this);
   }
 }).call(this)
+void (function(){var _ion_es6_Function_ = function(module,exports,require){
+// Fix Function#name on browsers that do not support it (IE):
+if (!(function f() {}).name) {
+    Object.defineProperty(Function.prototype, 'name', {
+        get: function() {
+            var name = this.toString().match(/^\s*function\s*(\S*)\s*\(/)[1]
+            Object.defineProperty(this, 'name', {value:name})
+            return name
+        }
+    });
+}
+
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/es6/Function',_ion_es6_Function_);
+    else
+      _ion_es6_Function_.call(this, module, exports, require);
+  }
+  else {
+    _ion_es6_Function_.call(this);
+  }
+}).call(this)
 void (function(){var _ion_es6_index_ = function(module,exports,require){'use strict';
 require('./String');
 require('./Map');
 require('./Object.observe');
+require('./Function');
   }
   if (typeof require === 'function') {
     if (require.register)
@@ -5947,183 +9207,6 @@ var test = exports.test = function () {
   }
 }).call(this)
 //@ sourceMappingURL=./Map.map
-void (function(){var _ion_es6_Object_observe_ = function(module,exports,require){'use strict';
-var clone = function (object) {
-    var _ref3 = {};
-    {
-        for (var key in object) {
-            var value = object[key];
-            _ref3[key] = value;
-        }
-    }
-    return _ref3;
-};
-var createObjectObserveAndUnobserve = function () {
-    var map = new Map();
-    var array = [];
-    var observe = function (object, callback) {
-        if (object.nodeType === 1 || object === global.document) {
-            return;
-        }
-        var meta = map.get(object);
-        if (!(meta != null)) {
-            meta = {
-                object: object,
-                clone: clone(object),
-                callbacks: []
-            };
-            map.set(object, meta);
-            array.push(meta);
-        }
-        meta.callbacks.push(callback);
-    };
-    var unobserve = function (object, callback) {
-        if (object.nodeType === 1 || object === global.document) {
-            return;
-        }
-        var meta = map.get(object);
-        if (meta != null) {
-            var index = meta.callbacks.lastIndexOf(callback);
-            if (index >= 0) {
-                meta.callbacks.splice(index, 1);
-                if (meta.callbacks.length === 0) {
-                    map.delete(object);
-                    array.splice(array.lastIndexOf(meta), 1);
-                }
-            }
-        }
-    };
-    var getChanges = function (oldValue, newValue) {
-        var changes = null;
-        var change = function (type, name, oldValue) {
-            changes = changes != null ? changes : [];
-            changes.push({
-                type: type,
-                name: name,
-                oldValue: oldValue
-            });
-        };
-        for (var name in oldValue) {
-            if (oldValue.hasOwnProperty(name)) {
-                var oldPropertyValue = oldValue[name];
-                if (!newValue.hasOwnProperty(name)) {
-                    change('delete', name, oldPropertyValue);
-                } else {
-                    var newPropertyValue = newValue[name];
-                    if (newPropertyValue !== oldPropertyValue) {
-                        change('update', name, oldPropertyValue);
-                    }
-                }
-            }
-        }
-        for (var name in newValue) {
-            if (newValue.hasOwnProperty(name) && !oldValue.hasOwnProperty(name)) {
-                change('add', name);
-            }
-        }
-        return changes;
-    };
-    observe.checkForChanges = function () {
-        var maxCycles = 100;
-        for (var i = 0; i < maxCycles; i++) {
-            var totalChanges = 0;
-            var pendingChanges = [];
-            for (var _i = 0; _i < array.length; _i++) {
-                var meta = array[_i];
-                var changes = getChanges(meta.clone, meta.object);
-                if (changes != null) {
-                    totalChanges++;
-                    meta.clone = clone(meta.object);
-                    pendingChanges.push([
-                        changes,
-                        meta.callbacks.slice(0)
-                    ]);
-                }
-            }
-            if (totalChanges === 0) {
-                return;
-            }
-            for (var _i2 = 0; _i2 < pendingChanges.length; _i2++) {
-                var _ref4 = pendingChanges[_i2];
-                var changes = _ref4[0];
-                var callbacks = _ref4[1];
-                for (var _i3 = 0; _i3 < callbacks.length; _i3++) {
-                    var callback = callbacks[_i3];
-                    callback(changes);
-                }
-            }
-        }
-        throw new Error('Circular Object.observe dependency');
-    };
-    return [
-        observe,
-        unobserve,
-        array
-    ];
-};
-var test = exports.test = function () {
-        var _ref = createObjectObserveAndUnobserve();
-        var observe = _ref[0];
-        var unobserve = _ref[1];
-        var object = {
-                a: 1,
-                b: {
-                    c: 2,
-                    d: 3
-                }
-            };
-        var changes;
-        var handler = function (c) {
-            changes = c;
-        };
-        observe(object, handler);
-        object.a = 2;
-        delete object.b;
-        object.c = 5;
-        observe.checkForChanges();
-        if (!(JSON.stringify(changes) === JSON.stringify([
-                {
-                    'type': 'update',
-                    'name': 'a',
-                    'oldValue': 1
-                },
-                {
-                    'type': 'delete',
-                    'name': 'b',
-                    'oldValue': {
-                        'c': 2,
-                        'd': 3
-                    }
-                },
-                {
-                    'type': 'add',
-                    'name': 'c'
-                }
-            ])))
-            throw new Error('Assertion Failed: (JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1},{"type":"delete","name":"b","oldValue":{"c":2,"d":3}},{"type":"add","name":"c"}]))');
-        unobserve(object, handler);
-    };
-if (!(Object.observe != null) && global.Map != null) {
-    var _ref2 = createObjectObserveAndUnobserve();
-    var observe = _ref2[0];
-    var unobserve = _ref2[1];
-    var array = _ref2[2];
-    Object.observe = observe;
-    Object.unobserve = unobserve;
-    global.array = array;
-}
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('ion/es6/Object.observe',_ion_es6_Object_observe_);
-    else
-      _ion_es6_Object_observe_.call(this, module, exports, require);
-  }
-  else {
-    _ion_es6_Object_observe_.call(this);
-  }
-}).call(this)
-//@ sourceMappingURL=./Object.observe.map
 void (function(){var _ion_es6_String_ = function(module,exports,require){if (!String.prototype.endsWith) {
     Object.defineProperty(String.prototype, 'endsWith', {
         enumerable: false,
@@ -6166,6 +9249,703 @@ if (!String.prototype.contains ) {
     _ion_es6_String_.call(this);
   }
 }).call(this)
+void (function(){var _ion_index_ = function(module,exports,require){'use strict';
+var ion = null;
+require('./es6');
+var primitive = {
+        string: true,
+        number: true,
+        boolean: true,
+        function: true
+    }, isPrimitive = function (object) {
+        return !(object != null) || primitive[typeof object] || false;
+    }, normalizeProperty = function (property) {
+        if (typeof property === 'function') {
+            property = {
+                writable: false,
+                value: property
+            };
+        } else if (isPrimitive(property) || Array.isArray(property)) {
+            property = { value: property };
+        }
+        if (!(property.get != null) && !(property.set != null) && !property.hasOwnProperty('value')) {
+            property.value = void 0;
+        }
+        if (property.hasOwnProperty('value')) {
+            property.writable = property.writable != null ? property.writable : true;
+        }
+        return property;
+    }, normalizeProperties = function (properties) {
+        if (properties == null)
+            properties = {};
+        for (var name in properties) {
+            var property = properties[name];
+            properties[name] = normalizeProperty(property);
+        }
+        return properties;
+    }, variableArgConstructs = [
+        function (type, a) {
+            return new type();
+        },
+        function (type, a) {
+            return new type(a[0]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]);
+        },
+        function (type, a) {
+            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
+        }
+    ], nodeObserveShim = (Object.observe != null ? Object.observe.checkForChanges : void 0) ? Object : require('./es6/Object.observe').createShim();
+var patch = exports.patch = function () {
+        var mergePatch = require('./mergePatch');
+        var patch = function (object, patch) {
+            return mergePatch.merge(object, patch);
+        };
+        for (var key in mergePatch) {
+            var value = mergePatch[key];
+            patch[key] = value;
+        }
+        return patch;
+    }(), create = exports.create = function (type, args) {
+        return variableArgConstructs[args.length](type, args);
+    }, template = exports.template = function (fn, template) {
+        fn.template = template;
+        return fn;
+    }, createRuntime = exports.createRuntime = function (ast, args) {
+        var Context = require('./runtime/Context');
+        var context = new Context();
+        if (args != null) {
+            for (var name in args) {
+                var value = args[name];
+                context.setVariable(name, value);
+            }
+        }
+        return context.createRuntime(ast);
+    }, nextTick = exports.nextTick = (this.process != null ? this.process.nextTick : void 0) != null ? this.process.nextTick : function (fn) {
+        return setTimeout(fn, 0);
+    }, clone = exports.clone = function (object, deep) {
+        if (deep == null)
+            deep = false;
+        if (Array.isArray(object)) {
+            var _ref = [];
+            for (var _i = 0; _i < object.length; _i++) {
+                var item = object[_i];
+                _ref.push(deep ? clone(item, deep) : item);
+            }
+            return _ref;
+        } else if ((object != null ? object.constructor : void 0) === Object) {
+            var _ref2 = {};
+            for (var key in object) {
+                var value = object[key];
+                _ref2[key] = deep ? clone(value, deep) : value;
+            }
+            return _ref2;
+        } else {
+            return object;
+        }
+    }, observe = exports.observe = function (object, observer, property) {
+        if (object === global || object === console) {
+            return;
+        }
+        if ((object != null ? object.nodeType : void 0) != null) {
+            nodeObserveShim.observe(object, observer, property);
+        } else if (object != null && observer != null && Object.observe != null && typeof object === 'object') {
+            Object.observe(object, observer);
+            object.addEventListener != null ? object.addEventListener('change', observer) : void 0;
+        }
+        object != null ? object.onObserved != null ? object.onObserved(observer, property) : void 0 : void 0;
+    }, unobserve = exports.unobserve = function (object, observer, property) {
+        if ((object != null ? object.nodeType : void 0) != null) {
+            nodeObserveShim.unobserve(object, observer, property);
+        } else if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
+            Object.unobserve(object, observer);
+            object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
+        }
+        object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
+    }, checkForChanges = exports.checkForChanges = function () {
+        if (Object.observe.checkForChanges != null) {
+            Object.observe.checkForChanges();
+        } else {
+            nodeObserveShim.observe.checkForChanges();
+        }
+    }, bind = exports.bind = function (fn, thisArg) {
+        var newFn = fn.bind(thisArg);
+        if ((fn.name != null ? fn.name.length : void 0) > 0) {
+            newFn.id = fn.id != null ? fn.id : fn.name;
+        }
+        return newFn;
+    }, add = exports.add = function (container, item) {
+        var remove;
+        if (typeof item === 'function' && ((item.name != null ? item.name.length : void 0) > 0 || item.id != null) && typeof container.addEventListener === 'function') {
+            var name = item.id != null ? item.id : item.name;
+            if ((Object.observe != null ? Object.observe.checkForChanges : void 0) != null) {
+                var originalItem = item;
+                item = function () {
+                    originalItem.apply(this, arguments);
+                    Object.observe.checkForChanges();
+                };
+            }
+            container.addEventListener(name, item);
+            remove = function () {
+                container.removeEventListener(name, item);
+            };
+        } else if (container.nodeType === 1) {
+            if (typeof item !== 'string' && !(item.nodeType != null)) {
+                item = JSON.stringify(item);
+            }
+            if (typeof item === 'string') {
+                item = document.createTextNode(item);
+            }
+            container.appendChild(item);
+            remove = function () {
+                container.removeChild(item);
+            };
+        } else {
+            if (container.push != null) {
+                container.push(item);
+            } else {
+                container.add(item);
+            }
+            remove = function () {
+                if (container.lastIndexOf != null && container.removeAt != null) {
+                    var index = container.lastIndexOf(item);
+                    if (index >= 0) {
+                        container.removeAt(index);
+                    }
+                } else if (typeof container.remove === 'function') {
+                    container.remove(item);
+                } else if (Array.isArray(container)) {
+                    var index = container.lastIndexOf(item);
+                    if (index >= 0) {
+                        container.splice(index, 1);
+                    }
+                }
+            };
+        }
+        item.onAdded != null ? item.onAdded(container) : void 0;
+        return function () {
+            remove();
+            item.onRemoved != null ? item.onRemoved(container) : void 0;
+        };
+    }, defineProperties = exports.defineProperties = function (object, properties) {
+        return Object.defineProperties(object, normalizeProperties(properties));
+    }, defineClass = exports.defineClass = function (___definitions) {
+        var definitions = Array.prototype.slice.call(arguments, 0);
+        var classDefinition = definitions[0];
+        if (definitions[1] === void 0) {
+            definitions[1] = require('./Object');
+        }
+        classDefinition.super = definitions[1];
+        var name = classDefinition.name != null ? classDefinition.name : classDefinition.id != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i) != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i)[1] : void 0 : void 0;
+        if (!(name != null)) {
+            throw new Error('missing name property');
+        }
+        var classFunction;
+        if (classDefinition.hasOwnProperty('constructor')) {
+            classFunction = classDefinition.constructor;
+        } else if (classDefinition.super != null) {
+            classFunction = eval('(function ' + name + '() { ' + name + '.super.apply(this, arguments); })');
+        } else {
+            classFunction = eval('(function ' + name + '() {})');
+        }
+        var canSetClassProperty = function (key) {
+            if (key === 'name') {
+                return false;
+            }
+            var descriptor = Object.getOwnPropertyDescriptor(classFunction, key);
+            return !(descriptor != null) || descriptor.writable || !(descriptor.get != null);
+        };
+        for (var i = definitions.length - 1; i >= 0; i--) {
+            var definition = definitions[i];
+            for (var key in definition) {
+                var value = definition[key];
+                if (key !== 'test' || i === 0) {
+                    if (canSetClassProperty(key)) {
+                        classFunction[key] = patch(classFunction[key], value);
+                    }
+                }
+            }
+        }
+        if (classFunction.properties != null) {
+            defineProperties(classFunction.prototype, classFunction.properties);
+        }
+        return classFunction;
+    }, get = exports.get = function (object, property) {
+        if (!(object != null && property != null)) {
+            return void 0;
+        }
+        if (object !== this && typeof object.get === 'function') {
+            return object.get(property);
+        } else {
+            return object[property];
+        }
+    }, set = exports.set = function (object, property, value, deleteUndefined) {
+        if (deleteUndefined == null)
+            deleteUndefined = true;
+        if (object != null) {
+            if (arguments.length === 2 && property != null) {
+                for (var k in property) {
+                    var v = property[k];
+                    set(object, k, v);
+                }
+                return;
+            }
+            if (object !== this && typeof object.set === 'function') {
+                object.set(property, value);
+            } else if (deleteUndefined && value === void 0) {
+                delete object[property];
+            } else {
+                object[property] = value;
+            }
+            value != null ? value.onSet != null ? value.onSet(object, property) : void 0 : void 0;
+        }
+        return value;
+    }, is = exports.is = function (instance, type) {
+        if (!(instance != null)) {
+            return false;
+        }
+        if (!(type != null)) {
+            return true;
+        }
+        if (typeof type === 'function') {
+            if (typeof instance.is === 'function') {
+                return instance.is(type);
+            }
+            return instance instanceof type;
+        } else {
+            return instance === type;
+        }
+    }, makeReactive = exports.makeReactive = function (object, activate) {
+        var observeCount = 0;
+        var deactivate = null;
+        return Object.defineProperties(object, {
+            onObserved: {
+                value: function () {
+                    observeCount++;
+                    if (observeCount === 1) {
+                        deactivate = activate.call(object);
+                    }
+                }
+            },
+            unObserved: {
+                value: function () {
+                    observeCount--;
+                    if (observeCount === 0) {
+                        deactivate != null ? deactivate() : void 0;
+                    }
+                }
+            }
+        });
+    }, serialize = exports.serialize = function (object) {
+        return JSON.stringify(object);
+    }, deserialize = exports.deserialize = function () {
+        var extractType = function (object) {
+            var typeKey = require('ion/Object').typeKey;
+            var typeName = object[typeKey];
+            if (!(typeName != null)) {
+                return Object;
+            }
+            var type = require(typeName);
+            if (!type.serializable) {
+                throw new Error('Type is not serializable: ' + typeName);
+            }
+            delete object[typeKey];
+            return type;
+        };
+        var deserialize = function (object) {
+            if (typeof object === 'string') {
+                object = JSON.parse(object);
+            }
+            var typeKey = require('ion/Object').typeKey;
+            var typeName = object[typeKey];
+            if (typeName != null) {
+                var type = require(typeName);
+                if (!type.serializable) {
+                    throw new Error('Type is not serializable: ' + typeName);
+                }
+                var typedObject = new type();
+                for (var key in object) {
+                    var value = object[key];
+                    if (key !== typeKey) {
+                        typedObject[key] = object[key];
+                    }
+                }
+                return typedObject;
+            } else {
+                return object;
+            }
+        };
+        deserialize.extractType = extractType;
+        return deserialize;
+    }(), test = exports.test = {
+        defineClass: function () {
+            var Foo = defineClass({
+                    id: 'Foo',
+                    constructor: function (number) {
+                        this.number = number;
+                    },
+                    properties: {
+                        getValue: function () {
+                            return this.number;
+                        }
+                    }
+                });
+            if (!(new Foo(2).getValue() === 2))
+                throw new Error('Assertion Failed: (new Foo(2).getValue() is 2)');
+        },
+        defineProperties: {
+            'should allow primitive values': function () {
+                var object = {};
+                var result = defineProperties(object, {
+                        f: function () {
+                            return 'function';
+                        },
+                        i: 2,
+                        b: true,
+                        a: [],
+                        s: 'hello'
+                    });
+                if (!(object === result))
+                    throw new Error('Assertion Failed: (object is result)');
+                if (!(typeof object.f === 'function'))
+                    throw new Error('Assertion Failed: (typeof object.f is \'function\')');
+                if (!(object.f() === 'function'))
+                    throw new Error('Assertion Failed: (object.f() is \'function\')');
+                if (!(object.i === 2))
+                    throw new Error('Assertion Failed: (object.i is 2)');
+                if (!(object.b === true))
+                    throw new Error('Assertion Failed: (object.b is true)');
+                if (!Array.isArray(object.a))
+                    throw new Error('Assertion Failed: (Array.isArray(object.a))');
+                if (!(object.s === 'hello'))
+                    throw new Error('Assertion Failed: (object.s is \'hello\')');
+            }
+        }
+    };
+if (global.window != null) {
+    global.window.addEventListener('resize', function () {
+        console.log('window resized');
+        checkForChanges();
+    });
+}
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/index',_ion_index_);
+    else
+      _ion_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_index_.call(this);
+  }
+}).call(this)
+//@ sourceMappingURL=./index.map
+void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
+var ion = require('./'), isObject = function (a) {
+        return a != null && typeof a === 'object';
+    }, deleteValue = null;
+var merge = exports.merge = function (target, values, options) {
+        var deleteNull = (options != null ? options.deleteNull : void 0) != null ? options.deleteNull : true;
+        if ((values != null ? values.constructor : void 0) !== Object) {
+            return values;
+        }
+        if (!isObject(target)) {
+            if ((options != null ? options.factory : void 0) != null) {
+                target = options.factory(values);
+            } else {
+                target = {};
+            }
+        }
+        for (var key in values) {
+            var value = values[key];
+            if (deleteNull && value === deleteValue) {
+                delete target[key];
+            } else {
+                target[key] = merge(target[key], value, options);
+            }
+        }
+        return target;
+    }, combine = exports.combine = function (patch1, patch2) {
+        return merge(patch1, patch2, { deleteNull: false });
+    }, watch = exports.watch = function (object, handler, callInitial) {
+        if (callInitial == null)
+            callInitial = true;
+        if (!isObject(object)) {
+            throw new Error('Cannot watch: #{object}');
+        }
+        var subWatchers = {};
+        var pendingPatch = null;
+        var processPatch = function (patchValues) {
+            for (var name in patchValues) {
+                subWatchers[name] != null ? subWatchers[name]() : void 0;
+                var value = object[name];
+                if (isObject(value)) {
+                    (function (name) {
+                        var subHandler = function (patch) {
+                            var basePatch = {};
+                            basePatch[name] = patch;
+                            queuePatch(basePatch);
+                        };
+                        subWatchers[name] = watch(value, subHandler, false);
+                    }(name));
+                }
+            }
+        };
+        var pendingTimeout = null;
+        var queuePatch = function (patch) {
+            if (!callInitial) {
+                handler(patch);
+            } else {
+                pendingPatch = combine(pendingPatch, patch);
+                processPatch(pendingPatch);
+                pendingTimeout = pendingTimeout != null ? pendingTimeout : setTimeout(function () {
+                    handler(pendingPatch);
+                    pendingPatch = null;
+                    pendingTimeout = null;
+                }, 0);
+            }
+        };
+        var watcher = function (changes) {
+            try {
+                var patch = {};
+                for (var _i = 0; _i < changes.length; _i++) {
+                    var change = changes[_i];
+                    patch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
+                }
+                queuePatch(patch);
+            } catch (e) {
+                console.error(e);
+            }
+        };
+        processPatch(object);
+        ion.observe(object, watcher);
+        return function () {
+            ion.unobserve(object, watcher);
+            for (var key in subWatchers) {
+                var value = subWatchers[key];
+                value();
+            }
+        };
+    }, diff = exports.diff = function (oldValue, newValue) {
+        if (oldValue === newValue) {
+            return void 0;
+        }
+        if (!(oldValue != null && newValue != null && typeof newValue === 'object' && typeof oldValue === 'object')) {
+            return newValue != null ? newValue : null;
+        }
+        var patch = void 0;
+        for (var name in oldValue) {
+            if (oldValue.hasOwnProperty(name)) {
+                var propertyDiff = diff(oldValue[name], newValue[name]);
+                if (propertyDiff !== void 0) {
+                    patch = patch != null ? patch : {};
+                    patch[name] = propertyDiff;
+                }
+            }
+        }
+        for (var name in newValue) {
+            if (newValue.hasOwnProperty(name) && !oldValue.hasOwnProperty(name)) {
+                patch = patch != null ? patch : {};
+                patch[name] = newValue[name];
+            }
+        }
+        return patch;
+    }, isChange = exports.isChange = function (oldValue, newValue) {
+        if (oldValue === newValue) {
+            return false;
+        }
+        if (!(oldValue != null && newValue != null && typeof newValue === 'object' && typeof oldValue === 'object')) {
+            return true;
+        }
+        for (var name in newValue) {
+            if (newValue[name] === null && !oldValue.hasOwnProperty(name)) {
+                continue;
+            }
+            if (isChange(oldValue[name], newValue[name])) {
+                return true;
+            }
+        }
+        return false;
+    }, test = exports.test = function () {
+        var equal = function (a, b) {
+            return !isChange(a, b) && !isChange(b, a);
+        };
+        return {
+            merge: function () {
+                if (!equal({
+                        a: {
+                            b: 2,
+                            c: 3
+                        },
+                        d: 4
+                    }, merge({ a: { b: 2 } }, {
+                        a: { c: 3 },
+                        d: 4
+                    })))
+                    throw new Error('Assertion Failed: (equal({a:{b:2,c:3},d:4}, merge({a:{b:2}}, {a:{c:3},d:4})))');
+                if (!equal({ b: 2 }, merge(null, { b: 2 })))
+                    throw new Error('Assertion Failed: (equal({b:2}, merge(null, {b:2})))');
+                if (!equal({
+                        a: 1,
+                        b: 2
+                    }, merge({
+                        a: 1,
+                        b: 2,
+                        c: 3
+                    }, { c: void 0 })))
+                    throw new Error('Assertion Failed: (equal({a:1,b:2}, merge({a:1,b:2,c:3}, {c:undefined})))');
+                var double = function (x) {
+                    return x * 2;
+                };
+                if (!equal({ a: double }, merge({}, { a: double })))
+                    throw new Error('Assertion Failed: (equal({a:double}, merge({},{a:double})))');
+            },
+            isChange: function () {
+                if (!isChange({ a: 1 }, null))
+                    throw new Error('Assertion Failed: (isChange({a:1}, null))');
+                if (!!isChange(null, null))
+                    throw new Error('Assertion Failed: (not isChange(null, null))');
+                if (!isChange(void 0, null))
+                    throw new Error('Assertion Failed: (isChange(undefined, null))');
+                if (!isChange(null, void 0))
+                    throw new Error('Assertion Failed: (isChange(null, undefined))');
+                if (!!isChange({ a: 1 }, { a: 1 }))
+                    throw new Error('Assertion Failed: (not isChange({a:1}, {a:1}))');
+                if (!!isChange({
+                        a: {
+                            b: 2,
+                            c: 3
+                        }
+                    }, { a: { b: 2 } }))
+                    throw new Error('Assertion Failed: (not isChange({a:{b:2,c:3}}, {a:{b:2}}))');
+                if (!isChange({ a: { b: 2 } }, { a: { b: 3 } }))
+                    throw new Error('Assertion Failed: (isChange({a:{b:2}}, {a:{b:3}}))');
+                if (!!isChange({ a: 1 }, { b: null }))
+                    throw new Error('Assertion Failed: (not isChange({a:1}, {b:null}))');
+            },
+            diff: function () {
+                if (!equal({ b: 2 }, diff({ a: 1 }, {
+                        a: 1,
+                        b: 2
+                    })))
+                    throw new Error('Assertion Failed: (equal({b:2}, diff({a:1}, {a:1,b:2})))');
+                if (!equal({
+                        a: {
+                            b: 3,
+                            c: null
+                        }
+                    }, diff({
+                        a: {
+                            b: 2,
+                            c: 4
+                        }
+                    }, { a: { b: 3 } })))
+                    throw new Error('Assertion Failed: (equal({a:{b:3,c:null}}, diff({a:{b:2,c:4}}, {a:{b:3}})))');
+                if (!equal({ a: 1 }, diff(null, { a: 1 })))
+                    throw new Error('Assertion Failed: (equal({a:1}, diff(null, {a:1})))');
+                if (!equal({ c: { d: { f: 4 } } }, diff({
+                        a: 1,
+                        b: 2,
+                        c: {
+                            d: {
+                                e: 1,
+                                f: 2
+                            }
+                        }
+                    }, {
+                        a: 1,
+                        b: 2,
+                        c: {
+                            d: {
+                                e: 1,
+                                f: 4
+                            }
+                        }
+                    })))
+                    throw new Error('Assertion Failed: (equal({c:{d:{f:4}}}, diff({a:1,b:2,c:{d:{e:1,f:2}}}, {a:1,b:2,c:{d:{e:1,f:4}}})))');
+                if (!equal(null, diff({ a: 1 }, void 0)))
+                    throw new Error('Assertion Failed: (equal(null, diff({a:1}, undefined)))');
+                if (!equal(null, diff({ a: 1 }, null)))
+                    throw new Error('Assertion Failed: (equal(null, diff({a:1}, null)))');
+                if (!equal(void 0, diff({ a: { b: 2 } }, { a: { b: 2 } })))
+                    throw new Error('Assertion Failed: (equal(undefined, diff({a:{b:2}}, {a:{b:2}})))');
+            },
+            observe: function (done) {
+                if (!(Object.observe != null)) {
+                    return done(null, 'Object.observe missing.');
+                }
+                var source = {
+                        name: 'Kris',
+                        age: 41,
+                        children: {
+                            Sadera: {
+                                grandchildren: {
+                                    One: 1,
+                                    Two: 2
+                                }
+                            },
+                            Orion: {},
+                            Third: {}
+                        }
+                    };
+                var target = ion.clone(source, true);
+                var unwatch = watch(source, function (patch) {
+                        target = merge(target, patch);
+                        if (equal(source, target)) {
+                            done();
+                            unwatch();
+                        }
+                    });
+                {
+                    source.name = 'Fred';
+                    source.children = ion.patch(source.children, {
+                        Orion: {
+                            a: 1,
+                            b: 2,
+                            c: 12
+                        },
+                        Sadera: { grandchildren: { three: 3 } }
+                    });
+                }
+                delete source.children.Third;
+                ion.checkForChanges();
+            }
+        };
+    }();
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/mergePatch',_ion_mergePatch_);
+    else
+      _ion_mergePatch_.call(this, module, exports, require);
+  }
+  else {
+    _ion_mergePatch_.call(this);
+  }
+}).call(this)
+//@ sourceMappingURL=./mergePatch.map
 void (function(){var _ion_Object_ = function(module,exports,require){'use strict';
 var ion = require('./');
 var Object = ion.defineClass({
@@ -6177,9 +9957,6 @@ var Object = ion.defineClass({
                     this[key] = value;
                 }
             }
-        },
-        toString: function () {
-            return this.name;
         },
         typeKey: '$',
         properties: {
@@ -6492,15 +10269,6 @@ var Context = ion.defineClass({
                 return value;
             },
             getVariable: function (name) {
-                return this.variables[name] != null ? this.variables[name] : this.parent != null ? this.parent.getVariable(name) : void 0;
-            },
-            setVariable: function (name, node) {
-                if (name != null) {
-                    var variable = this.variables[name] = this.createRuntime(node);
-                    return variable;
-                }
-            },
-            getVariableExpression: function (name) {
                 var context = this, value;
                 while (context != null) {
                     var variable = context.variables[name];
@@ -6515,6 +10283,12 @@ var Context = ion.defineClass({
                 }
                 var cachedGlobals = this.root.globals = this.root.globals != null ? this.root.globals : {};
                 return cachedGlobals[name] = cachedGlobals[name] != null ? cachedGlobals[name] : new Literal({ value: value });
+            },
+            setVariable: function (name, node) {
+                if (name != null) {
+                    var variable = this.variables[name] = this.createRuntime(node);
+                    return variable;
+                }
             }
         }
     });
@@ -6723,12 +10497,12 @@ var lookup = {
             VariableDeclaration: ion.patch(new Factory(), { runtime: './VariableDeclaration' }),
             ThisExpression: ion.patch(new Factory(), {
                 createRuntime: function (context, ast) {
-                    return context.getVariableExpression('this');
+                    return context.getVariable('this');
                 }
             }),
             Identifier: ion.patch(new Factory(), {
                 createRuntime: function (context, ast) {
-                    return context.getVariableExpression(ast.name);
+                    return context.getVariable(ast.name);
                 }
             }),
             Function: ion.patch(new Factory(), {
@@ -7009,18 +10783,18 @@ var ForInOfStatement = ion.defineClass({
                 delete this.statements[key];
             },
             applyChanges: function (changes) {
-                function ignoreProperty(name) {
-                    if (!(name != null)) {
-                        return true;
-                    }
-                    if (name[0] === '_') {
-                        return true;
-                    }
-                    if (name === 'length' && this.type === 'ForOfStatement') {
-                        return true;
-                    }
-                    return false;
-                }
+                var ignoreProperty = ion.bind(function (name) {
+                        if (!(name != null)) {
+                            return true;
+                        }
+                        if (name[0] === '_') {
+                            return true;
+                        }
+                        if (name === 'length' && this.type === 'ForOfStatement') {
+                            return true;
+                        }
+                        return false;
+                    }, this);
                 for (var _i = 0; _i < changes.length; _i++) {
                     var _ref = changes[_i];
                     var name = _ref.name;
@@ -7583,9 +11357,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -7638,9 +11409,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -7690,9 +11458,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -7834,9 +11599,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -7969,9 +11731,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -8127,9 +11886,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -8214,9 +11970,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -8252,9 +12005,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -8298,9 +12048,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -8379,9 +12126,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -8430,9 +12174,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -8490,9 +12231,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -8534,9 +12272,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -8561,9 +12296,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -8711,9 +12443,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -8806,9 +12535,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -8894,11 +12620,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     _ref: _ref,
+                    ion: ion,
                     templates: templates,
                     test: test
                 });
@@ -8955,11 +12678,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     type: type,
+                    ion: ion,
                     templates: templates,
                     test: test
                 });
@@ -8979,7 +12699,7 @@ var templates = [
         ],
         [
             ion.template(function (input, output) {
-                ion.patch(output, { e: input.a + input.b });
+                output.e = input.a + input.b;
                 return output;
             }, function (input, output) {
                 return ion.createRuntime({
@@ -9043,12 +12763,9 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     input: input,
                     output: output,
+                    ion: ion,
                     templates: templates,
                     test: test
                 });
@@ -9093,9 +12810,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     templates: templates,
                     test: test
@@ -9146,15 +12860,204 @@ var test = exports.test = function () {
   }
 }).call(this)
 //@ sourceMappingURL=./immediateTemplates.map
-void (function(){var _ion_test_ionCompilerES5_ = function(module,exports,require){var index, ion, tests;
+void (function(){var _ion_test_ionCompiler_ = function(module,exports,require){var index, ion, tests;
 
 ion = require('../');
 
 index = require('../compiler');
 
 tests = {
-  "let x = 10": "'use strict';\nvar x = 10;",
-  "let x = 10\nif foo\n    let y = 20\nif bar\n    const y = 30": "'use strict';\nvar x = 10;\nif (foo) {\n    var y = 20;\n}\nif (bar) {\n    var y = 30;\n}"
+  "let x = 10": "'use strict';\nlet x = 10;",
+  "for name, value of foo\n    console.log(name + value)": "'use strict';\nfor (let name in foo) {\n    let value = foo[name];\n    console.log(name + value);\n}",
+  "for let name, value of {a:1,b:2,c:3}\n    console.log(name + value)": "'use strict';\n{\n    let _ref = {\n            a: 1,\n            b: 2,\n            c: 3\n        };\n    for (let name in _ref) {\n        let value = _ref[name];\n        console.log(name + value);\n    }\n}    ",
+  "for let name in [\"a\",\"b\",\"c\"]\n    console.log(name)": "'use strict';\n{\n    let _ref = [\n            'a',\n            'b',\n            'c'\n        ];\n    for (let _i = 0; _i < _ref.length; _i++) {\n        let name = _ref[_i];\n        console.log(name);\n    }\n}",
+  "for name, index in [\"a\",\"b\",\"c\"]\n    console.log(name)": "'use strict';\n{\n    let _ref = [\n            'a',\n            'b',\n            'c'\n        ];\n    for (let _i = 0; _i < _ref.length; _i++) {\n        let index = _i;\n        let name = _ref[_i];\n        console.log(name);\n    }\n}",
+  "let object =\n    x: 1\n    y: 2\n    foo:\n        z: 3": "'use strict';\nlet object = {\n        x: 1,\n        y: 2,\n        foo: { z: 3 }\n    };",
+  "let array = []\n    1\n    2\n    3": "'use strict';\nlet array = [\n        1,\n        2,\n        3\n    ];",
+  "let kids = []\n    {}\n        name: \"Alpha\"\n        age: 10\n    {}\n        name: \"Beta\"\n        age: 8": "'use strict';\nlet kids = [\n        {\n            name: 'Alpha',\n            age: 10\n        },\n        {\n            name: 'Beta',\n            age: 8\n        }\n    ];",
+  "try\n    doSomething(1)\ncatch e\n    log(e)": "'use strict';\ntry {\n    doSomething(1);\n} catch (e) {\n    log(e);\n}",
+  "try\n    doSomething(1)\nfinally\n    log(e)": "'use strict';\ntry {\n    doSomething(1);\n} finally {\n    log(e);\n}",
+  "try\n    doSomething(1)\ncatch e\n    console.error(e)\nfinally\n    log(e)": "'use strict';\ntry {\n    doSomething(1);\n} catch (e) {\n    console.error(e);\n} finally {\n    log(e);\n}",
+  "for key, name of foo\n    if name is 'a'\n        break\n    else if name is 'b'\n        continue\n    else if name is 'c'\n        return\n    else if name is 'd'\n        throw new Error(\"D\")\n    else\n        return\n            x: 1\n            y: 2": "'use strict';\nfor (let key in foo) {\n    let name = foo[key];\n    if (name === 'a') {\n        break;\n    } else if (name === 'b') {\n        continue;\n    } else if (name === 'c') {\n        return;\n    } else if (name === 'd') {\n        throw new Error('D');\n    } else {\n        return {\n            x: 1,\n            y: 2\n        };\n    }\n}",
+  "console.log(\"Hello {{name}}\")": "'use strict';\nconsole.log('Hello ' + name);",
+  "console.log(\"{{name}}\")": "'use strict';\nconsole.log('' + name);",
+  "console.log(\"{{ 1 }}{{ 2 }}\")": "'use strict';\nconsole.log('' + 1 + 2);",
+  "return \"\"\n    <html>\n        <head><title>{{ title }}</title></head>\n        <body>\n        {{ body }}\n        </body>\n    </html>": "'use strict';\nreturn '<html>\\n    <head><title>' + title + '</title></head>\\n    <body>\\n    ' + body + '\\n    </body>\\n</html>';",
+  "return ''\n    <html>\n        <head><title>{{ title }}</title></head>\n        <body>\n        {{ body }}\n        </body>\n    </html>": "'use strict';\nreturn '<html>\\n    <head><title>{{ title }}</title></head>\\n    <body>\\n    {{ body }}\\n    </body>\\n</html>';",
+  "do -> x": "'use strict';\n(function () {\n    return x;\n}());",
+  "do (x, y) => x + y": "'use strict';\nconst ion = require('ion');\nion.bind(function (x, y) {\n    return x + y;\n}, this)(x, y);",
+  "const ion = import \"ion\"": "'use strict';\nconst ion = require('ion');",
+  "export\n    secret: 97542": "'use strict';\nmodule.exports = exports = { secret: 97542 };",
+  "export let x = 1, y = 2": "'use strict';\nlet x = exports.x = 1, y = exports.y = 2;",
+  "export const\n    x = 1\n    y = 2\n    z = 3": "'use strict';\nconst x = exports.x = 1, y = exports.y = 2, z = exports.z = 3;",
+  "let {x,y} = {x:1,y:2}": "'use strict';\nlet _ref = {\n        x: 1,\n        y: 2\n    };\nlet x = _ref.x;\nlet y = _ref.y;",
+  "for key, {x:[a,b],y:{c:d}} of points\n    console.log(x, y)": "'use strict';\nfor (let key in points) {\n    let _ref = points[key];\n    let a = _ref.x[0];\n    let b = _ref.x[1];\n    let d = _ref.y.c;\n    console.log(x, y);\n}",
+  "for {x:[a,b],y:{c:d}}, index in points\n    console.log(x, y)": "'use strict';\nfor (let _i = 0; _i < points.length; _i++) {\n    let index = _i;\n    let _ref = points[_i];\n    let a = _ref.x[0];\n    let b = _ref.x[1];\n    let d = _ref.y.c;\n    console.log(x, y);\n}",
+  "foo ? bar": "'use strict';\nfoo != null ? foo : bar;",
+  "foo ?? bar": "'use strict';\nfoo != void 0 ? foo : bar;",
+  "let x\nx ?= y": "'use strict';\nlet x;\nx = x != null ? x : y;",
+  "let x\nx ??= y": "'use strict';\nlet x;\nx = x != void 0 ? x : y;",
+  "for const x, index in foo\n    log(x)": "'use strict';\nfor (let _i = 0; _i < foo.length; _i++) {\n    const index = _i;\n    const x = foo[_i];\n    log(x);\n}",
+  "let x = 1, y = 2\n[x,y] = [y,x]": "'use strict';\nlet x = 1, y = 2;\nconst _ref = [\n        y,\n        x\n    ];\nx = _ref[0];\ny = _ref[1];",
+  "a?.b": "'use strict';\na != null ? a.b : void 0;",
+  "a?.b.c?.d": "'use strict';\na != null ? a.b.c != null ? a.b.c.d : void 0 : void 0;",
+  "a?()": "'use strict';\na != null ? a() : void 0;",
+  "a?.b?.c?()": "'use strict';\na != null ? a.b != null ? a.b.c != null ? a.b.c() : void 0 : void 0 : void 0;",
+  "a?.b().c?()": "'use strict';\na != null ? a.b().c != null ? a.b().c() : void 0 : void 0;",
+  "let y = (x) -> 2": "'use strict';\nlet y = function (x) {\n    return 2;\n};",
+  "s?": "'use strict';\ns != null;",
+  "# also test comments\nlet regex = /foo/": "'use strict';\nlet regex = /foo/;",
+  "for let i = 0; i < 10; i++\n    console.log(i)": "'use strict';\nfor (let i = 0; i < 10; i++) {\n    console.log(i);\n}",
+  "for key of object if key[0] isnt '_' for c in key\n    console.log(c)": "'use strict';\nfor (let key in object) {\n    if (key[0] !== '_') {\n        for (let _i = 0; _i < key.length; _i++) {\n            let c = key[_i];\n            console.log(c);\n        }\n    }\n}",
+  "console.log([key for key of object if key is cool])": "'use strict';\nlet _ref = [];\nfor (let key in object) {\n    if (key === cool) {\n        _ref.push(key);\n    }\n}\nconsole.log(_ref);",
+  "(console.log)\n    1\n    2\n    {}\n        x: 1\n        y: 2": "'use strict';\nconsole.log(1, 2, {\n    x: 1,\n    y: 2\n});",
+  "let x = ->\n    try\n        foo()\n        bar()\n    catch e\n        baz()": "'use strict';\nlet x = function () {\n    try {\n        foo();\n        bar();\n    } catch (e) {\n        baz();\n    }\n};",
+  "if foo\n    # bar": "'use strict';\nif (foo) {\n}",
+  "let trim = (a = \"\") -> a.trim()": "'use strict';\nlet trim = function (a) {\n    if (a == null)\n        a = '';\n    return a.trim();\n};",
+  "(foo)\n    1\n    2": "'use strict';\nfoo(1, 2);",
+  "(compile)\n    foo: 1\n    bar: 2\n    baz:\n        a: 1\n        b: 2": "'use strict';\ncompile({\n    foo: 1,\n    bar: 2,\n    baz: {\n        a: 1,\n        b: 2\n    }\n});",
+  "let array = [1,2,3]\n    4\n    5\n    6": "'use strict';\nlet array = [\n        1,\n        2,\n        3,\n        4,\n        5,\n        6\n    ];",
+  "let point = new Point(10, 20)\n    z: 30": "'use strict';\nconst ion = require('ion');\nlet point = ion.patch(new Point(10, 20), { z: 30 });",
+  "let object = {x:1, y:2}\n    z: 3": "'use strict';\nlet object = {\n        x: 1,\n        y: 2,\n        z: 3\n    };",
+  "let origin = new Point\n    x: 1\n    y: 2": "'use strict';\nconst ion = require('ion');\nlet origin = ion.patch(new Point(), {\n        x: 1,\n        y: 2\n    });",
+  "let origin = new Line\n    a: new Point\n        x: 0\n        y: 0\n    b: new Point\n        x: 10\n        y: 20": "'use strict';\nconst ion = require('ion');\nlet origin = ion.patch(new Line(), {\n        a: ion.patch(new Point(), {\n            x: 0,\n            y: 0\n        }),\n        b: ion.patch(new Point(), {\n            x: 10,\n            y: 20\n        })\n    });",
+  "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: new Point\n        x: 0\n        y: 0": "'use strict';\nconst ion = require('ion');\n{\n    input.x = 10;\n    input.y = 20;\n    input.z = ion.patch(input.z, {\n        a: 1,\n        b: 2\n    });\n    input.w = ion.patch(new Point(), {\n        x: 0,\n        y: 0\n    });\n}",
+  "let point = new Point\n    [x]: 1\n    [y]: 2": "'use strict';\nlet point = new Point();\n{\n    point[x] = 1;\n    point[y] = 2;\n}",
+  "let self = @\nlet x = @x\nlet y = @.y\nlet z = this.z": "'use strict';\nlet self = this;\nlet x = this.x;\nlet y = this.y;\nlet z = this.z;",
+  "let x = {}\n    [key]: value": "'use strict';\nlet x = {};\nx[key] = value;",
+  "if foo\n    return {}\n        for key, value of object\n            [key]: value": "'use strict';\nif (foo) {\n    let _ref = {};\n    for (let key in object) {\n        let value = object[key];\n        _ref[key] = value;\n    }\n    return _ref;\n}",
+  "for x, y, z of foo\n    log(foo)": {
+    line: 1,
+    column: 11
+  },
+  "export let x": {
+    line: 1,
+    column: 12
+  },
+  "export const x": {
+    line: 1,
+    column: 14
+  },
+  "export const x = 1\nexport {y:2}": {
+    line: 2,
+    column: 1
+  },
+  "const x = 1\nx = 2": {
+    line: 2,
+    column: 1
+  },
+  "const double = (x) ->\n    x *= 2\n    return x": "'use strict';\nconst double = function (x) {\n    x *= 2;\n    return x;\n};",
+  "x = 1": {
+    line: 1,
+    column: 1
+  },
+  "let x = 1\nlet x = 2": {
+    line: 2,
+    column: 5
+  },
+  "let x = 1\nconst double = (x) ->\n    return x": "'use strict';\nlet x = 1;\nconst double = function (x) {\n    return x;\n};",
+  "console.log(x)\nif a\n    let x = 1": {
+    line: 1,
+    column: 13
+  },
+  "if typeof a is 'string' and void a and delete a.b\n    log(a)": "'use strict';\nif (typeof a === 'string' && void a && delete a.b) {\n    log(a);\n}",
+  "if 1\n    # 1\n    # 2\n    x = 12": {
+    line: 4,
+    column: 5
+  },
+  "export const\n    BlockStatement =\n        isBlock: true\n        newScope: tr ue": {
+    line: 4,
+    column: 22
+  },
+  "export class Foo extends import 'Bar'\n    constructor: (x,y) ->\n        @x = x\n        @y = y\n    properties:\n        x: 1\n        y: 2\n        getXY: -> [@x,@y]\n    isThisPropertyStatic: true": "'use strict';\nconst ion = require('ion');\nconst Foo = ion.defineClass({\n        name: 'Foo',\n        constructor: function Foo(x, y) {\n            this.x = x;\n            this.y = y;\n        },\n        properties: {\n            x: 1,\n            y: 2,\n            getXY: function () {\n                return [\n                    this.x,\n                    this.y\n                ];\n            }\n        },\n        isThisPropertyStatic: true\n    }, require('Bar'));\nmodule.exports = exports = Foo;",
+  "const double(a) -> a * 2": "'use strict';\nfunction double(a) {\n    return a * 2;\n}",
+  "const double(a) -> a * 2\ndouble = 12": {
+    line: 2,
+    column: 1
+  },
+  "let object =\n    const double(a) -> a * 2\n    if a\n        [key]: value\n    else\n        foo: double(2)": "'use strict';\nlet object = {};\n{\n    function double(a) {\n        return a * 2;\n    }\n    if (a) {\n        object[key] = value;\n    } else {\n        object.foo = double(2);\n    }\n}",
+  "let items = []\n    for key, value of window\n        value": "'use strict';\nlet items = [];\nfor (let key in window) {\n    let value = window[key];\n    items.push(value);\n}",
+  "let foo = div()\n    span()\n        'Hello'": "'use strict';\nconst ion = require('ion');\nlet foo = div();\nlet _ref = span();\nion.add(_ref, 'Hello');\nion.add(foo, _ref);",
+  "const ion = import './'\nlet foo = div()\n    span()\n        'Hello'": "'use strict';\nconst ion = require('./');\nlet foo = div();\nlet _ref = span();\nion.add(_ref, 'Hello');\nion.add(foo, _ref);",
+  "const translate({x,y}) ->\n    x++\n    y++\n    return {x,y}": "'use strict';\nfunction translate(_ref) {\n    let x = _ref.x;\n    let y = _ref.y;\n    x++;\n    y++;\n    return {\n        x: x,\n        y: y\n    };\n}",
+  "let x = (foo)\n    ''\n        multiline string literal\n    \"\"\n        multiline string template": "'use strict';\nlet x = foo('multiline string literal', 'multiline string template');",
+  "assert x is 2": "'use strict';\nif (!(x === 2))\n    throw new Error('Assertion Failed: (x is 2)');",
+  "export class Point\n    constructor: ->\n        # call super with arguments object\n        super\n        # call super again with explicit arguments\n        super(width, height)\n        # calling twice is silly, but legal\n    properties:\n        x: 0\n        y: 0\n        superIdentifier: (x, y) -> super\n        superExplicit: (a, b) -> super(a, b)": "'use strict';\nconst ion = require('ion');\nconst Point = ion.defineClass({\n        name: 'Point',\n        constructor: function Point() {\n            Point.super.apply(this, arguments);\n            Point.super.call(this, width, height);\n        },\n        properties: {\n            x: 0,\n            y: 0,\n            superIdentifier: function (x, y) {\n                return Point.super.prototype.superIdentifier.apply(this, arguments);\n            },\n            superExplicit: function (a, b) {\n                return Point.super.prototype.superExplicit.call(this, a, b);\n            }\n        }\n    });\nmodule.exports = exports = Point;",
+  "const spreadFunction1(a, b, ...c) ->\n    log(1)\nconst spreadFunction2(a, b, ...c, d, e) ->\n    log(2)\nconst spreadFunction3(a,b, ...c, {d,e}) ->\n    log(3)": "'use strict';\nfunction spreadFunction1(a, b, ___c) {\n    let c = Array.prototype.slice.call(arguments, 2);\n    log(1);\n}\nfunction spreadFunction2(a, b, ___c, d, e) {\n    let c = Array.prototype.slice.call(arguments, 2, arguments.length - 2);\n    d = arguments[arguments.length - 2];\n    e = arguments[arguments.length - 1];\n    log(2);\n}\nfunction spreadFunction3(a, b, ___c, _ref) {\n    let c = Array.prototype.slice.call(arguments, 2, arguments.length - 1);\n    _ref = arguments[arguments.length - 1];\n    let d = _ref.d;\n    let e = _ref.e;\n    log(3);\n}",
+  "# default value for a should be set before b\nconst foo(a = 0, b = a) -> a + b": "'use strict';\nfunction foo(a, b) {\n    if (a == null)\n        a = 0;\n    if (b == null)\n        b = a;\n    return a + b;\n}",
+  "export template ->\n    # cannot define classes in templates\n    class Poo": {
+    line: 3,
+    column: 5
+  },
+  "export template ->\n    # cannot for loop in templates\n    for let i = 0; i < 10; i++\n        console.log(i)": {
+    line: 3,
+    column: 5
+  },
+  "export template ->\n    # cannot export in templates\n    export x": {
+    line: 3,
+    column: 5
+  },
+  "export template ->\n    # cannot try/catch in templates\n    try\n        return 0\n    catch e\n        return 1": {
+    line: 3,
+    column: 5
+  },
+  "export template ->\n    # cannot throw errors in templates\n    throw new Error": {
+    line: 3,
+    column: 5
+  },
+  "# cannot use => syntax in templates\nexport template => 0": {
+    line: 2,
+    column: 8
+  },
+  "export template ->\n    const x = 12\n    # cannot assign to const variables, make sure enforced within template\n    x = 10\n    return x": {
+    line: 4,
+    column: 5
+  },
+  "export template ->\n    let x = 12\n    # cannot assign to let variables either.\n    x = 12\n    return x": {
+    line: 4,
+    column: 5
+  },
+  "export template ->\n    let x = {y:10}\n    # cannot assign to anything really.\n    x.y = 12\n    return x.y": {
+    line: 4,
+    column: 5
+  },
+  "export template (a) ->\n    # cannot assign to parameters either\n    a = 10\n    return a": {
+    line: 3,
+    column: 5
+  },
+  "export class Foo\n    constructor: ->\n        # there was a problem with existential operators not processing within class definitions\n        if properties?\n            log(properties)": "'use strict';\nconst ion = require('ion');\nconst Foo = ion.defineClass({\n        name: 'Foo',\n        constructor: function Foo() {\n            if (properties != null) {\n                log(properties);\n            }\n        }\n    });\nmodule.exports = exports = Foo;",
+  "const ctor = @@\nconst ctorName = @@name": "'use strict';\nconst ctor = this.constructor;\nconst ctorName = this.constructor.name;",
+  "const inlineThrow() -> throw new Error('inline throw')": "'use strict';\nfunction inlineThrow() {\n    throw new Error('inline throw');\n}",
+  "class DynamicExpression\n    watch: ->\n        let x = @x ?= []": "'use strict';\nconst ion = require('ion');\nconst DynamicExpression = ion.defineClass({\n        name: 'DynamicExpression',\n        watch: function () {\n            let x = this.x = this.x != null ? this.x : [];\n        }\n    });\nDynamicExpression;",
+  "let a = (new Point)\n    1\n    2": "'use strict';\nlet a = new Point(1, 2);",
+  "let x = [y for y in z]": "'use strict';\nlet _ref = [];\nfor (let _i = 0; _i < z.length; _i++) {\n    let y = z[_i];\n    _ref.push(y);\n}\nlet x = _ref;",
+  "return\n    z: []\n        let items = [3,2,1]\n        for item in items\n            item * 2": "'use strict';\nlet _ref = [];\n{\n    let items = [\n            3,\n            2,\n            1\n        ];\n    for (let _i = 0; _i < items.length; _i++) {\n        let item = items[_i];\n        _ref.push(item * 2);\n    }\n}\nreturn { z: _ref };",
+  "let x = `y == null`": "'use strict';\nlet x = y == null;",
+  "# should get accurate error locations even from inline javascript expressions\nlet x = `y := null`": {
+    line: 2,
+    column: 13
+  },
+  "let x = 0 in Array\nlet y = \"foo\" instanceof String": "'use strict';\nlet x = 0 in Array;\nlet y = 'foo' instanceof String;",
+  "let output\noutput :=\n    x: 1\n    y: 2": "'use strict';\nconst ion = require('ion');\nlet output;\noutput = ion.patch(output, {\n    x: 1,\n    y: 2\n});",
+  "output:\n    for a in b\n        [c]: d": "'use strict';\nfor (let _i = 0; _i < b.length; _i++) {\n    let a = b[_i];\n    output[c] = d;\n}",
+  "output: {}\n    x: 1": {
+    line: 1,
+    column: 9
+  },
+  "[output]:\n    x: 1": {
+    line: 1,
+    column: 2
+  },
+  "#\n#\n\n#": "'use strict';",
+  "[a for a in b]\n[a for a in c]": "'use strict';\nlet _ref = [];\nfor (let _i = 0; _i < b.length; _i++) {\n    let a = b[_i];\n    _ref.push(a);\n}\n_ref;\nlet _ref2 = [];\nfor (let _i2 = 0; _i2 < c.length; _i2++) {\n    let a = c[_i2];\n    _ref2.push(a);\n}\n_ref2;",
+  "let array = []\n    1, 0, 0\n    0, 1, 0\n    0, 0, 1": "'use strict';\nlet array = [\n        1,\n        0,\n        0,\n        0,\n        1,\n        0,\n        0,\n        0,\n        1\n    ];",
+  "import(foo).bar": "'use strict';\nrequire(foo).bar;",
+  "let x = []\n    ->": "'use strict';\nlet x = [function () {\n        }];",
+  "x:\n    delete: true": "'use strict';\nx.delete = true;",
+  "return\n    style:\n        fontSize: \"0.7em\"\n    \"delete\"": "'use strict';\nconst ion = require('ion');\nlet _ref = {};\n{\n    _ref.style = ion.patch(_ref.style, { fontSize: '0.7em' });\n    ion.add(_ref, 'delete');\n}\nreturn _ref;",
+  "export template add(x,y) -> x + y": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function add(x, y) {\n    return x + y;\n}, function (x, y) {\n    return ion.createRuntime({\n        type: 'Template',\n        body: [{\n                type: 'ReturnStatement',\n                argument: {\n                    type: 'BinaryExpression',\n                    operator: '+',\n                    left: {\n                        type: 'Identifier',\n                        name: 'x'\n                    },\n                    right: {\n                        type: 'Identifier',\n                        name: 'y'\n                    }\n                }\n            }],\n        bound: false\n    }, {\n        this: this,\n        x: x,\n        y: y\n    });\n});",
+  "activate template ->": "'use strict';\nconst ion = require('ion');\nnew (ion.template(function () {\n}, function () {\n    return ion.createRuntime({\n        type: 'Template',\n        body: [],\n        bound: false\n    }, { this: this });\n})).template().activate();",
+  "content:\n    name: 'foo'\n    1\n    2": "'use strict';\nconst ion = require('ion');\n{\n    content.name = 'foo';\n    ion.add(content, 1);\n    ion.add(content, 2);\n}"
 };
 
 if (global.window != null) {
@@ -9166,16 +13069,18 @@ exports.test = function() {
   for (input in tests) {
     expected = tests[input];
     options = {
-      target: 'es5'
+      target: 'es6'
     };
     if (expected === null) {
       console.log('---------------------------------------------------');
       console.log(JSON.stringify(index.compile(input, ion.patch({
-        postprocess: false
+        postprocess: false,
+        loc: false
       }, options)), null, '  '));
       console.log('-Postprocessed-------------------------------------');
       console.log(JSON.stringify(index.compile(input, ion.patch({
-        generate: false
+        generate: false,
+        loc: false
       }, options)), null, '  '));
       console.log('---------------------------------------------------');
       console.log(index.compile(input, ion.patch({
@@ -9212,12 +13117,12 @@ exports.test = function() {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/test/ionCompilerES5',_ion_test_ionCompilerES5_);
+      require.register('ion/test/ionCompiler',_ion_test_ionCompiler_);
     else
-      _ion_test_ionCompilerES5_.call(this, module, exports, require);
+      _ion_test_ionCompiler_.call(this, module, exports, require);
   }
   else {
-    _ion_test_ionCompilerES5_.call(this);
+    _ion_test_ionCompiler_.call(this);
   }
 }).call(this)
 void (function(){var _ion_test_reactiveTemplates_ = function(module,exports,require){'use strict';
@@ -9263,11 +13168,8 @@ var _ref8 = [];
             bound: false
         }, {
             this: this,
-            require: require,
-            module: module,
-            exports: exports,
-            ion: ion,
             object: object,
+            ion: ion,
             _ref8: _ref8,
             templates: templates,
             _ref9: _ref9
@@ -9325,11 +13227,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     properties: properties,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -9389,11 +13288,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     properties: properties,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -9420,12 +13316,10 @@ var templates = [
                     return a * 2;
                 }
                 var _ref6 = {};
-                {
-                    for (var key in properties) {
-                        var value = properties[key];
-                        var value = properties[key];
-                        _ref6[key] = double(value);
-                    }
+                for (var key in properties) {
+                    var value = properties[key];
+                    var value = properties[key];
+                    _ref6[key] = double(value);
                 }
                 return _ref6;
             }, function (properties) {
@@ -9516,11 +13410,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     properties: properties,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -9549,13 +13440,11 @@ var templates = [
                     return a * factor;
                 }
                 var _ref7 = {};
-                {
-                    for (var key in properties) {
-                        var value = properties[key];
-                        var value = properties[key];
-                        if (key !== 'factor') {
-                            _ref7[key] = multiply(value);
-                        }
+                for (var key in properties) {
+                    var value = properties[key];
+                    var value = properties[key];
+                    if (key !== 'factor') {
+                        _ref7[key] = multiply(value);
                     }
                 }
                 return _ref7;
@@ -9718,11 +13607,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     properties: properties,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -9819,11 +13705,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     _ref: _ref,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -9933,11 +13816,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     _ref2: _ref2,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -9988,11 +13868,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     object: object,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -10105,12 +13982,9 @@ var templates = [
                             }
                         }, {
                             this: this,
-                            require: require,
-                            module: module,
-                            exports: exports,
-                            ion: ion,
                             _ref3: _ref3,
                             sum: sum,
+                            ion: ion,
                             _ref8: _ref8,
                             templates: templates,
                             _ref9: _ref9
@@ -10146,12 +14020,9 @@ var templates = [
                         bound: false
                     }, {
                         this: this,
-                        require: require,
-                        module: module,
-                        exports: exports,
-                        ion: ion,
                         object: object,
                         sum: sum,
+                        ion: ion,
                         _ref8: _ref8,
                         templates: templates,
                         _ref9: _ref9
@@ -10173,7 +14044,7 @@ var templates = [
             'bidirectional properties',
             {},
             ion.template(function (object) {
-                ion.patch(object, { x: object.y });
+                object.x = object.y;
                 return object;
             }, function (object) {
                 return ion.createRuntime({
@@ -10222,11 +14093,8 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
-                    ion: ion,
                     object: object,
+                    ion: ion,
                     _ref8: _ref8,
                     templates: templates,
                     _ref9: _ref9
@@ -10288,9 +14156,6 @@ var templates = [
                     bound: false
                 }, {
                     this: this,
-                    require: require,
-                    module: module,
-                    exports: exports,
                     ion: ion,
                     _ref8: _ref8,
                     templates: templates,
@@ -10307,36 +14172,34 @@ var templates = [
         _ref8
     ];
 var _ref9 = {};
-{
-    for (var _i2 = 0; _i2 < templates.length; _i2++) {
-        var _ref10 = templates[_i2];
-        var name = _ref10[0];
-        var thisArg = _ref10[1];
-        var templateType = _ref10[2];
-        var argument = _ref10[3];
-        var patch = _ref10[4];
-        var expected = _ref10[5];
-        if (expected != null) {
-            _ref9[name] = function (thisArg, templateType, argument, patch, expected) {
-                return function (done) {
-                    var template = templateType.template.call(thisArg, argument);
-                    function checkIfDone(check) {
-                        if (JSON.stringify(check) === JSON.stringify(expected)) {
-                            template.deactivate();
-                            done();
-                        }
+for (var _i2 = 0; _i2 < templates.length; _i2++) {
+    var _ref10 = templates[_i2];
+    var name = _ref10[0];
+    var thisArg = _ref10[1];
+    var templateType = _ref10[2];
+    var argument = _ref10[3];
+    var patch = _ref10[4];
+    var expected = _ref10[5];
+    if (expected != null) {
+        _ref9[name] = function (thisArg, templateType, argument, patch, expected) {
+            return function (done) {
+                var template = templateType.template.call(thisArg, argument);
+                function checkIfDone(check) {
+                    if (JSON.stringify(check) === JSON.stringify(expected)) {
+                        template.deactivate();
+                        done();
                     }
-                    template.activate();
-                    template.watch(function (value) {
+                }
+                template.activate();
+                template.watch(function (value) {
+                    checkIfDone(value);
+                    ion.observe(value, function (changes) {
                         checkIfDone(value);
-                        ion.observe(value, function (changes) {
-                            checkIfDone(value);
-                        });
                     });
-                    ion.patch(argument, patch);
-                };
-            }(thisArg, templateType, argument, patch, expected);
-        }
+                });
+                ion.patch(argument, patch);
+            };
+        }(thisArg, templateType, argument, patch, expected);
     }
 }
 module.exports = exports = { test: _ref9 };
@@ -10352,680 +14215,218 @@ module.exports = exports = { test: _ref9 };
   }
 }).call(this)
 //@ sourceMappingURL=./reactiveTemplates.map
-void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
-var ion = require('./'), isObject = function (a) {
-        return a != null && typeof a === 'object';
-    }, deleteValue = null;
-var merge = exports.merge = function (target, values, options) {
-        var deleteNull = (options != null ? options.deleteNull : void 0) != null ? options.deleteNull : true;
-        if ((values != null ? values.constructor : void 0) !== Object) {
-            return values;
+void (function(){var _ion_es6_Object_observe_ = function(module,exports,require){'use strict';
+var clone = function (object, properties) {
+    if (properties != null) {
+        var _ref3 = {};
+        for (var key in properties) {
+            _ref3[key] = object[key];
         }
-        if (!isObject(target)) {
-            if ((options != null ? options.factory : void 0) != null) {
-                target = options.factory(values);
-            } else {
-                target = {};
+        return _ref3;
+    } else {
+        var _ref4 = {};
+        for (var key in object) {
+            var value = object[key];
+            _ref4[key] = value;
+        }
+        return _ref4;
+    }
+};
+var createShim = exports.createShim = function () {
+        var map = new Map();
+        var observers = [];
+        var observe = function (object, callback, property) {
+            if (object.nodeType === 1 || object === global.document) {
+                if (!(property != null)) {
+                    return;
+                }
             }
-        }
-        for (var key in values) {
-            var value = values[key];
-            if (deleteNull && value === deleteValue) {
-                delete target[key];
-            } else {
-                target[key] = merge(target[key], value, options);
+            var meta = map.get(object);
+            if (!(meta != null)) {
+                var _ref5 = {};
+                _ref5[property] = 0;
+                meta = {
+                    object: object,
+                    properties: {},
+                    all: 0,
+                    clone: clone(object, property ? _ref5 : null),
+                    callbacks: []
+                };
+                map.set(object, meta);
+                observers.push(meta);
             }
-        }
-        return target;
-    }, combine = exports.combine = function (patch1, patch2) {
-        return merge(patch1, patch2, { deleteNull: false });
-    }, watch = exports.watch = function (object, handler, callInitial) {
-        if (callInitial == null)
-            callInitial = true;
-        if (!isObject(object)) {
-            throw new Error('Cannot watch: #{object}');
-        }
-        var subWatchers = {};
-        var pendingPatch = null;
-        var processPatch = function (patchValues) {
-            for (var name in patchValues) {
-                subWatchers[name] != null ? subWatchers[name]() : void 0;
-                var value = object[name];
-                if (isObject(value)) {
-                    (function (name) {
-                        var subHandler = function (patch) {
-                            var basePatch = {};
-                            basePatch[name] = patch;
-                            queuePatch(basePatch);
-                        };
-                        subWatchers[name] = watch(value, subHandler, false);
-                    }(name));
+            if (property != null) {
+                meta.properties[property] = meta.properties[property] != null ? meta.properties[property] : 0;
+                meta.properties[property]++;
+            } else {
+                meta.all++;
+            }
+            meta.callbacks.push(callback);
+        };
+        var unobserve = function (object, callback, property) {
+            var meta = map.get(object);
+            if (meta != null) {
+                var index = meta.callbacks.lastIndexOf(callback);
+                if (index >= 0) {
+                    meta.callbacks.splice(index, 1);
+                    if (meta.callbacks.length === 0) {
+                        map.delete(object);
+                        observers.splice(observers.lastIndexOf(meta), 1);
+                    }
+                }
+                if (property != null) {
+                    meta.properties[property]--;
+                    if (meta.properties[property] === 0) {
+                        delete meta.properties[property];
+                    }
+                } else {
+                    meta.all--;
                 }
             }
         };
-        var pendingTimeout = null;
-        var queuePatch = function (patch) {
-            if (!callInitial) {
-                handler(patch);
+        var getChanges = function (oldValue, newValue, properties) {
+            var changes = null;
+            var change = function (type, name, oldValue) {
+                changes = changes != null ? changes : [];
+                changes.push({
+                    type: type,
+                    name: name,
+                    oldValue: oldValue
+                });
+            };
+            var checkForChange = function (property) {
+                if (oldValue.hasOwnProperty(name)) {
+                    var oldPropertyValue = oldValue[name];
+                    if (!newValue.hasOwnProperty(name)) {
+                        change('delete', name, oldPropertyValue);
+                    } else {
+                        var newPropertyValue = newValue[name];
+                        if (newPropertyValue !== oldPropertyValue) {
+                            change('update', name, oldPropertyValue);
+                        }
+                    }
+                } else if (newValue.hasOwnProperty(name)) {
+                    change('add', name);
+                }
+            };
+            if (properties != null) {
+                for (var name in properties) {
+                    checkForChange(name);
+                }
             } else {
-                pendingPatch = combine(pendingPatch, patch);
-                processPatch(pendingPatch);
-                pendingTimeout = pendingTimeout != null ? pendingTimeout : setTimeout(function () {
-                    handler(pendingPatch);
-                    pendingPatch = null;
-                    pendingTimeout = null;
-                }, 0);
-            }
-        };
-        var watcher = function (changes) {
-            try {
-                var patch = {};
-                for (var _i = 0; _i < changes.length; _i++) {
-                    var change = changes[_i];
-                    patch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
+                for (var name in oldValue) {
+                    checkForChange(name);
                 }
-                queuePatch(patch);
-            } catch (e) {
-                console.error(e);
-            }
-        };
-        processPatch(object);
-        ion.observe(object, watcher);
-        return function () {
-            ion.unobserve(object, watcher);
-            for (var key in subWatchers) {
-                var value = subWatchers[key];
-                value();
-            }
-        };
-    }, diff = exports.diff = function (oldValue, newValue) {
-        if (oldValue === newValue) {
-            return void 0;
-        }
-        if (!(oldValue != null && newValue != null && typeof newValue === 'object' && typeof oldValue === 'object')) {
-            return newValue != null ? newValue : null;
-        }
-        var patch = void 0;
-        for (var name in oldValue) {
-            if (oldValue.hasOwnProperty(name)) {
-                var propertyDiff = diff(oldValue[name], newValue[name]);
-                if (propertyDiff !== void 0) {
-                    patch = patch != null ? patch : {};
-                    patch[name] = propertyDiff;
+                for (var name in newValue) {
+                    if (!oldValue.hasOwnProperty(name)) {
+                        checkForChange(name);
+                    }
                 }
             }
-        }
-        for (var name in newValue) {
-            if (newValue.hasOwnProperty(name) && !oldValue.hasOwnProperty(name)) {
-                patch = patch != null ? patch : {};
-                patch[name] = newValue[name];
-            }
-        }
-        return patch;
-    }, isChange = exports.isChange = function (oldValue, newValue) {
-        if (oldValue === newValue) {
-            return false;
-        }
-        if (!(oldValue != null && newValue != null && typeof newValue === 'object' && typeof oldValue === 'object')) {
-            return true;
-        }
-        for (var name in newValue) {
-            if (newValue[name] === null && !oldValue.hasOwnProperty(name)) {
-                continue;
-            }
-            if (isChange(oldValue[name], newValue[name])) {
-                return true;
-            }
-        }
-        return false;
-    }, test = exports.test = function () {
-        var equal = function (a, b) {
-            return !isChange(a, b) && !isChange(b, a);
+            return changes;
         };
+        observe.checkForChanges = function () {
+            var maxCycles = 10;
+            for (var i = 0; i < maxCycles; i++) {
+                var totalChanges = 0;
+                var pendingChanges = [];
+                for (var _i = 0; _i < observers.length; _i++) {
+                    var meta = observers[_i];
+                    var properties = meta.all > 0 ? null : meta.properties;
+                    var changes = getChanges(meta.clone, meta.object, properties);
+                    if (changes != null) {
+                        totalChanges++;
+                        meta.clone = clone(meta.object, properties);
+                        pendingChanges.push([
+                            changes,
+                            meta.callbacks.slice(0)
+                        ]);
+                    }
+                }
+                if (totalChanges === 0) {
+                    return;
+                }
+                for (var _i2 = 0; _i2 < pendingChanges.length; _i2++) {
+                    var _ref6 = pendingChanges[_i2];
+                    var changes = _ref6[0];
+                    var callbacks = _ref6[1];
+                    for (var _i3 = 0; _i3 < callbacks.length; _i3++) {
+                        var callback = callbacks[_i3];
+                        callback(changes);
+                    }
+                }
+            }
+            throw new Error('Circular Object.observe dependency');
+        };
+        observe.observers = observers;
         return {
-            merge: function () {
-                if (!equal({
-                        a: {
-                            b: 2,
-                            c: 3
-                        },
-                        d: 4
-                    }, merge({ a: { b: 2 } }, {
-                        a: { c: 3 },
-                        d: 4
-                    })))
-                    throw new Error('Assertion Failed: (equal({a:{b:2,c:3},d:4}, merge({a:{b:2}}, {a:{c:3},d:4})))');
-                if (!equal({ b: 2 }, merge(null, { b: 2 })))
-                    throw new Error('Assertion Failed: (equal({b:2}, merge(null, {b:2})))');
-                if (!equal({
-                        a: 1,
-                        b: 2
-                    }, merge({
-                        a: 1,
-                        b: 2,
-                        c: 3
-                    }, { c: void 0 })))
-                    throw new Error('Assertion Failed: (equal({a:1,b:2}, merge({a:1,b:2,c:3}, {c:undefined})))');
-                var double = function (x) {
-                    return x * 2;
-                };
-                if (!equal({ a: double }, merge({}, { a: double })))
-                    throw new Error('Assertion Failed: (equal({a:double}, merge({},{a:double})))');
-            },
-            isChange: function () {
-                if (!isChange({ a: 1 }, null))
-                    throw new Error('Assertion Failed: (isChange({a:1}, null))');
-                if (!!isChange(null, null))
-                    throw new Error('Assertion Failed: (not isChange(null, null))');
-                if (!isChange(void 0, null))
-                    throw new Error('Assertion Failed: (isChange(undefined, null))');
-                if (!isChange(null, void 0))
-                    throw new Error('Assertion Failed: (isChange(null, undefined))');
-                if (!!isChange({ a: 1 }, { a: 1 }))
-                    throw new Error('Assertion Failed: (not isChange({a:1}, {a:1}))');
-                if (!!isChange({
-                        a: {
-                            b: 2,
-                            c: 3
-                        }
-                    }, { a: { b: 2 } }))
-                    throw new Error('Assertion Failed: (not isChange({a:{b:2,c:3}}, {a:{b:2}}))');
-                if (!isChange({ a: { b: 2 } }, { a: { b: 3 } }))
-                    throw new Error('Assertion Failed: (isChange({a:{b:2}}, {a:{b:3}}))');
-                if (!!isChange({ a: 1 }, { b: null }))
-                    throw new Error('Assertion Failed: (not isChange({a:1}, {b:null}))');
-            },
-            diff: function () {
-                if (!equal({ b: 2 }, diff({ a: 1 }, {
-                        a: 1,
-                        b: 2
-                    })))
-                    throw new Error('Assertion Failed: (equal({b:2}, diff({a:1}, {a:1,b:2})))');
-                if (!equal({
-                        a: {
-                            b: 3,
-                            c: null
-                        }
-                    }, diff({
-                        a: {
-                            b: 2,
-                            c: 4
-                        }
-                    }, { a: { b: 3 } })))
-                    throw new Error('Assertion Failed: (equal({a:{b:3,c:null}}, diff({a:{b:2,c:4}}, {a:{b:3}})))');
-                if (!equal({ a: 1 }, diff(null, { a: 1 })))
-                    throw new Error('Assertion Failed: (equal({a:1}, diff(null, {a:1})))');
-                if (!equal({ c: { d: { f: 4 } } }, diff({
-                        a: 1,
-                        b: 2,
-                        c: {
-                            d: {
-                                e: 1,
-                                f: 2
-                            }
-                        }
-                    }, {
-                        a: 1,
-                        b: 2,
-                        c: {
-                            d: {
-                                e: 1,
-                                f: 4
-                            }
-                        }
-                    })))
-                    throw new Error('Assertion Failed: (equal({c:{d:{f:4}}}, diff({a:1,b:2,c:{d:{e:1,f:2}}}, {a:1,b:2,c:{d:{e:1,f:4}}})))');
-                if (!equal(null, diff({ a: 1 }, void 0)))
-                    throw new Error('Assertion Failed: (equal(null, diff({a:1}, undefined)))');
-                if (!equal(null, diff({ a: 1 }, null)))
-                    throw new Error('Assertion Failed: (equal(null, diff({a:1}, null)))');
-                if (!equal(void 0, diff({ a: { b: 2 } }, { a: { b: 2 } })))
-                    throw new Error('Assertion Failed: (equal(undefined, diff({a:{b:2}}, {a:{b:2}})))');
-            },
-            observe: function (done) {
-                if (!(Object.observe != null)) {
-                    return done(null, 'Object.observe missing.');
-                }
-                var source = {
-                        name: 'Kris',
-                        age: 41,
-                        children: {
-                            Sadera: {
-                                grandchildren: {
-                                    One: 1,
-                                    Two: 2
-                                }
-                            },
-                            Orion: {},
-                            Third: {}
-                        }
-                    };
-                var target = ion.clone(source, true);
-                var unwatch = watch(source, function (patch) {
-                        target = merge(target, patch);
-                        if (equal(source, target)) {
-                            done();
-                            unwatch();
-                        }
-                    });
-                ion.patch(source, {
-                    name: 'Fred',
-                    children: {
-                        Orion: {
-                            a: 1,
-                            b: 2,
-                            c: 12
-                        },
-                        Sadera: { grandchildren: { three: 3 } }
-                    }
-                });
-                delete source.children.Third;
-                Object.observe.checkForChanges != null ? Object.observe.checkForChanges() : void 0;
-            }
+            observe: observe,
+            unobserve: unobserve
         };
-    }();
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('ion/mergePatch',_ion_mergePatch_);
-    else
-      _ion_mergePatch_.call(this, module, exports, require);
-  }
-  else {
-    _ion_mergePatch_.call(this);
-  }
-}).call(this)
-//@ sourceMappingURL=./mergePatch.map
-void (function(){var _ion_index_ = function(module,exports,require){'use strict';
-var ion = null;
-require('./es6');
-var primitive = {
-        string: true,
-        number: true,
-        boolean: true,
-        function: true
-    }, isPrimitive = function (object) {
-        return !(object != null) || primitive[typeof object] || false;
-    }, normalizeProperty = function (property) {
-        if (typeof property === 'function') {
-            property = {
-                writable: false,
-                value: property
-            };
-        } else if (isPrimitive(property) || Array.isArray(property)) {
-            property = { value: property };
-        }
-        if (!(property.get != null) && !(property.set != null) && !property.hasOwnProperty('value')) {
-            property.value = void 0;
-        }
-        if (property.hasOwnProperty('value')) {
-            property.writable = property.writable != null ? property.writable : true;
-        }
-        return property;
-    }, normalizeProperties = function (properties) {
-        if (properties == null)
-            properties = {};
-        for (var name in properties) {
-            var property = properties[name];
-            properties[name] = normalizeProperty(property);
-        }
-        return properties;
-    }, variableArgConstructs = [
-        function (type, a) {
-            return new type();
-        },
-        function (type, a) {
-            return new type(a[0]);
-        },
-        function (type, a) {
-            return new type(a[0], a[1]);
-        },
-        function (type, a) {
-            return new type(a[0], a[1], a[2]);
-        },
-        function (type, a) {
-            return new type(a[0], a[1], a[2], a[3]);
-        },
-        function (type, a) {
-            return new type(a[0], a[1], a[2], a[3], a[4]);
-        },
-        function (type, a) {
-            return new type(a[0], a[1], a[2], a[3], a[4], a[5]);
-        },
-        function (type, a) {
-            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6]);
-        },
-        function (type, a) {
-            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
-        },
-        function (type, a) {
-            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]);
-        },
-        function (type, a) {
-            return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
-        }
-    ];
-var patch = exports.patch = function () {
-        var mergePatch = require('./mergePatch');
-        var patch = function (object, patch, add, remove) {
-            var result = mergePatch.merge(object, patch);
-            return result;
-        };
-        for (var key in mergePatch) {
-            var value = mergePatch[key];
-            patch[key] = value;
-        }
-        return patch;
-    }(), create = exports.create = function (type, args) {
-        return variableArgConstructs[args.length](type, args);
-    }, template = exports.template = function (fn, template) {
-        fn.template = template;
-        return fn;
-    }, createRuntime = exports.createRuntime = function (ast, args) {
-        var Context = require('./runtime/Context');
-        var context = new Context();
-        if (args != null) {
-            for (var name in args) {
-                var value = args[name];
-                context.setVariable(name, value);
-            }
-        }
-        return context.createRuntime(ast);
-    }, nextTick = exports.nextTick = (this.process != null ? this.process.nextTick : void 0) != null ? this.process.nextTick : function (fn) {
-        return setTimeout(fn, 0);
-    }, clone = exports.clone = function (object, deep) {
-        if (deep == null)
-            deep = false;
-        if (Array.isArray(object)) {
-            var _ref = [];
-            for (var _i = 0; _i < object.length; _i++) {
-                var item = object[_i];
-                _ref.push(deep ? clone(item, deep) : item);
-            }
-            return _ref;
-        } else if ((object != null ? object.constructor : void 0) === Object) {
-            var _ref2 = {};
-            {
-                for (var key in object) {
-                    var value = object[key];
-                    _ref2[key] = deep ? clone(value, deep) : value;
-                }
-            }
-            return _ref2;
-        } else {
-            return object;
-        }
-    }, observe = exports.observe = function (object, observer, property) {
-        if (object != null && observer != null && Object.observe != null && typeof object === 'object') {
-            Object.observe(object, observer);
-            object.addEventListener != null ? object.addEventListener('change', observer) : void 0;
-        }
-        object != null ? object.onObserved != null ? object.onObserved(observer, property) : void 0 : void 0;
-    }, unobserve = exports.unobserve = function (object, observer, property) {
-        if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
-            Object.unobserve(object, observer);
-            object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
-        }
-        object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
-    }, bind = exports.bind = function (fn, thisArg) {
-        var newFn = fn.bind(thisArg);
-        if (fn.name.length > 0) {
-            newFn.id = fn.id != null ? fn.id : fn.name;
-        }
-        return newFn;
-    }, add = exports.add = function (container, item) {
-        var remove;
-        if (typeof item === 'function' && (item.name.length > 0 || item.id != null) && typeof container.addEventListener === 'function') {
-            var name = item.id != null ? item.id : item.name;
-            if ((Object.observe != null ? Object.observe.checkForChanges : void 0) != null) {
-                var originalItem = item;
-                item = function () {
-                    originalItem.apply(this, arguments);
-                    Object.observe.checkForChanges();
-                };
-            }
-            container.addEventListener(name, item);
-            remove = function () {
-                container.removeEventListener(name, item);
-            };
-        } else if (container.nodeType === 1) {
-            if (typeof item !== 'string' && !(item.nodeType != null)) {
-                item = JSON.stringify(item);
-            }
-            if (typeof item === 'string') {
-                item = document.createTextNode(item);
-            }
-            container.appendChild(item);
-            remove = function () {
-                container.removeChild(item);
-            };
-        } else {
-            if (container.push != null) {
-                container.push(item);
-            } else {
-                container.add(item);
-            }
-            remove = function () {
-                if (container.lastIndexOf != null && container.removeAt != null) {
-                    var index = container.lastIndexOf(item);
-                    if (index >= 0) {
-                        container.removeAt(index);
-                    }
-                } else if (typeof container.remove === 'function') {
-                    container.remove(item);
-                } else if (Array.isArray(container)) {
-                    var index = container.lastIndexOf(item);
-                    if (index >= 0) {
-                        container.splice(index, 1);
-                    }
-                }
-            };
-        }
-        item.onAdded != null ? item.onAdded(container) : void 0;
-        return function () {
-            remove();
-            item.onRemoved != null ? item.onRemoved(container) : void 0;
-        };
-    }, defineProperties = exports.defineProperties = function (object, properties) {
-        return Object.defineProperties(object, normalizeProperties(properties));
-    }, defineClass = exports.defineClass = function (___definitions) {
-        var definitions = Array.prototype.slice.call(arguments, 0);
-        var classDefinition = definitions[0];
-        if (definitions[1] === void 0) {
-            definitions[1] = require('./Object');
-        }
-        classDefinition.super = definitions[1];
-        var name = classDefinition.name != null ? classDefinition.name : classDefinition.id != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i) != null ? classDefinition.id.match(/([a-z_0-9\$]+)(\.js)?$/i)[1] : void 0 : void 0;
-        if (!(name != null)) {
-            throw new Error('missing name property');
-        }
-        var classFunction;
-        if (classDefinition.hasOwnProperty('constructor')) {
-            classFunction = classDefinition.constructor;
-        } else if (classDefinition.super != null) {
-            classFunction = eval('(function ' + name + '() { ' + name + '.super.apply(this, arguments); })');
-        } else {
-            classFunction = eval('(function ' + name + '() {})');
-        }
-        for (var i = definitions.length - 1; i >= 0; i--) {
-            var definition = definitions[i];
-            for (var key in definition) {
-                var value = definition[key];
-                if (key !== 'test' || i === 0) {
-                    if ((value != null ? value.constructor : void 0) === Object || (Object.getOwnPropertyDescriptor(classFunction, key) != null ? Object.getOwnPropertyDescriptor(classFunction, key).writable : void 0) !== false) {
-                        classFunction[key] = patch(classFunction[key], value);
-                    }
-                }
-            }
-        }
-        if (classFunction.properties != null) {
-            defineProperties(classFunction.prototype, classFunction.properties);
-        }
-        return classFunction;
-    }, get = exports.get = function (object, property) {
-        if (!(object != null && property != null)) {
-            return void 0;
-        }
-        if (object !== this && typeof object.get === 'function') {
-            return object.get(property);
-        } else {
-            return object[property];
-        }
-    }, set = exports.set = function (object, property, value, deleteUndefined) {
-        if (deleteUndefined == null)
-            deleteUndefined = true;
-        if (object != null) {
-            if (arguments.length === 2 && property != null) {
-                for (var k in property) {
-                    var v = property[k];
-                    set(object, k, v);
-                }
-                return;
-            }
-            if (object !== this && typeof object.set === 'function') {
-                object.set(property, value);
-            } else if (deleteUndefined && value === void 0) {
-                delete object[property];
-            } else {
-                object[property] = value;
-            }
-            value != null ? value.onSet != null ? value.onSet(object, property) : void 0 : void 0;
-        }
-        return value;
-    }, is = exports.is = function (instance, type) {
-        if (!(instance != null)) {
-            return false;
-        }
-        if (!(type != null)) {
-            return true;
-        }
-        if (typeof type === 'function') {
-            if (typeof instance.is === 'function') {
-                return instance.is(type);
-            }
-            return instance instanceof type;
-        } else {
-            return instance === type;
-        }
-    }, makeReactive = exports.makeReactive = function (object, activate) {
-        var observeCount = 0;
-        var deactivate = null;
-        return Object.defineProperties(object, {
-            onObserved: {
-                value: function () {
-                    observeCount++;
-                    if (observeCount === 1) {
-                        deactivate = activate.call(object);
-                    }
-                }
-            },
-            unObserved: {
-                value: function () {
-                    observeCount--;
-                    if (observeCount === 0) {
-                        deactivate != null ? deactivate() : void 0;
-                    }
-                }
-            }
-        });
-    }, serialize = exports.serialize = function (object) {
-        return JSON.stringify(object);
-    }, deserialize = exports.deserialize = function () {
-        var extractType = function (object) {
-            var typeKey = require('ion/Object').typeKey;
-            var typeName = object[typeKey];
-            if (!(typeName != null)) {
-                return Object;
-            }
-            var type = require(typeName);
-            if (!type.serializable) {
-                throw new Error('Type is not serializable: ' + typeName);
-            }
-            delete object[typeKey];
-            return type;
-        };
-        var deserialize = function (object) {
-            if (typeof object === 'string') {
-                object = JSON.parse(object);
-            }
-            var typeKey = require('ion/Object').typeKey;
-            var typeName = object[typeKey];
-            if (typeName != null) {
-                var type = require(typeName);
-                if (!type.serializable) {
-                    throw new Error('Type is not serializable: ' + typeName);
-                }
-                var typedObject = new type();
-                for (var key in object) {
-                    var value = object[key];
-                    if (key !== typeKey) {
-                        typedObject[key] = object[key];
-                    }
-                }
-                return typedObject;
-            } else {
-                return object;
-            }
-        };
-        deserialize.extractType = extractType;
-        return deserialize;
-    }(), test = exports.test = {
-        defineClass: function () {
-            var Foo = defineClass({
-                    id: 'Foo',
-                    constructor: function (number) {
-                        this.number = number;
-                    },
-                    properties: {
-                        getValue: function () {
-                            return this.number;
-                        }
-                    }
-                });
-            if (!(new Foo(2).getValue() === 2))
-                throw new Error('Assertion Failed: (new Foo(2).getValue() is 2)');
-        },
-        defineProperties: {
-            'should allow primitive values': function () {
-                var object = {};
-                var result = defineProperties(object, {
-                        f: function () {
-                            return 'function';
-                        },
-                        i: 2,
-                        b: true,
-                        a: [],
-                        s: 'hello'
-                    });
-                if (!(object === result))
-                    throw new Error('Assertion Failed: (object is result)');
-                if (!(typeof object.f === 'function'))
-                    throw new Error('Assertion Failed: (typeof object.f is \'function\')');
-                if (!(object.f() === 'function'))
-                    throw new Error('Assertion Failed: (object.f() is \'function\')');
-                if (!(object.i === 2))
-                    throw new Error('Assertion Failed: (object.i is 2)');
-                if (!(object.b === true))
-                    throw new Error('Assertion Failed: (object.b is true)');
-                if (!Array.isArray(object.a))
-                    throw new Error('Assertion Failed: (Array.isArray(object.a))');
-                if (!(object.s === 'hello'))
-                    throw new Error('Assertion Failed: (object.s is \'hello\')');
-            }
-        }
     };
+var test = exports.test = function () {
+        var _ref = createShim();
+        var observe = _ref.observe;
+        var unobserve = _ref.unobserve;
+        var object = {
+                a: 1,
+                b: {
+                    c: 2,
+                    d: 3
+                }
+            };
+        var changes;
+        var handler = function (c) {
+            changes = c;
+        };
+        observe(object, handler);
+        object.a = 2;
+        delete object.b;
+        object.c = 5;
+        observe.checkForChanges();
+        if (!(JSON.stringify(changes) === JSON.stringify([
+                {
+                    'type': 'update',
+                    'name': 'a',
+                    'oldValue': 1
+                },
+                {
+                    'type': 'delete',
+                    'name': 'b',
+                    'oldValue': {
+                        'c': 2,
+                        'd': 3
+                    }
+                },
+                {
+                    'type': 'add',
+                    'name': 'c'
+                }
+            ])))
+            throw new Error('Assertion Failed: (JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1},{"type":"delete","name":"b","oldValue":{"c":2,"d":3}},{"type":"add","name":"c"}]))');
+        unobserve(object, handler);
+    };
+if (!(Object.observe != null) && global.Map != null) {
+    {
+        var _ref2 = createShim();
+        for (var key in _ref2) {
+            var value = _ref2[key];
+            Object[key] = value;
+        }
+    }
+}
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/index',_ion_index_);
+      require.register('ion/es6/Object.observe',_ion_es6_Object_observe_);
     else
-      _ion_index_.call(this, module, exports, require);
+      _ion_es6_Object_observe_.call(this, module, exports, require);
   }
   else {
-    _ion_index_.call(this);
+    _ion_es6_Object_observe_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./index.map
+//@ sourceMappingURL=./Object.observe.map
 void (function(){var _ion_compiler_parser_ = function(module,exports,require){module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
@@ -11127,108 +14528,109 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         peg$c52 = function(start, pattern, init, end) { return node("VariableDeclarator", {id:pattern,init:init}, start, end) },
         peg$c53 = "=",
         peg$c54 = { type: "literal", value: "=", description: "\"=\"" },
-        peg$c55 = function(pattern) { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ObjectPattern"; return pattern },
-        peg$c56 = function(pattern) { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ArrayPattern"; return pattern },
-        peg$c57 = "...",
-        peg$c58 = { type: "literal", value: "...", description: "\"...\"" },
-        peg$c59 = function(start, e, end) { return node("SpreadExpression", {expression:e}, start, end) },
-        peg$c60 = function(arg) { return arg },
-        peg$c61 = function(property) { return property },
-        peg$c62 = function(start, properties, end) { return [node("ObjectExpression", {properties:properties}, start, end)] },
-        peg$c63 = function(start, callee, args, end) {
+        peg$c55 = function(start, kind, id, init, end) { return node("VariableDeclarationExpression", {declarations:[node("VariableDeclarator", {id:id,init:init})], kind:kind}, start, end) },
+        peg$c56 = function(pattern) { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ObjectPattern"; return pattern },
+        peg$c57 = function(pattern) { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ArrayPattern"; return pattern },
+        peg$c58 = "...",
+        peg$c59 = { type: "literal", value: "...", description: "\"...\"" },
+        peg$c60 = function(start, e, end) { return node("SpreadExpression", {expression:e}, start, end) },
+        peg$c61 = function(arg) { return arg },
+        peg$c62 = function(property) { return property },
+        peg$c63 = function(start, properties, end) { return [node("ObjectExpression", {properties:properties}, start, end)] },
+        peg$c64 = function(start, callee, args, end) {
                 if (callee.type === 'NewExpression' && callee.arguments == null)
                     return node("NewExpression", {callee: callee.callee, arguments: args}, start, end)
                 return node("CallExpression", {callee: callee, arguments: args}, start, end)
             },
-        peg$c64 = "+=",
-        peg$c65 = { type: "literal", value: "+=", description: "\"+=\"" },
-        peg$c66 = "-=",
-        peg$c67 = { type: "literal", value: "-=", description: "\"-=\"" },
-        peg$c68 = "*=",
-        peg$c69 = { type: "literal", value: "*=", description: "\"*=\"" },
-        peg$c70 = "/=",
-        peg$c71 = { type: "literal", value: "/=", description: "\"/=\"" },
-        peg$c72 = "%=",
-        peg$c73 = { type: "literal", value: "%=", description: "\"%=\"" },
-        peg$c74 = "<<=",
-        peg$c75 = { type: "literal", value: "<<=", description: "\"<<=\"" },
-        peg$c76 = ">>=",
-        peg$c77 = { type: "literal", value: ">>=", description: "\">>=\"" },
-        peg$c78 = ">>>=",
-        peg$c79 = { type: "literal", value: ">>>=", description: "\">>>=\"" },
-        peg$c80 = "^=",
-        peg$c81 = { type: "literal", value: "^=", description: "\"^=\"" },
-        peg$c82 = "&=",
-        peg$c83 = { type: "literal", value: "&=", description: "\"&=\"" },
-        peg$c84 = "??=",
-        peg$c85 = { type: "literal", value: "??=", description: "\"??=\"" },
-        peg$c86 = "?=",
-        peg$c87 = { type: "literal", value: "?=", description: "\"?=\"" },
-        peg$c88 = ":=",
-        peg$c89 = { type: "literal", value: ":=", description: "\":=\"" },
-        peg$c90 = function(start, left, op, right, end) { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) },
-        peg$c91 = "?",
-        peg$c92 = { type: "literal", value: "?", description: "\"?\"" },
-        peg$c93 = function(start, test, consequent, alternate, end) { return node('ConditionalExpression', {test:test,consequent:consequent,alternate:alternate}, start, end) },
-        peg$c94 = "??",
-        peg$c95 = { type: "literal", value: "??", description: "\"??\"" },
-        peg$c96 = function(start, head, tail) { return leftAssociateBinaryExpressions(start, head, tail) },
-        peg$c97 = "|",
-        peg$c98 = { type: "literal", value: "|", description: "\"|\"" },
-        peg$c99 = "^",
-        peg$c100 = { type: "literal", value: "^", description: "\"^\"" },
-        peg$c101 = "&",
-        peg$c102 = { type: "literal", value: "&", description: "\"&\"" },
-        peg$c103 = "<=",
-        peg$c104 = { type: "literal", value: "<=", description: "\"<=\"" },
-        peg$c105 = ">=",
-        peg$c106 = { type: "literal", value: ">=", description: "\">=\"" },
-        peg$c107 = "<",
-        peg$c108 = { type: "literal", value: "<", description: "\"<\"" },
-        peg$c109 = ">",
-        peg$c110 = { type: "literal", value: ">", description: "\">\"" },
-        peg$c111 = ">>>",
-        peg$c112 = { type: "literal", value: ">>>", description: "\">>>\"" },
-        peg$c113 = ">>",
-        peg$c114 = { type: "literal", value: ">>", description: "\">>\"" },
-        peg$c115 = "<<",
-        peg$c116 = { type: "literal", value: "<<", description: "\"<<\"" },
-        peg$c117 = "+",
-        peg$c118 = { type: "literal", value: "+", description: "\"+\"" },
-        peg$c119 = "-",
-        peg$c120 = { type: "literal", value: "-", description: "\"-\"" },
-        peg$c121 = "*",
-        peg$c122 = { type: "literal", value: "*", description: "\"*\"" },
-        peg$c123 = "/",
-        peg$c124 = { type: "literal", value: "/", description: "\"/\"" },
-        peg$c125 = "%",
-        peg$c126 = { type: "literal", value: "%", description: "\"%\"" },
-        peg$c127 = function(start, op, arg, end) { return node('UnaryExpression', {operator:op, argument:arg}, start, end) },
-        peg$c128 = { type: "other", description: "unaryOperator" },
-        peg$c129 = "~",
-        peg$c130 = { type: "literal", value: "~", description: "\"~\"" },
-        peg$c131 = "++",
-        peg$c132 = { type: "literal", value: "++", description: "\"++\"" },
-        peg$c133 = "--",
-        peg$c134 = { type: "literal", value: "--", description: "\"--\"" },
-        peg$c135 = function(start, op, arg, end) { return node('UpdateExpression', {operator:op, argument:arg, prefix:true}, start, end) },
-        peg$c136 = function(start, arg, op, end) { return node('UpdateExpression', {operator:op, argument:arg, prefix:false}, start, end) },
-        peg$c137 = function(start, arg, op, end) { return node('UnaryExpression', {operator:op, argument:arg}, start, end) },
-        peg$c138 = function(start, head, tail) { return leftAssociateCallsOrMembers(start, head, tail) },
-        peg$c139 = function() {return true},
-        peg$c140 = function(existential, args, end) { return ["callee", node("CallExpression", {callee:null, arguments:args, existential:existential || undefined}), end] },
-        peg$c141 = function(existential, property, end) { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] },
-        peg$c142 = function(existential, property, end) { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] },
-        peg$c143 = "(",
-        peg$c144 = { type: "literal", value: "(", description: "\"(\"" },
-        peg$c145 = ")",
-        peg$c146 = { type: "literal", value: ")", description: "\")\"" },
-        peg$c147 = function(a) { return a ? a : [] },
-        peg$c148 = function(c) {return c},
-        peg$c149 = function(a, b) { return [a].concat(b) },
-        peg$c150 = function(start, callee, args, end) { return node("NewExpression", {callee:callee,arguments:args || null}, start, end) },
-        peg$c151 = function(start, name, end) { return node('ImportExpression', {name:name}, start, end) },
-        peg$c152 = function(start, f, end) {
+        peg$c65 = "+=",
+        peg$c66 = { type: "literal", value: "+=", description: "\"+=\"" },
+        peg$c67 = "-=",
+        peg$c68 = { type: "literal", value: "-=", description: "\"-=\"" },
+        peg$c69 = "*=",
+        peg$c70 = { type: "literal", value: "*=", description: "\"*=\"" },
+        peg$c71 = "/=",
+        peg$c72 = { type: "literal", value: "/=", description: "\"/=\"" },
+        peg$c73 = "%=",
+        peg$c74 = { type: "literal", value: "%=", description: "\"%=\"" },
+        peg$c75 = "<<=",
+        peg$c76 = { type: "literal", value: "<<=", description: "\"<<=\"" },
+        peg$c77 = ">>=",
+        peg$c78 = { type: "literal", value: ">>=", description: "\">>=\"" },
+        peg$c79 = ">>>=",
+        peg$c80 = { type: "literal", value: ">>>=", description: "\">>>=\"" },
+        peg$c81 = "^=",
+        peg$c82 = { type: "literal", value: "^=", description: "\"^=\"" },
+        peg$c83 = "&=",
+        peg$c84 = { type: "literal", value: "&=", description: "\"&=\"" },
+        peg$c85 = "??=",
+        peg$c86 = { type: "literal", value: "??=", description: "\"??=\"" },
+        peg$c87 = "?=",
+        peg$c88 = { type: "literal", value: "?=", description: "\"?=\"" },
+        peg$c89 = ":=",
+        peg$c90 = { type: "literal", value: ":=", description: "\":=\"" },
+        peg$c91 = function(start, left, op, right, end) { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) },
+        peg$c92 = "?",
+        peg$c93 = { type: "literal", value: "?", description: "\"?\"" },
+        peg$c94 = function(start, test, consequent, alternate, end) { return node('ConditionalExpression', {test:test,consequent:consequent,alternate:alternate}, start, end) },
+        peg$c95 = "??",
+        peg$c96 = { type: "literal", value: "??", description: "\"??\"" },
+        peg$c97 = function(start, head, tail) { return leftAssociateBinaryExpressions(start, head, tail) },
+        peg$c98 = "|",
+        peg$c99 = { type: "literal", value: "|", description: "\"|\"" },
+        peg$c100 = "^",
+        peg$c101 = { type: "literal", value: "^", description: "\"^\"" },
+        peg$c102 = "&",
+        peg$c103 = { type: "literal", value: "&", description: "\"&\"" },
+        peg$c104 = "<=",
+        peg$c105 = { type: "literal", value: "<=", description: "\"<=\"" },
+        peg$c106 = ">=",
+        peg$c107 = { type: "literal", value: ">=", description: "\">=\"" },
+        peg$c108 = "<",
+        peg$c109 = { type: "literal", value: "<", description: "\"<\"" },
+        peg$c110 = ">",
+        peg$c111 = { type: "literal", value: ">", description: "\">\"" },
+        peg$c112 = ">>>",
+        peg$c113 = { type: "literal", value: ">>>", description: "\">>>\"" },
+        peg$c114 = ">>",
+        peg$c115 = { type: "literal", value: ">>", description: "\">>\"" },
+        peg$c116 = "<<",
+        peg$c117 = { type: "literal", value: "<<", description: "\"<<\"" },
+        peg$c118 = "+",
+        peg$c119 = { type: "literal", value: "+", description: "\"+\"" },
+        peg$c120 = "-",
+        peg$c121 = { type: "literal", value: "-", description: "\"-\"" },
+        peg$c122 = "*",
+        peg$c123 = { type: "literal", value: "*", description: "\"*\"" },
+        peg$c124 = "/",
+        peg$c125 = { type: "literal", value: "/", description: "\"/\"" },
+        peg$c126 = "%",
+        peg$c127 = { type: "literal", value: "%", description: "\"%\"" },
+        peg$c128 = function(start, op, arg, end) { return node('UnaryExpression', {operator:op, argument:arg}, start, end) },
+        peg$c129 = { type: "other", description: "unaryOperator" },
+        peg$c130 = "~",
+        peg$c131 = { type: "literal", value: "~", description: "\"~\"" },
+        peg$c132 = "++",
+        peg$c133 = { type: "literal", value: "++", description: "\"++\"" },
+        peg$c134 = "--",
+        peg$c135 = { type: "literal", value: "--", description: "\"--\"" },
+        peg$c136 = function(start, op, arg, end) { return node('UpdateExpression', {operator:op, argument:arg, prefix:true}, start, end) },
+        peg$c137 = function(start, arg, op, end) { return node('UpdateExpression', {operator:op, argument:arg, prefix:false}, start, end) },
+        peg$c138 = function(start, arg, op, end) { return node('UnaryExpression', {operator:op, argument:arg}, start, end) },
+        peg$c139 = function(start, head, tail) { return leftAssociateCallsOrMembers(start, head, tail) },
+        peg$c140 = function() {return true},
+        peg$c141 = function(existential, args, end) { return ["callee", node("CallExpression", {callee:null, arguments:args, existential:existential || undefined}), end] },
+        peg$c142 = function(existential, property, end) { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] },
+        peg$c143 = function(existential, property, end) { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] },
+        peg$c144 = "(",
+        peg$c145 = { type: "literal", value: "(", description: "\"(\"" },
+        peg$c146 = ")",
+        peg$c147 = { type: "literal", value: ")", description: "\")\"" },
+        peg$c148 = function(a) { return a ? a : [] },
+        peg$c149 = function(c) {return c},
+        peg$c150 = function(a, b) { return [a].concat(b) },
+        peg$c151 = function(start, callee, args, end) { return node("NewExpression", {callee:callee,arguments:args || null}, start, end) },
+        peg$c152 = function(start, name, end) { return node('ImportExpression', {name:name}, start, end) },
+        peg$c153 = function(start, f, end) {
                 var args;
                 if (f.params != null)
                     args = f.params.map(function(x){ return x.name != null ? clone(x) : error("do parameters must be Identifiers") })
@@ -11236,13 +14638,13 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                     args = []
                 return node("CallExpression", {callee:f,arguments:args}, start, end)
             },
-        peg$c153 = "->",
-        peg$c154 = { type: "literal", value: "->", description: "\"->\"" },
-        peg$c155 = function() { return false },
-        peg$c156 = "=>",
-        peg$c157 = { type: "literal", value: "=>", description: "\"=>\"" },
-        peg$c158 = function() { return true },
-        peg$c159 = function(start, template, id, params, bound, body, end) {
+        peg$c154 = "->",
+        peg$c155 = { type: "literal", value: "->", description: "\"->\"" },
+        peg$c156 = function() { return false },
+        peg$c157 = "=>",
+        peg$c158 = { type: "literal", value: "=>", description: "\"=>\"" },
+        peg$c159 = function() { return true },
+        peg$c160 = function(start, template, id, params, bound, body, end) {
                 if (params == null) params = []
                 paramPatterns = params.map(function(x) { return x[0] })
                 paramDefaults = params.map(function(x) { return x[1] })
@@ -11255,307 +14657,307 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                     body = node('BlockStatement', {body:[node('ReturnStatement', {argument:body})]})
                 return node('FunctionExpression', {id:id, params:paramPatterns, defaults:paramDefaults, body:body, bound:bound, template:template ? true : undefined}, start, end)
             },
-        peg$c160 = function(params) { return params != null ? params : [] },
-        peg$c161 = function(param, init) { return [param,init] },
-        peg$c162 = { type: "other", description: "primaryExpression" },
-        peg$c163 = "`",
-        peg$c164 = { type: "literal", value: "`", description: "\"`\"" },
-        peg$c165 = { type: "any", description: "any character" },
-        peg$c166 = function(start, a, end) { return node("JavascriptExpression", {text:text().slice(1, -1)}, start, end) },
-        peg$c167 = function(start, elements, end) { return node("ArrayExpression", {elements:elements || []}, start, end) },
-        peg$c168 = function(item) {return item},
-        peg$c169 = "{",
-        peg$c170 = { type: "literal", value: "{", description: "\"{\"" },
-        peg$c171 = "}",
-        peg$c172 = { type: "literal", value: "}", description: "\"}\"" },
-        peg$c173 = function(start, assignments, end) { return node("ObjectExpression", {properties:assignments || []}, start, end) },
-        peg$c174 = function(start, key, end) { return node("Property", { key: key, value:clone(key), kind: 'init'}, start, end) },
-        peg$c175 = function(start, type, properties, end) { return node("ObjectExpression", {objectType:type,properties:properties.body}, start, end) },
-        peg$c176 = function(start, properties, end) { return node("ObjectExpression", {properties:properties.body}, start, end) },
-        peg$c177 = { type: "other", description: "group" },
-        peg$c178 = function(expression) { return expression },
-        peg$c179 = function(value) { return value },
-        peg$c180 = function(start, name, end) { return node("Identifier", {name:name}, start, end) },
-        peg$c181 = { type: "other", description: "this" },
-        peg$c182 = "@@",
-        peg$c183 = { type: "literal", value: "@@", description: "\"@@\"" },
-        peg$c184 = function(start, property, end) { return thisExpression(start, end, "constructor", property) },
-        peg$c185 = "@",
-        peg$c186 = { type: "literal", value: "@", description: "\"@\"" },
-        peg$c187 = function(start, property, end) { return thisExpression(start, end, property) },
-        peg$c188 = function(start, end) { return thisExpression(start, end, "constructor") },
-        peg$c189 = function(start, end) { return thisExpression(start, end) },
-        peg$c190 = { type: "other", description: "literal" },
-        peg$c191 = function(start, value, end) { return node('Literal', {value:value}, start, end) },
-        peg$c192 = function(start, end) { return node('UnaryExpression', {operator:'void', prefix:true, argument:node('Literal', {value:0}, start, end)}, start, end) },
-        peg$c193 = function() { return {line:line(),column:column()-1} },
-        peg$c194 = function() { return offset() },
-        peg$c195 = function(a, b) { return new RegExp(a, b) },
-        peg$c196 = "\\",
-        peg$c197 = { type: "literal", value: "\\", description: "\"\\\\\"" },
-        peg$c198 = /^[^\/]/,
-        peg$c199 = { type: "class", value: "[^\\/]", description: "[^\\/]" },
-        peg$c200 = /^[gimy]/,
-        peg$c201 = { type: "class", value: "[gimy]", description: "[gimy]" },
-        peg$c202 = "'",
-        peg$c203 = { type: "literal", value: "'", description: "\"'\"" },
-        peg$c204 = /^['\\\/bfnrt]/,
-        peg$c205 = { type: "class", value: "['\\\\\\/bfnrt]", description: "['\\\\\\/bfnrt]" },
-        peg$c206 = "u",
-        peg$c207 = { type: "literal", value: "u", description: "\"u\"" },
-        peg$c208 = /^[^'\\\r\n]/,
-        peg$c209 = { type: "class", value: "[^'\\\\\\r\\n]", description: "[^'\\\\\\r\\n]" },
-        peg$c210 = function() { return eval(text()) },
-        peg$c211 = "\"",
-        peg$c212 = { type: "literal", value: "\"", description: "\"\\\"\"" },
-        peg$c213 = /^["\\\/bfnrt]/,
-        peg$c214 = { type: "class", value: "[\"\\\\\\/bfnrt]", description: "[\"\\\\\\/bfnrt]" },
-        peg$c215 = /^[^"\\\r\n]/,
-        peg$c216 = { type: "class", value: "[^\"\\\\\\r\\n]", description: "[^\"\\\\\\r\\n]" },
-        peg$c217 = "\"\"",
-        peg$c218 = { type: "literal", value: "\"\"", description: "\"\\\"\\\"\"" },
-        peg$c219 = function(start, content, end) { return concatenate(unindent(content)) },
-        peg$c220 = function(a) { return Array.prototype.concat.apply([], a) },
-        peg$c221 = "{{",
-        peg$c222 = { type: "literal", value: "{{", description: "\"{{\"" },
-        peg$c223 = function() { return text() },
-        peg$c224 = "''",
-        peg$c225 = { type: "literal", value: "''", description: "\"''\"" },
-        peg$c226 = "}}",
-        peg$c227 = { type: "literal", value: "}}", description: "\"}}\"" },
-        peg$c228 = function(a) { return concatenate(a) },
-        peg$c229 = function() { return eval('"' + text() + '"') },
-        peg$c230 = /^[+\-]/,
-        peg$c231 = { type: "class", value: "[+\\-]", description: "[+\\-]" },
-        peg$c232 = /^[eE]/,
-        peg$c233 = { type: "class", value: "[eE]", description: "[eE]" },
-        peg$c234 = function() { return parseFloat(text()) },
-        peg$c235 = function() { return parseInt(text()) },
-        peg$c236 = /^[0-9]/,
-        peg$c237 = { type: "class", value: "[0-9]", description: "[0-9]" },
-        peg$c238 = "0",
-        peg$c239 = { type: "literal", value: "0", description: "\"0\"" },
-        peg$c240 = "0x",
-        peg$c241 = { type: "literal", value: "0x", description: "\"0x\"" },
-        peg$c242 = function() { return parseInt(text(), 16) },
-        peg$c243 = /^[0-9a-fA-F]/,
-        peg$c244 = { type: "class", value: "[0-9a-fA-F]", description: "[0-9a-fA-F]" },
-        peg$c245 = { type: "other", description: "identifier" },
-        peg$c246 = { type: "other", description: "identifierName" },
-        peg$c247 = /^[$_]/,
-        peg$c248 = { type: "class", value: "[$_]", description: "[$_]" },
-        peg$c249 = "\\u",
-        peg$c250 = { type: "literal", value: "\\u", description: "\"\\\\u\"" },
-        peg$c251 = function(h0, h1, h2, h3) { return String.fromCharCode(parseInt(h0 + h1 + h2 + h3, 16)); },
-        peg$c252 = /^[A-Z\xC0-\xD6\xD8-\xDE\u0100\u0102\u0104\u0106\u0108\u010A\u010C\u010E\u0110\u0112\u0114\u0116\u0118\u011A\u011C\u011E\u0120\u0122\u0124\u0126\u0128\u012A\u012C\u012E\u0130\u0132\u0134\u0136\u0139\u013B\u013D\u013F\u0141\u0143\u0145\u0147\u014A\u014C\u014E\u0150\u0152\u0154\u0156\u0158\u015A\u015C\u015E\u0160\u0162\u0164\u0166\u0168\u016A\u016C\u016E\u0170\u0172\u0174\u0176\u0178\u0179\u017B\u017D\u0181\u0182\u0184\u0186\u0187\u0189-\u018B\u018E-\u0191\u0193\u0194\u0196-\u0198\u019C\u019D\u019F\u01A0\u01A2\u01A4\u01A6\u01A7\u01A9\u01AC\u01AE\u01AF\u01B1-\u01B3\u01B5\u01B7\u01B8\u01BC\u01C4\u01C7\u01CA\u01CD\u01CF\u01D1\u01D3\u01D5\u01D7\u01D9\u01DB\u01DE\u01E0\u01E2\u01E4\u01E6\u01E8\u01EA\u01EC\u01EE\u01F1\u01F4\u01F6-\u01F8\u01FA\u01FC\u01FE\u0200\u0202\u0204\u0206\u0208\u020A\u020C\u020E\u0210\u0212\u0214\u0216\u0218\u021A\u021C\u021E\u0220\u0222\u0224\u0226\u0228\u022A\u022C\u022E\u0230\u0232\u023A\u023B\u023D\u023E\u0241\u0243-\u0246\u0248\u024A\u024C\u024E\u0370\u0372\u0376\u0386\u0388-\u038A\u038C\u038E\u038F\u0391-\u03A1\u03A3-\u03AB\u03CF\u03D2-\u03D4\u03D8\u03DA\u03DC\u03DE\u03E0\u03E2\u03E4\u03E6\u03E8\u03EA\u03EC\u03EE\u03F4\u03F7\u03F9\u03FA\u03FD-\u042F\u0460\u0462\u0464\u0466\u0468\u046A\u046C\u046E\u0470\u0472\u0474\u0476\u0478\u047A\u047C\u047E\u0480\u048A\u048C\u048E\u0490\u0492\u0494\u0496\u0498\u049A\u049C\u049E\u04A0\u04A2\u04A4\u04A6\u04A8\u04AA\u04AC\u04AE\u04B0\u04B2\u04B4\u04B6\u04B8\u04BA\u04BC\u04BE\u04C0\u04C1\u04C3\u04C5\u04C7\u04C9\u04CB\u04CD\u04D0\u04D2\u04D4\u04D6\u04D8\u04DA\u04DC\u04DE\u04E0\u04E2\u04E4\u04E6\u04E8\u04EA\u04EC\u04EE\u04F0\u04F2\u04F4\u04F6\u04F8\u04FA\u04FC\u04FE\u0500\u0502\u0504\u0506\u0508\u050A\u050C\u050E\u0510\u0512\u0514\u0516\u0518\u051A\u051C\u051E\u0520\u0522\u0524\u0526\u0531-\u0556\u10A0-\u10C5\u1E00\u1E02\u1E04\u1E06\u1E08\u1E0A\u1E0C\u1E0E\u1E10\u1E12\u1E14\u1E16\u1E18\u1E1A\u1E1C\u1E1E\u1E20\u1E22\u1E24\u1E26\u1E28\u1E2A\u1E2C\u1E2E\u1E30\u1E32\u1E34\u1E36\u1E38\u1E3A\u1E3C\u1E3E\u1E40\u1E42\u1E44\u1E46\u1E48\u1E4A\u1E4C\u1E4E\u1E50\u1E52\u1E54\u1E56\u1E58\u1E5A\u1E5C\u1E5E\u1E60\u1E62\u1E64\u1E66\u1E68\u1E6A\u1E6C\u1E6E\u1E70\u1E72\u1E74\u1E76\u1E78\u1E7A\u1E7C\u1E7E\u1E80\u1E82\u1E84\u1E86\u1E88\u1E8A\u1E8C\u1E8E\u1E90\u1E92\u1E94\u1E9E\u1EA0\u1EA2\u1EA4\u1EA6\u1EA8\u1EAA\u1EAC\u1EAE\u1EB0\u1EB2\u1EB4\u1EB6\u1EB8\u1EBA\u1EBC\u1EBE\u1EC0\u1EC2\u1EC4\u1EC6\u1EC8\u1ECA\u1ECC\u1ECE\u1ED0\u1ED2\u1ED4\u1ED6\u1ED8\u1EDA\u1EDC\u1EDE\u1EE0\u1EE2\u1EE4\u1EE6\u1EE8\u1EEA\u1EEC\u1EEE\u1EF0\u1EF2\u1EF4\u1EF6\u1EF8\u1EFA\u1EFC\u1EFE\u1F08-\u1F0F\u1F18-\u1F1D\u1F28-\u1F2F\u1F38-\u1F3F\u1F48-\u1F4D\u1F59\u1F5B\u1F5D\u1F5F\u1F68-\u1F6F\u1FB8-\u1FBB\u1FC8-\u1FCB\u1FD8-\u1FDB\u1FE8-\u1FEC\u1FF8-\u1FFB\u2102\u2107\u210B-\u210D\u2110-\u2112\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u2130-\u2133\u213E\u213F\u2145\u2183\u2C00-\u2C2E\u2C60\u2C62-\u2C64\u2C67\u2C69\u2C6B\u2C6D-\u2C70\u2C72\u2C75\u2C7E-\u2C80\u2C82\u2C84\u2C86\u2C88\u2C8A\u2C8C\u2C8E\u2C90\u2C92\u2C94\u2C96\u2C98\u2C9A\u2C9C\u2C9E\u2CA0\u2CA2\u2CA4\u2CA6\u2CA8\u2CAA\u2CAC\u2CAE\u2CB0\u2CB2\u2CB4\u2CB6\u2CB8\u2CBA\u2CBC\u2CBE\u2CC0\u2CC2\u2CC4\u2CC6\u2CC8\u2CCA\u2CCC\u2CCE\u2CD0\u2CD2\u2CD4\u2CD6\u2CD8\u2CDA\u2CDC\u2CDE\u2CE0\u2CE2\u2CEB\u2CED\uA640\uA642\uA644\uA646\uA648\uA64A\uA64C\uA64E\uA650\uA652\uA654\uA656\uA658\uA65A\uA65C\uA65E\uA660\uA662\uA664\uA666\uA668\uA66A\uA66C\uA680\uA682\uA684\uA686\uA688\uA68A\uA68C\uA68E\uA690\uA692\uA694\uA696\uA722\uA724\uA726\uA728\uA72A\uA72C\uA72E\uA732\uA734\uA736\uA738\uA73A\uA73C\uA73E\uA740\uA742\uA744\uA746\uA748\uA74A\uA74C\uA74E\uA750\uA752\uA754\uA756\uA758\uA75A\uA75C\uA75E\uA760\uA762\uA764\uA766\uA768\uA76A\uA76C\uA76E\uA779\uA77B\uA77D\uA77E\uA780\uA782\uA784\uA786\uA78B\uA78D\uA790\uA7A0\uA7A2\uA7A4\uA7A6\uA7A8\uFF21-\uFF3Aa-z\xAA\xB5\xBA\xDF-\xF6\xF8-\xFF\u0101\u0103\u0105\u0107\u0109\u010B\u010D\u010F\u0111\u0113\u0115\u0117\u0119\u011B\u011D\u011F\u0121\u0123\u0125\u0127\u0129\u012B\u012D\u012F\u0131\u0133\u0135\u0137\u0138\u013A\u013C\u013E\u0140\u0142\u0144\u0146\u0148\u0149\u014B\u014D\u014F\u0151\u0153\u0155\u0157\u0159\u015B\u015D\u015F\u0161\u0163\u0165\u0167\u0169\u016B\u016D\u016F\u0171\u0173\u0175\u0177\u017A\u017C\u017E-\u0180\u0183\u0185\u0188\u018C\u018D\u0192\u0195\u0199-\u019B\u019E\u01A1\u01A3\u01A5\u01A8\u01AA\u01AB\u01AD\u01B0\u01B4\u01B6\u01B9\u01BA\u01BD-\u01BF\u01C6\u01C9\u01CC\u01CE\u01D0\u01D2\u01D4\u01D6\u01D8\u01DA\u01DC\u01DD\u01DF\u01E1\u01E3\u01E5\u01E7\u01E9\u01EB\u01ED\u01EF\u01F0\u01F3\u01F5\u01F9\u01FB\u01FD\u01FF\u0201\u0203\u0205\u0207\u0209\u020B\u020D\u020F\u0211\u0213\u0215\u0217\u0219\u021B\u021D\u021F\u0221\u0223\u0225\u0227\u0229\u022B\u022D\u022F\u0231\u0233-\u0239\u023C\u023F\u0240\u0242\u0247\u0249\u024B\u024D\u024F-\u0293\u0295-\u02AF\u0371\u0373\u0377\u037B-\u037D\u0390\u03AC-\u03CE\u03D0\u03D1\u03D5-\u03D7\u03D9\u03DB\u03DD\u03DF\u03E1\u03E3\u03E5\u03E7\u03E9\u03EB\u03ED\u03EF-\u03F3\u03F5\u03F8\u03FB\u03FC\u0430-\u045F\u0461\u0463\u0465\u0467\u0469\u046B\u046D\u046F\u0471\u0473\u0475\u0477\u0479\u047B\u047D\u047F\u0481\u048B\u048D\u048F\u0491\u0493\u0495\u0497\u0499\u049B\u049D\u049F\u04A1\u04A3\u04A5\u04A7\u04A9\u04AB\u04AD\u04AF\u04B1\u04B3\u04B5\u04B7\u04B9\u04BB\u04BD\u04BF\u04C2\u04C4\u04C6\u04C8\u04CA\u04CC\u04CE\u04CF\u04D1\u04D3\u04D5\u04D7\u04D9\u04DB\u04DD\u04DF\u04E1\u04E3\u04E5\u04E7\u04E9\u04EB\u04ED\u04EF\u04F1\u04F3\u04F5\u04F7\u04F9\u04FB\u04FD\u04FF\u0501\u0503\u0505\u0507\u0509\u050B\u050D\u050F\u0511\u0513\u0515\u0517\u0519\u051B\u051D\u051F\u0521\u0523\u0525\u0527\u0561-\u0587\u1D00-\u1D2B\u1D62-\u1D77\u1D79-\u1D9A\u1E01\u1E03\u1E05\u1E07\u1E09\u1E0B\u1E0D\u1E0F\u1E11\u1E13\u1E15\u1E17\u1E19\u1E1B\u1E1D\u1E1F\u1E21\u1E23\u1E25\u1E27\u1E29\u1E2B\u1E2D\u1E2F\u1E31\u1E33\u1E35\u1E37\u1E39\u1E3B\u1E3D\u1E3F\u1E41\u1E43\u1E45\u1E47\u1E49\u1E4B\u1E4D\u1E4F\u1E51\u1E53\u1E55\u1E57\u1E59\u1E5B\u1E5D\u1E5F\u1E61\u1E63\u1E65\u1E67\u1E69\u1E6B\u1E6D\u1E6F\u1E71\u1E73\u1E75\u1E77\u1E79\u1E7B\u1E7D\u1E7F\u1E81\u1E83\u1E85\u1E87\u1E89\u1E8B\u1E8D\u1E8F\u1E91\u1E93\u1E95-\u1E9D\u1E9F\u1EA1\u1EA3\u1EA5\u1EA7\u1EA9\u1EAB\u1EAD\u1EAF\u1EB1\u1EB3\u1EB5\u1EB7\u1EB9\u1EBB\u1EBD\u1EBF\u1EC1\u1EC3\u1EC5\u1EC7\u1EC9\u1ECB\u1ECD\u1ECF\u1ED1\u1ED3\u1ED5\u1ED7\u1ED9\u1EDB\u1EDD\u1EDF\u1EE1\u1EE3\u1EE5\u1EE7\u1EE9\u1EEB\u1EED\u1EEF\u1EF1\u1EF3\u1EF5\u1EF7\u1EF9\u1EFB\u1EFD\u1EFF-\u1F07\u1F10-\u1F15\u1F20-\u1F27\u1F30-\u1F37\u1F40-\u1F45\u1F50-\u1F57\u1F60-\u1F67\u1F70-\u1F7D\u1F80-\u1F87\u1F90-\u1F97\u1FA0-\u1FA7\u1FB0-\u1FB4\u1FB6\u1FB7\u1FBE\u1FC2-\u1FC4\u1FC6\u1FC7\u1FD0-\u1FD3\u1FD6\u1FD7\u1FE0-\u1FE7\u1FF2-\u1FF4\u1FF6\u1FF7\u210A\u210E\u210F\u2113\u212F\u2134\u2139\u213C\u213D\u2146-\u2149\u214E\u2184\u2C30-\u2C5E\u2C61\u2C65\u2C66\u2C68\u2C6A\u2C6C\u2C71\u2C73\u2C74\u2C76-\u2C7C\u2C81\u2C83\u2C85\u2C87\u2C89\u2C8B\u2C8D\u2C8F\u2C91\u2C93\u2C95\u2C97\u2C99\u2C9B\u2C9D\u2C9F\u2CA1\u2CA3\u2CA5\u2CA7\u2CA9\u2CAB\u2CAD\u2CAF\u2CB1\u2CB3\u2CB5\u2CB7\u2CB9\u2CBB\u2CBD\u2CBF\u2CC1\u2CC3\u2CC5\u2CC7\u2CC9\u2CCB\u2CCD\u2CCF\u2CD1\u2CD3\u2CD5\u2CD7\u2CD9\u2CDB\u2CDD\u2CDF\u2CE1\u2CE3\u2CE4\u2CEC\u2CEE\u2D00-\u2D25\uA641\uA643\uA645\uA647\uA649\uA64B\uA64D\uA64F\uA651\uA653\uA655\uA657\uA659\uA65B\uA65D\uA65F\uA661\uA663\uA665\uA667\uA669\uA66B\uA66D\uA681\uA683\uA685\uA687\uA689\uA68B\uA68D\uA68F\uA691\uA693\uA695\uA697\uA723\uA725\uA727\uA729\uA72B\uA72D\uA72F-\uA731\uA733\uA735\uA737\uA739\uA73B\uA73D\uA73F\uA741\uA743\uA745\uA747\uA749\uA74B\uA74D\uA74F\uA751\uA753\uA755\uA757\uA759\uA75B\uA75D\uA75F\uA761\uA763\uA765\uA767\uA769\uA76B\uA76D\uA76F\uA771-\uA778\uA77A\uA77C\uA77F\uA781\uA783\uA785\uA787\uA78C\uA78E\uA791\uA7A1\uA7A3\uA7A5\uA7A7\uA7A9\uA7FA\uFB00-\uFB06\uFB13-\uFB17\uFF41-\uFF5A\u01C5\u01C8\u01CB\u01F2\u1F88-\u1F8F\u1F98-\u1F9F\u1FA8-\u1FAF\u1FBC\u1FCC\u1FFC\u02B0-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0374\u037A\u0559\u0640\u06E5\u06E6\u07F4\u07F5\u07FA\u081A\u0824\u0828\u0971\u0E46\u0EC6\u10FC\u17D7\u1843\u1AA7\u1C78-\u1C7D\u1D2C-\u1D61\u1D78\u1D9B-\u1DBF\u2071\u207F\u2090-\u209C\u2C7D\u2D6F\u2E2F\u3005\u3031-\u3035\u303B\u309D\u309E\u30FC-\u30FE\uA015\uA4F8-\uA4FD\uA60C\uA67F\uA717-\uA71F\uA770\uA788\uA9CF\uAA70\uAADD\uFF70\uFF9E\uFF9F\u01BB\u01C0-\u01C3\u0294\u05D0-\u05EA\u05F0-\u05F2\u0620-\u063F\u0641-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u0800-\u0815\u0840-\u0858\u0904-\u0939\u093D\u0950\u0958-\u0961\u0972-\u0977\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E45\u0E81\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EDC\u0EDD\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10D0-\u10FA\u1100-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17DC\u1820-\u1842\u1844-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16\u1A20-\u1A54\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF\u1BC0-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C77\u1CE9-\u1CEC\u1CEE-\u1CF1\u2135-\u2138\u2D30-\u2D65\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u3006\u303C\u3041-\u3096\u309F\u30A1-\u30FA\u30FF\u3105-\u312D\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400\u4DB5\u4E00\u9FCB\uA000-\uA014\uA016-\uA48C\uA4D0-\uA4F7\uA500-\uA60B\uA610-\uA61F\uA62A\uA62B\uA66E\uA6A0-\uA6E5\uA7FB-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA6F\uAA71-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB\uAADC\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uABC0-\uABE2\uAC00\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA2D\uFA30-\uFA6D\uFA70-\uFAD9\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF66-\uFF6F\uFF71-\uFF9D\uFFA0-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC\u16EE-\u16F0\u2160-\u2182\u2185-\u2188\u3007\u3021-\u3029\u3038-\u303A\uA6E6-\uA6EF]/,
-        peg$c253 = { type: "class", value: "[A-Z\\xC0-\\xD6\\xD8-\\xDE\\u0100\\u0102\\u0104\\u0106\\u0108\\u010A\\u010C\\u010E\\u0110\\u0112\\u0114\\u0116\\u0118\\u011A\\u011C\\u011E\\u0120\\u0122\\u0124\\u0126\\u0128\\u012A\\u012C\\u012E\\u0130\\u0132\\u0134\\u0136\\u0139\\u013B\\u013D\\u013F\\u0141\\u0143\\u0145\\u0147\\u014A\\u014C\\u014E\\u0150\\u0152\\u0154\\u0156\\u0158\\u015A\\u015C\\u015E\\u0160\\u0162\\u0164\\u0166\\u0168\\u016A\\u016C\\u016E\\u0170\\u0172\\u0174\\u0176\\u0178\\u0179\\u017B\\u017D\\u0181\\u0182\\u0184\\u0186\\u0187\\u0189-\\u018B\\u018E-\\u0191\\u0193\\u0194\\u0196-\\u0198\\u019C\\u019D\\u019F\\u01A0\\u01A2\\u01A4\\u01A6\\u01A7\\u01A9\\u01AC\\u01AE\\u01AF\\u01B1-\\u01B3\\u01B5\\u01B7\\u01B8\\u01BC\\u01C4\\u01C7\\u01CA\\u01CD\\u01CF\\u01D1\\u01D3\\u01D5\\u01D7\\u01D9\\u01DB\\u01DE\\u01E0\\u01E2\\u01E4\\u01E6\\u01E8\\u01EA\\u01EC\\u01EE\\u01F1\\u01F4\\u01F6-\\u01F8\\u01FA\\u01FC\\u01FE\\u0200\\u0202\\u0204\\u0206\\u0208\\u020A\\u020C\\u020E\\u0210\\u0212\\u0214\\u0216\\u0218\\u021A\\u021C\\u021E\\u0220\\u0222\\u0224\\u0226\\u0228\\u022A\\u022C\\u022E\\u0230\\u0232\\u023A\\u023B\\u023D\\u023E\\u0241\\u0243-\\u0246\\u0248\\u024A\\u024C\\u024E\\u0370\\u0372\\u0376\\u0386\\u0388-\\u038A\\u038C\\u038E\\u038F\\u0391-\\u03A1\\u03A3-\\u03AB\\u03CF\\u03D2-\\u03D4\\u03D8\\u03DA\\u03DC\\u03DE\\u03E0\\u03E2\\u03E4\\u03E6\\u03E8\\u03EA\\u03EC\\u03EE\\u03F4\\u03F7\\u03F9\\u03FA\\u03FD-\\u042F\\u0460\\u0462\\u0464\\u0466\\u0468\\u046A\\u046C\\u046E\\u0470\\u0472\\u0474\\u0476\\u0478\\u047A\\u047C\\u047E\\u0480\\u048A\\u048C\\u048E\\u0490\\u0492\\u0494\\u0496\\u0498\\u049A\\u049C\\u049E\\u04A0\\u04A2\\u04A4\\u04A6\\u04A8\\u04AA\\u04AC\\u04AE\\u04B0\\u04B2\\u04B4\\u04B6\\u04B8\\u04BA\\u04BC\\u04BE\\u04C0\\u04C1\\u04C3\\u04C5\\u04C7\\u04C9\\u04CB\\u04CD\\u04D0\\u04D2\\u04D4\\u04D6\\u04D8\\u04DA\\u04DC\\u04DE\\u04E0\\u04E2\\u04E4\\u04E6\\u04E8\\u04EA\\u04EC\\u04EE\\u04F0\\u04F2\\u04F4\\u04F6\\u04F8\\u04FA\\u04FC\\u04FE\\u0500\\u0502\\u0504\\u0506\\u0508\\u050A\\u050C\\u050E\\u0510\\u0512\\u0514\\u0516\\u0518\\u051A\\u051C\\u051E\\u0520\\u0522\\u0524\\u0526\\u0531-\\u0556\\u10A0-\\u10C5\\u1E00\\u1E02\\u1E04\\u1E06\\u1E08\\u1E0A\\u1E0C\\u1E0E\\u1E10\\u1E12\\u1E14\\u1E16\\u1E18\\u1E1A\\u1E1C\\u1E1E\\u1E20\\u1E22\\u1E24\\u1E26\\u1E28\\u1E2A\\u1E2C\\u1E2E\\u1E30\\u1E32\\u1E34\\u1E36\\u1E38\\u1E3A\\u1E3C\\u1E3E\\u1E40\\u1E42\\u1E44\\u1E46\\u1E48\\u1E4A\\u1E4C\\u1E4E\\u1E50\\u1E52\\u1E54\\u1E56\\u1E58\\u1E5A\\u1E5C\\u1E5E\\u1E60\\u1E62\\u1E64\\u1E66\\u1E68\\u1E6A\\u1E6C\\u1E6E\\u1E70\\u1E72\\u1E74\\u1E76\\u1E78\\u1E7A\\u1E7C\\u1E7E\\u1E80\\u1E82\\u1E84\\u1E86\\u1E88\\u1E8A\\u1E8C\\u1E8E\\u1E90\\u1E92\\u1E94\\u1E9E\\u1EA0\\u1EA2\\u1EA4\\u1EA6\\u1EA8\\u1EAA\\u1EAC\\u1EAE\\u1EB0\\u1EB2\\u1EB4\\u1EB6\\u1EB8\\u1EBA\\u1EBC\\u1EBE\\u1EC0\\u1EC2\\u1EC4\\u1EC6\\u1EC8\\u1ECA\\u1ECC\\u1ECE\\u1ED0\\u1ED2\\u1ED4\\u1ED6\\u1ED8\\u1EDA\\u1EDC\\u1EDE\\u1EE0\\u1EE2\\u1EE4\\u1EE6\\u1EE8\\u1EEA\\u1EEC\\u1EEE\\u1EF0\\u1EF2\\u1EF4\\u1EF6\\u1EF8\\u1EFA\\u1EFC\\u1EFE\\u1F08-\\u1F0F\\u1F18-\\u1F1D\\u1F28-\\u1F2F\\u1F38-\\u1F3F\\u1F48-\\u1F4D\\u1F59\\u1F5B\\u1F5D\\u1F5F\\u1F68-\\u1F6F\\u1FB8-\\u1FBB\\u1FC8-\\u1FCB\\u1FD8-\\u1FDB\\u1FE8-\\u1FEC\\u1FF8-\\u1FFB\\u2102\\u2107\\u210B-\\u210D\\u2110-\\u2112\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u2130-\\u2133\\u213E\\u213F\\u2145\\u2183\\u2C00-\\u2C2E\\u2C60\\u2C62-\\u2C64\\u2C67\\u2C69\\u2C6B\\u2C6D-\\u2C70\\u2C72\\u2C75\\u2C7E-\\u2C80\\u2C82\\u2C84\\u2C86\\u2C88\\u2C8A\\u2C8C\\u2C8E\\u2C90\\u2C92\\u2C94\\u2C96\\u2C98\\u2C9A\\u2C9C\\u2C9E\\u2CA0\\u2CA2\\u2CA4\\u2CA6\\u2CA8\\u2CAA\\u2CAC\\u2CAE\\u2CB0\\u2CB2\\u2CB4\\u2CB6\\u2CB8\\u2CBA\\u2CBC\\u2CBE\\u2CC0\\u2CC2\\u2CC4\\u2CC6\\u2CC8\\u2CCA\\u2CCC\\u2CCE\\u2CD0\\u2CD2\\u2CD4\\u2CD6\\u2CD8\\u2CDA\\u2CDC\\u2CDE\\u2CE0\\u2CE2\\u2CEB\\u2CED\\uA640\\uA642\\uA644\\uA646\\uA648\\uA64A\\uA64C\\uA64E\\uA650\\uA652\\uA654\\uA656\\uA658\\uA65A\\uA65C\\uA65E\\uA660\\uA662\\uA664\\uA666\\uA668\\uA66A\\uA66C\\uA680\\uA682\\uA684\\uA686\\uA688\\uA68A\\uA68C\\uA68E\\uA690\\uA692\\uA694\\uA696\\uA722\\uA724\\uA726\\uA728\\uA72A\\uA72C\\uA72E\\uA732\\uA734\\uA736\\uA738\\uA73A\\uA73C\\uA73E\\uA740\\uA742\\uA744\\uA746\\uA748\\uA74A\\uA74C\\uA74E\\uA750\\uA752\\uA754\\uA756\\uA758\\uA75A\\uA75C\\uA75E\\uA760\\uA762\\uA764\\uA766\\uA768\\uA76A\\uA76C\\uA76E\\uA779\\uA77B\\uA77D\\uA77E\\uA780\\uA782\\uA784\\uA786\\uA78B\\uA78D\\uA790\\uA7A0\\uA7A2\\uA7A4\\uA7A6\\uA7A8\\uFF21-\\uFF3Aa-z\\xAA\\xB5\\xBA\\xDF-\\xF6\\xF8-\\xFF\\u0101\\u0103\\u0105\\u0107\\u0109\\u010B\\u010D\\u010F\\u0111\\u0113\\u0115\\u0117\\u0119\\u011B\\u011D\\u011F\\u0121\\u0123\\u0125\\u0127\\u0129\\u012B\\u012D\\u012F\\u0131\\u0133\\u0135\\u0137\\u0138\\u013A\\u013C\\u013E\\u0140\\u0142\\u0144\\u0146\\u0148\\u0149\\u014B\\u014D\\u014F\\u0151\\u0153\\u0155\\u0157\\u0159\\u015B\\u015D\\u015F\\u0161\\u0163\\u0165\\u0167\\u0169\\u016B\\u016D\\u016F\\u0171\\u0173\\u0175\\u0177\\u017A\\u017C\\u017E-\\u0180\\u0183\\u0185\\u0188\\u018C\\u018D\\u0192\\u0195\\u0199-\\u019B\\u019E\\u01A1\\u01A3\\u01A5\\u01A8\\u01AA\\u01AB\\u01AD\\u01B0\\u01B4\\u01B6\\u01B9\\u01BA\\u01BD-\\u01BF\\u01C6\\u01C9\\u01CC\\u01CE\\u01D0\\u01D2\\u01D4\\u01D6\\u01D8\\u01DA\\u01DC\\u01DD\\u01DF\\u01E1\\u01E3\\u01E5\\u01E7\\u01E9\\u01EB\\u01ED\\u01EF\\u01F0\\u01F3\\u01F5\\u01F9\\u01FB\\u01FD\\u01FF\\u0201\\u0203\\u0205\\u0207\\u0209\\u020B\\u020D\\u020F\\u0211\\u0213\\u0215\\u0217\\u0219\\u021B\\u021D\\u021F\\u0221\\u0223\\u0225\\u0227\\u0229\\u022B\\u022D\\u022F\\u0231\\u0233-\\u0239\\u023C\\u023F\\u0240\\u0242\\u0247\\u0249\\u024B\\u024D\\u024F-\\u0293\\u0295-\\u02AF\\u0371\\u0373\\u0377\\u037B-\\u037D\\u0390\\u03AC-\\u03CE\\u03D0\\u03D1\\u03D5-\\u03D7\\u03D9\\u03DB\\u03DD\\u03DF\\u03E1\\u03E3\\u03E5\\u03E7\\u03E9\\u03EB\\u03ED\\u03EF-\\u03F3\\u03F5\\u03F8\\u03FB\\u03FC\\u0430-\\u045F\\u0461\\u0463\\u0465\\u0467\\u0469\\u046B\\u046D\\u046F\\u0471\\u0473\\u0475\\u0477\\u0479\\u047B\\u047D\\u047F\\u0481\\u048B\\u048D\\u048F\\u0491\\u0493\\u0495\\u0497\\u0499\\u049B\\u049D\\u049F\\u04A1\\u04A3\\u04A5\\u04A7\\u04A9\\u04AB\\u04AD\\u04AF\\u04B1\\u04B3\\u04B5\\u04B7\\u04B9\\u04BB\\u04BD\\u04BF\\u04C2\\u04C4\\u04C6\\u04C8\\u04CA\\u04CC\\u04CE\\u04CF\\u04D1\\u04D3\\u04D5\\u04D7\\u04D9\\u04DB\\u04DD\\u04DF\\u04E1\\u04E3\\u04E5\\u04E7\\u04E9\\u04EB\\u04ED\\u04EF\\u04F1\\u04F3\\u04F5\\u04F7\\u04F9\\u04FB\\u04FD\\u04FF\\u0501\\u0503\\u0505\\u0507\\u0509\\u050B\\u050D\\u050F\\u0511\\u0513\\u0515\\u0517\\u0519\\u051B\\u051D\\u051F\\u0521\\u0523\\u0525\\u0527\\u0561-\\u0587\\u1D00-\\u1D2B\\u1D62-\\u1D77\\u1D79-\\u1D9A\\u1E01\\u1E03\\u1E05\\u1E07\\u1E09\\u1E0B\\u1E0D\\u1E0F\\u1E11\\u1E13\\u1E15\\u1E17\\u1E19\\u1E1B\\u1E1D\\u1E1F\\u1E21\\u1E23\\u1E25\\u1E27\\u1E29\\u1E2B\\u1E2D\\u1E2F\\u1E31\\u1E33\\u1E35\\u1E37\\u1E39\\u1E3B\\u1E3D\\u1E3F\\u1E41\\u1E43\\u1E45\\u1E47\\u1E49\\u1E4B\\u1E4D\\u1E4F\\u1E51\\u1E53\\u1E55\\u1E57\\u1E59\\u1E5B\\u1E5D\\u1E5F\\u1E61\\u1E63\\u1E65\\u1E67\\u1E69\\u1E6B\\u1E6D\\u1E6F\\u1E71\\u1E73\\u1E75\\u1E77\\u1E79\\u1E7B\\u1E7D\\u1E7F\\u1E81\\u1E83\\u1E85\\u1E87\\u1E89\\u1E8B\\u1E8D\\u1E8F\\u1E91\\u1E93\\u1E95-\\u1E9D\\u1E9F\\u1EA1\\u1EA3\\u1EA5\\u1EA7\\u1EA9\\u1EAB\\u1EAD\\u1EAF\\u1EB1\\u1EB3\\u1EB5\\u1EB7\\u1EB9\\u1EBB\\u1EBD\\u1EBF\\u1EC1\\u1EC3\\u1EC5\\u1EC7\\u1EC9\\u1ECB\\u1ECD\\u1ECF\\u1ED1\\u1ED3\\u1ED5\\u1ED7\\u1ED9\\u1EDB\\u1EDD\\u1EDF\\u1EE1\\u1EE3\\u1EE5\\u1EE7\\u1EE9\\u1EEB\\u1EED\\u1EEF\\u1EF1\\u1EF3\\u1EF5\\u1EF7\\u1EF9\\u1EFB\\u1EFD\\u1EFF-\\u1F07\\u1F10-\\u1F15\\u1F20-\\u1F27\\u1F30-\\u1F37\\u1F40-\\u1F45\\u1F50-\\u1F57\\u1F60-\\u1F67\\u1F70-\\u1F7D\\u1F80-\\u1F87\\u1F90-\\u1F97\\u1FA0-\\u1FA7\\u1FB0-\\u1FB4\\u1FB6\\u1FB7\\u1FBE\\u1FC2-\\u1FC4\\u1FC6\\u1FC7\\u1FD0-\\u1FD3\\u1FD6\\u1FD7\\u1FE0-\\u1FE7\\u1FF2-\\u1FF4\\u1FF6\\u1FF7\\u210A\\u210E\\u210F\\u2113\\u212F\\u2134\\u2139\\u213C\\u213D\\u2146-\\u2149\\u214E\\u2184\\u2C30-\\u2C5E\\u2C61\\u2C65\\u2C66\\u2C68\\u2C6A\\u2C6C\\u2C71\\u2C73\\u2C74\\u2C76-\\u2C7C\\u2C81\\u2C83\\u2C85\\u2C87\\u2C89\\u2C8B\\u2C8D\\u2C8F\\u2C91\\u2C93\\u2C95\\u2C97\\u2C99\\u2C9B\\u2C9D\\u2C9F\\u2CA1\\u2CA3\\u2CA5\\u2CA7\\u2CA9\\u2CAB\\u2CAD\\u2CAF\\u2CB1\\u2CB3\\u2CB5\\u2CB7\\u2CB9\\u2CBB\\u2CBD\\u2CBF\\u2CC1\\u2CC3\\u2CC5\\u2CC7\\u2CC9\\u2CCB\\u2CCD\\u2CCF\\u2CD1\\u2CD3\\u2CD5\\u2CD7\\u2CD9\\u2CDB\\u2CDD\\u2CDF\\u2CE1\\u2CE3\\u2CE4\\u2CEC\\u2CEE\\u2D00-\\u2D25\\uA641\\uA643\\uA645\\uA647\\uA649\\uA64B\\uA64D\\uA64F\\uA651\\uA653\\uA655\\uA657\\uA659\\uA65B\\uA65D\\uA65F\\uA661\\uA663\\uA665\\uA667\\uA669\\uA66B\\uA66D\\uA681\\uA683\\uA685\\uA687\\uA689\\uA68B\\uA68D\\uA68F\\uA691\\uA693\\uA695\\uA697\\uA723\\uA725\\uA727\\uA729\\uA72B\\uA72D\\uA72F-\\uA731\\uA733\\uA735\\uA737\\uA739\\uA73B\\uA73D\\uA73F\\uA741\\uA743\\uA745\\uA747\\uA749\\uA74B\\uA74D\\uA74F\\uA751\\uA753\\uA755\\uA757\\uA759\\uA75B\\uA75D\\uA75F\\uA761\\uA763\\uA765\\uA767\\uA769\\uA76B\\uA76D\\uA76F\\uA771-\\uA778\\uA77A\\uA77C\\uA77F\\uA781\\uA783\\uA785\\uA787\\uA78C\\uA78E\\uA791\\uA7A1\\uA7A3\\uA7A5\\uA7A7\\uA7A9\\uA7FA\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFF41-\\uFF5A\\u01C5\\u01C8\\u01CB\\u01F2\\u1F88-\\u1F8F\\u1F98-\\u1F9F\\u1FA8-\\u1FAF\\u1FBC\\u1FCC\\u1FFC\\u02B0-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0374\\u037A\\u0559\\u0640\\u06E5\\u06E6\\u07F4\\u07F5\\u07FA\\u081A\\u0824\\u0828\\u0971\\u0E46\\u0EC6\\u10FC\\u17D7\\u1843\\u1AA7\\u1C78-\\u1C7D\\u1D2C-\\u1D61\\u1D78\\u1D9B-\\u1DBF\\u2071\\u207F\\u2090-\\u209C\\u2C7D\\u2D6F\\u2E2F\\u3005\\u3031-\\u3035\\u303B\\u309D\\u309E\\u30FC-\\u30FE\\uA015\\uA4F8-\\uA4FD\\uA60C\\uA67F\\uA717-\\uA71F\\uA770\\uA788\\uA9CF\\uAA70\\uAADD\\uFF70\\uFF9E\\uFF9F\\u01BB\\u01C0-\\u01C3\\u0294\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0620-\\u063F\\u0641-\\u064A\\u066E\\u066F\\u0671-\\u06D3\\u06D5\\u06EE\\u06EF\\u06FA-\\u06FC\\u06FF\\u0710\\u0712-\\u072F\\u074D-\\u07A5\\u07B1\\u07CA-\\u07EA\\u0800-\\u0815\\u0840-\\u0858\\u0904-\\u0939\\u093D\\u0950\\u0958-\\u0961\\u0972-\\u0977\\u0979-\\u097F\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BD\\u09CE\\u09DC\\u09DD\\u09DF-\\u09E1\\u09F0\\u09F1\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A59-\\u0A5C\\u0A5E\\u0A72-\\u0A74\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABD\\u0AD0\\u0AE0\\u0AE1\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3D\\u0B5C\\u0B5D\\u0B5F-\\u0B61\\u0B71\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BD0\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C33\\u0C35-\\u0C39\\u0C3D\\u0C58\\u0C59\\u0C60\\u0C61\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBD\\u0CDE\\u0CE0\\u0CE1\\u0CF1\\u0CF2\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D\\u0D4E\\u0D60\\u0D61\\u0D7A-\\u0D7F\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0E01-\\u0E30\\u0E32\\u0E33\\u0E40-\\u0E45\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB0\\u0EB2\\u0EB3\\u0EBD\\u0EC0-\\u0EC4\\u0EDC\\u0EDD\\u0F00\\u0F40-\\u0F47\\u0F49-\\u0F6C\\u0F88-\\u0F8C\\u1000-\\u102A\\u103F\\u1050-\\u1055\\u105A-\\u105D\\u1061\\u1065\\u1066\\u106E-\\u1070\\u1075-\\u1081\\u108E\\u10D0-\\u10FA\\u1100-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u1700-\\u170C\\u170E-\\u1711\\u1720-\\u1731\\u1740-\\u1751\\u1760-\\u176C\\u176E-\\u1770\\u1780-\\u17B3\\u17DC\\u1820-\\u1842\\u1844-\\u1877\\u1880-\\u18A8\\u18AA\\u18B0-\\u18F5\\u1900-\\u191C\\u1950-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19C1-\\u19C7\\u1A00-\\u1A16\\u1A20-\\u1A54\\u1B05-\\u1B33\\u1B45-\\u1B4B\\u1B83-\\u1BA0\\u1BAE\\u1BAF\\u1BC0-\\u1BE5\\u1C00-\\u1C23\\u1C4D-\\u1C4F\\u1C5A-\\u1C77\\u1CE9-\\u1CEC\\u1CEE-\\u1CF1\\u2135-\\u2138\\u2D30-\\u2D65\\u2D80-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u3006\\u303C\\u3041-\\u3096\\u309F\\u30A1-\\u30FA\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400\\u4DB5\\u4E00\\u9FCB\\uA000-\\uA014\\uA016-\\uA48C\\uA4D0-\\uA4F7\\uA500-\\uA60B\\uA610-\\uA61F\\uA62A\\uA62B\\uA66E\\uA6A0-\\uA6E5\\uA7FB-\\uA801\\uA803-\\uA805\\uA807-\\uA80A\\uA80C-\\uA822\\uA840-\\uA873\\uA882-\\uA8B3\\uA8F2-\\uA8F7\\uA8FB\\uA90A-\\uA925\\uA930-\\uA946\\uA960-\\uA97C\\uA984-\\uA9B2\\uAA00-\\uAA28\\uAA40-\\uAA42\\uAA44-\\uAA4B\\uAA60-\\uAA6F\\uAA71-\\uAA76\\uAA7A\\uAA80-\\uAAAF\\uAAB1\\uAAB5\\uAAB6\\uAAB9-\\uAABD\\uAAC0\\uAAC2\\uAADB\\uAADC\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uABC0-\\uABE2\\uAC00\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA2D\\uFA30-\\uFA6D\\uFA70-\\uFAD9\\uFB1D\\uFB1F-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF66-\\uFF6F\\uFF71-\\uFF9D\\uFFA0-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC\\u16EE-\\u16F0\\u2160-\\u2182\\u2185-\\u2188\\u3007\\u3021-\\u3029\\u3038-\\u303A\\uA6E6-\\uA6EF]", description: "[A-Z\\xC0-\\xD6\\xD8-\\xDE\\u0100\\u0102\\u0104\\u0106\\u0108\\u010A\\u010C\\u010E\\u0110\\u0112\\u0114\\u0116\\u0118\\u011A\\u011C\\u011E\\u0120\\u0122\\u0124\\u0126\\u0128\\u012A\\u012C\\u012E\\u0130\\u0132\\u0134\\u0136\\u0139\\u013B\\u013D\\u013F\\u0141\\u0143\\u0145\\u0147\\u014A\\u014C\\u014E\\u0150\\u0152\\u0154\\u0156\\u0158\\u015A\\u015C\\u015E\\u0160\\u0162\\u0164\\u0166\\u0168\\u016A\\u016C\\u016E\\u0170\\u0172\\u0174\\u0176\\u0178\\u0179\\u017B\\u017D\\u0181\\u0182\\u0184\\u0186\\u0187\\u0189-\\u018B\\u018E-\\u0191\\u0193\\u0194\\u0196-\\u0198\\u019C\\u019D\\u019F\\u01A0\\u01A2\\u01A4\\u01A6\\u01A7\\u01A9\\u01AC\\u01AE\\u01AF\\u01B1-\\u01B3\\u01B5\\u01B7\\u01B8\\u01BC\\u01C4\\u01C7\\u01CA\\u01CD\\u01CF\\u01D1\\u01D3\\u01D5\\u01D7\\u01D9\\u01DB\\u01DE\\u01E0\\u01E2\\u01E4\\u01E6\\u01E8\\u01EA\\u01EC\\u01EE\\u01F1\\u01F4\\u01F6-\\u01F8\\u01FA\\u01FC\\u01FE\\u0200\\u0202\\u0204\\u0206\\u0208\\u020A\\u020C\\u020E\\u0210\\u0212\\u0214\\u0216\\u0218\\u021A\\u021C\\u021E\\u0220\\u0222\\u0224\\u0226\\u0228\\u022A\\u022C\\u022E\\u0230\\u0232\\u023A\\u023B\\u023D\\u023E\\u0241\\u0243-\\u0246\\u0248\\u024A\\u024C\\u024E\\u0370\\u0372\\u0376\\u0386\\u0388-\\u038A\\u038C\\u038E\\u038F\\u0391-\\u03A1\\u03A3-\\u03AB\\u03CF\\u03D2-\\u03D4\\u03D8\\u03DA\\u03DC\\u03DE\\u03E0\\u03E2\\u03E4\\u03E6\\u03E8\\u03EA\\u03EC\\u03EE\\u03F4\\u03F7\\u03F9\\u03FA\\u03FD-\\u042F\\u0460\\u0462\\u0464\\u0466\\u0468\\u046A\\u046C\\u046E\\u0470\\u0472\\u0474\\u0476\\u0478\\u047A\\u047C\\u047E\\u0480\\u048A\\u048C\\u048E\\u0490\\u0492\\u0494\\u0496\\u0498\\u049A\\u049C\\u049E\\u04A0\\u04A2\\u04A4\\u04A6\\u04A8\\u04AA\\u04AC\\u04AE\\u04B0\\u04B2\\u04B4\\u04B6\\u04B8\\u04BA\\u04BC\\u04BE\\u04C0\\u04C1\\u04C3\\u04C5\\u04C7\\u04C9\\u04CB\\u04CD\\u04D0\\u04D2\\u04D4\\u04D6\\u04D8\\u04DA\\u04DC\\u04DE\\u04E0\\u04E2\\u04E4\\u04E6\\u04E8\\u04EA\\u04EC\\u04EE\\u04F0\\u04F2\\u04F4\\u04F6\\u04F8\\u04FA\\u04FC\\u04FE\\u0500\\u0502\\u0504\\u0506\\u0508\\u050A\\u050C\\u050E\\u0510\\u0512\\u0514\\u0516\\u0518\\u051A\\u051C\\u051E\\u0520\\u0522\\u0524\\u0526\\u0531-\\u0556\\u10A0-\\u10C5\\u1E00\\u1E02\\u1E04\\u1E06\\u1E08\\u1E0A\\u1E0C\\u1E0E\\u1E10\\u1E12\\u1E14\\u1E16\\u1E18\\u1E1A\\u1E1C\\u1E1E\\u1E20\\u1E22\\u1E24\\u1E26\\u1E28\\u1E2A\\u1E2C\\u1E2E\\u1E30\\u1E32\\u1E34\\u1E36\\u1E38\\u1E3A\\u1E3C\\u1E3E\\u1E40\\u1E42\\u1E44\\u1E46\\u1E48\\u1E4A\\u1E4C\\u1E4E\\u1E50\\u1E52\\u1E54\\u1E56\\u1E58\\u1E5A\\u1E5C\\u1E5E\\u1E60\\u1E62\\u1E64\\u1E66\\u1E68\\u1E6A\\u1E6C\\u1E6E\\u1E70\\u1E72\\u1E74\\u1E76\\u1E78\\u1E7A\\u1E7C\\u1E7E\\u1E80\\u1E82\\u1E84\\u1E86\\u1E88\\u1E8A\\u1E8C\\u1E8E\\u1E90\\u1E92\\u1E94\\u1E9E\\u1EA0\\u1EA2\\u1EA4\\u1EA6\\u1EA8\\u1EAA\\u1EAC\\u1EAE\\u1EB0\\u1EB2\\u1EB4\\u1EB6\\u1EB8\\u1EBA\\u1EBC\\u1EBE\\u1EC0\\u1EC2\\u1EC4\\u1EC6\\u1EC8\\u1ECA\\u1ECC\\u1ECE\\u1ED0\\u1ED2\\u1ED4\\u1ED6\\u1ED8\\u1EDA\\u1EDC\\u1EDE\\u1EE0\\u1EE2\\u1EE4\\u1EE6\\u1EE8\\u1EEA\\u1EEC\\u1EEE\\u1EF0\\u1EF2\\u1EF4\\u1EF6\\u1EF8\\u1EFA\\u1EFC\\u1EFE\\u1F08-\\u1F0F\\u1F18-\\u1F1D\\u1F28-\\u1F2F\\u1F38-\\u1F3F\\u1F48-\\u1F4D\\u1F59\\u1F5B\\u1F5D\\u1F5F\\u1F68-\\u1F6F\\u1FB8-\\u1FBB\\u1FC8-\\u1FCB\\u1FD8-\\u1FDB\\u1FE8-\\u1FEC\\u1FF8-\\u1FFB\\u2102\\u2107\\u210B-\\u210D\\u2110-\\u2112\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u2130-\\u2133\\u213E\\u213F\\u2145\\u2183\\u2C00-\\u2C2E\\u2C60\\u2C62-\\u2C64\\u2C67\\u2C69\\u2C6B\\u2C6D-\\u2C70\\u2C72\\u2C75\\u2C7E-\\u2C80\\u2C82\\u2C84\\u2C86\\u2C88\\u2C8A\\u2C8C\\u2C8E\\u2C90\\u2C92\\u2C94\\u2C96\\u2C98\\u2C9A\\u2C9C\\u2C9E\\u2CA0\\u2CA2\\u2CA4\\u2CA6\\u2CA8\\u2CAA\\u2CAC\\u2CAE\\u2CB0\\u2CB2\\u2CB4\\u2CB6\\u2CB8\\u2CBA\\u2CBC\\u2CBE\\u2CC0\\u2CC2\\u2CC4\\u2CC6\\u2CC8\\u2CCA\\u2CCC\\u2CCE\\u2CD0\\u2CD2\\u2CD4\\u2CD6\\u2CD8\\u2CDA\\u2CDC\\u2CDE\\u2CE0\\u2CE2\\u2CEB\\u2CED\\uA640\\uA642\\uA644\\uA646\\uA648\\uA64A\\uA64C\\uA64E\\uA650\\uA652\\uA654\\uA656\\uA658\\uA65A\\uA65C\\uA65E\\uA660\\uA662\\uA664\\uA666\\uA668\\uA66A\\uA66C\\uA680\\uA682\\uA684\\uA686\\uA688\\uA68A\\uA68C\\uA68E\\uA690\\uA692\\uA694\\uA696\\uA722\\uA724\\uA726\\uA728\\uA72A\\uA72C\\uA72E\\uA732\\uA734\\uA736\\uA738\\uA73A\\uA73C\\uA73E\\uA740\\uA742\\uA744\\uA746\\uA748\\uA74A\\uA74C\\uA74E\\uA750\\uA752\\uA754\\uA756\\uA758\\uA75A\\uA75C\\uA75E\\uA760\\uA762\\uA764\\uA766\\uA768\\uA76A\\uA76C\\uA76E\\uA779\\uA77B\\uA77D\\uA77E\\uA780\\uA782\\uA784\\uA786\\uA78B\\uA78D\\uA790\\uA7A0\\uA7A2\\uA7A4\\uA7A6\\uA7A8\\uFF21-\\uFF3Aa-z\\xAA\\xB5\\xBA\\xDF-\\xF6\\xF8-\\xFF\\u0101\\u0103\\u0105\\u0107\\u0109\\u010B\\u010D\\u010F\\u0111\\u0113\\u0115\\u0117\\u0119\\u011B\\u011D\\u011F\\u0121\\u0123\\u0125\\u0127\\u0129\\u012B\\u012D\\u012F\\u0131\\u0133\\u0135\\u0137\\u0138\\u013A\\u013C\\u013E\\u0140\\u0142\\u0144\\u0146\\u0148\\u0149\\u014B\\u014D\\u014F\\u0151\\u0153\\u0155\\u0157\\u0159\\u015B\\u015D\\u015F\\u0161\\u0163\\u0165\\u0167\\u0169\\u016B\\u016D\\u016F\\u0171\\u0173\\u0175\\u0177\\u017A\\u017C\\u017E-\\u0180\\u0183\\u0185\\u0188\\u018C\\u018D\\u0192\\u0195\\u0199-\\u019B\\u019E\\u01A1\\u01A3\\u01A5\\u01A8\\u01AA\\u01AB\\u01AD\\u01B0\\u01B4\\u01B6\\u01B9\\u01BA\\u01BD-\\u01BF\\u01C6\\u01C9\\u01CC\\u01CE\\u01D0\\u01D2\\u01D4\\u01D6\\u01D8\\u01DA\\u01DC\\u01DD\\u01DF\\u01E1\\u01E3\\u01E5\\u01E7\\u01E9\\u01EB\\u01ED\\u01EF\\u01F0\\u01F3\\u01F5\\u01F9\\u01FB\\u01FD\\u01FF\\u0201\\u0203\\u0205\\u0207\\u0209\\u020B\\u020D\\u020F\\u0211\\u0213\\u0215\\u0217\\u0219\\u021B\\u021D\\u021F\\u0221\\u0223\\u0225\\u0227\\u0229\\u022B\\u022D\\u022F\\u0231\\u0233-\\u0239\\u023C\\u023F\\u0240\\u0242\\u0247\\u0249\\u024B\\u024D\\u024F-\\u0293\\u0295-\\u02AF\\u0371\\u0373\\u0377\\u037B-\\u037D\\u0390\\u03AC-\\u03CE\\u03D0\\u03D1\\u03D5-\\u03D7\\u03D9\\u03DB\\u03DD\\u03DF\\u03E1\\u03E3\\u03E5\\u03E7\\u03E9\\u03EB\\u03ED\\u03EF-\\u03F3\\u03F5\\u03F8\\u03FB\\u03FC\\u0430-\\u045F\\u0461\\u0463\\u0465\\u0467\\u0469\\u046B\\u046D\\u046F\\u0471\\u0473\\u0475\\u0477\\u0479\\u047B\\u047D\\u047F\\u0481\\u048B\\u048D\\u048F\\u0491\\u0493\\u0495\\u0497\\u0499\\u049B\\u049D\\u049F\\u04A1\\u04A3\\u04A5\\u04A7\\u04A9\\u04AB\\u04AD\\u04AF\\u04B1\\u04B3\\u04B5\\u04B7\\u04B9\\u04BB\\u04BD\\u04BF\\u04C2\\u04C4\\u04C6\\u04C8\\u04CA\\u04CC\\u04CE\\u04CF\\u04D1\\u04D3\\u04D5\\u04D7\\u04D9\\u04DB\\u04DD\\u04DF\\u04E1\\u04E3\\u04E5\\u04E7\\u04E9\\u04EB\\u04ED\\u04EF\\u04F1\\u04F3\\u04F5\\u04F7\\u04F9\\u04FB\\u04FD\\u04FF\\u0501\\u0503\\u0505\\u0507\\u0509\\u050B\\u050D\\u050F\\u0511\\u0513\\u0515\\u0517\\u0519\\u051B\\u051D\\u051F\\u0521\\u0523\\u0525\\u0527\\u0561-\\u0587\\u1D00-\\u1D2B\\u1D62-\\u1D77\\u1D79-\\u1D9A\\u1E01\\u1E03\\u1E05\\u1E07\\u1E09\\u1E0B\\u1E0D\\u1E0F\\u1E11\\u1E13\\u1E15\\u1E17\\u1E19\\u1E1B\\u1E1D\\u1E1F\\u1E21\\u1E23\\u1E25\\u1E27\\u1E29\\u1E2B\\u1E2D\\u1E2F\\u1E31\\u1E33\\u1E35\\u1E37\\u1E39\\u1E3B\\u1E3D\\u1E3F\\u1E41\\u1E43\\u1E45\\u1E47\\u1E49\\u1E4B\\u1E4D\\u1E4F\\u1E51\\u1E53\\u1E55\\u1E57\\u1E59\\u1E5B\\u1E5D\\u1E5F\\u1E61\\u1E63\\u1E65\\u1E67\\u1E69\\u1E6B\\u1E6D\\u1E6F\\u1E71\\u1E73\\u1E75\\u1E77\\u1E79\\u1E7B\\u1E7D\\u1E7F\\u1E81\\u1E83\\u1E85\\u1E87\\u1E89\\u1E8B\\u1E8D\\u1E8F\\u1E91\\u1E93\\u1E95-\\u1E9D\\u1E9F\\u1EA1\\u1EA3\\u1EA5\\u1EA7\\u1EA9\\u1EAB\\u1EAD\\u1EAF\\u1EB1\\u1EB3\\u1EB5\\u1EB7\\u1EB9\\u1EBB\\u1EBD\\u1EBF\\u1EC1\\u1EC3\\u1EC5\\u1EC7\\u1EC9\\u1ECB\\u1ECD\\u1ECF\\u1ED1\\u1ED3\\u1ED5\\u1ED7\\u1ED9\\u1EDB\\u1EDD\\u1EDF\\u1EE1\\u1EE3\\u1EE5\\u1EE7\\u1EE9\\u1EEB\\u1EED\\u1EEF\\u1EF1\\u1EF3\\u1EF5\\u1EF7\\u1EF9\\u1EFB\\u1EFD\\u1EFF-\\u1F07\\u1F10-\\u1F15\\u1F20-\\u1F27\\u1F30-\\u1F37\\u1F40-\\u1F45\\u1F50-\\u1F57\\u1F60-\\u1F67\\u1F70-\\u1F7D\\u1F80-\\u1F87\\u1F90-\\u1F97\\u1FA0-\\u1FA7\\u1FB0-\\u1FB4\\u1FB6\\u1FB7\\u1FBE\\u1FC2-\\u1FC4\\u1FC6\\u1FC7\\u1FD0-\\u1FD3\\u1FD6\\u1FD7\\u1FE0-\\u1FE7\\u1FF2-\\u1FF4\\u1FF6\\u1FF7\\u210A\\u210E\\u210F\\u2113\\u212F\\u2134\\u2139\\u213C\\u213D\\u2146-\\u2149\\u214E\\u2184\\u2C30-\\u2C5E\\u2C61\\u2C65\\u2C66\\u2C68\\u2C6A\\u2C6C\\u2C71\\u2C73\\u2C74\\u2C76-\\u2C7C\\u2C81\\u2C83\\u2C85\\u2C87\\u2C89\\u2C8B\\u2C8D\\u2C8F\\u2C91\\u2C93\\u2C95\\u2C97\\u2C99\\u2C9B\\u2C9D\\u2C9F\\u2CA1\\u2CA3\\u2CA5\\u2CA7\\u2CA9\\u2CAB\\u2CAD\\u2CAF\\u2CB1\\u2CB3\\u2CB5\\u2CB7\\u2CB9\\u2CBB\\u2CBD\\u2CBF\\u2CC1\\u2CC3\\u2CC5\\u2CC7\\u2CC9\\u2CCB\\u2CCD\\u2CCF\\u2CD1\\u2CD3\\u2CD5\\u2CD7\\u2CD9\\u2CDB\\u2CDD\\u2CDF\\u2CE1\\u2CE3\\u2CE4\\u2CEC\\u2CEE\\u2D00-\\u2D25\\uA641\\uA643\\uA645\\uA647\\uA649\\uA64B\\uA64D\\uA64F\\uA651\\uA653\\uA655\\uA657\\uA659\\uA65B\\uA65D\\uA65F\\uA661\\uA663\\uA665\\uA667\\uA669\\uA66B\\uA66D\\uA681\\uA683\\uA685\\uA687\\uA689\\uA68B\\uA68D\\uA68F\\uA691\\uA693\\uA695\\uA697\\uA723\\uA725\\uA727\\uA729\\uA72B\\uA72D\\uA72F-\\uA731\\uA733\\uA735\\uA737\\uA739\\uA73B\\uA73D\\uA73F\\uA741\\uA743\\uA745\\uA747\\uA749\\uA74B\\uA74D\\uA74F\\uA751\\uA753\\uA755\\uA757\\uA759\\uA75B\\uA75D\\uA75F\\uA761\\uA763\\uA765\\uA767\\uA769\\uA76B\\uA76D\\uA76F\\uA771-\\uA778\\uA77A\\uA77C\\uA77F\\uA781\\uA783\\uA785\\uA787\\uA78C\\uA78E\\uA791\\uA7A1\\uA7A3\\uA7A5\\uA7A7\\uA7A9\\uA7FA\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFF41-\\uFF5A\\u01C5\\u01C8\\u01CB\\u01F2\\u1F88-\\u1F8F\\u1F98-\\u1F9F\\u1FA8-\\u1FAF\\u1FBC\\u1FCC\\u1FFC\\u02B0-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0374\\u037A\\u0559\\u0640\\u06E5\\u06E6\\u07F4\\u07F5\\u07FA\\u081A\\u0824\\u0828\\u0971\\u0E46\\u0EC6\\u10FC\\u17D7\\u1843\\u1AA7\\u1C78-\\u1C7D\\u1D2C-\\u1D61\\u1D78\\u1D9B-\\u1DBF\\u2071\\u207F\\u2090-\\u209C\\u2C7D\\u2D6F\\u2E2F\\u3005\\u3031-\\u3035\\u303B\\u309D\\u309E\\u30FC-\\u30FE\\uA015\\uA4F8-\\uA4FD\\uA60C\\uA67F\\uA717-\\uA71F\\uA770\\uA788\\uA9CF\\uAA70\\uAADD\\uFF70\\uFF9E\\uFF9F\\u01BB\\u01C0-\\u01C3\\u0294\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0620-\\u063F\\u0641-\\u064A\\u066E\\u066F\\u0671-\\u06D3\\u06D5\\u06EE\\u06EF\\u06FA-\\u06FC\\u06FF\\u0710\\u0712-\\u072F\\u074D-\\u07A5\\u07B1\\u07CA-\\u07EA\\u0800-\\u0815\\u0840-\\u0858\\u0904-\\u0939\\u093D\\u0950\\u0958-\\u0961\\u0972-\\u0977\\u0979-\\u097F\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BD\\u09CE\\u09DC\\u09DD\\u09DF-\\u09E1\\u09F0\\u09F1\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A59-\\u0A5C\\u0A5E\\u0A72-\\u0A74\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABD\\u0AD0\\u0AE0\\u0AE1\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3D\\u0B5C\\u0B5D\\u0B5F-\\u0B61\\u0B71\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BD0\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C33\\u0C35-\\u0C39\\u0C3D\\u0C58\\u0C59\\u0C60\\u0C61\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBD\\u0CDE\\u0CE0\\u0CE1\\u0CF1\\u0CF2\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D\\u0D4E\\u0D60\\u0D61\\u0D7A-\\u0D7F\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0E01-\\u0E30\\u0E32\\u0E33\\u0E40-\\u0E45\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB0\\u0EB2\\u0EB3\\u0EBD\\u0EC0-\\u0EC4\\u0EDC\\u0EDD\\u0F00\\u0F40-\\u0F47\\u0F49-\\u0F6C\\u0F88-\\u0F8C\\u1000-\\u102A\\u103F\\u1050-\\u1055\\u105A-\\u105D\\u1061\\u1065\\u1066\\u106E-\\u1070\\u1075-\\u1081\\u108E\\u10D0-\\u10FA\\u1100-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u1700-\\u170C\\u170E-\\u1711\\u1720-\\u1731\\u1740-\\u1751\\u1760-\\u176C\\u176E-\\u1770\\u1780-\\u17B3\\u17DC\\u1820-\\u1842\\u1844-\\u1877\\u1880-\\u18A8\\u18AA\\u18B0-\\u18F5\\u1900-\\u191C\\u1950-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19C1-\\u19C7\\u1A00-\\u1A16\\u1A20-\\u1A54\\u1B05-\\u1B33\\u1B45-\\u1B4B\\u1B83-\\u1BA0\\u1BAE\\u1BAF\\u1BC0-\\u1BE5\\u1C00-\\u1C23\\u1C4D-\\u1C4F\\u1C5A-\\u1C77\\u1CE9-\\u1CEC\\u1CEE-\\u1CF1\\u2135-\\u2138\\u2D30-\\u2D65\\u2D80-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u3006\\u303C\\u3041-\\u3096\\u309F\\u30A1-\\u30FA\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400\\u4DB5\\u4E00\\u9FCB\\uA000-\\uA014\\uA016-\\uA48C\\uA4D0-\\uA4F7\\uA500-\\uA60B\\uA610-\\uA61F\\uA62A\\uA62B\\uA66E\\uA6A0-\\uA6E5\\uA7FB-\\uA801\\uA803-\\uA805\\uA807-\\uA80A\\uA80C-\\uA822\\uA840-\\uA873\\uA882-\\uA8B3\\uA8F2-\\uA8F7\\uA8FB\\uA90A-\\uA925\\uA930-\\uA946\\uA960-\\uA97C\\uA984-\\uA9B2\\uAA00-\\uAA28\\uAA40-\\uAA42\\uAA44-\\uAA4B\\uAA60-\\uAA6F\\uAA71-\\uAA76\\uAA7A\\uAA80-\\uAAAF\\uAAB1\\uAAB5\\uAAB6\\uAAB9-\\uAABD\\uAAC0\\uAAC2\\uAADB\\uAADC\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uABC0-\\uABE2\\uAC00\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA2D\\uFA30-\\uFA6D\\uFA70-\\uFAD9\\uFB1D\\uFB1F-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF66-\\uFF6F\\uFF71-\\uFF9D\\uFFA0-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC\\u16EE-\\u16F0\\u2160-\\u2182\\u2185-\\u2188\\u3007\\u3021-\\u3029\\u3038-\\u303A\\uA6E6-\\uA6EF]" },
-        peg$c254 = "\uD82C",
-        peg$c255 = { type: "literal", value: "\uD82C", description: "\"\\uD82C\"" },
-        peg$c256 = /^[\uDC00\uDC01]/,
-        peg$c257 = { type: "class", value: "[\\uDC00\\uDC01]", description: "[\\uDC00\\uDC01]" },
-        peg$c258 = "\uD808",
-        peg$c259 = { type: "literal", value: "\uD808", description: "\"\\uD808\"" },
-        peg$c260 = /^[\uDC00-\uDF6E]/,
-        peg$c261 = { type: "class", value: "[\\uDC00-\\uDF6E]", description: "[\\uDC00-\\uDF6E]" },
-        peg$c262 = "\uD869",
-        peg$c263 = { type: "literal", value: "\uD869", description: "\"\\uD869\"" },
-        peg$c264 = /^[\uDED6\uDF00]/,
-        peg$c265 = { type: "class", value: "[\\uDED6\\uDF00]", description: "[\\uDED6\\uDF00]" },
-        peg$c266 = "\uD809",
-        peg$c267 = { type: "literal", value: "\uD809", description: "\"\\uD809\"" },
-        peg$c268 = /^[\uDC00-\uDC62]/,
-        peg$c269 = { type: "class", value: "[\\uDC00-\\uDC62]", description: "[\\uDC00-\\uDC62]" },
-        peg$c270 = "\uD835",
-        peg$c271 = { type: "literal", value: "\uD835", description: "\"\\uD835\"" },
-        peg$c272 = /^[\uDC00-\uDC19\uDC34-\uDC4D\uDC68-\uDC81\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB5\uDCD0-\uDCE9\uDD04\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD38\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD6C-\uDD85\uDDA0-\uDDB9\uDDD4-\uDDED\uDE08-\uDE21\uDE3C-\uDE55\uDE70-\uDE89\uDEA8-\uDEC0\uDEE2-\uDEFA\uDF1C-\uDF34\uDF56-\uDF6E\uDF90-\uDFA8\uDFCA\uDC1A-\uDC33\uDC4E-\uDC54\uDC56-\uDC67\uDC82-\uDC9B\uDCB6-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDCCF\uDCEA-\uDD03\uDD1E-\uDD37\uDD52-\uDD6B\uDD86-\uDD9F\uDDBA-\uDDD3\uDDEE-\uDE07\uDE22-\uDE3B\uDE56-\uDE6F\uDE8A-\uDEA5\uDEC2-\uDEDA\uDEDC-\uDEE1\uDEFC-\uDF14\uDF16-\uDF1B\uDF36-\uDF4E\uDF50-\uDF55\uDF70-\uDF88\uDF8A-\uDF8F\uDFAA-\uDFC2\uDFC4-\uDFC9\uDFCB]/,
-        peg$c273 = { type: "class", value: "[\\uDC00-\\uDC19\\uDC34-\\uDC4D\\uDC68-\\uDC81\\uDC9C\\uDC9E\\uDC9F\\uDCA2\\uDCA5\\uDCA6\\uDCA9-\\uDCAC\\uDCAE-\\uDCB5\\uDCD0-\\uDCE9\\uDD04\\uDD05\\uDD07-\\uDD0A\\uDD0D-\\uDD14\\uDD16-\\uDD1C\\uDD38\\uDD39\\uDD3B-\\uDD3E\\uDD40-\\uDD44\\uDD46\\uDD4A-\\uDD50\\uDD6C-\\uDD85\\uDDA0-\\uDDB9\\uDDD4-\\uDDED\\uDE08-\\uDE21\\uDE3C-\\uDE55\\uDE70-\\uDE89\\uDEA8-\\uDEC0\\uDEE2-\\uDEFA\\uDF1C-\\uDF34\\uDF56-\\uDF6E\\uDF90-\\uDFA8\\uDFCA\\uDC1A-\\uDC33\\uDC4E-\\uDC54\\uDC56-\\uDC67\\uDC82-\\uDC9B\\uDCB6-\\uDCB9\\uDCBB\\uDCBD-\\uDCC3\\uDCC5-\\uDCCF\\uDCEA-\\uDD03\\uDD1E-\\uDD37\\uDD52-\\uDD6B\\uDD86-\\uDD9F\\uDDBA-\\uDDD3\\uDDEE-\\uDE07\\uDE22-\\uDE3B\\uDE56-\\uDE6F\\uDE8A-\\uDEA5\\uDEC2-\\uDEDA\\uDEDC-\\uDEE1\\uDEFC-\\uDF14\\uDF16-\\uDF1B\\uDF36-\\uDF4E\\uDF50-\\uDF55\\uDF70-\\uDF88\\uDF8A-\\uDF8F\\uDFAA-\\uDFC2\\uDFC4-\\uDFC9\\uDFCB]", description: "[\\uDC00-\\uDC19\\uDC34-\\uDC4D\\uDC68-\\uDC81\\uDC9C\\uDC9E\\uDC9F\\uDCA2\\uDCA5\\uDCA6\\uDCA9-\\uDCAC\\uDCAE-\\uDCB5\\uDCD0-\\uDCE9\\uDD04\\uDD05\\uDD07-\\uDD0A\\uDD0D-\\uDD14\\uDD16-\\uDD1C\\uDD38\\uDD39\\uDD3B-\\uDD3E\\uDD40-\\uDD44\\uDD46\\uDD4A-\\uDD50\\uDD6C-\\uDD85\\uDDA0-\\uDDB9\\uDDD4-\\uDDED\\uDE08-\\uDE21\\uDE3C-\\uDE55\\uDE70-\\uDE89\\uDEA8-\\uDEC0\\uDEE2-\\uDEFA\\uDF1C-\\uDF34\\uDF56-\\uDF6E\\uDF90-\\uDFA8\\uDFCA\\uDC1A-\\uDC33\\uDC4E-\\uDC54\\uDC56-\\uDC67\\uDC82-\\uDC9B\\uDCB6-\\uDCB9\\uDCBB\\uDCBD-\\uDCC3\\uDCC5-\\uDCCF\\uDCEA-\\uDD03\\uDD1E-\\uDD37\\uDD52-\\uDD6B\\uDD86-\\uDD9F\\uDDBA-\\uDDD3\\uDDEE-\\uDE07\\uDE22-\\uDE3B\\uDE56-\\uDE6F\\uDE8A-\\uDEA5\\uDEC2-\\uDEDA\\uDEDC-\\uDEE1\\uDEFC-\\uDF14\\uDF16-\\uDF1B\\uDF36-\\uDF4E\\uDF50-\\uDF55\\uDF70-\\uDF88\\uDF8A-\\uDF8F\\uDFAA-\\uDFC2\\uDFC4-\\uDFC9\\uDFCB]" },
-        peg$c274 = "\uD804",
-        peg$c275 = { type: "literal", value: "\uD804", description: "\"\\uD804\"" },
-        peg$c276 = /^[\uDC03-\uDC37\uDC83-\uDCAF]/,
-        peg$c277 = { type: "class", value: "[\\uDC03-\\uDC37\\uDC83-\\uDCAF]", description: "[\\uDC03-\\uDC37\\uDC83-\\uDCAF]" },
-        peg$c278 = "\uD800",
-        peg$c279 = { type: "literal", value: "\uD800", description: "\"\\uD800\"" },
-        peg$c280 = /^[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1E\uDF30-\uDF40\uDF42-\uDF49\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF\uDD40-\uDD74\uDF41\uDF4A\uDFD1-\uDFD5]/,
-        peg$c281 = { type: "class", value: "[\\uDC00-\\uDC0B\\uDC0D-\\uDC26\\uDC28-\\uDC3A\\uDC3C\\uDC3D\\uDC3F-\\uDC4D\\uDC50-\\uDC5D\\uDC80-\\uDCFA\\uDE80-\\uDE9C\\uDEA0-\\uDED0\\uDF00-\\uDF1E\\uDF30-\\uDF40\\uDF42-\\uDF49\\uDF80-\\uDF9D\\uDFA0-\\uDFC3\\uDFC8-\\uDFCF\\uDD40-\\uDD74\\uDF41\\uDF4A\\uDFD1-\\uDFD5]", description: "[\\uDC00-\\uDC0B\\uDC0D-\\uDC26\\uDC28-\\uDC3A\\uDC3C\\uDC3D\\uDC3F-\\uDC4D\\uDC50-\\uDC5D\\uDC80-\\uDCFA\\uDE80-\\uDE9C\\uDEA0-\\uDED0\\uDF00-\\uDF1E\\uDF30-\\uDF40\\uDF42-\\uDF49\\uDF80-\\uDF9D\\uDFA0-\\uDFC3\\uDFC8-\\uDFCF\\uDD40-\\uDD74\\uDF41\\uDF4A\\uDFD1-\\uDFD5]" },
-        peg$c282 = "\uD80C",
-        peg$c283 = { type: "literal", value: "\uD80C", description: "\"\\uD80C\"" },
-        peg$c284 = /^[\uDC00-\uDFFF]/,
-        peg$c285 = { type: "class", value: "[\\uDC00-\\uDFFF]", description: "[\\uDC00-\\uDFFF]" },
-        peg$c286 = "\uD801",
-        peg$c287 = { type: "literal", value: "\uD801", description: "\"\\uD801\"" },
-        peg$c288 = /^[\uDC00-\uDC9D]/,
-        peg$c289 = { type: "class", value: "[\\uDC00-\\uDC9D]", description: "[\\uDC00-\\uDC9D]" },
-        peg$c290 = "\uD86E",
-        peg$c291 = { type: "literal", value: "\uD86E", description: "\"\\uD86E\"" },
-        peg$c292 = /^[\uDC1D]/,
-        peg$c293 = { type: "class", value: "[\\uDC1D]", description: "[\\uDC1D]" },
-        peg$c294 = "\uD803",
-        peg$c295 = { type: "literal", value: "\uD803", description: "\"\\uD803\"" },
-        peg$c296 = /^[\uDC00-\uDC48]/,
-        peg$c297 = { type: "class", value: "[\\uDC00-\\uDC48]", description: "[\\uDC00-\\uDC48]" },
-        peg$c298 = "\uD840",
-        peg$c299 = { type: "literal", value: "\uD840", description: "\"\\uD840\"" },
-        peg$c300 = /^[\uDC00]/,
-        peg$c301 = { type: "class", value: "[\\uDC00]", description: "[\\uDC00]" },
-        peg$c302 = "\uD87E",
-        peg$c303 = { type: "literal", value: "\uD87E", description: "\"\\uD87E\"" },
-        peg$c304 = /^[\uDC00-\uDE1D]/,
-        peg$c305 = { type: "class", value: "[\\uDC00-\\uDE1D]", description: "[\\uDC00-\\uDE1D]" },
-        peg$c306 = "\uD86D",
-        peg$c307 = { type: "literal", value: "\uD86D", description: "\"\\uD86D\"" },
-        peg$c308 = /^[\uDF34\uDF40]/,
-        peg$c309 = { type: "class", value: "[\\uDF34\\uDF40]", description: "[\\uDF34\\uDF40]" },
-        peg$c310 = "\uD81A",
-        peg$c311 = { type: "literal", value: "\uD81A", description: "\"\\uD81A\"" },
-        peg$c312 = /^[\uDC00-\uDE38]/,
-        peg$c313 = { type: "class", value: "[\\uDC00-\\uDE38]", description: "[\\uDC00-\\uDE38]" },
-        peg$c314 = "\uD802",
-        peg$c315 = { type: "literal", value: "\uD802", description: "\"\\uD802\"" },
-        peg$c316 = /^[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDD00-\uDD15\uDD20-\uDD39\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE33\uDE60-\uDE7C\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72]/,
-        peg$c317 = { type: "class", value: "[\\uDC00-\\uDC05\\uDC08\\uDC0A-\\uDC35\\uDC37\\uDC38\\uDC3C\\uDC3F-\\uDC55\\uDD00-\\uDD15\\uDD20-\\uDD39\\uDE00\\uDE10-\\uDE13\\uDE15-\\uDE17\\uDE19-\\uDE33\\uDE60-\\uDE7C\\uDF00-\\uDF35\\uDF40-\\uDF55\\uDF60-\\uDF72]", description: "[\\uDC00-\\uDC05\\uDC08\\uDC0A-\\uDC35\\uDC37\\uDC38\\uDC3C\\uDC3F-\\uDC55\\uDD00-\\uDD15\\uDD20-\\uDD39\\uDE00\\uDE10-\\uDE13\\uDE15-\\uDE17\\uDE19-\\uDE33\\uDE60-\\uDE7C\\uDF00-\\uDF35\\uDF40-\\uDF55\\uDF60-\\uDF72]" },
-        peg$c318 = "\uD80D",
-        peg$c319 = { type: "literal", value: "\uD80D", description: "\"\\uD80D\"" },
-        peg$c320 = /^[\uDC00-\uDC2E]/,
-        peg$c321 = { type: "class", value: "[\\uDC00-\\uDC2E]", description: "[\\uDC00-\\uDC2E]" },
-        peg$c322 = /^[\u0300-\u036F\u0483-\u0487\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0711\u0730-\u074A\u07A6-\u07B0\u07EB-\u07F3\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u0900-\u0902\u093A\u093C\u0941-\u0948\u094D\u0951-\u0957\u0962\u0963\u0981\u09BC\u09C1-\u09C4\u09CD\u09E2\u09E3\u0A01\u0A02\u0A3C\u0A41\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A70\u0A71\u0A75\u0A81\u0A82\u0ABC\u0AC1-\u0AC5\u0AC7\u0AC8\u0ACD\u0AE2\u0AE3\u0B01\u0B3C\u0B3F\u0B41-\u0B44\u0B4D\u0B56\u0B62\u0B63\u0B82\u0BC0\u0BCD\u0C3E-\u0C40\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0CBC\u0CBF\u0CC6\u0CCC\u0CCD\u0CE2\u0CE3\u0D41-\u0D44\u0D4D\u0D62\u0D63\u0DCA\u0DD2-\u0DD4\u0DD6\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0EB1\u0EB4-\u0EB9\u0EBB\u0EBC\u0EC8-\u0ECD\u0F18\u0F19\u0F35\u0F37\u0F39\u0F71-\u0F7E\u0F80-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102D-\u1030\u1032-\u1037\u1039\u103A\u103D\u103E\u1058\u1059\u105E-\u1060\u1071-\u1074\u1082\u1085\u1086\u108D\u109D\u135D-\u135F\u1712-\u1714\u1732-\u1734\u1752\u1753\u1772\u1773\u17B7-\u17BD\u17C6\u17C9-\u17D3\u17DD\u180B-\u180D\u18A9\u1920-\u1922\u1927\u1928\u1932\u1939-\u193B\u1A17\u1A18\u1A56\u1A58-\u1A5E\u1A60\u1A62\u1A65-\u1A6C\u1A73-\u1A7C\u1A7F\u1B00-\u1B03\u1B34\u1B36-\u1B3A\u1B3C\u1B42\u1B6B-\u1B73\u1B80\u1B81\u1BA2-\u1BA5\u1BA8\u1BA9\u1BE6\u1BE8\u1BE9\u1BED\u1BEF-\u1BF1\u1C2C-\u1C33\u1C36\u1C37\u1CD0-\u1CD2\u1CD4-\u1CE0\u1CE2-\u1CE8\u1CED\u1DC0-\u1DE6\u1DFC-\u1DFF\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302F\u3099\u309A\uA66F\uA67C\uA67D\uA6F0\uA6F1\uA802\uA806\uA80B\uA825\uA826\uA8C4\uA8E0-\uA8F1\uA926-\uA92D\uA947-\uA951\uA980-\uA982\uA9B3\uA9B6-\uA9B9\uA9BC\uAA29-\uAA2E\uAA31\uAA32\uAA35\uAA36\uAA43\uAA4C\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uABE5\uABE8\uABED\uFB1E\uFE00-\uFE0F\uFE20-\uFE26\u0903\u093B\u093E-\u0940\u0949-\u094C\u094E\u094F\u0982\u0983\u09BE-\u09C0\u09C7\u09C8\u09CB\u09CC\u09D7\u0A03\u0A3E-\u0A40\u0A83\u0ABE-\u0AC0\u0AC9\u0ACB\u0ACC\u0B02\u0B03\u0B3E\u0B40\u0B47\u0B48\u0B4B\u0B4C\u0B57\u0BBE\u0BBF\u0BC1\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCC\u0BD7\u0C01-\u0C03\u0C41-\u0C44\u0C82\u0C83\u0CBE\u0CC0-\u0CC4\u0CC7\u0CC8\u0CCA\u0CCB\u0CD5\u0CD6\u0D02\u0D03\u0D3E-\u0D40\u0D46-\u0D48\u0D4A-\u0D4C\u0D57\u0D82\u0D83\u0DCF-\u0DD1\u0DD8-\u0DDF\u0DF2\u0DF3\u0F3E\u0F3F\u0F7F\u102B\u102C\u1031\u1038\u103B\u103C\u1056\u1057\u1062-\u1064\u1067-\u106D\u1083\u1084\u1087-\u108C\u108F\u109A-\u109C\u17B6\u17BE-\u17C5\u17C7\u17C8\u1923-\u1926\u1929-\u192B\u1930\u1931\u1933-\u1938\u19B0-\u19C0\u19C8\u19C9\u1A19-\u1A1B\u1A55\u1A57\u1A61\u1A63\u1A64\u1A6D-\u1A72\u1B04\u1B35\u1B3B\u1B3D-\u1B41\u1B43\u1B44\u1B82\u1BA1\u1BA6\u1BA7\u1BAA\u1BE7\u1BEA-\u1BEC\u1BEE\u1BF2\u1BF3\u1C24-\u1C2B\u1C34\u1C35\u1CE1\u1CF2\uA823\uA824\uA827\uA880\uA881\uA8B4-\uA8C3\uA952\uA953\uA983\uA9B4\uA9B5\uA9BA\uA9BB\uA9BD-\uA9C0\uAA2F\uAA30\uAA33\uAA34\uAA4D\uAA7B\uABE3\uABE4\uABE6\uABE7\uABE9\uABEA\uABEC]/,
-        peg$c323 = { type: "class", value: "[\\u0300-\\u036F\\u0483-\\u0487\\u0591-\\u05BD\\u05BF\\u05C1\\u05C2\\u05C4\\u05C5\\u05C7\\u0610-\\u061A\\u064B-\\u065F\\u0670\\u06D6-\\u06DC\\u06DF-\\u06E4\\u06E7\\u06E8\\u06EA-\\u06ED\\u0711\\u0730-\\u074A\\u07A6-\\u07B0\\u07EB-\\u07F3\\u0816-\\u0819\\u081B-\\u0823\\u0825-\\u0827\\u0829-\\u082D\\u0859-\\u085B\\u0900-\\u0902\\u093A\\u093C\\u0941-\\u0948\\u094D\\u0951-\\u0957\\u0962\\u0963\\u0981\\u09BC\\u09C1-\\u09C4\\u09CD\\u09E2\\u09E3\\u0A01\\u0A02\\u0A3C\\u0A41\\u0A42\\u0A47\\u0A48\\u0A4B-\\u0A4D\\u0A51\\u0A70\\u0A71\\u0A75\\u0A81\\u0A82\\u0ABC\\u0AC1-\\u0AC5\\u0AC7\\u0AC8\\u0ACD\\u0AE2\\u0AE3\\u0B01\\u0B3C\\u0B3F\\u0B41-\\u0B44\\u0B4D\\u0B56\\u0B62\\u0B63\\u0B82\\u0BC0\\u0BCD\\u0C3E-\\u0C40\\u0C46-\\u0C48\\u0C4A-\\u0C4D\\u0C55\\u0C56\\u0C62\\u0C63\\u0CBC\\u0CBF\\u0CC6\\u0CCC\\u0CCD\\u0CE2\\u0CE3\\u0D41-\\u0D44\\u0D4D\\u0D62\\u0D63\\u0DCA\\u0DD2-\\u0DD4\\u0DD6\\u0E31\\u0E34-\\u0E3A\\u0E47-\\u0E4E\\u0EB1\\u0EB4-\\u0EB9\\u0EBB\\u0EBC\\u0EC8-\\u0ECD\\u0F18\\u0F19\\u0F35\\u0F37\\u0F39\\u0F71-\\u0F7E\\u0F80-\\u0F84\\u0F86\\u0F87\\u0F8D-\\u0F97\\u0F99-\\u0FBC\\u0FC6\\u102D-\\u1030\\u1032-\\u1037\\u1039\\u103A\\u103D\\u103E\\u1058\\u1059\\u105E-\\u1060\\u1071-\\u1074\\u1082\\u1085\\u1086\\u108D\\u109D\\u135D-\\u135F\\u1712-\\u1714\\u1732-\\u1734\\u1752\\u1753\\u1772\\u1773\\u17B7-\\u17BD\\u17C6\\u17C9-\\u17D3\\u17DD\\u180B-\\u180D\\u18A9\\u1920-\\u1922\\u1927\\u1928\\u1932\\u1939-\\u193B\\u1A17\\u1A18\\u1A56\\u1A58-\\u1A5E\\u1A60\\u1A62\\u1A65-\\u1A6C\\u1A73-\\u1A7C\\u1A7F\\u1B00-\\u1B03\\u1B34\\u1B36-\\u1B3A\\u1B3C\\u1B42\\u1B6B-\\u1B73\\u1B80\\u1B81\\u1BA2-\\u1BA5\\u1BA8\\u1BA9\\u1BE6\\u1BE8\\u1BE9\\u1BED\\u1BEF-\\u1BF1\\u1C2C-\\u1C33\\u1C36\\u1C37\\u1CD0-\\u1CD2\\u1CD4-\\u1CE0\\u1CE2-\\u1CE8\\u1CED\\u1DC0-\\u1DE6\\u1DFC-\\u1DFF\\u20D0-\\u20DC\\u20E1\\u20E5-\\u20F0\\u2CEF-\\u2CF1\\u2D7F\\u2DE0-\\u2DFF\\u302A-\\u302F\\u3099\\u309A\\uA66F\\uA67C\\uA67D\\uA6F0\\uA6F1\\uA802\\uA806\\uA80B\\uA825\\uA826\\uA8C4\\uA8E0-\\uA8F1\\uA926-\\uA92D\\uA947-\\uA951\\uA980-\\uA982\\uA9B3\\uA9B6-\\uA9B9\\uA9BC\\uAA29-\\uAA2E\\uAA31\\uAA32\\uAA35\\uAA36\\uAA43\\uAA4C\\uAAB0\\uAAB2-\\uAAB4\\uAAB7\\uAAB8\\uAABE\\uAABF\\uAAC1\\uABE5\\uABE8\\uABED\\uFB1E\\uFE00-\\uFE0F\\uFE20-\\uFE26\\u0903\\u093B\\u093E-\\u0940\\u0949-\\u094C\\u094E\\u094F\\u0982\\u0983\\u09BE-\\u09C0\\u09C7\\u09C8\\u09CB\\u09CC\\u09D7\\u0A03\\u0A3E-\\u0A40\\u0A83\\u0ABE-\\u0AC0\\u0AC9\\u0ACB\\u0ACC\\u0B02\\u0B03\\u0B3E\\u0B40\\u0B47\\u0B48\\u0B4B\\u0B4C\\u0B57\\u0BBE\\u0BBF\\u0BC1\\u0BC2\\u0BC6-\\u0BC8\\u0BCA-\\u0BCC\\u0BD7\\u0C01-\\u0C03\\u0C41-\\u0C44\\u0C82\\u0C83\\u0CBE\\u0CC0-\\u0CC4\\u0CC7\\u0CC8\\u0CCA\\u0CCB\\u0CD5\\u0CD6\\u0D02\\u0D03\\u0D3E-\\u0D40\\u0D46-\\u0D48\\u0D4A-\\u0D4C\\u0D57\\u0D82\\u0D83\\u0DCF-\\u0DD1\\u0DD8-\\u0DDF\\u0DF2\\u0DF3\\u0F3E\\u0F3F\\u0F7F\\u102B\\u102C\\u1031\\u1038\\u103B\\u103C\\u1056\\u1057\\u1062-\\u1064\\u1067-\\u106D\\u1083\\u1084\\u1087-\\u108C\\u108F\\u109A-\\u109C\\u17B6\\u17BE-\\u17C5\\u17C7\\u17C8\\u1923-\\u1926\\u1929-\\u192B\\u1930\\u1931\\u1933-\\u1938\\u19B0-\\u19C0\\u19C8\\u19C9\\u1A19-\\u1A1B\\u1A55\\u1A57\\u1A61\\u1A63\\u1A64\\u1A6D-\\u1A72\\u1B04\\u1B35\\u1B3B\\u1B3D-\\u1B41\\u1B43\\u1B44\\u1B82\\u1BA1\\u1BA6\\u1BA7\\u1BAA\\u1BE7\\u1BEA-\\u1BEC\\u1BEE\\u1BF2\\u1BF3\\u1C24-\\u1C2B\\u1C34\\u1C35\\u1CE1\\u1CF2\\uA823\\uA824\\uA827\\uA880\\uA881\\uA8B4-\\uA8C3\\uA952\\uA953\\uA983\\uA9B4\\uA9B5\\uA9BA\\uA9BB\\uA9BD-\\uA9C0\\uAA2F\\uAA30\\uAA33\\uAA34\\uAA4D\\uAA7B\\uABE3\\uABE4\\uABE6\\uABE7\\uABE9\\uABEA\\uABEC]", description: "[\\u0300-\\u036F\\u0483-\\u0487\\u0591-\\u05BD\\u05BF\\u05C1\\u05C2\\u05C4\\u05C5\\u05C7\\u0610-\\u061A\\u064B-\\u065F\\u0670\\u06D6-\\u06DC\\u06DF-\\u06E4\\u06E7\\u06E8\\u06EA-\\u06ED\\u0711\\u0730-\\u074A\\u07A6-\\u07B0\\u07EB-\\u07F3\\u0816-\\u0819\\u081B-\\u0823\\u0825-\\u0827\\u0829-\\u082D\\u0859-\\u085B\\u0900-\\u0902\\u093A\\u093C\\u0941-\\u0948\\u094D\\u0951-\\u0957\\u0962\\u0963\\u0981\\u09BC\\u09C1-\\u09C4\\u09CD\\u09E2\\u09E3\\u0A01\\u0A02\\u0A3C\\u0A41\\u0A42\\u0A47\\u0A48\\u0A4B-\\u0A4D\\u0A51\\u0A70\\u0A71\\u0A75\\u0A81\\u0A82\\u0ABC\\u0AC1-\\u0AC5\\u0AC7\\u0AC8\\u0ACD\\u0AE2\\u0AE3\\u0B01\\u0B3C\\u0B3F\\u0B41-\\u0B44\\u0B4D\\u0B56\\u0B62\\u0B63\\u0B82\\u0BC0\\u0BCD\\u0C3E-\\u0C40\\u0C46-\\u0C48\\u0C4A-\\u0C4D\\u0C55\\u0C56\\u0C62\\u0C63\\u0CBC\\u0CBF\\u0CC6\\u0CCC\\u0CCD\\u0CE2\\u0CE3\\u0D41-\\u0D44\\u0D4D\\u0D62\\u0D63\\u0DCA\\u0DD2-\\u0DD4\\u0DD6\\u0E31\\u0E34-\\u0E3A\\u0E47-\\u0E4E\\u0EB1\\u0EB4-\\u0EB9\\u0EBB\\u0EBC\\u0EC8-\\u0ECD\\u0F18\\u0F19\\u0F35\\u0F37\\u0F39\\u0F71-\\u0F7E\\u0F80-\\u0F84\\u0F86\\u0F87\\u0F8D-\\u0F97\\u0F99-\\u0FBC\\u0FC6\\u102D-\\u1030\\u1032-\\u1037\\u1039\\u103A\\u103D\\u103E\\u1058\\u1059\\u105E-\\u1060\\u1071-\\u1074\\u1082\\u1085\\u1086\\u108D\\u109D\\u135D-\\u135F\\u1712-\\u1714\\u1732-\\u1734\\u1752\\u1753\\u1772\\u1773\\u17B7-\\u17BD\\u17C6\\u17C9-\\u17D3\\u17DD\\u180B-\\u180D\\u18A9\\u1920-\\u1922\\u1927\\u1928\\u1932\\u1939-\\u193B\\u1A17\\u1A18\\u1A56\\u1A58-\\u1A5E\\u1A60\\u1A62\\u1A65-\\u1A6C\\u1A73-\\u1A7C\\u1A7F\\u1B00-\\u1B03\\u1B34\\u1B36-\\u1B3A\\u1B3C\\u1B42\\u1B6B-\\u1B73\\u1B80\\u1B81\\u1BA2-\\u1BA5\\u1BA8\\u1BA9\\u1BE6\\u1BE8\\u1BE9\\u1BED\\u1BEF-\\u1BF1\\u1C2C-\\u1C33\\u1C36\\u1C37\\u1CD0-\\u1CD2\\u1CD4-\\u1CE0\\u1CE2-\\u1CE8\\u1CED\\u1DC0-\\u1DE6\\u1DFC-\\u1DFF\\u20D0-\\u20DC\\u20E1\\u20E5-\\u20F0\\u2CEF-\\u2CF1\\u2D7F\\u2DE0-\\u2DFF\\u302A-\\u302F\\u3099\\u309A\\uA66F\\uA67C\\uA67D\\uA6F0\\uA6F1\\uA802\\uA806\\uA80B\\uA825\\uA826\\uA8C4\\uA8E0-\\uA8F1\\uA926-\\uA92D\\uA947-\\uA951\\uA980-\\uA982\\uA9B3\\uA9B6-\\uA9B9\\uA9BC\\uAA29-\\uAA2E\\uAA31\\uAA32\\uAA35\\uAA36\\uAA43\\uAA4C\\uAAB0\\uAAB2-\\uAAB4\\uAAB7\\uAAB8\\uAABE\\uAABF\\uAAC1\\uABE5\\uABE8\\uABED\\uFB1E\\uFE00-\\uFE0F\\uFE20-\\uFE26\\u0903\\u093B\\u093E-\\u0940\\u0949-\\u094C\\u094E\\u094F\\u0982\\u0983\\u09BE-\\u09C0\\u09C7\\u09C8\\u09CB\\u09CC\\u09D7\\u0A03\\u0A3E-\\u0A40\\u0A83\\u0ABE-\\u0AC0\\u0AC9\\u0ACB\\u0ACC\\u0B02\\u0B03\\u0B3E\\u0B40\\u0B47\\u0B48\\u0B4B\\u0B4C\\u0B57\\u0BBE\\u0BBF\\u0BC1\\u0BC2\\u0BC6-\\u0BC8\\u0BCA-\\u0BCC\\u0BD7\\u0C01-\\u0C03\\u0C41-\\u0C44\\u0C82\\u0C83\\u0CBE\\u0CC0-\\u0CC4\\u0CC7\\u0CC8\\u0CCA\\u0CCB\\u0CD5\\u0CD6\\u0D02\\u0D03\\u0D3E-\\u0D40\\u0D46-\\u0D48\\u0D4A-\\u0D4C\\u0D57\\u0D82\\u0D83\\u0DCF-\\u0DD1\\u0DD8-\\u0DDF\\u0DF2\\u0DF3\\u0F3E\\u0F3F\\u0F7F\\u102B\\u102C\\u1031\\u1038\\u103B\\u103C\\u1056\\u1057\\u1062-\\u1064\\u1067-\\u106D\\u1083\\u1084\\u1087-\\u108C\\u108F\\u109A-\\u109C\\u17B6\\u17BE-\\u17C5\\u17C7\\u17C8\\u1923-\\u1926\\u1929-\\u192B\\u1930\\u1931\\u1933-\\u1938\\u19B0-\\u19C0\\u19C8\\u19C9\\u1A19-\\u1A1B\\u1A55\\u1A57\\u1A61\\u1A63\\u1A64\\u1A6D-\\u1A72\\u1B04\\u1B35\\u1B3B\\u1B3D-\\u1B41\\u1B43\\u1B44\\u1B82\\u1BA1\\u1BA6\\u1BA7\\u1BAA\\u1BE7\\u1BEA-\\u1BEC\\u1BEE\\u1BF2\\u1BF3\\u1C24-\\u1C2B\\u1C34\\u1C35\\u1CE1\\u1CF2\\uA823\\uA824\\uA827\\uA880\\uA881\\uA8B4-\\uA8C3\\uA952\\uA953\\uA983\\uA9B4\\uA9B5\\uA9BA\\uA9BB\\uA9BD-\\uA9C0\\uAA2F\\uAA30\\uAA33\\uAA34\\uAA4D\\uAA7B\\uABE3\\uABE4\\uABE6\\uABE7\\uABE9\\uABEA\\uABEC]" },
-        peg$c324 = "\uDB40",
-        peg$c325 = { type: "literal", value: "\uDB40", description: "\"\\uDB40\"" },
-        peg$c326 = /^[\uDD00-\uDDEF]/,
-        peg$c327 = { type: "class", value: "[\\uDD00-\\uDDEF]", description: "[\\uDD00-\\uDDEF]" },
-        peg$c328 = "\uD834",
-        peg$c329 = { type: "literal", value: "\uD834", description: "\"\\uD834\"" },
-        peg$c330 = /^[\uDD67-\uDD69\uDD7B-\uDD82\uDD85-\uDD8B\uDDAA-\uDDAD\uDE42-\uDE44\uDD65\uDD66\uDD6D-\uDD72]/,
-        peg$c331 = { type: "class", value: "[\\uDD67-\\uDD69\\uDD7B-\\uDD82\\uDD85-\\uDD8B\\uDDAA-\\uDDAD\\uDE42-\\uDE44\\uDD65\\uDD66\\uDD6D-\\uDD72]", description: "[\\uDD67-\\uDD69\\uDD7B-\\uDD82\\uDD85-\\uDD8B\\uDDAA-\\uDDAD\\uDE42-\\uDE44\\uDD65\\uDD66\\uDD6D-\\uDD72]" },
-        peg$c332 = /^[\uDC01\uDC38-\uDC46\uDC80\uDC81\uDCB3-\uDCB6\uDCB9\uDCBA\uDC00\uDC02\uDC82\uDCB0-\uDCB2\uDCB7\uDCB8]/,
-        peg$c333 = { type: "class", value: "[\\uDC01\\uDC38-\\uDC46\\uDC80\\uDC81\\uDCB3-\\uDCB6\\uDCB9\\uDCBA\\uDC00\\uDC02\\uDC82\\uDCB0-\\uDCB2\\uDCB7\\uDCB8]", description: "[\\uDC01\\uDC38-\\uDC46\\uDC80\\uDC81\\uDCB3-\\uDCB6\\uDCB9\\uDCBA\\uDC00\\uDC02\\uDC82\\uDCB0-\\uDCB2\\uDCB7\\uDCB8]" },
-        peg$c334 = /^[\uDDFD]/,
-        peg$c335 = { type: "class", value: "[\\uDDFD]", description: "[\\uDDFD]" },
-        peg$c336 = /^[\uDE01-\uDE03\uDE05\uDE06\uDE0C-\uDE0F\uDE38-\uDE3A\uDE3F]/,
-        peg$c337 = { type: "class", value: "[\\uDE01-\\uDE03\\uDE05\\uDE06\\uDE0C-\\uDE0F\\uDE38-\\uDE3A\\uDE3F]", description: "[\\uDE01-\\uDE03\\uDE05\\uDE06\\uDE0C-\\uDE0F\\uDE38-\\uDE3A\\uDE3F]" },
-        peg$c338 = /^[0-9\u0660-\u0669\u06F0-\u06F9\u07C0-\u07C9\u0966-\u096F\u09E6-\u09EF\u0A66-\u0A6F\u0AE6-\u0AEF\u0B66-\u0B6F\u0BE6-\u0BEF\u0C66-\u0C6F\u0CE6-\u0CEF\u0D66-\u0D6F\u0E50-\u0E59\u0ED0-\u0ED9\u0F20-\u0F29\u1040-\u1049\u1090-\u1099\u17E0-\u17E9\u1810-\u1819\u1946-\u194F\u19D0-\u19D9\u1A80-\u1A89\u1A90-\u1A99\u1B50-\u1B59\u1BB0-\u1BB9\u1C40-\u1C49\u1C50-\u1C59\uA620-\uA629\uA8D0-\uA8D9\uA900-\uA909\uA9D0-\uA9D9\uAA50-\uAA59\uABF0-\uABF9\uFF10-\uFF19]/,
-        peg$c339 = { type: "class", value: "[0-9\\u0660-\\u0669\\u06F0-\\u06F9\\u07C0-\\u07C9\\u0966-\\u096F\\u09E6-\\u09EF\\u0A66-\\u0A6F\\u0AE6-\\u0AEF\\u0B66-\\u0B6F\\u0BE6-\\u0BEF\\u0C66-\\u0C6F\\u0CE6-\\u0CEF\\u0D66-\\u0D6F\\u0E50-\\u0E59\\u0ED0-\\u0ED9\\u0F20-\\u0F29\\u1040-\\u1049\\u1090-\\u1099\\u17E0-\\u17E9\\u1810-\\u1819\\u1946-\\u194F\\u19D0-\\u19D9\\u1A80-\\u1A89\\u1A90-\\u1A99\\u1B50-\\u1B59\\u1BB0-\\u1BB9\\u1C40-\\u1C49\\u1C50-\\u1C59\\uA620-\\uA629\\uA8D0-\\uA8D9\\uA900-\\uA909\\uA9D0-\\uA9D9\\uAA50-\\uAA59\\uABF0-\\uABF9\\uFF10-\\uFF19]", description: "[0-9\\u0660-\\u0669\\u06F0-\\u06F9\\u07C0-\\u07C9\\u0966-\\u096F\\u09E6-\\u09EF\\u0A66-\\u0A6F\\u0AE6-\\u0AEF\\u0B66-\\u0B6F\\u0BE6-\\u0BEF\\u0C66-\\u0C6F\\u0CE6-\\u0CEF\\u0D66-\\u0D6F\\u0E50-\\u0E59\\u0ED0-\\u0ED9\\u0F20-\\u0F29\\u1040-\\u1049\\u1090-\\u1099\\u17E0-\\u17E9\\u1810-\\u1819\\u1946-\\u194F\\u19D0-\\u19D9\\u1A80-\\u1A89\\u1A90-\\u1A99\\u1B50-\\u1B59\\u1BB0-\\u1BB9\\u1C40-\\u1C49\\u1C50-\\u1C59\\uA620-\\uA629\\uA8D0-\\uA8D9\\uA900-\\uA909\\uA9D0-\\uA9D9\\uAA50-\\uAA59\\uABF0-\\uABF9\\uFF10-\\uFF19]" },
-        peg$c340 = /^[\uDFCE-\uDFFF]/,
-        peg$c341 = { type: "class", value: "[\\uDFCE-\\uDFFF]", description: "[\\uDFCE-\\uDFFF]" },
-        peg$c342 = /^[\uDC66-\uDC6F]/,
-        peg$c343 = { type: "class", value: "[\\uDC66-\\uDC6F]", description: "[\\uDC66-\\uDC6F]" },
-        peg$c344 = /^[\uDCA0-\uDCA9]/,
-        peg$c345 = { type: "class", value: "[\\uDCA0-\\uDCA9]", description: "[\\uDCA0-\\uDCA9]" },
-        peg$c346 = /^[_\u203F\u2040\u2054\uFE33\uFE34\uFE4D-\uFE4F\uFF3F]/,
-        peg$c347 = { type: "class", value: "[_\\u203F\\u2040\\u2054\\uFE33\\uFE34\\uFE4D-\\uFE4F\\uFF3F]", description: "[_\\u203F\\u2040\\u2054\\uFE33\\uFE34\\uFE4D-\\uFE4F\\uFF3F]" },
-        peg$c348 = "\u200C",
-        peg$c349 = { type: "literal", value: "\u200C", description: "\"\\u200C\"" },
-        peg$c350 = "\u200D",
-        peg$c351 = { type: "literal", value: "\u200D", description: "\"\\u200D\"" },
-        peg$c352 = "true",
-        peg$c353 = { type: "literal", value: "true", description: "\"true\"" },
-        peg$c354 = "false",
-        peg$c355 = { type: "literal", value: "false", description: "\"false\"" },
-        peg$c356 = "new",
-        peg$c357 = { type: "literal", value: "new", description: "\"new\"" },
-        peg$c358 = "this",
-        peg$c359 = { type: "literal", value: "this", description: "\"this\"" },
-        peg$c360 = "null",
-        peg$c361 = { type: "literal", value: "null", description: "\"null\"" },
-        peg$c362 = function() { return null },
-        peg$c363 = "undefined",
-        peg$c364 = { type: "literal", value: "undefined", description: "\"undefined\"" },
-        peg$c365 = function() { return undefined },
-        peg$c366 = "and",
-        peg$c367 = { type: "literal", value: "and", description: "\"and\"" },
-        peg$c368 = function() { return "&&" },
-        peg$c369 = "or",
-        peg$c370 = { type: "literal", value: "or", description: "\"or\"" },
-        peg$c371 = function() { return "||" },
-        peg$c372 = "is",
-        peg$c373 = { type: "literal", value: "is", description: "\"is\"" },
-        peg$c374 = function() { return "===" },
-        peg$c375 = "isnt",
-        peg$c376 = { type: "literal", value: "isnt", description: "\"isnt\"" },
-        peg$c377 = function() { return "!==" },
-        peg$c378 = "not",
-        peg$c379 = { type: "literal", value: "not", description: "\"not\"" },
-        peg$c380 = function() { return "!" },
-        peg$c381 = "typeof",
-        peg$c382 = { type: "literal", value: "typeof", description: "\"typeof\"" },
-        peg$c383 = function() { return "typeof"},
-        peg$c384 = "void",
-        peg$c385 = { type: "literal", value: "void", description: "\"void\"" },
-        peg$c386 = function() { return "void"},
-        peg$c387 = "delete",
-        peg$c388 = { type: "literal", value: "delete", description: "\"delete\"" },
-        peg$c389 = function() { return "delete"},
-        peg$c390 = "var",
-        peg$c391 = { type: "literal", value: "var", description: "\"var\"" },
-        peg$c392 = "const",
-        peg$c393 = { type: "literal", value: "const", description: "\"const\"" },
-        peg$c394 = function() { return "const" },
-        peg$c395 = "let",
-        peg$c396 = { type: "literal", value: "let", description: "\"let\"" },
-        peg$c397 = function() { return "let" },
-        peg$c398 = "in",
-        peg$c399 = { type: "literal", value: "in", description: "\"in\"" },
-        peg$c400 = function() { return "in" },
-        peg$c401 = "instanceof",
-        peg$c402 = { type: "literal", value: "instanceof", description: "\"instanceof\"" },
-        peg$c403 = function() { return "instanceof" },
-        peg$c404 = "while",
-        peg$c405 = { type: "literal", value: "while", description: "\"while\"" },
-        peg$c406 = "for",
-        peg$c407 = { type: "literal", value: "for", description: "\"for\"" },
-        peg$c408 = "of",
-        peg$c409 = { type: "literal", value: "of", description: "\"of\"" },
-        peg$c410 = "if",
-        peg$c411 = { type: "literal", value: "if", description: "\"if\"" },
-        peg$c412 = "else",
-        peg$c413 = { type: "literal", value: "else", description: "\"else\"" },
-        peg$c414 = "return",
-        peg$c415 = { type: "literal", value: "return", description: "\"return\"" },
-        peg$c416 = "try",
-        peg$c417 = { type: "literal", value: "try", description: "\"try\"" },
-        peg$c418 = "catch",
-        peg$c419 = { type: "literal", value: "catch", description: "\"catch\"" },
-        peg$c420 = "finally",
-        peg$c421 = { type: "literal", value: "finally", description: "\"finally\"" },
-        peg$c422 = "throw",
-        peg$c423 = { type: "literal", value: "throw", description: "\"throw\"" },
-        peg$c424 = "break",
-        peg$c425 = { type: "literal", value: "break", description: "\"break\"" },
-        peg$c426 = "continue",
-        peg$c427 = { type: "literal", value: "continue", description: "\"continue\"" },
-        peg$c428 = "do",
-        peg$c429 = { type: "literal", value: "do", description: "\"do\"" },
-        peg$c430 = "import",
-        peg$c431 = { type: "literal", value: "import", description: "\"import\"" },
-        peg$c432 = "export",
-        peg$c433 = { type: "literal", value: "export", description: "\"export\"" },
-        peg$c434 = "class",
-        peg$c435 = { type: "literal", value: "class", description: "\"class\"" },
-        peg$c436 = "extends",
-        peg$c437 = { type: "literal", value: "extends", description: "\"extends\"" },
-        peg$c438 = "assert",
-        peg$c439 = { type: "literal", value: "assert", description: "\"assert\"" },
-        peg$c440 = "template",
-        peg$c441 = { type: "literal", value: "template", description: "\"template\"" },
-        peg$c442 = "activate",
-        peg$c443 = { type: "literal", value: "activate", description: "\"activate\"" },
-        peg$c444 = { type: "other", description: "INDENT" },
-        peg$c445 = "{{{{",
-        peg$c446 = { type: "literal", value: "{{{{", description: "\"{{{{\"" },
-        peg$c447 = { type: "other", description: "OUTDENT" },
-        peg$c448 = "}}}}",
-        peg$c449 = { type: "literal", value: "}}}}", description: "\"}}}}\"" },
-        peg$c450 = { type: "other", description: "space" },
-        peg$c451 = " ",
-        peg$c452 = { type: "literal", value: " ", description: "\" \"" },
-        peg$c453 = "#",
-        peg$c454 = { type: "literal", value: "#", description: "\"#\"" },
-        peg$c455 = "\n",
-        peg$c456 = { type: "literal", value: "\n", description: "\"\\n\"" },
-        peg$c457 = { type: "other", description: "end of line" },
-        peg$c458 = "\r",
-        peg$c459 = { type: "literal", value: "\r", description: "\"\\r\"" },
-        peg$c460 = { type: "other", description: "end of file" },
+        peg$c161 = function(params) { return params != null ? params : [] },
+        peg$c162 = function(param, init) { return [param,init] },
+        peg$c163 = { type: "other", description: "primaryExpression" },
+        peg$c164 = "`",
+        peg$c165 = { type: "literal", value: "`", description: "\"`\"" },
+        peg$c166 = { type: "any", description: "any character" },
+        peg$c167 = function(start, a, end) { return node("JavascriptExpression", {text:text().slice(1, -1)}, start, end) },
+        peg$c168 = function(start, elements, end) { return node("ArrayExpression", {elements:elements || []}, start, end) },
+        peg$c169 = function(item) {return item},
+        peg$c170 = "{",
+        peg$c171 = { type: "literal", value: "{", description: "\"{\"" },
+        peg$c172 = "}",
+        peg$c173 = { type: "literal", value: "}", description: "\"}\"" },
+        peg$c174 = function(start, assignments, end) { return node("ObjectExpression", {properties:assignments || []}, start, end) },
+        peg$c175 = function(start, key, end) { return node("Property", { key: key, value:clone(key), kind: 'init'}, start, end) },
+        peg$c176 = function(start, type, properties, end) { return node("ObjectExpression", {objectType:type,properties:properties.body}, start, end) },
+        peg$c177 = function(start, properties, end) { return node("ObjectExpression", {properties:properties.body}, start, end) },
+        peg$c178 = { type: "other", description: "group" },
+        peg$c179 = function(expression) { return expression },
+        peg$c180 = function(value) { return value },
+        peg$c181 = function(start, name, end) { return node("Identifier", {name:name}, start, end) },
+        peg$c182 = { type: "other", description: "this" },
+        peg$c183 = "@@",
+        peg$c184 = { type: "literal", value: "@@", description: "\"@@\"" },
+        peg$c185 = function(start, property, end) { return thisExpression(start, end, "constructor", property) },
+        peg$c186 = "@",
+        peg$c187 = { type: "literal", value: "@", description: "\"@\"" },
+        peg$c188 = function(start, property, end) { return thisExpression(start, end, property) },
+        peg$c189 = function(start, end) { return thisExpression(start, end, "constructor") },
+        peg$c190 = function(start, end) { return thisExpression(start, end) },
+        peg$c191 = { type: "other", description: "literal" },
+        peg$c192 = function(start, value, end) { return node('Literal', {value:value}, start, end) },
+        peg$c193 = function(start, end) { return node('UnaryExpression', {operator:'void', prefix:true, argument:node('Literal', {value:0}, start, end)}, start, end) },
+        peg$c194 = function() { return {line:line(),column:column()-1} },
+        peg$c195 = function() { return offset() },
+        peg$c196 = function(a, b) { return new RegExp(a, b) },
+        peg$c197 = "\\",
+        peg$c198 = { type: "literal", value: "\\", description: "\"\\\\\"" },
+        peg$c199 = /^[^\/]/,
+        peg$c200 = { type: "class", value: "[^\\/]", description: "[^\\/]" },
+        peg$c201 = /^[gimy]/,
+        peg$c202 = { type: "class", value: "[gimy]", description: "[gimy]" },
+        peg$c203 = "'",
+        peg$c204 = { type: "literal", value: "'", description: "\"'\"" },
+        peg$c205 = /^['\\\/bfnrt]/,
+        peg$c206 = { type: "class", value: "['\\\\\\/bfnrt]", description: "['\\\\\\/bfnrt]" },
+        peg$c207 = "u",
+        peg$c208 = { type: "literal", value: "u", description: "\"u\"" },
+        peg$c209 = /^[^'\\\r\n]/,
+        peg$c210 = { type: "class", value: "[^'\\\\\\r\\n]", description: "[^'\\\\\\r\\n]" },
+        peg$c211 = function() { return eval(text()) },
+        peg$c212 = "\"",
+        peg$c213 = { type: "literal", value: "\"", description: "\"\\\"\"" },
+        peg$c214 = /^["\\\/bfnrt]/,
+        peg$c215 = { type: "class", value: "[\"\\\\\\/bfnrt]", description: "[\"\\\\\\/bfnrt]" },
+        peg$c216 = /^[^"\\\r\n]/,
+        peg$c217 = { type: "class", value: "[^\"\\\\\\r\\n]", description: "[^\"\\\\\\r\\n]" },
+        peg$c218 = "\"\"",
+        peg$c219 = { type: "literal", value: "\"\"", description: "\"\\\"\\\"\"" },
+        peg$c220 = function(start, content, end) { return concatenate(unindent(content)) },
+        peg$c221 = function(a) { return Array.prototype.concat.apply([], a) },
+        peg$c222 = "{{",
+        peg$c223 = { type: "literal", value: "{{", description: "\"{{\"" },
+        peg$c224 = function() { return text() },
+        peg$c225 = "''",
+        peg$c226 = { type: "literal", value: "''", description: "\"''\"" },
+        peg$c227 = "}}",
+        peg$c228 = { type: "literal", value: "}}", description: "\"}}\"" },
+        peg$c229 = function(a) { return concatenate(a) },
+        peg$c230 = function() { return eval('"' + text() + '"') },
+        peg$c231 = /^[+\-]/,
+        peg$c232 = { type: "class", value: "[+\\-]", description: "[+\\-]" },
+        peg$c233 = /^[eE]/,
+        peg$c234 = { type: "class", value: "[eE]", description: "[eE]" },
+        peg$c235 = function() { return parseFloat(text()) },
+        peg$c236 = function() { return parseInt(text()) },
+        peg$c237 = /^[0-9]/,
+        peg$c238 = { type: "class", value: "[0-9]", description: "[0-9]" },
+        peg$c239 = "0",
+        peg$c240 = { type: "literal", value: "0", description: "\"0\"" },
+        peg$c241 = "0x",
+        peg$c242 = { type: "literal", value: "0x", description: "\"0x\"" },
+        peg$c243 = function() { return parseInt(text(), 16) },
+        peg$c244 = /^[0-9a-fA-F]/,
+        peg$c245 = { type: "class", value: "[0-9a-fA-F]", description: "[0-9a-fA-F]" },
+        peg$c246 = { type: "other", description: "identifier" },
+        peg$c247 = { type: "other", description: "identifierName" },
+        peg$c248 = /^[$_]/,
+        peg$c249 = { type: "class", value: "[$_]", description: "[$_]" },
+        peg$c250 = "\\u",
+        peg$c251 = { type: "literal", value: "\\u", description: "\"\\\\u\"" },
+        peg$c252 = function(h0, h1, h2, h3) { return String.fromCharCode(parseInt(h0 + h1 + h2 + h3, 16)); },
+        peg$c253 = /^[A-Z\xC0-\xD6\xD8-\xDE\u0100\u0102\u0104\u0106\u0108\u010A\u010C\u010E\u0110\u0112\u0114\u0116\u0118\u011A\u011C\u011E\u0120\u0122\u0124\u0126\u0128\u012A\u012C\u012E\u0130\u0132\u0134\u0136\u0139\u013B\u013D\u013F\u0141\u0143\u0145\u0147\u014A\u014C\u014E\u0150\u0152\u0154\u0156\u0158\u015A\u015C\u015E\u0160\u0162\u0164\u0166\u0168\u016A\u016C\u016E\u0170\u0172\u0174\u0176\u0178\u0179\u017B\u017D\u0181\u0182\u0184\u0186\u0187\u0189-\u018B\u018E-\u0191\u0193\u0194\u0196-\u0198\u019C\u019D\u019F\u01A0\u01A2\u01A4\u01A6\u01A7\u01A9\u01AC\u01AE\u01AF\u01B1-\u01B3\u01B5\u01B7\u01B8\u01BC\u01C4\u01C7\u01CA\u01CD\u01CF\u01D1\u01D3\u01D5\u01D7\u01D9\u01DB\u01DE\u01E0\u01E2\u01E4\u01E6\u01E8\u01EA\u01EC\u01EE\u01F1\u01F4\u01F6-\u01F8\u01FA\u01FC\u01FE\u0200\u0202\u0204\u0206\u0208\u020A\u020C\u020E\u0210\u0212\u0214\u0216\u0218\u021A\u021C\u021E\u0220\u0222\u0224\u0226\u0228\u022A\u022C\u022E\u0230\u0232\u023A\u023B\u023D\u023E\u0241\u0243-\u0246\u0248\u024A\u024C\u024E\u0370\u0372\u0376\u0386\u0388-\u038A\u038C\u038E\u038F\u0391-\u03A1\u03A3-\u03AB\u03CF\u03D2-\u03D4\u03D8\u03DA\u03DC\u03DE\u03E0\u03E2\u03E4\u03E6\u03E8\u03EA\u03EC\u03EE\u03F4\u03F7\u03F9\u03FA\u03FD-\u042F\u0460\u0462\u0464\u0466\u0468\u046A\u046C\u046E\u0470\u0472\u0474\u0476\u0478\u047A\u047C\u047E\u0480\u048A\u048C\u048E\u0490\u0492\u0494\u0496\u0498\u049A\u049C\u049E\u04A0\u04A2\u04A4\u04A6\u04A8\u04AA\u04AC\u04AE\u04B0\u04B2\u04B4\u04B6\u04B8\u04BA\u04BC\u04BE\u04C0\u04C1\u04C3\u04C5\u04C7\u04C9\u04CB\u04CD\u04D0\u04D2\u04D4\u04D6\u04D8\u04DA\u04DC\u04DE\u04E0\u04E2\u04E4\u04E6\u04E8\u04EA\u04EC\u04EE\u04F0\u04F2\u04F4\u04F6\u04F8\u04FA\u04FC\u04FE\u0500\u0502\u0504\u0506\u0508\u050A\u050C\u050E\u0510\u0512\u0514\u0516\u0518\u051A\u051C\u051E\u0520\u0522\u0524\u0526\u0531-\u0556\u10A0-\u10C5\u1E00\u1E02\u1E04\u1E06\u1E08\u1E0A\u1E0C\u1E0E\u1E10\u1E12\u1E14\u1E16\u1E18\u1E1A\u1E1C\u1E1E\u1E20\u1E22\u1E24\u1E26\u1E28\u1E2A\u1E2C\u1E2E\u1E30\u1E32\u1E34\u1E36\u1E38\u1E3A\u1E3C\u1E3E\u1E40\u1E42\u1E44\u1E46\u1E48\u1E4A\u1E4C\u1E4E\u1E50\u1E52\u1E54\u1E56\u1E58\u1E5A\u1E5C\u1E5E\u1E60\u1E62\u1E64\u1E66\u1E68\u1E6A\u1E6C\u1E6E\u1E70\u1E72\u1E74\u1E76\u1E78\u1E7A\u1E7C\u1E7E\u1E80\u1E82\u1E84\u1E86\u1E88\u1E8A\u1E8C\u1E8E\u1E90\u1E92\u1E94\u1E9E\u1EA0\u1EA2\u1EA4\u1EA6\u1EA8\u1EAA\u1EAC\u1EAE\u1EB0\u1EB2\u1EB4\u1EB6\u1EB8\u1EBA\u1EBC\u1EBE\u1EC0\u1EC2\u1EC4\u1EC6\u1EC8\u1ECA\u1ECC\u1ECE\u1ED0\u1ED2\u1ED4\u1ED6\u1ED8\u1EDA\u1EDC\u1EDE\u1EE0\u1EE2\u1EE4\u1EE6\u1EE8\u1EEA\u1EEC\u1EEE\u1EF0\u1EF2\u1EF4\u1EF6\u1EF8\u1EFA\u1EFC\u1EFE\u1F08-\u1F0F\u1F18-\u1F1D\u1F28-\u1F2F\u1F38-\u1F3F\u1F48-\u1F4D\u1F59\u1F5B\u1F5D\u1F5F\u1F68-\u1F6F\u1FB8-\u1FBB\u1FC8-\u1FCB\u1FD8-\u1FDB\u1FE8-\u1FEC\u1FF8-\u1FFB\u2102\u2107\u210B-\u210D\u2110-\u2112\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u2130-\u2133\u213E\u213F\u2145\u2183\u2C00-\u2C2E\u2C60\u2C62-\u2C64\u2C67\u2C69\u2C6B\u2C6D-\u2C70\u2C72\u2C75\u2C7E-\u2C80\u2C82\u2C84\u2C86\u2C88\u2C8A\u2C8C\u2C8E\u2C90\u2C92\u2C94\u2C96\u2C98\u2C9A\u2C9C\u2C9E\u2CA0\u2CA2\u2CA4\u2CA6\u2CA8\u2CAA\u2CAC\u2CAE\u2CB0\u2CB2\u2CB4\u2CB6\u2CB8\u2CBA\u2CBC\u2CBE\u2CC0\u2CC2\u2CC4\u2CC6\u2CC8\u2CCA\u2CCC\u2CCE\u2CD0\u2CD2\u2CD4\u2CD6\u2CD8\u2CDA\u2CDC\u2CDE\u2CE0\u2CE2\u2CEB\u2CED\uA640\uA642\uA644\uA646\uA648\uA64A\uA64C\uA64E\uA650\uA652\uA654\uA656\uA658\uA65A\uA65C\uA65E\uA660\uA662\uA664\uA666\uA668\uA66A\uA66C\uA680\uA682\uA684\uA686\uA688\uA68A\uA68C\uA68E\uA690\uA692\uA694\uA696\uA722\uA724\uA726\uA728\uA72A\uA72C\uA72E\uA732\uA734\uA736\uA738\uA73A\uA73C\uA73E\uA740\uA742\uA744\uA746\uA748\uA74A\uA74C\uA74E\uA750\uA752\uA754\uA756\uA758\uA75A\uA75C\uA75E\uA760\uA762\uA764\uA766\uA768\uA76A\uA76C\uA76E\uA779\uA77B\uA77D\uA77E\uA780\uA782\uA784\uA786\uA78B\uA78D\uA790\uA7A0\uA7A2\uA7A4\uA7A6\uA7A8\uFF21-\uFF3Aa-z\xAA\xB5\xBA\xDF-\xF6\xF8-\xFF\u0101\u0103\u0105\u0107\u0109\u010B\u010D\u010F\u0111\u0113\u0115\u0117\u0119\u011B\u011D\u011F\u0121\u0123\u0125\u0127\u0129\u012B\u012D\u012F\u0131\u0133\u0135\u0137\u0138\u013A\u013C\u013E\u0140\u0142\u0144\u0146\u0148\u0149\u014B\u014D\u014F\u0151\u0153\u0155\u0157\u0159\u015B\u015D\u015F\u0161\u0163\u0165\u0167\u0169\u016B\u016D\u016F\u0171\u0173\u0175\u0177\u017A\u017C\u017E-\u0180\u0183\u0185\u0188\u018C\u018D\u0192\u0195\u0199-\u019B\u019E\u01A1\u01A3\u01A5\u01A8\u01AA\u01AB\u01AD\u01B0\u01B4\u01B6\u01B9\u01BA\u01BD-\u01BF\u01C6\u01C9\u01CC\u01CE\u01D0\u01D2\u01D4\u01D6\u01D8\u01DA\u01DC\u01DD\u01DF\u01E1\u01E3\u01E5\u01E7\u01E9\u01EB\u01ED\u01EF\u01F0\u01F3\u01F5\u01F9\u01FB\u01FD\u01FF\u0201\u0203\u0205\u0207\u0209\u020B\u020D\u020F\u0211\u0213\u0215\u0217\u0219\u021B\u021D\u021F\u0221\u0223\u0225\u0227\u0229\u022B\u022D\u022F\u0231\u0233-\u0239\u023C\u023F\u0240\u0242\u0247\u0249\u024B\u024D\u024F-\u0293\u0295-\u02AF\u0371\u0373\u0377\u037B-\u037D\u0390\u03AC-\u03CE\u03D0\u03D1\u03D5-\u03D7\u03D9\u03DB\u03DD\u03DF\u03E1\u03E3\u03E5\u03E7\u03E9\u03EB\u03ED\u03EF-\u03F3\u03F5\u03F8\u03FB\u03FC\u0430-\u045F\u0461\u0463\u0465\u0467\u0469\u046B\u046D\u046F\u0471\u0473\u0475\u0477\u0479\u047B\u047D\u047F\u0481\u048B\u048D\u048F\u0491\u0493\u0495\u0497\u0499\u049B\u049D\u049F\u04A1\u04A3\u04A5\u04A7\u04A9\u04AB\u04AD\u04AF\u04B1\u04B3\u04B5\u04B7\u04B9\u04BB\u04BD\u04BF\u04C2\u04C4\u04C6\u04C8\u04CA\u04CC\u04CE\u04CF\u04D1\u04D3\u04D5\u04D7\u04D9\u04DB\u04DD\u04DF\u04E1\u04E3\u04E5\u04E7\u04E9\u04EB\u04ED\u04EF\u04F1\u04F3\u04F5\u04F7\u04F9\u04FB\u04FD\u04FF\u0501\u0503\u0505\u0507\u0509\u050B\u050D\u050F\u0511\u0513\u0515\u0517\u0519\u051B\u051D\u051F\u0521\u0523\u0525\u0527\u0561-\u0587\u1D00-\u1D2B\u1D62-\u1D77\u1D79-\u1D9A\u1E01\u1E03\u1E05\u1E07\u1E09\u1E0B\u1E0D\u1E0F\u1E11\u1E13\u1E15\u1E17\u1E19\u1E1B\u1E1D\u1E1F\u1E21\u1E23\u1E25\u1E27\u1E29\u1E2B\u1E2D\u1E2F\u1E31\u1E33\u1E35\u1E37\u1E39\u1E3B\u1E3D\u1E3F\u1E41\u1E43\u1E45\u1E47\u1E49\u1E4B\u1E4D\u1E4F\u1E51\u1E53\u1E55\u1E57\u1E59\u1E5B\u1E5D\u1E5F\u1E61\u1E63\u1E65\u1E67\u1E69\u1E6B\u1E6D\u1E6F\u1E71\u1E73\u1E75\u1E77\u1E79\u1E7B\u1E7D\u1E7F\u1E81\u1E83\u1E85\u1E87\u1E89\u1E8B\u1E8D\u1E8F\u1E91\u1E93\u1E95-\u1E9D\u1E9F\u1EA1\u1EA3\u1EA5\u1EA7\u1EA9\u1EAB\u1EAD\u1EAF\u1EB1\u1EB3\u1EB5\u1EB7\u1EB9\u1EBB\u1EBD\u1EBF\u1EC1\u1EC3\u1EC5\u1EC7\u1EC9\u1ECB\u1ECD\u1ECF\u1ED1\u1ED3\u1ED5\u1ED7\u1ED9\u1EDB\u1EDD\u1EDF\u1EE1\u1EE3\u1EE5\u1EE7\u1EE9\u1EEB\u1EED\u1EEF\u1EF1\u1EF3\u1EF5\u1EF7\u1EF9\u1EFB\u1EFD\u1EFF-\u1F07\u1F10-\u1F15\u1F20-\u1F27\u1F30-\u1F37\u1F40-\u1F45\u1F50-\u1F57\u1F60-\u1F67\u1F70-\u1F7D\u1F80-\u1F87\u1F90-\u1F97\u1FA0-\u1FA7\u1FB0-\u1FB4\u1FB6\u1FB7\u1FBE\u1FC2-\u1FC4\u1FC6\u1FC7\u1FD0-\u1FD3\u1FD6\u1FD7\u1FE0-\u1FE7\u1FF2-\u1FF4\u1FF6\u1FF7\u210A\u210E\u210F\u2113\u212F\u2134\u2139\u213C\u213D\u2146-\u2149\u214E\u2184\u2C30-\u2C5E\u2C61\u2C65\u2C66\u2C68\u2C6A\u2C6C\u2C71\u2C73\u2C74\u2C76-\u2C7C\u2C81\u2C83\u2C85\u2C87\u2C89\u2C8B\u2C8D\u2C8F\u2C91\u2C93\u2C95\u2C97\u2C99\u2C9B\u2C9D\u2C9F\u2CA1\u2CA3\u2CA5\u2CA7\u2CA9\u2CAB\u2CAD\u2CAF\u2CB1\u2CB3\u2CB5\u2CB7\u2CB9\u2CBB\u2CBD\u2CBF\u2CC1\u2CC3\u2CC5\u2CC7\u2CC9\u2CCB\u2CCD\u2CCF\u2CD1\u2CD3\u2CD5\u2CD7\u2CD9\u2CDB\u2CDD\u2CDF\u2CE1\u2CE3\u2CE4\u2CEC\u2CEE\u2D00-\u2D25\uA641\uA643\uA645\uA647\uA649\uA64B\uA64D\uA64F\uA651\uA653\uA655\uA657\uA659\uA65B\uA65D\uA65F\uA661\uA663\uA665\uA667\uA669\uA66B\uA66D\uA681\uA683\uA685\uA687\uA689\uA68B\uA68D\uA68F\uA691\uA693\uA695\uA697\uA723\uA725\uA727\uA729\uA72B\uA72D\uA72F-\uA731\uA733\uA735\uA737\uA739\uA73B\uA73D\uA73F\uA741\uA743\uA745\uA747\uA749\uA74B\uA74D\uA74F\uA751\uA753\uA755\uA757\uA759\uA75B\uA75D\uA75F\uA761\uA763\uA765\uA767\uA769\uA76B\uA76D\uA76F\uA771-\uA778\uA77A\uA77C\uA77F\uA781\uA783\uA785\uA787\uA78C\uA78E\uA791\uA7A1\uA7A3\uA7A5\uA7A7\uA7A9\uA7FA\uFB00-\uFB06\uFB13-\uFB17\uFF41-\uFF5A\u01C5\u01C8\u01CB\u01F2\u1F88-\u1F8F\u1F98-\u1F9F\u1FA8-\u1FAF\u1FBC\u1FCC\u1FFC\u02B0-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0374\u037A\u0559\u0640\u06E5\u06E6\u07F4\u07F5\u07FA\u081A\u0824\u0828\u0971\u0E46\u0EC6\u10FC\u17D7\u1843\u1AA7\u1C78-\u1C7D\u1D2C-\u1D61\u1D78\u1D9B-\u1DBF\u2071\u207F\u2090-\u209C\u2C7D\u2D6F\u2E2F\u3005\u3031-\u3035\u303B\u309D\u309E\u30FC-\u30FE\uA015\uA4F8-\uA4FD\uA60C\uA67F\uA717-\uA71F\uA770\uA788\uA9CF\uAA70\uAADD\uFF70\uFF9E\uFF9F\u01BB\u01C0-\u01C3\u0294\u05D0-\u05EA\u05F0-\u05F2\u0620-\u063F\u0641-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u0800-\u0815\u0840-\u0858\u0904-\u0939\u093D\u0950\u0958-\u0961\u0972-\u0977\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E45\u0E81\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EDC\u0EDD\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10D0-\u10FA\u1100-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17DC\u1820-\u1842\u1844-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16\u1A20-\u1A54\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF\u1BC0-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C77\u1CE9-\u1CEC\u1CEE-\u1CF1\u2135-\u2138\u2D30-\u2D65\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u3006\u303C\u3041-\u3096\u309F\u30A1-\u30FA\u30FF\u3105-\u312D\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400\u4DB5\u4E00\u9FCB\uA000-\uA014\uA016-\uA48C\uA4D0-\uA4F7\uA500-\uA60B\uA610-\uA61F\uA62A\uA62B\uA66E\uA6A0-\uA6E5\uA7FB-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA6F\uAA71-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB\uAADC\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uABC0-\uABE2\uAC00\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA2D\uFA30-\uFA6D\uFA70-\uFAD9\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF66-\uFF6F\uFF71-\uFF9D\uFFA0-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC\u16EE-\u16F0\u2160-\u2182\u2185-\u2188\u3007\u3021-\u3029\u3038-\u303A\uA6E6-\uA6EF]/,
+        peg$c254 = { type: "class", value: "[A-Z\\xC0-\\xD6\\xD8-\\xDE\\u0100\\u0102\\u0104\\u0106\\u0108\\u010A\\u010C\\u010E\\u0110\\u0112\\u0114\\u0116\\u0118\\u011A\\u011C\\u011E\\u0120\\u0122\\u0124\\u0126\\u0128\\u012A\\u012C\\u012E\\u0130\\u0132\\u0134\\u0136\\u0139\\u013B\\u013D\\u013F\\u0141\\u0143\\u0145\\u0147\\u014A\\u014C\\u014E\\u0150\\u0152\\u0154\\u0156\\u0158\\u015A\\u015C\\u015E\\u0160\\u0162\\u0164\\u0166\\u0168\\u016A\\u016C\\u016E\\u0170\\u0172\\u0174\\u0176\\u0178\\u0179\\u017B\\u017D\\u0181\\u0182\\u0184\\u0186\\u0187\\u0189-\\u018B\\u018E-\\u0191\\u0193\\u0194\\u0196-\\u0198\\u019C\\u019D\\u019F\\u01A0\\u01A2\\u01A4\\u01A6\\u01A7\\u01A9\\u01AC\\u01AE\\u01AF\\u01B1-\\u01B3\\u01B5\\u01B7\\u01B8\\u01BC\\u01C4\\u01C7\\u01CA\\u01CD\\u01CF\\u01D1\\u01D3\\u01D5\\u01D7\\u01D9\\u01DB\\u01DE\\u01E0\\u01E2\\u01E4\\u01E6\\u01E8\\u01EA\\u01EC\\u01EE\\u01F1\\u01F4\\u01F6-\\u01F8\\u01FA\\u01FC\\u01FE\\u0200\\u0202\\u0204\\u0206\\u0208\\u020A\\u020C\\u020E\\u0210\\u0212\\u0214\\u0216\\u0218\\u021A\\u021C\\u021E\\u0220\\u0222\\u0224\\u0226\\u0228\\u022A\\u022C\\u022E\\u0230\\u0232\\u023A\\u023B\\u023D\\u023E\\u0241\\u0243-\\u0246\\u0248\\u024A\\u024C\\u024E\\u0370\\u0372\\u0376\\u0386\\u0388-\\u038A\\u038C\\u038E\\u038F\\u0391-\\u03A1\\u03A3-\\u03AB\\u03CF\\u03D2-\\u03D4\\u03D8\\u03DA\\u03DC\\u03DE\\u03E0\\u03E2\\u03E4\\u03E6\\u03E8\\u03EA\\u03EC\\u03EE\\u03F4\\u03F7\\u03F9\\u03FA\\u03FD-\\u042F\\u0460\\u0462\\u0464\\u0466\\u0468\\u046A\\u046C\\u046E\\u0470\\u0472\\u0474\\u0476\\u0478\\u047A\\u047C\\u047E\\u0480\\u048A\\u048C\\u048E\\u0490\\u0492\\u0494\\u0496\\u0498\\u049A\\u049C\\u049E\\u04A0\\u04A2\\u04A4\\u04A6\\u04A8\\u04AA\\u04AC\\u04AE\\u04B0\\u04B2\\u04B4\\u04B6\\u04B8\\u04BA\\u04BC\\u04BE\\u04C0\\u04C1\\u04C3\\u04C5\\u04C7\\u04C9\\u04CB\\u04CD\\u04D0\\u04D2\\u04D4\\u04D6\\u04D8\\u04DA\\u04DC\\u04DE\\u04E0\\u04E2\\u04E4\\u04E6\\u04E8\\u04EA\\u04EC\\u04EE\\u04F0\\u04F2\\u04F4\\u04F6\\u04F8\\u04FA\\u04FC\\u04FE\\u0500\\u0502\\u0504\\u0506\\u0508\\u050A\\u050C\\u050E\\u0510\\u0512\\u0514\\u0516\\u0518\\u051A\\u051C\\u051E\\u0520\\u0522\\u0524\\u0526\\u0531-\\u0556\\u10A0-\\u10C5\\u1E00\\u1E02\\u1E04\\u1E06\\u1E08\\u1E0A\\u1E0C\\u1E0E\\u1E10\\u1E12\\u1E14\\u1E16\\u1E18\\u1E1A\\u1E1C\\u1E1E\\u1E20\\u1E22\\u1E24\\u1E26\\u1E28\\u1E2A\\u1E2C\\u1E2E\\u1E30\\u1E32\\u1E34\\u1E36\\u1E38\\u1E3A\\u1E3C\\u1E3E\\u1E40\\u1E42\\u1E44\\u1E46\\u1E48\\u1E4A\\u1E4C\\u1E4E\\u1E50\\u1E52\\u1E54\\u1E56\\u1E58\\u1E5A\\u1E5C\\u1E5E\\u1E60\\u1E62\\u1E64\\u1E66\\u1E68\\u1E6A\\u1E6C\\u1E6E\\u1E70\\u1E72\\u1E74\\u1E76\\u1E78\\u1E7A\\u1E7C\\u1E7E\\u1E80\\u1E82\\u1E84\\u1E86\\u1E88\\u1E8A\\u1E8C\\u1E8E\\u1E90\\u1E92\\u1E94\\u1E9E\\u1EA0\\u1EA2\\u1EA4\\u1EA6\\u1EA8\\u1EAA\\u1EAC\\u1EAE\\u1EB0\\u1EB2\\u1EB4\\u1EB6\\u1EB8\\u1EBA\\u1EBC\\u1EBE\\u1EC0\\u1EC2\\u1EC4\\u1EC6\\u1EC8\\u1ECA\\u1ECC\\u1ECE\\u1ED0\\u1ED2\\u1ED4\\u1ED6\\u1ED8\\u1EDA\\u1EDC\\u1EDE\\u1EE0\\u1EE2\\u1EE4\\u1EE6\\u1EE8\\u1EEA\\u1EEC\\u1EEE\\u1EF0\\u1EF2\\u1EF4\\u1EF6\\u1EF8\\u1EFA\\u1EFC\\u1EFE\\u1F08-\\u1F0F\\u1F18-\\u1F1D\\u1F28-\\u1F2F\\u1F38-\\u1F3F\\u1F48-\\u1F4D\\u1F59\\u1F5B\\u1F5D\\u1F5F\\u1F68-\\u1F6F\\u1FB8-\\u1FBB\\u1FC8-\\u1FCB\\u1FD8-\\u1FDB\\u1FE8-\\u1FEC\\u1FF8-\\u1FFB\\u2102\\u2107\\u210B-\\u210D\\u2110-\\u2112\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u2130-\\u2133\\u213E\\u213F\\u2145\\u2183\\u2C00-\\u2C2E\\u2C60\\u2C62-\\u2C64\\u2C67\\u2C69\\u2C6B\\u2C6D-\\u2C70\\u2C72\\u2C75\\u2C7E-\\u2C80\\u2C82\\u2C84\\u2C86\\u2C88\\u2C8A\\u2C8C\\u2C8E\\u2C90\\u2C92\\u2C94\\u2C96\\u2C98\\u2C9A\\u2C9C\\u2C9E\\u2CA0\\u2CA2\\u2CA4\\u2CA6\\u2CA8\\u2CAA\\u2CAC\\u2CAE\\u2CB0\\u2CB2\\u2CB4\\u2CB6\\u2CB8\\u2CBA\\u2CBC\\u2CBE\\u2CC0\\u2CC2\\u2CC4\\u2CC6\\u2CC8\\u2CCA\\u2CCC\\u2CCE\\u2CD0\\u2CD2\\u2CD4\\u2CD6\\u2CD8\\u2CDA\\u2CDC\\u2CDE\\u2CE0\\u2CE2\\u2CEB\\u2CED\\uA640\\uA642\\uA644\\uA646\\uA648\\uA64A\\uA64C\\uA64E\\uA650\\uA652\\uA654\\uA656\\uA658\\uA65A\\uA65C\\uA65E\\uA660\\uA662\\uA664\\uA666\\uA668\\uA66A\\uA66C\\uA680\\uA682\\uA684\\uA686\\uA688\\uA68A\\uA68C\\uA68E\\uA690\\uA692\\uA694\\uA696\\uA722\\uA724\\uA726\\uA728\\uA72A\\uA72C\\uA72E\\uA732\\uA734\\uA736\\uA738\\uA73A\\uA73C\\uA73E\\uA740\\uA742\\uA744\\uA746\\uA748\\uA74A\\uA74C\\uA74E\\uA750\\uA752\\uA754\\uA756\\uA758\\uA75A\\uA75C\\uA75E\\uA760\\uA762\\uA764\\uA766\\uA768\\uA76A\\uA76C\\uA76E\\uA779\\uA77B\\uA77D\\uA77E\\uA780\\uA782\\uA784\\uA786\\uA78B\\uA78D\\uA790\\uA7A0\\uA7A2\\uA7A4\\uA7A6\\uA7A8\\uFF21-\\uFF3Aa-z\\xAA\\xB5\\xBA\\xDF-\\xF6\\xF8-\\xFF\\u0101\\u0103\\u0105\\u0107\\u0109\\u010B\\u010D\\u010F\\u0111\\u0113\\u0115\\u0117\\u0119\\u011B\\u011D\\u011F\\u0121\\u0123\\u0125\\u0127\\u0129\\u012B\\u012D\\u012F\\u0131\\u0133\\u0135\\u0137\\u0138\\u013A\\u013C\\u013E\\u0140\\u0142\\u0144\\u0146\\u0148\\u0149\\u014B\\u014D\\u014F\\u0151\\u0153\\u0155\\u0157\\u0159\\u015B\\u015D\\u015F\\u0161\\u0163\\u0165\\u0167\\u0169\\u016B\\u016D\\u016F\\u0171\\u0173\\u0175\\u0177\\u017A\\u017C\\u017E-\\u0180\\u0183\\u0185\\u0188\\u018C\\u018D\\u0192\\u0195\\u0199-\\u019B\\u019E\\u01A1\\u01A3\\u01A5\\u01A8\\u01AA\\u01AB\\u01AD\\u01B0\\u01B4\\u01B6\\u01B9\\u01BA\\u01BD-\\u01BF\\u01C6\\u01C9\\u01CC\\u01CE\\u01D0\\u01D2\\u01D4\\u01D6\\u01D8\\u01DA\\u01DC\\u01DD\\u01DF\\u01E1\\u01E3\\u01E5\\u01E7\\u01E9\\u01EB\\u01ED\\u01EF\\u01F0\\u01F3\\u01F5\\u01F9\\u01FB\\u01FD\\u01FF\\u0201\\u0203\\u0205\\u0207\\u0209\\u020B\\u020D\\u020F\\u0211\\u0213\\u0215\\u0217\\u0219\\u021B\\u021D\\u021F\\u0221\\u0223\\u0225\\u0227\\u0229\\u022B\\u022D\\u022F\\u0231\\u0233-\\u0239\\u023C\\u023F\\u0240\\u0242\\u0247\\u0249\\u024B\\u024D\\u024F-\\u0293\\u0295-\\u02AF\\u0371\\u0373\\u0377\\u037B-\\u037D\\u0390\\u03AC-\\u03CE\\u03D0\\u03D1\\u03D5-\\u03D7\\u03D9\\u03DB\\u03DD\\u03DF\\u03E1\\u03E3\\u03E5\\u03E7\\u03E9\\u03EB\\u03ED\\u03EF-\\u03F3\\u03F5\\u03F8\\u03FB\\u03FC\\u0430-\\u045F\\u0461\\u0463\\u0465\\u0467\\u0469\\u046B\\u046D\\u046F\\u0471\\u0473\\u0475\\u0477\\u0479\\u047B\\u047D\\u047F\\u0481\\u048B\\u048D\\u048F\\u0491\\u0493\\u0495\\u0497\\u0499\\u049B\\u049D\\u049F\\u04A1\\u04A3\\u04A5\\u04A7\\u04A9\\u04AB\\u04AD\\u04AF\\u04B1\\u04B3\\u04B5\\u04B7\\u04B9\\u04BB\\u04BD\\u04BF\\u04C2\\u04C4\\u04C6\\u04C8\\u04CA\\u04CC\\u04CE\\u04CF\\u04D1\\u04D3\\u04D5\\u04D7\\u04D9\\u04DB\\u04DD\\u04DF\\u04E1\\u04E3\\u04E5\\u04E7\\u04E9\\u04EB\\u04ED\\u04EF\\u04F1\\u04F3\\u04F5\\u04F7\\u04F9\\u04FB\\u04FD\\u04FF\\u0501\\u0503\\u0505\\u0507\\u0509\\u050B\\u050D\\u050F\\u0511\\u0513\\u0515\\u0517\\u0519\\u051B\\u051D\\u051F\\u0521\\u0523\\u0525\\u0527\\u0561-\\u0587\\u1D00-\\u1D2B\\u1D62-\\u1D77\\u1D79-\\u1D9A\\u1E01\\u1E03\\u1E05\\u1E07\\u1E09\\u1E0B\\u1E0D\\u1E0F\\u1E11\\u1E13\\u1E15\\u1E17\\u1E19\\u1E1B\\u1E1D\\u1E1F\\u1E21\\u1E23\\u1E25\\u1E27\\u1E29\\u1E2B\\u1E2D\\u1E2F\\u1E31\\u1E33\\u1E35\\u1E37\\u1E39\\u1E3B\\u1E3D\\u1E3F\\u1E41\\u1E43\\u1E45\\u1E47\\u1E49\\u1E4B\\u1E4D\\u1E4F\\u1E51\\u1E53\\u1E55\\u1E57\\u1E59\\u1E5B\\u1E5D\\u1E5F\\u1E61\\u1E63\\u1E65\\u1E67\\u1E69\\u1E6B\\u1E6D\\u1E6F\\u1E71\\u1E73\\u1E75\\u1E77\\u1E79\\u1E7B\\u1E7D\\u1E7F\\u1E81\\u1E83\\u1E85\\u1E87\\u1E89\\u1E8B\\u1E8D\\u1E8F\\u1E91\\u1E93\\u1E95-\\u1E9D\\u1E9F\\u1EA1\\u1EA3\\u1EA5\\u1EA7\\u1EA9\\u1EAB\\u1EAD\\u1EAF\\u1EB1\\u1EB3\\u1EB5\\u1EB7\\u1EB9\\u1EBB\\u1EBD\\u1EBF\\u1EC1\\u1EC3\\u1EC5\\u1EC7\\u1EC9\\u1ECB\\u1ECD\\u1ECF\\u1ED1\\u1ED3\\u1ED5\\u1ED7\\u1ED9\\u1EDB\\u1EDD\\u1EDF\\u1EE1\\u1EE3\\u1EE5\\u1EE7\\u1EE9\\u1EEB\\u1EED\\u1EEF\\u1EF1\\u1EF3\\u1EF5\\u1EF7\\u1EF9\\u1EFB\\u1EFD\\u1EFF-\\u1F07\\u1F10-\\u1F15\\u1F20-\\u1F27\\u1F30-\\u1F37\\u1F40-\\u1F45\\u1F50-\\u1F57\\u1F60-\\u1F67\\u1F70-\\u1F7D\\u1F80-\\u1F87\\u1F90-\\u1F97\\u1FA0-\\u1FA7\\u1FB0-\\u1FB4\\u1FB6\\u1FB7\\u1FBE\\u1FC2-\\u1FC4\\u1FC6\\u1FC7\\u1FD0-\\u1FD3\\u1FD6\\u1FD7\\u1FE0-\\u1FE7\\u1FF2-\\u1FF4\\u1FF6\\u1FF7\\u210A\\u210E\\u210F\\u2113\\u212F\\u2134\\u2139\\u213C\\u213D\\u2146-\\u2149\\u214E\\u2184\\u2C30-\\u2C5E\\u2C61\\u2C65\\u2C66\\u2C68\\u2C6A\\u2C6C\\u2C71\\u2C73\\u2C74\\u2C76-\\u2C7C\\u2C81\\u2C83\\u2C85\\u2C87\\u2C89\\u2C8B\\u2C8D\\u2C8F\\u2C91\\u2C93\\u2C95\\u2C97\\u2C99\\u2C9B\\u2C9D\\u2C9F\\u2CA1\\u2CA3\\u2CA5\\u2CA7\\u2CA9\\u2CAB\\u2CAD\\u2CAF\\u2CB1\\u2CB3\\u2CB5\\u2CB7\\u2CB9\\u2CBB\\u2CBD\\u2CBF\\u2CC1\\u2CC3\\u2CC5\\u2CC7\\u2CC9\\u2CCB\\u2CCD\\u2CCF\\u2CD1\\u2CD3\\u2CD5\\u2CD7\\u2CD9\\u2CDB\\u2CDD\\u2CDF\\u2CE1\\u2CE3\\u2CE4\\u2CEC\\u2CEE\\u2D00-\\u2D25\\uA641\\uA643\\uA645\\uA647\\uA649\\uA64B\\uA64D\\uA64F\\uA651\\uA653\\uA655\\uA657\\uA659\\uA65B\\uA65D\\uA65F\\uA661\\uA663\\uA665\\uA667\\uA669\\uA66B\\uA66D\\uA681\\uA683\\uA685\\uA687\\uA689\\uA68B\\uA68D\\uA68F\\uA691\\uA693\\uA695\\uA697\\uA723\\uA725\\uA727\\uA729\\uA72B\\uA72D\\uA72F-\\uA731\\uA733\\uA735\\uA737\\uA739\\uA73B\\uA73D\\uA73F\\uA741\\uA743\\uA745\\uA747\\uA749\\uA74B\\uA74D\\uA74F\\uA751\\uA753\\uA755\\uA757\\uA759\\uA75B\\uA75D\\uA75F\\uA761\\uA763\\uA765\\uA767\\uA769\\uA76B\\uA76D\\uA76F\\uA771-\\uA778\\uA77A\\uA77C\\uA77F\\uA781\\uA783\\uA785\\uA787\\uA78C\\uA78E\\uA791\\uA7A1\\uA7A3\\uA7A5\\uA7A7\\uA7A9\\uA7FA\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFF41-\\uFF5A\\u01C5\\u01C8\\u01CB\\u01F2\\u1F88-\\u1F8F\\u1F98-\\u1F9F\\u1FA8-\\u1FAF\\u1FBC\\u1FCC\\u1FFC\\u02B0-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0374\\u037A\\u0559\\u0640\\u06E5\\u06E6\\u07F4\\u07F5\\u07FA\\u081A\\u0824\\u0828\\u0971\\u0E46\\u0EC6\\u10FC\\u17D7\\u1843\\u1AA7\\u1C78-\\u1C7D\\u1D2C-\\u1D61\\u1D78\\u1D9B-\\u1DBF\\u2071\\u207F\\u2090-\\u209C\\u2C7D\\u2D6F\\u2E2F\\u3005\\u3031-\\u3035\\u303B\\u309D\\u309E\\u30FC-\\u30FE\\uA015\\uA4F8-\\uA4FD\\uA60C\\uA67F\\uA717-\\uA71F\\uA770\\uA788\\uA9CF\\uAA70\\uAADD\\uFF70\\uFF9E\\uFF9F\\u01BB\\u01C0-\\u01C3\\u0294\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0620-\\u063F\\u0641-\\u064A\\u066E\\u066F\\u0671-\\u06D3\\u06D5\\u06EE\\u06EF\\u06FA-\\u06FC\\u06FF\\u0710\\u0712-\\u072F\\u074D-\\u07A5\\u07B1\\u07CA-\\u07EA\\u0800-\\u0815\\u0840-\\u0858\\u0904-\\u0939\\u093D\\u0950\\u0958-\\u0961\\u0972-\\u0977\\u0979-\\u097F\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BD\\u09CE\\u09DC\\u09DD\\u09DF-\\u09E1\\u09F0\\u09F1\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A59-\\u0A5C\\u0A5E\\u0A72-\\u0A74\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABD\\u0AD0\\u0AE0\\u0AE1\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3D\\u0B5C\\u0B5D\\u0B5F-\\u0B61\\u0B71\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BD0\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C33\\u0C35-\\u0C39\\u0C3D\\u0C58\\u0C59\\u0C60\\u0C61\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBD\\u0CDE\\u0CE0\\u0CE1\\u0CF1\\u0CF2\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D\\u0D4E\\u0D60\\u0D61\\u0D7A-\\u0D7F\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0E01-\\u0E30\\u0E32\\u0E33\\u0E40-\\u0E45\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB0\\u0EB2\\u0EB3\\u0EBD\\u0EC0-\\u0EC4\\u0EDC\\u0EDD\\u0F00\\u0F40-\\u0F47\\u0F49-\\u0F6C\\u0F88-\\u0F8C\\u1000-\\u102A\\u103F\\u1050-\\u1055\\u105A-\\u105D\\u1061\\u1065\\u1066\\u106E-\\u1070\\u1075-\\u1081\\u108E\\u10D0-\\u10FA\\u1100-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u1700-\\u170C\\u170E-\\u1711\\u1720-\\u1731\\u1740-\\u1751\\u1760-\\u176C\\u176E-\\u1770\\u1780-\\u17B3\\u17DC\\u1820-\\u1842\\u1844-\\u1877\\u1880-\\u18A8\\u18AA\\u18B0-\\u18F5\\u1900-\\u191C\\u1950-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19C1-\\u19C7\\u1A00-\\u1A16\\u1A20-\\u1A54\\u1B05-\\u1B33\\u1B45-\\u1B4B\\u1B83-\\u1BA0\\u1BAE\\u1BAF\\u1BC0-\\u1BE5\\u1C00-\\u1C23\\u1C4D-\\u1C4F\\u1C5A-\\u1C77\\u1CE9-\\u1CEC\\u1CEE-\\u1CF1\\u2135-\\u2138\\u2D30-\\u2D65\\u2D80-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u3006\\u303C\\u3041-\\u3096\\u309F\\u30A1-\\u30FA\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400\\u4DB5\\u4E00\\u9FCB\\uA000-\\uA014\\uA016-\\uA48C\\uA4D0-\\uA4F7\\uA500-\\uA60B\\uA610-\\uA61F\\uA62A\\uA62B\\uA66E\\uA6A0-\\uA6E5\\uA7FB-\\uA801\\uA803-\\uA805\\uA807-\\uA80A\\uA80C-\\uA822\\uA840-\\uA873\\uA882-\\uA8B3\\uA8F2-\\uA8F7\\uA8FB\\uA90A-\\uA925\\uA930-\\uA946\\uA960-\\uA97C\\uA984-\\uA9B2\\uAA00-\\uAA28\\uAA40-\\uAA42\\uAA44-\\uAA4B\\uAA60-\\uAA6F\\uAA71-\\uAA76\\uAA7A\\uAA80-\\uAAAF\\uAAB1\\uAAB5\\uAAB6\\uAAB9-\\uAABD\\uAAC0\\uAAC2\\uAADB\\uAADC\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uABC0-\\uABE2\\uAC00\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA2D\\uFA30-\\uFA6D\\uFA70-\\uFAD9\\uFB1D\\uFB1F-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF66-\\uFF6F\\uFF71-\\uFF9D\\uFFA0-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC\\u16EE-\\u16F0\\u2160-\\u2182\\u2185-\\u2188\\u3007\\u3021-\\u3029\\u3038-\\u303A\\uA6E6-\\uA6EF]", description: "[A-Z\\xC0-\\xD6\\xD8-\\xDE\\u0100\\u0102\\u0104\\u0106\\u0108\\u010A\\u010C\\u010E\\u0110\\u0112\\u0114\\u0116\\u0118\\u011A\\u011C\\u011E\\u0120\\u0122\\u0124\\u0126\\u0128\\u012A\\u012C\\u012E\\u0130\\u0132\\u0134\\u0136\\u0139\\u013B\\u013D\\u013F\\u0141\\u0143\\u0145\\u0147\\u014A\\u014C\\u014E\\u0150\\u0152\\u0154\\u0156\\u0158\\u015A\\u015C\\u015E\\u0160\\u0162\\u0164\\u0166\\u0168\\u016A\\u016C\\u016E\\u0170\\u0172\\u0174\\u0176\\u0178\\u0179\\u017B\\u017D\\u0181\\u0182\\u0184\\u0186\\u0187\\u0189-\\u018B\\u018E-\\u0191\\u0193\\u0194\\u0196-\\u0198\\u019C\\u019D\\u019F\\u01A0\\u01A2\\u01A4\\u01A6\\u01A7\\u01A9\\u01AC\\u01AE\\u01AF\\u01B1-\\u01B3\\u01B5\\u01B7\\u01B8\\u01BC\\u01C4\\u01C7\\u01CA\\u01CD\\u01CF\\u01D1\\u01D3\\u01D5\\u01D7\\u01D9\\u01DB\\u01DE\\u01E0\\u01E2\\u01E4\\u01E6\\u01E8\\u01EA\\u01EC\\u01EE\\u01F1\\u01F4\\u01F6-\\u01F8\\u01FA\\u01FC\\u01FE\\u0200\\u0202\\u0204\\u0206\\u0208\\u020A\\u020C\\u020E\\u0210\\u0212\\u0214\\u0216\\u0218\\u021A\\u021C\\u021E\\u0220\\u0222\\u0224\\u0226\\u0228\\u022A\\u022C\\u022E\\u0230\\u0232\\u023A\\u023B\\u023D\\u023E\\u0241\\u0243-\\u0246\\u0248\\u024A\\u024C\\u024E\\u0370\\u0372\\u0376\\u0386\\u0388-\\u038A\\u038C\\u038E\\u038F\\u0391-\\u03A1\\u03A3-\\u03AB\\u03CF\\u03D2-\\u03D4\\u03D8\\u03DA\\u03DC\\u03DE\\u03E0\\u03E2\\u03E4\\u03E6\\u03E8\\u03EA\\u03EC\\u03EE\\u03F4\\u03F7\\u03F9\\u03FA\\u03FD-\\u042F\\u0460\\u0462\\u0464\\u0466\\u0468\\u046A\\u046C\\u046E\\u0470\\u0472\\u0474\\u0476\\u0478\\u047A\\u047C\\u047E\\u0480\\u048A\\u048C\\u048E\\u0490\\u0492\\u0494\\u0496\\u0498\\u049A\\u049C\\u049E\\u04A0\\u04A2\\u04A4\\u04A6\\u04A8\\u04AA\\u04AC\\u04AE\\u04B0\\u04B2\\u04B4\\u04B6\\u04B8\\u04BA\\u04BC\\u04BE\\u04C0\\u04C1\\u04C3\\u04C5\\u04C7\\u04C9\\u04CB\\u04CD\\u04D0\\u04D2\\u04D4\\u04D6\\u04D8\\u04DA\\u04DC\\u04DE\\u04E0\\u04E2\\u04E4\\u04E6\\u04E8\\u04EA\\u04EC\\u04EE\\u04F0\\u04F2\\u04F4\\u04F6\\u04F8\\u04FA\\u04FC\\u04FE\\u0500\\u0502\\u0504\\u0506\\u0508\\u050A\\u050C\\u050E\\u0510\\u0512\\u0514\\u0516\\u0518\\u051A\\u051C\\u051E\\u0520\\u0522\\u0524\\u0526\\u0531-\\u0556\\u10A0-\\u10C5\\u1E00\\u1E02\\u1E04\\u1E06\\u1E08\\u1E0A\\u1E0C\\u1E0E\\u1E10\\u1E12\\u1E14\\u1E16\\u1E18\\u1E1A\\u1E1C\\u1E1E\\u1E20\\u1E22\\u1E24\\u1E26\\u1E28\\u1E2A\\u1E2C\\u1E2E\\u1E30\\u1E32\\u1E34\\u1E36\\u1E38\\u1E3A\\u1E3C\\u1E3E\\u1E40\\u1E42\\u1E44\\u1E46\\u1E48\\u1E4A\\u1E4C\\u1E4E\\u1E50\\u1E52\\u1E54\\u1E56\\u1E58\\u1E5A\\u1E5C\\u1E5E\\u1E60\\u1E62\\u1E64\\u1E66\\u1E68\\u1E6A\\u1E6C\\u1E6E\\u1E70\\u1E72\\u1E74\\u1E76\\u1E78\\u1E7A\\u1E7C\\u1E7E\\u1E80\\u1E82\\u1E84\\u1E86\\u1E88\\u1E8A\\u1E8C\\u1E8E\\u1E90\\u1E92\\u1E94\\u1E9E\\u1EA0\\u1EA2\\u1EA4\\u1EA6\\u1EA8\\u1EAA\\u1EAC\\u1EAE\\u1EB0\\u1EB2\\u1EB4\\u1EB6\\u1EB8\\u1EBA\\u1EBC\\u1EBE\\u1EC0\\u1EC2\\u1EC4\\u1EC6\\u1EC8\\u1ECA\\u1ECC\\u1ECE\\u1ED0\\u1ED2\\u1ED4\\u1ED6\\u1ED8\\u1EDA\\u1EDC\\u1EDE\\u1EE0\\u1EE2\\u1EE4\\u1EE6\\u1EE8\\u1EEA\\u1EEC\\u1EEE\\u1EF0\\u1EF2\\u1EF4\\u1EF6\\u1EF8\\u1EFA\\u1EFC\\u1EFE\\u1F08-\\u1F0F\\u1F18-\\u1F1D\\u1F28-\\u1F2F\\u1F38-\\u1F3F\\u1F48-\\u1F4D\\u1F59\\u1F5B\\u1F5D\\u1F5F\\u1F68-\\u1F6F\\u1FB8-\\u1FBB\\u1FC8-\\u1FCB\\u1FD8-\\u1FDB\\u1FE8-\\u1FEC\\u1FF8-\\u1FFB\\u2102\\u2107\\u210B-\\u210D\\u2110-\\u2112\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u2130-\\u2133\\u213E\\u213F\\u2145\\u2183\\u2C00-\\u2C2E\\u2C60\\u2C62-\\u2C64\\u2C67\\u2C69\\u2C6B\\u2C6D-\\u2C70\\u2C72\\u2C75\\u2C7E-\\u2C80\\u2C82\\u2C84\\u2C86\\u2C88\\u2C8A\\u2C8C\\u2C8E\\u2C90\\u2C92\\u2C94\\u2C96\\u2C98\\u2C9A\\u2C9C\\u2C9E\\u2CA0\\u2CA2\\u2CA4\\u2CA6\\u2CA8\\u2CAA\\u2CAC\\u2CAE\\u2CB0\\u2CB2\\u2CB4\\u2CB6\\u2CB8\\u2CBA\\u2CBC\\u2CBE\\u2CC0\\u2CC2\\u2CC4\\u2CC6\\u2CC8\\u2CCA\\u2CCC\\u2CCE\\u2CD0\\u2CD2\\u2CD4\\u2CD6\\u2CD8\\u2CDA\\u2CDC\\u2CDE\\u2CE0\\u2CE2\\u2CEB\\u2CED\\uA640\\uA642\\uA644\\uA646\\uA648\\uA64A\\uA64C\\uA64E\\uA650\\uA652\\uA654\\uA656\\uA658\\uA65A\\uA65C\\uA65E\\uA660\\uA662\\uA664\\uA666\\uA668\\uA66A\\uA66C\\uA680\\uA682\\uA684\\uA686\\uA688\\uA68A\\uA68C\\uA68E\\uA690\\uA692\\uA694\\uA696\\uA722\\uA724\\uA726\\uA728\\uA72A\\uA72C\\uA72E\\uA732\\uA734\\uA736\\uA738\\uA73A\\uA73C\\uA73E\\uA740\\uA742\\uA744\\uA746\\uA748\\uA74A\\uA74C\\uA74E\\uA750\\uA752\\uA754\\uA756\\uA758\\uA75A\\uA75C\\uA75E\\uA760\\uA762\\uA764\\uA766\\uA768\\uA76A\\uA76C\\uA76E\\uA779\\uA77B\\uA77D\\uA77E\\uA780\\uA782\\uA784\\uA786\\uA78B\\uA78D\\uA790\\uA7A0\\uA7A2\\uA7A4\\uA7A6\\uA7A8\\uFF21-\\uFF3Aa-z\\xAA\\xB5\\xBA\\xDF-\\xF6\\xF8-\\xFF\\u0101\\u0103\\u0105\\u0107\\u0109\\u010B\\u010D\\u010F\\u0111\\u0113\\u0115\\u0117\\u0119\\u011B\\u011D\\u011F\\u0121\\u0123\\u0125\\u0127\\u0129\\u012B\\u012D\\u012F\\u0131\\u0133\\u0135\\u0137\\u0138\\u013A\\u013C\\u013E\\u0140\\u0142\\u0144\\u0146\\u0148\\u0149\\u014B\\u014D\\u014F\\u0151\\u0153\\u0155\\u0157\\u0159\\u015B\\u015D\\u015F\\u0161\\u0163\\u0165\\u0167\\u0169\\u016B\\u016D\\u016F\\u0171\\u0173\\u0175\\u0177\\u017A\\u017C\\u017E-\\u0180\\u0183\\u0185\\u0188\\u018C\\u018D\\u0192\\u0195\\u0199-\\u019B\\u019E\\u01A1\\u01A3\\u01A5\\u01A8\\u01AA\\u01AB\\u01AD\\u01B0\\u01B4\\u01B6\\u01B9\\u01BA\\u01BD-\\u01BF\\u01C6\\u01C9\\u01CC\\u01CE\\u01D0\\u01D2\\u01D4\\u01D6\\u01D8\\u01DA\\u01DC\\u01DD\\u01DF\\u01E1\\u01E3\\u01E5\\u01E7\\u01E9\\u01EB\\u01ED\\u01EF\\u01F0\\u01F3\\u01F5\\u01F9\\u01FB\\u01FD\\u01FF\\u0201\\u0203\\u0205\\u0207\\u0209\\u020B\\u020D\\u020F\\u0211\\u0213\\u0215\\u0217\\u0219\\u021B\\u021D\\u021F\\u0221\\u0223\\u0225\\u0227\\u0229\\u022B\\u022D\\u022F\\u0231\\u0233-\\u0239\\u023C\\u023F\\u0240\\u0242\\u0247\\u0249\\u024B\\u024D\\u024F-\\u0293\\u0295-\\u02AF\\u0371\\u0373\\u0377\\u037B-\\u037D\\u0390\\u03AC-\\u03CE\\u03D0\\u03D1\\u03D5-\\u03D7\\u03D9\\u03DB\\u03DD\\u03DF\\u03E1\\u03E3\\u03E5\\u03E7\\u03E9\\u03EB\\u03ED\\u03EF-\\u03F3\\u03F5\\u03F8\\u03FB\\u03FC\\u0430-\\u045F\\u0461\\u0463\\u0465\\u0467\\u0469\\u046B\\u046D\\u046F\\u0471\\u0473\\u0475\\u0477\\u0479\\u047B\\u047D\\u047F\\u0481\\u048B\\u048D\\u048F\\u0491\\u0493\\u0495\\u0497\\u0499\\u049B\\u049D\\u049F\\u04A1\\u04A3\\u04A5\\u04A7\\u04A9\\u04AB\\u04AD\\u04AF\\u04B1\\u04B3\\u04B5\\u04B7\\u04B9\\u04BB\\u04BD\\u04BF\\u04C2\\u04C4\\u04C6\\u04C8\\u04CA\\u04CC\\u04CE\\u04CF\\u04D1\\u04D3\\u04D5\\u04D7\\u04D9\\u04DB\\u04DD\\u04DF\\u04E1\\u04E3\\u04E5\\u04E7\\u04E9\\u04EB\\u04ED\\u04EF\\u04F1\\u04F3\\u04F5\\u04F7\\u04F9\\u04FB\\u04FD\\u04FF\\u0501\\u0503\\u0505\\u0507\\u0509\\u050B\\u050D\\u050F\\u0511\\u0513\\u0515\\u0517\\u0519\\u051B\\u051D\\u051F\\u0521\\u0523\\u0525\\u0527\\u0561-\\u0587\\u1D00-\\u1D2B\\u1D62-\\u1D77\\u1D79-\\u1D9A\\u1E01\\u1E03\\u1E05\\u1E07\\u1E09\\u1E0B\\u1E0D\\u1E0F\\u1E11\\u1E13\\u1E15\\u1E17\\u1E19\\u1E1B\\u1E1D\\u1E1F\\u1E21\\u1E23\\u1E25\\u1E27\\u1E29\\u1E2B\\u1E2D\\u1E2F\\u1E31\\u1E33\\u1E35\\u1E37\\u1E39\\u1E3B\\u1E3D\\u1E3F\\u1E41\\u1E43\\u1E45\\u1E47\\u1E49\\u1E4B\\u1E4D\\u1E4F\\u1E51\\u1E53\\u1E55\\u1E57\\u1E59\\u1E5B\\u1E5D\\u1E5F\\u1E61\\u1E63\\u1E65\\u1E67\\u1E69\\u1E6B\\u1E6D\\u1E6F\\u1E71\\u1E73\\u1E75\\u1E77\\u1E79\\u1E7B\\u1E7D\\u1E7F\\u1E81\\u1E83\\u1E85\\u1E87\\u1E89\\u1E8B\\u1E8D\\u1E8F\\u1E91\\u1E93\\u1E95-\\u1E9D\\u1E9F\\u1EA1\\u1EA3\\u1EA5\\u1EA7\\u1EA9\\u1EAB\\u1EAD\\u1EAF\\u1EB1\\u1EB3\\u1EB5\\u1EB7\\u1EB9\\u1EBB\\u1EBD\\u1EBF\\u1EC1\\u1EC3\\u1EC5\\u1EC7\\u1EC9\\u1ECB\\u1ECD\\u1ECF\\u1ED1\\u1ED3\\u1ED5\\u1ED7\\u1ED9\\u1EDB\\u1EDD\\u1EDF\\u1EE1\\u1EE3\\u1EE5\\u1EE7\\u1EE9\\u1EEB\\u1EED\\u1EEF\\u1EF1\\u1EF3\\u1EF5\\u1EF7\\u1EF9\\u1EFB\\u1EFD\\u1EFF-\\u1F07\\u1F10-\\u1F15\\u1F20-\\u1F27\\u1F30-\\u1F37\\u1F40-\\u1F45\\u1F50-\\u1F57\\u1F60-\\u1F67\\u1F70-\\u1F7D\\u1F80-\\u1F87\\u1F90-\\u1F97\\u1FA0-\\u1FA7\\u1FB0-\\u1FB4\\u1FB6\\u1FB7\\u1FBE\\u1FC2-\\u1FC4\\u1FC6\\u1FC7\\u1FD0-\\u1FD3\\u1FD6\\u1FD7\\u1FE0-\\u1FE7\\u1FF2-\\u1FF4\\u1FF6\\u1FF7\\u210A\\u210E\\u210F\\u2113\\u212F\\u2134\\u2139\\u213C\\u213D\\u2146-\\u2149\\u214E\\u2184\\u2C30-\\u2C5E\\u2C61\\u2C65\\u2C66\\u2C68\\u2C6A\\u2C6C\\u2C71\\u2C73\\u2C74\\u2C76-\\u2C7C\\u2C81\\u2C83\\u2C85\\u2C87\\u2C89\\u2C8B\\u2C8D\\u2C8F\\u2C91\\u2C93\\u2C95\\u2C97\\u2C99\\u2C9B\\u2C9D\\u2C9F\\u2CA1\\u2CA3\\u2CA5\\u2CA7\\u2CA9\\u2CAB\\u2CAD\\u2CAF\\u2CB1\\u2CB3\\u2CB5\\u2CB7\\u2CB9\\u2CBB\\u2CBD\\u2CBF\\u2CC1\\u2CC3\\u2CC5\\u2CC7\\u2CC9\\u2CCB\\u2CCD\\u2CCF\\u2CD1\\u2CD3\\u2CD5\\u2CD7\\u2CD9\\u2CDB\\u2CDD\\u2CDF\\u2CE1\\u2CE3\\u2CE4\\u2CEC\\u2CEE\\u2D00-\\u2D25\\uA641\\uA643\\uA645\\uA647\\uA649\\uA64B\\uA64D\\uA64F\\uA651\\uA653\\uA655\\uA657\\uA659\\uA65B\\uA65D\\uA65F\\uA661\\uA663\\uA665\\uA667\\uA669\\uA66B\\uA66D\\uA681\\uA683\\uA685\\uA687\\uA689\\uA68B\\uA68D\\uA68F\\uA691\\uA693\\uA695\\uA697\\uA723\\uA725\\uA727\\uA729\\uA72B\\uA72D\\uA72F-\\uA731\\uA733\\uA735\\uA737\\uA739\\uA73B\\uA73D\\uA73F\\uA741\\uA743\\uA745\\uA747\\uA749\\uA74B\\uA74D\\uA74F\\uA751\\uA753\\uA755\\uA757\\uA759\\uA75B\\uA75D\\uA75F\\uA761\\uA763\\uA765\\uA767\\uA769\\uA76B\\uA76D\\uA76F\\uA771-\\uA778\\uA77A\\uA77C\\uA77F\\uA781\\uA783\\uA785\\uA787\\uA78C\\uA78E\\uA791\\uA7A1\\uA7A3\\uA7A5\\uA7A7\\uA7A9\\uA7FA\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFF41-\\uFF5A\\u01C5\\u01C8\\u01CB\\u01F2\\u1F88-\\u1F8F\\u1F98-\\u1F9F\\u1FA8-\\u1FAF\\u1FBC\\u1FCC\\u1FFC\\u02B0-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0374\\u037A\\u0559\\u0640\\u06E5\\u06E6\\u07F4\\u07F5\\u07FA\\u081A\\u0824\\u0828\\u0971\\u0E46\\u0EC6\\u10FC\\u17D7\\u1843\\u1AA7\\u1C78-\\u1C7D\\u1D2C-\\u1D61\\u1D78\\u1D9B-\\u1DBF\\u2071\\u207F\\u2090-\\u209C\\u2C7D\\u2D6F\\u2E2F\\u3005\\u3031-\\u3035\\u303B\\u309D\\u309E\\u30FC-\\u30FE\\uA015\\uA4F8-\\uA4FD\\uA60C\\uA67F\\uA717-\\uA71F\\uA770\\uA788\\uA9CF\\uAA70\\uAADD\\uFF70\\uFF9E\\uFF9F\\u01BB\\u01C0-\\u01C3\\u0294\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0620-\\u063F\\u0641-\\u064A\\u066E\\u066F\\u0671-\\u06D3\\u06D5\\u06EE\\u06EF\\u06FA-\\u06FC\\u06FF\\u0710\\u0712-\\u072F\\u074D-\\u07A5\\u07B1\\u07CA-\\u07EA\\u0800-\\u0815\\u0840-\\u0858\\u0904-\\u0939\\u093D\\u0950\\u0958-\\u0961\\u0972-\\u0977\\u0979-\\u097F\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BD\\u09CE\\u09DC\\u09DD\\u09DF-\\u09E1\\u09F0\\u09F1\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A59-\\u0A5C\\u0A5E\\u0A72-\\u0A74\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABD\\u0AD0\\u0AE0\\u0AE1\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3D\\u0B5C\\u0B5D\\u0B5F-\\u0B61\\u0B71\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BD0\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C33\\u0C35-\\u0C39\\u0C3D\\u0C58\\u0C59\\u0C60\\u0C61\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBD\\u0CDE\\u0CE0\\u0CE1\\u0CF1\\u0CF2\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D\\u0D4E\\u0D60\\u0D61\\u0D7A-\\u0D7F\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0E01-\\u0E30\\u0E32\\u0E33\\u0E40-\\u0E45\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB0\\u0EB2\\u0EB3\\u0EBD\\u0EC0-\\u0EC4\\u0EDC\\u0EDD\\u0F00\\u0F40-\\u0F47\\u0F49-\\u0F6C\\u0F88-\\u0F8C\\u1000-\\u102A\\u103F\\u1050-\\u1055\\u105A-\\u105D\\u1061\\u1065\\u1066\\u106E-\\u1070\\u1075-\\u1081\\u108E\\u10D0-\\u10FA\\u1100-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u1700-\\u170C\\u170E-\\u1711\\u1720-\\u1731\\u1740-\\u1751\\u1760-\\u176C\\u176E-\\u1770\\u1780-\\u17B3\\u17DC\\u1820-\\u1842\\u1844-\\u1877\\u1880-\\u18A8\\u18AA\\u18B0-\\u18F5\\u1900-\\u191C\\u1950-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19C1-\\u19C7\\u1A00-\\u1A16\\u1A20-\\u1A54\\u1B05-\\u1B33\\u1B45-\\u1B4B\\u1B83-\\u1BA0\\u1BAE\\u1BAF\\u1BC0-\\u1BE5\\u1C00-\\u1C23\\u1C4D-\\u1C4F\\u1C5A-\\u1C77\\u1CE9-\\u1CEC\\u1CEE-\\u1CF1\\u2135-\\u2138\\u2D30-\\u2D65\\u2D80-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u3006\\u303C\\u3041-\\u3096\\u309F\\u30A1-\\u30FA\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400\\u4DB5\\u4E00\\u9FCB\\uA000-\\uA014\\uA016-\\uA48C\\uA4D0-\\uA4F7\\uA500-\\uA60B\\uA610-\\uA61F\\uA62A\\uA62B\\uA66E\\uA6A0-\\uA6E5\\uA7FB-\\uA801\\uA803-\\uA805\\uA807-\\uA80A\\uA80C-\\uA822\\uA840-\\uA873\\uA882-\\uA8B3\\uA8F2-\\uA8F7\\uA8FB\\uA90A-\\uA925\\uA930-\\uA946\\uA960-\\uA97C\\uA984-\\uA9B2\\uAA00-\\uAA28\\uAA40-\\uAA42\\uAA44-\\uAA4B\\uAA60-\\uAA6F\\uAA71-\\uAA76\\uAA7A\\uAA80-\\uAAAF\\uAAB1\\uAAB5\\uAAB6\\uAAB9-\\uAABD\\uAAC0\\uAAC2\\uAADB\\uAADC\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uABC0-\\uABE2\\uAC00\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA2D\\uFA30-\\uFA6D\\uFA70-\\uFAD9\\uFB1D\\uFB1F-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF66-\\uFF6F\\uFF71-\\uFF9D\\uFFA0-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC\\u16EE-\\u16F0\\u2160-\\u2182\\u2185-\\u2188\\u3007\\u3021-\\u3029\\u3038-\\u303A\\uA6E6-\\uA6EF]" },
+        peg$c255 = "\uD82C",
+        peg$c256 = { type: "literal", value: "\uD82C", description: "\"\\uD82C\"" },
+        peg$c257 = /^[\uDC00\uDC01]/,
+        peg$c258 = { type: "class", value: "[\\uDC00\\uDC01]", description: "[\\uDC00\\uDC01]" },
+        peg$c259 = "\uD808",
+        peg$c260 = { type: "literal", value: "\uD808", description: "\"\\uD808\"" },
+        peg$c261 = /^[\uDC00-\uDF6E]/,
+        peg$c262 = { type: "class", value: "[\\uDC00-\\uDF6E]", description: "[\\uDC00-\\uDF6E]" },
+        peg$c263 = "\uD869",
+        peg$c264 = { type: "literal", value: "\uD869", description: "\"\\uD869\"" },
+        peg$c265 = /^[\uDED6\uDF00]/,
+        peg$c266 = { type: "class", value: "[\\uDED6\\uDF00]", description: "[\\uDED6\\uDF00]" },
+        peg$c267 = "\uD809",
+        peg$c268 = { type: "literal", value: "\uD809", description: "\"\\uD809\"" },
+        peg$c269 = /^[\uDC00-\uDC62]/,
+        peg$c270 = { type: "class", value: "[\\uDC00-\\uDC62]", description: "[\\uDC00-\\uDC62]" },
+        peg$c271 = "\uD835",
+        peg$c272 = { type: "literal", value: "\uD835", description: "\"\\uD835\"" },
+        peg$c273 = /^[\uDC00-\uDC19\uDC34-\uDC4D\uDC68-\uDC81\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB5\uDCD0-\uDCE9\uDD04\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD38\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD6C-\uDD85\uDDA0-\uDDB9\uDDD4-\uDDED\uDE08-\uDE21\uDE3C-\uDE55\uDE70-\uDE89\uDEA8-\uDEC0\uDEE2-\uDEFA\uDF1C-\uDF34\uDF56-\uDF6E\uDF90-\uDFA8\uDFCA\uDC1A-\uDC33\uDC4E-\uDC54\uDC56-\uDC67\uDC82-\uDC9B\uDCB6-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDCCF\uDCEA-\uDD03\uDD1E-\uDD37\uDD52-\uDD6B\uDD86-\uDD9F\uDDBA-\uDDD3\uDDEE-\uDE07\uDE22-\uDE3B\uDE56-\uDE6F\uDE8A-\uDEA5\uDEC2-\uDEDA\uDEDC-\uDEE1\uDEFC-\uDF14\uDF16-\uDF1B\uDF36-\uDF4E\uDF50-\uDF55\uDF70-\uDF88\uDF8A-\uDF8F\uDFAA-\uDFC2\uDFC4-\uDFC9\uDFCB]/,
+        peg$c274 = { type: "class", value: "[\\uDC00-\\uDC19\\uDC34-\\uDC4D\\uDC68-\\uDC81\\uDC9C\\uDC9E\\uDC9F\\uDCA2\\uDCA5\\uDCA6\\uDCA9-\\uDCAC\\uDCAE-\\uDCB5\\uDCD0-\\uDCE9\\uDD04\\uDD05\\uDD07-\\uDD0A\\uDD0D-\\uDD14\\uDD16-\\uDD1C\\uDD38\\uDD39\\uDD3B-\\uDD3E\\uDD40-\\uDD44\\uDD46\\uDD4A-\\uDD50\\uDD6C-\\uDD85\\uDDA0-\\uDDB9\\uDDD4-\\uDDED\\uDE08-\\uDE21\\uDE3C-\\uDE55\\uDE70-\\uDE89\\uDEA8-\\uDEC0\\uDEE2-\\uDEFA\\uDF1C-\\uDF34\\uDF56-\\uDF6E\\uDF90-\\uDFA8\\uDFCA\\uDC1A-\\uDC33\\uDC4E-\\uDC54\\uDC56-\\uDC67\\uDC82-\\uDC9B\\uDCB6-\\uDCB9\\uDCBB\\uDCBD-\\uDCC3\\uDCC5-\\uDCCF\\uDCEA-\\uDD03\\uDD1E-\\uDD37\\uDD52-\\uDD6B\\uDD86-\\uDD9F\\uDDBA-\\uDDD3\\uDDEE-\\uDE07\\uDE22-\\uDE3B\\uDE56-\\uDE6F\\uDE8A-\\uDEA5\\uDEC2-\\uDEDA\\uDEDC-\\uDEE1\\uDEFC-\\uDF14\\uDF16-\\uDF1B\\uDF36-\\uDF4E\\uDF50-\\uDF55\\uDF70-\\uDF88\\uDF8A-\\uDF8F\\uDFAA-\\uDFC2\\uDFC4-\\uDFC9\\uDFCB]", description: "[\\uDC00-\\uDC19\\uDC34-\\uDC4D\\uDC68-\\uDC81\\uDC9C\\uDC9E\\uDC9F\\uDCA2\\uDCA5\\uDCA6\\uDCA9-\\uDCAC\\uDCAE-\\uDCB5\\uDCD0-\\uDCE9\\uDD04\\uDD05\\uDD07-\\uDD0A\\uDD0D-\\uDD14\\uDD16-\\uDD1C\\uDD38\\uDD39\\uDD3B-\\uDD3E\\uDD40-\\uDD44\\uDD46\\uDD4A-\\uDD50\\uDD6C-\\uDD85\\uDDA0-\\uDDB9\\uDDD4-\\uDDED\\uDE08-\\uDE21\\uDE3C-\\uDE55\\uDE70-\\uDE89\\uDEA8-\\uDEC0\\uDEE2-\\uDEFA\\uDF1C-\\uDF34\\uDF56-\\uDF6E\\uDF90-\\uDFA8\\uDFCA\\uDC1A-\\uDC33\\uDC4E-\\uDC54\\uDC56-\\uDC67\\uDC82-\\uDC9B\\uDCB6-\\uDCB9\\uDCBB\\uDCBD-\\uDCC3\\uDCC5-\\uDCCF\\uDCEA-\\uDD03\\uDD1E-\\uDD37\\uDD52-\\uDD6B\\uDD86-\\uDD9F\\uDDBA-\\uDDD3\\uDDEE-\\uDE07\\uDE22-\\uDE3B\\uDE56-\\uDE6F\\uDE8A-\\uDEA5\\uDEC2-\\uDEDA\\uDEDC-\\uDEE1\\uDEFC-\\uDF14\\uDF16-\\uDF1B\\uDF36-\\uDF4E\\uDF50-\\uDF55\\uDF70-\\uDF88\\uDF8A-\\uDF8F\\uDFAA-\\uDFC2\\uDFC4-\\uDFC9\\uDFCB]" },
+        peg$c275 = "\uD804",
+        peg$c276 = { type: "literal", value: "\uD804", description: "\"\\uD804\"" },
+        peg$c277 = /^[\uDC03-\uDC37\uDC83-\uDCAF]/,
+        peg$c278 = { type: "class", value: "[\\uDC03-\\uDC37\\uDC83-\\uDCAF]", description: "[\\uDC03-\\uDC37\\uDC83-\\uDCAF]" },
+        peg$c279 = "\uD800",
+        peg$c280 = { type: "literal", value: "\uD800", description: "\"\\uD800\"" },
+        peg$c281 = /^[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1E\uDF30-\uDF40\uDF42-\uDF49\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF\uDD40-\uDD74\uDF41\uDF4A\uDFD1-\uDFD5]/,
+        peg$c282 = { type: "class", value: "[\\uDC00-\\uDC0B\\uDC0D-\\uDC26\\uDC28-\\uDC3A\\uDC3C\\uDC3D\\uDC3F-\\uDC4D\\uDC50-\\uDC5D\\uDC80-\\uDCFA\\uDE80-\\uDE9C\\uDEA0-\\uDED0\\uDF00-\\uDF1E\\uDF30-\\uDF40\\uDF42-\\uDF49\\uDF80-\\uDF9D\\uDFA0-\\uDFC3\\uDFC8-\\uDFCF\\uDD40-\\uDD74\\uDF41\\uDF4A\\uDFD1-\\uDFD5]", description: "[\\uDC00-\\uDC0B\\uDC0D-\\uDC26\\uDC28-\\uDC3A\\uDC3C\\uDC3D\\uDC3F-\\uDC4D\\uDC50-\\uDC5D\\uDC80-\\uDCFA\\uDE80-\\uDE9C\\uDEA0-\\uDED0\\uDF00-\\uDF1E\\uDF30-\\uDF40\\uDF42-\\uDF49\\uDF80-\\uDF9D\\uDFA0-\\uDFC3\\uDFC8-\\uDFCF\\uDD40-\\uDD74\\uDF41\\uDF4A\\uDFD1-\\uDFD5]" },
+        peg$c283 = "\uD80C",
+        peg$c284 = { type: "literal", value: "\uD80C", description: "\"\\uD80C\"" },
+        peg$c285 = /^[\uDC00-\uDFFF]/,
+        peg$c286 = { type: "class", value: "[\\uDC00-\\uDFFF]", description: "[\\uDC00-\\uDFFF]" },
+        peg$c287 = "\uD801",
+        peg$c288 = { type: "literal", value: "\uD801", description: "\"\\uD801\"" },
+        peg$c289 = /^[\uDC00-\uDC9D]/,
+        peg$c290 = { type: "class", value: "[\\uDC00-\\uDC9D]", description: "[\\uDC00-\\uDC9D]" },
+        peg$c291 = "\uD86E",
+        peg$c292 = { type: "literal", value: "\uD86E", description: "\"\\uD86E\"" },
+        peg$c293 = /^[\uDC1D]/,
+        peg$c294 = { type: "class", value: "[\\uDC1D]", description: "[\\uDC1D]" },
+        peg$c295 = "\uD803",
+        peg$c296 = { type: "literal", value: "\uD803", description: "\"\\uD803\"" },
+        peg$c297 = /^[\uDC00-\uDC48]/,
+        peg$c298 = { type: "class", value: "[\\uDC00-\\uDC48]", description: "[\\uDC00-\\uDC48]" },
+        peg$c299 = "\uD840",
+        peg$c300 = { type: "literal", value: "\uD840", description: "\"\\uD840\"" },
+        peg$c301 = /^[\uDC00]/,
+        peg$c302 = { type: "class", value: "[\\uDC00]", description: "[\\uDC00]" },
+        peg$c303 = "\uD87E",
+        peg$c304 = { type: "literal", value: "\uD87E", description: "\"\\uD87E\"" },
+        peg$c305 = /^[\uDC00-\uDE1D]/,
+        peg$c306 = { type: "class", value: "[\\uDC00-\\uDE1D]", description: "[\\uDC00-\\uDE1D]" },
+        peg$c307 = "\uD86D",
+        peg$c308 = { type: "literal", value: "\uD86D", description: "\"\\uD86D\"" },
+        peg$c309 = /^[\uDF34\uDF40]/,
+        peg$c310 = { type: "class", value: "[\\uDF34\\uDF40]", description: "[\\uDF34\\uDF40]" },
+        peg$c311 = "\uD81A",
+        peg$c312 = { type: "literal", value: "\uD81A", description: "\"\\uD81A\"" },
+        peg$c313 = /^[\uDC00-\uDE38]/,
+        peg$c314 = { type: "class", value: "[\\uDC00-\\uDE38]", description: "[\\uDC00-\\uDE38]" },
+        peg$c315 = "\uD802",
+        peg$c316 = { type: "literal", value: "\uD802", description: "\"\\uD802\"" },
+        peg$c317 = /^[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDD00-\uDD15\uDD20-\uDD39\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE33\uDE60-\uDE7C\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72]/,
+        peg$c318 = { type: "class", value: "[\\uDC00-\\uDC05\\uDC08\\uDC0A-\\uDC35\\uDC37\\uDC38\\uDC3C\\uDC3F-\\uDC55\\uDD00-\\uDD15\\uDD20-\\uDD39\\uDE00\\uDE10-\\uDE13\\uDE15-\\uDE17\\uDE19-\\uDE33\\uDE60-\\uDE7C\\uDF00-\\uDF35\\uDF40-\\uDF55\\uDF60-\\uDF72]", description: "[\\uDC00-\\uDC05\\uDC08\\uDC0A-\\uDC35\\uDC37\\uDC38\\uDC3C\\uDC3F-\\uDC55\\uDD00-\\uDD15\\uDD20-\\uDD39\\uDE00\\uDE10-\\uDE13\\uDE15-\\uDE17\\uDE19-\\uDE33\\uDE60-\\uDE7C\\uDF00-\\uDF35\\uDF40-\\uDF55\\uDF60-\\uDF72]" },
+        peg$c319 = "\uD80D",
+        peg$c320 = { type: "literal", value: "\uD80D", description: "\"\\uD80D\"" },
+        peg$c321 = /^[\uDC00-\uDC2E]/,
+        peg$c322 = { type: "class", value: "[\\uDC00-\\uDC2E]", description: "[\\uDC00-\\uDC2E]" },
+        peg$c323 = /^[\u0300-\u036F\u0483-\u0487\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0711\u0730-\u074A\u07A6-\u07B0\u07EB-\u07F3\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u0900-\u0902\u093A\u093C\u0941-\u0948\u094D\u0951-\u0957\u0962\u0963\u0981\u09BC\u09C1-\u09C4\u09CD\u09E2\u09E3\u0A01\u0A02\u0A3C\u0A41\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A70\u0A71\u0A75\u0A81\u0A82\u0ABC\u0AC1-\u0AC5\u0AC7\u0AC8\u0ACD\u0AE2\u0AE3\u0B01\u0B3C\u0B3F\u0B41-\u0B44\u0B4D\u0B56\u0B62\u0B63\u0B82\u0BC0\u0BCD\u0C3E-\u0C40\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0CBC\u0CBF\u0CC6\u0CCC\u0CCD\u0CE2\u0CE3\u0D41-\u0D44\u0D4D\u0D62\u0D63\u0DCA\u0DD2-\u0DD4\u0DD6\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0EB1\u0EB4-\u0EB9\u0EBB\u0EBC\u0EC8-\u0ECD\u0F18\u0F19\u0F35\u0F37\u0F39\u0F71-\u0F7E\u0F80-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102D-\u1030\u1032-\u1037\u1039\u103A\u103D\u103E\u1058\u1059\u105E-\u1060\u1071-\u1074\u1082\u1085\u1086\u108D\u109D\u135D-\u135F\u1712-\u1714\u1732-\u1734\u1752\u1753\u1772\u1773\u17B7-\u17BD\u17C6\u17C9-\u17D3\u17DD\u180B-\u180D\u18A9\u1920-\u1922\u1927\u1928\u1932\u1939-\u193B\u1A17\u1A18\u1A56\u1A58-\u1A5E\u1A60\u1A62\u1A65-\u1A6C\u1A73-\u1A7C\u1A7F\u1B00-\u1B03\u1B34\u1B36-\u1B3A\u1B3C\u1B42\u1B6B-\u1B73\u1B80\u1B81\u1BA2-\u1BA5\u1BA8\u1BA9\u1BE6\u1BE8\u1BE9\u1BED\u1BEF-\u1BF1\u1C2C-\u1C33\u1C36\u1C37\u1CD0-\u1CD2\u1CD4-\u1CE0\u1CE2-\u1CE8\u1CED\u1DC0-\u1DE6\u1DFC-\u1DFF\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302F\u3099\u309A\uA66F\uA67C\uA67D\uA6F0\uA6F1\uA802\uA806\uA80B\uA825\uA826\uA8C4\uA8E0-\uA8F1\uA926-\uA92D\uA947-\uA951\uA980-\uA982\uA9B3\uA9B6-\uA9B9\uA9BC\uAA29-\uAA2E\uAA31\uAA32\uAA35\uAA36\uAA43\uAA4C\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uABE5\uABE8\uABED\uFB1E\uFE00-\uFE0F\uFE20-\uFE26\u0903\u093B\u093E-\u0940\u0949-\u094C\u094E\u094F\u0982\u0983\u09BE-\u09C0\u09C7\u09C8\u09CB\u09CC\u09D7\u0A03\u0A3E-\u0A40\u0A83\u0ABE-\u0AC0\u0AC9\u0ACB\u0ACC\u0B02\u0B03\u0B3E\u0B40\u0B47\u0B48\u0B4B\u0B4C\u0B57\u0BBE\u0BBF\u0BC1\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCC\u0BD7\u0C01-\u0C03\u0C41-\u0C44\u0C82\u0C83\u0CBE\u0CC0-\u0CC4\u0CC7\u0CC8\u0CCA\u0CCB\u0CD5\u0CD6\u0D02\u0D03\u0D3E-\u0D40\u0D46-\u0D48\u0D4A-\u0D4C\u0D57\u0D82\u0D83\u0DCF-\u0DD1\u0DD8-\u0DDF\u0DF2\u0DF3\u0F3E\u0F3F\u0F7F\u102B\u102C\u1031\u1038\u103B\u103C\u1056\u1057\u1062-\u1064\u1067-\u106D\u1083\u1084\u1087-\u108C\u108F\u109A-\u109C\u17B6\u17BE-\u17C5\u17C7\u17C8\u1923-\u1926\u1929-\u192B\u1930\u1931\u1933-\u1938\u19B0-\u19C0\u19C8\u19C9\u1A19-\u1A1B\u1A55\u1A57\u1A61\u1A63\u1A64\u1A6D-\u1A72\u1B04\u1B35\u1B3B\u1B3D-\u1B41\u1B43\u1B44\u1B82\u1BA1\u1BA6\u1BA7\u1BAA\u1BE7\u1BEA-\u1BEC\u1BEE\u1BF2\u1BF3\u1C24-\u1C2B\u1C34\u1C35\u1CE1\u1CF2\uA823\uA824\uA827\uA880\uA881\uA8B4-\uA8C3\uA952\uA953\uA983\uA9B4\uA9B5\uA9BA\uA9BB\uA9BD-\uA9C0\uAA2F\uAA30\uAA33\uAA34\uAA4D\uAA7B\uABE3\uABE4\uABE6\uABE7\uABE9\uABEA\uABEC]/,
+        peg$c324 = { type: "class", value: "[\\u0300-\\u036F\\u0483-\\u0487\\u0591-\\u05BD\\u05BF\\u05C1\\u05C2\\u05C4\\u05C5\\u05C7\\u0610-\\u061A\\u064B-\\u065F\\u0670\\u06D6-\\u06DC\\u06DF-\\u06E4\\u06E7\\u06E8\\u06EA-\\u06ED\\u0711\\u0730-\\u074A\\u07A6-\\u07B0\\u07EB-\\u07F3\\u0816-\\u0819\\u081B-\\u0823\\u0825-\\u0827\\u0829-\\u082D\\u0859-\\u085B\\u0900-\\u0902\\u093A\\u093C\\u0941-\\u0948\\u094D\\u0951-\\u0957\\u0962\\u0963\\u0981\\u09BC\\u09C1-\\u09C4\\u09CD\\u09E2\\u09E3\\u0A01\\u0A02\\u0A3C\\u0A41\\u0A42\\u0A47\\u0A48\\u0A4B-\\u0A4D\\u0A51\\u0A70\\u0A71\\u0A75\\u0A81\\u0A82\\u0ABC\\u0AC1-\\u0AC5\\u0AC7\\u0AC8\\u0ACD\\u0AE2\\u0AE3\\u0B01\\u0B3C\\u0B3F\\u0B41-\\u0B44\\u0B4D\\u0B56\\u0B62\\u0B63\\u0B82\\u0BC0\\u0BCD\\u0C3E-\\u0C40\\u0C46-\\u0C48\\u0C4A-\\u0C4D\\u0C55\\u0C56\\u0C62\\u0C63\\u0CBC\\u0CBF\\u0CC6\\u0CCC\\u0CCD\\u0CE2\\u0CE3\\u0D41-\\u0D44\\u0D4D\\u0D62\\u0D63\\u0DCA\\u0DD2-\\u0DD4\\u0DD6\\u0E31\\u0E34-\\u0E3A\\u0E47-\\u0E4E\\u0EB1\\u0EB4-\\u0EB9\\u0EBB\\u0EBC\\u0EC8-\\u0ECD\\u0F18\\u0F19\\u0F35\\u0F37\\u0F39\\u0F71-\\u0F7E\\u0F80-\\u0F84\\u0F86\\u0F87\\u0F8D-\\u0F97\\u0F99-\\u0FBC\\u0FC6\\u102D-\\u1030\\u1032-\\u1037\\u1039\\u103A\\u103D\\u103E\\u1058\\u1059\\u105E-\\u1060\\u1071-\\u1074\\u1082\\u1085\\u1086\\u108D\\u109D\\u135D-\\u135F\\u1712-\\u1714\\u1732-\\u1734\\u1752\\u1753\\u1772\\u1773\\u17B7-\\u17BD\\u17C6\\u17C9-\\u17D3\\u17DD\\u180B-\\u180D\\u18A9\\u1920-\\u1922\\u1927\\u1928\\u1932\\u1939-\\u193B\\u1A17\\u1A18\\u1A56\\u1A58-\\u1A5E\\u1A60\\u1A62\\u1A65-\\u1A6C\\u1A73-\\u1A7C\\u1A7F\\u1B00-\\u1B03\\u1B34\\u1B36-\\u1B3A\\u1B3C\\u1B42\\u1B6B-\\u1B73\\u1B80\\u1B81\\u1BA2-\\u1BA5\\u1BA8\\u1BA9\\u1BE6\\u1BE8\\u1BE9\\u1BED\\u1BEF-\\u1BF1\\u1C2C-\\u1C33\\u1C36\\u1C37\\u1CD0-\\u1CD2\\u1CD4-\\u1CE0\\u1CE2-\\u1CE8\\u1CED\\u1DC0-\\u1DE6\\u1DFC-\\u1DFF\\u20D0-\\u20DC\\u20E1\\u20E5-\\u20F0\\u2CEF-\\u2CF1\\u2D7F\\u2DE0-\\u2DFF\\u302A-\\u302F\\u3099\\u309A\\uA66F\\uA67C\\uA67D\\uA6F0\\uA6F1\\uA802\\uA806\\uA80B\\uA825\\uA826\\uA8C4\\uA8E0-\\uA8F1\\uA926-\\uA92D\\uA947-\\uA951\\uA980-\\uA982\\uA9B3\\uA9B6-\\uA9B9\\uA9BC\\uAA29-\\uAA2E\\uAA31\\uAA32\\uAA35\\uAA36\\uAA43\\uAA4C\\uAAB0\\uAAB2-\\uAAB4\\uAAB7\\uAAB8\\uAABE\\uAABF\\uAAC1\\uABE5\\uABE8\\uABED\\uFB1E\\uFE00-\\uFE0F\\uFE20-\\uFE26\\u0903\\u093B\\u093E-\\u0940\\u0949-\\u094C\\u094E\\u094F\\u0982\\u0983\\u09BE-\\u09C0\\u09C7\\u09C8\\u09CB\\u09CC\\u09D7\\u0A03\\u0A3E-\\u0A40\\u0A83\\u0ABE-\\u0AC0\\u0AC9\\u0ACB\\u0ACC\\u0B02\\u0B03\\u0B3E\\u0B40\\u0B47\\u0B48\\u0B4B\\u0B4C\\u0B57\\u0BBE\\u0BBF\\u0BC1\\u0BC2\\u0BC6-\\u0BC8\\u0BCA-\\u0BCC\\u0BD7\\u0C01-\\u0C03\\u0C41-\\u0C44\\u0C82\\u0C83\\u0CBE\\u0CC0-\\u0CC4\\u0CC7\\u0CC8\\u0CCA\\u0CCB\\u0CD5\\u0CD6\\u0D02\\u0D03\\u0D3E-\\u0D40\\u0D46-\\u0D48\\u0D4A-\\u0D4C\\u0D57\\u0D82\\u0D83\\u0DCF-\\u0DD1\\u0DD8-\\u0DDF\\u0DF2\\u0DF3\\u0F3E\\u0F3F\\u0F7F\\u102B\\u102C\\u1031\\u1038\\u103B\\u103C\\u1056\\u1057\\u1062-\\u1064\\u1067-\\u106D\\u1083\\u1084\\u1087-\\u108C\\u108F\\u109A-\\u109C\\u17B6\\u17BE-\\u17C5\\u17C7\\u17C8\\u1923-\\u1926\\u1929-\\u192B\\u1930\\u1931\\u1933-\\u1938\\u19B0-\\u19C0\\u19C8\\u19C9\\u1A19-\\u1A1B\\u1A55\\u1A57\\u1A61\\u1A63\\u1A64\\u1A6D-\\u1A72\\u1B04\\u1B35\\u1B3B\\u1B3D-\\u1B41\\u1B43\\u1B44\\u1B82\\u1BA1\\u1BA6\\u1BA7\\u1BAA\\u1BE7\\u1BEA-\\u1BEC\\u1BEE\\u1BF2\\u1BF3\\u1C24-\\u1C2B\\u1C34\\u1C35\\u1CE1\\u1CF2\\uA823\\uA824\\uA827\\uA880\\uA881\\uA8B4-\\uA8C3\\uA952\\uA953\\uA983\\uA9B4\\uA9B5\\uA9BA\\uA9BB\\uA9BD-\\uA9C0\\uAA2F\\uAA30\\uAA33\\uAA34\\uAA4D\\uAA7B\\uABE3\\uABE4\\uABE6\\uABE7\\uABE9\\uABEA\\uABEC]", description: "[\\u0300-\\u036F\\u0483-\\u0487\\u0591-\\u05BD\\u05BF\\u05C1\\u05C2\\u05C4\\u05C5\\u05C7\\u0610-\\u061A\\u064B-\\u065F\\u0670\\u06D6-\\u06DC\\u06DF-\\u06E4\\u06E7\\u06E8\\u06EA-\\u06ED\\u0711\\u0730-\\u074A\\u07A6-\\u07B0\\u07EB-\\u07F3\\u0816-\\u0819\\u081B-\\u0823\\u0825-\\u0827\\u0829-\\u082D\\u0859-\\u085B\\u0900-\\u0902\\u093A\\u093C\\u0941-\\u0948\\u094D\\u0951-\\u0957\\u0962\\u0963\\u0981\\u09BC\\u09C1-\\u09C4\\u09CD\\u09E2\\u09E3\\u0A01\\u0A02\\u0A3C\\u0A41\\u0A42\\u0A47\\u0A48\\u0A4B-\\u0A4D\\u0A51\\u0A70\\u0A71\\u0A75\\u0A81\\u0A82\\u0ABC\\u0AC1-\\u0AC5\\u0AC7\\u0AC8\\u0ACD\\u0AE2\\u0AE3\\u0B01\\u0B3C\\u0B3F\\u0B41-\\u0B44\\u0B4D\\u0B56\\u0B62\\u0B63\\u0B82\\u0BC0\\u0BCD\\u0C3E-\\u0C40\\u0C46-\\u0C48\\u0C4A-\\u0C4D\\u0C55\\u0C56\\u0C62\\u0C63\\u0CBC\\u0CBF\\u0CC6\\u0CCC\\u0CCD\\u0CE2\\u0CE3\\u0D41-\\u0D44\\u0D4D\\u0D62\\u0D63\\u0DCA\\u0DD2-\\u0DD4\\u0DD6\\u0E31\\u0E34-\\u0E3A\\u0E47-\\u0E4E\\u0EB1\\u0EB4-\\u0EB9\\u0EBB\\u0EBC\\u0EC8-\\u0ECD\\u0F18\\u0F19\\u0F35\\u0F37\\u0F39\\u0F71-\\u0F7E\\u0F80-\\u0F84\\u0F86\\u0F87\\u0F8D-\\u0F97\\u0F99-\\u0FBC\\u0FC6\\u102D-\\u1030\\u1032-\\u1037\\u1039\\u103A\\u103D\\u103E\\u1058\\u1059\\u105E-\\u1060\\u1071-\\u1074\\u1082\\u1085\\u1086\\u108D\\u109D\\u135D-\\u135F\\u1712-\\u1714\\u1732-\\u1734\\u1752\\u1753\\u1772\\u1773\\u17B7-\\u17BD\\u17C6\\u17C9-\\u17D3\\u17DD\\u180B-\\u180D\\u18A9\\u1920-\\u1922\\u1927\\u1928\\u1932\\u1939-\\u193B\\u1A17\\u1A18\\u1A56\\u1A58-\\u1A5E\\u1A60\\u1A62\\u1A65-\\u1A6C\\u1A73-\\u1A7C\\u1A7F\\u1B00-\\u1B03\\u1B34\\u1B36-\\u1B3A\\u1B3C\\u1B42\\u1B6B-\\u1B73\\u1B80\\u1B81\\u1BA2-\\u1BA5\\u1BA8\\u1BA9\\u1BE6\\u1BE8\\u1BE9\\u1BED\\u1BEF-\\u1BF1\\u1C2C-\\u1C33\\u1C36\\u1C37\\u1CD0-\\u1CD2\\u1CD4-\\u1CE0\\u1CE2-\\u1CE8\\u1CED\\u1DC0-\\u1DE6\\u1DFC-\\u1DFF\\u20D0-\\u20DC\\u20E1\\u20E5-\\u20F0\\u2CEF-\\u2CF1\\u2D7F\\u2DE0-\\u2DFF\\u302A-\\u302F\\u3099\\u309A\\uA66F\\uA67C\\uA67D\\uA6F0\\uA6F1\\uA802\\uA806\\uA80B\\uA825\\uA826\\uA8C4\\uA8E0-\\uA8F1\\uA926-\\uA92D\\uA947-\\uA951\\uA980-\\uA982\\uA9B3\\uA9B6-\\uA9B9\\uA9BC\\uAA29-\\uAA2E\\uAA31\\uAA32\\uAA35\\uAA36\\uAA43\\uAA4C\\uAAB0\\uAAB2-\\uAAB4\\uAAB7\\uAAB8\\uAABE\\uAABF\\uAAC1\\uABE5\\uABE8\\uABED\\uFB1E\\uFE00-\\uFE0F\\uFE20-\\uFE26\\u0903\\u093B\\u093E-\\u0940\\u0949-\\u094C\\u094E\\u094F\\u0982\\u0983\\u09BE-\\u09C0\\u09C7\\u09C8\\u09CB\\u09CC\\u09D7\\u0A03\\u0A3E-\\u0A40\\u0A83\\u0ABE-\\u0AC0\\u0AC9\\u0ACB\\u0ACC\\u0B02\\u0B03\\u0B3E\\u0B40\\u0B47\\u0B48\\u0B4B\\u0B4C\\u0B57\\u0BBE\\u0BBF\\u0BC1\\u0BC2\\u0BC6-\\u0BC8\\u0BCA-\\u0BCC\\u0BD7\\u0C01-\\u0C03\\u0C41-\\u0C44\\u0C82\\u0C83\\u0CBE\\u0CC0-\\u0CC4\\u0CC7\\u0CC8\\u0CCA\\u0CCB\\u0CD5\\u0CD6\\u0D02\\u0D03\\u0D3E-\\u0D40\\u0D46-\\u0D48\\u0D4A-\\u0D4C\\u0D57\\u0D82\\u0D83\\u0DCF-\\u0DD1\\u0DD8-\\u0DDF\\u0DF2\\u0DF3\\u0F3E\\u0F3F\\u0F7F\\u102B\\u102C\\u1031\\u1038\\u103B\\u103C\\u1056\\u1057\\u1062-\\u1064\\u1067-\\u106D\\u1083\\u1084\\u1087-\\u108C\\u108F\\u109A-\\u109C\\u17B6\\u17BE-\\u17C5\\u17C7\\u17C8\\u1923-\\u1926\\u1929-\\u192B\\u1930\\u1931\\u1933-\\u1938\\u19B0-\\u19C0\\u19C8\\u19C9\\u1A19-\\u1A1B\\u1A55\\u1A57\\u1A61\\u1A63\\u1A64\\u1A6D-\\u1A72\\u1B04\\u1B35\\u1B3B\\u1B3D-\\u1B41\\u1B43\\u1B44\\u1B82\\u1BA1\\u1BA6\\u1BA7\\u1BAA\\u1BE7\\u1BEA-\\u1BEC\\u1BEE\\u1BF2\\u1BF3\\u1C24-\\u1C2B\\u1C34\\u1C35\\u1CE1\\u1CF2\\uA823\\uA824\\uA827\\uA880\\uA881\\uA8B4-\\uA8C3\\uA952\\uA953\\uA983\\uA9B4\\uA9B5\\uA9BA\\uA9BB\\uA9BD-\\uA9C0\\uAA2F\\uAA30\\uAA33\\uAA34\\uAA4D\\uAA7B\\uABE3\\uABE4\\uABE6\\uABE7\\uABE9\\uABEA\\uABEC]" },
+        peg$c325 = "\uDB40",
+        peg$c326 = { type: "literal", value: "\uDB40", description: "\"\\uDB40\"" },
+        peg$c327 = /^[\uDD00-\uDDEF]/,
+        peg$c328 = { type: "class", value: "[\\uDD00-\\uDDEF]", description: "[\\uDD00-\\uDDEF]" },
+        peg$c329 = "\uD834",
+        peg$c330 = { type: "literal", value: "\uD834", description: "\"\\uD834\"" },
+        peg$c331 = /^[\uDD67-\uDD69\uDD7B-\uDD82\uDD85-\uDD8B\uDDAA-\uDDAD\uDE42-\uDE44\uDD65\uDD66\uDD6D-\uDD72]/,
+        peg$c332 = { type: "class", value: "[\\uDD67-\\uDD69\\uDD7B-\\uDD82\\uDD85-\\uDD8B\\uDDAA-\\uDDAD\\uDE42-\\uDE44\\uDD65\\uDD66\\uDD6D-\\uDD72]", description: "[\\uDD67-\\uDD69\\uDD7B-\\uDD82\\uDD85-\\uDD8B\\uDDAA-\\uDDAD\\uDE42-\\uDE44\\uDD65\\uDD66\\uDD6D-\\uDD72]" },
+        peg$c333 = /^[\uDC01\uDC38-\uDC46\uDC80\uDC81\uDCB3-\uDCB6\uDCB9\uDCBA\uDC00\uDC02\uDC82\uDCB0-\uDCB2\uDCB7\uDCB8]/,
+        peg$c334 = { type: "class", value: "[\\uDC01\\uDC38-\\uDC46\\uDC80\\uDC81\\uDCB3-\\uDCB6\\uDCB9\\uDCBA\\uDC00\\uDC02\\uDC82\\uDCB0-\\uDCB2\\uDCB7\\uDCB8]", description: "[\\uDC01\\uDC38-\\uDC46\\uDC80\\uDC81\\uDCB3-\\uDCB6\\uDCB9\\uDCBA\\uDC00\\uDC02\\uDC82\\uDCB0-\\uDCB2\\uDCB7\\uDCB8]" },
+        peg$c335 = /^[\uDDFD]/,
+        peg$c336 = { type: "class", value: "[\\uDDFD]", description: "[\\uDDFD]" },
+        peg$c337 = /^[\uDE01-\uDE03\uDE05\uDE06\uDE0C-\uDE0F\uDE38-\uDE3A\uDE3F]/,
+        peg$c338 = { type: "class", value: "[\\uDE01-\\uDE03\\uDE05\\uDE06\\uDE0C-\\uDE0F\\uDE38-\\uDE3A\\uDE3F]", description: "[\\uDE01-\\uDE03\\uDE05\\uDE06\\uDE0C-\\uDE0F\\uDE38-\\uDE3A\\uDE3F]" },
+        peg$c339 = /^[0-9\u0660-\u0669\u06F0-\u06F9\u07C0-\u07C9\u0966-\u096F\u09E6-\u09EF\u0A66-\u0A6F\u0AE6-\u0AEF\u0B66-\u0B6F\u0BE6-\u0BEF\u0C66-\u0C6F\u0CE6-\u0CEF\u0D66-\u0D6F\u0E50-\u0E59\u0ED0-\u0ED9\u0F20-\u0F29\u1040-\u1049\u1090-\u1099\u17E0-\u17E9\u1810-\u1819\u1946-\u194F\u19D0-\u19D9\u1A80-\u1A89\u1A90-\u1A99\u1B50-\u1B59\u1BB0-\u1BB9\u1C40-\u1C49\u1C50-\u1C59\uA620-\uA629\uA8D0-\uA8D9\uA900-\uA909\uA9D0-\uA9D9\uAA50-\uAA59\uABF0-\uABF9\uFF10-\uFF19]/,
+        peg$c340 = { type: "class", value: "[0-9\\u0660-\\u0669\\u06F0-\\u06F9\\u07C0-\\u07C9\\u0966-\\u096F\\u09E6-\\u09EF\\u0A66-\\u0A6F\\u0AE6-\\u0AEF\\u0B66-\\u0B6F\\u0BE6-\\u0BEF\\u0C66-\\u0C6F\\u0CE6-\\u0CEF\\u0D66-\\u0D6F\\u0E50-\\u0E59\\u0ED0-\\u0ED9\\u0F20-\\u0F29\\u1040-\\u1049\\u1090-\\u1099\\u17E0-\\u17E9\\u1810-\\u1819\\u1946-\\u194F\\u19D0-\\u19D9\\u1A80-\\u1A89\\u1A90-\\u1A99\\u1B50-\\u1B59\\u1BB0-\\u1BB9\\u1C40-\\u1C49\\u1C50-\\u1C59\\uA620-\\uA629\\uA8D0-\\uA8D9\\uA900-\\uA909\\uA9D0-\\uA9D9\\uAA50-\\uAA59\\uABF0-\\uABF9\\uFF10-\\uFF19]", description: "[0-9\\u0660-\\u0669\\u06F0-\\u06F9\\u07C0-\\u07C9\\u0966-\\u096F\\u09E6-\\u09EF\\u0A66-\\u0A6F\\u0AE6-\\u0AEF\\u0B66-\\u0B6F\\u0BE6-\\u0BEF\\u0C66-\\u0C6F\\u0CE6-\\u0CEF\\u0D66-\\u0D6F\\u0E50-\\u0E59\\u0ED0-\\u0ED9\\u0F20-\\u0F29\\u1040-\\u1049\\u1090-\\u1099\\u17E0-\\u17E9\\u1810-\\u1819\\u1946-\\u194F\\u19D0-\\u19D9\\u1A80-\\u1A89\\u1A90-\\u1A99\\u1B50-\\u1B59\\u1BB0-\\u1BB9\\u1C40-\\u1C49\\u1C50-\\u1C59\\uA620-\\uA629\\uA8D0-\\uA8D9\\uA900-\\uA909\\uA9D0-\\uA9D9\\uAA50-\\uAA59\\uABF0-\\uABF9\\uFF10-\\uFF19]" },
+        peg$c341 = /^[\uDFCE-\uDFFF]/,
+        peg$c342 = { type: "class", value: "[\\uDFCE-\\uDFFF]", description: "[\\uDFCE-\\uDFFF]" },
+        peg$c343 = /^[\uDC66-\uDC6F]/,
+        peg$c344 = { type: "class", value: "[\\uDC66-\\uDC6F]", description: "[\\uDC66-\\uDC6F]" },
+        peg$c345 = /^[\uDCA0-\uDCA9]/,
+        peg$c346 = { type: "class", value: "[\\uDCA0-\\uDCA9]", description: "[\\uDCA0-\\uDCA9]" },
+        peg$c347 = /^[_\u203F\u2040\u2054\uFE33\uFE34\uFE4D-\uFE4F\uFF3F]/,
+        peg$c348 = { type: "class", value: "[_\\u203F\\u2040\\u2054\\uFE33\\uFE34\\uFE4D-\\uFE4F\\uFF3F]", description: "[_\\u203F\\u2040\\u2054\\uFE33\\uFE34\\uFE4D-\\uFE4F\\uFF3F]" },
+        peg$c349 = "\u200C",
+        peg$c350 = { type: "literal", value: "\u200C", description: "\"\\u200C\"" },
+        peg$c351 = "\u200D",
+        peg$c352 = { type: "literal", value: "\u200D", description: "\"\\u200D\"" },
+        peg$c353 = "true",
+        peg$c354 = { type: "literal", value: "true", description: "\"true\"" },
+        peg$c355 = "false",
+        peg$c356 = { type: "literal", value: "false", description: "\"false\"" },
+        peg$c357 = "new",
+        peg$c358 = { type: "literal", value: "new", description: "\"new\"" },
+        peg$c359 = "this",
+        peg$c360 = { type: "literal", value: "this", description: "\"this\"" },
+        peg$c361 = "null",
+        peg$c362 = { type: "literal", value: "null", description: "\"null\"" },
+        peg$c363 = function() { return null },
+        peg$c364 = "undefined",
+        peg$c365 = { type: "literal", value: "undefined", description: "\"undefined\"" },
+        peg$c366 = function() { return undefined },
+        peg$c367 = "and",
+        peg$c368 = { type: "literal", value: "and", description: "\"and\"" },
+        peg$c369 = function() { return "&&" },
+        peg$c370 = "or",
+        peg$c371 = { type: "literal", value: "or", description: "\"or\"" },
+        peg$c372 = function() { return "||" },
+        peg$c373 = "is",
+        peg$c374 = { type: "literal", value: "is", description: "\"is\"" },
+        peg$c375 = function() { return "===" },
+        peg$c376 = "isnt",
+        peg$c377 = { type: "literal", value: "isnt", description: "\"isnt\"" },
+        peg$c378 = function() { return "!==" },
+        peg$c379 = "not",
+        peg$c380 = { type: "literal", value: "not", description: "\"not\"" },
+        peg$c381 = function() { return "!" },
+        peg$c382 = "typeof",
+        peg$c383 = { type: "literal", value: "typeof", description: "\"typeof\"" },
+        peg$c384 = function() { return "typeof"},
+        peg$c385 = "void",
+        peg$c386 = { type: "literal", value: "void", description: "\"void\"" },
+        peg$c387 = function() { return "void"},
+        peg$c388 = "delete",
+        peg$c389 = { type: "literal", value: "delete", description: "\"delete\"" },
+        peg$c390 = function() { return "delete"},
+        peg$c391 = "var",
+        peg$c392 = { type: "literal", value: "var", description: "\"var\"" },
+        peg$c393 = "const",
+        peg$c394 = { type: "literal", value: "const", description: "\"const\"" },
+        peg$c395 = function() { return "const" },
+        peg$c396 = "let",
+        peg$c397 = { type: "literal", value: "let", description: "\"let\"" },
+        peg$c398 = function() { return "let" },
+        peg$c399 = "in",
+        peg$c400 = { type: "literal", value: "in", description: "\"in\"" },
+        peg$c401 = function() { return "in" },
+        peg$c402 = "instanceof",
+        peg$c403 = { type: "literal", value: "instanceof", description: "\"instanceof\"" },
+        peg$c404 = function() { return "instanceof" },
+        peg$c405 = "while",
+        peg$c406 = { type: "literal", value: "while", description: "\"while\"" },
+        peg$c407 = "for",
+        peg$c408 = { type: "literal", value: "for", description: "\"for\"" },
+        peg$c409 = "of",
+        peg$c410 = { type: "literal", value: "of", description: "\"of\"" },
+        peg$c411 = "if",
+        peg$c412 = { type: "literal", value: "if", description: "\"if\"" },
+        peg$c413 = "else",
+        peg$c414 = { type: "literal", value: "else", description: "\"else\"" },
+        peg$c415 = "return",
+        peg$c416 = { type: "literal", value: "return", description: "\"return\"" },
+        peg$c417 = "try",
+        peg$c418 = { type: "literal", value: "try", description: "\"try\"" },
+        peg$c419 = "catch",
+        peg$c420 = { type: "literal", value: "catch", description: "\"catch\"" },
+        peg$c421 = "finally",
+        peg$c422 = { type: "literal", value: "finally", description: "\"finally\"" },
+        peg$c423 = "throw",
+        peg$c424 = { type: "literal", value: "throw", description: "\"throw\"" },
+        peg$c425 = "break",
+        peg$c426 = { type: "literal", value: "break", description: "\"break\"" },
+        peg$c427 = "continue",
+        peg$c428 = { type: "literal", value: "continue", description: "\"continue\"" },
+        peg$c429 = "do",
+        peg$c430 = { type: "literal", value: "do", description: "\"do\"" },
+        peg$c431 = "import",
+        peg$c432 = { type: "literal", value: "import", description: "\"import\"" },
+        peg$c433 = "export",
+        peg$c434 = { type: "literal", value: "export", description: "\"export\"" },
+        peg$c435 = "class",
+        peg$c436 = { type: "literal", value: "class", description: "\"class\"" },
+        peg$c437 = "extends",
+        peg$c438 = { type: "literal", value: "extends", description: "\"extends\"" },
+        peg$c439 = "assert",
+        peg$c440 = { type: "literal", value: "assert", description: "\"assert\"" },
+        peg$c441 = "template",
+        peg$c442 = { type: "literal", value: "template", description: "\"template\"" },
+        peg$c443 = "activate",
+        peg$c444 = { type: "literal", value: "activate", description: "\"activate\"" },
+        peg$c445 = { type: "other", description: "INDENT" },
+        peg$c446 = "{{{{",
+        peg$c447 = { type: "literal", value: "{{{{", description: "\"{{{{\"" },
+        peg$c448 = { type: "other", description: "OUTDENT" },
+        peg$c449 = "}}}}",
+        peg$c450 = { type: "literal", value: "}}}}", description: "\"}}}}\"" },
+        peg$c451 = { type: "other", description: "space" },
+        peg$c452 = " ",
+        peg$c453 = { type: "literal", value: " ", description: "\" \"" },
+        peg$c454 = "#",
+        peg$c455 = { type: "literal", value: "#", description: "\"#\"" },
+        peg$c456 = "\n",
+        peg$c457 = { type: "literal", value: "\n", description: "\"\\n\"" },
+        peg$c458 = { type: "other", description: "end of line" },
+        peg$c459 = "\r",
+        peg$c460 = { type: "literal", value: "\r", description: "\"\\r\"" },
+        peg$c461 = { type: "other", description: "end of file" },
 
         peg$currPos          = 0,
         peg$reportedPos      = 0,
@@ -11727,7 +15129,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseProgram() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 0,
+      var key    = peg$currPos * 176 + 0,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11771,7 +15173,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 174 + 1,
+      var key    = peg$currPos * 176 + 1,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11878,7 +15280,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseExportStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 2,
+      var key    = peg$currPos * 176 + 2,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11932,7 +15334,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseReturnStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 3,
+      var key    = peg$currPos * 176 + 3,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11986,7 +15388,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseThrowStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 4,
+      var key    = peg$currPos * 176 + 4,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12037,7 +15439,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBreakStatement() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 5,
+      var key    = peg$currPos * 176 + 5,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12076,7 +15478,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseContinueStatement() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 6,
+      var key    = peg$currPos * 176 + 6,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12115,7 +15517,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseAssertStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 7,
+      var key    = peg$currPos * 176 + 7,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12172,7 +15574,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseExpressionStatement() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 8,
+      var key    = peg$currPos * 176 + 8,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12211,7 +15613,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseActivateStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 174 + 9,
+      var key    = peg$currPos * 176 + 9,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12277,7 +15679,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseIfStatement() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
-      var key    = peg$currPos * 174 + 10,
+      var key    = peg$currPos * 176 + 10,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12292,7 +15694,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         if (s2 !== peg$FAILED) {
           s3 = peg$parse_();
           if (s3 !== peg$FAILED) {
-            s4 = peg$parseAssignmentExpression();
+            s4 = peg$parseInlineExpression();
             if (s4 !== peg$FAILED) {
               s5 = peg$parseBlockStatement();
               if (s5 !== peg$FAILED) {
@@ -12379,7 +15781,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseTryStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 174 + 11,
+      var key    = peg$currPos * 176 + 11,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12475,7 +15877,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsefinallyClause() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 174 + 12,
+      var key    = peg$currPos * 176 + 12,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12520,7 +15922,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsecatchClause() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 174 + 13,
+      var key    = peg$currPos * 176 + 13,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12589,7 +15991,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseIterationStatement() {
       var s0;
 
-      var key    = peg$currPos * 174 + 14,
+      var key    = peg$currPos * 176 + 14,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12613,7 +16015,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseWhileStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 174 + 15,
+      var key    = peg$currPos * 176 + 15,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12628,7 +16030,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         if (s2 !== peg$FAILED) {
           s3 = peg$parse_();
           if (s3 !== peg$FAILED) {
-            s4 = peg$parseAssignmentExpression();
+            s4 = peg$parseInlineExpression();
             if (s4 !== peg$FAILED) {
               s5 = peg$parseBlockStatement();
               if (s5 !== peg$FAILED) {
@@ -12670,7 +16072,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseForInOfHead() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12;
 
-      var key    = peg$currPos * 174 + 16,
+      var key    = peg$currPos * 176 + 16,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12706,7 +16108,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               if (s5 !== peg$FAILED) {
                 s6 = peg$parse_();
                 if (s6 !== peg$FAILED) {
-                  s7 = peg$parseAssignmentExpression();
+                  s7 = peg$parseInlineExpression();
                   if (s7 !== peg$FAILED) {
                     s8 = peg$parse_();
                     if (s8 !== peg$FAILED) {
@@ -12715,7 +16117,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                       if (s10 !== peg$FAILED) {
                         s11 = peg$parse_();
                         if (s11 !== peg$FAILED) {
-                          s12 = peg$parseAssignmentExpression();
+                          s12 = peg$parseInlineExpression();
                           if (s12 !== peg$FAILED) {
                             peg$reportedPos = s9;
                             s10 = peg$c25(s12);
@@ -12799,7 +16201,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseForInOfStatement() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 174 + 17,
+      var key    = peg$currPos * 176 + 17,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12844,7 +16246,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseForStatement() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14;
 
-      var key    = peg$currPos * 174 + 18,
+      var key    = peg$currPos * 176 + 18,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12861,7 +16263,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           if (s3 !== peg$FAILED) {
             s4 = peg$parseVariableDeclaration();
             if (s4 === peg$FAILED) {
-              s4 = peg$parseAssignmentExpression();
+              s4 = peg$parseInlineExpression();
             }
             if (s4 === peg$FAILED) {
               s4 = peg$c3;
@@ -12879,7 +16281,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                 if (s6 !== peg$FAILED) {
                   s7 = peg$parse_();
                   if (s7 !== peg$FAILED) {
-                    s8 = peg$parseAssignmentExpression();
+                    s8 = peg$parseInlineExpression();
                     if (s8 === peg$FAILED) {
                       s8 = peg$c3;
                     }
@@ -12896,7 +16298,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                         if (s10 !== peg$FAILED) {
                           s11 = peg$parse_();
                           if (s11 !== peg$FAILED) {
-                            s12 = peg$parseAssignmentExpression();
+                            s12 = peg$parseInlineExpression();
                             if (s12 === peg$FAILED) {
                               s12 = peg$c3;
                             }
@@ -12973,7 +16375,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseArrayComprehension() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 174 + 19,
+      var key    = peg$currPos * 176 + 19,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12994,7 +16396,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         if (s2 !== peg$FAILED) {
           s3 = peg$parse_();
           if (s3 !== peg$FAILED) {
-            s4 = peg$parseAssignmentExpression();
+            s4 = peg$parseInlineExpression();
             if (s4 !== peg$FAILED) {
               s5 = peg$parse_();
               if (s5 !== peg$FAILED) {
@@ -13060,7 +16462,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBlockStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 174 + 20,
+      var key    = peg$currPos * 176 + 20,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13122,7 +16524,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseClassExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 174 + 21,
+      var key    = peg$currPos * 176 + 21,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13200,7 +16602,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseclassName() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 22,
+      var key    = peg$currPos * 176 + 22,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13227,7 +16629,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         if (s1 !== peg$FAILED) {
           s2 = peg$parse_();
           if (s2 !== peg$FAILED) {
-            s3 = peg$parseAssignmentExpression();
+            s3 = peg$parseInlineExpression();
             if (s3 !== peg$FAILED) {
               s4 = peg$parse_();
               if (s4 !== peg$FAILED) {
@@ -13272,7 +16674,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseclassExtends() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 23,
+      var key    = peg$currPos * 176 + 23,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13311,7 +16713,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsepath() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 24,
+      var key    = peg$currPos * 176 + 24,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13395,7 +16797,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsepropertyLeft() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 25,
+      var key    = peg$currPos * 176 + 25,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13428,7 +16830,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         if (s1 !== peg$FAILED) {
           s2 = peg$parse_();
           if (s2 !== peg$FAILED) {
-            s3 = peg$parseAssignmentExpression();
+            s3 = peg$parseInlineExpression();
             if (s3 !== peg$FAILED) {
               s4 = peg$parse_();
               if (s4 !== peg$FAILED) {
@@ -13473,7 +16875,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsePropertyDeclaration() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 174 + 26,
+      var key    = peg$currPos * 176 + 26,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13557,7 +16959,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseVariableDeclaration() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 174 + 27,
+      var key    = peg$currPos * 176 + 27,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13599,7 +17001,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseVariableDeclarationKindOptional() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 28,
+      var key    = peg$currPos * 176 + 28,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13653,7 +17055,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevariableKind() {
       var s0;
 
-      var key    = peg$currPos * 174 + 29,
+      var key    = peg$currPos * 176 + 29,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13674,7 +17076,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevariableDeclaratorList() {
       var s0;
 
-      var key    = peg$currPos * 174 + 30,
+      var key    = peg$currPos * 176 + 30,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13695,7 +17097,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseinlineVariableDeclaratorList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 31,
+      var key    = peg$currPos * 176 + 31,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13799,7 +17201,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineVariableDeclaratorList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 32,
+      var key    = peg$currPos * 176 + 32,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13901,7 +17303,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseVariableDeclarator() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 33,
+      var key    = peg$currPos * 176 + 33,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13994,7 +17396,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevariableInitializer() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 34,
+      var key    = peg$currPos * 176 + 34,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14036,10 +17438,91 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
+    function peg$parseVariableDeclarationExpression() {
+      var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
+
+      var key    = peg$currPos * 176 + 35,
+          cached = peg$cache[key];
+
+      if (cached) {
+        peg$currPos = cached.nextPos;
+        return cached.result;
+      }
+
+      s0 = peg$currPos;
+      s1 = peg$parsestart();
+      if (s1 !== peg$FAILED) {
+        s2 = peg$parsevariableKind();
+        if (s2 !== peg$FAILED) {
+          s3 = peg$parse_();
+          if (s3 !== peg$FAILED) {
+            s4 = peg$parseIdentifier();
+            if (s4 !== peg$FAILED) {
+              s5 = peg$parse_();
+              if (s5 !== peg$FAILED) {
+                if (input.charCodeAt(peg$currPos) === 61) {
+                  s6 = peg$c53;
+                  peg$currPos++;
+                } else {
+                  s6 = peg$FAILED;
+                  if (peg$silentFails === 0) { peg$fail(peg$c54); }
+                }
+                if (s6 !== peg$FAILED) {
+                  s7 = peg$parse_();
+                  if (s7 !== peg$FAILED) {
+                    s8 = peg$parseInlineExpression();
+                    if (s8 !== peg$FAILED) {
+                      s9 = peg$parsestart();
+                      if (s9 !== peg$FAILED) {
+                        peg$reportedPos = s0;
+                        s1 = peg$c55(s1, s2, s4, s8, s9);
+                        s0 = s1;
+                      } else {
+                        peg$currPos = s0;
+                        s0 = peg$c0;
+                      }
+                    } else {
+                      peg$currPos = s0;
+                      s0 = peg$c0;
+                    }
+                  } else {
+                    peg$currPos = s0;
+                    s0 = peg$c0;
+                  }
+                } else {
+                  peg$currPos = s0;
+                  s0 = peg$c0;
+                }
+              } else {
+                peg$currPos = s0;
+                s0 = peg$c0;
+              }
+            } else {
+              peg$currPos = s0;
+              s0 = peg$c0;
+            }
+          } else {
+            peg$currPos = s0;
+            s0 = peg$c0;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$c0;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$c0;
+      }
+
+      peg$cache[key] = { nextPos: peg$currPos, result: s0 };
+
+      return s0;
+    }
+
     function peg$parsePattern() {
       var s0;
 
-      var key    = peg$currPos * 174 + 35,
+      var key    = peg$currPos * 176 + 36,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14063,7 +17546,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseObjectPattern() {
       var s0, s1;
 
-      var key    = peg$currPos * 174 + 36,
+      var key    = peg$currPos * 176 + 37,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14075,7 +17558,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s1 = peg$parseObjectLiteral();
       if (s1 !== peg$FAILED) {
         peg$reportedPos = s0;
-        s1 = peg$c55(s1);
+        s1 = peg$c56(s1);
       }
       s0 = s1;
 
@@ -14087,7 +17570,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseArrayPattern() {
       var s0, s1;
 
-      var key    = peg$currPos * 174 + 37,
+      var key    = peg$currPos * 176 + 38,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14099,7 +17582,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s1 = peg$parseArrayLiteral();
       if (s1 !== peg$FAILED) {
         peg$reportedPos = s0;
-        s1 = peg$c56(s1);
+        s1 = peg$c57(s1);
       }
       s0 = s1;
 
@@ -14111,7 +17594,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseSpreadPattern() {
       var s0;
 
-      var key    = peg$currPos * 174 + 38,
+      var key    = peg$currPos * 176 + 39,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14132,7 +17615,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsespread() {
       var s0;
 
-      var key    = peg$currPos * 174 + 39,
+      var key    = peg$currPos * 176 + 40,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14140,12 +17623,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         return cached.result;
       }
 
-      if (input.substr(peg$currPos, 3) === peg$c57) {
-        s0 = peg$c57;
+      if (input.substr(peg$currPos, 3) === peg$c58) {
+        s0 = peg$c58;
         peg$currPos += 3;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c58); }
+        if (peg$silentFails === 0) { peg$fail(peg$c59); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -14156,7 +17639,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseSpreadExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 40,
+      var key    = peg$currPos * 176 + 41,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14171,12 +17654,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         if (s2 !== peg$FAILED) {
           s3 = peg$parse_();
           if (s3 !== peg$FAILED) {
-            s4 = peg$parseAssignmentExpression();
+            s4 = peg$parseInlineExpression();
             if (s4 !== peg$FAILED) {
               s5 = peg$parsestart();
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c59(s1, s4, s5);
+                s1 = peg$c60(s1, s4, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -14199,7 +17682,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         s0 = peg$c0;
       }
       if (s0 === peg$FAILED) {
-        s0 = peg$parseAssignmentExpression();
+        s0 = peg$parseInlineExpression();
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -14210,7 +17693,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseSpreadIdentifier() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 41,
+      var key    = peg$currPos * 176 + 42,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14230,7 +17713,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s5 = peg$parsestart();
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c59(s1, s4, s5);
+                s1 = peg$c60(s1, s4, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -14264,7 +17747,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseRightHandSideExpression() {
       var s0;
 
-      var key    = peg$currPos * 174 + 42,
+      var key    = peg$currPos * 176 + 43,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14285,7 +17768,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseExpression() {
       var s0;
 
-      var key    = peg$currPos * 174 + 43,
+      var key    = peg$currPos * 176 + 44,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14295,7 +17778,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$parseMultilineExpression();
       if (s0 === peg$FAILED) {
-        s0 = peg$parseAssignmentExpression();
+        s0 = peg$parseInlineExpression();
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -14306,7 +17789,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineExpression() {
       var s0;
 
-      var key    = peg$currPos * 174 + 44,
+      var key    = peg$currPos * 176 + 45,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14336,7 +17819,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineCallArguments() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 174 + 45,
+      var key    = peg$currPos * 176 + 46,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14353,7 +17836,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s4 = peg$parseeol();
           if (s4 !== peg$FAILED) {
             peg$reportedPos = s1;
-            s2 = peg$c60(s3);
+            s2 = peg$c61(s3);
             s1 = s2;
           } else {
             peg$currPos = s1;
@@ -14378,7 +17861,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s4 = peg$parseeol();
               if (s4 !== peg$FAILED) {
                 peg$reportedPos = s1;
-                s2 = peg$c60(s3);
+                s2 = peg$c61(s3);
                 s1 = s2;
               } else {
                 peg$currPos = s1;
@@ -14409,7 +17892,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s6 = peg$parseeol();
               if (s6 !== peg$FAILED) {
                 peg$reportedPos = s3;
-                s4 = peg$c61(s5);
+                s4 = peg$c62(s5);
                 s3 = s4;
               } else {
                 peg$currPos = s3;
@@ -14434,7 +17917,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   s6 = peg$parseeol();
                   if (s6 !== peg$FAILED) {
                     peg$reportedPos = s3;
-                    s4 = peg$c61(s5);
+                    s4 = peg$c62(s5);
                     s3 = s4;
                   } else {
                     peg$currPos = s3;
@@ -14456,7 +17939,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s3 = peg$parsestart();
             if (s3 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c62(s1, s2, s3);
+              s1 = peg$c63(s1, s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -14480,7 +17963,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineCallExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 46,
+      var key    = peg$currPos * 176 + 47,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14504,7 +17987,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   s7 = peg$parseoutdent();
                   if (s7 !== peg$FAILED) {
                     peg$reportedPos = s0;
-                    s1 = peg$c63(s1, s2, s5, s6);
+                    s1 = peg$c64(s1, s2, s5, s6);
                     s0 = s1;
                   } else {
                     peg$currPos = s0;
@@ -14540,10 +18023,31 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
+    function peg$parseInlineExpression() {
+      var s0;
+
+      var key    = peg$currPos * 176 + 48,
+          cached = peg$cache[key];
+
+      if (cached) {
+        peg$currPos = cached.nextPos;
+        return cached.result;
+      }
+
+      s0 = peg$parseAssignmentExpression();
+      if (s0 === peg$FAILED) {
+        s0 = peg$parseVariableDeclarationExpression();
+      }
+
+      peg$cache[key] = { nextPos: peg$currPos, result: s0 };
+
+      return s0;
+    }
+
     function peg$parseAssignmentExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 47,
+      var key    = peg$currPos * 176 + 49,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14566,116 +18070,116 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               if (peg$silentFails === 0) { peg$fail(peg$c54); }
             }
             if (s4 === peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c64) {
-                s4 = peg$c64;
+              if (input.substr(peg$currPos, 2) === peg$c65) {
+                s4 = peg$c65;
                 peg$currPos += 2;
               } else {
                 s4 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c65); }
+                if (peg$silentFails === 0) { peg$fail(peg$c66); }
               }
               if (s4 === peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c66) {
-                  s4 = peg$c66;
+                if (input.substr(peg$currPos, 2) === peg$c67) {
+                  s4 = peg$c67;
                   peg$currPos += 2;
                 } else {
                   s4 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c67); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c68); }
                 }
                 if (s4 === peg$FAILED) {
-                  if (input.substr(peg$currPos, 2) === peg$c68) {
-                    s4 = peg$c68;
+                  if (input.substr(peg$currPos, 2) === peg$c69) {
+                    s4 = peg$c69;
                     peg$currPos += 2;
                   } else {
                     s4 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c69); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c70); }
                   }
                   if (s4 === peg$FAILED) {
-                    if (input.substr(peg$currPos, 2) === peg$c70) {
-                      s4 = peg$c70;
+                    if (input.substr(peg$currPos, 2) === peg$c71) {
+                      s4 = peg$c71;
                       peg$currPos += 2;
                     } else {
                       s4 = peg$FAILED;
-                      if (peg$silentFails === 0) { peg$fail(peg$c71); }
+                      if (peg$silentFails === 0) { peg$fail(peg$c72); }
                     }
                     if (s4 === peg$FAILED) {
-                      if (input.substr(peg$currPos, 2) === peg$c72) {
-                        s4 = peg$c72;
+                      if (input.substr(peg$currPos, 2) === peg$c73) {
+                        s4 = peg$c73;
                         peg$currPos += 2;
                       } else {
                         s4 = peg$FAILED;
-                        if (peg$silentFails === 0) { peg$fail(peg$c73); }
+                        if (peg$silentFails === 0) { peg$fail(peg$c74); }
                       }
                       if (s4 === peg$FAILED) {
-                        if (input.substr(peg$currPos, 3) === peg$c74) {
-                          s4 = peg$c74;
+                        if (input.substr(peg$currPos, 3) === peg$c75) {
+                          s4 = peg$c75;
                           peg$currPos += 3;
                         } else {
                           s4 = peg$FAILED;
-                          if (peg$silentFails === 0) { peg$fail(peg$c75); }
+                          if (peg$silentFails === 0) { peg$fail(peg$c76); }
                         }
                         if (s4 === peg$FAILED) {
-                          if (input.substr(peg$currPos, 3) === peg$c76) {
-                            s4 = peg$c76;
+                          if (input.substr(peg$currPos, 3) === peg$c77) {
+                            s4 = peg$c77;
                             peg$currPos += 3;
                           } else {
                             s4 = peg$FAILED;
-                            if (peg$silentFails === 0) { peg$fail(peg$c77); }
+                            if (peg$silentFails === 0) { peg$fail(peg$c78); }
                           }
                           if (s4 === peg$FAILED) {
-                            if (input.substr(peg$currPos, 4) === peg$c78) {
-                              s4 = peg$c78;
+                            if (input.substr(peg$currPos, 4) === peg$c79) {
+                              s4 = peg$c79;
                               peg$currPos += 4;
                             } else {
                               s4 = peg$FAILED;
-                              if (peg$silentFails === 0) { peg$fail(peg$c79); }
+                              if (peg$silentFails === 0) { peg$fail(peg$c80); }
                             }
                             if (s4 === peg$FAILED) {
-                              if (input.substr(peg$currPos, 2) === peg$c70) {
-                                s4 = peg$c70;
+                              if (input.substr(peg$currPos, 2) === peg$c71) {
+                                s4 = peg$c71;
                                 peg$currPos += 2;
                               } else {
                                 s4 = peg$FAILED;
-                                if (peg$silentFails === 0) { peg$fail(peg$c71); }
+                                if (peg$silentFails === 0) { peg$fail(peg$c72); }
                               }
                               if (s4 === peg$FAILED) {
-                                if (input.substr(peg$currPos, 2) === peg$c80) {
-                                  s4 = peg$c80;
+                                if (input.substr(peg$currPos, 2) === peg$c81) {
+                                  s4 = peg$c81;
                                   peg$currPos += 2;
                                 } else {
                                   s4 = peg$FAILED;
-                                  if (peg$silentFails === 0) { peg$fail(peg$c81); }
+                                  if (peg$silentFails === 0) { peg$fail(peg$c82); }
                                 }
                                 if (s4 === peg$FAILED) {
-                                  if (input.substr(peg$currPos, 2) === peg$c82) {
-                                    s4 = peg$c82;
+                                  if (input.substr(peg$currPos, 2) === peg$c83) {
+                                    s4 = peg$c83;
                                     peg$currPos += 2;
                                   } else {
                                     s4 = peg$FAILED;
-                                    if (peg$silentFails === 0) { peg$fail(peg$c83); }
+                                    if (peg$silentFails === 0) { peg$fail(peg$c84); }
                                   }
                                   if (s4 === peg$FAILED) {
-                                    if (input.substr(peg$currPos, 3) === peg$c84) {
-                                      s4 = peg$c84;
+                                    if (input.substr(peg$currPos, 3) === peg$c85) {
+                                      s4 = peg$c85;
                                       peg$currPos += 3;
                                     } else {
                                       s4 = peg$FAILED;
-                                      if (peg$silentFails === 0) { peg$fail(peg$c85); }
+                                      if (peg$silentFails === 0) { peg$fail(peg$c86); }
                                     }
                                     if (s4 === peg$FAILED) {
-                                      if (input.substr(peg$currPos, 2) === peg$c86) {
-                                        s4 = peg$c86;
+                                      if (input.substr(peg$currPos, 2) === peg$c87) {
+                                        s4 = peg$c87;
                                         peg$currPos += 2;
                                       } else {
                                         s4 = peg$FAILED;
-                                        if (peg$silentFails === 0) { peg$fail(peg$c87); }
+                                        if (peg$silentFails === 0) { peg$fail(peg$c88); }
                                       }
                                       if (s4 === peg$FAILED) {
-                                        if (input.substr(peg$currPos, 2) === peg$c88) {
-                                          s4 = peg$c88;
+                                        if (input.substr(peg$currPos, 2) === peg$c89) {
+                                          s4 = peg$c89;
                                           peg$currPos += 2;
                                         } else {
                                           s4 = peg$FAILED;
-                                          if (peg$silentFails === 0) { peg$fail(peg$c89); }
+                                          if (peg$silentFails === 0) { peg$fail(peg$c90); }
                                         }
                                       }
                                     }
@@ -14699,7 +18203,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   s7 = peg$parsestart();
                   if (s7 !== peg$FAILED) {
                     peg$reportedPos = s0;
-                    s1 = peg$c90(s1, s2, s4, s6, s7);
+                    s1 = peg$c91(s1, s2, s4, s6, s7);
                     s0 = s1;
                   } else {
                     peg$currPos = s0;
@@ -14741,7 +18245,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseConditionalOrDefaultExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
-      var key    = peg$currPos * 174 + 48,
+      var key    = peg$currPos * 176 + 50,
           cached = peg$cache[key];
 
       if (cached) {
@@ -14757,11 +18261,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s3 = peg$parse_();
           if (s3 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 63) {
-              s4 = peg$c91;
+              s4 = peg$c92;
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c92); }
+              if (peg$silentFails === 0) { peg$fail(peg$c93); }
             }
             if (s4 !== peg$FAILED) {
               s5 = peg$parse_();
@@ -14785,7 +18289,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                           s11 = peg$parsestart();
                           if (s11 !== peg$FAILED) {
                             peg$reportedPos = s0;
-                            s1 = peg$c93(s1, s2, s6, s10, s11);
+                            s1 = peg$c94(s1, s2, s6, s10, s11);
                             s0 = s1;
                           } else {
                             peg$currPos = s0;
@@ -14841,20 +18345,20 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$currPos;
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c94) {
-                s6 = peg$c94;
+              if (input.substr(peg$currPos, 2) === peg$c95) {
+                s6 = peg$c95;
                 peg$currPos += 2;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c95); }
+                if (peg$silentFails === 0) { peg$fail(peg$c96); }
               }
               if (s6 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 63) {
-                  s6 = peg$c91;
+                  s6 = peg$c92;
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c92); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c93); }
                 }
               }
               if (s6 !== peg$FAILED) {
@@ -14891,20 +18395,20 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s4 = peg$currPos;
               s5 = peg$parse_();
               if (s5 !== peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c94) {
-                  s6 = peg$c94;
+                if (input.substr(peg$currPos, 2) === peg$c95) {
+                  s6 = peg$c95;
                   peg$currPos += 2;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c95); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c96); }
                 }
                 if (s6 === peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 63) {
-                    s6 = peg$c91;
+                    s6 = peg$c92;
                     peg$currPos++;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c92); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c93); }
                   }
                 }
                 if (s6 !== peg$FAILED) {
@@ -14939,7 +18443,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             }
             if (s3 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c96(s1, s2, s3);
+              s1 = peg$c97(s1, s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -14966,7 +18470,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseLogicalOrExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 174 + 49,
+      var key    = peg$currPos * 176 + 51,
           cached = peg$cache[key];
 
       if (cached) {
@@ -15051,7 +18555,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c96(s1, s2, s3);
+            s1 = peg$c97(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -15074,7 +18578,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseLogicalAndExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 174 + 50,
+      var key    = peg$currPos * 176 + 52,
           cached = peg$cache[key];
 
       if (cached) {
@@ -15159,7 +18663,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c96(s1, s2, s3);
+            s1 = peg$c97(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -15182,7 +18686,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBitwiseOrExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 174 + 51,
+      var key    = peg$currPos * 176 + 53,
           cached = peg$cache[key];
 
       if (cached) {
@@ -15200,11 +18704,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 124) {
-              s6 = peg$c97;
+              s6 = peg$c98;
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c98); }
+              if (peg$silentFails === 0) { peg$fail(peg$c99); }
             }
             if (s6 !== peg$FAILED) {
               s7 = peg$parse_();
@@ -15241,11 +18745,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 124) {
-                s6 = peg$c97;
+                s6 = peg$c98;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c98); }
+                if (peg$silentFails === 0) { peg$fail(peg$c99); }
               }
               if (s6 !== peg$FAILED) {
                 s7 = peg$parse_();
@@ -15279,7 +18783,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c96(s1, s2, s3);
+            s1 = peg$c97(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -15302,7 +18806,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBitwiseXorExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 174 + 52,
+      var key    = peg$currPos * 176 + 54,
           cached = peg$cache[key];
 
       if (cached) {
@@ -15320,11 +18824,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 94) {
-              s6 = peg$c99;
+              s6 = peg$c100;
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c100); }
+              if (peg$silentFails === 0) { peg$fail(peg$c101); }
             }
             if (s6 !== peg$FAILED) {
               s7 = peg$parse_();
@@ -15361,11 +18865,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 94) {
-                s6 = peg$c99;
+                s6 = peg$c100;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c100); }
+                if (peg$silentFails === 0) { peg$fail(peg$c101); }
               }
               if (s6 !== peg$FAILED) {
                 s7 = peg$parse_();
@@ -15399,7 +18903,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c96(s1, s2, s3);
+            s1 = peg$c97(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -15422,7 +18926,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBitwiseAndExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 174 + 53,
+      var key    = peg$currPos * 176 + 55,
           cached = peg$cache[key];
 
       if (cached) {
@@ -15440,11 +18944,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 38) {
-              s6 = peg$c101;
+              s6 = peg$c102;
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c102); }
+              if (peg$silentFails === 0) { peg$fail(peg$c103); }
             }
             if (s6 !== peg$FAILED) {
               s7 = peg$parse_();
@@ -15481,11 +18985,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 38) {
-                s6 = peg$c101;
+                s6 = peg$c102;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c102); }
+                if (peg$silentFails === 0) { peg$fail(peg$c103); }
               }
               if (s6 !== peg$FAILED) {
                 s7 = peg$parse_();
@@ -15519,7 +19023,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c96(s1, s2, s3);
+            s1 = peg$c97(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -15542,7 +19046,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseEqualityExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 174 + 54,
+      var key    = peg$currPos * 176 + 56,
           cached = peg$cache[key];
 
       if (cached) {
@@ -15633,7 +19137,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c96(s1, s2, s3);
+            s1 = peg$c97(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -15656,7 +19160,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseRelationalExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 174 + 55,
+      var key    = peg$currPos * 176 + 57,
           cached = peg$cache[key];
 
       if (cached) {
@@ -15673,36 +19177,36 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s4 = peg$currPos;
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
-            if (input.substr(peg$currPos, 2) === peg$c103) {
-              s6 = peg$c103;
+            if (input.substr(peg$currPos, 2) === peg$c104) {
+              s6 = peg$c104;
               peg$currPos += 2;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c104); }
+              if (peg$silentFails === 0) { peg$fail(peg$c105); }
             }
             if (s6 === peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c105) {
-                s6 = peg$c105;
+              if (input.substr(peg$currPos, 2) === peg$c106) {
+                s6 = peg$c106;
                 peg$currPos += 2;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c106); }
+                if (peg$silentFails === 0) { peg$fail(peg$c107); }
               }
               if (s6 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 60) {
-                  s6 = peg$c107;
+                  s6 = peg$c108;
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c108); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c109); }
                 }
                 if (s6 === peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 62) {
-                    s6 = peg$c109;
+                    s6 = peg$c110;
                     peg$currPos++;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c110); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c111); }
                   }
                   if (s6 === peg$FAILED) {
                     s6 = peg$parsein();
@@ -15747,36 +19251,36 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$currPos;
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c103) {
-                s6 = peg$c103;
+              if (input.substr(peg$currPos, 2) === peg$c104) {
+                s6 = peg$c104;
                 peg$currPos += 2;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c104); }
+                if (peg$silentFails === 0) { peg$fail(peg$c105); }
               }
               if (s6 === peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c105) {
-                  s6 = peg$c105;
+                if (input.substr(peg$currPos, 2) === peg$c106) {
+                  s6 = peg$c106;
                   peg$currPos += 2;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c106); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c107); }
                 }
                 if (s6 === peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 60) {
-                    s6 = peg$c107;
+                    s6 = peg$c108;
                     peg$currPos++;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c108); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c109); }
                   }
                   if (s6 === peg$FAILED) {
                     if (input.charCodeAt(peg$currPos) === 62) {
-                      s6 = peg$c109;
+                      s6 = peg$c110;
                       peg$currPos++;
                     } else {
                       s6 = peg$FAILED;
-                      if (peg$silentFails === 0) { peg$fail(peg$c110); }
+                      if (peg$silentFails === 0) { peg$fail(peg$c111); }
                     }
                     if (s6 === peg$FAILED) {
                       s6 = peg$parsein();
@@ -15819,7 +19323,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c96(s1, s2, s3);
+            s1 = peg$c97(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -15842,7 +19346,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBitwiseShiftExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 174 + 56,
+      var key    = peg$currPos * 176 + 58,
           cached = peg$cache[key];
 
       if (cached) {
@@ -15859,28 +19363,28 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s4 = peg$currPos;
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
-            if (input.substr(peg$currPos, 3) === peg$c111) {
-              s6 = peg$c111;
+            if (input.substr(peg$currPos, 3) === peg$c112) {
+              s6 = peg$c112;
               peg$currPos += 3;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c112); }
+              if (peg$silentFails === 0) { peg$fail(peg$c113); }
             }
             if (s6 === peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c113) {
-                s6 = peg$c113;
+              if (input.substr(peg$currPos, 2) === peg$c114) {
+                s6 = peg$c114;
                 peg$currPos += 2;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c114); }
+                if (peg$silentFails === 0) { peg$fail(peg$c115); }
               }
               if (s6 === peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c115) {
-                  s6 = peg$c115;
+                if (input.substr(peg$currPos, 2) === peg$c116) {
+                  s6 = peg$c116;
                   peg$currPos += 2;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c116); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c117); }
                 }
               }
             }
@@ -15918,28 +19422,28 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$currPos;
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 3) === peg$c111) {
-                s6 = peg$c111;
+              if (input.substr(peg$currPos, 3) === peg$c112) {
+                s6 = peg$c112;
                 peg$currPos += 3;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c112); }
+                if (peg$silentFails === 0) { peg$fail(peg$c113); }
               }
               if (s6 === peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c113) {
-                  s6 = peg$c113;
+                if (input.substr(peg$currPos, 2) === peg$c114) {
+                  s6 = peg$c114;
                   peg$currPos += 2;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c114); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c115); }
                 }
                 if (s6 === peg$FAILED) {
-                  if (input.substr(peg$currPos, 2) === peg$c115) {
-                    s6 = peg$c115;
+                  if (input.substr(peg$currPos, 2) === peg$c116) {
+                    s6 = peg$c116;
                     peg$currPos += 2;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c116); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c117); }
                   }
                 }
               }
@@ -15975,7 +19479,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c96(s1, s2, s3);
+            s1 = peg$c97(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -15998,7 +19502,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseAdditiveExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 174 + 57,
+      var key    = peg$currPos * 176 + 59,
           cached = peg$cache[key];
 
       if (cached) {
@@ -16016,19 +19520,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 43) {
-              s6 = peg$c117;
+              s6 = peg$c118;
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c118); }
+              if (peg$silentFails === 0) { peg$fail(peg$c119); }
             }
             if (s6 === peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 45) {
-                s6 = peg$c119;
+                s6 = peg$c120;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c120); }
+                if (peg$silentFails === 0) { peg$fail(peg$c121); }
               }
             }
             if (s6 !== peg$FAILED) {
@@ -16066,19 +19570,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 43) {
-                s6 = peg$c117;
+                s6 = peg$c118;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c118); }
+                if (peg$silentFails === 0) { peg$fail(peg$c119); }
               }
               if (s6 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 45) {
-                  s6 = peg$c119;
+                  s6 = peg$c120;
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c120); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c121); }
                 }
               }
               if (s6 !== peg$FAILED) {
@@ -16113,7 +19617,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c96(s1, s2, s3);
+            s1 = peg$c97(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -16136,7 +19640,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultiplicativeExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 174 + 58,
+      var key    = peg$currPos * 176 + 60,
           cached = peg$cache[key];
 
       if (cached) {
@@ -16154,27 +19658,27 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 42) {
-              s6 = peg$c121;
+              s6 = peg$c122;
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c122); }
+              if (peg$silentFails === 0) { peg$fail(peg$c123); }
             }
             if (s6 === peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 47) {
-                s6 = peg$c123;
+                s6 = peg$c124;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c124); }
+                if (peg$silentFails === 0) { peg$fail(peg$c125); }
               }
               if (s6 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 37) {
-                  s6 = peg$c125;
+                  s6 = peg$c126;
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c126); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c127); }
                 }
               }
             }
@@ -16213,27 +19717,27 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 42) {
-                s6 = peg$c121;
+                s6 = peg$c122;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c122); }
+                if (peg$silentFails === 0) { peg$fail(peg$c123); }
               }
               if (s6 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 47) {
-                  s6 = peg$c123;
+                  s6 = peg$c124;
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c124); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c125); }
                 }
                 if (s6 === peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 37) {
-                    s6 = peg$c125;
+                    s6 = peg$c126;
                     peg$currPos++;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c126); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c127); }
                   }
                 }
               }
@@ -16269,7 +19773,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c96(s1, s2, s3);
+            s1 = peg$c97(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -16292,7 +19796,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseUnaryExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 59,
+      var key    = peg$currPos * 176 + 61,
           cached = peg$cache[key];
 
       if (cached) {
@@ -16312,7 +19816,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s5 = peg$parsestart();
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c127(s1, s2, s4, s5);
+                s1 = peg$c128(s1, s2, s4, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -16346,7 +19850,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunaryOperator() {
       var s0, s1;
 
-      var key    = peg$currPos * 174 + 60,
+      var key    = peg$currPos * 176 + 62,
           cached = peg$cache[key];
 
       if (cached) {
@@ -16358,27 +19862,27 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s0 = peg$parsenot();
       if (s0 === peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 45) {
-          s0 = peg$c119;
+          s0 = peg$c120;
           peg$currPos++;
         } else {
           s0 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c120); }
+          if (peg$silentFails === 0) { peg$fail(peg$c121); }
         }
         if (s0 === peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 43) {
-            s0 = peg$c117;
+            s0 = peg$c118;
             peg$currPos++;
           } else {
             s0 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c118); }
+            if (peg$silentFails === 0) { peg$fail(peg$c119); }
           }
           if (s0 === peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 126) {
-              s0 = peg$c129;
+              s0 = peg$c130;
               peg$currPos++;
             } else {
               s0 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c130); }
+              if (peg$silentFails === 0) { peg$fail(peg$c131); }
             }
             if (s0 === peg$FAILED) {
               s0 = peg$parsetypeof();
@@ -16395,7 +19899,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c128); }
+        if (peg$silentFails === 0) { peg$fail(peg$c129); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -16406,7 +19910,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseUpdateExpression() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 174 + 61,
+      var key    = peg$currPos * 176 + 63,
           cached = peg$cache[key];
 
       if (cached) {
@@ -16417,20 +19921,20 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s0 = peg$currPos;
       s1 = peg$parsestart();
       if (s1 !== peg$FAILED) {
-        if (input.substr(peg$currPos, 2) === peg$c131) {
-          s2 = peg$c131;
+        if (input.substr(peg$currPos, 2) === peg$c132) {
+          s2 = peg$c132;
           peg$currPos += 2;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c132); }
+          if (peg$silentFails === 0) { peg$fail(peg$c133); }
         }
         if (s2 === peg$FAILED) {
-          if (input.substr(peg$currPos, 2) === peg$c133) {
-            s2 = peg$c133;
+          if (input.substr(peg$currPos, 2) === peg$c134) {
+            s2 = peg$c134;
             peg$currPos += 2;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c134); }
+            if (peg$silentFails === 0) { peg$fail(peg$c135); }
           }
         }
         if (s2 !== peg$FAILED) {
@@ -16439,7 +19943,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$parsestart();
             if (s4 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c135(s1, s2, s3, s4);
+              s1 = peg$c136(s1, s2, s3, s4);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -16465,27 +19969,27 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           if (s2 !== peg$FAILED) {
             s3 = peg$parseCallExpression();
             if (s3 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c131) {
-                s4 = peg$c131;
+              if (input.substr(peg$currPos, 2) === peg$c132) {
+                s4 = peg$c132;
                 peg$currPos += 2;
               } else {
                 s4 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c132); }
+                if (peg$silentFails === 0) { peg$fail(peg$c133); }
               }
               if (s4 === peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c133) {
-                  s4 = peg$c133;
+                if (input.substr(peg$currPos, 2) === peg$c134) {
+                  s4 = peg$c134;
                   peg$currPos += 2;
                 } else {
                   s4 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c134); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c135); }
                 }
               }
               if (s4 !== peg$FAILED) {
                 s5 = peg$parsestart();
                 if (s5 !== peg$FAILED) {
                   peg$reportedPos = s0;
-                  s1 = peg$c136(s1, s3, s4, s5);
+                  s1 = peg$c137(s1, s3, s4, s5);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -16516,11 +20020,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s3 = peg$parseCallExpression();
               if (s3 !== peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 63) {
-                  s4 = peg$c91;
+                  s4 = peg$c92;
                   peg$currPos++;
                 } else {
                   s4 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c92); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c93); }
                 }
                 if (s4 !== peg$FAILED) {
                   s5 = peg$currPos;
@@ -16543,7 +20047,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                     s6 = peg$parsestart();
                     if (s6 !== peg$FAILED) {
                       peg$reportedPos = s0;
-                      s1 = peg$c137(s1, s3, s4, s6);
+                      s1 = peg$c138(s1, s3, s4, s6);
                       s0 = s1;
                     } else {
                       peg$currPos = s0;
@@ -16583,7 +20087,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseCallExpression() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 174 + 62,
+      var key    = peg$currPos * 176 + 64,
           cached = peg$cache[key];
 
       if (cached) {
@@ -16610,7 +20114,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c138(s1, s2, s3);
+            s1 = peg$c139(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -16633,7 +20137,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetailCall() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 174 + 63,
+      var key    = peg$currPos * 176 + 65,
           cached = peg$cache[key];
 
       if (cached) {
@@ -16646,15 +20150,15 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 63) {
-          s3 = peg$c91;
+          s3 = peg$c92;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c92); }
+          if (peg$silentFails === 0) { peg$fail(peg$c93); }
         }
         if (s3 !== peg$FAILED) {
           peg$reportedPos = s2;
-          s3 = peg$c139();
+          s3 = peg$c140();
         }
         s2 = s3;
         if (s2 === peg$FAILED) {
@@ -16666,7 +20170,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$parsestart();
             if (s4 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c140(s2, s3, s4);
+              s1 = peg$c141(s2, s3, s4);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -16693,7 +20197,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetailMember() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 174 + 64,
+      var key    = peg$currPos * 176 + 66,
           cached = peg$cache[key];
 
       if (cached) {
@@ -16706,15 +20210,15 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 63) {
-          s3 = peg$c91;
+          s3 = peg$c92;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c92); }
+          if (peg$silentFails === 0) { peg$fail(peg$c93); }
         }
         if (s3 !== peg$FAILED) {
           peg$reportedPos = s2;
-          s3 = peg$c139();
+          s3 = peg$c140();
         }
         s2 = s3;
         if (s2 === peg$FAILED) {
@@ -16731,7 +20235,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           if (s3 !== peg$FAILED) {
             s4 = peg$parse_();
             if (s4 !== peg$FAILED) {
-              s5 = peg$parseAssignmentExpression();
+              s5 = peg$parseInlineExpression();
               if (s5 !== peg$FAILED) {
                 s6 = peg$parse_();
                 if (s6 !== peg$FAILED) {
@@ -16746,7 +20250,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                     s8 = peg$parsestart();
                     if (s8 !== peg$FAILED) {
                       peg$reportedPos = s0;
-                      s1 = peg$c141(s2, s5, s8);
+                      s1 = peg$c142(s2, s5, s8);
                       s0 = s1;
                     } else {
                       peg$currPos = s0;
@@ -16786,15 +20290,15 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         if (s1 !== peg$FAILED) {
           s2 = peg$currPos;
           if (input.charCodeAt(peg$currPos) === 63) {
-            s3 = peg$c91;
+            s3 = peg$c92;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c92); }
+            if (peg$silentFails === 0) { peg$fail(peg$c93); }
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s2;
-            s3 = peg$c139();
+            s3 = peg$c140();
           }
           s2 = s3;
           if (s2 === peg$FAILED) {
@@ -16816,7 +20320,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   s6 = peg$parsestart();
                   if (s6 !== peg$FAILED) {
                     peg$reportedPos = s0;
-                    s1 = peg$c142(s2, s5, s6);
+                    s1 = peg$c143(s2, s5, s6);
                     s0 = s1;
                   } else {
                     peg$currPos = s0;
@@ -16852,7 +20356,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsearguments() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 65,
+      var key    = peg$currPos * 176 + 67,
           cached = peg$cache[key];
 
       if (cached) {
@@ -16862,11 +20366,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 40) {
-        s1 = peg$c143;
+        s1 = peg$c144;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c144); }
+        if (peg$silentFails === 0) { peg$fail(peg$c145); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parseargumentList();
@@ -16875,15 +20379,15 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 41) {
-            s3 = peg$c145;
+            s3 = peg$c146;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c146); }
+            if (peg$silentFails === 0) { peg$fail(peg$c147); }
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c147(s2);
+            s1 = peg$c148(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -16906,7 +20410,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseargumentList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 66,
+      var key    = peg$currPos * 176 + 68,
           cached = peg$cache[key];
 
       if (cached) {
@@ -16915,7 +20419,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      s1 = peg$parseAssignmentExpression();
+      s1 = peg$parseInlineExpression();
       if (s1 !== peg$FAILED) {
         s2 = [];
         s3 = peg$currPos;
@@ -16931,10 +20435,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           if (s5 !== peg$FAILED) {
             s6 = peg$parse_();
             if (s6 !== peg$FAILED) {
-              s7 = peg$parseAssignmentExpression();
+              s7 = peg$parseInlineExpression();
               if (s7 !== peg$FAILED) {
                 peg$reportedPos = s3;
-                s4 = peg$c148(s7);
+                s4 = peg$c149(s7);
                 s3 = s4;
               } else {
                 peg$currPos = s3;
@@ -16967,10 +20471,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             if (s5 !== peg$FAILED) {
               s6 = peg$parse_();
               if (s6 !== peg$FAILED) {
-                s7 = peg$parseAssignmentExpression();
+                s7 = peg$parseInlineExpression();
                 if (s7 !== peg$FAILED) {
                   peg$reportedPos = s3;
-                  s4 = peg$c148(s7);
+                  s4 = peg$c149(s7);
                   s3 = s4;
                 } else {
                   peg$currPos = s3;
@@ -16991,7 +20495,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c149(s1, s2);
+          s1 = peg$c150(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -17010,7 +20514,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMemberExpression() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 174 + 67,
+      var key    = peg$currPos * 176 + 69,
           cached = peg$cache[key];
 
       if (cached) {
@@ -17043,7 +20547,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c138(s1, s2, s3);
+            s1 = peg$c139(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -17066,7 +20570,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseNewExpression() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 174 + 68,
+      var key    = peg$currPos * 176 + 70,
           cached = peg$cache[key];
 
       if (cached) {
@@ -17091,7 +20595,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                 s6 = peg$parsestart();
                 if (s6 !== peg$FAILED) {
                   peg$reportedPos = s0;
-                  s1 = peg$c150(s1, s4, s5, s6);
+                  s1 = peg$c151(s1, s4, s5, s6);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -17126,7 +20630,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseImportExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 69,
+      var key    = peg$currPos * 176 + 71,
           cached = peg$cache[key];
 
       if (cached) {
@@ -17143,59 +20647,8 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           if (s3 !== peg$FAILED) {
             s4 = peg$parseGroupExpression();
             if (s4 === peg$FAILED) {
-              s4 = peg$parseAssignmentExpression();
+              s4 = peg$parseInlineExpression();
             }
-            if (s4 !== peg$FAILED) {
-              s5 = peg$parsestart();
-              if (s5 !== peg$FAILED) {
-                peg$reportedPos = s0;
-                s1 = peg$c151(s1, s4, s5);
-                s0 = s1;
-              } else {
-                peg$currPos = s0;
-                s0 = peg$c0;
-              }
-            } else {
-              peg$currPos = s0;
-              s0 = peg$c0;
-            }
-          } else {
-            peg$currPos = s0;
-            s0 = peg$c0;
-          }
-        } else {
-          peg$currPos = s0;
-          s0 = peg$c0;
-        }
-      } else {
-        peg$currPos = s0;
-        s0 = peg$c0;
-      }
-
-      peg$cache[key] = { nextPos: peg$currPos, result: s0 };
-
-      return s0;
-    }
-
-    function peg$parseDoExpression() {
-      var s0, s1, s2, s3, s4, s5;
-
-      var key    = peg$currPos * 174 + 70,
-          cached = peg$cache[key];
-
-      if (cached) {
-        peg$currPos = cached.nextPos;
-        return cached.result;
-      }
-
-      s0 = peg$currPos;
-      s1 = peg$parsestart();
-      if (s1 !== peg$FAILED) {
-        s2 = peg$parsedo();
-        if (s2 !== peg$FAILED) {
-          s3 = peg$parse_();
-          if (s3 !== peg$FAILED) {
-            s4 = peg$parseExpression();
             if (s4 !== peg$FAILED) {
               s5 = peg$parsestart();
               if (s5 !== peg$FAILED) {
@@ -17228,10 +20681,61 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
+    function peg$parseDoExpression() {
+      var s0, s1, s2, s3, s4, s5;
+
+      var key    = peg$currPos * 176 + 72,
+          cached = peg$cache[key];
+
+      if (cached) {
+        peg$currPos = cached.nextPos;
+        return cached.result;
+      }
+
+      s0 = peg$currPos;
+      s1 = peg$parsestart();
+      if (s1 !== peg$FAILED) {
+        s2 = peg$parsedo();
+        if (s2 !== peg$FAILED) {
+          s3 = peg$parse_();
+          if (s3 !== peg$FAILED) {
+            s4 = peg$parseExpression();
+            if (s4 !== peg$FAILED) {
+              s5 = peg$parsestart();
+              if (s5 !== peg$FAILED) {
+                peg$reportedPos = s0;
+                s1 = peg$c153(s1, s4, s5);
+                s0 = s1;
+              } else {
+                peg$currPos = s0;
+                s0 = peg$c0;
+              }
+            } else {
+              peg$currPos = s0;
+              s0 = peg$c0;
+            }
+          } else {
+            peg$currPos = s0;
+            s0 = peg$c0;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$c0;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$c0;
+      }
+
+      peg$cache[key] = { nextPos: peg$currPos, result: s0 };
+
+      return s0;
+    }
+
     function peg$parseFunctionExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
-      var key    = peg$currPos * 174 + 71,
+      var key    = peg$currPos * 176 + 73,
           cached = peg$cache[key];
 
       if (cached) {
@@ -17264,37 +20768,37 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   s7 = peg$parse_();
                   if (s7 !== peg$FAILED) {
                     s8 = peg$currPos;
-                    if (input.substr(peg$currPos, 2) === peg$c153) {
-                      s9 = peg$c153;
+                    if (input.substr(peg$currPos, 2) === peg$c154) {
+                      s9 = peg$c154;
                       peg$currPos += 2;
                     } else {
                       s9 = peg$FAILED;
-                      if (peg$silentFails === 0) { peg$fail(peg$c154); }
+                      if (peg$silentFails === 0) { peg$fail(peg$c155); }
                     }
                     if (s9 !== peg$FAILED) {
                       peg$reportedPos = s8;
-                      s9 = peg$c155();
+                      s9 = peg$c156();
                     }
                     s8 = s9;
                     if (s8 === peg$FAILED) {
                       s8 = peg$currPos;
-                      if (input.substr(peg$currPos, 2) === peg$c156) {
-                        s9 = peg$c156;
+                      if (input.substr(peg$currPos, 2) === peg$c157) {
+                        s9 = peg$c157;
                         peg$currPos += 2;
                       } else {
                         s9 = peg$FAILED;
-                        if (peg$silentFails === 0) { peg$fail(peg$c157); }
+                        if (peg$silentFails === 0) { peg$fail(peg$c158); }
                       }
                       if (s9 !== peg$FAILED) {
                         peg$reportedPos = s8;
-                        s9 = peg$c158();
+                        s9 = peg$c159();
                       }
                       s8 = s9;
                     }
                     if (s8 !== peg$FAILED) {
                       s9 = peg$parse_();
                       if (s9 !== peg$FAILED) {
-                        s10 = peg$parseAssignmentExpression();
+                        s10 = peg$parseInlineExpression();
                         if (s10 === peg$FAILED) {
                           s10 = peg$parseThrowStatement();
                           if (s10 === peg$FAILED) {
@@ -17308,7 +20812,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                           s11 = peg$parsestart();
                           if (s11 !== peg$FAILED) {
                             peg$reportedPos = s0;
-                            s1 = peg$c159(s1, s2, s4, s6, s8, s10, s11);
+                            s1 = peg$c160(s1, s2, s4, s6, s8, s10, s11);
                             s0 = s1;
                           } else {
                             peg$currPos = s0;
@@ -17363,7 +20867,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseformalParameterList() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 72,
+      var key    = peg$currPos * 176 + 74,
           cached = peg$cache[key];
 
       if (cached) {
@@ -17373,11 +20877,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 40) {
-        s1 = peg$c143;
+        s1 = peg$c144;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c144); }
+        if (peg$silentFails === 0) { peg$fail(peg$c145); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parse_();
@@ -17390,15 +20894,15 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$parse_();
             if (s4 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 41) {
-                s5 = peg$c145;
+                s5 = peg$c146;
                 peg$currPos++;
               } else {
                 s5 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c146); }
+                if (peg$silentFails === 0) { peg$fail(peg$c147); }
               }
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c160(s3);
+                s1 = peg$c161(s3);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -17429,7 +20933,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseformalParameters() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 73,
+      var key    = peg$currPos * 176 + 75,
           cached = peg$cache[key];
 
       if (cached) {
@@ -17533,7 +21037,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseformalParameter() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 74,
+      var key    = peg$currPos * 176 + 76,
           cached = peg$cache[key];
 
       if (cached) {
@@ -17552,7 +21056,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c161(s1, s3);
+            s1 = peg$c162(s1, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -17575,7 +21079,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseformalParameterInitializer() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 75,
+      var key    = peg$currPos * 176 + 77,
           cached = peg$cache[key];
 
       if (cached) {
@@ -17594,7 +21098,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       if (s1 !== peg$FAILED) {
         s2 = peg$parse_();
         if (s2 !== peg$FAILED) {
-          s3 = peg$parseAssignmentExpression();
+          s3 = peg$parseInlineExpression();
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
             s1 = peg$c6(s3);
@@ -17620,7 +21124,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsePrimaryExpression() {
       var s0, s1;
 
-      var key    = peg$currPos * 174 + 76,
+      var key    = peg$currPos * 176 + 78,
           cached = peg$cache[key];
 
       if (cached) {
@@ -17654,7 +21158,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c162); }
+        if (peg$silentFails === 0) { peg$fail(peg$c163); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -17665,7 +21169,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseJavascriptExpression() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 174 + 77,
+      var key    = peg$currPos * 176 + 79,
           cached = peg$cache[key];
 
       if (cached) {
@@ -17677,11 +21181,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s1 = peg$parsestart();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 96) {
-          s2 = peg$c163;
+          s2 = peg$c164;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c164); }
+          if (peg$silentFails === 0) { peg$fail(peg$c165); }
         }
         if (s2 !== peg$FAILED) {
           s3 = [];
@@ -17689,11 +21193,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$currPos;
           peg$silentFails++;
           if (input.charCodeAt(peg$currPos) === 96) {
-            s6 = peg$c163;
+            s6 = peg$c164;
             peg$currPos++;
           } else {
             s6 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c164); }
+            if (peg$silentFails === 0) { peg$fail(peg$c165); }
           }
           peg$silentFails--;
           if (s6 === peg$FAILED) {
@@ -17708,7 +21212,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c165); }
+              if (peg$silentFails === 0) { peg$fail(peg$c166); }
             }
             if (s6 !== peg$FAILED) {
               s5 = [s5, s6];
@@ -17728,11 +21232,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s5 = peg$currPos;
               peg$silentFails++;
               if (input.charCodeAt(peg$currPos) === 96) {
-                s6 = peg$c163;
+                s6 = peg$c164;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c164); }
+                if (peg$silentFails === 0) { peg$fail(peg$c165); }
               }
               peg$silentFails--;
               if (s6 === peg$FAILED) {
@@ -17747,7 +21251,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c165); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c166); }
                 }
                 if (s6 !== peg$FAILED) {
                   s5 = [s5, s6];
@@ -17766,17 +21270,17 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 96) {
-              s4 = peg$c163;
+              s4 = peg$c164;
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c164); }
+              if (peg$silentFails === 0) { peg$fail(peg$c165); }
             }
             if (s4 !== peg$FAILED) {
               s5 = peg$parsestart();
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c166(s1, s3, s5);
+                s1 = peg$c167(s1, s3, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -17807,7 +21311,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseArrayLiteral() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 78,
+      var key    = peg$currPos * 176 + 80,
           cached = peg$cache[key];
 
       if (cached) {
@@ -17846,7 +21350,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   s7 = peg$parsestart();
                   if (s7 !== peg$FAILED) {
                     peg$reportedPos = s0;
-                    s1 = peg$c167(s1, s4, s7);
+                    s1 = peg$c168(s1, s4, s7);
                     s0 = s1;
                   } else {
                     peg$currPos = s0;
@@ -17885,7 +21389,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseelementList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 79,
+      var key    = peg$currPos * 176 + 81,
           cached = peg$cache[key];
 
       if (cached) {
@@ -17894,7 +21398,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      s1 = peg$parseAssignmentExpression();
+      s1 = peg$parseInlineExpression();
       if (s1 !== peg$FAILED) {
         s2 = [];
         s3 = peg$currPos;
@@ -17910,10 +21414,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           if (s5 !== peg$FAILED) {
             s6 = peg$parse_();
             if (s6 !== peg$FAILED) {
-              s7 = peg$parseAssignmentExpression();
+              s7 = peg$parseInlineExpression();
               if (s7 !== peg$FAILED) {
                 peg$reportedPos = s3;
-                s4 = peg$c168(s7);
+                s4 = peg$c169(s7);
                 s3 = s4;
               } else {
                 peg$currPos = s3;
@@ -17946,10 +21450,10 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             if (s5 !== peg$FAILED) {
               s6 = peg$parse_();
               if (s6 !== peg$FAILED) {
-                s7 = peg$parseAssignmentExpression();
+                s7 = peg$parseInlineExpression();
                 if (s7 !== peg$FAILED) {
                   peg$reportedPos = s3;
-                  s4 = peg$c168(s7);
+                  s4 = peg$c169(s7);
                   s3 = s4;
                 } else {
                   peg$currPos = s3;
@@ -17989,7 +21493,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseObjectLiteral() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 80,
+      var key    = peg$currPos * 176 + 82,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18001,11 +21505,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s1 = peg$parsestart();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 123) {
-          s2 = peg$c169;
+          s2 = peg$c170;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c170); }
+          if (peg$silentFails === 0) { peg$fail(peg$c171); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parse_();
@@ -18018,17 +21522,17 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s5 = peg$parse_();
               if (s5 !== peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 125) {
-                  s6 = peg$c171;
+                  s6 = peg$c172;
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c172); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c173); }
                 }
                 if (s6 !== peg$FAILED) {
                   s7 = peg$parsestart();
                   if (s7 !== peg$FAILED) {
                     peg$reportedPos = s0;
-                    s1 = peg$c173(s1, s4, s7);
+                    s1 = peg$c174(s1, s4, s7);
                     s0 = s1;
                   } else {
                     peg$currPos = s0;
@@ -18067,7 +21571,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsepropertyAssignmentList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 81,
+      var key    = peg$currPos * 176 + 83,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18095,7 +21599,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s7 = peg$parsepropertyAssignment();
               if (s7 !== peg$FAILED) {
                 peg$reportedPos = s3;
-                s4 = peg$c168(s7);
+                s4 = peg$c169(s7);
                 s3 = s4;
               } else {
                 peg$currPos = s3;
@@ -18131,7 +21635,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                 s7 = peg$parsepropertyAssignment();
                 if (s7 !== peg$FAILED) {
                   peg$reportedPos = s3;
-                  s4 = peg$c168(s7);
+                  s4 = peg$c169(s7);
                   s3 = s4;
                 } else {
                   peg$currPos = s3;
@@ -18171,7 +21675,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsepropertyAssignment() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 82,
+      var key    = peg$currPos * 176 + 84,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18189,7 +21693,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s3 = peg$parsestart();
             if (s3 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c174(s1, s2, s3);
+              s1 = peg$c175(s1, s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -18213,7 +21717,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseTypedObjectExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 83,
+      var key    = peg$currPos * 176 + 85,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18227,11 +21731,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         s2 = peg$currPos;
         peg$silentFails++;
         if (input.charCodeAt(peg$currPos) === 40) {
-          s3 = peg$c143;
+          s3 = peg$c144;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c144); }
+          if (peg$silentFails === 0) { peg$fail(peg$c145); }
         }
         peg$silentFails--;
         if (s3 === peg$FAILED) {
@@ -18241,14 +21745,14 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s2 = peg$c0;
         }
         if (s2 !== peg$FAILED) {
-          s3 = peg$parseAssignmentExpression();
+          s3 = peg$parseInlineExpression();
           if (s3 !== peg$FAILED) {
             s4 = peg$parseBlockStatement();
             if (s4 !== peg$FAILED) {
               s5 = peg$parsestart();
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c175(s1, s3, s4, s5);
+                s1 = peg$c176(s1, s3, s4, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -18279,7 +21783,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseImpliedObjectExpression() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 84,
+      var key    = peg$currPos * 176 + 86,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18295,7 +21799,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s3 = peg$parsestart();
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c176(s1, s2, s3);
+            s1 = peg$c177(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -18318,7 +21822,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseGroupExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 85,
+      var key    = peg$currPos * 176 + 87,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18329,29 +21833,29 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails++;
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 40) {
-        s1 = peg$c143;
+        s1 = peg$c144;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c144); }
+        if (peg$silentFails === 0) { peg$fail(peg$c145); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parse_();
         if (s2 !== peg$FAILED) {
-          s3 = peg$parseAssignmentExpression();
+          s3 = peg$parseInlineExpression();
           if (s3 !== peg$FAILED) {
             s4 = peg$parse_();
             if (s4 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 41) {
-                s5 = peg$c145;
+                s5 = peg$c146;
                 peg$currPos++;
               } else {
                 s5 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c146); }
+                if (peg$silentFails === 0) { peg$fail(peg$c147); }
               }
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c178(s3);
+                s1 = peg$c179(s3);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -18376,7 +21880,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c177); }
+        if (peg$silentFails === 0) { peg$fail(peg$c178); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -18387,7 +21891,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseIdentifier() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 174 + 86,
+      var key    = peg$currPos * 176 + 88,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18410,7 +21914,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         s2 = peg$parseIdentifierName();
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c179(s2);
+          s1 = peg$c180(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -18429,7 +21933,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseIdentifierName() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 87,
+      var key    = peg$currPos * 176 + 89,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18445,7 +21949,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s3 = peg$parsestart();
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c180(s1, s2, s3);
+            s1 = peg$c181(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -18468,7 +21972,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseThisExpression() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 174 + 88,
+      var key    = peg$currPos * 176 + 90,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18480,12 +21984,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s0 = peg$currPos;
       s1 = peg$parsestart();
       if (s1 !== peg$FAILED) {
-        if (input.substr(peg$currPos, 2) === peg$c182) {
-          s2 = peg$c182;
+        if (input.substr(peg$currPos, 2) === peg$c183) {
+          s2 = peg$c183;
           peg$currPos += 2;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c183); }
+          if (peg$silentFails === 0) { peg$fail(peg$c184); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parseIdentifierName();
@@ -18493,7 +21997,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$parsestart();
             if (s4 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c184(s1, s3, s4);
+              s1 = peg$c185(s1, s3, s4);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -18516,11 +22020,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         s1 = peg$parsestart();
         if (s1 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 64) {
-            s2 = peg$c185;
+            s2 = peg$c186;
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c186); }
+            if (peg$silentFails === 0) { peg$fail(peg$c187); }
           }
           if (s2 !== peg$FAILED) {
             s3 = peg$parseIdentifierName();
@@ -18528,7 +22032,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s4 = peg$parsestart();
               if (s4 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c187(s1, s3, s4);
+                s1 = peg$c188(s1, s3, s4);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -18550,18 +22054,18 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s0 = peg$currPos;
           s1 = peg$parsestart();
           if (s1 !== peg$FAILED) {
-            if (input.substr(peg$currPos, 2) === peg$c182) {
-              s2 = peg$c182;
+            if (input.substr(peg$currPos, 2) === peg$c183) {
+              s2 = peg$c183;
               peg$currPos += 2;
             } else {
               s2 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c183); }
+              if (peg$silentFails === 0) { peg$fail(peg$c184); }
             }
             if (s2 !== peg$FAILED) {
               s3 = peg$parsestart();
               if (s3 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c188(s1, s3);
+                s1 = peg$c189(s1, s3);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -18582,18 +22086,18 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s2 = peg$parsethis();
               if (s2 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 64) {
-                  s2 = peg$c185;
+                  s2 = peg$c186;
                   peg$currPos++;
                 } else {
                   s2 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c186); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c187); }
                 }
               }
               if (s2 !== peg$FAILED) {
                 s3 = peg$parsestart();
                 if (s3 !== peg$FAILED) {
                   peg$reportedPos = s0;
-                  s1 = peg$c189(s1, s3);
+                  s1 = peg$c190(s1, s3);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -18613,7 +22117,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c181); }
+        if (peg$silentFails === 0) { peg$fail(peg$c182); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -18624,7 +22128,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseStringOrNumberLiteral() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 174 + 89,
+      var key    = peg$currPos * 176 + 91,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18650,7 +22154,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         s2 = peg$parseLiteral();
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c179(s2);
+          s1 = peg$c180(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -18669,7 +22173,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseLiteral() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 90,
+      var key    = peg$currPos * 176 + 92,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18700,7 +22204,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s3 = peg$parsestart();
             if (s3 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c191(s1, s2, s3);
+              s1 = peg$c192(s1, s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -18723,7 +22227,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s3 = peg$parsestart();
               if (s3 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c192(s1, s3);
+                s1 = peg$c193(s1, s3);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -18742,7 +22246,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c190); }
+        if (peg$silentFails === 0) { peg$fail(peg$c191); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -18753,7 +22257,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsestart() {
       var s0, s1;
 
-      var key    = peg$currPos * 174 + 91,
+      var key    = peg$currPos * 176 + 93,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18763,37 +22267,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       peg$reportedPos = peg$currPos;
-      s1 = peg$c139();
-      if (s1) {
-        s1 = peg$c15;
-      } else {
-        s1 = peg$c0;
-      }
-      if (s1 !== peg$FAILED) {
-        peg$reportedPos = s0;
-        s1 = peg$c193();
-      }
-      s0 = s1;
-
-      peg$cache[key] = { nextPos: peg$currPos, result: s0 };
-
-      return s0;
-    }
-
-    function peg$parseoffset() {
-      var s0, s1;
-
-      var key    = peg$currPos * 174 + 92,
-          cached = peg$cache[key];
-
-      if (cached) {
-        peg$currPos = cached.nextPos;
-        return cached.result;
-      }
-
-      s0 = peg$currPos;
-      peg$reportedPos = peg$currPos;
-      s1 = peg$c139();
+      s1 = peg$c140();
       if (s1) {
         s1 = peg$c15;
       } else {
@@ -18810,10 +22284,40 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
+    function peg$parseoffset() {
+      var s0, s1;
+
+      var key    = peg$currPos * 176 + 94,
+          cached = peg$cache[key];
+
+      if (cached) {
+        peg$currPos = cached.nextPos;
+        return cached.result;
+      }
+
+      s0 = peg$currPos;
+      peg$reportedPos = peg$currPos;
+      s1 = peg$c140();
+      if (s1) {
+        s1 = peg$c15;
+      } else {
+        s1 = peg$c0;
+      }
+      if (s1 !== peg$FAILED) {
+        peg$reportedPos = s0;
+        s1 = peg$c195();
+      }
+      s0 = s1;
+
+      peg$cache[key] = { nextPos: peg$currPos, result: s0 };
+
+      return s0;
+    }
+
     function peg$parseboolean() {
       var s0;
 
-      var key    = peg$currPos * 174 + 93,
+      var key    = peg$currPos * 176 + 95,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18834,7 +22338,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseregex() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 174 + 94,
+      var key    = peg$currPos * 176 + 96,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18844,27 +22348,27 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 47) {
-        s1 = peg$c123;
+        s1 = peg$c124;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c124); }
+        if (peg$silentFails === 0) { peg$fail(peg$c125); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parseregexBody();
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 47) {
-            s3 = peg$c123;
+            s3 = peg$c124;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c124); }
+            if (peg$silentFails === 0) { peg$fail(peg$c125); }
           }
           if (s3 !== peg$FAILED) {
             s4 = peg$parseregexOptions();
             if (s4 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c195(s2, s4);
+              s1 = peg$c196(s2, s4);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -18891,7 +22395,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseregexBody() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 174 + 95,
+      var key    = peg$currPos * 176 + 97,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18903,11 +22407,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s1 = [];
       s2 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 92) {
-        s3 = peg$c196;
+        s3 = peg$c197;
         peg$currPos++;
       } else {
         s3 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c197); }
+        if (peg$silentFails === 0) { peg$fail(peg$c198); }
       }
       if (s3 !== peg$FAILED) {
         if (input.length > peg$currPos) {
@@ -18915,7 +22419,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c165); }
+          if (peg$silentFails === 0) { peg$fail(peg$c166); }
         }
         if (s4 !== peg$FAILED) {
           s3 = [s3, s4];
@@ -18929,23 +22433,23 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         s2 = peg$c0;
       }
       if (s2 === peg$FAILED) {
-        if (peg$c198.test(input.charAt(peg$currPos))) {
+        if (peg$c199.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c199); }
+          if (peg$silentFails === 0) { peg$fail(peg$c200); }
         }
       }
       while (s2 !== peg$FAILED) {
         s1.push(s2);
         s2 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 92) {
-          s3 = peg$c196;
+          s3 = peg$c197;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c197); }
+          if (peg$silentFails === 0) { peg$fail(peg$c198); }
         }
         if (s3 !== peg$FAILED) {
           if (input.length > peg$currPos) {
@@ -18953,7 +22457,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c165); }
+            if (peg$silentFails === 0) { peg$fail(peg$c166); }
           }
           if (s4 !== peg$FAILED) {
             s3 = [s3, s4];
@@ -18967,12 +22471,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s2 = peg$c0;
         }
         if (s2 === peg$FAILED) {
-          if (peg$c198.test(input.charAt(peg$currPos))) {
+          if (peg$c199.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c199); }
+            if (peg$silentFails === 0) { peg$fail(peg$c200); }
           }
         }
       }
@@ -18989,7 +22493,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseregexOptions() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 174 + 96,
+      var key    = peg$currPos * 176 + 98,
           cached = peg$cache[key];
 
       if (cached) {
@@ -18999,21 +22503,21 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       s1 = [];
-      if (peg$c200.test(input.charAt(peg$currPos))) {
+      if (peg$c201.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c201); }
+        if (peg$silentFails === 0) { peg$fail(peg$c202); }
       }
       while (s2 !== peg$FAILED) {
         s1.push(s2);
-        if (peg$c200.test(input.charAt(peg$currPos))) {
+        if (peg$c201.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c201); }
+          if (peg$silentFails === 0) { peg$fail(peg$c202); }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -19029,7 +22533,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsesimpleString() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
-      var key    = peg$currPos * 174 + 97,
+      var key    = peg$currPos * 176 + 99,
           cached = peg$cache[key];
 
       if (cached) {
@@ -19039,38 +22543,38 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 39) {
-        s1 = peg$c202;
+        s1 = peg$c203;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c203); }
+        if (peg$silentFails === 0) { peg$fail(peg$c204); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
         s3 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 92) {
-          s4 = peg$c196;
+          s4 = peg$c197;
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c197); }
+          if (peg$silentFails === 0) { peg$fail(peg$c198); }
         }
         if (s4 !== peg$FAILED) {
-          if (peg$c204.test(input.charAt(peg$currPos))) {
+          if (peg$c205.test(input.charAt(peg$currPos))) {
             s5 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s5 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c205); }
+            if (peg$silentFails === 0) { peg$fail(peg$c206); }
           }
           if (s5 === peg$FAILED) {
             s5 = peg$currPos;
             if (input.charCodeAt(peg$currPos) === 117) {
-              s6 = peg$c206;
+              s6 = peg$c207;
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c207); }
+              if (peg$silentFails === 0) { peg$fail(peg$c208); }
             }
             if (s6 !== peg$FAILED) {
               s7 = peg$parsehexDigit();
@@ -19116,40 +22620,40 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s3 = peg$c0;
         }
         if (s3 === peg$FAILED) {
-          if (peg$c208.test(input.charAt(peg$currPos))) {
+          if (peg$c209.test(input.charAt(peg$currPos))) {
             s3 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c209); }
+            if (peg$silentFails === 0) { peg$fail(peg$c210); }
           }
         }
         while (s3 !== peg$FAILED) {
           s2.push(s3);
           s3 = peg$currPos;
           if (input.charCodeAt(peg$currPos) === 92) {
-            s4 = peg$c196;
+            s4 = peg$c197;
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c197); }
+            if (peg$silentFails === 0) { peg$fail(peg$c198); }
           }
           if (s4 !== peg$FAILED) {
-            if (peg$c204.test(input.charAt(peg$currPos))) {
+            if (peg$c205.test(input.charAt(peg$currPos))) {
               s5 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s5 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c205); }
+              if (peg$silentFails === 0) { peg$fail(peg$c206); }
             }
             if (s5 === peg$FAILED) {
               s5 = peg$currPos;
               if (input.charCodeAt(peg$currPos) === 117) {
-                s6 = peg$c206;
+                s6 = peg$c207;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c207); }
+                if (peg$silentFails === 0) { peg$fail(peg$c208); }
               }
               if (s6 !== peg$FAILED) {
                 s7 = peg$parsehexDigit();
@@ -19195,26 +22699,26 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s3 = peg$c0;
           }
           if (s3 === peg$FAILED) {
-            if (peg$c208.test(input.charAt(peg$currPos))) {
+            if (peg$c209.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c209); }
+              if (peg$silentFails === 0) { peg$fail(peg$c210); }
             }
           }
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 39) {
-            s3 = peg$c202;
+            s3 = peg$c203;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c203); }
+            if (peg$silentFails === 0) { peg$fail(peg$c204); }
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c210();
+            s1 = peg$c211();
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -19231,38 +22735,38 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 34) {
-          s1 = peg$c211;
+          s1 = peg$c212;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c212); }
+          if (peg$silentFails === 0) { peg$fail(peg$c213); }
         }
         if (s1 !== peg$FAILED) {
           s2 = [];
           s3 = peg$currPos;
           if (input.charCodeAt(peg$currPos) === 92) {
-            s4 = peg$c196;
+            s4 = peg$c197;
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c197); }
+            if (peg$silentFails === 0) { peg$fail(peg$c198); }
           }
           if (s4 !== peg$FAILED) {
-            if (peg$c213.test(input.charAt(peg$currPos))) {
+            if (peg$c214.test(input.charAt(peg$currPos))) {
               s5 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s5 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c214); }
+              if (peg$silentFails === 0) { peg$fail(peg$c215); }
             }
             if (s5 === peg$FAILED) {
               s5 = peg$currPos;
               if (input.charCodeAt(peg$currPos) === 117) {
-                s6 = peg$c206;
+                s6 = peg$c207;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c207); }
+                if (peg$silentFails === 0) { peg$fail(peg$c208); }
               }
               if (s6 !== peg$FAILED) {
                 s7 = peg$parsehexDigit();
@@ -19308,40 +22812,40 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s3 = peg$c0;
           }
           if (s3 === peg$FAILED) {
-            if (peg$c215.test(input.charAt(peg$currPos))) {
+            if (peg$c216.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c216); }
+              if (peg$silentFails === 0) { peg$fail(peg$c217); }
             }
           }
           while (s3 !== peg$FAILED) {
             s2.push(s3);
             s3 = peg$currPos;
             if (input.charCodeAt(peg$currPos) === 92) {
-              s4 = peg$c196;
+              s4 = peg$c197;
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c197); }
+              if (peg$silentFails === 0) { peg$fail(peg$c198); }
             }
             if (s4 !== peg$FAILED) {
-              if (peg$c213.test(input.charAt(peg$currPos))) {
+              if (peg$c214.test(input.charAt(peg$currPos))) {
                 s5 = input.charAt(peg$currPos);
                 peg$currPos++;
               } else {
                 s5 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c214); }
+                if (peg$silentFails === 0) { peg$fail(peg$c215); }
               }
               if (s5 === peg$FAILED) {
                 s5 = peg$currPos;
                 if (input.charCodeAt(peg$currPos) === 117) {
-                  s6 = peg$c206;
+                  s6 = peg$c207;
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c207); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c208); }
                 }
                 if (s6 !== peg$FAILED) {
                   s7 = peg$parsehexDigit();
@@ -19387,26 +22891,26 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s3 = peg$c0;
             }
             if (s3 === peg$FAILED) {
-              if (peg$c215.test(input.charAt(peg$currPos))) {
+              if (peg$c216.test(input.charAt(peg$currPos))) {
                 s3 = input.charAt(peg$currPos);
                 peg$currPos++;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c216); }
+                if (peg$silentFails === 0) { peg$fail(peg$c217); }
               }
             }
           }
           if (s2 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 34) {
-              s3 = peg$c211;
+              s3 = peg$c212;
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c212); }
+              if (peg$silentFails === 0) { peg$fail(peg$c213); }
             }
             if (s3 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c210();
+              s1 = peg$c211();
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -19430,7 +22934,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineStringTemplate() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 98,
+      var key    = peg$currPos * 176 + 100,
           cached = peg$cache[key];
 
       if (cached) {
@@ -19441,12 +22945,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s0 = peg$currPos;
       s1 = peg$parsestart();
       if (s1 !== peg$FAILED) {
-        if (input.substr(peg$currPos, 2) === peg$c217) {
-          s2 = peg$c217;
+        if (input.substr(peg$currPos, 2) === peg$c218) {
+          s2 = peg$c218;
           peg$currPos += 2;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c218); }
+          if (peg$silentFails === 0) { peg$fail(peg$c219); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parseeol();
@@ -19456,7 +22960,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s5 = peg$parsestart();
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c219(s1, s4, s5);
+                s1 = peg$c220(s1, s4, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -19487,7 +22991,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringTemplateContent() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 99,
+      var key    = peg$currPos * 176 + 101,
           cached = peg$cache[key];
 
       if (cached) {
@@ -19514,7 +23018,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s3 = peg$parseoutdent();
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c220(s2);
+            s1 = peg$c221(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -19537,7 +23041,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringTemplateLine() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 100,
+      var key    = peg$currPos * 176 + 102,
           cached = peg$cache[key];
 
       if (cached) {
@@ -19597,7 +23101,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringTemplatePart() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 174 + 101,
+      var key    = peg$currPos * 176 + 103,
           cached = peg$cache[key];
 
       if (cached) {
@@ -19615,12 +23119,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         s3 = peg$currPos;
         s4 = peg$currPos;
         peg$silentFails++;
-        if (input.substr(peg$currPos, 2) === peg$c221) {
-          s5 = peg$c221;
+        if (input.substr(peg$currPos, 2) === peg$c222) {
+          s5 = peg$c222;
           peg$currPos += 2;
         } else {
           s5 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c222); }
+          if (peg$silentFails === 0) { peg$fail(peg$c223); }
         }
         peg$silentFails--;
         if (s5 === peg$FAILED) {
@@ -19646,7 +23150,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c165); }
+              if (peg$silentFails === 0) { peg$fail(peg$c166); }
             }
             if (s6 !== peg$FAILED) {
               s4 = [s4, s5, s6];
@@ -19669,12 +23173,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s3 = peg$currPos;
             s4 = peg$currPos;
             peg$silentFails++;
-            if (input.substr(peg$currPos, 2) === peg$c221) {
-              s5 = peg$c221;
+            if (input.substr(peg$currPos, 2) === peg$c222) {
+              s5 = peg$c222;
               peg$currPos += 2;
             } else {
               s5 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c222); }
+              if (peg$silentFails === 0) { peg$fail(peg$c223); }
             }
             peg$silentFails--;
             if (s5 === peg$FAILED) {
@@ -19700,7 +23204,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c165); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c166); }
                 }
                 if (s6 !== peg$FAILED) {
                   s4 = [s4, s5, s6];
@@ -19723,7 +23227,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c223();
+          s1 = peg$c224();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -19742,7 +23246,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineStringLiteral() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 102,
+      var key    = peg$currPos * 176 + 104,
           cached = peg$cache[key];
 
       if (cached) {
@@ -19753,12 +23257,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s0 = peg$currPos;
       s1 = peg$parsestart();
       if (s1 !== peg$FAILED) {
-        if (input.substr(peg$currPos, 2) === peg$c224) {
-          s2 = peg$c224;
+        if (input.substr(peg$currPos, 2) === peg$c225) {
+          s2 = peg$c225;
           peg$currPos += 2;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c225); }
+          if (peg$silentFails === 0) { peg$fail(peg$c226); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parseeol();
@@ -19768,7 +23272,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s5 = peg$parsestart();
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c219(s1, s4, s5);
+                s1 = peg$c220(s1, s4, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -19799,7 +23303,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringLiteralContent() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 103,
+      var key    = peg$currPos * 176 + 105,
           cached = peg$cache[key];
 
       if (cached) {
@@ -19826,7 +23330,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s3 = peg$parseoutdent();
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c220(s2);
+            s1 = peg$c221(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -19849,7 +23353,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringLiteralLine() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 104,
+      var key    = peg$currPos * 176 + 106,
           cached = peg$cache[key];
 
       if (cached) {
@@ -19903,7 +23407,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                 peg$currPos++;
               } else {
                 s7 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c165); }
+                if (peg$silentFails === 0) { peg$fail(peg$c166); }
               }
               if (s7 !== peg$FAILED) {
                 s6 = [s6, s7];
@@ -19936,7 +23440,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                     peg$currPos++;
                   } else {
                     s7 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c165); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c166); }
                   }
                   if (s7 !== peg$FAILED) {
                     s6 = [s6, s7];
@@ -19955,7 +23459,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             }
             if (s4 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c223();
+              s1 = peg$c224();
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -19982,7 +23486,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsestringInterpolation() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 105,
+      var key    = peg$currPos * 176 + 107,
           cached = peg$cache[key];
 
       if (cached) {
@@ -19991,30 +23495,30 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c221) {
-        s1 = peg$c221;
+      if (input.substr(peg$currPos, 2) === peg$c222) {
+        s1 = peg$c222;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c222); }
+        if (peg$silentFails === 0) { peg$fail(peg$c223); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parse_();
         if (s2 !== peg$FAILED) {
-          s3 = peg$parseAssignmentExpression();
+          s3 = peg$parseInlineExpression();
           if (s3 !== peg$FAILED) {
             s4 = peg$parse_();
             if (s4 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c226) {
-                s5 = peg$c226;
+              if (input.substr(peg$currPos, 2) === peg$c227) {
+                s5 = peg$c227;
                 peg$currPos += 2;
               } else {
                 s5 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c227); }
+                if (peg$silentFails === 0) { peg$fail(peg$c228); }
               }
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c178(s3);
+                s1 = peg$c179(s3);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -20045,7 +23549,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseStringTemplate() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 106,
+      var key    = peg$currPos * 176 + 108,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20055,11 +23559,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 34) {
-        s1 = peg$c211;
+        s1 = peg$c212;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c212); }
+        if (peg$silentFails === 0) { peg$fail(peg$c213); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
@@ -20076,15 +23580,15 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 34) {
-            s3 = peg$c211;
+            s3 = peg$c212;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c212); }
+            if (peg$silentFails === 0) { peg$fail(peg$c213); }
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c228(s2);
+            s1 = peg$c229(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -20107,7 +23611,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsestringTemplateChars() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 174 + 107,
+      var key    = peg$currPos * 176 + 109,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20128,7 +23632,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
       if (s1 !== peg$FAILED) {
         peg$reportedPos = s0;
-        s1 = peg$c229();
+        s1 = peg$c230();
       }
       s0 = s1;
 
@@ -20140,7 +23644,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsestringTemplateChar() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 108,
+      var key    = peg$currPos * 176 + 110,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20150,19 +23654,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 92) {
-        s1 = peg$c196;
+        s1 = peg$c197;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c197); }
+        if (peg$silentFails === 0) { peg$fail(peg$c198); }
       }
       if (s1 !== peg$FAILED) {
-        if (peg$c213.test(input.charAt(peg$currPos))) {
+        if (peg$c214.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c214); }
+          if (peg$silentFails === 0) { peg$fail(peg$c215); }
         }
         if (s2 !== peg$FAILED) {
           s1 = [s1, s2];
@@ -20178,11 +23682,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 117) {
-          s1 = peg$c206;
+          s1 = peg$c207;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c207); }
+          if (peg$silentFails === 0) { peg$fail(peg$c208); }
         }
         if (s1 !== peg$FAILED) {
           s2 = peg$parsehexDigit();
@@ -20220,12 +23724,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         s0 = peg$currPos;
         s1 = peg$currPos;
         peg$silentFails++;
-        if (input.substr(peg$currPos, 2) === peg$c221) {
-          s2 = peg$c221;
+        if (input.substr(peg$currPos, 2) === peg$c222) {
+          s2 = peg$c222;
           peg$currPos += 2;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c222); }
+          if (peg$silentFails === 0) { peg$fail(peg$c223); }
         }
         peg$silentFails--;
         if (s2 === peg$FAILED) {
@@ -20235,12 +23739,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s1 = peg$c0;
         }
         if (s1 !== peg$FAILED) {
-          if (peg$c215.test(input.charAt(peg$currPos))) {
+          if (peg$c216.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c216); }
+            if (peg$silentFails === 0) { peg$fail(peg$c217); }
           }
           if (s2 !== peg$FAILED) {
             s1 = [s1, s2];
@@ -20263,7 +23767,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenumber() {
       var s0;
 
-      var key    = peg$currPos * 174 + 109,
+      var key    = peg$currPos * 176 + 111,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20284,7 +23788,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedecimal() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 110,
+      var key    = peg$currPos * 176 + 112,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20293,12 +23797,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (peg$c230.test(input.charAt(peg$currPos))) {
+      if (peg$c231.test(input.charAt(peg$currPos))) {
         s1 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c231); }
+        if (peg$silentFails === 0) { peg$fail(peg$c232); }
       }
       if (s1 === peg$FAILED) {
         s1 = peg$c3;
@@ -20385,20 +23889,20 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$currPos;
-          if (peg$c232.test(input.charAt(peg$currPos))) {
+          if (peg$c233.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c233); }
+            if (peg$silentFails === 0) { peg$fail(peg$c234); }
           }
           if (s4 !== peg$FAILED) {
-            if (peg$c230.test(input.charAt(peg$currPos))) {
+            if (peg$c231.test(input.charAt(peg$currPos))) {
               s5 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s5 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c231); }
+              if (peg$silentFails === 0) { peg$fail(peg$c232); }
             }
             if (s5 === peg$FAILED) {
               s5 = peg$c3;
@@ -20445,7 +23949,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             }
             if (s4 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c234();
+              s1 = peg$c235();
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -20472,7 +23976,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseinteger() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 174 + 111,
+      var key    = peg$currPos * 176 + 113,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20481,12 +23985,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (peg$c230.test(input.charAt(peg$currPos))) {
+      if (peg$c231.test(input.charAt(peg$currPos))) {
         s1 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c231); }
+        if (peg$silentFails === 0) { peg$fail(peg$c232); }
       }
       if (s1 === peg$FAILED) {
         s1 = peg$c3;
@@ -20506,7 +24010,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c235();
+            s1 = peg$c236();
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -20529,7 +24033,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedecimalDigit() {
       var s0;
 
-      var key    = peg$currPos * 174 + 112,
+      var key    = peg$currPos * 176 + 114,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20537,12 +24041,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         return cached.result;
       }
 
-      if (peg$c236.test(input.charAt(peg$currPos))) {
+      if (peg$c237.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c237); }
+        if (peg$silentFails === 0) { peg$fail(peg$c238); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -20553,7 +24057,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenonzeroDigit() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 174 + 113,
+      var key    = peg$currPos * 176 + 115,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20565,11 +24069,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s1 = peg$currPos;
       peg$silentFails++;
       if (input.charCodeAt(peg$currPos) === 48) {
-        s2 = peg$c238;
+        s2 = peg$c239;
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c239); }
+        if (peg$silentFails === 0) { peg$fail(peg$c240); }
       }
       peg$silentFails--;
       if (s2 === peg$FAILED) {
@@ -20600,7 +24104,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedecimalInteger() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 114,
+      var key    = peg$currPos * 176 + 116,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20609,11 +24113,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       if (input.charCodeAt(peg$currPos) === 48) {
-        s0 = peg$c238;
+        s0 = peg$c239;
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c239); }
+        if (peg$silentFails === 0) { peg$fail(peg$c240); }
       }
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
@@ -20646,7 +24150,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsehexInteger() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 115,
+      var key    = peg$currPos * 176 + 117,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20655,12 +24159,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c240) {
-        s1 = peg$c240;
+      if (input.substr(peg$currPos, 2) === peg$c241) {
+        s1 = peg$c241;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c241); }
+        if (peg$silentFails === 0) { peg$fail(peg$c242); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
@@ -20675,7 +24179,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c242();
+          s1 = peg$c243();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -20694,7 +24198,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsehexDigit() {
       var s0;
 
-      var key    = peg$currPos * 174 + 116,
+      var key    = peg$currPos * 176 + 118,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20702,12 +24206,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         return cached.result;
       }
 
-      if (peg$c243.test(input.charAt(peg$currPos))) {
+      if (peg$c244.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c244); }
+        if (peg$silentFails === 0) { peg$fail(peg$c245); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -20718,7 +24222,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseidentifier() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 117,
+      var key    = peg$currPos * 176 + 119,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20759,7 +24263,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c245); }
+        if (peg$silentFails === 0) { peg$fail(peg$c246); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -20770,7 +24274,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseidentifierName() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 174 + 118,
+      var key    = peg$currPos * 176 + 120,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20807,7 +24311,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c246); }
+        if (peg$silentFails === 0) { peg$fail(peg$c247); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -20818,7 +24322,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseidentifierStart() {
       var s0;
 
-      var key    = peg$currPos * 174 + 119,
+      var key    = peg$currPos * 176 + 121,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20828,12 +24332,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$parseunicodeLetter();
       if (s0 === peg$FAILED) {
-        if (peg$c247.test(input.charAt(peg$currPos))) {
+        if (peg$c248.test(input.charAt(peg$currPos))) {
           s0 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s0 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c248); }
+          if (peg$silentFails === 0) { peg$fail(peg$c249); }
         }
         if (s0 === peg$FAILED) {
           s0 = peg$parseunicodeEscapeSequence();
@@ -20848,7 +24352,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseidentifierPart() {
       var s0;
 
-      var key    = peg$currPos * 174 + 120,
+      var key    = peg$currPos * 176 + 122,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20881,7 +24385,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeEscapeSequence() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 174 + 121,
+      var key    = peg$currPos * 176 + 123,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20890,12 +24394,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c249) {
-        s1 = peg$c249;
+      if (input.substr(peg$currPos, 2) === peg$c250) {
+        s1 = peg$c250;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c250); }
+        if (peg$silentFails === 0) { peg$fail(peg$c251); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsehexDigit();
@@ -20907,7 +24411,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s5 = peg$parsehexDigit();
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c251(s2, s3, s4, s5);
+                s1 = peg$c252(s2, s3, s4, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -20938,7 +24442,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeLetter() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 174 + 122,
+      var key    = peg$currPos * 176 + 124,
           cached = peg$cache[key];
 
       if (cached) {
@@ -20946,29 +24450,29 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         return cached.result;
       }
 
-      if (peg$c252.test(input.charAt(peg$currPos))) {
+      if (peg$c253.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c253); }
+        if (peg$silentFails === 0) { peg$fail(peg$c254); }
       }
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 55340) {
-          s1 = peg$c254;
+          s1 = peg$c255;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c255); }
+          if (peg$silentFails === 0) { peg$fail(peg$c256); }
         }
         if (s1 !== peg$FAILED) {
-          if (peg$c256.test(input.charAt(peg$currPos))) {
+          if (peg$c257.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c257); }
+            if (peg$silentFails === 0) { peg$fail(peg$c258); }
           }
           if (s2 !== peg$FAILED) {
             s1 = [s1, s2];
@@ -20984,19 +24488,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         if (s0 === peg$FAILED) {
           s0 = peg$currPos;
           if (input.charCodeAt(peg$currPos) === 55304) {
-            s1 = peg$c258;
+            s1 = peg$c259;
             peg$currPos++;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c259); }
+            if (peg$silentFails === 0) { peg$fail(peg$c260); }
           }
           if (s1 !== peg$FAILED) {
-            if (peg$c260.test(input.charAt(peg$currPos))) {
+            if (peg$c261.test(input.charAt(peg$currPos))) {
               s2 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s2 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c261); }
+              if (peg$silentFails === 0) { peg$fail(peg$c262); }
             }
             if (s2 !== peg$FAILED) {
               s1 = [s1, s2];
@@ -21012,19 +24516,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           if (s0 === peg$FAILED) {
             s0 = peg$currPos;
             if (input.charCodeAt(peg$currPos) === 55401) {
-              s1 = peg$c262;
+              s1 = peg$c263;
               peg$currPos++;
             } else {
               s1 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c263); }
+              if (peg$silentFails === 0) { peg$fail(peg$c264); }
             }
             if (s1 !== peg$FAILED) {
-              if (peg$c264.test(input.charAt(peg$currPos))) {
+              if (peg$c265.test(input.charAt(peg$currPos))) {
                 s2 = input.charAt(peg$currPos);
                 peg$currPos++;
               } else {
                 s2 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c265); }
+                if (peg$silentFails === 0) { peg$fail(peg$c266); }
               }
               if (s2 !== peg$FAILED) {
                 s1 = [s1, s2];
@@ -21040,19 +24544,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             if (s0 === peg$FAILED) {
               s0 = peg$currPos;
               if (input.charCodeAt(peg$currPos) === 55305) {
-                s1 = peg$c266;
+                s1 = peg$c267;
                 peg$currPos++;
               } else {
                 s1 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c267); }
+                if (peg$silentFails === 0) { peg$fail(peg$c268); }
               }
               if (s1 !== peg$FAILED) {
-                if (peg$c268.test(input.charAt(peg$currPos))) {
+                if (peg$c269.test(input.charAt(peg$currPos))) {
                   s2 = input.charAt(peg$currPos);
                   peg$currPos++;
                 } else {
                   s2 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c269); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c270); }
                 }
                 if (s2 !== peg$FAILED) {
                   s1 = [s1, s2];
@@ -21068,19 +24572,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               if (s0 === peg$FAILED) {
                 s0 = peg$currPos;
                 if (input.charCodeAt(peg$currPos) === 55349) {
-                  s1 = peg$c270;
+                  s1 = peg$c271;
                   peg$currPos++;
                 } else {
                   s1 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c271); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c272); }
                 }
                 if (s1 !== peg$FAILED) {
-                  if (peg$c272.test(input.charAt(peg$currPos))) {
+                  if (peg$c273.test(input.charAt(peg$currPos))) {
                     s2 = input.charAt(peg$currPos);
                     peg$currPos++;
                   } else {
                     s2 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c273); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c274); }
                   }
                   if (s2 !== peg$FAILED) {
                     s1 = [s1, s2];
@@ -21096,19 +24600,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                 if (s0 === peg$FAILED) {
                   s0 = peg$currPos;
                   if (input.charCodeAt(peg$currPos) === 55300) {
-                    s1 = peg$c274;
+                    s1 = peg$c275;
                     peg$currPos++;
                   } else {
                     s1 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c275); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c276); }
                   }
                   if (s1 !== peg$FAILED) {
-                    if (peg$c276.test(input.charAt(peg$currPos))) {
+                    if (peg$c277.test(input.charAt(peg$currPos))) {
                       s2 = input.charAt(peg$currPos);
                       peg$currPos++;
                     } else {
                       s2 = peg$FAILED;
-                      if (peg$silentFails === 0) { peg$fail(peg$c277); }
+                      if (peg$silentFails === 0) { peg$fail(peg$c278); }
                     }
                     if (s2 !== peg$FAILED) {
                       s1 = [s1, s2];
@@ -21124,19 +24628,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   if (s0 === peg$FAILED) {
                     s0 = peg$currPos;
                     if (input.charCodeAt(peg$currPos) === 55296) {
-                      s1 = peg$c278;
+                      s1 = peg$c279;
                       peg$currPos++;
                     } else {
                       s1 = peg$FAILED;
-                      if (peg$silentFails === 0) { peg$fail(peg$c279); }
+                      if (peg$silentFails === 0) { peg$fail(peg$c280); }
                     }
                     if (s1 !== peg$FAILED) {
-                      if (peg$c280.test(input.charAt(peg$currPos))) {
+                      if (peg$c281.test(input.charAt(peg$currPos))) {
                         s2 = input.charAt(peg$currPos);
                         peg$currPos++;
                       } else {
                         s2 = peg$FAILED;
-                        if (peg$silentFails === 0) { peg$fail(peg$c281); }
+                        if (peg$silentFails === 0) { peg$fail(peg$c282); }
                       }
                       if (s2 !== peg$FAILED) {
                         s1 = [s1, s2];
@@ -21152,19 +24656,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                     if (s0 === peg$FAILED) {
                       s0 = peg$currPos;
                       if (input.charCodeAt(peg$currPos) === 55308) {
-                        s1 = peg$c282;
+                        s1 = peg$c283;
                         peg$currPos++;
                       } else {
                         s1 = peg$FAILED;
-                        if (peg$silentFails === 0) { peg$fail(peg$c283); }
+                        if (peg$silentFails === 0) { peg$fail(peg$c284); }
                       }
                       if (s1 !== peg$FAILED) {
-                        if (peg$c284.test(input.charAt(peg$currPos))) {
+                        if (peg$c285.test(input.charAt(peg$currPos))) {
                           s2 = input.charAt(peg$currPos);
                           peg$currPos++;
                         } else {
                           s2 = peg$FAILED;
-                          if (peg$silentFails === 0) { peg$fail(peg$c285); }
+                          if (peg$silentFails === 0) { peg$fail(peg$c286); }
                         }
                         if (s2 !== peg$FAILED) {
                           s1 = [s1, s2];
@@ -21180,19 +24684,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                       if (s0 === peg$FAILED) {
                         s0 = peg$currPos;
                         if (input.charCodeAt(peg$currPos) === 55297) {
-                          s1 = peg$c286;
+                          s1 = peg$c287;
                           peg$currPos++;
                         } else {
                           s1 = peg$FAILED;
-                          if (peg$silentFails === 0) { peg$fail(peg$c287); }
+                          if (peg$silentFails === 0) { peg$fail(peg$c288); }
                         }
                         if (s1 !== peg$FAILED) {
-                          if (peg$c288.test(input.charAt(peg$currPos))) {
+                          if (peg$c289.test(input.charAt(peg$currPos))) {
                             s2 = input.charAt(peg$currPos);
                             peg$currPos++;
                           } else {
                             s2 = peg$FAILED;
-                            if (peg$silentFails === 0) { peg$fail(peg$c289); }
+                            if (peg$silentFails === 0) { peg$fail(peg$c290); }
                           }
                           if (s2 !== peg$FAILED) {
                             s1 = [s1, s2];
@@ -21208,19 +24712,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                         if (s0 === peg$FAILED) {
                           s0 = peg$currPos;
                           if (input.charCodeAt(peg$currPos) === 55406) {
-                            s1 = peg$c290;
+                            s1 = peg$c291;
                             peg$currPos++;
                           } else {
                             s1 = peg$FAILED;
-                            if (peg$silentFails === 0) { peg$fail(peg$c291); }
+                            if (peg$silentFails === 0) { peg$fail(peg$c292); }
                           }
                           if (s1 !== peg$FAILED) {
-                            if (peg$c292.test(input.charAt(peg$currPos))) {
+                            if (peg$c293.test(input.charAt(peg$currPos))) {
                               s2 = input.charAt(peg$currPos);
                               peg$currPos++;
                             } else {
                               s2 = peg$FAILED;
-                              if (peg$silentFails === 0) { peg$fail(peg$c293); }
+                              if (peg$silentFails === 0) { peg$fail(peg$c294); }
                             }
                             if (s2 !== peg$FAILED) {
                               s1 = [s1, s2];
@@ -21236,19 +24740,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                           if (s0 === peg$FAILED) {
                             s0 = peg$currPos;
                             if (input.charCodeAt(peg$currPos) === 55299) {
-                              s1 = peg$c294;
+                              s1 = peg$c295;
                               peg$currPos++;
                             } else {
                               s1 = peg$FAILED;
-                              if (peg$silentFails === 0) { peg$fail(peg$c295); }
+                              if (peg$silentFails === 0) { peg$fail(peg$c296); }
                             }
                             if (s1 !== peg$FAILED) {
-                              if (peg$c296.test(input.charAt(peg$currPos))) {
+                              if (peg$c297.test(input.charAt(peg$currPos))) {
                                 s2 = input.charAt(peg$currPos);
                                 peg$currPos++;
                               } else {
                                 s2 = peg$FAILED;
-                                if (peg$silentFails === 0) { peg$fail(peg$c297); }
+                                if (peg$silentFails === 0) { peg$fail(peg$c298); }
                               }
                               if (s2 !== peg$FAILED) {
                                 s1 = [s1, s2];
@@ -21264,19 +24768,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                             if (s0 === peg$FAILED) {
                               s0 = peg$currPos;
                               if (input.charCodeAt(peg$currPos) === 55360) {
-                                s1 = peg$c298;
+                                s1 = peg$c299;
                                 peg$currPos++;
                               } else {
                                 s1 = peg$FAILED;
-                                if (peg$silentFails === 0) { peg$fail(peg$c299); }
+                                if (peg$silentFails === 0) { peg$fail(peg$c300); }
                               }
                               if (s1 !== peg$FAILED) {
-                                if (peg$c300.test(input.charAt(peg$currPos))) {
+                                if (peg$c301.test(input.charAt(peg$currPos))) {
                                   s2 = input.charAt(peg$currPos);
                                   peg$currPos++;
                                 } else {
                                   s2 = peg$FAILED;
-                                  if (peg$silentFails === 0) { peg$fail(peg$c301); }
+                                  if (peg$silentFails === 0) { peg$fail(peg$c302); }
                                 }
                                 if (s2 !== peg$FAILED) {
                                   s1 = [s1, s2];
@@ -21292,19 +24796,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                               if (s0 === peg$FAILED) {
                                 s0 = peg$currPos;
                                 if (input.charCodeAt(peg$currPos) === 55422) {
-                                  s1 = peg$c302;
+                                  s1 = peg$c303;
                                   peg$currPos++;
                                 } else {
                                   s1 = peg$FAILED;
-                                  if (peg$silentFails === 0) { peg$fail(peg$c303); }
+                                  if (peg$silentFails === 0) { peg$fail(peg$c304); }
                                 }
                                 if (s1 !== peg$FAILED) {
-                                  if (peg$c304.test(input.charAt(peg$currPos))) {
+                                  if (peg$c305.test(input.charAt(peg$currPos))) {
                                     s2 = input.charAt(peg$currPos);
                                     peg$currPos++;
                                   } else {
                                     s2 = peg$FAILED;
-                                    if (peg$silentFails === 0) { peg$fail(peg$c305); }
+                                    if (peg$silentFails === 0) { peg$fail(peg$c306); }
                                   }
                                   if (s2 !== peg$FAILED) {
                                     s1 = [s1, s2];
@@ -21320,19 +24824,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                                 if (s0 === peg$FAILED) {
                                   s0 = peg$currPos;
                                   if (input.charCodeAt(peg$currPos) === 55405) {
-                                    s1 = peg$c306;
+                                    s1 = peg$c307;
                                     peg$currPos++;
                                   } else {
                                     s1 = peg$FAILED;
-                                    if (peg$silentFails === 0) { peg$fail(peg$c307); }
+                                    if (peg$silentFails === 0) { peg$fail(peg$c308); }
                                   }
                                   if (s1 !== peg$FAILED) {
-                                    if (peg$c308.test(input.charAt(peg$currPos))) {
+                                    if (peg$c309.test(input.charAt(peg$currPos))) {
                                       s2 = input.charAt(peg$currPos);
                                       peg$currPos++;
                                     } else {
                                       s2 = peg$FAILED;
-                                      if (peg$silentFails === 0) { peg$fail(peg$c309); }
+                                      if (peg$silentFails === 0) { peg$fail(peg$c310); }
                                     }
                                     if (s2 !== peg$FAILED) {
                                       s1 = [s1, s2];
@@ -21348,19 +24852,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                                   if (s0 === peg$FAILED) {
                                     s0 = peg$currPos;
                                     if (input.charCodeAt(peg$currPos) === 55322) {
-                                      s1 = peg$c310;
+                                      s1 = peg$c311;
                                       peg$currPos++;
                                     } else {
                                       s1 = peg$FAILED;
-                                      if (peg$silentFails === 0) { peg$fail(peg$c311); }
+                                      if (peg$silentFails === 0) { peg$fail(peg$c312); }
                                     }
                                     if (s1 !== peg$FAILED) {
-                                      if (peg$c312.test(input.charAt(peg$currPos))) {
+                                      if (peg$c313.test(input.charAt(peg$currPos))) {
                                         s2 = input.charAt(peg$currPos);
                                         peg$currPos++;
                                       } else {
                                         s2 = peg$FAILED;
-                                        if (peg$silentFails === 0) { peg$fail(peg$c313); }
+                                        if (peg$silentFails === 0) { peg$fail(peg$c314); }
                                       }
                                       if (s2 !== peg$FAILED) {
                                         s1 = [s1, s2];
@@ -21376,19 +24880,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                                     if (s0 === peg$FAILED) {
                                       s0 = peg$currPos;
                                       if (input.charCodeAt(peg$currPos) === 55298) {
-                                        s1 = peg$c314;
+                                        s1 = peg$c315;
                                         peg$currPos++;
                                       } else {
                                         s1 = peg$FAILED;
-                                        if (peg$silentFails === 0) { peg$fail(peg$c315); }
+                                        if (peg$silentFails === 0) { peg$fail(peg$c316); }
                                       }
                                       if (s1 !== peg$FAILED) {
-                                        if (peg$c316.test(input.charAt(peg$currPos))) {
+                                        if (peg$c317.test(input.charAt(peg$currPos))) {
                                           s2 = input.charAt(peg$currPos);
                                           peg$currPos++;
                                         } else {
                                           s2 = peg$FAILED;
-                                          if (peg$silentFails === 0) { peg$fail(peg$c317); }
+                                          if (peg$silentFails === 0) { peg$fail(peg$c318); }
                                         }
                                         if (s2 !== peg$FAILED) {
                                           s1 = [s1, s2];
@@ -21404,19 +24908,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                                       if (s0 === peg$FAILED) {
                                         s0 = peg$currPos;
                                         if (input.charCodeAt(peg$currPos) === 55309) {
-                                          s1 = peg$c318;
+                                          s1 = peg$c319;
                                           peg$currPos++;
                                         } else {
                                           s1 = peg$FAILED;
-                                          if (peg$silentFails === 0) { peg$fail(peg$c319); }
+                                          if (peg$silentFails === 0) { peg$fail(peg$c320); }
                                         }
                                         if (s1 !== peg$FAILED) {
-                                          if (peg$c320.test(input.charAt(peg$currPos))) {
+                                          if (peg$c321.test(input.charAt(peg$currPos))) {
                                             s2 = input.charAt(peg$currPos);
                                             peg$currPos++;
                                           } else {
                                             s2 = peg$FAILED;
-                                            if (peg$silentFails === 0) { peg$fail(peg$c321); }
+                                            if (peg$silentFails === 0) { peg$fail(peg$c322); }
                                           }
                                           if (s2 !== peg$FAILED) {
                                             s1 = [s1, s2];
@@ -21455,7 +24959,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeCombiningMark() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 174 + 123,
+      var key    = peg$currPos * 176 + 125,
           cached = peg$cache[key];
 
       if (cached) {
@@ -21463,29 +24967,29 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         return cached.result;
       }
 
-      if (peg$c322.test(input.charAt(peg$currPos))) {
+      if (peg$c323.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c323); }
+        if (peg$silentFails === 0) { peg$fail(peg$c324); }
       }
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 56128) {
-          s1 = peg$c324;
+          s1 = peg$c325;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c325); }
+          if (peg$silentFails === 0) { peg$fail(peg$c326); }
         }
         if (s1 !== peg$FAILED) {
-          if (peg$c326.test(input.charAt(peg$currPos))) {
+          if (peg$c327.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c327); }
+            if (peg$silentFails === 0) { peg$fail(peg$c328); }
           }
           if (s2 !== peg$FAILED) {
             s1 = [s1, s2];
@@ -21501,19 +25005,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         if (s0 === peg$FAILED) {
           s0 = peg$currPos;
           if (input.charCodeAt(peg$currPos) === 55348) {
-            s1 = peg$c328;
+            s1 = peg$c329;
             peg$currPos++;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c329); }
+            if (peg$silentFails === 0) { peg$fail(peg$c330); }
           }
           if (s1 !== peg$FAILED) {
-            if (peg$c330.test(input.charAt(peg$currPos))) {
+            if (peg$c331.test(input.charAt(peg$currPos))) {
               s2 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s2 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c331); }
+              if (peg$silentFails === 0) { peg$fail(peg$c332); }
             }
             if (s2 !== peg$FAILED) {
               s1 = [s1, s2];
@@ -21529,19 +25033,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           if (s0 === peg$FAILED) {
             s0 = peg$currPos;
             if (input.charCodeAt(peg$currPos) === 55300) {
-              s1 = peg$c274;
+              s1 = peg$c275;
               peg$currPos++;
             } else {
               s1 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c275); }
+              if (peg$silentFails === 0) { peg$fail(peg$c276); }
             }
             if (s1 !== peg$FAILED) {
-              if (peg$c332.test(input.charAt(peg$currPos))) {
+              if (peg$c333.test(input.charAt(peg$currPos))) {
                 s2 = input.charAt(peg$currPos);
                 peg$currPos++;
               } else {
                 s2 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c333); }
+                if (peg$silentFails === 0) { peg$fail(peg$c334); }
               }
               if (s2 !== peg$FAILED) {
                 s1 = [s1, s2];
@@ -21557,19 +25061,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             if (s0 === peg$FAILED) {
               s0 = peg$currPos;
               if (input.charCodeAt(peg$currPos) === 55296) {
-                s1 = peg$c278;
+                s1 = peg$c279;
                 peg$currPos++;
               } else {
                 s1 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c279); }
+                if (peg$silentFails === 0) { peg$fail(peg$c280); }
               }
               if (s1 !== peg$FAILED) {
-                if (peg$c334.test(input.charAt(peg$currPos))) {
+                if (peg$c335.test(input.charAt(peg$currPos))) {
                   s2 = input.charAt(peg$currPos);
                   peg$currPos++;
                 } else {
                   s2 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c335); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c336); }
                 }
                 if (s2 !== peg$FAILED) {
                   s1 = [s1, s2];
@@ -21585,19 +25089,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               if (s0 === peg$FAILED) {
                 s0 = peg$currPos;
                 if (input.charCodeAt(peg$currPos) === 55298) {
-                  s1 = peg$c314;
+                  s1 = peg$c315;
                   peg$currPos++;
                 } else {
                   s1 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c315); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c316); }
                 }
                 if (s1 !== peg$FAILED) {
-                  if (peg$c336.test(input.charAt(peg$currPos))) {
+                  if (peg$c337.test(input.charAt(peg$currPos))) {
                     s2 = input.charAt(peg$currPos);
                     peg$currPos++;
                   } else {
                     s2 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c337); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c338); }
                   }
                   if (s2 !== peg$FAILED) {
                     s1 = [s1, s2];
@@ -21624,7 +25128,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeDigit() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 174 + 124,
+      var key    = peg$currPos * 176 + 126,
           cached = peg$cache[key];
 
       if (cached) {
@@ -21632,29 +25136,29 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         return cached.result;
       }
 
-      if (peg$c338.test(input.charAt(peg$currPos))) {
+      if (peg$c339.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c339); }
+        if (peg$silentFails === 0) { peg$fail(peg$c340); }
       }
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 55349) {
-          s1 = peg$c270;
+          s1 = peg$c271;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c271); }
+          if (peg$silentFails === 0) { peg$fail(peg$c272); }
         }
         if (s1 !== peg$FAILED) {
-          if (peg$c340.test(input.charAt(peg$currPos))) {
+          if (peg$c341.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c341); }
+            if (peg$silentFails === 0) { peg$fail(peg$c342); }
           }
           if (s2 !== peg$FAILED) {
             s1 = [s1, s2];
@@ -21670,19 +25174,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         if (s0 === peg$FAILED) {
           s0 = peg$currPos;
           if (input.charCodeAt(peg$currPos) === 55300) {
-            s1 = peg$c274;
+            s1 = peg$c275;
             peg$currPos++;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c275); }
+            if (peg$silentFails === 0) { peg$fail(peg$c276); }
           }
           if (s1 !== peg$FAILED) {
-            if (peg$c342.test(input.charAt(peg$currPos))) {
+            if (peg$c343.test(input.charAt(peg$currPos))) {
               s2 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s2 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c343); }
+              if (peg$silentFails === 0) { peg$fail(peg$c344); }
             }
             if (s2 !== peg$FAILED) {
               s1 = [s1, s2];
@@ -21698,19 +25202,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           if (s0 === peg$FAILED) {
             s0 = peg$currPos;
             if (input.charCodeAt(peg$currPos) === 55297) {
-              s1 = peg$c286;
+              s1 = peg$c287;
               peg$currPos++;
             } else {
               s1 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c287); }
+              if (peg$silentFails === 0) { peg$fail(peg$c288); }
             }
             if (s1 !== peg$FAILED) {
-              if (peg$c344.test(input.charAt(peg$currPos))) {
+              if (peg$c345.test(input.charAt(peg$currPos))) {
                 s2 = input.charAt(peg$currPos);
                 peg$currPos++;
               } else {
                 s2 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c345); }
+                if (peg$silentFails === 0) { peg$fail(peg$c346); }
               }
               if (s2 !== peg$FAILED) {
                 s1 = [s1, s2];
@@ -21735,7 +25239,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeConnectorPunctuation() {
       var s0;
 
-      var key    = peg$currPos * 174 + 125,
+      var key    = peg$currPos * 176 + 127,
           cached = peg$cache[key];
 
       if (cached) {
@@ -21743,12 +25247,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         return cached.result;
       }
 
-      if (peg$c346.test(input.charAt(peg$currPos))) {
+      if (peg$c347.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c347); }
+        if (peg$silentFails === 0) { peg$fail(peg$c348); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -21759,7 +25263,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsezwnj() {
       var s0;
 
-      var key    = peg$currPos * 174 + 126,
+      var key    = peg$currPos * 176 + 128,
           cached = peg$cache[key];
 
       if (cached) {
@@ -21768,11 +25272,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       if (input.charCodeAt(peg$currPos) === 8204) {
-        s0 = peg$c348;
+        s0 = peg$c349;
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c349); }
+        if (peg$silentFails === 0) { peg$fail(peg$c350); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -21783,7 +25287,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsezwj() {
       var s0;
 
-      var key    = peg$currPos * 174 + 127,
+      var key    = peg$currPos * 176 + 129,
           cached = peg$cache[key];
 
       if (cached) {
@@ -21792,11 +25296,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       if (input.charCodeAt(peg$currPos) === 8205) {
-        s0 = peg$c350;
+        s0 = peg$c351;
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c351); }
+        if (peg$silentFails === 0) { peg$fail(peg$c352); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -21807,7 +25311,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsereserved() {
       var s0;
 
-      var key    = peg$currPos * 174 + 128,
+      var key    = peg$currPos * 176 + 130,
           cached = peg$cache[key];
 
       if (cached) {
@@ -21909,7 +25413,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetrue() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 129,
+      var key    = peg$currPos * 176 + 131,
           cached = peg$cache[key];
 
       if (cached) {
@@ -21918,12 +25422,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c352) {
-        s1 = peg$c352;
+      if (input.substr(peg$currPos, 4) === peg$c353) {
+        s1 = peg$c353;
         peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c353); }
+        if (peg$silentFails === 0) { peg$fail(peg$c354); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -21938,7 +25442,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c158();
+          s1 = peg$c159();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -21957,7 +25461,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsefalse() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 130,
+      var key    = peg$currPos * 176 + 132,
           cached = peg$cache[key];
 
       if (cached) {
@@ -21966,12 +25470,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c354) {
-        s1 = peg$c354;
+      if (input.substr(peg$currPos, 5) === peg$c355) {
+        s1 = peg$c355;
         peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c355); }
+        if (peg$silentFails === 0) { peg$fail(peg$c356); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -21986,7 +25490,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c155();
+          s1 = peg$c156();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22005,7 +25509,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenew() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 131,
+      var key    = peg$currPos * 176 + 133,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22014,12 +25518,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 3) === peg$c356) {
-        s1 = peg$c356;
+      if (input.substr(peg$currPos, 3) === peg$c357) {
+        s1 = peg$c357;
         peg$currPos += 3;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c357); }
+        if (peg$silentFails === 0) { peg$fail(peg$c358); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22052,7 +25556,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsethis() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 132,
+      var key    = peg$currPos * 176 + 134,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22061,12 +25565,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c358) {
-        s1 = peg$c358;
+      if (input.substr(peg$currPos, 4) === peg$c359) {
+        s1 = peg$c359;
         peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c359); }
+        if (peg$silentFails === 0) { peg$fail(peg$c360); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22099,7 +25603,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenull() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 133,
+      var key    = peg$currPos * 176 + 135,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22108,12 +25612,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c360) {
-        s1 = peg$c360;
+      if (input.substr(peg$currPos, 4) === peg$c361) {
+        s1 = peg$c361;
         peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c361); }
+        if (peg$silentFails === 0) { peg$fail(peg$c362); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22128,7 +25632,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c362();
+          s1 = peg$c363();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22147,7 +25651,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseundefined() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 134,
+      var key    = peg$currPos * 176 + 136,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22156,12 +25660,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 9) === peg$c363) {
-        s1 = peg$c363;
+      if (input.substr(peg$currPos, 9) === peg$c364) {
+        s1 = peg$c364;
         peg$currPos += 9;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c364); }
+        if (peg$silentFails === 0) { peg$fail(peg$c365); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22176,7 +25680,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c365();
+          s1 = peg$c366();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22195,7 +25699,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseand() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 135,
+      var key    = peg$currPos * 176 + 137,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22204,12 +25708,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 3) === peg$c366) {
-        s1 = peg$c366;
+      if (input.substr(peg$currPos, 3) === peg$c367) {
+        s1 = peg$c367;
         peg$currPos += 3;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c367); }
+        if (peg$silentFails === 0) { peg$fail(peg$c368); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22224,7 +25728,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c368();
+          s1 = peg$c369();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22243,7 +25747,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseor() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 136,
+      var key    = peg$currPos * 176 + 138,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22252,12 +25756,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c369) {
-        s1 = peg$c369;
+      if (input.substr(peg$currPos, 2) === peg$c370) {
+        s1 = peg$c370;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c370); }
+        if (peg$silentFails === 0) { peg$fail(peg$c371); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22272,7 +25776,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c371();
+          s1 = peg$c372();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22291,7 +25795,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseis() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 137,
+      var key    = peg$currPos * 176 + 139,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22300,12 +25804,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c372) {
-        s1 = peg$c372;
+      if (input.substr(peg$currPos, 2) === peg$c373) {
+        s1 = peg$c373;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c373); }
+        if (peg$silentFails === 0) { peg$fail(peg$c374); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22320,7 +25824,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c374();
+          s1 = peg$c375();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22339,7 +25843,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseisnt() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 138,
+      var key    = peg$currPos * 176 + 140,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22348,12 +25852,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c375) {
-        s1 = peg$c375;
+      if (input.substr(peg$currPos, 4) === peg$c376) {
+        s1 = peg$c376;
         peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c376); }
+        if (peg$silentFails === 0) { peg$fail(peg$c377); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22368,7 +25872,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c377();
+          s1 = peg$c378();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22387,7 +25891,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenot() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 139,
+      var key    = peg$currPos * 176 + 141,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22396,12 +25900,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 3) === peg$c378) {
-        s1 = peg$c378;
+      if (input.substr(peg$currPos, 3) === peg$c379) {
+        s1 = peg$c379;
         peg$currPos += 3;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c379); }
+        if (peg$silentFails === 0) { peg$fail(peg$c380); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22416,7 +25920,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c380();
+          s1 = peg$c381();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22435,7 +25939,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetypeof() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 140,
+      var key    = peg$currPos * 176 + 142,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22444,12 +25948,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c381) {
-        s1 = peg$c381;
+      if (input.substr(peg$currPos, 6) === peg$c382) {
+        s1 = peg$c382;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c382); }
+        if (peg$silentFails === 0) { peg$fail(peg$c383); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22464,7 +25968,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c383();
+          s1 = peg$c384();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22483,7 +25987,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevoid() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 141,
+      var key    = peg$currPos * 176 + 143,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22492,12 +25996,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c384) {
-        s1 = peg$c384;
+      if (input.substr(peg$currPos, 4) === peg$c385) {
+        s1 = peg$c385;
         peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c385); }
+        if (peg$silentFails === 0) { peg$fail(peg$c386); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22512,7 +26016,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c386();
+          s1 = peg$c387();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22531,7 +26035,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedelete() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 142,
+      var key    = peg$currPos * 176 + 144,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22540,12 +26044,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c387) {
-        s1 = peg$c387;
+      if (input.substr(peg$currPos, 6) === peg$c388) {
+        s1 = peg$c388;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c388); }
+        if (peg$silentFails === 0) { peg$fail(peg$c389); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22560,7 +26064,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c389();
+          s1 = peg$c390();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22579,7 +26083,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevar() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 143,
+      var key    = peg$currPos * 176 + 145,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22588,12 +26092,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 3) === peg$c390) {
-        s1 = peg$c390;
+      if (input.substr(peg$currPos, 3) === peg$c391) {
+        s1 = peg$c391;
         peg$currPos += 3;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c391); }
+        if (peg$silentFails === 0) { peg$fail(peg$c392); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22626,7 +26130,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseconst() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 144,
+      var key    = peg$currPos * 176 + 146,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22635,12 +26139,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c392) {
-        s1 = peg$c392;
+      if (input.substr(peg$currPos, 5) === peg$c393) {
+        s1 = peg$c393;
         peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c393); }
+        if (peg$silentFails === 0) { peg$fail(peg$c394); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22655,7 +26159,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c394();
+          s1 = peg$c395();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22674,7 +26178,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parselet() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 145,
+      var key    = peg$currPos * 176 + 147,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22683,12 +26187,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 3) === peg$c395) {
-        s1 = peg$c395;
+      if (input.substr(peg$currPos, 3) === peg$c396) {
+        s1 = peg$c396;
         peg$currPos += 3;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c396); }
+        if (peg$silentFails === 0) { peg$fail(peg$c397); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22703,7 +26207,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c397();
+          s1 = peg$c398();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22722,7 +26226,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsein() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 146,
+      var key    = peg$currPos * 176 + 148,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22731,12 +26235,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c398) {
-        s1 = peg$c398;
+      if (input.substr(peg$currPos, 2) === peg$c399) {
+        s1 = peg$c399;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c399); }
+        if (peg$silentFails === 0) { peg$fail(peg$c400); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22751,7 +26255,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c400();
+          s1 = peg$c401();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22770,7 +26274,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseinstanceof() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 147,
+      var key    = peg$currPos * 176 + 149,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22779,12 +26283,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 10) === peg$c401) {
-        s1 = peg$c401;
+      if (input.substr(peg$currPos, 10) === peg$c402) {
+        s1 = peg$c402;
         peg$currPos += 10;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c402); }
+        if (peg$silentFails === 0) { peg$fail(peg$c403); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22799,7 +26303,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c403();
+          s1 = peg$c404();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -22818,7 +26322,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsewhile() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 148,
+      var key    = peg$currPos * 176 + 150,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22827,12 +26331,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c404) {
-        s1 = peg$c404;
+      if (input.substr(peg$currPos, 5) === peg$c405) {
+        s1 = peg$c405;
         peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c405); }
+        if (peg$silentFails === 0) { peg$fail(peg$c406); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22865,7 +26369,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsefor() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 149,
+      var key    = peg$currPos * 176 + 151,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22874,12 +26378,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 3) === peg$c406) {
-        s1 = peg$c406;
+      if (input.substr(peg$currPos, 3) === peg$c407) {
+        s1 = peg$c407;
         peg$currPos += 3;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c407); }
+        if (peg$silentFails === 0) { peg$fail(peg$c408); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22912,7 +26416,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseof() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 150,
+      var key    = peg$currPos * 176 + 152,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22921,12 +26425,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c408) {
-        s1 = peg$c408;
+      if (input.substr(peg$currPos, 2) === peg$c409) {
+        s1 = peg$c409;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c409); }
+        if (peg$silentFails === 0) { peg$fail(peg$c410); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -22959,7 +26463,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseif() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 151,
+      var key    = peg$currPos * 176 + 153,
           cached = peg$cache[key];
 
       if (cached) {
@@ -22968,12 +26472,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c410) {
-        s1 = peg$c410;
+      if (input.substr(peg$currPos, 2) === peg$c411) {
+        s1 = peg$c411;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c411); }
+        if (peg$silentFails === 0) { peg$fail(peg$c412); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23006,7 +26510,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseelse() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 152,
+      var key    = peg$currPos * 176 + 154,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23015,12 +26519,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c412) {
-        s1 = peg$c412;
+      if (input.substr(peg$currPos, 4) === peg$c413) {
+        s1 = peg$c413;
         peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c413); }
+        if (peg$silentFails === 0) { peg$fail(peg$c414); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23053,7 +26557,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsereturn() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 153,
+      var key    = peg$currPos * 176 + 155,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23062,12 +26566,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c414) {
-        s1 = peg$c414;
+      if (input.substr(peg$currPos, 6) === peg$c415) {
+        s1 = peg$c415;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c415); }
+        if (peg$silentFails === 0) { peg$fail(peg$c416); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23100,7 +26604,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetry() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 154,
+      var key    = peg$currPos * 176 + 156,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23109,12 +26613,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 3) === peg$c416) {
-        s1 = peg$c416;
+      if (input.substr(peg$currPos, 3) === peg$c417) {
+        s1 = peg$c417;
         peg$currPos += 3;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c417); }
+        if (peg$silentFails === 0) { peg$fail(peg$c418); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23147,7 +26651,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsecatch() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 155,
+      var key    = peg$currPos * 176 + 157,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23156,12 +26660,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c418) {
-        s1 = peg$c418;
+      if (input.substr(peg$currPos, 5) === peg$c419) {
+        s1 = peg$c419;
         peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c419); }
+        if (peg$silentFails === 0) { peg$fail(peg$c420); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23194,7 +26698,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsefinally() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 156,
+      var key    = peg$currPos * 176 + 158,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23203,12 +26707,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 7) === peg$c420) {
-        s1 = peg$c420;
+      if (input.substr(peg$currPos, 7) === peg$c421) {
+        s1 = peg$c421;
         peg$currPos += 7;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c421); }
+        if (peg$silentFails === 0) { peg$fail(peg$c422); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23241,7 +26745,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsethrow() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 157,
+      var key    = peg$currPos * 176 + 159,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23250,12 +26754,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c422) {
-        s1 = peg$c422;
+      if (input.substr(peg$currPos, 5) === peg$c423) {
+        s1 = peg$c423;
         peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c423); }
+        if (peg$silentFails === 0) { peg$fail(peg$c424); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23288,7 +26792,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsebreak() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 158,
+      var key    = peg$currPos * 176 + 160,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23297,12 +26801,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c424) {
-        s1 = peg$c424;
+      if (input.substr(peg$currPos, 5) === peg$c425) {
+        s1 = peg$c425;
         peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c425); }
+        if (peg$silentFails === 0) { peg$fail(peg$c426); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23335,7 +26839,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsecontinue() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 159,
+      var key    = peg$currPos * 176 + 161,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23344,12 +26848,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 8) === peg$c426) {
-        s1 = peg$c426;
+      if (input.substr(peg$currPos, 8) === peg$c427) {
+        s1 = peg$c427;
         peg$currPos += 8;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c427); }
+        if (peg$silentFails === 0) { peg$fail(peg$c428); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23382,7 +26886,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedo() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 160,
+      var key    = peg$currPos * 176 + 162,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23391,12 +26895,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c428) {
-        s1 = peg$c428;
+      if (input.substr(peg$currPos, 2) === peg$c429) {
+        s1 = peg$c429;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c429); }
+        if (peg$silentFails === 0) { peg$fail(peg$c430); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23429,7 +26933,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseimport() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 161,
+      var key    = peg$currPos * 176 + 163,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23438,12 +26942,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c430) {
-        s1 = peg$c430;
+      if (input.substr(peg$currPos, 6) === peg$c431) {
+        s1 = peg$c431;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c431); }
+        if (peg$silentFails === 0) { peg$fail(peg$c432); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23476,7 +26980,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseexport() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 162,
+      var key    = peg$currPos * 176 + 164,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23485,12 +26989,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c432) {
-        s1 = peg$c432;
+      if (input.substr(peg$currPos, 6) === peg$c433) {
+        s1 = peg$c433;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c433); }
+        if (peg$silentFails === 0) { peg$fail(peg$c434); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23523,7 +27027,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseclass() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 163,
+      var key    = peg$currPos * 176 + 165,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23532,12 +27036,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c434) {
-        s1 = peg$c434;
+      if (input.substr(peg$currPos, 5) === peg$c435) {
+        s1 = peg$c435;
         peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c435); }
+        if (peg$silentFails === 0) { peg$fail(peg$c436); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23570,7 +27074,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseextends() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 164,
+      var key    = peg$currPos * 176 + 166,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23579,12 +27083,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 7) === peg$c436) {
-        s1 = peg$c436;
+      if (input.substr(peg$currPos, 7) === peg$c437) {
+        s1 = peg$c437;
         peg$currPos += 7;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c437); }
+        if (peg$silentFails === 0) { peg$fail(peg$c438); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23617,7 +27121,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseassert() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 165,
+      var key    = peg$currPos * 176 + 167,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23626,12 +27130,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c438) {
-        s1 = peg$c438;
+      if (input.substr(peg$currPos, 6) === peg$c439) {
+        s1 = peg$c439;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c439); }
+        if (peg$silentFails === 0) { peg$fail(peg$c440); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23664,7 +27168,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetemplate() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 166,
+      var key    = peg$currPos * 176 + 168,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23673,12 +27177,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 8) === peg$c440) {
-        s1 = peg$c440;
+      if (input.substr(peg$currPos, 8) === peg$c441) {
+        s1 = peg$c441;
         peg$currPos += 8;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c441); }
+        if (peg$silentFails === 0) { peg$fail(peg$c442); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23711,7 +27215,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseactivate() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 167,
+      var key    = peg$currPos * 176 + 169,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23720,12 +27224,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 8) === peg$c442) {
-        s1 = peg$c442;
+      if (input.substr(peg$currPos, 8) === peg$c443) {
+        s1 = peg$c443;
         peg$currPos += 8;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c443); }
+        if (peg$silentFails === 0) { peg$fail(peg$c444); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -23758,7 +27262,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseindent() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 168,
+      var key    = peg$currPos * 176 + 170,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23775,12 +27279,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       if (s1 !== peg$FAILED) {
         s2 = peg$parse_();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 4) === peg$c445) {
-            s3 = peg$c445;
+          if (input.substr(peg$currPos, 4) === peg$c446) {
+            s3 = peg$c446;
             peg$currPos += 4;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c446); }
+            if (peg$silentFails === 0) { peg$fail(peg$c447); }
           }
           if (s3 !== peg$FAILED) {
             s1 = [s1, s2, s3];
@@ -23800,7 +27304,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c444); }
+        if (peg$silentFails === 0) { peg$fail(peg$c445); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -23811,7 +27315,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseoutdent() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 174 + 169,
+      var key    = peg$currPos * 176 + 171,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23828,12 +27332,12 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       if (s1 !== peg$FAILED) {
         s2 = peg$parse_();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 4) === peg$c448) {
-            s3 = peg$c448;
+          if (input.substr(peg$currPos, 4) === peg$c449) {
+            s3 = peg$c449;
             peg$currPos += 4;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c449); }
+            if (peg$silentFails === 0) { peg$fail(peg$c450); }
           }
           if (s3 !== peg$FAILED) {
             s1 = [s1, s2, s3];
@@ -23853,7 +27357,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c447); }
+        if (peg$silentFails === 0) { peg$fail(peg$c448); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -23864,7 +27368,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parse_() {
       var s0, s1;
 
-      var key    = peg$currPos * 174 + 170,
+      var key    = peg$currPos * 176 + 172,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23875,26 +27379,26 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails++;
       s0 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s1 = peg$c451;
+        s1 = peg$c452;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c452); }
+        if (peg$silentFails === 0) { peg$fail(peg$c453); }
       }
       while (s1 !== peg$FAILED) {
         s0.push(s1);
         if (input.charCodeAt(peg$currPos) === 32) {
-          s1 = peg$c451;
+          s1 = peg$c452;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c452); }
+          if (peg$silentFails === 0) { peg$fail(peg$c453); }
         }
       }
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c450); }
+        if (peg$silentFails === 0) { peg$fail(peg$c451); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -23905,7 +27409,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsecomment() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 174 + 171,
+      var key    = peg$currPos * 176 + 173,
           cached = peg$cache[key];
 
       if (cached) {
@@ -23917,11 +27421,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s1 = peg$parse_();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 35) {
-          s2 = peg$c453;
+          s2 = peg$c454;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c454); }
+          if (peg$silentFails === 0) { peg$fail(peg$c455); }
         }
         if (s2 !== peg$FAILED) {
           s3 = [];
@@ -23929,11 +27433,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$currPos;
           peg$silentFails++;
           if (input.charCodeAt(peg$currPos) === 10) {
-            s6 = peg$c455;
+            s6 = peg$c456;
             peg$currPos++;
           } else {
             s6 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c456); }
+            if (peg$silentFails === 0) { peg$fail(peg$c457); }
           }
           peg$silentFails--;
           if (s6 === peg$FAILED) {
@@ -23948,7 +27452,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c165); }
+              if (peg$silentFails === 0) { peg$fail(peg$c166); }
             }
             if (s6 !== peg$FAILED) {
               s5 = [s5, s6];
@@ -23968,11 +27472,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s5 = peg$currPos;
               peg$silentFails++;
               if (input.charCodeAt(peg$currPos) === 10) {
-                s6 = peg$c455;
+                s6 = peg$c456;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c456); }
+                if (peg$silentFails === 0) { peg$fail(peg$c457); }
               }
               peg$silentFails--;
               if (s6 === peg$FAILED) {
@@ -23987,7 +27491,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c165); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c166); }
                 }
                 if (s6 !== peg$FAILED) {
                   s5 = [s5, s6];
@@ -24028,7 +27532,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseeol() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 174 + 172,
+      var key    = peg$currPos * 176 + 174,
           cached = peg$cache[key];
 
       if (cached) {
@@ -24050,22 +27554,22 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s3 = [];
             s4 = peg$currPos;
             if (input.charCodeAt(peg$currPos) === 13) {
-              s5 = peg$c458;
+              s5 = peg$c459;
               peg$currPos++;
             } else {
               s5 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c459); }
+              if (peg$silentFails === 0) { peg$fail(peg$c460); }
             }
             if (s5 === peg$FAILED) {
               s5 = peg$c3;
             }
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 10) {
-                s6 = peg$c455;
+                s6 = peg$c456;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c456); }
+                if (peg$silentFails === 0) { peg$fail(peg$c457); }
               }
               if (s6 !== peg$FAILED) {
                 s7 = peg$parsecomment();
@@ -24092,22 +27596,22 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                 s3.push(s4);
                 s4 = peg$currPos;
                 if (input.charCodeAt(peg$currPos) === 13) {
-                  s5 = peg$c458;
+                  s5 = peg$c459;
                   peg$currPos++;
                 } else {
                   s5 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c459); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c460); }
                 }
                 if (s5 === peg$FAILED) {
                   s5 = peg$c3;
                 }
                 if (s5 !== peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 10) {
-                    s6 = peg$c455;
+                    s6 = peg$c456;
                     peg$currPos++;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c456); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c457); }
                   }
                   if (s6 !== peg$FAILED) {
                     s7 = peg$parsecomment();
@@ -24152,7 +27656,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c457); }
+        if (peg$silentFails === 0) { peg$fail(peg$c458); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -24163,7 +27667,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseeof() {
       var s0, s1;
 
-      var key    = peg$currPos * 174 + 173,
+      var key    = peg$currPos * 176 + 175,
           cached = peg$cache[key];
 
       if (cached) {
@@ -24179,7 +27683,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c165); }
+        if (peg$silentFails === 0) { peg$fail(peg$c166); }
       }
       peg$silentFails--;
       if (s1 === peg$FAILED) {
@@ -24191,7 +27695,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c460); }
+        if (peg$silentFails === 0) { peg$fail(peg$c461); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -24344,7 +27848,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     _ion_compiler_parser_.call(this);
   }
 }).call(this)
-void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var activateStatements, addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, getReferenceIdentifiers, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isReferenceNode, isSimpleObjectExpression, isSuperExpression, javascriptExpressions, letAndConstToVar, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, patchAssignmentExpression, propertyStatements, removeLocationInfo, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, wrapTemplateInnerFunctions, _ref;
+void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var activateStatements, addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, getReferenceIdentifiers, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isReferenceNode, isSimpleObjectExpression, isSuperExpression, javascriptExpressions, letAndConstToVar, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, patchAssignmentExpression, propertyStatements, removeLocationInfo, setNodeOutputValues, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, variableDeclarationExpressions, wrapTemplateInnerFunctions, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -25070,7 +28574,7 @@ isSimpleObjectExpression = function(node) {
 };
 
 typedObjectExpressions = function(node, context) {
-  var addPosition, element, elements, expressionStatement, getExistingObjectIdIfTempVarNotNeeded, grandNode, initialValue, isArray, isSimple, objectId, objectType, parentNode, statements, subnodeEnter, subnodeExit, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
+  var addPosition, element, elements, expressionStatement, getExistingObjectIdIfTempVarNotNeeded, grandNode, initialValue, isArray, isSimple, objectId, objectType, parentNode, statements, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
   if (context.reactive) {
     return;
   }
@@ -25155,67 +28659,76 @@ typedObjectExpressions = function(node, context) {
       context.replace(objectId);
     }
     statements = [];
-    subnodeEnter = function(subnode, subcontext) {
-      if (subcontext.outputStack == null) {
-        subcontext.outputStack = [objectId];
-      }
-      if (subnode.type === 'ObjectExpression' || subnode.type === 'ArrayExpression') {
-        return subcontext.skip();
-      }
-      if (subnode.type === 'Property') {
-        subnode.output = subcontext.outputStack[subcontext.outputStack.length - 1];
-        subcontext.outputStack.push({
-          type: 'MemberExpression',
-          object: subnode.output,
-          property: subnode.key,
-          computed: subnode.computed || subnode.key.type !== 'Identifier'
-        });
-      } else if (isFunctionNode(subnode)) {
-        subcontext.skip();
-      } else if (subnode.type === 'ExpressionStatement') {
-        if (!isArray) {
-          ensureIonVariable(context);
-        }
-        subnode = subcontext.replace({
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'CallExpression',
-            callee: {
-              type: 'MemberExpression',
-              object: isArray ? objectId : ionExpression,
-              property: {
-                type: 'Identifier',
-                name: isArray ? 'push' : 'add'
-              }
-            },
-            "arguments": isArray ? [subnode.expression] : [objectId, subnode.expression]
-          }
-        });
-        subcontext.skip();
-      }
-      if (subcontext.parentNode() == null) {
-        return statements.push(subnode);
-      }
-    };
+    setNodeOutputValues(context, node.properties, objectId, statements, isArray);
     if (statements.length === 1) {
-      context.addStatement(statements[0], addPosition);
+      return context.addStatement(statements[0], addPosition);
     } else {
-      context.addStatement({
+      return context.addStatement({
         type: 'BlockStatement',
         body: statements
       }, addPosition);
     }
-    subnodeExit = function(subnode, subcontext) {
-      if (subnode.type === 'Property') {
-        return subcontext.outputStack.pop();
-      }
-    };
   }
-  return traverse(node.properties, subnodeEnter, subnodeExit);
+};
+
+setNodeOutputValues = function(context, nodes, outputId, statements, isArray) {
+  var subnodeEnter, subnodeExit;
+  if (statements == null) {
+    statements = [];
+  }
+  subnodeEnter = function(subnode, subcontext) {
+    if (subcontext.outputStack == null) {
+      subcontext.outputStack = [outputId];
+    }
+    if (subnode.type === 'ObjectExpression' || subnode.type === 'ArrayExpression') {
+      return subcontext.skip();
+    }
+    if (subnode.type === 'Property') {
+      subnode.output = subcontext.outputStack[subcontext.outputStack.length - 1];
+      subcontext.outputStack.push({
+        type: 'MemberExpression',
+        object: subnode.output,
+        property: subnode.key,
+        computed: subnode.computed || subnode.key.type !== 'Identifier'
+      });
+    } else if (isFunctionNode(subnode)) {
+      subcontext.skip();
+    } else if (subnode.type === 'ExpressionStatement') {
+      if (!isArray) {
+        ensureIonVariable(context);
+      }
+      subnode = subcontext.replace({
+        type: 'ExpressionStatement',
+        expression: {
+          type: 'CallExpression',
+          callee: {
+            type: 'MemberExpression',
+            object: isArray ? outputId : ionExpression,
+            property: {
+              type: 'Identifier',
+              name: isArray ? 'push' : 'add'
+            }
+          },
+          "arguments": isArray ? [subnode.expression] : [outputId, subnode.expression]
+        }
+      });
+      subcontext.skip();
+    }
+    if (subcontext.parentNode() == null) {
+      return statements.push(subnode);
+    }
+  };
+  subnodeExit = function(subnode, subcontext) {
+    if (subnode.type === 'Property') {
+      return subcontext.outputStack.pop();
+    }
+  };
+  traverse(nodes, subnodeEnter, subnodeExit);
+  return statements;
 };
 
 propertyStatements = function(node, context) {
-  var left, parent, right;
+  var left, parent, right, statements;
   if (context.reactive) {
     return;
   }
@@ -25271,15 +28784,16 @@ propertyStatements = function(node, context) {
       if (node.value.objectType != null) {
         throw context.error("type not allowed on set expression", node.value);
       }
-      ensureIonVariable(context);
-      return context.replace({
-        type: 'ExpressionStatement',
-        expression: {
-          type: 'CallExpression',
-          callee: getPathExpression('ion.patch'),
-          "arguments": [node.key, node.value]
-        }
-      });
+      statements = [];
+      setNodeOutputValues(context, node.value.properties, node.key, statements);
+      if (statements.length === 1) {
+        return context.replace(statements[0]);
+      } else {
+        return context.replace({
+          type: 'BlockStatement',
+          body: statements
+        });
+      }
     }
   }
 };
@@ -25676,11 +29190,19 @@ isReferenceNode = function(node, context) {
 };
 
 getReferenceIdentifiers = function(node, callback) {
+  var results;
+  results = {};
+  if (callback == null) {
+    callback = function(node) {
+      return results[node.name] = node;
+    };
+  }
   traverse(node, function(node, context) {
     if (isReferenceNode(node, context)) {
       return callback(node, context);
     }
   });
+  return results;
 };
 
 getExternalIdentifiers = function(node, callback) {
@@ -25789,7 +29311,7 @@ createTemplateFunctionClone = function(node, context) {
 };
 
 createTemplateRuntime = function(node, context) {
-  var args, id, key, name, params, template, value, variables, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
+  var args, id, key, name, params, referenceIds, template, value, variables, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
   if (node.type === 'Template') {
     template = removeLocationInfo(node);
     args = {
@@ -25799,13 +29321,16 @@ createTemplateRuntime = function(node, context) {
     variables = {
       "this": thisExpression
     };
+    referenceIds = getReferenceIdentifiers(node);
     _ref1 = ['require', 'module', 'exports', 'ion'];
     for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
       name = _ref1[_i];
-      variables[name] = {
-        type: 'Identifier',
-        name: name
-      };
+      if (referenceIds[name] != null) {
+        variables[name] = {
+          type: 'Identifier',
+          name: name
+        };
+      }
     }
     _ref2 = template.params;
     for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
@@ -25854,7 +29379,14 @@ createTemplateRuntime = function(node, context) {
 javascriptExpressions = function(node, context) {
   var e, errorNode, esprima, expression, message, program, _ref1, _ref2;
   if (node.type === 'JavascriptExpression') {
-    esprima = require('esprima');
+    try {
+      esprima = require('esprima');
+    } catch (_error) {
+      e = _error;
+      node.type = 'VerbatimExpression';
+      node.verbatim = node.text;
+      return;
+    }
     try {
       program = esprima.parse(node.text);
       expression = program.body[0].expression;
@@ -25923,9 +29455,20 @@ activateStatements = function(node, context) {
   }
 };
 
+variableDeclarationExpressions = function(node, context) {
+  if (node.type === 'VariableDeclarationExpression') {
+    context.addStatement(0, {
+      type: 'VariableDeclaration',
+      declarations: node.declarations,
+      kind: node.kind
+    });
+    return context.replace(node.declarations[0].id);
+  }
+};
+
 exports.postprocess = function(program, options) {
   var enter, exit, previousContext, steps, traversal, variable, _i, _len;
-  steps = [[namedFunctionsAndNewArguments, superExpressions, activateStatements], [destructuringAssignments], [createTemplateFunctionClone], [javascriptExpressions, arrayComprehensionsToES5], [checkVariableDeclarations], [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]];
+  steps = [[namedFunctionsAndNewArguments, superExpressions, activateStatements], [destructuringAssignments], [createTemplateFunctionClone], [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions], [checkVariableDeclarations], [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]];
   if ((options != null ? options.target : void 0) === 'es5') {
     steps.push([letAndConstToVar]);
   }
@@ -26006,203 +29549,16 @@ exports.postprocess = function(program, options) {
     _ion_compiler_postprocessor_.call(this);
   }
 }).call(this)
-void (function(){var _ion_test_ionCompiler_ = function(module,exports,require){var index, ion, tests;
+void (function(){var _ion_test_ionCompilerES5_ = function(module,exports,require){var index, ion, tests;
 
 ion = require('../');
 
 index = require('../compiler');
 
 tests = {
-  "let x = 10": "'use strict';\nlet x = 10;",
-  "for name, value of foo\n    console.log(name + value)": "'use strict';\nfor (let name in foo) {\n    let value = foo[name];\n    console.log(name + value);\n}",
-  "for let name, value of {a:1,b:2,c:3}\n    console.log(name + value)": "'use strict';\n{\n    let _ref = {\n            a: 1,\n            b: 2,\n            c: 3\n        };\n    for (let name in _ref) {\n        let value = _ref[name];\n        console.log(name + value);\n    }\n}    ",
-  "for let name in [\"a\",\"b\",\"c\"]\n    console.log(name)": "'use strict';\n{\n    let _ref = [\n            'a',\n            'b',\n            'c'\n        ];\n    for (let _i = 0; _i < _ref.length; _i++) {\n        let name = _ref[_i];\n        console.log(name);\n    }\n}",
-  "for name, index in [\"a\",\"b\",\"c\"]\n    console.log(name)": "'use strict';\n{\n    let _ref = [\n            'a',\n            'b',\n            'c'\n        ];\n    for (let _i = 0; _i < _ref.length; _i++) {\n        let index = _i;\n        let name = _ref[_i];\n        console.log(name);\n    }\n}",
-  "let object =\n    x: 1\n    y: 2\n    foo:\n        z: 3": "'use strict';\nlet object = {\n        x: 1,\n        y: 2,\n        foo: { z: 3 }\n    };",
-  "let array = []\n    1\n    2\n    3": "'use strict';\nlet array = [\n        1,\n        2,\n        3\n    ];",
-  "let kids = []\n    {}\n        name: \"Alpha\"\n        age: 10\n    {}\n        name: \"Beta\"\n        age: 8": "'use strict';\nlet kids = [\n        {\n            name: 'Alpha',\n            age: 10\n        },\n        {\n            name: 'Beta',\n            age: 8\n        }\n    ];",
-  "try\n    doSomething(1)\ncatch e\n    log(e)": "'use strict';\ntry {\n    doSomething(1);\n} catch (e) {\n    log(e);\n}",
-  "try\n    doSomething(1)\nfinally\n    log(e)": "'use strict';\ntry {\n    doSomething(1);\n} finally {\n    log(e);\n}",
-  "try\n    doSomething(1)\ncatch e\n    console.error(e)\nfinally\n    log(e)": "'use strict';\ntry {\n    doSomething(1);\n} catch (e) {\n    console.error(e);\n} finally {\n    log(e);\n}",
-  "for key, name of foo\n    if name is 'a'\n        break\n    else if name is 'b'\n        continue\n    else if name is 'c'\n        return\n    else if name is 'd'\n        throw new Error(\"D\")\n    else\n        return\n            x: 1\n            y: 2": "'use strict';\nfor (let key in foo) {\n    let name = foo[key];\n    if (name === 'a') {\n        break;\n    } else if (name === 'b') {\n        continue;\n    } else if (name === 'c') {\n        return;\n    } else if (name === 'd') {\n        throw new Error('D');\n    } else {\n        return {\n            x: 1,\n            y: 2\n        };\n    }\n}",
-  "console.log(\"Hello {{name}}\")": "'use strict';\nconsole.log('Hello ' + name);",
-  "console.log(\"{{name}}\")": "'use strict';\nconsole.log('' + name);",
-  "console.log(\"{{ 1 }}{{ 2 }}\")": "'use strict';\nconsole.log('' + 1 + 2);",
-  "return \"\"\n    <html>\n        <head><title>{{ title }}</title></head>\n        <body>\n        {{ body }}\n        </body>\n    </html>": "'use strict';\nreturn '<html>\\n    <head><title>' + title + '</title></head>\\n    <body>\\n    ' + body + '\\n    </body>\\n</html>';",
-  "return ''\n    <html>\n        <head><title>{{ title }}</title></head>\n        <body>\n        {{ body }}\n        </body>\n    </html>": "'use strict';\nreturn '<html>\\n    <head><title>{{ title }}</title></head>\\n    <body>\\n    {{ body }}\\n    </body>\\n</html>';",
-  "do -> x": "'use strict';\n(function () {\n    return x;\n}());",
-  "do (x, y) => x + y": "'use strict';\nconst ion = require('ion');\nion.bind(function (x, y) {\n    return x + y;\n}, this)(x, y);",
-  "const ion = import \"ion\"": "'use strict';\nconst ion = require('ion');",
-  "export\n    secret: 97542": "'use strict';\nmodule.exports = exports = { secret: 97542 };",
-  "export let x = 1, y = 2": "'use strict';\nlet x = exports.x = 1, y = exports.y = 2;",
-  "export const\n    x = 1\n    y = 2\n    z = 3": "'use strict';\nconst x = exports.x = 1, y = exports.y = 2, z = exports.z = 3;",
-  "let {x,y} = {x:1,y:2}": "'use strict';\nlet _ref = {\n        x: 1,\n        y: 2\n    };\nlet x = _ref.x;\nlet y = _ref.y;",
-  "for key, {x:[a,b],y:{c:d}} of points\n    console.log(x, y)": "'use strict';\nfor (let key in points) {\n    let _ref = points[key];\n    let a = _ref.x[0];\n    let b = _ref.x[1];\n    let d = _ref.y.c;\n    console.log(x, y);\n}",
-  "for {x:[a,b],y:{c:d}}, index in points\n    console.log(x, y)": "'use strict';\nfor (let _i = 0; _i < points.length; _i++) {\n    let index = _i;\n    let _ref = points[_i];\n    let a = _ref.x[0];\n    let b = _ref.x[1];\n    let d = _ref.y.c;\n    console.log(x, y);\n}",
-  "foo ? bar": "'use strict';\nfoo != null ? foo : bar;",
-  "foo ?? bar": "'use strict';\nfoo != void 0 ? foo : bar;",
-  "let x\nx ?= y": "'use strict';\nlet x;\nx = x != null ? x : y;",
-  "let x\nx ??= y": "'use strict';\nlet x;\nx = x != void 0 ? x : y;",
-  "for const x, index in foo\n    log(x)": "'use strict';\nfor (let _i = 0; _i < foo.length; _i++) {\n    const index = _i;\n    const x = foo[_i];\n    log(x);\n}",
-  "let x = 1, y = 2\n[x,y] = [y,x]": "'use strict';\nlet x = 1, y = 2;\nconst _ref = [\n        y,\n        x\n    ];\nx = _ref[0];\ny = _ref[1];",
-  "a?.b": "'use strict';\na != null ? a.b : void 0;",
-  "a?.b.c?.d": "'use strict';\na != null ? a.b.c != null ? a.b.c.d : void 0 : void 0;",
-  "a?()": "'use strict';\na != null ? a() : void 0;",
-  "a?.b?.c?()": "'use strict';\na != null ? a.b != null ? a.b.c != null ? a.b.c() : void 0 : void 0 : void 0;",
-  "a?.b().c?()": "'use strict';\na != null ? a.b().c != null ? a.b().c() : void 0 : void 0;",
-  "let y = (x) -> 2": "'use strict';\nlet y = function (x) {\n    return 2;\n};",
-  "s?": "'use strict';\ns != null;",
-  "# also test comments\nlet regex = /foo/": "'use strict';\nlet regex = /foo/;",
-  "for let i = 0; i < 10; i++\n    console.log(i)": "'use strict';\nfor (let i = 0; i < 10; i++) {\n    console.log(i);\n}",
-  "for key of object if key[0] isnt '_' for c in key\n    console.log(c)": "'use strict';\nfor (let key in object) {\n    if (key[0] !== '_') {\n        for (let _i = 0; _i < key.length; _i++) {\n            let c = key[_i];\n            console.log(c);\n        }\n    }\n}",
-  "console.log([key for key of object if key is cool])": "'use strict';\nlet _ref = [];\nfor (let key in object) {\n    if (key === cool) {\n        _ref.push(key);\n    }\n}\nconsole.log(_ref);",
-  "(console.log)\n    1\n    2\n    {}\n        x: 1\n        y: 2": "'use strict';\nconsole.log(1, 2, {\n    x: 1,\n    y: 2\n});",
-  "let x = ->\n    try\n        foo()\n        bar()\n    catch e\n        baz()": "'use strict';\nlet x = function () {\n    try {\n        foo();\n        bar();\n    } catch (e) {\n        baz();\n    }\n};",
-  "if foo\n    # bar": "'use strict';\nif (foo) {\n}",
-  "let trim = (a = \"\") -> a.trim()": "'use strict';\nlet trim = function (a) {\n    if (a == null)\n        a = '';\n    return a.trim();\n};",
-  "(foo)\n    1\n    2": "'use strict';\nfoo(1, 2);",
-  "(compile)\n    foo: 1\n    bar: 2\n    baz:\n        a: 1\n        b: 2": "'use strict';\ncompile({\n    foo: 1,\n    bar: 2,\n    baz: {\n        a: 1,\n        b: 2\n    }\n});",
-  "let array = [1,2,3]\n    4\n    5\n    6": "'use strict';\nlet array = [\n        1,\n        2,\n        3,\n        4,\n        5,\n        6\n    ];",
-  "let point = new Point(10, 20)\n    z: 30": "'use strict';\nconst ion = require('ion');\nlet point = ion.patch(new Point(10, 20), { z: 30 });",
-  "let object = {x:1, y:2}\n    z: 3": "'use strict';\nlet object = {\n        x: 1,\n        y: 2,\n        z: 3\n    };",
-  "let origin = new Point\n    x: 1\n    y: 2": "'use strict';\nconst ion = require('ion');\nlet origin = ion.patch(new Point(), {\n        x: 1,\n        y: 2\n    });",
-  "let origin = new Line\n    a: new Point\n        x: 0\n        y: 0\n    b: new Point\n        x: 10\n        y: 20": "'use strict';\nconst ion = require('ion');\nlet origin = ion.patch(new Line(), {\n        a: ion.patch(new Point(), {\n            x: 0,\n            y: 0\n        }),\n        b: ion.patch(new Point(), {\n            x: 10,\n            y: 20\n        })\n    });",
-  "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: new Point\n        x: 0\n        y: 0": "'use strict';\nconst ion = require('ion');\nion.patch(input, {\n    x: 10,\n    y: 20,\n    z: {\n        a: 1,\n        b: 2\n    },\n    w: ion.patch(new Point(), {\n        x: 0,\n        y: 0\n    })\n});",
-  "let point = new Point\n    [x]: 1\n    [y]: 2": "'use strict';\nlet point = new Point();\n{\n    point[x] = 1;\n    point[y] = 2;\n}",
-  "let self = @\nlet x = @x\nlet y = @.y\nlet z = this.z": "'use strict';\nlet self = this;\nlet x = this.x;\nlet y = this.y;\nlet z = this.z;",
-  "let x = {}\n    [key]: value": "'use strict';\nlet x = {};\n{\n    x[key] = value;\n}",
-  "if foo\n    return {}\n        for key, value of object\n            [key]: value": "'use strict';\nif (foo) {\n    let _ref = {};\n    {\n        for (let key in object) {\n            let value = object[key];\n            _ref[key] = value;\n        }\n    }\n    return _ref;\n}",
-  "for x, y, z of foo\n    log(foo)": {
-    line: 1,
-    column: 11
-  },
-  "export let x": {
-    line: 1,
-    column: 12
-  },
-  "export const x": {
-    line: 1,
-    column: 14
-  },
-  "export const x = 1\nexport {y:2}": {
-    line: 2,
-    column: 1
-  },
-  "const x = 1\nx = 2": {
-    line: 2,
-    column: 1
-  },
-  "const double = (x) ->\n    x *= 2\n    return x": "'use strict';\nconst double = function (x) {\n    x *= 2;\n    return x;\n};",
-  "x = 1": {
-    line: 1,
-    column: 1
-  },
-  "let x = 1\nlet x = 2": {
-    line: 2,
-    column: 5
-  },
-  "let x = 1\nconst double = (x) ->\n    return x": "'use strict';\nlet x = 1;\nconst double = function (x) {\n    return x;\n};",
-  "console.log(x)\nif a\n    let x = 1": {
-    line: 1,
-    column: 13
-  },
-  "if typeof a is 'string' and void a and delete a.b\n    log(a)": "'use strict';\nif (typeof a === 'string' && void a && delete a.b) {\n    log(a);\n}",
-  "if 1\n    # 1\n    # 2\n    x = 12": {
-    line: 4,
-    column: 5
-  },
-  "export const\n    BlockStatement =\n        isBlock: true\n        newScope: tr ue": {
-    line: 4,
-    column: 22
-  },
-  "export class Foo extends import 'Bar'\n    constructor: (x,y) ->\n        @x = x\n        @y = y\n    properties:\n        x: 1\n        y: 2\n        getXY: -> [@x,@y]\n    isThisPropertyStatic: true": "'use strict';\nconst ion = require('ion');\nconst Foo = ion.defineClass({\n        name: 'Foo',\n        constructor: function Foo(x, y) {\n            this.x = x;\n            this.y = y;\n        },\n        properties: {\n            x: 1,\n            y: 2,\n            getXY: function () {\n                return [\n                    this.x,\n                    this.y\n                ];\n            }\n        },\n        isThisPropertyStatic: true\n    }, require('Bar'));\nmodule.exports = exports = Foo;",
-  "const double(a) -> a * 2": "'use strict';\nfunction double(a) {\n    return a * 2;\n}",
-  "const double(a) -> a * 2\ndouble = 12": {
-    line: 2,
-    column: 1
-  },
-  "let object =\n    const double(a) -> a * 2\n    if a\n        [key]: value\n    else\n        foo: double(2)": "'use strict';\nlet object = {};\n{\n    function double(a) {\n        return a * 2;\n    }\n    if (a) {\n        object[key] = value;\n    } else {\n        object.foo = double(2);\n    }\n}",
-  "let items = []\n    for key, value of window\n        value": "'use strict';\nlet items = [];\n{\n    for (let key in window) {\n        let value = window[key];\n        items.push(value);\n    }\n}",
-  "let foo = div()\n    span()\n        'Hello'": "'use strict';\nconst ion = require('ion');\nlet foo = div();\n{\n    let _ref = span();\n    {\n        ion.add(_ref, 'Hello');\n    }\n    ion.add(foo, _ref);\n}",
-  "const ion = import './'\nlet foo = div()\n    span()\n        'Hello'": "'use strict';\nconst ion = require('./');\nlet foo = div();\n{\n    let _ref = span();\n    {\n        ion.add(_ref, 'Hello');\n    }\n    ion.add(foo, _ref);\n}",
-  "const translate({x,y}) ->\n    x++\n    y++\n    return {x,y}": "'use strict';\nfunction translate(_ref) {\n    let x = _ref.x;\n    let y = _ref.y;\n    x++;\n    y++;\n    return {\n        x: x,\n        y: y\n    };\n}",
-  "let x = (foo)\n    ''\n        multiline string literal\n    \"\"\n        multiline string template": "'use strict';\nlet x = foo('multiline string literal', 'multiline string template');",
-  "assert x is 2": "'use strict';\nif (!(x === 2))\n    throw new Error('Assertion Failed: (x is 2)');",
-  "export class Point\n    constructor: ->\n        # call super with arguments object\n        super\n        # call super again with explicit arguments\n        super(width, height)\n        # calling twice is silly, but legal\n    properties:\n        x: 0\n        y: 0\n        superIdentifier: (x, y) -> super\n        superExplicit: (a, b) -> super(a, b)": "'use strict';\nconst ion = require('ion');\nconst Point = ion.defineClass({\n        name: 'Point',\n        constructor: function Point() {\n            Point.super.apply(this, arguments);\n            Point.super.call(this, width, height);\n        },\n        properties: {\n            x: 0,\n            y: 0,\n            superIdentifier: function (x, y) {\n                return Point.super.prototype.superIdentifier.apply(this, arguments);\n            },\n            superExplicit: function (a, b) {\n                return Point.super.prototype.superExplicit.call(this, a, b);\n            }\n        }\n    });\nmodule.exports = exports = Point;",
-  "const spreadFunction1(a, b, ...c) ->\n    log(1)\nconst spreadFunction2(a, b, ...c, d, e) ->\n    log(2)\nconst spreadFunction3(a,b, ...c, {d,e}) ->\n    log(3)": "'use strict';\nfunction spreadFunction1(a, b, ___c) {\n    let c = Array.prototype.slice.call(arguments, 2);\n    log(1);\n}\nfunction spreadFunction2(a, b, ___c, d, e) {\n    let c = Array.prototype.slice.call(arguments, 2, arguments.length - 2);\n    d = arguments[arguments.length - 2];\n    e = arguments[arguments.length - 1];\n    log(2);\n}\nfunction spreadFunction3(a, b, ___c, _ref) {\n    let c = Array.prototype.slice.call(arguments, 2, arguments.length - 1);\n    _ref = arguments[arguments.length - 1];\n    let d = _ref.d;\n    let e = _ref.e;\n    log(3);\n}",
-  "# default value for a should be set before b\nconst foo(a = 0, b = a) -> a + b": "'use strict';\nfunction foo(a, b) {\n    if (a == null)\n        a = 0;\n    if (b == null)\n        b = a;\n    return a + b;\n}",
-  "export template ->\n    # cannot define classes in templates\n    class Poo": {
-    line: 3,
-    column: 5
-  },
-  "export template ->\n    # cannot for loop in templates\n    for let i = 0; i < 10; i++\n        console.log(i)": {
-    line: 3,
-    column: 5
-  },
-  "export template ->\n    # cannot export in templates\n    export x": {
-    line: 3,
-    column: 5
-  },
-  "export template ->\n    # cannot try/catch in templates\n    try\n        return 0\n    catch e\n        return 1": {
-    line: 3,
-    column: 5
-  },
-  "export template ->\n    # cannot throw errors in templates\n    throw new Error": {
-    line: 3,
-    column: 5
-  },
-  "# cannot use => syntax in templates\nexport template => 0": {
-    line: 2,
-    column: 8
-  },
-  "export template ->\n    const x = 12\n    # cannot assign to const variables, make sure enforced within template\n    x = 10\n    return x": {
-    line: 4,
-    column: 5
-  },
-  "export template ->\n    let x = 12\n    # cannot assign to let variables either.\n    x = 12\n    return x": {
-    line: 4,
-    column: 5
-  },
-  "export template ->\n    let x = {y:10}\n    # cannot assign to anything really.\n    x.y = 12\n    return x.y": {
-    line: 4,
-    column: 5
-  },
-  "export template (a) ->\n    # cannot assign to parameters either\n    a = 10\n    return a": {
-    line: 3,
-    column: 5
-  },
-  "export class Foo\n    constructor: ->\n        # there was a problem with existential operators not processing within class definitions\n        if properties?\n            log(properties)": "'use strict';\nconst ion = require('ion');\nconst Foo = ion.defineClass({\n        name: 'Foo',\n        constructor: function Foo() {\n            if (properties != null) {\n                log(properties);\n            }\n        }\n    });\nmodule.exports = exports = Foo;",
-  "const ctor = @@\nconst ctorName = @@name": "'use strict';\nconst ctor = this.constructor;\nconst ctorName = this.constructor.name;",
-  "const inlineThrow() -> throw new Error('inline throw')": "'use strict';\nfunction inlineThrow() {\n    throw new Error('inline throw');\n}",
-  "class DynamicExpression\n    watch: ->\n        let x = @x ?= []": "'use strict';\nconst ion = require('ion');\nconst DynamicExpression = ion.defineClass({\n        name: 'DynamicExpression',\n        watch: function () {\n            let x = this.x = this.x != null ? this.x : [];\n        }\n    });\nDynamicExpression;",
-  "let a = (new Point)\n    1\n    2": "'use strict';\nlet a = new Point(1, 2);",
-  "let x = [y for y in z]": "'use strict';\nlet _ref = [];\nfor (let _i = 0; _i < z.length; _i++) {\n    let y = z[_i];\n    _ref.push(y);\n}\nlet x = _ref;",
-  "return\n    z: []\n        let items = [3,2,1]\n        for item in items\n            item * 2": "'use strict';\nlet _ref = [];\n{\n    let items = [\n            3,\n            2,\n            1\n        ];\n    for (let _i = 0; _i < items.length; _i++) {\n        let item = items[_i];\n        _ref.push(item * 2);\n    }\n}\nreturn { z: _ref };",
-  "let x = `y == null`": "'use strict';\nlet x = y == null;",
-  "# should get accurate error locations even from inline javascript expressions\nlet x = `y := null`": {
-    line: 2,
-    column: 13
-  },
-  "let x = 0 in Array\nlet y = \"foo\" instanceof String": "'use strict';\nlet x = 0 in Array;\nlet y = 'foo' instanceof String;",
-  "let output\noutput :=\n    x: 1\n    y: 2": "'use strict';\nconst ion = require('ion');\nlet output;\noutput = ion.patch(output, {\n    x: 1,\n    y: 2\n});",
-  "output:\n    for a in b\n        [c]: d": "'use strict';\nconst ion = require('ion');\nlet _ref = {};\n{\n    for (let _i = 0; _i < b.length; _i++) {\n        let a = b[_i];\n        _ref[c] = d;\n    }\n}\nion.patch(output, _ref);",
-  "output: {}\n    x: 1": {
-    line: 1,
-    column: 9
-  },
-  "[output]:\n    x: 1": {
-    line: 1,
-    column: 2
-  },
-  "#\n#\n\n#": "'use strict';",
-  "[a for a in b]\n[a for a in c]": "'use strict';\nlet _ref = [];\nfor (let _i = 0; _i < b.length; _i++) {\n    let a = b[_i];\n    _ref.push(a);\n}\n_ref;\nlet _ref2 = [];\nfor (let _i2 = 0; _i2 < c.length; _i2++) {\n    let a = c[_i2];\n    _ref2.push(a);\n}\n_ref2;",
-  "let array = []\n    1, 0, 0\n    0, 1, 0\n    0, 0, 1": "'use strict';\nlet array = [\n        1,\n        0,\n        0,\n        0,\n        1,\n        0,\n        0,\n        0,\n        1\n    ];",
-  "import(foo).bar": "'use strict';\nrequire(foo).bar;",
-  "let x = []\n    ->": "'use strict';\nlet x = [function () {\n        }];",
-  "x:\n    delete: true": "'use strict';\nconst ion = require('ion');\nion.patch(x, { delete: true });",
-  "return\n    style:\n        fontSize: \"0.7em\"\n    \"delete\"": "'use strict';\nconst ion = require('ion');\nlet _ref = {};\n{\n    _ref.style = ion.patch(_ref.style, { fontSize: '0.7em' });\n    ion.add(_ref, 'delete');\n}\nreturn _ref;",
-  "export template add(x,y) -> x + y": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function add(x, y) {\n    return x + y;\n}, function (x, y) {\n    return ion.createRuntime({\n        type: 'Template',\n        body: [{\n                type: 'ReturnStatement',\n                argument: {\n                    type: 'BinaryExpression',\n                    operator: '+',\n                    left: {\n                        type: 'Identifier',\n                        name: 'x'\n                    },\n                    right: {\n                        type: 'Identifier',\n                        name: 'y'\n                    }\n                }\n            }],\n        bound: false\n    }, {\n        this: this,\n        require: require,\n        module: module,\n        exports: exports,\n        ion: ion,\n        x: x,\n        y: y\n    });\n});",
-  "activate template ->": "'use strict';\nconst ion = require('ion');\nnew (ion.template(function () {\n}, function () {\n    return ion.createRuntime({\n        type: 'Template',\n        body: [],\n        bound: false\n    }, {\n        this: this,\n        require: require,\n        module: module,\n        exports: exports,\n        ion: ion\n    });\n})).template().activate();"
+  "let x = 10": "'use strict';\nvar x = 10;",
+  "let x = 10\nif foo\n    let y = 20\nif bar\n    const y = 30": "'use strict';\nvar x = 10;\nif (foo) {\n    var y = 20;\n}\nif (bar) {\n    var y = 30;\n}",
+  "return let grid = div()\n    child1(grid)\n    child2(grid)": "'use strict';\nvar ion = require('ion');\nvar grid = div();\nvar _ref = grid;\n{\n    ion.add(_ref, child1(grid));\n    ion.add(_ref, child2(grid));\n}\nreturn _ref;"
 };
 
 if (global.window != null) {
@@ -26214,18 +29570,16 @@ exports.test = function() {
   for (input in tests) {
     expected = tests[input];
     options = {
-      target: 'es6'
+      target: 'es5'
     };
     if (expected === null) {
       console.log('---------------------------------------------------');
       console.log(JSON.stringify(index.compile(input, ion.patch({
-        postprocess: false,
-        loc: false
+        postprocess: false
       }, options)), null, '  '));
       console.log('-Postprocessed-------------------------------------');
       console.log(JSON.stringify(index.compile(input, ion.patch({
-        generate: false,
-        loc: false
+        generate: false
       }, options)), null, '  '));
       console.log('---------------------------------------------------');
       console.log(index.compile(input, ion.patch({
@@ -26262,11 +29616,11 @@ exports.test = function() {
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/test/ionCompiler',_ion_test_ionCompiler_);
+      require.register('ion/test/ionCompilerES5',_ion_test_ionCompilerES5_);
     else
-      _ion_test_ionCompiler_.call(this, module, exports, require);
+      _ion_test_ionCompilerES5_.call(this, module, exports, require);
   }
   else {
-    _ion_test_ionCompiler_.call(this);
+    _ion_test_ionCompilerES5_.call(this);
   }
 }).call(this)

@@ -203,6 +203,10 @@ VariableDeclarator
     = start:start &Identifier func:FunctionExpression end:end { return node("VariableDeclarator", {id:func.id,init:func}, start, end) }
     / start:start pattern:Pattern _ init:variableInitializer? end:end { return node("VariableDeclarator", {id:pattern,init:init}, start, end) }
 variableInitializer = "=" _ a:RightHandSideExpression { return a }
+
+VariableDeclarationExpression = start:start kind:variableKind _ id:Identifier _ "=" _ init:InlineExpression end:end
+{ return node("VariableDeclarationExpression", {declarations:[node("VariableDeclarator", {id:id,init:init})], kind:kind}, start, end) }
+
 Pattern = Identifier / ObjectPattern / ArrayPattern
 ObjectPattern = pattern:ObjectLiteral { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ObjectPattern"; return pattern }
 ArrayPattern = pattern:ArrayLiteral { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ArrayPattern"; return pattern }
@@ -230,7 +234,7 @@ MultilineCallExpression = start:start callee:GroupExpression indent eol args:mul
             return node("NewExpression", {callee: callee.callee, arguments: args}, start, end)
         return node("CallExpression", {callee: callee, arguments: args}, start, end)
     }
-InlineExpression = AssignmentExpression
+InlineExpression =  AssignmentExpression / VariableDeclarationExpression
 AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=" / ":=") _ right:RightHandSideExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
     / ConditionalOrDefaultExpression
 ConditionalOrDefaultExpression

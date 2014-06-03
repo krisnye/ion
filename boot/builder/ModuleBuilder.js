@@ -35,7 +35,6 @@ module.exports = exports = ion.template(function (packagePatch) {
         var path = sortedFiles[_i];
         _ref5.push(builder.normalizePath(path));
     }
-    var _ref8 = {};
     {
         var extensions = Object.keys(compilers);
         {
@@ -50,10 +49,10 @@ module.exports = exports = ion.template(function (packagePatch) {
                     var _ref = compiler.compileWithSourceMap(source, packageJson);
                     var code = _ref[0];
                     var map = _ref[1];
-                    _ref8[targetPath] = code + '\n//@ sourceMappingURL=./' + mapName;
-                    _ref8[mapPath] = map;
+                    output[targetPath] = code + '\n//@ sourceMappingURL=./' + mapName;
+                    output[mapPath] = map;
                 } else {
-                    _ref8[targetPath] = compiler.compile(source, packageJson);
+                    output[targetPath] = compiler.compile(source, packageJson);
                 }
             }
         }
@@ -68,24 +67,23 @@ module.exports = exports = ion.template(function (packagePatch) {
                 modified: Math.max.apply(null, _ref4),
                 files: _ref5
             };
-        _ref8[manifestFileName] = JSON.stringify(manifest, null, '  ', sortedFiles);
+        output[manifestFileName] = JSON.stringify(manifest, null, '  ', sortedFiles);
         if (packageJson.build.merge != null) {
             var _ref6 = [];
             for (var _i2 = 0; _i2 < sortedFiles.length; _i2++) {
                 var name = sortedFiles[_i2];
-                ion.add(_ref8, _ref6.push(outputFiles[name].read()));
+                ion.add(output, _ref6.push(outputFiles[name].read()));
             }
-            _ref8[packageJson.build.merge] = _ref6.join('\n');
+            output[packageJson.build.merge] = _ref6.join('\n');
         }
         if (packageJson.build.package) {
-            _ref8['package.json'] = JSON.stringify(ion.patch(ion.clone(packageJson), { main: void 0 }), null, '    ');
+            output['package.json'] = JSON.stringify(ion.patch(ion.clone(packageJson), { main: void 0 }), null, '    ');
         }
         if (packageJson.build.test !== false) {
             var manifestFile = output.getFile(manifestFileName);
-            ion.add(_ref8, builder.runTests(manifestFile, manifestFile.modified));
+            ion.add(output, builder.runTests(manifestFile, manifestFile.modified));
         }
     }
-    ion.patch(output, _ref8);
 }, function (packagePatch) {
     return ion.createRuntime({
         type: 'Template',
@@ -1642,9 +1640,6 @@ module.exports = exports = ion.template(function (packagePatch) {
         bound: false
     }, {
         this: this,
-        require: require,
-        module: module,
-        exports: exports,
         ion: ion,
         packagePatch: packagePatch,
         File: File,

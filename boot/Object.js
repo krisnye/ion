@@ -10,9 +10,6 @@ var Object = ion.defineClass({
                 }
             }
         },
-        toString: function () {
-            return this.name;
-        },
         typeKey: '$',
         properties: {
             toJSON: function () {

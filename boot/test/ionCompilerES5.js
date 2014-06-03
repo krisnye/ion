@@ -6,7 +6,8 @@ index = require('../compiler');
 
 tests = {
   "let x = 10": "'use strict';\nvar x = 10;",
-  "let x = 10\nif foo\n    let y = 20\nif bar\n    const y = 30": "'use strict';\nvar x = 10;\nif (foo) {\n    var y = 20;\n}\nif (bar) {\n    var y = 30;\n}"
+  "let x = 10\nif foo\n    let y = 20\nif bar\n    const y = 30": "'use strict';\nvar x = 10;\nif (foo) {\n    var y = 20;\n}\nif (bar) {\n    var y = 30;\n}",
+  "return let grid = div()\n    child1(grid)\n    child2(grid)": "'use strict';\nvar ion = require('ion');\nvar grid = div();\nvar _ref = grid;\n{\n    ion.add(_ref, child1(grid));\n    ion.add(_ref, child2(grid));\n}\nreturn _ref;"
 };
 
 if (global.window != null) {

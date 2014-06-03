@@ -23,12 +23,12 @@ var lookup = {
             VariableDeclaration: ion.patch(new Factory(), { runtime: './VariableDeclaration' }),
             ThisExpression: ion.patch(new Factory(), {
                 createRuntime: function (context, ast) {
-                    return context.getVariableExpression('this');
+                    return context.getVariable('this');
                 }
             }),
             Identifier: ion.patch(new Factory(), {
                 createRuntime: function (context, ast) {
-                    return context.getVariableExpression(ast.name);
+                    return context.getVariable(ast.name);
                 }
             }),
             Function: ion.patch(new Factory(), {

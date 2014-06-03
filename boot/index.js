@@ -66,12 +66,11 @@ var primitive = {
         function (type, a) {
             return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
         }
-    ];
+    ], nodeObserveShim = (Object.observe != null ? Object.observe.checkForChanges : void 0) ? Object : require('./es6/Object.observe').createShim();
 var patch = exports.patch = function () {
         var mergePatch = require('./mergePatch');
-        var patch = function (object, patch, add, remove) {
-            var result = mergePatch.merge(object, patch);
-            return result;
+        var patch = function (object, patch) {
+            return mergePatch.merge(object, patch);
         };
         for (var key in mergePatch) {
             var value = mergePatch[key];
@@ -107,37 +106,48 @@ var patch = exports.patch = function () {
             return _ref;
         } else if ((object != null ? object.constructor : void 0) === Object) {
             var _ref2 = {};
-            {
-                for (var key in object) {
-                    var value = object[key];
-                    _ref2[key] = deep ? clone(value, deep) : value;
-                }
+            for (var key in object) {
+                var value = object[key];
+                _ref2[key] = deep ? clone(value, deep) : value;
             }
             return _ref2;
         } else {
             return object;
         }
     }, observe = exports.observe = function (object, observer, property) {
-        if (object != null && observer != null && Object.observe != null && typeof object === 'object') {
+        if (object === global || object === console) {
+            return;
+        }
+        if ((object != null ? object.nodeType : void 0) != null) {
+            nodeObserveShim.observe(object, observer, property);
+        } else if (object != null && observer != null && Object.observe != null && typeof object === 'object') {
             Object.observe(object, observer);
             object.addEventListener != null ? object.addEventListener('change', observer) : void 0;
         }
         object != null ? object.onObserved != null ? object.onObserved(observer, property) : void 0 : void 0;
     }, unobserve = exports.unobserve = function (object, observer, property) {
-        if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
+        if ((object != null ? object.nodeType : void 0) != null) {
+            nodeObserveShim.unobserve(object, observer, property);
+        } else if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
             Object.unobserve(object, observer);
             object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
         }
         object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
+    }, checkForChanges = exports.checkForChanges = function () {
+        if (Object.observe.checkForChanges != null) {
+            Object.observe.checkForChanges();
+        } else {
+            nodeObserveShim.observe.checkForChanges();
+        }
     }, bind = exports.bind = function (fn, thisArg) {
         var newFn = fn.bind(thisArg);
-        if (fn.name.length > 0) {
+        if ((fn.name != null ? fn.name.length : void 0) > 0) {
             newFn.id = fn.id != null ? fn.id : fn.name;
         }
         return newFn;
     }, add = exports.add = function (container, item) {
         var remove;
-        if (typeof item === 'function' && (item.name.length > 0 || item.id != null) && typeof container.addEventListener === 'function') {
+        if (typeof item === 'function' && ((item.name != null ? item.name.length : void 0) > 0 || item.id != null) && typeof container.addEventListener === 'function') {
             var name = item.id != null ? item.id : item.name;
             if ((Object.observe != null ? Object.observe.checkForChanges : void 0) != null) {
                 var originalItem = item;
@@ -209,12 +219,19 @@ var patch = exports.patch = function () {
         } else {
             classFunction = eval('(function ' + name + '() {})');
         }
+        var canSetClassProperty = function (key) {
+            if (key === 'name') {
+                return false;
+            }
+            var descriptor = Object.getOwnPropertyDescriptor(classFunction, key);
+            return !(descriptor != null) || descriptor.writable || !(descriptor.get != null);
+        };
         for (var i = definitions.length - 1; i >= 0; i--) {
             var definition = definitions[i];
             for (var key in definition) {
                 var value = definition[key];
                 if (key !== 'test' || i === 0) {
-                    if ((value != null ? value.constructor : void 0) === Object || (Object.getOwnPropertyDescriptor(classFunction, key) != null ? Object.getOwnPropertyDescriptor(classFunction, key).writable : void 0) !== false) {
+                    if (canSetClassProperty(key)) {
                         classFunction[key] = patch(classFunction[key], value);
                     }
                 }
@@ -376,6 +393,12 @@ var patch = exports.patch = function () {
             }
         }
     };
+if (global.window != null) {
+    global.window.addEventListener('resize', function () {
+        console.log('window resized');
+        checkForChanges();
+    });
+}
   }
   if (typeof require === 'function') {
     if (require.register)

@@ -254,19 +254,19 @@ var merge = exports.merge = function (target, values, options) {
                             unwatch();
                         }
                     });
-                ion.patch(source, {
-                    name: 'Fred',
-                    children: {
+                {
+                    source.name = 'Fred';
+                    source.children = ion.patch(source.children, {
                         Orion: {
                             a: 1,
                             b: 2,
                             c: 12
                         },
                         Sadera: { grandchildren: { three: 3 } }
-                    }
-                });
+                    });
+                }
                 delete source.children.Third;
-                Object.observe.checkForChanges != null ? Object.observe.checkForChanges() : void 0;
+                ion.checkForChanges();
             }
         };
     }();

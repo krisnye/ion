@@ -28,11 +28,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                     ], ['node_modules'].concat(packageJson.build.client.exclude));
                 for (var key in _ref3) {
                     var source = _ref3[key];
-                    var _ref10 = {};
-                    {
-                        _ref10[source.path.substring(nodepath.length)] = source.read();
-                    }
-                    ion.patch(clientOutput, _ref10);
+                    clientOutput[source.path.substring(nodepath.length)] = source.read();
                 }
             }
         }
@@ -49,11 +45,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                     ], ['node_modules'].concat(packageJson.build.server.exclude));
                 for (var key in _ref5) {
                     var source = _ref5[key];
-                    var _ref11 = {};
-                    {
-                        _ref11[source.path.substring(nodepath.length)] = source.read();
-                    }
-                    ion.patch(serverOutput, _ref11);
+                    serverOutput[source.path.substring(nodepath.length)] = source.read();
                 }
             }
         }
@@ -91,11 +83,7 @@ module.exports = exports = ion.template(function (packagePatch) {
         for (var key in _ref6) {
             var source = _ref6[key];
             var target = output.getFile(key);
-            var _ref12 = {};
-            {
-                _ref12[key] = source.read();
-            }
-            ion.patch(output, _ref12);
+            output[key] = source.read();
         }
     }
     {
@@ -103,11 +91,7 @@ module.exports = exports = ion.template(function (packagePatch) {
         for (var key in _ref7) {
             var source = _ref7[key];
             var targetPath = builder.changeExtension(key, '.js');
-            var _ref13 = {};
-            {
-                _ref13[targetPath] = builder.compileIon(source);
-            }
-            ion.patch(output, _ref13);
+            output[targetPath] = builder.compileIon(source);
         }
     }
     var pageOutput = output.getDirectory('WEB-INF/pages');
@@ -116,11 +100,7 @@ module.exports = exports = ion.template(function (packagePatch) {
         for (var key in _ref8) {
             var source = _ref8[key];
             var targetPath = builder.changeExtension(key, '.js');
-            var _ref14 = {};
-            {
-                _ref14[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(source) + ' })';
-            }
-            ion.patch(pageOutput, _ref14);
+            pageOutput[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(source) + ' })';
         }
     }
     {
@@ -128,11 +108,7 @@ module.exports = exports = ion.template(function (packagePatch) {
         for (var key in _ref9) {
             var source = _ref9[key];
             var targetPath = builder.changeExtension(key, '.js');
-            var _ref15 = {};
-            {
-                _ref15[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(source) + ' })';
-            }
-            ion.patch(pageOutput, _ref15);
+            pageOutput[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(source) + ' })';
         }
     }
 }, function (packagePatch) {
@@ -2077,9 +2053,6 @@ module.exports = exports = ion.template(function (packagePatch) {
         bound: false
     }, {
         this: this,
-        require: require,
-        module: module,
-        exports: exports,
         ion: ion,
         packagePatch: packagePatch,
         File: File,
