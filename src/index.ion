@@ -312,5 +312,4 @@ if global.window?
     (global.window.addEventListener)
         'resize'
         ->
-            console.log('window resized')
             checkForChanges()

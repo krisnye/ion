@@ -66,7 +66,8 @@ export const createShim = ->
                             change("delete", name, oldPropertyValue)
                     else
                         let newPropertyValue = newValue[name]
-                        if newPropertyValue isnt oldPropertyValue
+                        # must use Object.is because NaN != NaN
+                        if not Object.is(newPropertyValue, oldPropertyValue)
                             change("update", name, oldPropertyValue)
                 else if newValue.hasOwnProperty(name)
                     change("add", name)
@@ -74,7 +75,8 @@ export const createShim = ->
                 # for everything else, we only check current property values
                 let oldPropertyValue = oldValue[name]
                 let newPropertyValue = newValue[name]
-                if newPropertyValue isnt oldPropertyValue
+                # must use Object.is because NaN != NaN
+                if not Object.is(newPropertyValue, oldPropertyValue)
                     change("update", name, oldPropertyValue)
 
         if properties?
