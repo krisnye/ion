@@ -1,6 +1,6 @@
 
 export {}
-    for name in ["div","span","input","textarea", "a","br","button","caption","fieldset","form", "frame","frameset","h1","h2","h3","h4","h5","h6","hr","legend","menu","option","select","script","pre","table","tbody","td","tr","thead"]
+    for name in ["div","span","input","textarea", "a","br","button","caption","fieldset","form", "frame","frameset","h1","h2","h3","h4","h5","h6","hr","legend","menu","option","select","script","pre","table","tbody","td","tr","thead", "canvas"]
         [name]: do (name) ->
             return (attributes) ->
                 let element = document.createElement(name)

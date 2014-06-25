@@ -1,0 +1,12 @@
+
+if not Object.is?
+    (Object.defineProperty)
+        Object
+        'is'
+        {}
+            value: (a, b) ->
+                if a is b
+                    if a is 0
+                        return 1 / a is 1 / b
+                    return true
+                return a isnt a and b isnt b
