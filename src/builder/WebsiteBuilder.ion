@@ -8,6 +8,8 @@ const
     clientJsDir = 'js'
     serverJsDir = 'WEB-INF/js'
     serverJavaDir = 'WEB-INF/java'
+    np = import 'path'
+
 
 export template (packagePatch) ->
     const
@@ -16,7 +18,7 @@ export template (packagePatch) ->
         output = new Directory(packageJson.directories.www ? 'debug')
         clientOutput = output.getDirectory(clientJsDir)
         serverOutput = output.getDirectory(serverJsDir)
-        nodepath = 'node_modules/'
+        nodepaths = ['node_modules'].concat(process.env.NODE_PATH.split(np.delimiter))
 
     # Copy local development versions of glass-pages to input directory if available
     # They will be copied from src to the build directory by ant
@@ -30,15 +32,17 @@ export template (packagePatch) ->
 
     # Copy client and server node modules to the output
     for moduleName in packageJson.build.client.modules
-        let directory = new Directory(nodepath + moduleName)
-        for key, source of directory.search([".js",".map"], ["node_modules"].concat(packageJson.build.client.exclude))
-            clientOutput:
-                [source.path.substring(nodepath.length)]: source.read()
+        for nodepath in nodepaths
+            let directory = new Directory(np.join(nodepath, moduleName))
+            for key, source of directory.search([".js",".map"], ["node_modules"].concat(packageJson.build.client.exclude))
+                clientOutput:
+                    [source.path.substring(nodepath.length)]: source.read()
     for moduleName in packageJson.build.server.modules
-        let directory = new Directory(nodepath + moduleName)
-        for key, source of directory.search([".js",".map"], ["node_modules"].concat(packageJson.build.server.exclude))
-            serverOutput:
-                [source.path.substring(nodepath.length)]: source.read()
+        for nodepath in nodepaths
+            let directory = new Directory(np.join(nodepath, moduleName))
+            for key, source of directory.search([".js",".map"], ["node_modules"].concat(packageJson.build.server.exclude))
+                serverOutput:
+                    [source.path.substring(nodepath.length)]: source.read()
 
     # build client javascript
     (ModuleBuilder)
