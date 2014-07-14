@@ -47,10 +47,10 @@ export class Property extends Statement
             @keyExpression.unwatch(@keyWatcher)
             @valueExpression.unwatch(@valueWatcher)
         restoreProperty: ->
-            if @originalKey?
-                ion.set(@context.output, @originalKey, @originalValue)
-                @originalKey = undefined
-                @originalValue = undefined
+            # if @originalKey?
+            #     ion.set(@context.output, @originalKey, @originalValue)
+            #     @originalKey = undefined
+            #     @originalValue = undefined
         setProperty: (key = @keyValue, value = @valueValue) ->
             # we must have a key, and the value must not be undefined UNLESS the value is explicitly undefined!
             let explicitUndefined = @value.operator is 'void'

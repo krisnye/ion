@@ -27,7 +27,7 @@ const templates = []
                     [key]: double(value)
         {x:1,y:2}
         {x:4,z:3}
-        {y:4,x:8,z:6} # the x swaps place because it is removed and re-added on property change
+        {x:8,y:4,z:6}
     []
         "shared variables functions"
         {}
@@ -39,7 +39,7 @@ const templates = []
                     [key]: multiply(value)
         {x:1,y:2}
         {x:4,y:undefined,z:5,factor:10}
-        {x:40,z:50}
+        {x:40,y:6,z:50}
     []
         "reactive destructured parameters"
         {}

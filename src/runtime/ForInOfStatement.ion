@@ -44,23 +44,37 @@ export class ForInOfStatement extends Statement
         deactivate: ->
             super
             @collectionExpression.unwatch(@collectionWatcher)
-        addItem: (key, value) ->
+        addItem: (key, value, cache) ->
             # console.log('add ' + key + ' ' + value)
             if value isnt undefined
-                let newContext = @context.newContext()
-                if @valueName?
-                    newContext.setVariable(@valueName, value)
-                if @keyName?
-                    # the key *could* by dynamic if this is an array
-                    # this way we only need to change the key if an items index in an array changes.
-                    let keyExpression = newContext._keyExpression = new DynamicExpression({value:key})
-                    newContext.setVariable(@keyName, keyExpression)
-                let statement = @statements[key] = newContext.createRuntime(@body)
-                statement.activate()
+                # see if there is a cached statement with that value
+                let statement = cache?.get(value)
+                if statement?
+                    # if so, just update the new key
+                    #debugger
+                    statement.context._keyExpression?.setValue(key)
+                    # and remove it from the cache
+                    cache.delete(value)
+                else
+                    let newContext = @context.newContext()
+                    if @valueName?
+                        newContext.setVariable(@valueName, value)
+                    if @keyName?
+                        # the key *could* by dynamic if this is an array
+                        # this way we only need to change the key if an items index in an array changes.
+                        let keyExpression = newContext._keyExpression = new DynamicExpression({value:key})
+                        newContext.setVariable(@keyName, keyExpression)
+                    statement = newContext.createRuntime(@body)
+                    statement.activate()
+                @statements[key] = statement
         removeItem: (key, value, cache) ->
             let statement = @statements[key]
             # console.log('remove ' + key + ' ' + value + ' ', statement)
-            statement?.deactivate()
+            if statement?
+                if cache?
+                    cache.set(value, statement)
+                else
+                    statement.deactivate()
             delete @statements[key]
         applyChanges: (changes) ->
             let ignoreProperty = (name) =>
@@ -74,14 +88,26 @@ export class ForInOfStatement extends Statement
             # this will be an N performance algorithm for ARRAY insertions/deletions.
             # we can improve this later by looking for "slice" events and seeing if index is not relevant.
             # console.log('changes', changes)
+            let cache = new Map
+
+            for {name,oldValue} in changes
+                let ignore = ignoreProperty(name)
+                if not ignore
+                    let key = @toKey(name)
+                    if oldValue isnt undefined
+                        @removeItem(key, oldValue, cache)
 
             for {name,oldValue} in changes
                 let ignore = ignoreProperty(name)
                 if not ignore
                     let newValue = @collection[name]
                     let key = @toKey(name)
-                    if oldValue isnt undefined
-                        @removeItem(key, oldValue)
                     if newValue isnt undefined
-                        @addItem(key, newValue)
+                        @addItem(key, newValue, cache)
+
+            # now anything left in the cache are statements to be deactivated.
+            for key in cache.keys()
+                let statement = cache.get(key)
+                # console.log('-----------------------', key, statement)
+                statement.deactivate()
 
