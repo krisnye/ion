@@ -125,6 +125,8 @@ const getFactory(ast, step = lookup) ->
 
 export const
     createRuntime = (context, ast) ->
+        if typeof ast?.watch is 'function' and typeof ast?.unwatch is 'function'
+            return ast
         if typeof ast?.type isnt 'string'
             ast =
                 type: 'Literal'

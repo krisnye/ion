@@ -1,6 +1,7 @@
 const
     ion = import '../'
     Statement = import './Statement'
+    DynamicExpression = import './DynamicExpression'
 
 export class ForInOfStatement extends Statement
     properties:
@@ -20,7 +21,12 @@ export class ForInOfStatement extends Statement
                     callback(key, value)
         activate: ->
             super
-            @statements ?= {}
+
+            if not @statements?
+                @statements = {}            
+                @valueName = @left.declarations[@type is 'ForOfStatement' ? 0 : 1]?.id.name
+                @keyName = @left.declarations[@type is 'ForOfStatement' ? 1 : 0]?.id.name
+
             # we must create new contexts for every item in the list thingy.
             # console.log('ForEachStatement.activate', @)
             @collectionExpression ?= @context.createRuntime(@right)
@@ -42,11 +48,16 @@ export class ForInOfStatement extends Statement
             # console.log('add ' + key + ' ' + value)
             if value isnt undefined
                 let newContext = @context.newContext()
-                newContext.setVariable(@left.declarations[@type is 'ForOfStatement' ? 0 : 1]?.id.name, value)
-                newContext.setVariable(@left.declarations[@type is 'ForOfStatement' ? 1 : 0]?.id.name, key)
+                if @valueName?
+                    newContext.setVariable(@valueName, value)
+                if @keyName?
+                    # the key *could* by dynamic if this is an array
+                    # this way we only need to change the key if an items index in an array changes.
+                    let keyExpression = newContext._keyExpression = new DynamicExpression({value:key})
+                    newContext.setVariable(@keyName, keyExpression)
                 let statement = @statements[key] = newContext.createRuntime(@body)
                 statement.activate()
-        removeItem: (key, value) ->
+        removeItem: (key, value, cache) ->
             let statement = @statements[key]
             # console.log('remove ' + key + ' ' + value + ' ', statement)
             statement?.deactivate()
@@ -63,6 +74,7 @@ export class ForInOfStatement extends Statement
             # this will be an N performance algorithm for ARRAY insertions/deletions.
             # we can improve this later by looking for "slice" events and seeing if index is not relevant.
             # console.log('changes', changes)
+
             for {name,oldValue} in changes
                 let ignore = ignoreProperty(name)
                 if not ignore

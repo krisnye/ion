@@ -1,0 +1,18 @@
+
+if not Array.prototype.add?
+    (Object.defineProperty)
+        Array.prototype
+        'add'
+        {}
+            value: Array.prototype.push
+
+if not Array.prototype.remove?
+    (Object.defineProperty)
+        Array.prototype
+        'remove'
+        {}
+            value: ->
+                for item in arguments
+                    let index = @lastIndexOf(item)
+                    if index >= 0
+                        @splice(index, 1)

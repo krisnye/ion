@@ -19,7 +19,7 @@ export class DynamicExpression extends import './Expression'
             if value isnt undefined
                 @_notifyWatcher(watcher, value)
         unwatch: (watcher) ->
-            @_watchers.splice(@_watchers.lastIndexOf(watcher), 1)
+            @_watchers.remove(watcher)
             # notify watcher immediately if we have a defined value
             let value = @getValue()
             if value isnt undefined

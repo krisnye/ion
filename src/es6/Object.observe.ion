@@ -12,7 +12,6 @@ const clone = (object, properties) ->
 export const createShim = ->
     # multiple callbacks on same object.
     let map = new Map()
-    let observers = []
 
     let observe = (object, callback, property) ->
         # console.log('+observe', property)
@@ -25,7 +24,6 @@ export const createShim = ->
                 clone: clone(object, property ? {[property]:0} : null)
                 callbacks: []
             map.set(object, meta)
-            observers.push(meta)
         if property?
             meta.properties[property] ?= 0
             meta.properties[property]++
@@ -36,13 +34,10 @@ export const createShim = ->
         # console.log('-unobserve', object, callback)
         let meta = map.get(object)
         if meta?
-            let index = meta.callbacks.lastIndexOf(callback)
-            if index >= 0
-                meta.callbacks.splice(index, 1)
-                if meta.callbacks.length is 0
-                    # remove no longer observed objects
-                    map.delete(object)
-                    observers.splice(observers.lastIndexOf(meta), 1)
+            meta.callbacks.remove(callback)
+            if meta.callbacks.length is 0
+                # remove no longer observed objects
+                map.delete(object)
             if property?
                 meta.properties[property]--
                 if meta.properties[property] is 0
@@ -96,7 +91,8 @@ export const createShim = ->
             let totalChanges = 0
             let pendingChanges = []
             # traverse all objects and find changes
-            for meta in observers
+            for key in map.keys()
+                let meta = map.get(key)
                 let properties = meta.all > 0 ? null : meta.properties
                 let changes = getChanges(meta.clone, meta.object, properties)
                 if changes?
@@ -114,7 +110,6 @@ export const createShim = ->
         # we have hit max cycles, indicates a circular dependency error
         throw new Error("Circular Object.observe dependency")
 
-    observe.observers = observers
     return {observe,unobserve}
 
 export const test = ->

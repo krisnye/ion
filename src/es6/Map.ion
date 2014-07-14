@@ -2,6 +2,7 @@
 
 const MapShim(pairs) ->
     let lookup = {}
+    let keys = []
     let uniqueCounter = 0
     const idName = "__Map_id"
     const getId = (key) ->
@@ -16,18 +17,32 @@ const MapShim(pairs) ->
         return id
     const methods =
         get: get(key) -> lookup[getId(key)]
-        set: set(key, value) -> lookup[getId(key)] = value
+        set: set(key, value) ->
+            let id = getId(key)
+            if not lookup.hasOwnProperty(id)
+                keys.push(key)
+            lookup[id] = value
+            return value
         has: has(key) -> lookup.hasOwnProperty(getId(key))
-        delete: del(key) -> delete lookup[getId(key)]
+        delete: del(key) ->
+            let id = getId(key)
+            keys.remove(key)
+            delete lookup[id]
         clear: clear ->
             lookup = {}
+        keys: -> keys.slice(0)
+        forEach: forEach (callback, thisArg) ->
+            for key in keys
+                let value = @get(key)
+                callback.call(thisArg, value, key, @)
     for key, value of methods
         Object.defineProperty(@, key, {value})
     if pairs?
         for [key, value] in pairs
             @set(key, value)
 
-if not global.Map?
+# we will even replace Googles crap implementation of Map that doesn't yet have forEach or keys
+if not global.Map?.prototype.forEach?
     global.Map = MapShim
 
 export const test = ->
@@ -43,3 +58,4 @@ export const test = ->
     map.set(mykey1, "one")
     assert Object.keys(mykey1).length is 0
     assert map.get(mykey1) is "one"
+    assert JSON.stringify(map.keys()) is JSON.stringify(['a','b',mykey1])
