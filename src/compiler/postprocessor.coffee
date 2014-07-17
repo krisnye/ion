@@ -936,9 +936,6 @@ validateTemplateNodes = (node, context) ->
         if nodes[node.type]?.allowedInReactive is false
             throw context.error node.type + " not allowed in templates", node
 
-    # if node.type is 'VariableDeclaration' and node.kind is 'let'
-    #     throw context.error "only const variables are allowed in templates", node
-
 removeLocationInfo = (node) ->
     traverse node, (node) ->
         if node.loc?

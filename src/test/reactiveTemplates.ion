@@ -26,8 +26,20 @@ const templates = []
                 for key, value of properties
                     [key]: double(value)
         {x:1,y:2}
-        {x:4,z:3}
+        {x:4,z:3,y:undefined}
         {x:8,y:4,z:6}
+    []
+        "for else statements"
+        {}
+        template (properties) ->
+            return {}
+                for key, value of properties
+                    [key]: value
+                else
+                    [key]: undefined
+        {x:1,y:2}
+        {x:4,y:undefined,z:3}
+        {x:4,z:3}
     []
         "shared variables functions"
         {}
@@ -116,6 +128,7 @@ export
                 return (done) ->
                     let template = templateType.template.call(thisArg, argument)
                     const checkIfDone (check) ->
+                        # console.log(JSON.stringify(check))
                         if JSON.stringify(check) is JSON.stringify(expected)
                             template.deactivate()
                             done()

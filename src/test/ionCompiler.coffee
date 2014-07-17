@@ -1321,6 +1321,23 @@ tests =
         ion.add(content, 2);
     }
     """
+    """
+    for name, file of directory
+        write(name, file)
+    else
+        delete(name)
+    """: """
+    'use strict';
+    for (let name in directory) {
+        let file = directory[name];
+        write(name, file);
+    }
+    """
+    # """
+    # Point
+    #     x: 10
+    #     y: delete
+    # """: null
 
 if global.window?
     return
@@ -1329,12 +1346,13 @@ exports.test = ->
     for input, expected of tests
         options = {target:'es6'}
         if expected is null
+            loc = false
             console.log '---------------------------------------------------'
-            console.log JSON.stringify index.compile(input, ion.patch({postprocess:false,loc:false}, options)), null, '  '
+            console.log JSON.stringify index.compile(input, ion.patch({postprocess:false,loc:loc}, options)), null, '  '
             console.log '-Postprocessed-------------------------------------'
-            console.log JSON.stringify index.compile(input, ion.patch({generate:false,loc:false}, options)), null, '  '
+            console.log JSON.stringify index.compile(input, ion.patch({generate:false,loc:loc}, options)), null, '  '
             console.log '---------------------------------------------------'
-            console.log index.compile input, ion.patch({loc:false}, options)
+            console.log index.compile input, ion.patch({loc:loc}, options)
         else if typeof expected is 'object'
             # expected to throw an error
             error = null

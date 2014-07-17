@@ -156,12 +156,16 @@ ForInOfHead
     _ test:(if _ test:InlineExpression { return test })?
     _ inner:ForInOfHead?
     { return {type:type, left:left, right:right, test:test || undefined, inner: inner || undefined} }
-ForInOfStatement = start:start head:ForInOfHead body:BlockOrSingleStatement end:end
+ForInOfElseStatement = eol _ start:start else _ a:BlockStatement end:end
+    { return node("BlockStatement", {body:a.body}, start, end) }
+ForInOfStatement = start:start head:ForInOfHead body:BlockOrSingleStatement remove:ForInOfElseStatement? end:end
     {
         head = clone(head)
         head.body = body
+        head.remove = remove
         return node(head.type, head, start, end)
     }
+
 ForStatement = start:start for _ init:(VariableDeclaration / InlineExpression)? _ ";" _ test:InlineExpression? _ ";" _ update:InlineExpression? body:BlockOrSingleStatement end:end
     { return node("ForStatement", {init:init, test:test, update:update, body:body}, start, end) }
 ArrayComprehension = start:start "[" _ value:InlineExpression _ comprehension:ForInOfHead _ "]" end:end
