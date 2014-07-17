@@ -120,6 +120,41 @@ const templates = []
         object
         {x:10}
         12
+    do ->
+        # this test verifies that statements are reused when a value shifts within an array
+        let Type = ->
+        let alpha = new Type
+            name: 'alpha'
+        let beta = new Type
+            name: 'beta'
+        let charlie = new Type
+            name: 'charlie'
+        let next = 0
+        let nextId = -> next++
+        return []
+            "for in reuse values"
+            {}
+            template (items) ->
+                return []
+                    for item, index in items
+                        { id: nextId(), name: item.name, index: index }
+            [alpha,beta,charlie]
+            {0:alpha,1:charlie,2:undefined}
+            [{id:0,name:'alpha',index:0},{id:2,name:'charlie',index:1}]
+    do ->
+        # this test verifies that statements are reused when a value shifts within an array
+        let next = 0
+        let nextId = -> next++
+        return []
+            "for of reuse keys"
+            {}
+            template (items) ->
+                return []
+                    for key, value of items
+                        { id: nextId(), key: key, value: value }
+            {alpha:1,beta:2,charlie:3}
+            {beta:3,charlie:undefined}
+            [{id:0,key:'alpha',value:1},{id:1,key:'beta',value:3}]
 
 export
     test:
@@ -128,7 +163,6 @@ export
                 return (done) ->
                     let template = templateType.template.call(thisArg, argument)
                     const checkIfDone (check) ->
-                        # console.log(JSON.stringify(check))
                         if JSON.stringify(check) is JSON.stringify(expected)
                             template.deactivate()
                             done()

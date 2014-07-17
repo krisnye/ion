@@ -56,12 +56,9 @@ export class ForInOfStatement extends Statement
                 # see if there is a cached statement with that value
                 let newContext = @context.newContext()
                 if @valueName?
-                    newContext.setVariable(@valueName, value)
+                    newContext.setVariable(@valueName, new DynamicExpression({value:value}))
                 if @keyName?
-                    # the key *could* by dynamic if this is an array
-                    # this way we only need to change the key if an items index in an array changes.
-                    let keyExpression = newContext._keyExpression = new DynamicExpression({value:key})
-                    newContext.setVariable(@keyName, keyExpression)
+                    newContext.setVariable(@keyName, new DynamicExpression({value:key}))
                 let statement = newContext.createRuntime(@body)
                 @statements[key] = statement
                 if activate
@@ -92,35 +89,45 @@ export class ForInOfStatement extends Statement
             # this will be an N performance algorithm for ARRAY insertions/deletions.
             # we can improve this later by looking for "slice" events and seeing if index is not relevant.
             # console.log('changes', changes)
-            let removeStatements = new Map
+            let recyclableStatements = new Map
+            let getRecycleKey = (key, value) => @type is 'ForOfStatement' ? value : key
             let activateStatements = []
 
             for {name,oldValue} in changes if not ignoreProperty(name)
                 let key = @toKey(name)
                 if oldValue isnt undefined
+                    let rkey = getRecycleKey(key, oldValue)
                     let statement = @statements[key]
-                    removeStatements.set(oldValue, statement)
+                    recyclableStatements.set(rkey, statement)
 
             for {name,oldValue} in changes if not ignoreProperty(name)
                 let newValue = @collection[name]
                 let key = @toKey(name)
                 if newValue isnt undefined
-                    let statement = removeStatements?.get(newValue)
+                    let rkey = getRecycleKey(key, newValue)
+                    let statement = recyclableStatements?.get(rkey)
+                    # let statement = null
                     if statement?
-                        statement.context._keyExpression?.setValue(key)
-                        removeStatements.delete(newValue)
+                        if @type is 'ForOfStatement'
+                            if @keyName?
+                                statement.context.variables[@keyName].setValue(key)
+                        else
+                            if @valueName?
+                                statement.context.variables[@valueName].setValue(newValue)
+                        recyclableStatements.delete(rkey)
                     else
                         statement = @addItem(key, newValue, false)
                         if statement?
                             activateStatements.push(statement)
 
-            # now anything left in the removeStatements are statements to be deactivated.
-            for key in removeStatements.keys()
-                let statement = removeStatements.get(key)
+            # it's important that old statements are deactivated BEFORE new statements are activated
+
+            # recyclableStatements are deactivated.
+            for key in recyclableStatements.keys()
+                let statement = recyclableStatements.get(key)
                 @disposeStatement(statement)
 
-            # now activate new statements
-            # it's important that old statements are deactivated BEFORE new statements are activated
+            # activate new statements
             for statement in activateStatements
                 statement.activate()
 
