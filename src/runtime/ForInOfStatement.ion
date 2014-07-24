@@ -77,7 +77,7 @@ export class ForInOfStatement extends Statement
                 let removeStatement = statement.context.createRuntime(@remove)
                 removeStatement.activate()
             statement.deactivate()
-        applyChanges: (changes) ->
+        summarize: (changes) ->
             let ignoreProperty = (name) =>
                 if not name?
                     return true
@@ -86,26 +86,57 @@ export class ForInOfStatement extends Statement
                 if name is 'length' and @type is 'ForOfStatement'
                     return true
                 return false
-            # this will be an N performance algorithm for ARRAY insertions/deletions.
-            # we can improve this later by looking for "slice" events and seeing if index is not relevant.
-            # console.log('changes', changes)
+            let map = new Map
+            for {type,object,name,oldValue} in changes
+                if not ignoreProperty(name)
+                    if not map.has(name)
+                        map.set(name, {type,object,name,oldValue})
+                    else
+                        let change = map.get(name)
+                        # update the type.
+                        change.type = type
+            let array = []
+            (map.forEach)
+                (change, name, object)->
+                    let newValue = change.object[name]
+                    if newValue isnt change.oldValue
+                        delete change.object
+                        array.push(change)
+            return array
+        applyChanges: (changes) ->
+            # prune the change messages down
+            changes = @summarize(changes)
+            if changes.length is 0
+                return
+            # console.log(JSON.stringify(changes))
+
+            # for {name,type,oldValue} in changes
+            #     let newValue = @collection[name]
+            #     let key = @toKey(name)
+            #     if oldValue isnt undefined
+            #         @removeItem(key, oldValue)
+            #     if newValue isnt undefined
+            #         @addItem(key, newValue)
+
             let recyclableStatements = new Map
             let getRecycleKey = (key, value) => @type is 'ForOfStatement' ? value : key
             let activateStatements = []
 
-            for {name,oldValue} in changes if not ignoreProperty(name)
+            for {name,oldValue} in changes
                 let key = @toKey(name)
                 if oldValue isnt undefined
                     let rkey = getRecycleKey(key, oldValue)
                     let statement = @statements[key]
-                    recyclableStatements.set(rkey, statement)
+                    if statement?
+                        delete @statements[key]
+                        recyclableStatements.set(rkey, statement)
 
-            for {name,oldValue} in changes if not ignoreProperty(name)
+            for {name,oldValue} in changes
                 let newValue = @collection[name]
                 let key = @toKey(name)
                 if newValue isnt undefined
                     let rkey = getRecycleKey(key, newValue)
-                    let statement = recyclableStatements?.get(rkey)
+                    let statement = recyclableStatements.get(rkey)
                     # let statement = null
                     if statement?
                         if @type is 'ForOfStatement'
@@ -114,6 +145,7 @@ export class ForInOfStatement extends Statement
                         else
                             if @valueName?
                                 statement.context.variables[@valueName].setValue(newValue)
+                        @statements[key] = statement
                         recyclableStatements.delete(rkey)
                     else
                         statement = @addItem(key, newValue, false)
@@ -123,9 +155,9 @@ export class ForInOfStatement extends Statement
             # it's important that old statements are deactivated BEFORE new statements are activated
 
             # recyclableStatements are deactivated.
-            for key in recyclableStatements.keys()
-                let statement = recyclableStatements.get(key)
-                @disposeStatement(statement)
+            (recyclableStatements.forEach)
+                (statement) =>
+                    @disposeStatement(statement)
 
             # activate new statements
             for statement in activateStatements

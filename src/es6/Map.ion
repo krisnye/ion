@@ -1,20 +1,23 @@
 # don't depend on ion for this.
 
+# the uniqueCounter and getId have to be defined outside of the MapShim constructor.
+# otherwise some objects may end up with the same uniqueId if they are added to different Maps.
+let uniqueCounter = 0
+const idName = "__Map_id"
+const getId = (key) ->
+    if not key?
+        return String(key)
+    if typeof key is 'string' or typeof key is 'number' or typeof key is 'boolean'
+        return "_" + key
+    let id = key[idName]
+    if not id?
+        id = ++uniqueCounter
+        Object.defineProperty(key, idName, {value:id})
+    return id
+
 const MapShim(pairs) ->
     let lookup = {}
     let keys = []
-    let uniqueCounter = 0
-    const idName = "__Map_id"
-    const getId = (key) ->
-        if not key?
-            return String(key)
-        if typeof key is 'string' or typeof key is 'number' or typeof key is 'boolean'
-            return "_" + key
-        let id = key[idName]
-        if not id?
-            id = ++uniqueCounter
-            Object.defineProperty(key, idName, {value:id})
-        return id
     const methods =
         get: get(key) -> lookup[getId(key)]
         set: set(key, value) ->
@@ -42,11 +45,21 @@ const MapShim(pairs) ->
             @set(key, value)
 
 # we will even replace Googles crap implementation of Map that doesn't yet have forEach or keys
-if not global.Map?.prototype.forEach?
+if not global.Map? or not Map.prototype.forEach?
+    console.warn('Shimming Map')
     global.Map = MapShim
+# shim keys if not provided for Chrome.
+if not (new Map()).keys?
+    console.warn('Shimming Map.prototype.keys')
+    Map.prototype.keys = ->
+        let keys = []
+        (@forEach)
+            (value, key) ->
+                keys.push(key)
+        return keys
 
 export const test = ->
-    const Map = MapShim
+    const Map = global.Map
     let map = new Map([['a', 1], ['b', 2]])
     assert Object.keys(map).length is 0
     assert map.has('a')

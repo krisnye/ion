@@ -131,5 +131,6 @@ export const test = ->
     unobserve(object, handler)
 
 if not Object.observe? and global.Map?
+    console.warn('Shimming Object.observe')
     for key, value of createShim()
         Object[key] = value
