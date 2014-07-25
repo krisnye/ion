@@ -1,6 +1,7 @@
 
 import './String'
 import './Map'
+import './Set'
 import './Object'
 import './Object.observe'
 import './Function'

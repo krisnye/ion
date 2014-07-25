@@ -19,22 +19,25 @@ const MapShim(pairs) ->
     let lookup = {}
     let keys = []
     const methods =
-        get: get(key) -> lookup[getId(key)]
-        set: set(key, value) ->
+        get: (key) -> lookup[getId(key)]
+        set: (key, value) ->
             let id = getId(key)
             if not lookup.hasOwnProperty(id)
                 keys.push(key)
             lookup[id] = value
             return value
-        has: has(key) -> lookup.hasOwnProperty(getId(key))
-        delete: del(key) ->
+        has: (key) ->
+            let id = getId(key)
+            return lookup.hasOwnProperty(id)
+        delete: (key) ->
             let id = getId(key)
             keys.remove(key)
             delete lookup[id]
-        clear: clear ->
+        clear: ->
             lookup = {}
+            keys = []
         keys: -> keys.slice(0)
-        forEach: forEach (callback, thisArg) ->
+        forEach: (callback, thisArg) ->
             for key in keys
                 let value = @get(key)
                 callback.call(thisArg, value, key, @)

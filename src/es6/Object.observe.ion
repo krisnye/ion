@@ -47,9 +47,9 @@ export const createShim = ->
 
     let getChanges = (oldValue, newValue, properties) ->
         let changes = null
-        let change = (type, name, oldValue) ->
+        let change = (type, name, oldValue, object) ->
             changes ?= []
-            changes.push({type,name,oldValue})
+            changes.push({type,name,oldValue,object})
             # console.log('change', type, name)
         let checkForChange = (property) ->
             # we only check add/delete on plain old javascript objects
@@ -58,21 +58,21 @@ export const createShim = ->
                     let oldPropertyValue = oldValue[name]
                     if not newValue.hasOwnProperty(name)
                         if oldPropertyValue isnt undefined
-                            change("delete", name, oldPropertyValue)
+                            change("delete", name, oldPropertyValue, oldValue)
                     else
                         let newPropertyValue = newValue[name]
                         # must use Object.is because NaN != NaN
                         if not Object.is(newPropertyValue, oldPropertyValue)
-                            change("update", name, oldPropertyValue)
+                            change("update", name, oldPropertyValue, newValue)
                 else if newValue.hasOwnProperty(name)
-                    change("add", name)
+                    change("add", name, undefined, newValue)
             else
                 # for everything else, we only check current property values
                 let oldPropertyValue = oldValue[name]
                 let newPropertyValue = newValue[name]
                 # must use Object.is because NaN != NaN
                 if not Object.is(newPropertyValue, oldPropertyValue)
-                    change("update", name, oldPropertyValue)
+                    change("update", name, oldPropertyValue, oldValue)
 
         if properties?
             for name of properties
@@ -127,7 +127,7 @@ export const test = ->
     delete object.b
     object.c = 5
     observe.checkForChanges()
-    assert JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1},{"type":"delete","name":"b","oldValue":{"c":2,"d":3}},{"type":"add","name":"c"}])
+    assert JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1,"object":{"a":2,"c":5}},{"type":"delete","name":"b","oldValue":{"c":2,"d":3},"object":{"a":1,"b":{"c":2,"d":3}}},{"type":"add","name":"c","object":{"a":2,"c":5}}])
     unobserve(object, handler)
 
 if not Object.observe? and global.Map?

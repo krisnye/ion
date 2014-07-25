@@ -186,11 +186,15 @@ export const
             let descriptor = Object.getOwnPropertyDescriptor(classFunction, key)
             return not descriptor? or descriptor.writable or not descriptor.get?
 
+        let types = new Set([classFunction])   # a map of all types
         for let i = definitions.length - 1; i >= 0; i--
             let definition = definitions[i]
-            for key, value of definition if key isnt 'test' or i is 0
-                if canSetClassProperty(key)
-                    classFunction[key] = patch(classFunction[key], value)
+            if definition?
+                types.add(definition)
+                for key, value of definition if key isnt 'test' or i is 0
+                    if canSetClassProperty(key)
+                        classFunction[key] = patch(classFunction[key], value)
+        classFunction.types = types
 
         if classFunction.properties?
             defineProperties(classFunction.prototype, classFunction.properties)

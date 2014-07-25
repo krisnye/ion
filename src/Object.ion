@@ -7,6 +7,7 @@ export class Object extends null
             for key, value of properties
                 @[key] = value
     typeKey: '$'
+    is: (object) -> object?.constructor.types?.has?(@)
     properties:
         toJSON: ->
             const properties = {}
@@ -15,3 +16,6 @@ export class Object extends null
             for key, value of @ if @hasOwnProperty(key)
                 properties[key] = value
             return properties
+    test: ->
+        let object = new Object()
+        assert Object.is(object)
