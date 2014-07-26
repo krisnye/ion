@@ -64,9 +64,13 @@ export const
             try
                 let patch = {}
                 for change in changes
-                    # we convert undefined values from delete into explicit nulls
-                    patch[change.name] = object[change.name] ? deleteValue
-                queuePatch(patch)
+                    # we ignore names that start with underscore, they are considered private
+                    if change.name[0] isnt '_'
+                        patch ?= {}
+                        # we convert undefined values from delete into explicit nulls
+                        patch[change.name] = object[change.name] ? deleteValue
+                if patch?
+                    queuePatch(patch)
             catch e
                 # catch and log errors, because object observe callbacks suppress errors
                 console.error(e)

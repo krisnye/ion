@@ -83,9 +83,9 @@ export const
                 return
             nodeObserveShim.observe(object, observer, property)
         else if object? and observer? and Object.observe? and typeof object is 'object'
-            observer.tryWrapper ?= ->
+            observer.tryWrapper ?= (changes) ->
                 try
-                    observer.apply(@, arguments)
+                    observer(changes)
                 catch error
                     console.error('Exception in Object.observe callback', error)
             Object.observe(object, observer.tryWrapper)
@@ -186,7 +186,8 @@ export const
             let descriptor = Object.getOwnPropertyDescriptor(classFunction, key)
             return not descriptor? or descriptor.writable or not descriptor.get?
 
-        let types = new Set([classFunction])   # a map of all types
+        let types = new Set()   # a map of all types
+        types.add(classFunction)
         for let i = definitions.length - 1; i >= 0; i--
             let definition = definitions[i]
             if definition?

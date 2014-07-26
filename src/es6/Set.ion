@@ -1,6 +1,8 @@
 import './Map'
 
 const SetShim(items) ->
+    if items?
+        throw new Error("Don't add items in the constructor, IE implementation of Set breaks this")
     let map = new Map
     const methods =
         has: (key) -> map.has(key)
@@ -13,9 +15,6 @@ const SetShim(items) ->
                     callback.call(thisArg, key, @)
     for key, value of methods
         Object.defineProperty(@, key, {value})
-    if items?
-        for item in items
-            @add(item)
 
 # we will even replace Googles crap implementation of Map that doesn't yet have forEach or keys
 if not global.Set? or not Set.prototype.forEach?
@@ -26,7 +25,9 @@ export const test = ->
     const Set = global.Set
     let a = {}
     let b = ->
-    let set = new Set([a,b])
+    let set = new Set()
+    set.add(a)
+    set.add(b)
     assert set.has(a)
     assert set.has(b)
     set.delete(b)
