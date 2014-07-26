@@ -1,37 +1,57 @@
 void (function(){var _ion_es6_Map_ = function(module,exports,require){'use strict';
+var uniqueCounter = 0;
+var idName = '__Map_id';
+var getId = function (key) {
+    if (!(key != null)) {
+        return String(key);
+    }
+    if (typeof key === 'string' || typeof key === 'number' || typeof key === 'boolean') {
+        return '_' + key;
+    }
+    var id = key[idName];
+    if (!(id != null)) {
+        id = ++uniqueCounter;
+        Object.defineProperty(key, idName, { value: id });
+    }
+    return id;
+};
 function MapShim(pairs) {
     var lookup = {};
-    var uniqueCounter = 0;
-    var idName = '__Map_id';
-    var getId = function (key) {
-        if (!(key != null)) {
-            return String(key);
-        }
-        if (typeof key === 'string' || typeof key === 'number' || typeof key === 'boolean') {
-            return '_' + key;
-        }
-        var id = key[idName];
-        if (!(id != null)) {
-            id = ++uniqueCounter;
-            Object.defineProperty(key, idName, { value: id });
-        }
-        return id;
-    };
+    var keys = [];
     var methods = {
-            get: function get(key) {
+            get: function (key) {
                 return lookup[getId(key)];
             },
-            set: function set(key, value) {
-                return lookup[getId(key)] = value;
+            set: function (key, value) {
+                var id = getId(key);
+                if (!lookup.hasOwnProperty(id)) {
+                    keys.push(key);
+                }
+                lookup[id] = value;
+                return value;
             },
-            has: function has(key) {
-                return lookup.hasOwnProperty(getId(key));
+            has: function (key) {
+                var id = getId(key);
+                return lookup.hasOwnProperty(id);
             },
-            delete: function del(key) {
-                return delete lookup[getId(key)];
+            delete: function (key) {
+                var id = getId(key);
+                keys.remove(key);
+                delete lookup[id];
             },
-            clear: function clear() {
+            clear: function () {
                 lookup = {};
+                keys = [];
+            },
+            keys: function () {
+                return keys.slice(0);
+            },
+            forEach: function (callback, thisArg) {
+                for (var _i = 0; _i < keys.length; _i++) {
+                    var key = keys[_i];
+                    var value = this.get(key);
+                    callback.call(thisArg, value, key, this);
+                }
             }
         };
     for (var key in methods) {
@@ -39,19 +59,30 @@ function MapShim(pairs) {
         Object.defineProperty(this, key, { value: value });
     }
     if (pairs != null) {
-        for (var _i = 0; _i < pairs.length; _i++) {
-            var _ref = pairs[_i];
+        for (var _i2 = 0; _i2 < pairs.length; _i2++) {
+            var _ref = pairs[_i2];
             var key = _ref[0];
             var value = _ref[1];
             this.set(key, value);
         }
     }
 }
-if (!(global.Map != null)) {
+if (!(global.Map != null) || !(Map.prototype.forEach != null)) {
+    console.warn('Shimming Map');
     global.Map = MapShim;
 }
+if (!(new Map().keys != null)) {
+    console.warn('Shimming Map.prototype.keys');
+    Map.prototype.keys = function () {
+        var keys = [];
+        this.forEach(function (value, key) {
+            keys.push(key);
+        });
+        return keys;
+    };
+}
 var test = exports.test = function () {
-        var Map = MapShim;
+        var Map = global.Map;
         var map = new Map([
                 [
                     'a',
@@ -80,6 +111,12 @@ var test = exports.test = function () {
             throw new Error('Assertion Failed: (Object.keys(mykey1).length is 0)');
         if (!(map.get(mykey1) === 'one'))
             throw new Error('Assertion Failed: (map.get(mykey1) is "one")');
+        if (!(JSON.stringify(map.keys()) === JSON.stringify([
+                'a',
+                'b',
+                mykey1
+            ])))
+            throw new Error('Assertion Failed: (JSON.stringify(map.keys()) is JSON.stringify([\'a\',\'b\',mykey1]))');
     };
   }
   if (typeof require === 'function') {

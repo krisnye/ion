@@ -11,6 +11,9 @@ var Object = ion.defineClass({
             }
         },
         typeKey: '$',
+        is: function (object) {
+            return object != null ? object.constructor.types != null ? object.constructor.types.has != null ? object.constructor.types.has(this) : void 0 : void 0 : void 0;
+        },
         properties: {
             toJSON: function () {
                 var properties = {};
@@ -28,6 +31,11 @@ var Object = ion.defineClass({
                 }
                 return properties;
             }
+        },
+        test: function () {
+            var object = new Object();
+            if (!Object.is(object))
+                throw new Error('Assertion Failed: (Object.is(object))');
         }
     }, null);
 module.exports = exports = Object;

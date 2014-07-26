@@ -1,42 +1,35 @@
 void (function(){var _ion_es6_Object_observe_ = function(module,exports,require){'use strict';
 var clone = function (object, properties) {
     if (properties != null) {
-        var _ref3 = {};
-        for (var key in properties) {
-            _ref3[key] = object[key];
-        }
-        return _ref3;
-    } else {
         var _ref4 = {};
-        for (var key in object) {
-            var value = object[key];
-            _ref4[key] = value;
+        for (var key in properties) {
+            _ref4[key] = object[key];
         }
         return _ref4;
+    } else {
+        var _ref5 = {};
+        for (var key in object) {
+            var value = object[key];
+            _ref5[key] = value;
+        }
+        return _ref5;
     }
 };
 var createShim = exports.createShim = function () {
         var map = new Map();
-        var observers = [];
         var observe = function (object, callback, property) {
-            if (object.nodeType === 1 || object === global.document) {
-                if (!(property != null)) {
-                    return;
-                }
-            }
             var meta = map.get(object);
             if (!(meta != null)) {
-                var _ref5 = {};
-                _ref5[property] = 0;
+                var _ref6 = {};
+                _ref6[property] = 0;
                 meta = {
                     object: object,
                     properties: {},
                     all: 0,
-                    clone: clone(object, property ? _ref5 : null),
+                    clone: clone(object, property ? _ref6 : null),
                     callbacks: []
                 };
                 map.set(object, meta);
-                observers.push(meta);
             }
             if (property != null) {
                 meta.properties[property] = meta.properties[property] != null ? meta.properties[property] : 0;
@@ -49,13 +42,9 @@ var createShim = exports.createShim = function () {
         var unobserve = function (object, callback, property) {
             var meta = map.get(object);
             if (meta != null) {
-                var index = meta.callbacks.lastIndexOf(callback);
-                if (index >= 0) {
-                    meta.callbacks.splice(index, 1);
-                    if (meta.callbacks.length === 0) {
-                        map.delete(object);
-                        observers.splice(observers.lastIndexOf(meta), 1);
-                    }
+                meta.callbacks.remove(callback);
+                if (meta.callbacks.length === 0) {
+                    map.delete(object);
                 }
                 if (property != null) {
                     meta.properties[property]--;
@@ -69,27 +58,38 @@ var createShim = exports.createShim = function () {
         };
         var getChanges = function (oldValue, newValue, properties) {
             var changes = null;
-            var change = function (type, name, oldValue) {
+            var change = function (type, name, oldValue, object) {
                 changes = changes != null ? changes : [];
                 changes.push({
                     type: type,
                     name: name,
-                    oldValue: oldValue
+                    oldValue: oldValue,
+                    object: object
                 });
             };
             var checkForChange = function (property) {
-                if (oldValue.hasOwnProperty(name)) {
-                    var oldPropertyValue = oldValue[name];
-                    if (!newValue.hasOwnProperty(name)) {
-                        change('delete', name, oldPropertyValue);
-                    } else {
-                        var newPropertyValue = newValue[name];
-                        if (newPropertyValue !== oldPropertyValue) {
-                            change('update', name, oldPropertyValue);
+                if (newValue.constructor === Object) {
+                    if (oldValue.hasOwnProperty(name)) {
+                        var oldPropertyValue = oldValue[name];
+                        if (!newValue.hasOwnProperty(name)) {
+                            if (oldPropertyValue !== void 0) {
+                                change('delete', name, oldPropertyValue, oldValue);
+                            }
+                        } else {
+                            var newPropertyValue = newValue[name];
+                            if (!Object.is(newPropertyValue, oldPropertyValue)) {
+                                change('update', name, oldPropertyValue, newValue);
+                            }
                         }
+                    } else if (newValue.hasOwnProperty(name)) {
+                        change('add', name, void 0, newValue);
                     }
-                } else if (newValue.hasOwnProperty(name)) {
-                    change('add', name);
+                } else {
+                    var oldPropertyValue = oldValue[name];
+                    var newPropertyValue = newValue[name];
+                    if (!Object.is(newPropertyValue, oldPropertyValue)) {
+                        change('update', name, oldPropertyValue, oldValue);
+                    }
                 }
             };
             if (properties != null) {
@@ -113,26 +113,31 @@ var createShim = exports.createShim = function () {
             for (var i = 0; i < maxCycles; i++) {
                 var totalChanges = 0;
                 var pendingChanges = [];
-                for (var _i = 0; _i < observers.length; _i++) {
-                    var meta = observers[_i];
-                    var properties = meta.all > 0 ? null : meta.properties;
-                    var changes = getChanges(meta.clone, meta.object, properties);
-                    if (changes != null) {
-                        totalChanges++;
-                        meta.clone = clone(meta.object, properties);
-                        pendingChanges.push([
-                            changes,
-                            meta.callbacks.slice(0)
-                        ]);
+                {
+                    var _ref2 = map.keys();
+                    for (var _i = 0; _i < _ref2.length; _i++) {
+                        var key = _ref2[_i];
+                        var meta = map.get(key);
+                        var properties = meta.all > 0 ? null : meta.properties;
+                        var changes = getChanges(meta.clone, meta.object, properties);
+                        if (changes != null) {
+                            totalChanges++;
+                            meta.clone = clone(meta.object, properties);
+                            pendingChanges.push([
+                                changes,
+                                meta.callbacks.slice(0),
+                                meta
+                            ]);
+                        }
                     }
                 }
                 if (totalChanges === 0) {
                     return;
                 }
                 for (var _i2 = 0; _i2 < pendingChanges.length; _i2++) {
-                    var _ref6 = pendingChanges[_i2];
-                    var changes = _ref6[0];
-                    var callbacks = _ref6[1];
+                    var _ref7 = pendingChanges[_i2];
+                    var changes = _ref7[0];
+                    var callbacks = _ref7[1];
                     for (var _i3 = 0; _i3 < callbacks.length; _i3++) {
                         var callback = callbacks[_i3];
                         callback(changes);
@@ -141,7 +146,6 @@ var createShim = exports.createShim = function () {
             }
             throw new Error('Circular Object.observe dependency');
         };
-        observe.observers = observers;
         return {
             observe: observe,
             unobserve: unobserve
@@ -171,7 +175,11 @@ var test = exports.test = function () {
                 {
                     'type': 'update',
                     'name': 'a',
-                    'oldValue': 1
+                    'oldValue': 1,
+                    'object': {
+                        'a': 2,
+                        'c': 5
+                    }
                 },
                 {
                     'type': 'delete',
@@ -179,21 +187,33 @@ var test = exports.test = function () {
                     'oldValue': {
                         'c': 2,
                         'd': 3
+                    },
+                    'object': {
+                        'a': 1,
+                        'b': {
+                            'c': 2,
+                            'd': 3
+                        }
                     }
                 },
                 {
                     'type': 'add',
-                    'name': 'c'
+                    'name': 'c',
+                    'object': {
+                        'a': 2,
+                        'c': 5
+                    }
                 }
             ])))
-            throw new Error('Assertion Failed: (JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1},{"type":"delete","name":"b","oldValue":{"c":2,"d":3}},{"type":"add","name":"c"}]))');
+            throw new Error('Assertion Failed: (JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1,"object":{"a":2,"c":5}},{"type":"delete","name":"b","oldValue":{"c":2,"d":3},"object":{"a":1,"b":{"c":2,"d":3}}},{"type":"add","name":"c","object":{"a":2,"c":5}}]))');
         unobserve(object, handler);
     };
 if (!(Object.observe != null) && global.Map != null) {
+    console.warn('Shimming Object.observe');
     {
-        var _ref2 = createShim();
-        for (var key in _ref2) {
-            var value = _ref2[key];
+        var _ref3 = createShim();
+        for (var key in _ref3) {
+            var value = _ref3[key];
             Object[key] = value;
         }
     }

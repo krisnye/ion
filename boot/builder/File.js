@@ -60,6 +60,9 @@ var File = ion.defineClass({
             write: function (content, encoding) {
                 return utility.write(this.path, content, encoding);
             },
+            delete: function () {
+                return utility.write(this.path, null);
+            },
             toString: function () {
                 return this.path;
             },

@@ -31,7 +31,8 @@ var _ref2 = {};
             'tbody',
             'td',
             'tr',
-            'thead'
+            'thead',
+            'canvas'
         ];
     for (var _i = 0; _i < _ref.length; _i++) {
         var name = _ref[_i];

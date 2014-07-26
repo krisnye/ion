@@ -66,7 +66,18 @@ var primitive = {
         function (type, a) {
             return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
         }
-    ], nodeObserveShim = (Object.observe != null ? Object.observe.checkForChanges : void 0) ? Object : require('./es6/Object.observe').createShim();
+    ], nodeObserveShim = (Object.observe != null ? Object.observe.checkForChanges : void 0) ? Object : require('./es6/Object.observe').createShim(), isObjectObservable = function () {
+        var Node = global.Node != null ? global.Node : function () {
+            };
+        var NodeList = global.NodeList != null ? global.NodeList : function () {
+            };
+        return function (a) {
+            if (a instanceof Node || a instanceof NodeList) {
+                return false;
+            }
+            return true;
+        };
+    }();
 var patch = exports.patch = function () {
         var mergePatch = require('./mergePatch');
         var patch = function (object, patch) {
@@ -118,18 +129,31 @@ var patch = exports.patch = function () {
         if (object === global || object === console) {
             return;
         }
-        if ((object != null ? object.nodeType : void 0) != null) {
+        if (!isObjectObservable(object)) {
+            if (!(property != null)) {
+                return;
+            }
             nodeObserveShim.observe(object, observer, property);
         } else if (object != null && observer != null && Object.observe != null && typeof object === 'object') {
-            Object.observe(object, observer);
+            observer.tryWrapper = observer.tryWrapper != null ? observer.tryWrapper : function () {
+                try {
+                    observer.apply(this, arguments);
+                } catch (error) {
+                    console.error('Exception in Object.observe callback', error);
+                }
+            };
+            Object.observe(object, observer.tryWrapper);
             object.addEventListener != null ? object.addEventListener('change', observer) : void 0;
         }
         object != null ? object.onObserved != null ? object.onObserved(observer, property) : void 0 : void 0;
     }, unobserve = exports.unobserve = function (object, observer, property) {
-        if ((object != null ? object.nodeType : void 0) != null) {
+        if (!isObjectObservable(object)) {
+            if (!(property != null)) {
+                return;
+            }
             nodeObserveShim.unobserve(object, observer, property);
         } else if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
-            Object.unobserve(object, observer);
+            Object.unobserve(object, observer.tryWrapper != null ? observer.tryWrapper : observer);
             object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
         }
         object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
@@ -226,17 +250,22 @@ var patch = exports.patch = function () {
             var descriptor = Object.getOwnPropertyDescriptor(classFunction, key);
             return !(descriptor != null) || descriptor.writable || !(descriptor.get != null);
         };
+        var types = new Set([classFunction]);
         for (var i = definitions.length - 1; i >= 0; i--) {
             var definition = definitions[i];
-            for (var key in definition) {
-                var value = definition[key];
-                if (key !== 'test' || i === 0) {
-                    if (canSetClassProperty(key)) {
-                        classFunction[key] = patch(classFunction[key], value);
+            if (definition != null) {
+                types.add(definition);
+                for (var key in definition) {
+                    var value = definition[key];
+                    if (key !== 'test' || i === 0) {
+                        if (canSetClassProperty(key)) {
+                            classFunction[key] = patch(classFunction[key], value);
+                        }
                     }
                 }
             }
         }
+        classFunction.types = types;
         if (classFunction.properties != null) {
             defineProperties(classFunction.prototype, classFunction.properties);
         }
@@ -395,7 +424,6 @@ var patch = exports.patch = function () {
     };
 if (global.window != null) {
     global.window.addEventListener('resize', function () {
-        console.log('window resized');
         checkForChanges();
     });
 }

@@ -126,7 +126,7 @@ module.exports = exports =
             if encoding == undefined and typeof content is 'string'
                 encoding = 'utf8'
             fs.writeFileSync(file, content, encoding)
-        else
+        else if fs.existsSync file
             fs.unlinkSync(file)
     # copies files or folders
     copy: copy = (source, target, include) ->

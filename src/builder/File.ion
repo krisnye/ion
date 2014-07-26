@@ -51,7 +51,9 @@ export class File
         getExtension: ->
             let index = @path.lastIndexOf('.')
             return index < 0 ? "" : @path.substring(index)
-        write: (content, encoding) -> utility.write(@path, content, encoding)
+        write: (content, encoding) ->
+            if content? and content isnt @read(encoding)
+                utility.write(@path, content, encoding)
         delete: -> utility.write(@path, null)
         toString: -> @path
         valueOf: -> @path

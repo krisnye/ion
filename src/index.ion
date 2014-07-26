@@ -156,11 +156,11 @@ export const
                     if index >= 0
                         container.splice(index, 1)
 
-        item.onAdded?(container)
+        item?.onAdded?(container)
         # returns a function which can be used to remove the item
         return ->
             remove()
-            item.onRemoved?(container)
+            item?.onRemoved?(container)
     defineProperties = (object, properties) -> Object.defineProperties(object, normalizeProperties(properties))
     defineClass = (...definitions) ->
         const classDefinition = definitions[0]

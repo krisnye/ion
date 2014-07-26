@@ -20,39 +20,41 @@ export template (packagePatch) ->
     let input = new Directory(packageJson.directories.src ? 'src')
     let output = new Directory(packageJson.directories.lib ? 'lib')
     let moduleName = packageJson.name ? ''
-    output:
-        # build all source files with a single search
-        let extensions = Object.keys(compilers)
-        for path, source of input.search(extensions, packageJson.build.exclude)
-            let compiler = compilers[source.getExtension()]
-            let targetPath = builder.changeExtension(path, '.js')
-            if compiler.compileWithSourceMap?
-                let mapPath = builder.changeExtension(path, '.map')
-                let mapName = mapPath.split(/[\/\\]/g).slice(-1)[0]
-                let [code,map] = compiler.compileWithSourceMap(source, packageJson)
-                [targetPath]: code + "\n//@ sourceMappingURL=./" + mapName
-                [mapPath]: map
-            else
-                [targetPath]: compiler.compile(source, packageJson)
-        # build a manifest file with require.js at the top
-        let outputFiles = output.search(".js", [/^_/, 'node_modules']) # ignore output _browser.js and node_modules
-        let top = [key for key of outputFiles if key.endsWith('require.js')]
-        let sortedFiles = top.concat([key for key of outputFiles if not builder.isPrivate(key) and top.indexOf(key) < 0])
-        let manifestFileName = "manifest.json"
-        let manifest =
-            modified: Math.max.apply(null, [file.modified for path, file of outputFiles])
-            files: [builder.normalizePath(path) for path in sortedFiles]
-        [manifestFileName]: JSON.stringify(manifest, null, '  ', sortedFiles)
+    # build all source files with a single search
+    let extensions = Object.keys(compilers)
+    for path, source of input.search(extensions, packageJson.build.exclude)
+        let compiler = compilers[source.getExtension()]
+        let targetPath = builder.changeExtension(path, '.js')
+        if compiler.compileWithSourceMap?
+            let mapPath = builder.changeExtension(path, '.map')
+            let mapName = mapPath.split(/[\/\\]/g).slice(-1)[0]
+            let [code,map] = compiler.compileWithSourceMap(source, packageJson)
+            output.write(targetPath, code + "\n//@ sourceMappingURL=./" + mapName)
+            output.write(mapPath, map)
+        else
+            output.write(targetPath, compiler.compile(source, packageJson))
+    else
+        output.delete(targetPath)
+        output.delete(mapPath)
+    # build a manifest file with require.js at the top
+    let outputFiles = output.search(".js", [/^_/, 'node_modules']) # ignore output _browser.js and node_modules
+    let top = [key for key of outputFiles if key.endsWith('require.js')]
+    let sortedFiles = top.concat([key for key of outputFiles if not builder.isPrivate(key) and top.indexOf(key) < 0])
+    let manifestFileName = "manifest.json"
+    let manifestFile = output.getFile(manifestFileName)
+    let manifest =
+        modified: Math.max.apply(null, [file.modified for path, file of outputFiles])
+        files: [builder.normalizePath(path) for path in sortedFiles]
+    manifestFile.write(JSON.stringify(manifest, null, '  ', sortedFiles))
 
-        # build merged file, just so we can test locally with file:// protocol
-        if packageJson.build.merge?
-            [packageJson.build.merge]: [outputFiles[name].read() for name in sortedFiles].join('\n')
+    # build merged file, just so we can test locally with file:// protocol
+    if packageJson.build.merge?
+        output.write(packageJson.build.merge, [outputFiles[name].read() for name in sortedFiles].join('\n'))
 
-        # copy the package.json to the lib directory
-        if packageJson.build.package
-            ['package.json']: JSON.stringify(ion.patch(ion.clone(packageJson), {main:undefined}), null, '    ')
+    # copy the package.json to the lib directory
+    if packageJson.build.package
+        output.write('package.json', JSON.stringify(ion.patch(ion.clone(packageJson), {main:undefined}), null, '    '))
 
-        # builder.test
-        if packageJson.build.test isnt false
-            let manifestFile = output.getFile(manifestFileName)
-            builder.runTests(manifestFile, manifestFile.modified)
+    # builder.test
+    if packageJson.build.test isnt false
+        builder.runTests(manifestFile, manifestFile.modified)

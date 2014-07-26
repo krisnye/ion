@@ -195,7 +195,8 @@ tests = {
   "return\n    style:\n        fontSize: \"0.7em\"\n    \"delete\"": "'use strict';\nconst ion = require('ion');\nlet _ref = {};\n{\n    _ref.style = ion.patch(_ref.style, { fontSize: '0.7em' });\n    ion.add(_ref, 'delete');\n}\nreturn _ref;",
   "export template add(x,y) -> x + y": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function add(x, y) {\n    return x + y;\n}, function (x, y) {\n    return ion.createRuntime({\n        type: 'Template',\n        body: [{\n                type: 'ReturnStatement',\n                argument: {\n                    type: 'BinaryExpression',\n                    operator: '+',\n                    left: {\n                        type: 'Identifier',\n                        name: 'x'\n                    },\n                    right: {\n                        type: 'Identifier',\n                        name: 'y'\n                    }\n                }\n            }],\n        bound: false\n    }, {\n        this: this,\n        x: x,\n        y: y\n    });\n});",
   "activate template ->": "'use strict';\nconst ion = require('ion');\nnew (ion.template(function () {\n}, function () {\n    return ion.createRuntime({\n        type: 'Template',\n        body: [],\n        bound: false\n    }, { this: this });\n})).template().activate();",
-  "content:\n    name: 'foo'\n    1\n    2": "'use strict';\nconst ion = require('ion');\n{\n    content.name = 'foo';\n    ion.add(content, 1);\n    ion.add(content, 2);\n}"
+  "content:\n    name: 'foo'\n    1\n    2": "'use strict';\nconst ion = require('ion');\n{\n    content.name = 'foo';\n    ion.add(content, 1);\n    ion.add(content, 2);\n}",
+  "for name, file of directory\n    write(name, file)\nelse\n    delete(name)": "'use strict';\nfor (let name in directory) {\n    let file = directory[name];\n    write(name, file);\n}"
 };
 
 if (global.window != null) {
@@ -203,26 +204,27 @@ if (global.window != null) {
 }
 
 exports.test = function() {
-  var e, error, expected, input, key, options, output, value;
+  var e, error, expected, input, key, loc, options, output, value;
   for (input in tests) {
     expected = tests[input];
     options = {
       target: 'es6'
     };
     if (expected === null) {
+      loc = false;
       console.log('---------------------------------------------------');
       console.log(JSON.stringify(index.compile(input, ion.patch({
         postprocess: false,
-        loc: false
+        loc: loc
       }, options)), null, '  '));
       console.log('-Postprocessed-------------------------------------');
       console.log(JSON.stringify(index.compile(input, ion.patch({
         generate: false,
-        loc: false
+        loc: loc
       }, options)), null, '  '));
       console.log('---------------------------------------------------');
       console.log(index.compile(input, ion.patch({
-        loc: false
+        loc: loc
       }, options)));
     } else if (typeof expected === 'object') {
       error = null;

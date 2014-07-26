@@ -121,11 +121,12 @@ module.exports = exports =
         catch e
             console.error e
 
-    compileIon: compileIon = (source, packageObject) -> compileIonWithSourceMap(source, packageObject)[0]
+    compileIon: compileIon = (source, packageObject) -> compileIonWithSourceMap(source, packageObject)?[0]
 
     # this compiles ion and returns the result.  Does not write to the target file.
     compileIonWithSourceMap: compileIonWithSourceMap = (source, packageObject) ->
-        return if source.modified is 0
+        if source.modified is 0
+            return
         moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
         filename = source.path
         try

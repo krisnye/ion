@@ -1,8 +1,11 @@
 void (function(){var _ion_es6_index_ = function(module,exports,require){'use strict';
 require('./String');
 require('./Map');
+require('./Set');
+require('./Object');
 require('./Object.observe');
 require('./Function');
+require('./Array');
   }
   if (typeof require === 'function') {
     if (require.register)

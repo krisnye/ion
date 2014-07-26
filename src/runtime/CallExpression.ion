@@ -37,6 +37,9 @@ module.exports = class CallExpression extends DynamicExpression
                 @template.deactivate()
                 delete @template
         evaluate: ->
+            if not @isActive
+                return
+
             let value = undefined
             if @calleeValue? and @argumentsValue?
                 try

@@ -1,0 +1,1 @@
+{"version":3,"sources":["browser.ion"],"names":["console","log"],"mappings":"aAAA;AAEAA,OAAA,CAAQC,GAAR,CAAY,4BAAZ","sourcesContent":["\r\n# if run within the browser, then this automatically compiles any <script type='ion'> tags on page load.\r\nconsole.log('look to listen for on load')\r\n"]}

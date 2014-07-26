@@ -35,14 +35,12 @@ export template (packagePatch) ->
         for nodepath in nodepaths
             let directory = new Directory(np.join(nodepath, moduleName))
             for key, source of directory.search([".js",".map"], ["node_modules"].concat(packageJson.build.client.exclude))
-                clientOutput:
-                    [source.path.substring(nodepath.length)]: source.read()
+                clientOutput.write(source.path.substring(nodepath.length), source.read())
     for moduleName in packageJson.build.server.modules
         for nodepath in nodepaths
             let directory = new Directory(np.join(nodepath, moduleName))
             for key, source of directory.search([".js",".map"], ["node_modules"].concat(packageJson.build.server.exclude))
-                serverOutput:
-                    [source.path.substring(nodepath.length)]: source.read()
+                serverOutput.write(source.path.substring(nodepath.length), source.read())
 
     # build client javascript
     (ModuleBuilder)
@@ -63,27 +61,30 @@ export template (packagePatch) ->
             test: true
 
     # Copy all other files from src to output
-    for key, source of input.search(null, [".ionpage",".coffeepage",".coffee",".java",".class",".jar", ".ion"])
-        let target = output.getFile(key)
-        output:
-            [key]: source.read()
+    for path, file of input.search(null, [".ionpage",".coffeepage",".coffee",".java",".class",".jar", ".ion"])
+        output.write(path, file.read())
+    else
+        output.delete(path)
 
     # Compile plain ion files, while excluding the js directory
-    for key, source of input.search(".ion", "js")
-        let targetPath = builder.changeExtension(key, ".js")
-        output:
-            [targetPath]: builder.compileIon(source)
+    for path, file of input.search(".ion", "js")
+        let targetPath = builder.changeExtension(path, ".js")
+        output.write(targetPath, builder.compileIon(file))
+    else
+        output.delete(targetPath)
 
     # Compile ion pages
     let pageOutput = output.getDirectory('WEB-INF/pages')
-    for key, source of input.search(".ionpage")
-        let targetPath = builder.changeExtension(key, ".js")
-        pageOutput:
-            [targetPath]: "(function {{key.replace(/[\.\/\\]/g, '_')}}(){ {{builder.compileIon(source)}} })"
+    for path, file of input.search(".ionpage")
+        let targetPath = builder.changeExtension(path, ".js")
+        pageOutput.write(targetPath, "(function {{path.replace(/[\.\/\\]/g, '_')}}(){ {{builder.compileIon(file)}} })")
+    else
+        pageOutput.delete(targetPath)
 
     # Compile coffee pages
     # TODO: port all .coffeepages to .ionpages and delete this.
-    for key, source of input.search(".coffeepage")
-        let targetPath = builder.changeExtension(key, ".js")
-        pageOutput:
-            [targetPath]: "(function {{key.replace(/[\.\/\\]/g, '_')}}(){ {{builder.compileCoffeeScript(source)}} })"
+    for path, file of input.search(".coffeepage")
+        let targetPath = builder.changeExtension(path, ".js")
+        pageOutput.write(targetPath, "(function {{path.replace(/[\.\/\\]/g, '_')}}(){ {{builder.compileCoffeeScript(file)}} })")
+    else
+        pageOutput.delete(targetPath)

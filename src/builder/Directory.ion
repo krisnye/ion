@@ -41,6 +41,29 @@ export class Directory
                 console.log("Deleting: " + path)
             utility.write(path, content)
             return content
+        read: (path) ->
+            # allow us to get our own properties
+            if @hasOwnProperty(path) or @[path]?
+                return @[path]
+
+            path = @getAbsoluteName(path)
+            if fs.existsSync(path)
+                return utility.read(path)
+            else
+                return undefined
+        write: (path, content) ->
+            if not content?
+                return
+            if @hasOwnProperty(path) or @[path]?
+                return @[path] = content
+
+            path = @getAbsoluteName(path)
+            console.log("Writing: " + path)
+            utility.write(path, content)
+        delete: (path) ->
+            console.log("Deleting: " + path)
+            path = @getAbsoluteName(path)
+            utility.write(path, null)
         getFile: (path) -> new File(@getAbsoluteName(path))
         getDirectory: (path) -> new Directory(@getAbsoluteName(path))
         getRelativeName: (path) -> np.relative(@path, String(path))

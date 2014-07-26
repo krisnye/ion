@@ -39,11 +39,6 @@ var Property = ion.defineClass({
                 this.valueExpression.unwatch(this.valueWatcher);
             },
             restoreProperty: function () {
-                if (this.originalKey != null) {
-                    ion.set(this.context.output, this.originalKey, this.originalValue);
-                    this.originalKey = void 0;
-                    this.originalValue = void 0;
-                }
             },
             setProperty: function (key, value) {
                 if (key == null)

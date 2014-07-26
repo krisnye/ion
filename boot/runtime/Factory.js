@@ -1,6 +1,7 @@
 void (function(){var _ion_runtime_Factory_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var Literal = require('./Literal');
+var Expression = require('./Expression');
 var Factory = ion.defineClass({
         name: 'Factory',
         properties: {
@@ -206,6 +207,9 @@ function getFactory(ast, step) {
     return null;
 }
 var createRuntime = exports.createRuntime = function (context, ast) {
+        if (Expression.is(ast)) {
+            return ast;
+        }
         if (typeof (ast != null ? ast.type : void 0) !== 'string') {
             ast = {
                 type: 'Literal',
