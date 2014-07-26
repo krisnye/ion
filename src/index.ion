@@ -241,7 +241,7 @@ export const
     makeReactive = (object, activate) ->
         let observeCount = 0
         let deactivate = null
-        return (Object.defineProperties)
+        return Object.defineProperties(
             object
             {}
                 onObserved:
@@ -254,6 +254,7 @@ export const
                         observeCount--
                         if observeCount is 0
                             deactivate?()
+        )
     serialize = (object) -> JSON.stringify(object)
     deserialize = do ->
         let extractType = (object) ->
@@ -288,18 +289,19 @@ export const
         return deserialize
     test =
         defineClass: ->
-            const Foo = (defineClass)
+            const Foo = defineClass(
                 {}
                     id: "Foo"
                     constructor: (number) ->
                         @number = number
                     properties:
                         getValue: -> @number
+            )
             assert new Foo(2).getValue() is 2
         defineProperties:
             "should allow primitive values": ->
                 const object = {}
-                const result = (defineProperties)
+                const result = defineProperties(
                     object
                     {}
                         f: -> "function"
@@ -307,6 +309,7 @@ export const
                         b: true
                         a: []
                         s: "hello"
+                )
                 assert object is result
                 assert typeof object.f is 'function'
                 assert object.f() is 'function'
@@ -317,7 +320,8 @@ export const
 
 # if window, then on resize, check for changes
 if global.window?
-    (global.window.addEventListener)
+    global.window.addEventListener(
         'resize'
         ->
             checkForChanges()
+    )

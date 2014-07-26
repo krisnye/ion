@@ -133,8 +133,7 @@ export const
             let template = templateType.template.apply(this, args)
             template.activate()
             let reactiveResult = null
-            (template.watch)
-                (value) -> reactiveResult = value
+            template.watch((value) -> reactiveResult = value)
             try
                 assert reactiveResult is expected or JSON.stringify(reactiveResult) is JSON.stringify(expected)
             catch e

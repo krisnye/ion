@@ -10,9 +10,10 @@ const SetShim(items) ->
         add: (key) -> map.set(key, true)
         values: -> map.keys()
         forEach: (callback, thisArg) ->
-            (map.forEach)
+            map.forEach(
                 (value, key) =>
                     callback.call(thisArg, key, @)
+            )
     for key, value of methods
         Object.defineProperty(@, key, {value})
 

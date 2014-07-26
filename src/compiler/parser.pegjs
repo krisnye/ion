@@ -232,7 +232,7 @@ multilineCallArguments
     = (_ arg:Expression eol { return arg })+
     / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end
         { return [node("ObjectExpression", {properties:properties}, start, end)] }
-MultilineCallExpression = start:start callee:GroupExpression indent eol args:multilineCallArguments end:end outdent
+MultilineCallExpression = start:start callee:InlineExpression "(" indent eol args:multilineCallArguments end:end outdent eol _ ")"
     {
         if (callee.type === 'NewExpression' && callee.arguments == null)
             return node("NewExpression", {callee: callee.callee, arguments: args}, start, end)

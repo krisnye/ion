@@ -457,12 +457,13 @@ tests =
     console.log(_ref);
     """
     """
-    (console.log)
+    console.log(
         1
         2
         {}
             x: 1
             y: 2
+    )
     """: """
     'use strict';
     console.log(1, 2, {
@@ -510,20 +511,22 @@ tests =
     """
     # function call with single property names
     """
-    (foo)
+    foo(
         1
         2
+    )
     """: """
     'use strict';
     foo(1, 2);
     """
     """
-    (compile)
+    compile(
         foo: 1
         bar: 2
         baz:
             a: 1
             b: 2
+    )
     """: """
     'use strict';
     compile({
@@ -880,11 +883,12 @@ tests =
     }
     """
     """
-    let x = (foo)
+    let x = foo(
         ''
             multiline string literal
         ""
             multiline string template
+    )
     """: """
     'use strict';
     let x = foo('multiline string literal', 'multiline string template');
@@ -1082,9 +1086,10 @@ tests =
     DynamicExpression;
     """
     """
-    let a = (new Point)
+    let a = new Point(
         1
         2
+    )
     """: """
     'use strict';
     let a = new Point(1, 2);
@@ -1338,6 +1343,18 @@ tests =
     #     x: 10
     #     y: delete
     # """: null
+    """
+    foo(
+        bar()
+        baz(
+            1
+            2
+        )
+    )
+    """: """
+    'use strict';
+    foo(bar(), baz(1, 2));
+    """
 
 if global.window?
     return

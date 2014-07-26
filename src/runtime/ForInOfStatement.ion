@@ -30,7 +30,7 @@ export class ForInOfStatement extends Statement
             # we must create new contexts for every item in the list thingy.
             # console.log('ForEachStatement.activate', @)
             @collectionExpression ?= @context.createRuntime(@right)
-            (@collectionExpression.watch)
+            @collectionExpression.watch(
                 @collectionWatcher ?= (collection) =>
                     # console.log('collectionWatcher', collection)
                     if @collection isnt collection
@@ -47,6 +47,7 @@ export class ForInOfStatement extends Statement
                                 (key, value) =>
                                     @addItem(key, value)
                             ion.observe(@collection, @collectionObserver ?= @applyChanges.bind(@))
+            )
         deactivate: ->
             super
             @collectionExpression.unwatch(@collectionWatcher)
@@ -96,12 +97,13 @@ export class ForInOfStatement extends Statement
                         # update the type.
                         change.type = type
             let array = []
-            (map.forEach)
+            map.forEach(
                 (change, name, object)->
                     let newValue = change.object[name]
                     if newValue isnt change.oldValue
                         delete change.object
                         array.push(change)
+            )
             return array
         applyChanges: (changes) ->
             # prune the change messages down
@@ -155,9 +157,10 @@ export class ForInOfStatement extends Statement
             # it's important that old statements are deactivated BEFORE new statements are activated
 
             # recyclableStatements are deactivated.
-            (recyclableStatements.forEach)
+            recyclableStatements.forEach(
                 (statement) =>
                     @disposeStatement(statement)
+            )
 
             # activate new statements
             for statement in activateStatements

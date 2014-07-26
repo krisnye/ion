@@ -1,13 +1,14 @@
 
 if not Array.prototype.add?
-    (Object.defineProperty)
+    Object.defineProperty(
         Array.prototype
         'add'
         {}
             value: Array.prototype.push
+    )
 
 if not Array.prototype.remove?
-    (Object.defineProperty)
+    Object.defineProperty(
         Array.prototype
         'remove'
         {}
@@ -16,10 +17,12 @@ if not Array.prototype.remove?
                     let index = @lastIndexOf(item)
                     if index >= 0
                         @splice(index, 1)
+    )
 
 if not Array.prototype.contains?
-    (Object.defineProperty)
+    Object.defineProperty(
         Array.prototype
         'contains'
         {}
             value: (item) -> @indexOf(item) >= 0
+    )

@@ -26,7 +26,7 @@ export const
             callback(pattern, expression)
         else if pattern.properties?
             for {key,value} in pattern.properties
-                (forEachDestructuringAssignment)
+                forEachDestructuringAssignment(
                     value
                     {}
                         type: 'MemberExpression'
@@ -34,9 +34,10 @@ export const
                         property: key
                         computed: key.type isnt 'Identifier'
                     callback
+                )
         else if pattern.elements?
             for value, index in pattern.elements
-                (forEachDestructuringAssignment)
+                forEachDestructuringAssignment(
                     value
                     {}
                         type: 'MemberExpression'
@@ -46,4 +47,5 @@ export const
                             value: index
                         computed: true
                     callback
+                )
 

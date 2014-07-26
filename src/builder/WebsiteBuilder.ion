@@ -43,22 +43,24 @@ export template (packagePatch) ->
                 serverOutput.write(source.path.substring(nodepath.length), source.read())
 
     # build client javascript
-    (ModuleBuilder)
+    ModuleBuilder(
         directories:
             src:input + '/js' # client side javascript
             lib:output + '/' + clientJsDir
         build:
             exclude: packageJson.build.client.exclude
             test: false
+    )
 
     # build server javascript
-    (ModuleBuilder)
+    ModuleBuilder(
         directories:
             src:input + '/js' # server side javascript
             lib:output + '/' + serverJsDir
         build:
             exclude: packageJson.build.server.exclude
             test: true
+    )
 
     # Copy all other files from src to output
     for path, file of input.search(null, [".ionpage",".coffeepage",".coffee",".java",".class",".jar", ".ion"])

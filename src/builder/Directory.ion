@@ -76,7 +76,7 @@ export class Directory
             if exclude?
                 options.exclude = exclude
             let results = {}
-            (ion.makeReactive)
+            ion.makeReactive(
                 results
                 =>
                     let unwatch = (watcher.watchDirectory)
@@ -90,6 +90,7 @@ export class Directory
                             else
                                 delete results[path]
                     return unwatch
+            )
             let files = utility.list(@path, options)
             for path in files
                 results[@getRelativeName(path)] = new File(path)

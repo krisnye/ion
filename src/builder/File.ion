@@ -16,17 +16,18 @@ export class File
             return new File(path)
         if typeof path isnt 'string'
             throw new Error("path string is required")
-        (Object.defineProperties)
+        Object.defineProperties(
             @
             {}
                 path:
                     value: path
                     enumerable: true
                     writable: false
+        )
         # set modified immediately
         @modified = utility.getModified(path)
         # make us reactive to observers.  Specifically we will just update our modified value as needed.
-        (ion.makeReactive)
+        ion.makeReactive(
             @
             =>
                 let watcher
@@ -36,6 +37,7 @@ export class File
                         =>
                             @modified = utility.getModified(@path)
                 return -> watcher?.close()
+        )
     properties:
         directoryName:
             get: -> np.dirname(@path)

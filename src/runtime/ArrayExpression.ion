@@ -21,11 +21,12 @@ export class ArrayExpression extends DynamicExpression
                 @argumentValues[key] = value
                 if @observeElements
                     # console.log "observe items=============" + JSON.stringify value
-                    (ion.observe)
+                    ion.observe(
                         value
                         @itemObserver ?= =>
                             # console.log '=========observed========' + JSON.stringify(value)
                             @notifyIfActive()
+                    )
                 @notifyIfActive()
         activate: ->
             if not @argumentValues?

@@ -167,11 +167,13 @@ export
                             template.deactivate()
                             done()
                     template.activate()
-                    (template.watch)
+                    template.watch(
                         (value) ->
                             checkIfDone(value)
-                            (ion.observe)
+                            ion.observe(
                                 value
                                 (changes) ->
                                     checkIfDone(value)
+                            )
+                    )
                     ion.patch(argument, patch)

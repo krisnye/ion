@@ -31,7 +31,7 @@ export class Property extends Statement
             if @bi
                 # then we need to observe the context output object for changes to the leftValue property.
                 # console.log('bidirectional!!!!!!!!!!!!!', @valueValue, @keyValue, @context.output)
-                (ion.observe)
+                ion.observe(
                     @context.output
                     @contextObserver ?= =>
                         # console.log('CALLBACK FROM OBSERVER', @valueValue)
@@ -39,6 +39,7 @@ export class Property extends Statement
                         if value isnt undefined
                             @valueExpression.setMemberValue(value)
                     @keyValue
+                )
 
         deactivate: ->
             super

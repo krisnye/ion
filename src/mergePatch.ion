@@ -54,12 +54,13 @@ export const
             else
                 pendingPatch = combine(pendingPatch, patch)
                 processPatch(pendingPatch)
-                pendingTimeout ?= (setTimeout)
+                pendingTimeout ?= setTimeout(
                     ->
                         handler(pendingPatch)
                         pendingPatch = null
                         pendingTimeout = null
                     0
+                )
         let watcher = (changes) ->
             try
                 let patch = {}
@@ -90,7 +91,7 @@ export const
         if oldValue is newValue
             return undefined
         if not(oldValue? and newValue? and typeof newValue is 'object' and typeof oldValue is 'object')
-            return (newValue ? null)
+            return newValue ? null
         let patch = undefined
         for name of oldValue if oldValue.hasOwnProperty(name)
             let propertyDiff = diff(oldValue[name], newValue[name])
@@ -154,7 +155,7 @@ export const
                         Orion: {}
                         Third: {}
                 let target = ion.clone(source, true)
-                let unwatch = (watch)
+                let unwatch = watch(
                     source
                     (patch) ->
                         target = merge(target, patch)
@@ -162,6 +163,7 @@ export const
                         if equal(source, target)
                             done()
                             unwatch()
+                )
                 source:
                     name: 'Fred'
                     children:

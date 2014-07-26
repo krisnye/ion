@@ -1,6 +1,6 @@
 
 if not Object.is?
-    (Object.defineProperty)
+    Object.defineProperty(
         Object
         'is'
         {}
@@ -10,3 +10,4 @@ if not Object.is?
                         return 1 / a is 1 / b
                     return true
                 return a isnt a and b isnt b
+    )
