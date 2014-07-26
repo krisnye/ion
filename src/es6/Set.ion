@@ -8,7 +8,6 @@ const SetShim(items) ->
         has: (key) -> map.has(key)
         delete: (key) -> map.delete(key)
         add: (key) -> map.set(key, true)
-        values: -> map.keys()
         forEach: (callback, thisArg) ->
             map.forEach(
                 (value, key) =>

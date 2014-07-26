@@ -58,7 +58,7 @@ export const createShim = ->
                     let oldPropertyValue = oldValue[name]
                     if not newValue.hasOwnProperty(name)
                         if oldPropertyValue isnt undefined
-                            change("delete", name, oldPropertyValue, oldValue)
+                            change("delete", name, oldPropertyValue, newValue)
                     else
                         let newPropertyValue = newValue[name]
                         # must use Object.is because NaN != NaN
@@ -72,7 +72,7 @@ export const createShim = ->
                 let newPropertyValue = newValue[name]
                 # must use Object.is because NaN != NaN
                 if not Object.is(newPropertyValue, oldPropertyValue)
-                    change("update", name, oldPropertyValue, oldValue)
+                    change("update", name, oldPropertyValue, newValue)
 
         if properties?
             for name of properties
@@ -91,15 +91,16 @@ export const createShim = ->
             let totalChanges = 0
             let pendingChanges = []
             # traverse all objects and find changes
-            for key in map.keys()
-                let meta = map.get(key)
-                let properties = meta.all > 0 ? null : meta.properties
-                let changes = getChanges(meta.clone, meta.object, properties)
-                if changes?
-                    totalChanges++
-                    meta.clone = clone(meta.object, properties)
-                    # callbacks must be deferred until after ALL changes have been found
-                    pendingChanges.push([changes, meta.callbacks.slice(0), meta])
+            map.forEach(
+                (meta, key) ->
+                    let properties = meta.all > 0 ? null : meta.properties
+                    let changes = getChanges(meta.clone, meta.object, properties)
+                    if changes?
+                        totalChanges++
+                        meta.clone = clone(meta.object, properties)
+                        # callbacks must be deferred until after ALL changes have been found
+                        pendingChanges.push([changes, meta.callbacks.slice(0), meta])
+            )
             if totalChanges is 0
                 return
             for [changes, callbacks] in pendingChanges
@@ -127,7 +128,7 @@ export const test = ->
     delete object.b
     object.c = 5
     observe.checkForChanges()
-    assert JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1,"object":{"a":2,"c":5}},{"type":"delete","name":"b","oldValue":{"c":2,"d":3},"object":{"a":1,"b":{"c":2,"d":3}}},{"type":"add","name":"c","object":{"a":2,"c":5}}])
+    assert JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1,"object":{"a":2,"c":5}},{"type":"delete","name":"b","oldValue":{"c":2,"d":3},"object":{"a":2,"c":5}},{"type":"add","name":"c","object":{"a":2,"c":5}}])
     unobserve(object, handler)
 
 if not Object.observe? and global.Map?

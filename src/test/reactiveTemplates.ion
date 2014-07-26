@@ -10,7 +10,7 @@ const templates = []
         {}
         "blphb"
     []
-        "array comprehension"
+        "array comprehension for of"
         {}
         template (properties) ->
             return [key for key of properties]
@@ -60,7 +60,7 @@ const templates = []
         {a:5}
         7
     []
-        "array comprehensions"
+        "array comprehension for in"
         {}
         template ({items}) -> [x + i for x, i in items]
         {items:[1,2,3]}
@@ -163,6 +163,7 @@ export
                 return (done) ->
                     let template = templateType.template.call(thisArg, argument)
                     const checkIfDone (check) ->
+                        # console.log(JSON.stringify({check,expected,argument}))
                         if JSON.stringify(check) is JSON.stringify(expected)
                             template.deactivate()
                             done()
@@ -177,3 +178,6 @@ export
                             )
                     )
                     ion.patch(argument, patch)
+                    # console.log('just patched')
+                    # console.log(JSON.stringify({expected,argument}))
+                    ion.checkForChanges()

@@ -20,7 +20,8 @@ export const
             if deleteNull and value is deleteValue
                 delete target[key]
             else
-                target[key] = merge(target[key], value, options)
+                let newValue = merge(target[key], value, options)
+                target[key] = newValue
         return target
     # combines two patches to make a single patch
     combine = (patch1, patch2) -> merge(patch1, patch2, {deleteNull:false})

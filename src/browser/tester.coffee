@@ -57,8 +57,8 @@ exports.runTests = runTests = (moduleIds, callback) ->
         callback()
     else
         # we have to wait for completion, but not too long
-        # say... 10 second
-        duration = 10000
+        # say... 1 second
+        duration = 1000
         error = "Timed out after #{duration} ms"
         warning = undefined
         timeout = =>

@@ -109,10 +109,11 @@ export class ForInOfStatement extends Statement
             return array
         applyChanges: (changes) ->
             # prune the change messages down
+            # console.log('changes before', JSON.stringify(changes))
             changes = @summarize(changes)
+            # console.log('changes after', JSON.stringify(changes))
             if changes.length is 0
                 return
-            # console.log(JSON.stringify(changes))
 
             # for {name,type,oldValue} in changes
             #     let newValue = @collection[name]
