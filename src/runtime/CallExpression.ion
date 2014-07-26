@@ -9,7 +9,7 @@ module.exports = class CallExpression extends DynamicExpression
         activate: ->
             super
             @calleeExpression ?= @context.createRuntime(@callee)
-            (@calleeExpression.watch)
+            @calleeExpression.watch(
                 @calleeWatcher ?= (value) =>
                     @calleeValue = value
                     # get thisArg and watch for changes
@@ -24,11 +24,13 @@ module.exports = class CallExpression extends DynamicExpression
                                     @evaluate()
                             )
                     @evaluate()
+            )
             @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:not @calleeValue?.template})
-            (@argumentExpressions.watch)
+            @argumentExpressions.watch(
                 @argumentWatcher ?= (value) =>
                     @argumentsValue = value
                     @evaluate()
+            )
         deactivate: ->
             super
             @calleeExpression.unwatch(@calleeWatcher)

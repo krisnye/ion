@@ -9,23 +9,26 @@ export class MemberExpression extends DynamicExpression
             @objectExpression ?= @context.createRuntime(@object)
             @propertyExpression ?= @context.createRuntime(@computed ? @property : @property.name)
 
-            (@propertyExpression.watch)
+            @propertyExpression.watch(
                 @propertyWatcher ?= (propertyValue) =>
                     @propertyValue = propertyValue
                     @updateValue()
+            )
 
-            (@objectExpression.watch)
+            @objectExpression.watch(
                 @objectWatcher ?= (objectValue) =>
                     @objectValue = objectValue
                     @updateValue()
                     # also observe the objectValue for changes
                     @objectObserver?()
                     if objectValue?
-                        @objectObserver = (ion.observe)
+                        @objectObserver = ion.observe(
                             objectValue
                             (changes) =>
                                 @updateValue()
                             @propertyValue
+                        )
+            )
         deactivate: ->
             super
             @objectExpression.unwatch(@objectWatcher)

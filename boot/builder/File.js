@@ -58,7 +58,9 @@ var File = ion.defineClass({
                 return index < 0 ? '' : this.path.substring(index);
             },
             write: function (content, encoding) {
-                return utility.write(this.path, content, encoding);
+                if (content != null && content !== this.read(encoding)) {
+                    utility.write(this.path, content, encoding);
+                }
             },
             delete: function () {
                 return utility.write(this.path, null);

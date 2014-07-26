@@ -11,7 +11,7 @@ export class Property extends Statement
             @valueExpression ?= @context.createRuntime(@value)
             # then watch them, this way, the keywatcher can set the left value on the right hand side
             # before it is activated
-            (@keyExpression.watch)
+            @keyExpression.watch(
                 @keyWatcher ?= (key) =>
                     if key? and @valueExpression.setLeftValue?
                         # if there is a context.output then get the current key from that
@@ -23,10 +23,12 @@ export class Property extends Statement
                     @restoreProperty()
                     @keyValue = key
                     @setProperty()
-            (@valueExpression.watch)
+            )
+            @valueExpression.watch(
                 @valueWatcher ?= (value) =>
                     @valueValue = value
                     @setProperty()
+            )
 
             if @bi
                 # then we need to observe the context output object for changes to the leftValue property.

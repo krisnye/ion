@@ -484,6 +484,33 @@ var Directory = ion.defineClass({
                 utility.write(path, content);
                 return content;
             },
+            read: function (path) {
+                if (this.hasOwnProperty(path) || this[path] != null) {
+                    return this[path];
+                }
+                path = this.getAbsoluteName(path);
+                if (fs.existsSync(path)) {
+                    return utility.read(path);
+                } else {
+                    return void 0;
+                }
+            },
+            write: function (path, content) {
+                if (!(content != null)) {
+                    return;
+                }
+                if (this.hasOwnProperty(path) || this[path] != null) {
+                    return this[path] = content;
+                }
+                path = this.getAbsoluteName(path);
+                console.log('Writing: ' + path);
+                utility.write(path, content);
+            },
+            delete: function (path) {
+                console.log('Deleting: ' + path);
+                path = this.getAbsoluteName(path);
+                utility.write(path, null);
+            },
             getFile: function (path) {
                 return new File(this.getAbsoluteName(path));
             },
@@ -600,7 +627,9 @@ var File = ion.defineClass({
                 return index < 0 ? '' : this.path.substring(index);
             },
             write: function (content, encoding) {
-                return utility.write(this.path, content, encoding);
+                if (content != null && content !== this.read(encoding)) {
+                    utility.write(this.path, content, encoding);
+                }
             },
             delete: function () {
                 return utility.write(this.path, null);
@@ -787,7 +816,8 @@ module.exports = exports = {
     }
   },
   compileIon: compileIon = function(source, packageObject) {
-    return compileIonWithSourceMap(source, packageObject)[0];
+    var _ref;
+    return (_ref = compileIonWithSourceMap(source, packageObject)) != null ? _ref[0] : void 0;
   },
   compileIonWithSourceMap: compileIonWithSourceMap = function(source, packageObject) {
     var e, filename, input, ionCompiler, map, moduleId, _ref;
@@ -855,18 +885,46 @@ module.exports = exports = ion.template(function (packagePatch) {
     var input = new Directory(packageJson.directories.src != null ? packageJson.directories.src : 'src');
     var output = new Directory(packageJson.directories.lib != null ? packageJson.directories.lib : 'lib');
     var moduleName = packageJson.name != null ? packageJson.name : '';
+    var extensions = Object.keys(compilers);
+    {
+        var _ref7 = input.search(extensions, packageJson.build.exclude);
+        for (var path in _ref7) {
+            var source = _ref7[path];
+            var compiler = compilers[source.getExtension()];
+            var targetPath = builder.changeExtension(path, '.js');
+            if (compiler.compileWithSourceMap != null) {
+                var mapPath = builder.changeExtension(path, '.map');
+                var mapName = mapPath.split(/[\/\\]/g).slice(-1)[0];
+                var _ref = compiler.compileWithSourceMap(source, packageJson);
+                var code = _ref[0];
+                var map = _ref[1];
+                output.write(targetPath, code + '\n//@ sourceMappingURL=./' + mapName);
+                output.write(mapPath, map);
+            } else {
+                output.write(targetPath, compiler.compile(source, packageJson));
+            }
+        }
+    }
+    var outputFiles = output.search('.js', [
+            /^_/,
+            'node_modules'
+        ]);
     var _ref2 = [];
     for (var key in outputFiles) {
         if (key.endsWith('require.js')) {
             _ref2.push(key);
         }
     }
+    var top = _ref2;
     var _ref3 = [];
     for (var key in outputFiles) {
         if (!builder.isPrivate(key) && top.indexOf(key) < 0) {
             _ref3.push(key);
         }
     }
+    var sortedFiles = top.concat(_ref3);
+    var manifestFileName = 'manifest.json';
+    var manifestFile = output.getFile(manifestFileName);
     var _ref4 = [];
     for (var path in outputFiles) {
         var file = outputFiles[path];
@@ -877,54 +935,24 @@ module.exports = exports = ion.template(function (packagePatch) {
         var path = sortedFiles[_i];
         _ref5.push(builder.normalizePath(path));
     }
-    {
-        var extensions = Object.keys(compilers);
-        {
-            var _ref7 = input.search(extensions, packageJson.build.exclude);
-            for (var path in _ref7) {
-                var source = _ref7[path];
-                var compiler = compilers[source.getExtension()];
-                var targetPath = builder.changeExtension(path, '.js');
-                if (compiler.compileWithSourceMap != null) {
-                    var mapPath = builder.changeExtension(path, '.map');
-                    var mapName = mapPath.split(/[\/\\]/g).slice(-1)[0];
-                    var _ref = compiler.compileWithSourceMap(source, packageJson);
-                    var code = _ref[0];
-                    var map = _ref[1];
-                    output[targetPath] = code + '\n//@ sourceMappingURL=./' + mapName;
-                    output[mapPath] = map;
-                } else {
-                    output[targetPath] = compiler.compile(source, packageJson);
-                }
-            }
+    var manifest = {
+            modified: Math.max.apply(null, _ref4),
+            files: _ref5
+        };
+    manifestFile.write(JSON.stringify(manifest, null, '  ', sortedFiles));
+    if (packageJson.build.merge != null) {
+        var _ref6 = [];
+        for (var _i2 = 0; _i2 < sortedFiles.length; _i2++) {
+            var name = sortedFiles[_i2];
+            _ref6.push(outputFiles[name].read());
         }
-        var outputFiles = output.search('.js', [
-                /^_/,
-                'node_modules'
-            ]);
-        var top = _ref2;
-        var sortedFiles = top.concat(_ref3);
-        var manifestFileName = 'manifest.json';
-        var manifest = {
-                modified: Math.max.apply(null, _ref4),
-                files: _ref5
-            };
-        output[manifestFileName] = JSON.stringify(manifest, null, '  ', sortedFiles);
-        if (packageJson.build.merge != null) {
-            var _ref6 = [];
-            for (var _i2 = 0; _i2 < sortedFiles.length; _i2++) {
-                var name = sortedFiles[_i2];
-                ion.add(output, _ref6.push(outputFiles[name].read()));
-            }
-            output[packageJson.build.merge] = _ref6.join('\n');
-        }
-        if (packageJson.build.package) {
-            output['package.json'] = JSON.stringify(ion.patch(ion.clone(packageJson), { main: void 0 }), null, '    ');
-        }
-        if (packageJson.build.test !== false) {
-            var manifestFile = output.getFile(manifestFileName);
-            ion.add(output, builder.runTests(manifestFile, manifestFile.modified));
-        }
+        output.write(packageJson.build.merge, _ref6.join('\n'));
+    }
+    if (packageJson.build.package) {
+        output.write('package.json', JSON.stringify(ion.patch(ion.clone(packageJson), { main: void 0 }), null, '    '));
+    }
+    if (packageJson.build.test !== false) {
+        builder.runTests(manifestFile, manifestFile.modified);
     }
 }, function (packagePatch) {
     return ion.createRuntime({
@@ -1216,21 +1244,145 @@ module.exports = exports = ion.template(function (packagePatch) {
                 kind: 'let'
             },
             {
-                type: 'Property',
-                key: {
-                    type: 'Identifier',
-                    name: 'output'
+                type: 'VariableDeclaration',
+                declarations: [{
+                        type: 'VariableDeclarator',
+                        id: {
+                            type: 'Identifier',
+                            name: 'extensions'
+                        },
+                        init: {
+                            type: 'CallExpression',
+                            callee: {
+                                type: 'MemberExpression',
+                                computed: false,
+                                object: {
+                                    type: 'Identifier',
+                                    name: 'Object'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'keys'
+                                }
+                            },
+                            arguments: [{
+                                    type: 'Identifier',
+                                    name: 'compilers'
+                                }]
+                        }
+                    }],
+                kind: 'let'
+            },
+            {
+                type: 'ForInStatement',
+                left: {
+                    type: 'VariableDeclaration',
+                    declarations: [
+                        {
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'path'
+                            },
+                            init: null
+                        },
+                        {
+                            type: 'VariableDeclarator',
+                            id: {
+                                type: 'Identifier',
+                                name: 'source'
+                            },
+                            init: null
+                        }
+                    ],
+                    kind: 'let'
                 },
-                value: {
-                    type: 'ObjectExpression',
-                    properties: [
+                right: {
+                    type: 'CallExpression',
+                    callee: {
+                        type: 'MemberExpression',
+                        computed: false,
+                        object: {
+                            type: 'Identifier',
+                            name: 'input'
+                        },
+                        property: {
+                            type: 'Identifier',
+                            name: 'search'
+                        }
+                    },
+                    arguments: [
+                        {
+                            type: 'Identifier',
+                            name: 'extensions'
+                        },
+                        {
+                            type: 'MemberExpression',
+                            computed: false,
+                            object: {
+                                type: 'MemberExpression',
+                                computed: false,
+                                object: {
+                                    type: 'Identifier',
+                                    name: 'packageJson'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'build'
+                                }
+                            },
+                            property: {
+                                type: 'Identifier',
+                                name: 'exclude'
+                            }
+                        }
+                    ]
+                },
+                body: {
+                    type: 'BlockStatement',
+                    body: [
                         {
                             type: 'VariableDeclaration',
                             declarations: [{
                                     type: 'VariableDeclarator',
                                     id: {
                                         type: 'Identifier',
-                                        name: 'extensions'
+                                        name: 'compiler'
+                                    },
+                                    init: {
+                                        type: 'MemberExpression',
+                                        computed: true,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'compilers'
+                                        },
+                                        property: {
+                                            type: 'CallExpression',
+                                            callee: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'source'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'getExtension'
+                                                }
+                                            },
+                                            arguments: []
+                                        }
+                                    }
+                                }],
+                            kind: 'let'
+                        },
+                        {
+                            type: 'VariableDeclaration',
+                            declarations: [{
+                                    type: 'VariableDeclarator',
+                                    id: {
+                                        type: 'Identifier',
+                                        name: 'targetPath'
                                     },
                                     init: {
                                         type: 'CallExpression',
@@ -1239,87 +1391,46 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             computed: false,
                                             object: {
                                                 type: 'Identifier',
-                                                name: 'Object'
+                                                name: 'builder'
                                             },
                                             property: {
                                                 type: 'Identifier',
-                                                name: 'keys'
+                                                name: 'changeExtension'
                                             }
                                         },
-                                        arguments: [{
+                                        arguments: [
+                                            {
                                                 type: 'Identifier',
-                                                name: 'compilers'
-                                            }]
+                                                name: 'path'
+                                            },
+                                            {
+                                                type: 'Literal',
+                                                value: '.js'
+                                            }
+                                        ]
                                     }
                                 }],
                             kind: 'let'
                         },
                         {
-                            type: 'ForInStatement',
-                            left: {
-                                type: 'VariableDeclaration',
-                                declarations: [
-                                    {
-                                        type: 'VariableDeclarator',
-                                        id: {
-                                            type: 'Identifier',
-                                            name: 'path'
-                                        },
-                                        init: null
-                                    },
-                                    {
-                                        type: 'VariableDeclarator',
-                                        id: {
-                                            type: 'Identifier',
-                                            name: 'source'
-                                        },
-                                        init: null
-                                    }
-                                ],
-                                kind: 'let'
-                            },
-                            right: {
-                                type: 'CallExpression',
-                                callee: {
+                            type: 'IfStatement',
+                            test: {
+                                type: 'UnaryExpression',
+                                operator: '?',
+                                argument: {
                                     type: 'MemberExpression',
                                     computed: false,
                                     object: {
                                         type: 'Identifier',
-                                        name: 'input'
+                                        name: 'compiler'
                                     },
                                     property: {
                                         type: 'Identifier',
-                                        name: 'search'
+                                        name: 'compileWithSourceMap'
                                     }
-                                },
-                                arguments: [
-                                    {
-                                        type: 'Identifier',
-                                        name: 'extensions'
-                                    },
-                                    {
-                                        type: 'MemberExpression',
-                                        computed: false,
-                                        object: {
-                                            type: 'MemberExpression',
-                                            computed: false,
-                                            object: {
-                                                type: 'Identifier',
-                                                name: 'packageJson'
-                                            },
-                                            property: {
-                                                type: 'Identifier',
-                                                name: 'build'
-                                            }
-                                        },
-                                        property: {
-                                            type: 'Identifier',
-                                            name: 'exclude'
-                                        }
-                                    }
-                                ]
+                                }
                             },
-                            body: {
+                            consequent: {
                                 type: 'BlockStatement',
                                 body: [
                                     {
@@ -1328,42 +1439,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 type: 'VariableDeclarator',
                                                 id: {
                                                     type: 'Identifier',
-                                                    name: 'compiler'
-                                                },
-                                                init: {
-                                                    type: 'MemberExpression',
-                                                    computed: true,
-                                                    object: {
-                                                        type: 'Identifier',
-                                                        name: 'compilers'
-                                                    },
-                                                    property: {
-                                                        type: 'CallExpression',
-                                                        callee: {
-                                                            type: 'MemberExpression',
-                                                            computed: false,
-                                                            object: {
-                                                                type: 'Identifier',
-                                                                name: 'source'
-                                                            },
-                                                            property: {
-                                                                type: 'Identifier',
-                                                                name: 'getExtension'
-                                                            }
-                                                        },
-                                                        arguments: []
-                                                    }
-                                                }
-                                            }],
-                                        kind: 'let'
-                                    },
-                                    {
-                                        type: 'VariableDeclaration',
-                                        declarations: [{
-                                                type: 'VariableDeclarator',
-                                                id: {
-                                                    type: 'Identifier',
-                                                    name: 'targetPath'
+                                                    name: 'mapPath'
                                                 },
                                                 init: {
                                                     type: 'CallExpression',
@@ -1386,7 +1462,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                         },
                                                         {
                                                             type: 'Literal',
-                                                            value: '.js'
+                                                            value: '.map'
                                                         }
                                                     ]
                                                 }
@@ -1394,1023 +1470,69 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         kind: 'let'
                                     },
                                     {
-                                        type: 'IfStatement',
-                                        test: {
-                                            type: 'UnaryExpression',
-                                            operator: '?',
-                                            argument: {
-                                                type: 'MemberExpression',
-                                                computed: false,
-                                                object: {
+                                        type: 'VariableDeclaration',
+                                        declarations: [{
+                                                type: 'VariableDeclarator',
+                                                id: {
                                                     type: 'Identifier',
-                                                    name: 'compiler'
+                                                    name: 'mapName'
                                                 },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'compileWithSourceMap'
-                                                }
-                                            }
-                                        },
-                                        consequent: {
-                                            type: 'BlockStatement',
-                                            body: [
-                                                {
-                                                    type: 'VariableDeclaration',
-                                                    declarations: [{
-                                                            type: 'VariableDeclarator',
-                                                            id: {
-                                                                type: 'Identifier',
-                                                                name: 'mapPath'
-                                                            },
-                                                            init: {
-                                                                type: 'CallExpression',
-                                                                callee: {
-                                                                    type: 'MemberExpression',
-                                                                    computed: false,
-                                                                    object: {
-                                                                        type: 'Identifier',
-                                                                        name: 'builder'
-                                                                    },
-                                                                    property: {
-                                                                        type: 'Identifier',
-                                                                        name: 'changeExtension'
-                                                                    }
-                                                                },
-                                                                arguments: [
-                                                                    {
-                                                                        type: 'Identifier',
-                                                                        name: 'path'
-                                                                    },
-                                                                    {
-                                                                        type: 'Literal',
-                                                                        value: '.map'
-                                                                    }
-                                                                ]
-                                                            }
-                                                        }],
-                                                    kind: 'let'
-                                                },
-                                                {
-                                                    type: 'VariableDeclaration',
-                                                    declarations: [{
-                                                            type: 'VariableDeclarator',
-                                                            id: {
-                                                                type: 'Identifier',
-                                                                name: 'mapName'
-                                                            },
-                                                            init: {
-                                                                type: 'MemberExpression',
-                                                                computed: true,
-                                                                object: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'CallExpression',
-                                                                            callee: {
-                                                                                type: 'MemberExpression',
-                                                                                computed: false,
-                                                                                object: {
-                                                                                    type: 'Identifier',
-                                                                                    name: 'mapPath'
-                                                                                },
-                                                                                property: {
-                                                                                    type: 'Identifier',
-                                                                                    name: 'split'
-                                                                                }
-                                                                            },
-                                                                            arguments: [{
-                                                                                    type: 'Literal',
-                                                                                    value: /[\/\\]/g
-                                                                                }]
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'slice'
-                                                                        }
-                                                                    },
-                                                                    arguments: [{
-                                                                            type: 'UnaryExpression',
-                                                                            operator: '-',
-                                                                            argument: {
-                                                                                type: 'Literal',
-                                                                                value: 1
-                                                                            }
-                                                                        }]
-                                                                },
-                                                                property: {
-                                                                    type: 'Literal',
-                                                                    value: 0
-                                                                }
-                                                            }
-                                                        }],
-                                                    kind: 'let'
-                                                },
-                                                {
-                                                    type: 'VariableDeclaration',
-                                                    declarations: [{
-                                                            type: 'VariableDeclarator',
-                                                            id: {
-                                                                type: 'Identifier',
-                                                                name: '_ref'
-                                                            },
-                                                            init: {
-                                                                type: 'CallExpression',
-                                                                callee: {
-                                                                    type: 'MemberExpression',
-                                                                    computed: false,
-                                                                    object: {
-                                                                        type: 'Identifier',
-                                                                        name: 'compiler'
-                                                                    },
-                                                                    property: {
-                                                                        type: 'Identifier',
-                                                                        name: 'compileWithSourceMap'
-                                                                    }
-                                                                },
-                                                                arguments: [
-                                                                    {
-                                                                        type: 'Identifier',
-                                                                        name: 'source'
-                                                                    },
-                                                                    {
-                                                                        type: 'Identifier',
-                                                                        name: 'packageJson'
-                                                                    }
-                                                                ]
-                                                            }
-                                                        }],
-                                                    kind: 'let'
-                                                },
-                                                {
-                                                    type: 'VariableDeclaration',
-                                                    declarations: [{
-                                                            type: 'VariableDeclarator',
-                                                            id: {
-                                                                type: 'Identifier',
-                                                                name: 'code'
-                                                            },
-                                                            init: {
-                                                                type: 'MemberExpression',
-                                                                object: {
-                                                                    type: 'Identifier',
-                                                                    name: '_ref'
-                                                                },
-                                                                property: {
-                                                                    type: 'Literal',
-                                                                    value: 0
-                                                                },
-                                                                computed: true
-                                                            }
-                                                        }],
-                                                    kind: 'let'
-                                                },
-                                                {
-                                                    type: 'VariableDeclaration',
-                                                    declarations: [{
-                                                            type: 'VariableDeclarator',
-                                                            id: {
-                                                                type: 'Identifier',
-                                                                name: 'map'
-                                                            },
-                                                            init: {
-                                                                type: 'MemberExpression',
-                                                                object: {
-                                                                    type: 'Identifier',
-                                                                    name: '_ref'
-                                                                },
-                                                                property: {
-                                                                    type: 'Literal',
-                                                                    value: 1
-                                                                },
-                                                                computed: true
-                                                            }
-                                                        }],
-                                                    kind: 'let'
-                                                },
-                                                {
-                                                    type: 'Property',
-                                                    key: {
-                                                        type: 'Identifier',
-                                                        name: 'targetPath'
-                                                    },
-                                                    value: {
-                                                        type: 'BinaryExpression',
-                                                        operator: '+',
-                                                        left: {
-                                                            type: 'BinaryExpression',
-                                                            operator: '+',
-                                                            left: {
-                                                                type: 'Identifier',
-                                                                name: 'code'
-                                                            },
-                                                            right: {
-                                                                type: 'Literal',
-                                                                value: '\n//@ sourceMappingURL=./'
-                                                            }
-                                                        },
-                                                        right: {
-                                                            type: 'Identifier',
-                                                            name: 'mapName'
-                                                        }
-                                                    },
-                                                    kind: 'init',
-                                                    computed: true
-                                                },
-                                                {
-                                                    type: 'Property',
-                                                    key: {
-                                                        type: 'Identifier',
-                                                        name: 'mapPath'
-                                                    },
-                                                    value: {
-                                                        type: 'Identifier',
-                                                        name: 'map'
-                                                    },
-                                                    kind: 'init',
-                                                    computed: true
-                                                }
-                                            ]
-                                        },
-                                        alternate: {
-                                            type: 'BlockStatement',
-                                            body: [{
-                                                    type: 'Property',
-                                                    key: {
-                                                        type: 'Identifier',
-                                                        name: 'targetPath'
-                                                    },
-                                                    value: {
+                                                init: {
+                                                    type: 'MemberExpression',
+                                                    computed: true,
+                                                    object: {
                                                         type: 'CallExpression',
                                                         callee: {
                                                             type: 'MemberExpression',
                                                             computed: false,
                                                             object: {
-                                                                type: 'Identifier',
-                                                                name: 'compiler'
-                                                            },
-                                                            property: {
-                                                                type: 'Identifier',
-                                                                name: 'compile'
-                                                            }
-                                                        },
-                                                        arguments: [
-                                                            {
-                                                                type: 'Identifier',
-                                                                name: 'source'
-                                                            },
-                                                            {
-                                                                type: 'Identifier',
-                                                                name: 'packageJson'
-                                                            }
-                                                        ]
-                                                    },
-                                                    kind: 'init',
-                                                    computed: true
-                                                }]
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            type: 'VariableDeclaration',
-                            declarations: [{
-                                    type: 'VariableDeclarator',
-                                    id: {
-                                        type: 'Identifier',
-                                        name: 'outputFiles'
-                                    },
-                                    init: {
-                                        type: 'CallExpression',
-                                        callee: {
-                                            type: 'MemberExpression',
-                                            computed: false,
-                                            object: {
-                                                type: 'Identifier',
-                                                name: 'output'
-                                            },
-                                            property: {
-                                                type: 'Identifier',
-                                                name: 'search'
-                                            }
-                                        },
-                                        arguments: [
-                                            {
-                                                type: 'Literal',
-                                                value: '.js'
-                                            },
-                                            {
-                                                type: 'ArrayExpression',
-                                                elements: [
-                                                    {
-                                                        type: 'Literal',
-                                                        value: /^_/
-                                                    },
-                                                    {
-                                                        type: 'Literal',
-                                                        value: 'node_modules'
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                }],
-                            kind: 'let'
-                        },
-                        {
-                            type: 'VariableDeclaration',
-                            declarations: [{
-                                    type: 'VariableDeclarator',
-                                    id: {
-                                        type: 'Identifier',
-                                        name: 'top'
-                                    },
-                                    init: {
-                                        type: 'ObjectExpression',
-                                        objectType: {
-                                            type: 'ArrayExpression',
-                                            elements: []
-                                        },
-                                        properties: [{
-                                                type: 'ForInStatement',
-                                                left: {
-                                                    type: 'VariableDeclaration',
-                                                    declarations: [{
-                                                            type: 'VariableDeclarator',
-                                                            id: {
-                                                                type: 'Identifier',
-                                                                name: 'key'
-                                                            },
-                                                            init: null
-                                                        }],
-                                                    kind: 'let'
-                                                },
-                                                right: {
-                                                    type: 'Identifier',
-                                                    name: 'outputFiles'
-                                                },
-                                                body: {
-                                                    type: 'BlockStatement',
-                                                    body: [{
-                                                            type: 'IfStatement',
-                                                            test: {
                                                                 type: 'CallExpression',
                                                                 callee: {
                                                                     type: 'MemberExpression',
                                                                     computed: false,
                                                                     object: {
                                                                         type: 'Identifier',
-                                                                        name: 'key'
+                                                                        name: 'mapPath'
                                                                     },
                                                                     property: {
                                                                         type: 'Identifier',
-                                                                        name: 'endsWith'
+                                                                        name: 'split'
                                                                     }
                                                                 },
                                                                 arguments: [{
                                                                         type: 'Literal',
-                                                                        value: 'require.js'
+                                                                        value: /[\/\\]/g
                                                                     }]
-                                                            },
-                                                            consequent: {
-                                                                type: 'BlockStatement',
-                                                                body: [{
-                                                                        type: 'ExpressionStatement',
-                                                                        expression: {
-                                                                            type: 'Identifier',
-                                                                            name: 'key'
-                                                                        }
-                                                                    }]
-                                                            }
-                                                        }]
-                                                }
-                                            }]
-                                    }
-                                }],
-                            kind: 'let'
-                        },
-                        {
-                            type: 'VariableDeclaration',
-                            declarations: [{
-                                    type: 'VariableDeclarator',
-                                    id: {
-                                        type: 'Identifier',
-                                        name: 'sortedFiles'
-                                    },
-                                    init: {
-                                        type: 'CallExpression',
-                                        callee: {
-                                            type: 'MemberExpression',
-                                            computed: false,
-                                            object: {
-                                                type: 'Identifier',
-                                                name: 'top'
-                                            },
-                                            property: {
-                                                type: 'Identifier',
-                                                name: 'concat'
-                                            }
-                                        },
-                                        arguments: [{
-                                                type: 'ObjectExpression',
-                                                objectType: {
-                                                    type: 'ArrayExpression',
-                                                    elements: []
-                                                },
-                                                properties: [{
-                                                        type: 'ForInStatement',
-                                                        left: {
-                                                            type: 'VariableDeclaration',
-                                                            declarations: [{
-                                                                    type: 'VariableDeclarator',
-                                                                    id: {
-                                                                        type: 'Identifier',
-                                                                        name: 'key'
-                                                                    },
-                                                                    init: null
-                                                                }],
-                                                            kind: 'let'
-                                                        },
-                                                        right: {
-                                                            type: 'Identifier',
-                                                            name: 'outputFiles'
-                                                        },
-                                                        body: {
-                                                            type: 'BlockStatement',
-                                                            body: [{
-                                                                    type: 'IfStatement',
-                                                                    test: {
-                                                                        type: 'BinaryExpression',
-                                                                        operator: '&&',
-                                                                        left: {
-                                                                            type: 'UnaryExpression',
-                                                                            operator: '!',
-                                                                            argument: {
-                                                                                type: 'CallExpression',
-                                                                                callee: {
-                                                                                    type: 'MemberExpression',
-                                                                                    computed: false,
-                                                                                    object: {
-                                                                                        type: 'Identifier',
-                                                                                        name: 'builder'
-                                                                                    },
-                                                                                    property: {
-                                                                                        type: 'Identifier',
-                                                                                        name: 'isPrivate'
-                                                                                    }
-                                                                                },
-                                                                                arguments: [{
-                                                                                        type: 'Identifier',
-                                                                                        name: 'key'
-                                                                                    }]
-                                                                            }
-                                                                        },
-                                                                        right: {
-                                                                            type: 'BinaryExpression',
-                                                                            operator: '<',
-                                                                            left: {
-                                                                                type: 'CallExpression',
-                                                                                callee: {
-                                                                                    type: 'MemberExpression',
-                                                                                    computed: false,
-                                                                                    object: {
-                                                                                        type: 'Identifier',
-                                                                                        name: 'top'
-                                                                                    },
-                                                                                    property: {
-                                                                                        type: 'Identifier',
-                                                                                        name: 'indexOf'
-                                                                                    }
-                                                                                },
-                                                                                arguments: [{
-                                                                                        type: 'Identifier',
-                                                                                        name: 'key'
-                                                                                    }]
-                                                                            },
-                                                                            right: {
-                                                                                type: 'Literal',
-                                                                                value: 0
-                                                                            }
-                                                                        }
-                                                                    },
-                                                                    consequent: {
-                                                                        type: 'BlockStatement',
-                                                                        body: [{
-                                                                                type: 'ExpressionStatement',
-                                                                                expression: {
-                                                                                    type: 'Identifier',
-                                                                                    name: 'key'
-                                                                                }
-                                                                            }]
-                                                                    }
-                                                                }]
-                                                        }
-                                                    }]
-                                            }]
-                                    }
-                                }],
-                            kind: 'let'
-                        },
-                        {
-                            type: 'VariableDeclaration',
-                            declarations: [{
-                                    type: 'VariableDeclarator',
-                                    id: {
-                                        type: 'Identifier',
-                                        name: 'manifestFileName'
-                                    },
-                                    init: {
-                                        type: 'Literal',
-                                        value: 'manifest.json'
-                                    }
-                                }],
-                            kind: 'let'
-                        },
-                        {
-                            type: 'VariableDeclaration',
-                            declarations: [{
-                                    type: 'VariableDeclarator',
-                                    id: {
-                                        type: 'Identifier',
-                                        name: 'manifest'
-                                    },
-                                    init: {
-                                        type: 'ObjectExpression',
-                                        properties: [
-                                            {
-                                                type: 'Property',
-                                                key: {
-                                                    type: 'Identifier',
-                                                    name: 'modified'
-                                                },
-                                                value: {
-                                                    type: 'CallExpression',
-                                                    callee: {
-                                                        type: 'MemberExpression',
-                                                        computed: false,
-                                                        object: {
-                                                            type: 'MemberExpression',
-                                                            computed: false,
-                                                            object: {
-                                                                type: 'Identifier',
-                                                                name: 'Math'
                                                             },
                                                             property: {
                                                                 type: 'Identifier',
-                                                                name: 'max'
+                                                                name: 'slice'
                                                             }
                                                         },
-                                                        property: {
-                                                            type: 'Identifier',
-                                                            name: 'apply'
-                                                        }
-                                                    },
-                                                    arguments: [
-                                                        {
-                                                            type: 'Literal',
-                                                            value: null
-                                                        },
-                                                        {
-                                                            type: 'ObjectExpression',
-                                                            objectType: {
-                                                                type: 'ArrayExpression',
-                                                                elements: []
-                                                            },
-                                                            properties: [{
-                                                                    type: 'ForInStatement',
-                                                                    left: {
-                                                                        type: 'VariableDeclaration',
-                                                                        declarations: [
-                                                                            {
-                                                                                type: 'VariableDeclarator',
-                                                                                id: {
-                                                                                    type: 'Identifier',
-                                                                                    name: 'path'
-                                                                                },
-                                                                                init: null
-                                                                            },
-                                                                            {
-                                                                                type: 'VariableDeclarator',
-                                                                                id: {
-                                                                                    type: 'Identifier',
-                                                                                    name: 'file'
-                                                                                },
-                                                                                init: null
-                                                                            }
-                                                                        ],
-                                                                        kind: 'let'
-                                                                    },
-                                                                    right: {
-                                                                        type: 'Identifier',
-                                                                        name: 'outputFiles'
-                                                                    },
-                                                                    body: {
-                                                                        type: 'ExpressionStatement',
-                                                                        expression: {
-                                                                            type: 'MemberExpression',
-                                                                            computed: false,
-                                                                            object: {
-                                                                                type: 'Identifier',
-                                                                                name: 'file'
-                                                                            },
-                                                                            property: {
-                                                                                type: 'Identifier',
-                                                                                name: 'modified'
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }]
-                                                        }
-                                                    ]
-                                                },
-                                                kind: 'init'
-                                            },
-                                            {
-                                                type: 'Property',
-                                                key: {
-                                                    type: 'Identifier',
-                                                    name: 'files'
-                                                },
-                                                value: {
-                                                    type: 'ObjectExpression',
-                                                    objectType: {
-                                                        type: 'ArrayExpression',
-                                                        elements: []
-                                                    },
-                                                    properties: [{
-                                                            type: 'ForOfStatement',
-                                                            left: {
-                                                                type: 'VariableDeclaration',
-                                                                declarations: [{
-                                                                        type: 'VariableDeclarator',
-                                                                        id: {
-                                                                            type: 'Identifier',
-                                                                            name: 'path'
-                                                                        },
-                                                                        init: null
-                                                                    }],
-                                                                kind: 'let'
-                                                            },
-                                                            right: {
-                                                                type: 'Identifier',
-                                                                name: 'sortedFiles'
-                                                            },
-                                                            body: {
-                                                                type: 'ExpressionStatement',
-                                                                expression: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'Identifier',
-                                                                            name: 'builder'
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'normalizePath'
-                                                                        }
-                                                                    },
-                                                                    arguments: [{
-                                                                            type: 'Identifier',
-                                                                            name: 'path'
-                                                                        }]
+                                                        arguments: [{
+                                                                type: 'UnaryExpression',
+                                                                operator: '-',
+                                                                argument: {
+                                                                    type: 'Literal',
+                                                                    value: 1
                                                                 }
-                                                            }
-                                                        }]
-                                                },
-                                                kind: 'init'
-                                            }
-                                        ]
-                                    }
-                                }],
-                            kind: 'let'
-                        },
-                        {
-                            type: 'Property',
-                            key: {
-                                type: 'Identifier',
-                                name: 'manifestFileName'
-                            },
-                            value: {
-                                type: 'CallExpression',
-                                callee: {
-                                    type: 'MemberExpression',
-                                    computed: false,
-                                    object: {
-                                        type: 'Identifier',
-                                        name: 'JSON'
-                                    },
-                                    property: {
-                                        type: 'Identifier',
-                                        name: 'stringify'
-                                    }
-                                },
-                                arguments: [
-                                    {
-                                        type: 'Identifier',
-                                        name: 'manifest'
-                                    },
-                                    {
-                                        type: 'Literal',
-                                        value: null
-                                    },
-                                    {
-                                        type: 'Literal',
-                                        value: '  '
-                                    },
-                                    {
-                                        type: 'Identifier',
-                                        name: 'sortedFiles'
-                                    }
-                                ]
-                            },
-                            kind: 'init',
-                            computed: true
-                        },
-                        {
-                            type: 'IfStatement',
-                            test: {
-                                type: 'UnaryExpression',
-                                operator: '?',
-                                argument: {
-                                    type: 'MemberExpression',
-                                    computed: false,
-                                    object: {
-                                        type: 'MemberExpression',
-                                        computed: false,
-                                        object: {
-                                            type: 'Identifier',
-                                            name: 'packageJson'
-                                        },
-                                        property: {
-                                            type: 'Identifier',
-                                            name: 'build'
-                                        }
-                                    },
-                                    property: {
-                                        type: 'Identifier',
-                                        name: 'merge'
-                                    }
-                                }
-                            },
-                            consequent: {
-                                type: 'BlockStatement',
-                                body: [{
-                                        type: 'Property',
-                                        key: {
-                                            type: 'MemberExpression',
-                                            computed: false,
-                                            object: {
-                                                type: 'MemberExpression',
-                                                computed: false,
-                                                object: {
-                                                    type: 'Identifier',
-                                                    name: 'packageJson'
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'build'
-                                                }
-                                            },
-                                            property: {
-                                                type: 'Identifier',
-                                                name: 'merge'
-                                            }
-                                        },
-                                        value: {
-                                            type: 'CallExpression',
-                                            callee: {
-                                                type: 'MemberExpression',
-                                                computed: false,
-                                                object: {
-                                                    type: 'ObjectExpression',
-                                                    objectType: {
-                                                        type: 'ArrayExpression',
-                                                        elements: []
+                                                            }]
                                                     },
-                                                    properties: [{
-                                                            type: 'ForOfStatement',
-                                                            left: {
-                                                                type: 'VariableDeclaration',
-                                                                declarations: [{
-                                                                        type: 'VariableDeclarator',
-                                                                        id: {
-                                                                            type: 'Identifier',
-                                                                            name: 'name'
-                                                                        },
-                                                                        init: null
-                                                                    }],
-                                                                kind: 'let'
-                                                            },
-                                                            right: {
-                                                                type: 'Identifier',
-                                                                name: 'sortedFiles'
-                                                            },
-                                                            body: {
-                                                                type: 'ExpressionStatement',
-                                                                expression: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'MemberExpression',
-                                                                            computed: true,
-                                                                            object: {
-                                                                                type: 'Identifier',
-                                                                                name: 'outputFiles'
-                                                                            },
-                                                                            property: {
-                                                                                type: 'Identifier',
-                                                                                name: 'name'
-                                                                            }
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'read'
-                                                                        }
-                                                                    },
-                                                                    arguments: []
-                                                                }
-                                                            }
-                                                        }]
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'join'
+                                                    property: {
+                                                        type: 'Literal',
+                                                        value: 0
+                                                    }
                                                 }
-                                            },
-                                            arguments: [{
-                                                    type: 'Literal',
-                                                    value: '\n'
-                                                }]
-                                        },
-                                        kind: 'init',
-                                        computed: true
-                                    }]
-                            },
-                            alternate: null
-                        },
-                        {
-                            type: 'IfStatement',
-                            test: {
-                                type: 'MemberExpression',
-                                computed: false,
-                                object: {
-                                    type: 'MemberExpression',
-                                    computed: false,
-                                    object: {
-                                        type: 'Identifier',
-                                        name: 'packageJson'
+                                            }],
+                                        kind: 'let'
                                     },
-                                    property: {
-                                        type: 'Identifier',
-                                        name: 'build'
-                                    }
-                                },
-                                property: {
-                                    type: 'Identifier',
-                                    name: 'package'
-                                }
-                            },
-                            consequent: {
-                                type: 'BlockStatement',
-                                body: [{
-                                        type: 'Property',
-                                        key: {
-                                            type: 'Literal',
-                                            value: 'package.json'
-                                        },
-                                        value: {
-                                            type: 'CallExpression',
-                                            callee: {
-                                                type: 'MemberExpression',
-                                                computed: false,
-                                                object: {
-                                                    type: 'Identifier',
-                                                    name: 'JSON'
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'stringify'
-                                                }
-                                            },
-                                            arguments: [
-                                                {
-                                                    type: 'CallExpression',
-                                                    callee: {
-                                                        type: 'MemberExpression',
-                                                        computed: false,
-                                                        object: {
-                                                            type: 'Identifier',
-                                                            name: 'ion'
-                                                        },
-                                                        property: {
-                                                            type: 'Identifier',
-                                                            name: 'patch'
-                                                        }
-                                                    },
-                                                    arguments: [
-                                                        {
-                                                            type: 'CallExpression',
-                                                            callee: {
-                                                                type: 'MemberExpression',
-                                                                computed: false,
-                                                                object: {
-                                                                    type: 'Identifier',
-                                                                    name: 'ion'
-                                                                },
-                                                                property: {
-                                                                    type: 'Identifier',
-                                                                    name: 'clone'
-                                                                }
-                                                            },
-                                                            arguments: [{
-                                                                    type: 'Identifier',
-                                                                    name: 'packageJson'
-                                                                }]
-                                                        },
-                                                        {
-                                                            type: 'ObjectExpression',
-                                                            properties: [{
-                                                                    type: 'Property',
-                                                                    key: {
-                                                                        type: 'Identifier',
-                                                                        name: 'main'
-                                                                    },
-                                                                    value: {
-                                                                        type: 'UnaryExpression',
-                                                                        operator: 'void',
-                                                                        prefix: true,
-                                                                        argument: {
-                                                                            type: 'Literal',
-                                                                            value: 0
-                                                                        }
-                                                                    },
-                                                                    kind: 'init'
-                                                                }]
-                                                        }
-                                                    ]
-                                                },
-                                                {
-                                                    type: 'Literal',
-                                                    value: null
-                                                },
-                                                {
-                                                    type: 'Literal',
-                                                    value: '    '
-                                                }
-                                            ]
-                                        },
-                                        kind: 'init',
-                                        computed: true
-                                    }]
-                            },
-                            alternate: null
-                        },
-                        {
-                            type: 'IfStatement',
-                            test: {
-                                type: 'BinaryExpression',
-                                operator: '!==',
-                                left: {
-                                    type: 'MemberExpression',
-                                    computed: false,
-                                    object: {
-                                        type: 'MemberExpression',
-                                        computed: false,
-                                        object: {
-                                            type: 'Identifier',
-                                            name: 'packageJson'
-                                        },
-                                        property: {
-                                            type: 'Identifier',
-                                            name: 'build'
-                                        }
-                                    },
-                                    property: {
-                                        type: 'Identifier',
-                                        name: 'test'
-                                    }
-                                },
-                                right: {
-                                    type: 'Literal',
-                                    value: false
-                                }
-                            },
-                            consequent: {
-                                type: 'BlockStatement',
-                                body: [
                                     {
                                         type: 'VariableDeclaration',
                                         declarations: [{
                                                 type: 'VariableDeclarator',
                                                 id: {
                                                     type: 'Identifier',
-                                                    name: 'manifestFile'
+                                                    name: '_ref'
                                                 },
                                                 init: {
                                                     type: 'CallExpression',
@@ -2419,17 +1541,69 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                         computed: false,
                                                         object: {
                                                             type: 'Identifier',
-                                                            name: 'output'
+                                                            name: 'compiler'
                                                         },
                                                         property: {
                                                             type: 'Identifier',
-                                                            name: 'getFile'
+                                                            name: 'compileWithSourceMap'
                                                         }
                                                     },
-                                                    arguments: [{
+                                                    arguments: [
+                                                        {
                                                             type: 'Identifier',
-                                                            name: 'manifestFileName'
-                                                        }]
+                                                            name: 'source'
+                                                        },
+                                                        {
+                                                            type: 'Identifier',
+                                                            name: 'packageJson'
+                                                        }
+                                                    ]
+                                                }
+                                            }],
+                                        kind: 'let'
+                                    },
+                                    {
+                                        type: 'VariableDeclaration',
+                                        declarations: [{
+                                                type: 'VariableDeclarator',
+                                                id: {
+                                                    type: 'Identifier',
+                                                    name: 'code'
+                                                },
+                                                init: {
+                                                    type: 'MemberExpression',
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: '_ref'
+                                                    },
+                                                    property: {
+                                                        type: 'Literal',
+                                                        value: 0
+                                                    },
+                                                    computed: true
+                                                }
+                                            }],
+                                        kind: 'let'
+                                    },
+                                    {
+                                        type: 'VariableDeclaration',
+                                        declarations: [{
+                                                type: 'VariableDeclarator',
+                                                id: {
+                                                    type: 'Identifier',
+                                                    name: 'map'
+                                                },
+                                                init: {
+                                                    type: 'MemberExpression',
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: '_ref'
+                                                    },
+                                                    property: {
+                                                        type: 'Literal',
+                                                        value: 1
+                                                    },
+                                                    computed: true
                                                 }
                                             }],
                                         kind: 'let'
@@ -2443,40 +1617,1012 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 computed: false,
                                                 object: {
                                                     type: 'Identifier',
-                                                    name: 'builder'
+                                                    name: 'output'
                                                 },
                                                 property: {
                                                     type: 'Identifier',
-                                                    name: 'runTests'
+                                                    name: 'write'
                                                 }
                                             },
                                             arguments: [
                                                 {
                                                     type: 'Identifier',
-                                                    name: 'manifestFile'
+                                                    name: 'targetPath'
                                                 },
                                                 {
-                                                    type: 'MemberExpression',
-                                                    computed: false,
-                                                    object: {
-                                                        type: 'Identifier',
-                                                        name: 'manifestFile'
+                                                    type: 'BinaryExpression',
+                                                    operator: '+',
+                                                    left: {
+                                                        type: 'BinaryExpression',
+                                                        operator: '+',
+                                                        left: {
+                                                            type: 'Identifier',
+                                                            name: 'code'
+                                                        },
+                                                        right: {
+                                                            type: 'Literal',
+                                                            value: '\n//@ sourceMappingURL=./'
+                                                        }
                                                     },
-                                                    property: {
+                                                    right: {
                                                         type: 'Identifier',
-                                                        name: 'modified'
+                                                        name: 'mapName'
                                                     }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        type: 'ExpressionStatement',
+                                        expression: {
+                                            type: 'CallExpression',
+                                            callee: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'output'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'write'
+                                                }
+                                            },
+                                            arguments: [
+                                                {
+                                                    type: 'Identifier',
+                                                    name: 'mapPath'
+                                                },
+                                                {
+                                                    type: 'Identifier',
+                                                    name: 'map'
                                                 }
                                             ]
                                         }
                                     }
                                 ]
                             },
-                            alternate: null
+                            alternate: {
+                                type: 'BlockStatement',
+                                body: [{
+                                        type: 'ExpressionStatement',
+                                        expression: {
+                                            type: 'CallExpression',
+                                            callee: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'output'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'write'
+                                                }
+                                            },
+                                            arguments: [
+                                                {
+                                                    type: 'Identifier',
+                                                    name: 'targetPath'
+                                                },
+                                                {
+                                                    type: 'CallExpression',
+                                                    callee: {
+                                                        type: 'MemberExpression',
+                                                        computed: false,
+                                                        object: {
+                                                            type: 'Identifier',
+                                                            name: 'compiler'
+                                                        },
+                                                        property: {
+                                                            type: 'Identifier',
+                                                            name: 'compile'
+                                                        }
+                                                    },
+                                                    arguments: [
+                                                        {
+                                                            type: 'Identifier',
+                                                            name: 'source'
+                                                        },
+                                                        {
+                                                            type: 'Identifier',
+                                                            name: 'packageJson'
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    }]
+                            }
                         }
                     ]
                 },
-                kind: 'init'
+                remove: {
+                    type: 'BlockStatement',
+                    body: [
+                        {
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'output'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'delete'
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    }]
+                            }
+                        },
+                        {
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'output'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'delete'
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'mapPath'
+                                    }]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                type: 'VariableDeclaration',
+                declarations: [{
+                        type: 'VariableDeclarator',
+                        id: {
+                            type: 'Identifier',
+                            name: 'outputFiles'
+                        },
+                        init: {
+                            type: 'CallExpression',
+                            callee: {
+                                type: 'MemberExpression',
+                                computed: false,
+                                object: {
+                                    type: 'Identifier',
+                                    name: 'output'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'search'
+                                }
+                            },
+                            arguments: [
+                                {
+                                    type: 'Literal',
+                                    value: '.js'
+                                },
+                                {
+                                    type: 'ArrayExpression',
+                                    elements: [
+                                        {
+                                            type: 'Literal',
+                                            value: /^_/
+                                        },
+                                        {
+                                            type: 'Literal',
+                                            value: 'node_modules'
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }],
+                kind: 'let'
+            },
+            {
+                type: 'VariableDeclaration',
+                declarations: [{
+                        type: 'VariableDeclarator',
+                        id: {
+                            type: 'Identifier',
+                            name: 'top'
+                        },
+                        init: {
+                            type: 'ObjectExpression',
+                            objectType: {
+                                type: 'ArrayExpression',
+                                elements: []
+                            },
+                            properties: [{
+                                    type: 'ForInStatement',
+                                    left: {
+                                        type: 'VariableDeclaration',
+                                        declarations: [{
+                                                type: 'VariableDeclarator',
+                                                id: {
+                                                    type: 'Identifier',
+                                                    name: 'key'
+                                                },
+                                                init: null
+                                            }],
+                                        kind: 'let'
+                                    },
+                                    right: {
+                                        type: 'Identifier',
+                                        name: 'outputFiles'
+                                    },
+                                    body: {
+                                        type: 'BlockStatement',
+                                        body: [{
+                                                type: 'IfStatement',
+                                                test: {
+                                                    type: 'CallExpression',
+                                                    callee: {
+                                                        type: 'MemberExpression',
+                                                        computed: false,
+                                                        object: {
+                                                            type: 'Identifier',
+                                                            name: 'key'
+                                                        },
+                                                        property: {
+                                                            type: 'Identifier',
+                                                            name: 'endsWith'
+                                                        }
+                                                    },
+                                                    arguments: [{
+                                                            type: 'Literal',
+                                                            value: 'require.js'
+                                                        }]
+                                                },
+                                                consequent: {
+                                                    type: 'BlockStatement',
+                                                    body: [{
+                                                            type: 'ExpressionStatement',
+                                                            expression: {
+                                                                type: 'Identifier',
+                                                                name: 'key'
+                                                            }
+                                                        }]
+                                                }
+                                            }]
+                                    }
+                                }]
+                        }
+                    }],
+                kind: 'let'
+            },
+            {
+                type: 'VariableDeclaration',
+                declarations: [{
+                        type: 'VariableDeclarator',
+                        id: {
+                            type: 'Identifier',
+                            name: 'sortedFiles'
+                        },
+                        init: {
+                            type: 'CallExpression',
+                            callee: {
+                                type: 'MemberExpression',
+                                computed: false,
+                                object: {
+                                    type: 'Identifier',
+                                    name: 'top'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'concat'
+                                }
+                            },
+                            arguments: [{
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'ArrayExpression',
+                                        elements: []
+                                    },
+                                    properties: [{
+                                            type: 'ForInStatement',
+                                            left: {
+                                                type: 'VariableDeclaration',
+                                                declarations: [{
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'key'
+                                                        },
+                                                        init: null
+                                                    }],
+                                                kind: 'let'
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'outputFiles'
+                                            },
+                                            body: {
+                                                type: 'BlockStatement',
+                                                body: [{
+                                                        type: 'IfStatement',
+                                                        test: {
+                                                            type: 'BinaryExpression',
+                                                            operator: '&&',
+                                                            left: {
+                                                                type: 'UnaryExpression',
+                                                                operator: '!',
+                                                                argument: {
+                                                                    type: 'CallExpression',
+                                                                    callee: {
+                                                                        type: 'MemberExpression',
+                                                                        computed: false,
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: 'builder'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'isPrivate'
+                                                                        }
+                                                                    },
+                                                                    arguments: [{
+                                                                            type: 'Identifier',
+                                                                            name: 'key'
+                                                                        }]
+                                                                }
+                                                            },
+                                                            right: {
+                                                                type: 'BinaryExpression',
+                                                                operator: '<',
+                                                                left: {
+                                                                    type: 'CallExpression',
+                                                                    callee: {
+                                                                        type: 'MemberExpression',
+                                                                        computed: false,
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: 'top'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'indexOf'
+                                                                        }
+                                                                    },
+                                                                    arguments: [{
+                                                                            type: 'Identifier',
+                                                                            name: 'key'
+                                                                        }]
+                                                                },
+                                                                right: {
+                                                                    type: 'Literal',
+                                                                    value: 0
+                                                                }
+                                                            }
+                                                        },
+                                                        consequent: {
+                                                            type: 'BlockStatement',
+                                                            body: [{
+                                                                    type: 'ExpressionStatement',
+                                                                    expression: {
+                                                                        type: 'Identifier',
+                                                                        name: 'key'
+                                                                    }
+                                                                }]
+                                                        }
+                                                    }]
+                                            }
+                                        }]
+                                }]
+                        }
+                    }],
+                kind: 'let'
+            },
+            {
+                type: 'VariableDeclaration',
+                declarations: [{
+                        type: 'VariableDeclarator',
+                        id: {
+                            type: 'Identifier',
+                            name: 'manifestFileName'
+                        },
+                        init: {
+                            type: 'Literal',
+                            value: 'manifest.json'
+                        }
+                    }],
+                kind: 'let'
+            },
+            {
+                type: 'VariableDeclaration',
+                declarations: [{
+                        type: 'VariableDeclarator',
+                        id: {
+                            type: 'Identifier',
+                            name: 'manifestFile'
+                        },
+                        init: {
+                            type: 'CallExpression',
+                            callee: {
+                                type: 'MemberExpression',
+                                computed: false,
+                                object: {
+                                    type: 'Identifier',
+                                    name: 'output'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'getFile'
+                                }
+                            },
+                            arguments: [{
+                                    type: 'Identifier',
+                                    name: 'manifestFileName'
+                                }]
+                        }
+                    }],
+                kind: 'let'
+            },
+            {
+                type: 'VariableDeclaration',
+                declarations: [{
+                        type: 'VariableDeclarator',
+                        id: {
+                            type: 'Identifier',
+                            name: 'manifest'
+                        },
+                        init: {
+                            type: 'ObjectExpression',
+                            properties: [
+                                {
+                                    type: 'Property',
+                                    key: {
+                                        type: 'Identifier',
+                                        name: 'modified'
+                                    },
+                                    value: {
+                                        type: 'CallExpression',
+                                        callee: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'Math'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'max'
+                                                }
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'apply'
+                                            }
+                                        },
+                                        arguments: [
+                                            {
+                                                type: 'Literal',
+                                                value: null
+                                            },
+                                            {
+                                                type: 'ObjectExpression',
+                                                objectType: {
+                                                    type: 'ArrayExpression',
+                                                    elements: []
+                                                },
+                                                properties: [{
+                                                        type: 'ForInStatement',
+                                                        left: {
+                                                            type: 'VariableDeclaration',
+                                                            declarations: [
+                                                                {
+                                                                    type: 'VariableDeclarator',
+                                                                    id: {
+                                                                        type: 'Identifier',
+                                                                        name: 'path'
+                                                                    },
+                                                                    init: null
+                                                                },
+                                                                {
+                                                                    type: 'VariableDeclarator',
+                                                                    id: {
+                                                                        type: 'Identifier',
+                                                                        name: 'file'
+                                                                    },
+                                                                    init: null
+                                                                }
+                                                            ],
+                                                            kind: 'let'
+                                                        },
+                                                        right: {
+                                                            type: 'Identifier',
+                                                            name: 'outputFiles'
+                                                        },
+                                                        body: {
+                                                            type: 'ExpressionStatement',
+                                                            expression: {
+                                                                type: 'MemberExpression',
+                                                                computed: false,
+                                                                object: {
+                                                                    type: 'Identifier',
+                                                                    name: 'file'
+                                                                },
+                                                                property: {
+                                                                    type: 'Identifier',
+                                                                    name: 'modified'
+                                                                }
+                                                            }
+                                                        }
+                                                    }]
+                                            }
+                                        ]
+                                    },
+                                    kind: 'init'
+                                },
+                                {
+                                    type: 'Property',
+                                    key: {
+                                        type: 'Identifier',
+                                        name: 'files'
+                                    },
+                                    value: {
+                                        type: 'ObjectExpression',
+                                        objectType: {
+                                            type: 'ArrayExpression',
+                                            elements: []
+                                        },
+                                        properties: [{
+                                                type: 'ForOfStatement',
+                                                left: {
+                                                    type: 'VariableDeclaration',
+                                                    declarations: [{
+                                                            type: 'VariableDeclarator',
+                                                            id: {
+                                                                type: 'Identifier',
+                                                                name: 'path'
+                                                            },
+                                                            init: null
+                                                        }],
+                                                    kind: 'let'
+                                                },
+                                                right: {
+                                                    type: 'Identifier',
+                                                    name: 'sortedFiles'
+                                                },
+                                                body: {
+                                                    type: 'ExpressionStatement',
+                                                    expression: {
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'builder'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'normalizePath'
+                                                            }
+                                                        },
+                                                        arguments: [{
+                                                                type: 'Identifier',
+                                                                name: 'path'
+                                                            }]
+                                                    }
+                                                }
+                                            }]
+                                    },
+                                    kind: 'init'
+                                }
+                            ]
+                        }
+                    }],
+                kind: 'let'
+            },
+            {
+                type: 'ExpressionStatement',
+                expression: {
+                    type: 'CallExpression',
+                    callee: {
+                        type: 'MemberExpression',
+                        computed: false,
+                        object: {
+                            type: 'Identifier',
+                            name: 'manifestFile'
+                        },
+                        property: {
+                            type: 'Identifier',
+                            name: 'write'
+                        }
+                    },
+                    arguments: [{
+                            type: 'CallExpression',
+                            callee: {
+                                type: 'MemberExpression',
+                                computed: false,
+                                object: {
+                                    type: 'Identifier',
+                                    name: 'JSON'
+                                },
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'stringify'
+                                }
+                            },
+                            arguments: [
+                                {
+                                    type: 'Identifier',
+                                    name: 'manifest'
+                                },
+                                {
+                                    type: 'Literal',
+                                    value: null
+                                },
+                                {
+                                    type: 'Literal',
+                                    value: '  '
+                                },
+                                {
+                                    type: 'Identifier',
+                                    name: 'sortedFiles'
+                                }
+                            ]
+                        }]
+                }
+            },
+            {
+                type: 'IfStatement',
+                test: {
+                    type: 'UnaryExpression',
+                    operator: '?',
+                    argument: {
+                        type: 'MemberExpression',
+                        computed: false,
+                        object: {
+                            type: 'MemberExpression',
+                            computed: false,
+                            object: {
+                                type: 'Identifier',
+                                name: 'packageJson'
+                            },
+                            property: {
+                                type: 'Identifier',
+                                name: 'build'
+                            }
+                        },
+                        property: {
+                            type: 'Identifier',
+                            name: 'merge'
+                        }
+                    }
+                },
+                consequent: {
+                    type: 'BlockStatement',
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'output'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'write'
+                                    }
+                                },
+                                arguments: [
+                                    {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'packageJson'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'build'
+                                            }
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'merge'
+                                        }
+                                    },
+                                    {
+                                        type: 'CallExpression',
+                                        callee: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'ObjectExpression',
+                                                objectType: {
+                                                    type: 'ArrayExpression',
+                                                    elements: []
+                                                },
+                                                properties: [{
+                                                        type: 'ForOfStatement',
+                                                        left: {
+                                                            type: 'VariableDeclaration',
+                                                            declarations: [{
+                                                                    type: 'VariableDeclarator',
+                                                                    id: {
+                                                                        type: 'Identifier',
+                                                                        name: 'name'
+                                                                    },
+                                                                    init: null
+                                                                }],
+                                                            kind: 'let'
+                                                        },
+                                                        right: {
+                                                            type: 'Identifier',
+                                                            name: 'sortedFiles'
+                                                        },
+                                                        body: {
+                                                            type: 'ExpressionStatement',
+                                                            expression: {
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
+                                                                        type: 'MemberExpression',
+                                                                        computed: true,
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: 'outputFiles'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'name'
+                                                                        }
+                                                                    },
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'read'
+                                                                    }
+                                                                },
+                                                                arguments: []
+                                                            }
+                                                        }
+                                                    }]
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'join'
+                                            }
+                                        },
+                                        arguments: [{
+                                                type: 'Literal',
+                                                value: '\n'
+                                            }]
+                                    }
+                                ]
+                            }
+                        }]
+                },
+                alternate: null
+            },
+            {
+                type: 'IfStatement',
+                test: {
+                    type: 'MemberExpression',
+                    computed: false,
+                    object: {
+                        type: 'MemberExpression',
+                        computed: false,
+                        object: {
+                            type: 'Identifier',
+                            name: 'packageJson'
+                        },
+                        property: {
+                            type: 'Identifier',
+                            name: 'build'
+                        }
+                    },
+                    property: {
+                        type: 'Identifier',
+                        name: 'package'
+                    }
+                },
+                consequent: {
+                    type: 'BlockStatement',
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'output'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'write'
+                                    }
+                                },
+                                arguments: [
+                                    {
+                                        type: 'Literal',
+                                        value: 'package.json'
+                                    },
+                                    {
+                                        type: 'CallExpression',
+                                        callee: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'JSON'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'stringify'
+                                            }
+                                        },
+                                        arguments: [
+                                            {
+                                                type: 'CallExpression',
+                                                callee: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'ion'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'patch'
+                                                    }
+                                                },
+                                                arguments: [
+                                                    {
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'ion'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'clone'
+                                                            }
+                                                        },
+                                                        arguments: [{
+                                                                type: 'Identifier',
+                                                                name: 'packageJson'
+                                                            }]
+                                                    },
+                                                    {
+                                                        type: 'ObjectExpression',
+                                                        properties: [{
+                                                                type: 'Property',
+                                                                key: {
+                                                                    type: 'Identifier',
+                                                                    name: 'main'
+                                                                },
+                                                                value: {
+                                                                    type: 'UnaryExpression',
+                                                                    operator: 'void',
+                                                                    prefix: true,
+                                                                    argument: {
+                                                                        type: 'Literal',
+                                                                        value: 0
+                                                                    }
+                                                                },
+                                                                kind: 'init'
+                                                            }]
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                type: 'Literal',
+                                                value: null
+                                            },
+                                            {
+                                                type: 'Literal',
+                                                value: '    '
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }]
+                },
+                alternate: null
+            },
+            {
+                type: 'IfStatement',
+                test: {
+                    type: 'BinaryExpression',
+                    operator: '!==',
+                    left: {
+                        type: 'MemberExpression',
+                        computed: false,
+                        object: {
+                            type: 'MemberExpression',
+                            computed: false,
+                            object: {
+                                type: 'Identifier',
+                                name: 'packageJson'
+                            },
+                            property: {
+                                type: 'Identifier',
+                                name: 'build'
+                            }
+                        },
+                        property: {
+                            type: 'Identifier',
+                            name: 'test'
+                        }
+                    },
+                    right: {
+                        type: 'Literal',
+                        value: false
+                    }
+                },
+                consequent: {
+                    type: 'BlockStatement',
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'builder'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'runTests'
+                                    }
+                                },
+                                arguments: [
+                                    {
+                                        type: 'Identifier',
+                                        name: 'manifestFile'
+                                    },
+                                    {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'manifestFile'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'modified'
+                                        }
+                                    }
+                                ]
+                            }
+                        }]
+                },
+                alternate: null
             }
         ],
         bound: false
@@ -2733,7 +2879,7 @@ module.exports = exports = {
         encoding = 'utf8';
       }
       return fs.writeFileSync(file, content, encoding);
-    } else {
+    } else if (fs.existsSync(file)) {
       return fs.unlinkSync(file);
     }
   },
@@ -2959,7 +3105,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                         ], ['node_modules'].concat(packageJson.build.client.exclude));
                     for (var key in _ref3) {
                         var source = _ref3[key];
-                        clientOutput[source.path.substring(nodepath.length)] = source.read();
+                        clientOutput.write(source.path.substring(nodepath.length), source.read());
                     }
                 }
             }
@@ -2979,7 +3125,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                         ], ['node_modules'].concat(packageJson.build.server.exclude));
                     for (var key in _ref5) {
                         var source = _ref5[key];
-                        serverOutput[source.path.substring(nodepath.length)] = source.read();
+                        serverOutput.write(source.path.substring(nodepath.length), source.read());
                     }
                 }
             }
@@ -3015,35 +3161,34 @@ module.exports = exports = ion.template(function (packagePatch) {
                 '.jar',
                 '.ion'
             ]);
-        for (var key in _ref6) {
-            var source = _ref6[key];
-            var target = output.getFile(key);
-            output[key] = source.read();
+        for (var path in _ref6) {
+            var file = _ref6[path];
+            output.write(path, file.read());
         }
     }
     {
         var _ref7 = input.search('.ion', 'js');
-        for (var key in _ref7) {
-            var source = _ref7[key];
-            var targetPath = builder.changeExtension(key, '.js');
-            output[targetPath] = builder.compileIon(source);
+        for (var path in _ref7) {
+            var file = _ref7[path];
+            var targetPath = builder.changeExtension(path, '.js');
+            output.write(targetPath, builder.compileIon(file));
         }
     }
     var pageOutput = output.getDirectory('WEB-INF/pages');
     {
         var _ref8 = input.search('.ionpage');
-        for (var key in _ref8) {
-            var source = _ref8[key];
-            var targetPath = builder.changeExtension(key, '.js');
-            pageOutput[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(source) + ' })';
+        for (var path in _ref8) {
+            var file = _ref8[path];
+            var targetPath = builder.changeExtension(path, '.js');
+            pageOutput.write(targetPath, '(function ' + path.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(file) + ' })');
         }
     }
     {
         var _ref9 = input.search('.coffeepage');
-        for (var key in _ref9) {
-            var source = _ref9[key];
-            var targetPath = builder.changeExtension(key, '.js');
-            pageOutput[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(source) + ' })';
+        for (var path in _ref9) {
+            var file = _ref9[path];
+            var targetPath = builder.changeExtension(path, '.js');
+            pageOutput.write(targetPath, '(function ' + path.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(file) + ' })');
         }
     }
 }, function (packagePatch) {
@@ -3599,7 +3744,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         alternate: null
                                     }
                                 ]
-                            }
+                            },
+                            remove: null
                         }
                     ]
                 },
@@ -3816,53 +3962,28 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         body: {
                                             type: 'BlockStatement',
                                             body: [{
-                                                    type: 'Property',
-                                                    key: {
-                                                        type: 'Identifier',
-                                                        name: 'clientOutput'
-                                                    },
-                                                    value: {
-                                                        type: 'ObjectExpression',
-                                                        properties: [{
-                                                                type: 'Property',
-                                                                key: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'MemberExpression',
-                                                                            computed: false,
-                                                                            object: {
-                                                                                type: 'Identifier',
-                                                                                name: 'source'
-                                                                            },
-                                                                            property: {
-                                                                                type: 'Identifier',
-                                                                                name: 'path'
-                                                                            }
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'substring'
-                                                                        }
-                                                                    },
-                                                                    arguments: [{
-                                                                            type: 'MemberExpression',
-                                                                            computed: false,
-                                                                            object: {
-                                                                                type: 'Identifier',
-                                                                                name: 'nodepath'
-                                                                            },
-                                                                            property: {
-                                                                                type: 'Identifier',
-                                                                                name: 'length'
-                                                                            }
-                                                                        }]
-                                                                },
-                                                                value: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
+                                                    type: 'ExpressionStatement',
+                                                    expression: {
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'clientOutput'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'write'
+                                                            }
+                                                        },
+                                                        arguments: [
+                                                            {
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
                                                                         type: 'MemberExpression',
                                                                         computed: false,
                                                                         object: {
@@ -3871,23 +3992,55 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                         },
                                                                         property: {
                                                                             type: 'Identifier',
-                                                                            name: 'read'
+                                                                            name: 'path'
                                                                         }
                                                                     },
-                                                                    arguments: []
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'substring'
+                                                                    }
                                                                 },
-                                                                kind: 'init',
-                                                                computed: true
-                                                            }]
-                                                    },
-                                                    kind: 'init'
+                                                                arguments: [{
+                                                                        type: 'MemberExpression',
+                                                                        computed: false,
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: 'nodepath'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'length'
+                                                                        }
+                                                                    }]
+                                                            },
+                                                            {
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
+                                                                        type: 'Identifier',
+                                                                        name: 'source'
+                                                                    },
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'read'
+                                                                    }
+                                                                },
+                                                                arguments: []
+                                                            }
+                                                        ]
+                                                    }
                                                 }]
-                                        }
+                                        },
+                                        remove: null
                                     }
                                 ]
-                            }
+                            },
+                            remove: null
                         }]
-                }
+                },
+                remove: null
             },
             {
                 type: 'ForOfStatement',
@@ -4100,53 +4253,28 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         body: {
                                             type: 'BlockStatement',
                                             body: [{
-                                                    type: 'Property',
-                                                    key: {
-                                                        type: 'Identifier',
-                                                        name: 'serverOutput'
-                                                    },
-                                                    value: {
-                                                        type: 'ObjectExpression',
-                                                        properties: [{
-                                                                type: 'Property',
-                                                                key: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'MemberExpression',
-                                                                            computed: false,
-                                                                            object: {
-                                                                                type: 'Identifier',
-                                                                                name: 'source'
-                                                                            },
-                                                                            property: {
-                                                                                type: 'Identifier',
-                                                                                name: 'path'
-                                                                            }
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'substring'
-                                                                        }
-                                                                    },
-                                                                    arguments: [{
-                                                                            type: 'MemberExpression',
-                                                                            computed: false,
-                                                                            object: {
-                                                                                type: 'Identifier',
-                                                                                name: 'nodepath'
-                                                                            },
-                                                                            property: {
-                                                                                type: 'Identifier',
-                                                                                name: 'length'
-                                                                            }
-                                                                        }]
-                                                                },
-                                                                value: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
+                                                    type: 'ExpressionStatement',
+                                                    expression: {
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'serverOutput'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'write'
+                                                            }
+                                                        },
+                                                        arguments: [
+                                                            {
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
                                                                         type: 'MemberExpression',
                                                                         computed: false,
                                                                         object: {
@@ -4155,23 +4283,55 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                         },
                                                                         property: {
                                                                             type: 'Identifier',
-                                                                            name: 'read'
+                                                                            name: 'path'
                                                                         }
                                                                     },
-                                                                    arguments: []
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'substring'
+                                                                    }
                                                                 },
-                                                                kind: 'init',
-                                                                computed: true
-                                                            }]
-                                                    },
-                                                    kind: 'init'
+                                                                arguments: [{
+                                                                        type: 'MemberExpression',
+                                                                        computed: false,
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: 'nodepath'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'length'
+                                                                        }
+                                                                    }]
+                                                            },
+                                                            {
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
+                                                                        type: 'Identifier',
+                                                                        name: 'source'
+                                                                    },
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'read'
+                                                                    }
+                                                                },
+                                                                arguments: []
+                                                            }
+                                                        ]
+                                                    }
                                                 }]
-                                        }
+                                        },
+                                        remove: null
                                     }
                                 ]
-                            }
+                            },
+                            remove: null
                         }]
-                }
+                },
+                remove: null
             },
             {
                 type: 'ExpressionStatement',
@@ -4456,7 +4616,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'key'
+                                name: 'path'
                             },
                             init: null
                         },
@@ -4464,7 +4624,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'source'
+                                name: 'file'
                             },
                             init: null
                         }
@@ -4527,74 +4687,71 @@ module.exports = exports = ion.template(function (packagePatch) {
                 },
                 body: {
                     type: 'BlockStatement',
-                    body: [
-                        {
-                            type: 'VariableDeclaration',
-                            declarations: [{
-                                    type: 'VariableDeclarator',
-                                    id: {
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
                                         type: 'Identifier',
-                                        name: 'target'
+                                        name: 'output'
                                     },
-                                    init: {
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'write'
+                                    }
+                                },
+                                arguments: [
+                                    {
+                                        type: 'Identifier',
+                                        name: 'path'
+                                    },
+                                    {
                                         type: 'CallExpression',
                                         callee: {
                                             type: 'MemberExpression',
                                             computed: false,
                                             object: {
                                                 type: 'Identifier',
-                                                name: 'output'
+                                                name: 'file'
                                             },
                                             property: {
                                                 type: 'Identifier',
-                                                name: 'getFile'
+                                                name: 'read'
                                             }
                                         },
-                                        arguments: [{
-                                                type: 'Identifier',
-                                                name: 'key'
-                                            }]
+                                        arguments: []
                                     }
-                                }],
-                            kind: 'let'
-                        },
-                        {
-                            type: 'Property',
-                            key: {
-                                type: 'Identifier',
-                                name: 'output'
-                            },
-                            value: {
-                                type: 'ObjectExpression',
-                                properties: [{
-                                        type: 'Property',
-                                        key: {
-                                            type: 'Identifier',
-                                            name: 'key'
-                                        },
-                                        value: {
-                                            type: 'CallExpression',
-                                            callee: {
-                                                type: 'MemberExpression',
-                                                computed: false,
-                                                object: {
-                                                    type: 'Identifier',
-                                                    name: 'source'
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'read'
-                                                }
-                                            },
-                                            arguments: []
-                                        },
-                                        kind: 'init',
-                                        computed: true
+                                ]
+                            }
+                        }]
+                },
+                remove: {
+                    type: 'BlockStatement',
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'output'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'delete'
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'path'
                                     }]
-                            },
-                            kind: 'init'
-                        }
-                    ]
+                            }
+                        }]
                 }
             },
             {
@@ -4606,7 +4763,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'key'
+                                name: 'path'
                             },
                             init: null
                         },
@@ -4614,7 +4771,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'source'
+                                name: 'file'
                             },
                             init: null
                         }
@@ -4674,7 +4831,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         arguments: [
                                             {
                                                 type: 'Identifier',
-                                                name: 'key'
+                                                name: 'path'
                                             },
                                             {
                                                 type: 'Literal',
@@ -4686,45 +4843,74 @@ module.exports = exports = ion.template(function (packagePatch) {
                             kind: 'let'
                         },
                         {
-                            type: 'Property',
-                            key: {
-                                type: 'Identifier',
-                                name: 'output'
-                            },
-                            value: {
-                                type: 'ObjectExpression',
-                                properties: [{
-                                        type: 'Property',
-                                        key: {
-                                            type: 'Identifier',
-                                            name: 'targetPath'
-                                        },
-                                        value: {
-                                            type: 'CallExpression',
-                                            callee: {
-                                                type: 'MemberExpression',
-                                                computed: false,
-                                                object: {
-                                                    type: 'Identifier',
-                                                    name: 'builder'
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'compileIon'
-                                                }
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'output'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'write'
+                                    }
+                                },
+                                arguments: [
+                                    {
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    },
+                                    {
+                                        type: 'CallExpression',
+                                        callee: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'builder'
                                             },
-                                            arguments: [{
-                                                    type: 'Identifier',
-                                                    name: 'source'
-                                                }]
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'compileIon'
+                                            }
                                         },
-                                        kind: 'init',
-                                        computed: true
-                                    }]
-                            },
-                            kind: 'init'
+                                        arguments: [{
+                                                type: 'Identifier',
+                                                name: 'file'
+                                            }]
+                                    }
+                                ]
+                            }
                         }
                     ]
+                },
+                remove: {
+                    type: 'BlockStatement',
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'output'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'delete'
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    }]
+                            }
+                        }]
                 }
             },
             {
@@ -4766,7 +4952,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'key'
+                                name: 'path'
                             },
                             init: null
                         },
@@ -4774,7 +4960,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'source'
+                                name: 'file'
                             },
                             init: null
                         }
@@ -4828,7 +5014,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         arguments: [
                                             {
                                                 type: 'Identifier',
-                                                name: 'key'
+                                                name: 'path'
                                             },
                                             {
                                                 type: 'Literal',
@@ -4840,20 +5026,30 @@ module.exports = exports = ion.template(function (packagePatch) {
                             kind: 'let'
                         },
                         {
-                            type: 'Property',
-                            key: {
-                                type: 'Identifier',
-                                name: 'pageOutput'
-                            },
-                            value: {
-                                type: 'ObjectExpression',
-                                properties: [{
-                                        type: 'Property',
-                                        key: {
-                                            type: 'Identifier',
-                                            name: 'targetPath'
-                                        },
-                                        value: {
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'pageOutput'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'write'
+                                    }
+                                },
+                                arguments: [
+                                    {
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    },
+                                    {
+                                        type: 'BinaryExpression',
+                                        operator: '+',
+                                        left: {
                                             type: 'BinaryExpression',
                                             operator: '+',
                                             left: {
@@ -4863,75 +5059,94 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                     type: 'BinaryExpression',
                                                     operator: '+',
                                                     left: {
-                                                        type: 'BinaryExpression',
-                                                        operator: '+',
-                                                        left: {
-                                                            type: 'Literal',
-                                                            value: '(function '
-                                                        },
-                                                        right: {
-                                                            type: 'CallExpression',
-                                                            callee: {
-                                                                type: 'MemberExpression',
-                                                                computed: false,
-                                                                object: {
-                                                                    type: 'Identifier',
-                                                                    name: 'key'
-                                                                },
-                                                                property: {
-                                                                    type: 'Identifier',
-                                                                    name: 'replace'
-                                                                }
-                                                            },
-                                                            arguments: [
-                                                                {
-                                                                    type: 'Literal',
-                                                                    value: /[\.\/\\]/g
-                                                                },
-                                                                {
-                                                                    type: 'Literal',
-                                                                    value: '_'
-                                                                }
-                                                            ]
-                                                        }
+                                                        type: 'Literal',
+                                                        value: '(function '
                                                     },
                                                     right: {
-                                                        type: 'Literal',
-                                                        value: '(){ '
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'path'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'replace'
+                                                            }
+                                                        },
+                                                        arguments: [
+                                                            {
+                                                                type: 'Literal',
+                                                                value: /[\.\/\\]/g
+                                                            },
+                                                            {
+                                                                type: 'Literal',
+                                                                value: '_'
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 right: {
-                                                    type: 'CallExpression',
-                                                    callee: {
-                                                        type: 'MemberExpression',
-                                                        computed: false,
-                                                        object: {
-                                                            type: 'Identifier',
-                                                            name: 'builder'
-                                                        },
-                                                        property: {
-                                                            type: 'Identifier',
-                                                            name: 'compileIon'
-                                                        }
-                                                    },
-                                                    arguments: [{
-                                                            type: 'Identifier',
-                                                            name: 'source'
-                                                        }]
+                                                    type: 'Literal',
+                                                    value: '(){ '
                                                 }
                                             },
                                             right: {
-                                                type: 'Literal',
-                                                value: ' })'
+                                                type: 'CallExpression',
+                                                callee: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'builder'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'compileIon'
+                                                    }
+                                                },
+                                                arguments: [{
+                                                        type: 'Identifier',
+                                                        name: 'file'
+                                                    }]
                                             }
                                         },
-                                        kind: 'init',
-                                        computed: true
-                                    }]
-                            },
-                            kind: 'init'
+                                        right: {
+                                            type: 'Literal',
+                                            value: ' })'
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     ]
+                },
+                remove: {
+                    type: 'BlockStatement',
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'pageOutput'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'delete'
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    }]
+                            }
+                        }]
                 }
             },
             {
@@ -4943,7 +5158,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'key'
+                                name: 'path'
                             },
                             init: null
                         },
@@ -4951,7 +5166,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'source'
+                                name: 'file'
                             },
                             init: null
                         }
@@ -5005,7 +5220,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         arguments: [
                                             {
                                                 type: 'Identifier',
-                                                name: 'key'
+                                                name: 'path'
                                             },
                                             {
                                                 type: 'Literal',
@@ -5017,20 +5232,30 @@ module.exports = exports = ion.template(function (packagePatch) {
                             kind: 'let'
                         },
                         {
-                            type: 'Property',
-                            key: {
-                                type: 'Identifier',
-                                name: 'pageOutput'
-                            },
-                            value: {
-                                type: 'ObjectExpression',
-                                properties: [{
-                                        type: 'Property',
-                                        key: {
-                                            type: 'Identifier',
-                                            name: 'targetPath'
-                                        },
-                                        value: {
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'pageOutput'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'write'
+                                    }
+                                },
+                                arguments: [
+                                    {
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    },
+                                    {
+                                        type: 'BinaryExpression',
+                                        operator: '+',
+                                        left: {
                                             type: 'BinaryExpression',
                                             operator: '+',
                                             left: {
@@ -5040,75 +5265,94 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                     type: 'BinaryExpression',
                                                     operator: '+',
                                                     left: {
-                                                        type: 'BinaryExpression',
-                                                        operator: '+',
-                                                        left: {
-                                                            type: 'Literal',
-                                                            value: '(function '
-                                                        },
-                                                        right: {
-                                                            type: 'CallExpression',
-                                                            callee: {
-                                                                type: 'MemberExpression',
-                                                                computed: false,
-                                                                object: {
-                                                                    type: 'Identifier',
-                                                                    name: 'key'
-                                                                },
-                                                                property: {
-                                                                    type: 'Identifier',
-                                                                    name: 'replace'
-                                                                }
-                                                            },
-                                                            arguments: [
-                                                                {
-                                                                    type: 'Literal',
-                                                                    value: /[\.\/\\]/g
-                                                                },
-                                                                {
-                                                                    type: 'Literal',
-                                                                    value: '_'
-                                                                }
-                                                            ]
-                                                        }
+                                                        type: 'Literal',
+                                                        value: '(function '
                                                     },
                                                     right: {
-                                                        type: 'Literal',
-                                                        value: '(){ '
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'path'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'replace'
+                                                            }
+                                                        },
+                                                        arguments: [
+                                                            {
+                                                                type: 'Literal',
+                                                                value: /[\.\/\\]/g
+                                                            },
+                                                            {
+                                                                type: 'Literal',
+                                                                value: '_'
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 right: {
-                                                    type: 'CallExpression',
-                                                    callee: {
-                                                        type: 'MemberExpression',
-                                                        computed: false,
-                                                        object: {
-                                                            type: 'Identifier',
-                                                            name: 'builder'
-                                                        },
-                                                        property: {
-                                                            type: 'Identifier',
-                                                            name: 'compileCoffeeScript'
-                                                        }
-                                                    },
-                                                    arguments: [{
-                                                            type: 'Identifier',
-                                                            name: 'source'
-                                                        }]
+                                                    type: 'Literal',
+                                                    value: '(){ '
                                                 }
                                             },
                                             right: {
-                                                type: 'Literal',
-                                                value: ' })'
+                                                type: 'CallExpression',
+                                                callee: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'builder'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'compileCoffeeScript'
+                                                    }
+                                                },
+                                                arguments: [{
+                                                        type: 'Identifier',
+                                                        name: 'file'
+                                                    }]
                                             }
                                         },
-                                        kind: 'init',
-                                        computed: true
-                                    }]
-                            },
-                            kind: 'init'
+                                        right: {
+                                            type: 'Literal',
+                                            value: ' })'
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     ]
+                },
+                remove: {
+                    type: 'BlockStatement',
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'pageOutput'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'delete'
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    }]
+                            }
+                        }]
                 }
             }
         ],
@@ -8764,94 +9008,94 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         peg$c62 = function(arg) { return arg },
         peg$c63 = function(property) { return property },
         peg$c64 = function(start, properties, end) { return [node("ObjectExpression", {properties:properties}, start, end)] },
-        peg$c65 = function(start, callee, args, end) {
+        peg$c65 = "(",
+        peg$c66 = { type: "literal", value: "(", description: "\"(\"" },
+        peg$c67 = ")",
+        peg$c68 = { type: "literal", value: ")", description: "\")\"" },
+        peg$c69 = function(start, callee, args, end) {
                 if (callee.type === 'NewExpression' && callee.arguments == null)
                     return node("NewExpression", {callee: callee.callee, arguments: args}, start, end)
                 return node("CallExpression", {callee: callee, arguments: args}, start, end)
             },
-        peg$c66 = "+=",
-        peg$c67 = { type: "literal", value: "+=", description: "\"+=\"" },
-        peg$c68 = "-=",
-        peg$c69 = { type: "literal", value: "-=", description: "\"-=\"" },
-        peg$c70 = "*=",
-        peg$c71 = { type: "literal", value: "*=", description: "\"*=\"" },
-        peg$c72 = "/=",
-        peg$c73 = { type: "literal", value: "/=", description: "\"/=\"" },
-        peg$c74 = "%=",
-        peg$c75 = { type: "literal", value: "%=", description: "\"%=\"" },
-        peg$c76 = "<<=",
-        peg$c77 = { type: "literal", value: "<<=", description: "\"<<=\"" },
-        peg$c78 = ">>=",
-        peg$c79 = { type: "literal", value: ">>=", description: "\">>=\"" },
-        peg$c80 = ">>>=",
-        peg$c81 = { type: "literal", value: ">>>=", description: "\">>>=\"" },
-        peg$c82 = "^=",
-        peg$c83 = { type: "literal", value: "^=", description: "\"^=\"" },
-        peg$c84 = "&=",
-        peg$c85 = { type: "literal", value: "&=", description: "\"&=\"" },
-        peg$c86 = "??=",
-        peg$c87 = { type: "literal", value: "??=", description: "\"??=\"" },
-        peg$c88 = "?=",
-        peg$c89 = { type: "literal", value: "?=", description: "\"?=\"" },
-        peg$c90 = ":=",
-        peg$c91 = { type: "literal", value: ":=", description: "\":=\"" },
-        peg$c92 = function(start, left, op, right, end) { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) },
-        peg$c93 = "?",
-        peg$c94 = { type: "literal", value: "?", description: "\"?\"" },
-        peg$c95 = function(start, test, consequent, alternate, end) { return node('ConditionalExpression', {test:test,consequent:consequent,alternate:alternate}, start, end) },
-        peg$c96 = "??",
-        peg$c97 = { type: "literal", value: "??", description: "\"??\"" },
-        peg$c98 = function(start, head, tail) { return leftAssociateBinaryExpressions(start, head, tail) },
-        peg$c99 = "|",
-        peg$c100 = { type: "literal", value: "|", description: "\"|\"" },
-        peg$c101 = "^",
-        peg$c102 = { type: "literal", value: "^", description: "\"^\"" },
-        peg$c103 = "&",
-        peg$c104 = { type: "literal", value: "&", description: "\"&\"" },
-        peg$c105 = "<=",
-        peg$c106 = { type: "literal", value: "<=", description: "\"<=\"" },
-        peg$c107 = ">=",
-        peg$c108 = { type: "literal", value: ">=", description: "\">=\"" },
-        peg$c109 = "<",
-        peg$c110 = { type: "literal", value: "<", description: "\"<\"" },
-        peg$c111 = ">",
-        peg$c112 = { type: "literal", value: ">", description: "\">\"" },
-        peg$c113 = ">>>",
-        peg$c114 = { type: "literal", value: ">>>", description: "\">>>\"" },
-        peg$c115 = ">>",
-        peg$c116 = { type: "literal", value: ">>", description: "\">>\"" },
-        peg$c117 = "<<",
-        peg$c118 = { type: "literal", value: "<<", description: "\"<<\"" },
-        peg$c119 = "+",
-        peg$c120 = { type: "literal", value: "+", description: "\"+\"" },
-        peg$c121 = "-",
-        peg$c122 = { type: "literal", value: "-", description: "\"-\"" },
-        peg$c123 = "*",
-        peg$c124 = { type: "literal", value: "*", description: "\"*\"" },
-        peg$c125 = "/",
-        peg$c126 = { type: "literal", value: "/", description: "\"/\"" },
-        peg$c127 = "%",
-        peg$c128 = { type: "literal", value: "%", description: "\"%\"" },
-        peg$c129 = function(start, op, arg, end) { return node('UnaryExpression', {operator:op, argument:arg}, start, end) },
-        peg$c130 = { type: "other", description: "unaryOperator" },
-        peg$c131 = "~",
-        peg$c132 = { type: "literal", value: "~", description: "\"~\"" },
-        peg$c133 = "++",
-        peg$c134 = { type: "literal", value: "++", description: "\"++\"" },
-        peg$c135 = "--",
-        peg$c136 = { type: "literal", value: "--", description: "\"--\"" },
-        peg$c137 = function(start, op, arg, end) { return node('UpdateExpression', {operator:op, argument:arg, prefix:true}, start, end) },
-        peg$c138 = function(start, arg, op, end) { return node('UpdateExpression', {operator:op, argument:arg, prefix:false}, start, end) },
-        peg$c139 = function(start, arg, op, end) { return node('UnaryExpression', {operator:op, argument:arg}, start, end) },
-        peg$c140 = function(start, head, tail) { return leftAssociateCallsOrMembers(start, head, tail) },
-        peg$c141 = function() {return true},
-        peg$c142 = function(existential, args, end) { return ["callee", node("CallExpression", {callee:null, arguments:args, existential:existential || undefined}), end] },
-        peg$c143 = function(existential, property, end) { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] },
-        peg$c144 = function(existential, property, end) { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] },
-        peg$c145 = "(",
-        peg$c146 = { type: "literal", value: "(", description: "\"(\"" },
-        peg$c147 = ")",
-        peg$c148 = { type: "literal", value: ")", description: "\")\"" },
+        peg$c70 = "+=",
+        peg$c71 = { type: "literal", value: "+=", description: "\"+=\"" },
+        peg$c72 = "-=",
+        peg$c73 = { type: "literal", value: "-=", description: "\"-=\"" },
+        peg$c74 = "*=",
+        peg$c75 = { type: "literal", value: "*=", description: "\"*=\"" },
+        peg$c76 = "/=",
+        peg$c77 = { type: "literal", value: "/=", description: "\"/=\"" },
+        peg$c78 = "%=",
+        peg$c79 = { type: "literal", value: "%=", description: "\"%=\"" },
+        peg$c80 = "<<=",
+        peg$c81 = { type: "literal", value: "<<=", description: "\"<<=\"" },
+        peg$c82 = ">>=",
+        peg$c83 = { type: "literal", value: ">>=", description: "\">>=\"" },
+        peg$c84 = ">>>=",
+        peg$c85 = { type: "literal", value: ">>>=", description: "\">>>=\"" },
+        peg$c86 = "^=",
+        peg$c87 = { type: "literal", value: "^=", description: "\"^=\"" },
+        peg$c88 = "&=",
+        peg$c89 = { type: "literal", value: "&=", description: "\"&=\"" },
+        peg$c90 = "??=",
+        peg$c91 = { type: "literal", value: "??=", description: "\"??=\"" },
+        peg$c92 = "?=",
+        peg$c93 = { type: "literal", value: "?=", description: "\"?=\"" },
+        peg$c94 = ":=",
+        peg$c95 = { type: "literal", value: ":=", description: "\":=\"" },
+        peg$c96 = function(start, left, op, right, end) { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) },
+        peg$c97 = "?",
+        peg$c98 = { type: "literal", value: "?", description: "\"?\"" },
+        peg$c99 = function(start, test, consequent, alternate, end) { return node('ConditionalExpression', {test:test,consequent:consequent,alternate:alternate}, start, end) },
+        peg$c100 = "??",
+        peg$c101 = { type: "literal", value: "??", description: "\"??\"" },
+        peg$c102 = function(start, head, tail) { return leftAssociateBinaryExpressions(start, head, tail) },
+        peg$c103 = "|",
+        peg$c104 = { type: "literal", value: "|", description: "\"|\"" },
+        peg$c105 = "^",
+        peg$c106 = { type: "literal", value: "^", description: "\"^\"" },
+        peg$c107 = "&",
+        peg$c108 = { type: "literal", value: "&", description: "\"&\"" },
+        peg$c109 = "<=",
+        peg$c110 = { type: "literal", value: "<=", description: "\"<=\"" },
+        peg$c111 = ">=",
+        peg$c112 = { type: "literal", value: ">=", description: "\">=\"" },
+        peg$c113 = "<",
+        peg$c114 = { type: "literal", value: "<", description: "\"<\"" },
+        peg$c115 = ">",
+        peg$c116 = { type: "literal", value: ">", description: "\">\"" },
+        peg$c117 = ">>>",
+        peg$c118 = { type: "literal", value: ">>>", description: "\">>>\"" },
+        peg$c119 = ">>",
+        peg$c120 = { type: "literal", value: ">>", description: "\">>\"" },
+        peg$c121 = "<<",
+        peg$c122 = { type: "literal", value: "<<", description: "\"<<\"" },
+        peg$c123 = "+",
+        peg$c124 = { type: "literal", value: "+", description: "\"+\"" },
+        peg$c125 = "-",
+        peg$c126 = { type: "literal", value: "-", description: "\"-\"" },
+        peg$c127 = "*",
+        peg$c128 = { type: "literal", value: "*", description: "\"*\"" },
+        peg$c129 = "/",
+        peg$c130 = { type: "literal", value: "/", description: "\"/\"" },
+        peg$c131 = "%",
+        peg$c132 = { type: "literal", value: "%", description: "\"%\"" },
+        peg$c133 = function(start, op, arg, end) { return node('UnaryExpression', {operator:op, argument:arg}, start, end) },
+        peg$c134 = { type: "other", description: "unaryOperator" },
+        peg$c135 = "~",
+        peg$c136 = { type: "literal", value: "~", description: "\"~\"" },
+        peg$c137 = "++",
+        peg$c138 = { type: "literal", value: "++", description: "\"++\"" },
+        peg$c139 = "--",
+        peg$c140 = { type: "literal", value: "--", description: "\"--\"" },
+        peg$c141 = function(start, op, arg, end) { return node('UpdateExpression', {operator:op, argument:arg, prefix:true}, start, end) },
+        peg$c142 = function(start, arg, op, end) { return node('UpdateExpression', {operator:op, argument:arg, prefix:false}, start, end) },
+        peg$c143 = function(start, arg, op, end) { return node('UnaryExpression', {operator:op, argument:arg}, start, end) },
+        peg$c144 = function(start, head, tail) { return leftAssociateCallsOrMembers(start, head, tail) },
+        peg$c145 = function() {return true},
+        peg$c146 = function(existential, args, end) { return ["callee", node("CallExpression", {callee:null, arguments:args, existential:existential || undefined}), end] },
+        peg$c147 = function(existential, property, end) { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] },
+        peg$c148 = function(existential, property, end) { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] },
         peg$c149 = function(a) { return a ? a : [] },
         peg$c150 = function(c) {return c},
         peg$c151 = function(a, b) { return [a].concat(b) },
@@ -12260,7 +12504,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     }
 
     function peg$parseMultilineCallExpression() {
-      var s0, s1, s2, s3, s4, s5, s6, s7;
+      var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
       var key    = peg$currPos * 177 + 48,
           cached = peg$cache[key];
@@ -12273,21 +12517,57 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s0 = peg$currPos;
       s1 = peg$parsestart();
       if (s1 !== peg$FAILED) {
-        s2 = peg$parseGroupExpression();
+        s2 = peg$parseInlineExpression();
         if (s2 !== peg$FAILED) {
-          s3 = peg$parseindent();
+          if (input.charCodeAt(peg$currPos) === 40) {
+            s3 = peg$c65;
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c66); }
+          }
           if (s3 !== peg$FAILED) {
-            s4 = peg$parseeol();
+            s4 = peg$parseindent();
             if (s4 !== peg$FAILED) {
-              s5 = peg$parsemultilineCallArguments();
+              s5 = peg$parseeol();
               if (s5 !== peg$FAILED) {
-                s6 = peg$parsestart();
+                s6 = peg$parsemultilineCallArguments();
                 if (s6 !== peg$FAILED) {
-                  s7 = peg$parseoutdent();
+                  s7 = peg$parsestart();
                   if (s7 !== peg$FAILED) {
-                    peg$reportedPos = s0;
-                    s1 = peg$c65(s1, s2, s5, s6);
-                    s0 = s1;
+                    s8 = peg$parseoutdent();
+                    if (s8 !== peg$FAILED) {
+                      s9 = peg$parseeol();
+                      if (s9 !== peg$FAILED) {
+                        s10 = peg$parse_();
+                        if (s10 !== peg$FAILED) {
+                          if (input.charCodeAt(peg$currPos) === 41) {
+                            s11 = peg$c67;
+                            peg$currPos++;
+                          } else {
+                            s11 = peg$FAILED;
+                            if (peg$silentFails === 0) { peg$fail(peg$c68); }
+                          }
+                          if (s11 !== peg$FAILED) {
+                            peg$reportedPos = s0;
+                            s1 = peg$c69(s1, s2, s6, s7);
+                            s0 = s1;
+                          } else {
+                            peg$currPos = s0;
+                            s0 = peg$c0;
+                          }
+                        } else {
+                          peg$currPos = s0;
+                          s0 = peg$c0;
+                        }
+                      } else {
+                        peg$currPos = s0;
+                        s0 = peg$c0;
+                      }
+                    } else {
+                      peg$currPos = s0;
+                      s0 = peg$c0;
+                    }
                   } else {
                     peg$currPos = s0;
                     s0 = peg$c0;
@@ -12369,116 +12649,116 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               if (peg$silentFails === 0) { peg$fail(peg$c55); }
             }
             if (s4 === peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c66) {
-                s4 = peg$c66;
+              if (input.substr(peg$currPos, 2) === peg$c70) {
+                s4 = peg$c70;
                 peg$currPos += 2;
               } else {
                 s4 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c67); }
+                if (peg$silentFails === 0) { peg$fail(peg$c71); }
               }
               if (s4 === peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c68) {
-                  s4 = peg$c68;
+                if (input.substr(peg$currPos, 2) === peg$c72) {
+                  s4 = peg$c72;
                   peg$currPos += 2;
                 } else {
                   s4 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c69); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c73); }
                 }
                 if (s4 === peg$FAILED) {
-                  if (input.substr(peg$currPos, 2) === peg$c70) {
-                    s4 = peg$c70;
+                  if (input.substr(peg$currPos, 2) === peg$c74) {
+                    s4 = peg$c74;
                     peg$currPos += 2;
                   } else {
                     s4 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c71); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c75); }
                   }
                   if (s4 === peg$FAILED) {
-                    if (input.substr(peg$currPos, 2) === peg$c72) {
-                      s4 = peg$c72;
+                    if (input.substr(peg$currPos, 2) === peg$c76) {
+                      s4 = peg$c76;
                       peg$currPos += 2;
                     } else {
                       s4 = peg$FAILED;
-                      if (peg$silentFails === 0) { peg$fail(peg$c73); }
+                      if (peg$silentFails === 0) { peg$fail(peg$c77); }
                     }
                     if (s4 === peg$FAILED) {
-                      if (input.substr(peg$currPos, 2) === peg$c74) {
-                        s4 = peg$c74;
+                      if (input.substr(peg$currPos, 2) === peg$c78) {
+                        s4 = peg$c78;
                         peg$currPos += 2;
                       } else {
                         s4 = peg$FAILED;
-                        if (peg$silentFails === 0) { peg$fail(peg$c75); }
+                        if (peg$silentFails === 0) { peg$fail(peg$c79); }
                       }
                       if (s4 === peg$FAILED) {
-                        if (input.substr(peg$currPos, 3) === peg$c76) {
-                          s4 = peg$c76;
+                        if (input.substr(peg$currPos, 3) === peg$c80) {
+                          s4 = peg$c80;
                           peg$currPos += 3;
                         } else {
                           s4 = peg$FAILED;
-                          if (peg$silentFails === 0) { peg$fail(peg$c77); }
+                          if (peg$silentFails === 0) { peg$fail(peg$c81); }
                         }
                         if (s4 === peg$FAILED) {
-                          if (input.substr(peg$currPos, 3) === peg$c78) {
-                            s4 = peg$c78;
+                          if (input.substr(peg$currPos, 3) === peg$c82) {
+                            s4 = peg$c82;
                             peg$currPos += 3;
                           } else {
                             s4 = peg$FAILED;
-                            if (peg$silentFails === 0) { peg$fail(peg$c79); }
+                            if (peg$silentFails === 0) { peg$fail(peg$c83); }
                           }
                           if (s4 === peg$FAILED) {
-                            if (input.substr(peg$currPos, 4) === peg$c80) {
-                              s4 = peg$c80;
+                            if (input.substr(peg$currPos, 4) === peg$c84) {
+                              s4 = peg$c84;
                               peg$currPos += 4;
                             } else {
                               s4 = peg$FAILED;
-                              if (peg$silentFails === 0) { peg$fail(peg$c81); }
+                              if (peg$silentFails === 0) { peg$fail(peg$c85); }
                             }
                             if (s4 === peg$FAILED) {
-                              if (input.substr(peg$currPos, 2) === peg$c72) {
-                                s4 = peg$c72;
+                              if (input.substr(peg$currPos, 2) === peg$c76) {
+                                s4 = peg$c76;
                                 peg$currPos += 2;
                               } else {
                                 s4 = peg$FAILED;
-                                if (peg$silentFails === 0) { peg$fail(peg$c73); }
+                                if (peg$silentFails === 0) { peg$fail(peg$c77); }
                               }
                               if (s4 === peg$FAILED) {
-                                if (input.substr(peg$currPos, 2) === peg$c82) {
-                                  s4 = peg$c82;
+                                if (input.substr(peg$currPos, 2) === peg$c86) {
+                                  s4 = peg$c86;
                                   peg$currPos += 2;
                                 } else {
                                   s4 = peg$FAILED;
-                                  if (peg$silentFails === 0) { peg$fail(peg$c83); }
+                                  if (peg$silentFails === 0) { peg$fail(peg$c87); }
                                 }
                                 if (s4 === peg$FAILED) {
-                                  if (input.substr(peg$currPos, 2) === peg$c84) {
-                                    s4 = peg$c84;
+                                  if (input.substr(peg$currPos, 2) === peg$c88) {
+                                    s4 = peg$c88;
                                     peg$currPos += 2;
                                   } else {
                                     s4 = peg$FAILED;
-                                    if (peg$silentFails === 0) { peg$fail(peg$c85); }
+                                    if (peg$silentFails === 0) { peg$fail(peg$c89); }
                                   }
                                   if (s4 === peg$FAILED) {
-                                    if (input.substr(peg$currPos, 3) === peg$c86) {
-                                      s4 = peg$c86;
+                                    if (input.substr(peg$currPos, 3) === peg$c90) {
+                                      s4 = peg$c90;
                                       peg$currPos += 3;
                                     } else {
                                       s4 = peg$FAILED;
-                                      if (peg$silentFails === 0) { peg$fail(peg$c87); }
+                                      if (peg$silentFails === 0) { peg$fail(peg$c91); }
                                     }
                                     if (s4 === peg$FAILED) {
-                                      if (input.substr(peg$currPos, 2) === peg$c88) {
-                                        s4 = peg$c88;
+                                      if (input.substr(peg$currPos, 2) === peg$c92) {
+                                        s4 = peg$c92;
                                         peg$currPos += 2;
                                       } else {
                                         s4 = peg$FAILED;
-                                        if (peg$silentFails === 0) { peg$fail(peg$c89); }
+                                        if (peg$silentFails === 0) { peg$fail(peg$c93); }
                                       }
                                       if (s4 === peg$FAILED) {
-                                        if (input.substr(peg$currPos, 2) === peg$c90) {
-                                          s4 = peg$c90;
+                                        if (input.substr(peg$currPos, 2) === peg$c94) {
+                                          s4 = peg$c94;
                                           peg$currPos += 2;
                                         } else {
                                           s4 = peg$FAILED;
-                                          if (peg$silentFails === 0) { peg$fail(peg$c91); }
+                                          if (peg$silentFails === 0) { peg$fail(peg$c95); }
                                         }
                                       }
                                     }
@@ -12502,7 +12782,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   s7 = peg$parsestart();
                   if (s7 !== peg$FAILED) {
                     peg$reportedPos = s0;
-                    s1 = peg$c92(s1, s2, s4, s6, s7);
+                    s1 = peg$c96(s1, s2, s4, s6, s7);
                     s0 = s1;
                   } else {
                     peg$currPos = s0;
@@ -12560,11 +12840,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s3 = peg$parse_();
           if (s3 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 63) {
-              s4 = peg$c93;
+              s4 = peg$c97;
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c94); }
+              if (peg$silentFails === 0) { peg$fail(peg$c98); }
             }
             if (s4 !== peg$FAILED) {
               s5 = peg$parse_();
@@ -12588,7 +12868,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                           s11 = peg$parsestart();
                           if (s11 !== peg$FAILED) {
                             peg$reportedPos = s0;
-                            s1 = peg$c95(s1, s2, s6, s10, s11);
+                            s1 = peg$c99(s1, s2, s6, s10, s11);
                             s0 = s1;
                           } else {
                             peg$currPos = s0;
@@ -12644,20 +12924,20 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$currPos;
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c96) {
-                s6 = peg$c96;
+              if (input.substr(peg$currPos, 2) === peg$c100) {
+                s6 = peg$c100;
                 peg$currPos += 2;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c97); }
+                if (peg$silentFails === 0) { peg$fail(peg$c101); }
               }
               if (s6 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 63) {
-                  s6 = peg$c93;
+                  s6 = peg$c97;
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c94); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c98); }
                 }
               }
               if (s6 !== peg$FAILED) {
@@ -12694,20 +12974,20 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s4 = peg$currPos;
               s5 = peg$parse_();
               if (s5 !== peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c96) {
-                  s6 = peg$c96;
+                if (input.substr(peg$currPos, 2) === peg$c100) {
+                  s6 = peg$c100;
                   peg$currPos += 2;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c97); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c101); }
                 }
                 if (s6 === peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 63) {
-                    s6 = peg$c93;
+                    s6 = peg$c97;
                     peg$currPos++;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c94); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c98); }
                   }
                 }
                 if (s6 !== peg$FAILED) {
@@ -12742,7 +13022,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             }
             if (s3 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c98(s1, s2, s3);
+              s1 = peg$c102(s1, s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -12854,7 +13134,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c98(s1, s2, s3);
+            s1 = peg$c102(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -12962,7 +13242,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c98(s1, s2, s3);
+            s1 = peg$c102(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -13003,11 +13283,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 124) {
-              s6 = peg$c99;
+              s6 = peg$c103;
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c100); }
+              if (peg$silentFails === 0) { peg$fail(peg$c104); }
             }
             if (s6 !== peg$FAILED) {
               s7 = peg$parse_();
@@ -13044,11 +13324,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 124) {
-                s6 = peg$c99;
+                s6 = peg$c103;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c100); }
+                if (peg$silentFails === 0) { peg$fail(peg$c104); }
               }
               if (s6 !== peg$FAILED) {
                 s7 = peg$parse_();
@@ -13082,7 +13362,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c98(s1, s2, s3);
+            s1 = peg$c102(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -13123,11 +13403,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 94) {
-              s6 = peg$c101;
+              s6 = peg$c105;
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c102); }
+              if (peg$silentFails === 0) { peg$fail(peg$c106); }
             }
             if (s6 !== peg$FAILED) {
               s7 = peg$parse_();
@@ -13164,11 +13444,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 94) {
-                s6 = peg$c101;
+                s6 = peg$c105;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c102); }
+                if (peg$silentFails === 0) { peg$fail(peg$c106); }
               }
               if (s6 !== peg$FAILED) {
                 s7 = peg$parse_();
@@ -13202,7 +13482,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c98(s1, s2, s3);
+            s1 = peg$c102(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -13243,11 +13523,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 38) {
-              s6 = peg$c103;
+              s6 = peg$c107;
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c104); }
+              if (peg$silentFails === 0) { peg$fail(peg$c108); }
             }
             if (s6 !== peg$FAILED) {
               s7 = peg$parse_();
@@ -13284,11 +13564,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 38) {
-                s6 = peg$c103;
+                s6 = peg$c107;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c104); }
+                if (peg$silentFails === 0) { peg$fail(peg$c108); }
               }
               if (s6 !== peg$FAILED) {
                 s7 = peg$parse_();
@@ -13322,7 +13602,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c98(s1, s2, s3);
+            s1 = peg$c102(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -13436,7 +13716,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c98(s1, s2, s3);
+            s1 = peg$c102(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -13476,36 +13756,36 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s4 = peg$currPos;
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
-            if (input.substr(peg$currPos, 2) === peg$c105) {
-              s6 = peg$c105;
+            if (input.substr(peg$currPos, 2) === peg$c109) {
+              s6 = peg$c109;
               peg$currPos += 2;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c106); }
+              if (peg$silentFails === 0) { peg$fail(peg$c110); }
             }
             if (s6 === peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c107) {
-                s6 = peg$c107;
+              if (input.substr(peg$currPos, 2) === peg$c111) {
+                s6 = peg$c111;
                 peg$currPos += 2;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c108); }
+                if (peg$silentFails === 0) { peg$fail(peg$c112); }
               }
               if (s6 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 60) {
-                  s6 = peg$c109;
+                  s6 = peg$c113;
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c110); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c114); }
                 }
                 if (s6 === peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 62) {
-                    s6 = peg$c111;
+                    s6 = peg$c115;
                     peg$currPos++;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c112); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c116); }
                   }
                   if (s6 === peg$FAILED) {
                     s6 = peg$parsein();
@@ -13550,36 +13830,36 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$currPos;
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c105) {
-                s6 = peg$c105;
+              if (input.substr(peg$currPos, 2) === peg$c109) {
+                s6 = peg$c109;
                 peg$currPos += 2;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c106); }
+                if (peg$silentFails === 0) { peg$fail(peg$c110); }
               }
               if (s6 === peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c107) {
-                  s6 = peg$c107;
+                if (input.substr(peg$currPos, 2) === peg$c111) {
+                  s6 = peg$c111;
                   peg$currPos += 2;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c108); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c112); }
                 }
                 if (s6 === peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 60) {
-                    s6 = peg$c109;
+                    s6 = peg$c113;
                     peg$currPos++;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c110); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c114); }
                   }
                   if (s6 === peg$FAILED) {
                     if (input.charCodeAt(peg$currPos) === 62) {
-                      s6 = peg$c111;
+                      s6 = peg$c115;
                       peg$currPos++;
                     } else {
                       s6 = peg$FAILED;
-                      if (peg$silentFails === 0) { peg$fail(peg$c112); }
+                      if (peg$silentFails === 0) { peg$fail(peg$c116); }
                     }
                     if (s6 === peg$FAILED) {
                       s6 = peg$parsein();
@@ -13622,7 +13902,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c98(s1, s2, s3);
+            s1 = peg$c102(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -13662,28 +13942,28 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s4 = peg$currPos;
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
-            if (input.substr(peg$currPos, 3) === peg$c113) {
-              s6 = peg$c113;
+            if (input.substr(peg$currPos, 3) === peg$c117) {
+              s6 = peg$c117;
               peg$currPos += 3;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c114); }
+              if (peg$silentFails === 0) { peg$fail(peg$c118); }
             }
             if (s6 === peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c115) {
-                s6 = peg$c115;
+              if (input.substr(peg$currPos, 2) === peg$c119) {
+                s6 = peg$c119;
                 peg$currPos += 2;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c116); }
+                if (peg$silentFails === 0) { peg$fail(peg$c120); }
               }
               if (s6 === peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c117) {
-                  s6 = peg$c117;
+                if (input.substr(peg$currPos, 2) === peg$c121) {
+                  s6 = peg$c121;
                   peg$currPos += 2;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c118); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c122); }
                 }
               }
             }
@@ -13721,28 +14001,28 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$currPos;
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 3) === peg$c113) {
-                s6 = peg$c113;
+              if (input.substr(peg$currPos, 3) === peg$c117) {
+                s6 = peg$c117;
                 peg$currPos += 3;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c114); }
+                if (peg$silentFails === 0) { peg$fail(peg$c118); }
               }
               if (s6 === peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c115) {
-                  s6 = peg$c115;
+                if (input.substr(peg$currPos, 2) === peg$c119) {
+                  s6 = peg$c119;
                   peg$currPos += 2;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c116); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c120); }
                 }
                 if (s6 === peg$FAILED) {
-                  if (input.substr(peg$currPos, 2) === peg$c117) {
-                    s6 = peg$c117;
+                  if (input.substr(peg$currPos, 2) === peg$c121) {
+                    s6 = peg$c121;
                     peg$currPos += 2;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c118); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c122); }
                   }
                 }
               }
@@ -13778,7 +14058,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c98(s1, s2, s3);
+            s1 = peg$c102(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -13819,19 +14099,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 43) {
-              s6 = peg$c119;
+              s6 = peg$c123;
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c120); }
+              if (peg$silentFails === 0) { peg$fail(peg$c124); }
             }
             if (s6 === peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 45) {
-                s6 = peg$c121;
+                s6 = peg$c125;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c122); }
+                if (peg$silentFails === 0) { peg$fail(peg$c126); }
               }
             }
             if (s6 !== peg$FAILED) {
@@ -13869,19 +14149,19 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 43) {
-                s6 = peg$c119;
+                s6 = peg$c123;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c120); }
+                if (peg$silentFails === 0) { peg$fail(peg$c124); }
               }
               if (s6 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 45) {
-                  s6 = peg$c121;
+                  s6 = peg$c125;
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c122); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c126); }
                 }
               }
               if (s6 !== peg$FAILED) {
@@ -13916,7 +14196,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c98(s1, s2, s3);
+            s1 = peg$c102(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -13957,27 +14237,27 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s5 = peg$parse_();
           if (s5 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 42) {
-              s6 = peg$c123;
+              s6 = peg$c127;
               peg$currPos++;
             } else {
               s6 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c124); }
+              if (peg$silentFails === 0) { peg$fail(peg$c128); }
             }
             if (s6 === peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 47) {
-                s6 = peg$c125;
+                s6 = peg$c129;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c126); }
+                if (peg$silentFails === 0) { peg$fail(peg$c130); }
               }
               if (s6 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 37) {
-                  s6 = peg$c127;
+                  s6 = peg$c131;
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c128); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c132); }
                 }
               }
             }
@@ -14016,27 +14296,27 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s5 = peg$parse_();
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 42) {
-                s6 = peg$c123;
+                s6 = peg$c127;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c124); }
+                if (peg$silentFails === 0) { peg$fail(peg$c128); }
               }
               if (s6 === peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 47) {
-                  s6 = peg$c125;
+                  s6 = peg$c129;
                   peg$currPos++;
                 } else {
                   s6 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c126); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c130); }
                 }
                 if (s6 === peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 37) {
-                    s6 = peg$c127;
+                    s6 = peg$c131;
                     peg$currPos++;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c128); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c132); }
                   }
                 }
               }
@@ -14072,7 +14352,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c98(s1, s2, s3);
+            s1 = peg$c102(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -14115,7 +14395,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s5 = peg$parsestart();
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c129(s1, s2, s4, s5);
+                s1 = peg$c133(s1, s2, s4, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -14161,27 +14441,27 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s0 = peg$parsenot();
       if (s0 === peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 45) {
-          s0 = peg$c121;
+          s0 = peg$c125;
           peg$currPos++;
         } else {
           s0 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c122); }
+          if (peg$silentFails === 0) { peg$fail(peg$c126); }
         }
         if (s0 === peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 43) {
-            s0 = peg$c119;
+            s0 = peg$c123;
             peg$currPos++;
           } else {
             s0 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c120); }
+            if (peg$silentFails === 0) { peg$fail(peg$c124); }
           }
           if (s0 === peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 126) {
-              s0 = peg$c131;
+              s0 = peg$c135;
               peg$currPos++;
             } else {
               s0 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c132); }
+              if (peg$silentFails === 0) { peg$fail(peg$c136); }
             }
             if (s0 === peg$FAILED) {
               s0 = peg$parsetypeof();
@@ -14198,7 +14478,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c130); }
+        if (peg$silentFails === 0) { peg$fail(peg$c134); }
       }
 
       peg$cache[key] = { nextPos: peg$currPos, result: s0 };
@@ -14220,20 +14500,20 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       s0 = peg$currPos;
       s1 = peg$parsestart();
       if (s1 !== peg$FAILED) {
-        if (input.substr(peg$currPos, 2) === peg$c133) {
-          s2 = peg$c133;
+        if (input.substr(peg$currPos, 2) === peg$c137) {
+          s2 = peg$c137;
           peg$currPos += 2;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c134); }
+          if (peg$silentFails === 0) { peg$fail(peg$c138); }
         }
         if (s2 === peg$FAILED) {
-          if (input.substr(peg$currPos, 2) === peg$c135) {
-            s2 = peg$c135;
+          if (input.substr(peg$currPos, 2) === peg$c139) {
+            s2 = peg$c139;
             peg$currPos += 2;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c136); }
+            if (peg$silentFails === 0) { peg$fail(peg$c140); }
           }
         }
         if (s2 !== peg$FAILED) {
@@ -14242,7 +14522,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$parsestart();
             if (s4 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c137(s1, s2, s3, s4);
+              s1 = peg$c141(s1, s2, s3, s4);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -14268,27 +14548,27 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           if (s2 !== peg$FAILED) {
             s3 = peg$parseCallExpression();
             if (s3 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c133) {
-                s4 = peg$c133;
+              if (input.substr(peg$currPos, 2) === peg$c137) {
+                s4 = peg$c137;
                 peg$currPos += 2;
               } else {
                 s4 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c134); }
+                if (peg$silentFails === 0) { peg$fail(peg$c138); }
               }
               if (s4 === peg$FAILED) {
-                if (input.substr(peg$currPos, 2) === peg$c135) {
-                  s4 = peg$c135;
+                if (input.substr(peg$currPos, 2) === peg$c139) {
+                  s4 = peg$c139;
                   peg$currPos += 2;
                 } else {
                   s4 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c136); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c140); }
                 }
               }
               if (s4 !== peg$FAILED) {
                 s5 = peg$parsestart();
                 if (s5 !== peg$FAILED) {
                   peg$reportedPos = s0;
-                  s1 = peg$c138(s1, s3, s4, s5);
+                  s1 = peg$c142(s1, s3, s4, s5);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -14319,11 +14599,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
               s3 = peg$parseCallExpression();
               if (s3 !== peg$FAILED) {
                 if (input.charCodeAt(peg$currPos) === 63) {
-                  s4 = peg$c93;
+                  s4 = peg$c97;
                   peg$currPos++;
                 } else {
                   s4 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c94); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c98); }
                 }
                 if (s4 !== peg$FAILED) {
                   s5 = peg$currPos;
@@ -14346,7 +14626,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                     s6 = peg$parsestart();
                     if (s6 !== peg$FAILED) {
                       peg$reportedPos = s0;
-                      s1 = peg$c139(s1, s3, s4, s6);
+                      s1 = peg$c143(s1, s3, s4, s6);
                       s0 = s1;
                     } else {
                       peg$currPos = s0;
@@ -14413,7 +14693,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c140(s1, s2, s3);
+            s1 = peg$c144(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -14449,15 +14729,15 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 63) {
-          s3 = peg$c93;
+          s3 = peg$c97;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c94); }
+          if (peg$silentFails === 0) { peg$fail(peg$c98); }
         }
         if (s3 !== peg$FAILED) {
           peg$reportedPos = s2;
-          s3 = peg$c141();
+          s3 = peg$c145();
         }
         s2 = s3;
         if (s2 === peg$FAILED) {
@@ -14469,7 +14749,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$parsestart();
             if (s4 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c142(s2, s3, s4);
+              s1 = peg$c146(s2, s3, s4);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -14509,15 +14789,15 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 63) {
-          s3 = peg$c93;
+          s3 = peg$c97;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c94); }
+          if (peg$silentFails === 0) { peg$fail(peg$c98); }
         }
         if (s3 !== peg$FAILED) {
           peg$reportedPos = s2;
-          s3 = peg$c141();
+          s3 = peg$c145();
         }
         s2 = s3;
         if (s2 === peg$FAILED) {
@@ -14549,7 +14829,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                     s8 = peg$parsestart();
                     if (s8 !== peg$FAILED) {
                       peg$reportedPos = s0;
-                      s1 = peg$c143(s2, s5, s8);
+                      s1 = peg$c147(s2, s5, s8);
                       s0 = s1;
                     } else {
                       peg$currPos = s0;
@@ -14589,15 +14869,15 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         if (s1 !== peg$FAILED) {
           s2 = peg$currPos;
           if (input.charCodeAt(peg$currPos) === 63) {
-            s3 = peg$c93;
+            s3 = peg$c97;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c94); }
+            if (peg$silentFails === 0) { peg$fail(peg$c98); }
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s2;
-            s3 = peg$c141();
+            s3 = peg$c145();
           }
           s2 = s3;
           if (s2 === peg$FAILED) {
@@ -14619,7 +14899,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                   s6 = peg$parsestart();
                   if (s6 !== peg$FAILED) {
                     peg$reportedPos = s0;
-                    s1 = peg$c144(s2, s5, s6);
+                    s1 = peg$c148(s2, s5, s6);
                     s0 = s1;
                   } else {
                     peg$currPos = s0;
@@ -14665,11 +14945,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 40) {
-        s1 = peg$c145;
+        s1 = peg$c65;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c146); }
+        if (peg$silentFails === 0) { peg$fail(peg$c66); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parseargumentList();
@@ -14678,11 +14958,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 41) {
-            s3 = peg$c147;
+            s3 = peg$c67;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c148); }
+            if (peg$silentFails === 0) { peg$fail(peg$c68); }
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
@@ -14846,7 +15126,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c140(s1, s2, s3);
+            s1 = peg$c144(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -15176,11 +15456,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 40) {
-        s1 = peg$c145;
+        s1 = peg$c65;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c146); }
+        if (peg$silentFails === 0) { peg$fail(peg$c66); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parse_();
@@ -15193,11 +15473,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$parse_();
             if (s4 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 41) {
-                s5 = peg$c147;
+                s5 = peg$c67;
                 peg$currPos++;
               } else {
                 s5 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c148); }
+                if (peg$silentFails === 0) { peg$fail(peg$c68); }
               }
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
@@ -16030,11 +16310,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         s2 = peg$currPos;
         peg$silentFails++;
         if (input.charCodeAt(peg$currPos) === 40) {
-          s3 = peg$c145;
+          s3 = peg$c65;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c146); }
+          if (peg$silentFails === 0) { peg$fail(peg$c66); }
         }
         peg$silentFails--;
         if (s3 === peg$FAILED) {
@@ -16132,11 +16412,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       peg$silentFails++;
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 40) {
-        s1 = peg$c145;
+        s1 = peg$c65;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c146); }
+        if (peg$silentFails === 0) { peg$fail(peg$c66); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parse_();
@@ -16146,11 +16426,11 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s4 = peg$parse_();
             if (s4 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 41) {
-                s5 = peg$c147;
+                s5 = peg$c67;
                 peg$currPos++;
               } else {
                 s5 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c148); }
+                if (peg$silentFails === 0) { peg$fail(peg$c68); }
               }
               if (s5 !== peg$FAILED) {
                 peg$reportedPos = s0;
@@ -16566,7 +16846,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       peg$reportedPos = peg$currPos;
-      s1 = peg$c141();
+      s1 = peg$c145();
       if (s1) {
         s1 = peg$c15;
       } else {
@@ -16596,7 +16876,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       peg$reportedPos = peg$currPos;
-      s1 = peg$c141();
+      s1 = peg$c145();
       if (s1) {
         s1 = peg$c15;
       } else {
@@ -16647,21 +16927,21 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 47) {
-        s1 = peg$c125;
+        s1 = peg$c129;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c126); }
+        if (peg$silentFails === 0) { peg$fail(peg$c130); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parseregexBody();
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 47) {
-            s3 = peg$c125;
+            s3 = peg$c129;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c126); }
+            if (peg$silentFails === 0) { peg$fail(peg$c130); }
           }
           if (s3 !== peg$FAILED) {
             s4 = peg$parseregexOptions();
@@ -24512,11 +24792,17 @@ var getId = function (key) {
     var id = key[idName];
     if (!(id != null)) {
         id = ++uniqueCounter;
-        Object.defineProperty(key, idName, { value: id });
+        Object.defineProperty(key, idName, {
+            value: id,
+            enumerable: false
+        });
     }
     return id;
 };
 function MapShim(pairs) {
+    if (pairs != null) {
+        throw new Error('Don\'t add items in the constructor, IE implementation of Set breaks this');
+    }
     var lookup = {};
     var keys = [];
     var methods = {
@@ -24559,14 +24845,6 @@ function MapShim(pairs) {
         var value = methods[key];
         Object.defineProperty(this, key, { value: value });
     }
-    if (pairs != null) {
-        for (var _i2 = 0; _i2 < pairs.length; _i2++) {
-            var _ref = pairs[_i2];
-            var key = _ref[0];
-            var value = _ref[1];
-            this.set(key, value);
-        }
-    }
 }
 if (!(global.Map != null) || !(Map.prototype.forEach != null)) {
     console.warn('Shimming Map');
@@ -24584,16 +24862,9 @@ if (!(new Map().keys != null)) {
 }
 var test = exports.test = function () {
         var Map = global.Map;
-        var map = new Map([
-                [
-                    'a',
-                    1
-                ],
-                [
-                    'b',
-                    2
-                ]
-            ]);
+        var map = new Map();
+        map.set('a', 1);
+        map.set('b', 2);
         if (!(Object.keys(map).length === 0))
             throw new Error('Assertion Failed: (Object.keys(map).length is 0)');
         if (!map.has('a'))
@@ -24893,6 +25164,9 @@ void (function(){var _ion_es6_Set_ = function(module,exports,require){'use stric
 var ion = require('ion');
 require('./Map');
 function SetShim(items) {
+    if (items != null) {
+        throw new Error('Don\'t add items in the constructor, IE implementation of Set breaks this');
+    }
     var map = new Map();
     var methods = {
             has: function (key) {
@@ -24917,12 +25191,6 @@ function SetShim(items) {
         var value = methods[key];
         Object.defineProperty(this, key, { value: value });
     }
-    if (items != null) {
-        for (var _i = 0; _i < items.length; _i++) {
-            var item = items[_i];
-            this.add(item);
-        }
-    }
 }
 if (!(global.Set != null) || !(Set.prototype.forEach != null)) {
     console.warn('Shimming Set');
@@ -24933,10 +25201,9 @@ var test = exports.test = function () {
         var a = {};
         var b = function () {
         };
-        var set = new Set([
-                a,
-                b
-            ]);
+        var set = new Set();
+        set.add(a);
+        set.add(b);
         if (!set.has(a))
             throw new Error('Assertion Failed: (set.has(a))');
         if (!set.has(b))
@@ -25139,9 +25406,9 @@ var patch = exports.patch = function () {
             }
             nodeObserveShim.observe(object, observer, property);
         } else if (object != null && observer != null && Object.observe != null && typeof object === 'object') {
-            observer.tryWrapper = observer.tryWrapper != null ? observer.tryWrapper : function () {
+            observer.tryWrapper = observer.tryWrapper != null ? observer.tryWrapper : function (changes) {
                 try {
-                    observer.apply(this, arguments);
+                    observer(changes);
                 } catch (error) {
                     console.error('Exception in Object.observe callback', error);
                 }
@@ -25221,10 +25488,10 @@ var patch = exports.patch = function () {
                 }
             };
         }
-        item.onAdded != null ? item.onAdded(container) : void 0;
+        item != null ? item.onAdded != null ? item.onAdded(container) : void 0 : void 0;
         return function () {
             remove();
-            item.onRemoved != null ? item.onRemoved(container) : void 0;
+            item != null ? item.onRemoved != null ? item.onRemoved(container) : void 0 : void 0;
         };
     }, defineProperties = exports.defineProperties = function (object, properties) {
         return Object.defineProperties(object, normalizeProperties(properties));
@@ -25254,7 +25521,8 @@ var patch = exports.patch = function () {
             var descriptor = Object.getOwnPropertyDescriptor(classFunction, key);
             return !(descriptor != null) || descriptor.writable || !(descriptor.get != null);
         };
-        var types = new Set([classFunction]);
+        var types = new Set();
+        types.add(classFunction);
         for (var i = definitions.length - 1; i >= 0; i--) {
             var definition = definitions[i];
             if (definition != null) {
@@ -25513,9 +25781,14 @@ var merge = exports.merge = function (target, values, options) {
                 var patch = {};
                 for (var _i = 0; _i < changes.length; _i++) {
                     var change = changes[_i];
-                    patch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
+                    if (change.name[0] !== '_') {
+                        patch = patch != null ? patch : {};
+                        patch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
+                    }
                 }
-                queuePatch(patch);
+                if (patch != null) {
+                    queuePatch(patch);
+                }
             } catch (e) {
                 console.error(e);
             }
@@ -25983,6 +26256,9 @@ var CallExpression = ion.defineClass({
                 }
             },
             evaluate: function () {
+                if (!this.isActive) {
+                    return;
+                }
                 var value = void 0;
                 if (this.calleeValue != null && this.argumentsValue != null) {
                     try {
@@ -28322,7 +28598,8 @@ var templates = [
                                                                     }
                                                                 }
                                                             }]
-                                                    }
+                                                    },
+                                                    remove: null
                                                 }
                                             ]
                                         },
@@ -28801,12 +29078,12 @@ tests = {
   "for let i = 0; i < 10; i++\n    console.log(i)": "'use strict';\nfor (let i = 0; i < 10; i++) {\n    console.log(i);\n}",
   "for key of object if key[0] isnt '_' for c in key\n    console.log(c)": "'use strict';\nfor (let key in object) {\n    if (key[0] !== '_') {\n        for (let _i = 0; _i < key.length; _i++) {\n            let c = key[_i];\n            console.log(c);\n        }\n    }\n}",
   "console.log([key for key of object if key is cool])": "'use strict';\nlet _ref = [];\nfor (let key in object) {\n    if (key === cool) {\n        _ref.push(key);\n    }\n}\nconsole.log(_ref);",
-  "(console.log)\n    1\n    2\n    {}\n        x: 1\n        y: 2": "'use strict';\nconsole.log(1, 2, {\n    x: 1,\n    y: 2\n});",
+  "console.log(\n    1\n    2\n    {}\n        x: 1\n        y: 2\n)": "'use strict';\nconsole.log(1, 2, {\n    x: 1,\n    y: 2\n});",
   "let x = ->\n    try\n        foo()\n        bar()\n    catch e\n        baz()": "'use strict';\nlet x = function () {\n    try {\n        foo();\n        bar();\n    } catch (e) {\n        baz();\n    }\n};",
   "if foo\n    # bar": "'use strict';\nif (foo) {\n}",
   "let trim = (a = \"\") -> a.trim()": "'use strict';\nlet trim = function (a) {\n    if (a == null)\n        a = '';\n    return a.trim();\n};",
-  "(foo)\n    1\n    2": "'use strict';\nfoo(1, 2);",
-  "(compile)\n    foo: 1\n    bar: 2\n    baz:\n        a: 1\n        b: 2": "'use strict';\ncompile({\n    foo: 1,\n    bar: 2,\n    baz: {\n        a: 1,\n        b: 2\n    }\n});",
+  "foo(\n    1\n    2\n)": "'use strict';\nfoo(1, 2);",
+  "compile(\n    foo: 1\n    bar: 2\n    baz:\n        a: 1\n        b: 2\n)": "'use strict';\ncompile({\n    foo: 1,\n    bar: 2,\n    baz: {\n        a: 1,\n        b: 2\n    }\n});",
   "let array = [1,2,3]\n    4\n    5\n    6": "'use strict';\nlet array = [\n        1,\n        2,\n        3,\n        4,\n        5,\n        6\n    ];",
   "let point = new Point(10, 20)\n    z: 30": "'use strict';\nconst ion = require('ion');\nlet point = ion.patch(new Point(10, 20), { z: 30 });",
   "let object = {x:1, y:2}\n    z: 3": "'use strict';\nlet object = {\n        x: 1,\n        y: 2,\n        z: 3\n    };",
@@ -28871,7 +29148,7 @@ tests = {
   "let foo = div()\n    span()\n        'Hello'": "'use strict';\nconst ion = require('ion');\nlet foo = div();\nlet _ref = span();\nion.add(_ref, 'Hello');\nion.add(foo, _ref);",
   "const ion = import './'\nlet foo = div()\n    span()\n        'Hello'": "'use strict';\nconst ion = require('./');\nlet foo = div();\nlet _ref = span();\nion.add(_ref, 'Hello');\nion.add(foo, _ref);",
   "const translate({x,y}) ->\n    x++\n    y++\n    return {x,y}": "'use strict';\nfunction translate(_ref) {\n    let x = _ref.x;\n    let y = _ref.y;\n    x++;\n    y++;\n    return {\n        x: x,\n        y: y\n    };\n}",
-  "let x = (foo)\n    ''\n        multiline string literal\n    \"\"\n        multiline string template": "'use strict';\nlet x = foo('multiline string literal', 'multiline string template');",
+  "let x = foo(\n    ''\n        multiline string literal\n    \"\"\n        multiline string template\n)": "'use strict';\nlet x = foo('multiline string literal', 'multiline string template');",
   "assert x is 2": "'use strict';\nif (!(x === 2))\n    throw new Error('Assertion Failed: (x is 2)');",
   "export class Point\n    constructor: ->\n        # call super with arguments object\n        super\n        # call super again with explicit arguments\n        super(width, height)\n        # calling twice is silly, but legal\n    properties:\n        x: 0\n        y: 0\n        superIdentifier: (x, y) -> super\n        superExplicit: (a, b) -> super(a, b)": "'use strict';\nconst ion = require('ion');\nconst Point = ion.defineClass({\n        name: 'Point',\n        constructor: function Point() {\n            Point.super.apply(this, arguments);\n            Point.super.call(this, width, height);\n        },\n        properties: {\n            x: 0,\n            y: 0,\n            superIdentifier: function (x, y) {\n                return Point.super.prototype.superIdentifier.apply(this, arguments);\n            },\n            superExplicit: function (a, b) {\n                return Point.super.prototype.superExplicit.call(this, a, b);\n            }\n        }\n    });\nmodule.exports = exports = Point;",
   "const spreadFunction1(a, b, ...c) ->\n    log(1)\nconst spreadFunction2(a, b, ...c, d, e) ->\n    log(2)\nconst spreadFunction3(a,b, ...c, {d,e}) ->\n    log(3)": "'use strict';\nfunction spreadFunction1(a, b, ___c) {\n    let c = Array.prototype.slice.call(arguments, 2);\n    log(1);\n}\nfunction spreadFunction2(a, b, ___c, d, e) {\n    let c = Array.prototype.slice.call(arguments, 2, arguments.length - 2);\n    d = arguments[arguments.length - 2];\n    e = arguments[arguments.length - 1];\n    log(2);\n}\nfunction spreadFunction3(a, b, ___c, _ref) {\n    let c = Array.prototype.slice.call(arguments, 2, arguments.length - 1);\n    _ref = arguments[arguments.length - 1];\n    let d = _ref.d;\n    let e = _ref.e;\n    log(3);\n}",
@@ -28920,7 +29197,7 @@ tests = {
   "const ctor = @@\nconst ctorName = @@name": "'use strict';\nconst ctor = this.constructor;\nconst ctorName = this.constructor.name;",
   "const inlineThrow() -> throw new Error('inline throw')": "'use strict';\nfunction inlineThrow() {\n    throw new Error('inline throw');\n}",
   "class DynamicExpression\n    watch: ->\n        let x = @x ?= []": "'use strict';\nconst ion = require('ion');\nconst DynamicExpression = ion.defineClass({\n        name: 'DynamicExpression',\n        watch: function () {\n            let x = this.x = this.x != null ? this.x : [];\n        }\n    });\nDynamicExpression;",
-  "let a = (new Point)\n    1\n    2": "'use strict';\nlet a = new Point(1, 2);",
+  "let a = new Point(\n    1\n    2\n)": "'use strict';\nlet a = new Point(1, 2);",
   "let x = [y for y in z]": "'use strict';\nlet _ref = [];\nfor (let _i = 0; _i < z.length; _i++) {\n    let y = z[_i];\n    _ref.push(y);\n}\nlet x = _ref;",
   "return\n    z: []\n        let items = [3,2,1]\n        for item in items\n            item * 2": "'use strict';\nlet _ref = [];\n{\n    let items = [\n            3,\n            2,\n            1\n        ];\n    for (let _i = 0; _i < items.length; _i++) {\n        let item = items[_i];\n        _ref.push(item * 2);\n    }\n}\nreturn { z: _ref };",
   "let x = `y == null`": "'use strict';\nlet x = y == null;",
@@ -28949,7 +29226,8 @@ tests = {
   "export template add(x,y) -> x + y": "'use strict';\nconst ion = require('ion');\nmodule.exports = exports = ion.template(function add(x, y) {\n    return x + y;\n}, function (x, y) {\n    return ion.createRuntime({\n        type: 'Template',\n        body: [{\n                type: 'ReturnStatement',\n                argument: {\n                    type: 'BinaryExpression',\n                    operator: '+',\n                    left: {\n                        type: 'Identifier',\n                        name: 'x'\n                    },\n                    right: {\n                        type: 'Identifier',\n                        name: 'y'\n                    }\n                }\n            }],\n        bound: false\n    }, {\n        this: this,\n        x: x,\n        y: y\n    });\n});",
   "activate template ->": "'use strict';\nconst ion = require('ion');\nnew (ion.template(function () {\n}, function () {\n    return ion.createRuntime({\n        type: 'Template',\n        body: [],\n        bound: false\n    }, { this: this });\n})).template().activate();",
   "content:\n    name: 'foo'\n    1\n    2": "'use strict';\nconst ion = require('ion');\n{\n    content.name = 'foo';\n    ion.add(content, 1);\n    ion.add(content, 2);\n}",
-  "for name, file of directory\n    write(name, file)\nelse\n    delete(name)": "'use strict';\nfor (let name in directory) {\n    let file = directory[name];\n    write(name, file);\n}"
+  "for name, file of directory\n    write(name, file)\nelse\n    delete(name)": "'use strict';\nfor (let name in directory) {\n    let file = directory[name];\n    write(name, file);\n}",
+  "foo(\n    bar()\n    baz(\n        1\n        2\n    )\n)": "'use strict';\nfoo(bar(), baz(1, 2));"
 };
 
 if (global.window != null) {
@@ -29093,5 +29371,1527 @@ exports.test = function() {
     _ion_test_ionCompilerES5_.call(this);
   }
 }).call(this)
-undefined
+void (function(){var _ion_test_reactiveTemplates_ = function(module,exports,require){'use strict';
+var ion = require('../');
+var _ref9 = [];
+{
+    _ref9.push('this');
+    var object = {
+            x: 1,
+            y: 2
+        };
+    _ref9.push(object);
+    _ref9.push(ion.template(function () {
+        return this.x + this.y;
+    }, function () {
+        return ion.createRuntime({
+            type: 'Template',
+            body: [{
+                    type: 'ReturnStatement',
+                    argument: {
+                        type: 'BinaryExpression',
+                        operator: '+',
+                        left: {
+                            type: 'MemberExpression',
+                            computed: false,
+                            object: { type: 'ThisExpression' },
+                            property: {
+                                type: 'Identifier',
+                                name: 'x'
+                            }
+                        },
+                        right: {
+                            type: 'MemberExpression',
+                            computed: false,
+                            object: { type: 'ThisExpression' },
+                            property: {
+                                type: 'Identifier',
+                                name: 'y'
+                            }
+                        }
+                    }
+                }],
+            bound: false
+        }, {
+            this: this,
+            object: object,
+            ion: ion,
+            _ref9: _ref9,
+            templates: templates,
+            _ref12: _ref12
+        });
+    }));
+    _ref9.push(object);
+    _ref9.push({ x: 10 });
+    _ref9.push(12);
+}
+var templates = [
+        [
+            'regular expression',
+            {},
+            ion.template(function (properties) {
+                return properties.name.replace(/a/g, 'b');
+            }, function (properties) {
+                return ion.createRuntime({
+                    type: 'Template',
+                    body: [{
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'MemberExpression',
+                                        computed: false,
+                                        object: {
+                                            type: 'Identifier',
+                                            name: 'properties'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'name'
+                                        }
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'replace'
+                                    }
+                                },
+                                arguments: [
+                                    {
+                                        type: 'Literal',
+                                        value: /a/g
+                                    },
+                                    {
+                                        type: 'Literal',
+                                        value: 'b'
+                                    }
+                                ]
+                            }
+                        }],
+                    bound: false
+                }, {
+                    this: this,
+                    properties: properties,
+                    ion: ion,
+                    _ref9: _ref9,
+                    templates: templates,
+                    _ref12: _ref12
+                });
+            }),
+            { name: 'alpha' },
+            {},
+            'blphb'
+        ],
+        [
+            'array comprehension',
+            {},
+            ion.template(function (properties) {
+                var _ref4 = [];
+                for (var key in properties)
+                    _ref4.push(key);
+                return _ref4;
+            }, function (properties) {
+                return ion.createRuntime({
+                    type: 'Template',
+                    body: [{
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'ObjectExpression',
+                                objectType: {
+                                    type: 'ArrayExpression',
+                                    elements: []
+                                },
+                                properties: [{
+                                        type: 'ForInStatement',
+                                        left: {
+                                            type: 'VariableDeclaration',
+                                            declarations: [{
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'key'
+                                                    },
+                                                    init: null
+                                                }],
+                                            kind: 'let'
+                                        },
+                                        right: {
+                                            type: 'Identifier',
+                                            name: 'properties'
+                                        },
+                                        body: {
+                                            type: 'ExpressionStatement',
+                                            expression: {
+                                                type: 'Identifier',
+                                                name: 'key'
+                                            }
+                                        }
+                                    }]
+                            }
+                        }],
+                    bound: false
+                }, {
+                    this: this,
+                    properties: properties,
+                    ion: ion,
+                    _ref9: _ref9,
+                    templates: templates,
+                    _ref12: _ref12
+                });
+            }),
+            {
+                a: 1,
+                b: 2
+            },
+            {
+                b: void 0,
+                c: 3
+            },
+            [
+                'a',
+                'c'
+            ]
+        ],
+        [
+            'imperative functions',
+            {},
+            ion.template(function (properties) {
+                function double(a) {
+                    return a * 2;
+                }
+                var _ref6 = {};
+                for (var key in properties) {
+                    var value = properties[key];
+                    var value = properties[key];
+                    _ref6[key] = double(value);
+                }
+                return _ref6;
+            }, function (properties) {
+                return ion.createRuntime({
+                    type: 'Template',
+                    body: [
+                        {
+                            type: 'VariableDeclaration',
+                            declarations: [{
+                                    type: 'VariableDeclarator',
+                                    id: {
+                                        type: 'Identifier',
+                                        name: 'double'
+                                    },
+                                    init: {
+                                        type: 'Function',
+                                        context: false,
+                                        value: function double(a) {
+                                            return a * 2;
+                                        }
+                                    }
+                                }],
+                            kind: 'const'
+                        },
+                        {
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'ObjectExpression',
+                                objectType: {
+                                    type: 'ObjectExpression',
+                                    properties: []
+                                },
+                                properties: [{
+                                        type: 'ForInStatement',
+                                        left: {
+                                            type: 'VariableDeclaration',
+                                            declarations: [
+                                                {
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'key'
+                                                    },
+                                                    init: null
+                                                },
+                                                {
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'value'
+                                                    },
+                                                    init: null
+                                                }
+                                            ],
+                                            kind: 'let'
+                                        },
+                                        right: {
+                                            type: 'Identifier',
+                                            name: 'properties'
+                                        },
+                                        body: {
+                                            type: 'BlockStatement',
+                                            body: [{
+                                                    type: 'Property',
+                                                    key: {
+                                                        type: 'Identifier',
+                                                        name: 'key'
+                                                    },
+                                                    value: {
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'Identifier',
+                                                            name: 'double'
+                                                        },
+                                                        arguments: [{
+                                                                type: 'Identifier',
+                                                                name: 'value'
+                                                            }]
+                                                    },
+                                                    kind: 'init',
+                                                    computed: true
+                                                }]
+                                        },
+                                        remove: null
+                                    }]
+                            }
+                        }
+                    ],
+                    bound: false
+                }, {
+                    this: this,
+                    properties: properties,
+                    ion: ion,
+                    _ref9: _ref9,
+                    templates: templates,
+                    _ref12: _ref12
+                });
+            }),
+            {
+                x: 1,
+                y: 2
+            },
+            {
+                x: 4,
+                z: 3,
+                y: void 0
+            },
+            {
+                x: 8,
+                y: 4,
+                z: 6
+            }
+        ],
+        [
+            'for else statements',
+            {},
+            ion.template(function (properties) {
+                var _ref7 = {};
+                for (var key in properties) {
+                    var value = properties[key];
+                    var value = properties[key];
+                    _ref7[key] = value;
+                }
+                return _ref7;
+            }, function (properties) {
+                return ion.createRuntime({
+                    type: 'Template',
+                    body: [{
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'ObjectExpression',
+                                objectType: {
+                                    type: 'ObjectExpression',
+                                    properties: []
+                                },
+                                properties: [{
+                                        type: 'ForInStatement',
+                                        left: {
+                                            type: 'VariableDeclaration',
+                                            declarations: [
+                                                {
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'key'
+                                                    },
+                                                    init: null
+                                                },
+                                                {
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'value'
+                                                    },
+                                                    init: null
+                                                }
+                                            ],
+                                            kind: 'let'
+                                        },
+                                        right: {
+                                            type: 'Identifier',
+                                            name: 'properties'
+                                        },
+                                        body: {
+                                            type: 'BlockStatement',
+                                            body: [{
+                                                    type: 'Property',
+                                                    key: {
+                                                        type: 'Identifier',
+                                                        name: 'key'
+                                                    },
+                                                    value: {
+                                                        type: 'Identifier',
+                                                        name: 'value'
+                                                    },
+                                                    kind: 'init',
+                                                    computed: true
+                                                }]
+                                        },
+                                        remove: {
+                                            type: 'BlockStatement',
+                                            body: [{
+                                                    type: 'Property',
+                                                    key: {
+                                                        type: 'Identifier',
+                                                        name: 'key'
+                                                    },
+                                                    value: {
+                                                        type: 'UnaryExpression',
+                                                        operator: 'void',
+                                                        prefix: true,
+                                                        argument: {
+                                                            type: 'Literal',
+                                                            value: 0
+                                                        }
+                                                    },
+                                                    kind: 'init',
+                                                    computed: true
+                                                }]
+                                        }
+                                    }]
+                            }
+                        }],
+                    bound: false
+                }, {
+                    this: this,
+                    properties: properties,
+                    ion: ion,
+                    _ref9: _ref9,
+                    templates: templates,
+                    _ref12: _ref12
+                });
+            }),
+            {
+                x: 1,
+                y: 2
+            },
+            {
+                x: 4,
+                y: void 0,
+                z: 3
+            },
+            {
+                x: 4,
+                z: 3
+            }
+        ],
+        [
+            'shared variables functions',
+            {},
+            ion.template(function (properties) {
+                var factor = properties.factor != null ? properties.factor : 3;
+                function multiply(a) {
+                    return a * factor;
+                }
+                var _ref8 = {};
+                for (var key in properties) {
+                    var value = properties[key];
+                    var value = properties[key];
+                    if (key !== 'factor') {
+                        _ref8[key] = multiply(value);
+                    }
+                }
+                return _ref8;
+            }, function (properties) {
+                return ion.createRuntime({
+                    type: 'Template',
+                    body: [
+                        {
+                            type: 'VariableDeclaration',
+                            declarations: [{
+                                    type: 'VariableDeclarator',
+                                    id: {
+                                        type: 'Identifier',
+                                        name: 'factor'
+                                    },
+                                    init: {
+                                        type: 'ConditionalExpression',
+                                        test: {
+                                            type: 'BinaryExpression',
+                                            operator: '!=',
+                                            left: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'properties'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'factor'
+                                                }
+                                            },
+                                            right: {
+                                                type: 'Literal',
+                                                value: null
+                                            }
+                                        },
+                                        consequent: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'properties'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'factor'
+                                            }
+                                        },
+                                        alternate: {
+                                            type: 'Literal',
+                                            value: 3
+                                        }
+                                    }
+                                }],
+                            kind: 'let'
+                        },
+                        {
+                            type: 'VariableDeclaration',
+                            declarations: [{
+                                    type: 'VariableDeclarator',
+                                    id: {
+                                        type: 'Identifier',
+                                        name: 'multiply'
+                                    },
+                                    init: {
+                                        type: 'Function',
+                                        context: true,
+                                        value: function (_context) {
+                                            return function multiply(a) {
+                                                var factor = _context.get('factor');
+                                                return a * factor;
+                                            };
+                                        }
+                                    }
+                                }],
+                            kind: 'const'
+                        },
+                        {
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'ObjectExpression',
+                                objectType: {
+                                    type: 'ObjectExpression',
+                                    properties: []
+                                },
+                                properties: [{
+                                        type: 'ForInStatement',
+                                        left: {
+                                            type: 'VariableDeclaration',
+                                            declarations: [
+                                                {
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'key'
+                                                    },
+                                                    init: null
+                                                },
+                                                {
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'value'
+                                                    },
+                                                    init: null
+                                                }
+                                            ],
+                                            kind: 'let'
+                                        },
+                                        right: {
+                                            type: 'Identifier',
+                                            name: 'properties'
+                                        },
+                                        body: {
+                                            type: 'BlockStatement',
+                                            body: [{
+                                                    type: 'IfStatement',
+                                                    test: {
+                                                        type: 'BinaryExpression',
+                                                        operator: '!==',
+                                                        left: {
+                                                            type: 'Identifier',
+                                                            name: 'key'
+                                                        },
+                                                        right: {
+                                                            type: 'Literal',
+                                                            value: 'factor'
+                                                        }
+                                                    },
+                                                    consequent: {
+                                                        type: 'BlockStatement',
+                                                        body: [{
+                                                                type: 'Property',
+                                                                key: {
+                                                                    type: 'Identifier',
+                                                                    name: 'key'
+                                                                },
+                                                                value: {
+                                                                    type: 'CallExpression',
+                                                                    callee: {
+                                                                        type: 'Identifier',
+                                                                        name: 'multiply'
+                                                                    },
+                                                                    arguments: [{
+                                                                            type: 'Identifier',
+                                                                            name: 'value'
+                                                                        }]
+                                                                },
+                                                                kind: 'init',
+                                                                computed: true
+                                                            }]
+                                                    }
+                                                }]
+                                        },
+                                        remove: null
+                                    }]
+                            }
+                        }
+                    ],
+                    bound: false
+                }, {
+                    this: this,
+                    properties: properties,
+                    ion: ion,
+                    _ref9: _ref9,
+                    templates: templates,
+                    _ref12: _ref12
+                });
+            }),
+            {
+                x: 1,
+                y: 2
+            },
+            {
+                x: 4,
+                y: void 0,
+                z: 5,
+                factor: 10
+            },
+            {
+                x: 40,
+                y: 6,
+                z: 50
+            }
+        ],
+        [
+            'reactive destructured parameters',
+            {},
+            ion.template(function (_ref) {
+                var a = _ref.a;
+                var b = _ref.b;
+                return a + b;
+            }, function (_ref) {
+                return ion.createRuntime({
+                    type: 'Template',
+                    body: [
+                        {
+                            type: 'VariableDeclaration',
+                            declarations: [{
+                                    type: 'VariableDeclarator',
+                                    id: {
+                                        type: 'Identifier',
+                                        name: 'a'
+                                    },
+                                    init: {
+                                        type: 'MemberExpression',
+                                        object: {
+                                            type: 'Identifier',
+                                            name: '_ref'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'a'
+                                        },
+                                        computed: false
+                                    }
+                                }],
+                            kind: 'let'
+                        },
+                        {
+                            type: 'VariableDeclaration',
+                            declarations: [{
+                                    type: 'VariableDeclarator',
+                                    id: {
+                                        type: 'Identifier',
+                                        name: 'b'
+                                    },
+                                    init: {
+                                        type: 'MemberExpression',
+                                        object: {
+                                            type: 'Identifier',
+                                            name: '_ref'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'b'
+                                        },
+                                        computed: false
+                                    }
+                                }],
+                            kind: 'let'
+                        },
+                        {
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'BinaryExpression',
+                                operator: '+',
+                                left: {
+                                    type: 'Identifier',
+                                    name: 'a'
+                                },
+                                right: {
+                                    type: 'Identifier',
+                                    name: 'b'
+                                }
+                            }
+                        }
+                    ],
+                    bound: false
+                }, {
+                    this: this,
+                    _ref: _ref,
+                    ion: ion,
+                    _ref9: _ref9,
+                    templates: templates,
+                    _ref12: _ref12
+                });
+            }),
+            {
+                a: 1,
+                b: 2
+            },
+            { a: 5 },
+            7
+        ],
+        [
+            'array comprehensions',
+            {},
+            ion.template(function (_ref2) {
+                var items = _ref2.items;
+                var _ref5 = [];
+                for (var _i = 0; _i < items.length; _i++) {
+                    var i = _i;
+                    var x = items[_i];
+                    _ref5.push(x + i);
+                }
+                return _ref5;
+            }, function (_ref2) {
+                return ion.createRuntime({
+                    type: 'Template',
+                    body: [
+                        {
+                            type: 'VariableDeclaration',
+                            declarations: [{
+                                    type: 'VariableDeclarator',
+                                    id: {
+                                        type: 'Identifier',
+                                        name: 'items'
+                                    },
+                                    init: {
+                                        type: 'MemberExpression',
+                                        object: {
+                                            type: 'Identifier',
+                                            name: '_ref2'
+                                        },
+                                        property: {
+                                            type: 'Identifier',
+                                            name: 'items'
+                                        },
+                                        computed: false
+                                    }
+                                }],
+                            kind: 'let'
+                        },
+                        {
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'ObjectExpression',
+                                objectType: {
+                                    type: 'ArrayExpression',
+                                    elements: []
+                                },
+                                properties: [{
+                                        type: 'ForOfStatement',
+                                        left: {
+                                            type: 'VariableDeclaration',
+                                            declarations: [
+                                                {
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'x'
+                                                    },
+                                                    init: null
+                                                },
+                                                {
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'i'
+                                                    },
+                                                    init: null
+                                                }
+                                            ],
+                                            kind: 'let'
+                                        },
+                                        right: {
+                                            type: 'Identifier',
+                                            name: 'items'
+                                        },
+                                        body: {
+                                            type: 'ExpressionStatement',
+                                            expression: {
+                                                type: 'BinaryExpression',
+                                                operator: '+',
+                                                left: {
+                                                    type: 'Identifier',
+                                                    name: 'x'
+                                                },
+                                                right: {
+                                                    type: 'Identifier',
+                                                    name: 'i'
+                                                }
+                                            }
+                                        }
+                                    }]
+                            }
+                        }
+                    ],
+                    bound: false
+                }, {
+                    this: this,
+                    _ref2: _ref2,
+                    ion: ion,
+                    _ref9: _ref9,
+                    templates: templates,
+                    _ref12: _ref12
+                });
+            }),
+            {
+                items: [
+                    1,
+                    2,
+                    3
+                ]
+            },
+            { items: { 3: 4 } },
+            [
+                1,
+                3,
+                5,
+                7
+            ]
+        ],
+        [
+            'changing object with function',
+            {},
+            ion.template(function (object) {
+                return object.sum();
+            }, function (object) {
+                return ion.createRuntime({
+                    type: 'Template',
+                    body: [{
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'object'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'sum'
+                                    }
+                                },
+                                arguments: []
+                            }
+                        }],
+                    bound: false
+                }, {
+                    this: this,
+                    object: object,
+                    ion: ion,
+                    _ref9: _ref9,
+                    templates: templates,
+                    _ref12: _ref12
+                });
+            }),
+            {
+                sum: function () {
+                    return this.x + this.y;
+                },
+                x: 1,
+                y: 2
+            },
+            { x: 6 },
+            8
+        ],
+        [
+            'nested templates',
+            {},
+            function () {
+                var sum = ion.template(function (_ref3) {
+                        var a = _ref3.deep.a;
+                        var b = _ref3.deep.b;
+                        return a + b;
+                    }, function (_ref3) {
+                        return ion.createRuntime({
+                            type: 'Template',
+                            body: [
+                                {
+                                    type: 'VariableDeclaration',
+                                    declarations: [{
+                                            type: 'VariableDeclarator',
+                                            id: {
+                                                type: 'Identifier',
+                                                name: 'a'
+                                            },
+                                            init: {
+                                                type: 'MemberExpression',
+                                                object: {
+                                                    type: 'MemberExpression',
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: '_ref3'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'deep'
+                                                    },
+                                                    computed: false
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'a'
+                                                },
+                                                computed: false
+                                            }
+                                        }],
+                                    kind: 'let'
+                                },
+                                {
+                                    type: 'VariableDeclaration',
+                                    declarations: [{
+                                            type: 'VariableDeclarator',
+                                            id: {
+                                                type: 'Identifier',
+                                                name: 'b'
+                                            },
+                                            init: {
+                                                type: 'MemberExpression',
+                                                object: {
+                                                    type: 'MemberExpression',
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: '_ref3'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'deep'
+                                                    },
+                                                    computed: false
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'b'
+                                                },
+                                                computed: false
+                                            }
+                                        }],
+                                    kind: 'let'
+                                },
+                                {
+                                    type: 'ReturnStatement',
+                                    argument: {
+                                        type: 'BinaryExpression',
+                                        operator: '+',
+                                        left: {
+                                            type: 'Identifier',
+                                            name: 'a'
+                                        },
+                                        right: {
+                                            type: 'Identifier',
+                                            name: 'b'
+                                        }
+                                    }
+                                }
+                            ],
+                            bound: false,
+                            name: {
+                                type: 'Identifier',
+                                name: 'sum'
+                            }
+                        }, {
+                            this: this,
+                            _ref3: _ref3,
+                            sum: sum,
+                            ion: ion,
+                            _ref9: _ref9,
+                            templates: templates,
+                            _ref12: _ref12
+                        });
+                    });
+                return ion.template(function (object) {
+                    return sum(object.one);
+                }, function (object) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'Identifier',
+                                        name: 'sum'
+                                    },
+                                    arguments: [{
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'object'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'one'
+                                            }
+                                        }]
+                                }
+                            }],
+                        bound: false
+                    }, {
+                        this: this,
+                        object: object,
+                        sum: sum,
+                        ion: ion,
+                        _ref9: _ref9,
+                        templates: templates,
+                        _ref12: _ref12
+                    });
+                });
+            }(),
+            {
+                one: {
+                    deep: {
+                        a: 1,
+                        b: 2
+                    }
+                }
+            },
+            { one: { deep: { a: 2 } } },
+            4
+        ],
+        [
+            'bidirectional properties',
+            {},
+            ion.template(function (object) {
+                object.x = object.y;
+                return object;
+            }, function (object) {
+                return ion.createRuntime({
+                    type: 'Template',
+                    body: [
+                        {
+                            type: 'Property',
+                            key: {
+                                type: 'Identifier',
+                                name: 'object'
+                            },
+                            value: {
+                                type: 'ObjectExpression',
+                                properties: [{
+                                        type: 'Property',
+                                        key: {
+                                            type: 'Identifier',
+                                            name: 'x'
+                                        },
+                                        value: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'object'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'y'
+                                            }
+                                        },
+                                        kind: 'init',
+                                        bi: true
+                                    }]
+                            },
+                            kind: 'init'
+                        },
+                        {
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'Identifier',
+                                name: 'object'
+                            }
+                        }
+                    ],
+                    bound: false
+                }, {
+                    this: this,
+                    object: object,
+                    ion: ion,
+                    _ref9: _ref9,
+                    templates: templates,
+                    _ref12: _ref12
+                });
+            }),
+            {
+                x: 1,
+                y: 2
+            },
+            { x: 3 },
+            {
+                x: 3,
+                y: 3
+            }
+        ],
+        [
+            'literal objects',
+            {},
+            ion.template(function () {
+                return {
+                    touch: 1,
+                    'touch-start': 2
+                };
+            }, function () {
+                return ion.createRuntime({
+                    type: 'Template',
+                    body: [{
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'ObjectExpression',
+                                properties: [
+                                    {
+                                        type: 'Property',
+                                        key: {
+                                            type: 'Identifier',
+                                            name: 'touch'
+                                        },
+                                        value: {
+                                            type: 'Literal',
+                                            value: 1
+                                        },
+                                        kind: 'init'
+                                    },
+                                    {
+                                        type: 'Property',
+                                        key: {
+                                            type: 'Literal',
+                                            value: 'touch-start'
+                                        },
+                                        value: {
+                                            type: 'Literal',
+                                            value: 2
+                                        },
+                                        kind: 'init'
+                                    }
+                                ]
+                            }
+                        }],
+                    bound: false
+                }, {
+                    this: this,
+                    ion: ion,
+                    _ref9: _ref9,
+                    templates: templates,
+                    _ref12: _ref12
+                });
+            }),
+            {},
+            {},
+            {
+                touch: 1,
+                'touch-start': 2
+            }
+        ],
+        _ref9,
+        function () {
+            var Type = function () {
+            };
+            var alpha = ion.patch(new Type(), { name: 'alpha' });
+            var beta = ion.patch(new Type(), { name: 'beta' });
+            var charlie = ion.patch(new Type(), { name: 'charlie' });
+            var next = 0;
+            var nextId = function () {
+                return next++;
+            };
+            return [
+                'for in reuse values',
+                {},
+                ion.template(function (items) {
+                    var _ref10 = [];
+                    for (var _i2 = 0; _i2 < items.length; _i2++) {
+                        var index = _i2;
+                        var item = items[_i2];
+                        _ref10.push({
+                            id: nextId(),
+                            name: item.name,
+                            index: index
+                        });
+                    }
+                    return _ref10;
+                }, function (items) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'ArrayExpression',
+                                        elements: []
+                                    },
+                                    properties: [{
+                                            type: 'ForOfStatement',
+                                            left: {
+                                                type: 'VariableDeclaration',
+                                                declarations: [
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'item'
+                                                        },
+                                                        init: null
+                                                    },
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'index'
+                                                        },
+                                                        init: null
+                                                    }
+                                                ],
+                                                kind: 'let'
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'items'
+                                            },
+                                            body: {
+                                                type: 'BlockStatement',
+                                                body: [{
+                                                        type: 'ExpressionStatement',
+                                                        expression: {
+                                                            type: 'ObjectExpression',
+                                                            properties: [
+                                                                {
+                                                                    type: 'Property',
+                                                                    key: {
+                                                                        type: 'Identifier',
+                                                                        name: 'id'
+                                                                    },
+                                                                    value: {
+                                                                        type: 'CallExpression',
+                                                                        callee: {
+                                                                            type: 'Identifier',
+                                                                            name: 'nextId'
+                                                                        },
+                                                                        arguments: []
+                                                                    },
+                                                                    kind: 'init'
+                                                                },
+                                                                {
+                                                                    type: 'Property',
+                                                                    key: {
+                                                                        type: 'Identifier',
+                                                                        name: 'name'
+                                                                    },
+                                                                    value: {
+                                                                        type: 'MemberExpression',
+                                                                        computed: false,
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: 'item'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'name'
+                                                                        }
+                                                                    },
+                                                                    kind: 'init'
+                                                                },
+                                                                {
+                                                                    type: 'Property',
+                                                                    key: {
+                                                                        type: 'Identifier',
+                                                                        name: 'index'
+                                                                    },
+                                                                    value: {
+                                                                        type: 'Identifier',
+                                                                        name: 'index'
+                                                                    },
+                                                                    kind: 'init'
+                                                                }
+                                                            ]
+                                                        }
+                                                    }]
+                                            },
+                                            remove: null
+                                        }]
+                                }
+                            }],
+                        bound: false
+                    }, {
+                        this: this,
+                        items: items,
+                        Type: Type,
+                        alpha: alpha,
+                        beta: beta,
+                        charlie: charlie,
+                        next: next,
+                        nextId: nextId,
+                        ion: ion,
+                        _ref9: _ref9,
+                        templates: templates,
+                        _ref12: _ref12
+                    });
+                }),
+                [
+                    alpha,
+                    beta,
+                    charlie
+                ],
+                {
+                    0: alpha,
+                    1: charlie,
+                    2: void 0
+                },
+                [
+                    {
+                        id: 0,
+                        name: 'alpha',
+                        index: 0
+                    },
+                    {
+                        id: 2,
+                        name: 'charlie',
+                        index: 1
+                    }
+                ]
+            ];
+        }(),
+        function () {
+            var next = 0;
+            var nextId = function () {
+                return next++;
+            };
+            return [
+                'for of reuse keys',
+                {},
+                ion.template(function (items) {
+                    var _ref11 = [];
+                    for (var key in items) {
+                        var value = items[key];
+                        var value = items[key];
+                        _ref11.push({
+                            id: nextId(),
+                            key: key,
+                            value: value
+                        });
+                    }
+                    return _ref11;
+                }, function (items) {
+                    return ion.createRuntime({
+                        type: 'Template',
+                        body: [{
+                                type: 'ReturnStatement',
+                                argument: {
+                                    type: 'ObjectExpression',
+                                    objectType: {
+                                        type: 'ArrayExpression',
+                                        elements: []
+                                    },
+                                    properties: [{
+                                            type: 'ForInStatement',
+                                            left: {
+                                                type: 'VariableDeclaration',
+                                                declarations: [
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'key'
+                                                        },
+                                                        init: null
+                                                    },
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'value'
+                                                        },
+                                                        init: null
+                                                    }
+                                                ],
+                                                kind: 'let'
+                                            },
+                                            right: {
+                                                type: 'Identifier',
+                                                name: 'items'
+                                            },
+                                            body: {
+                                                type: 'BlockStatement',
+                                                body: [{
+                                                        type: 'ExpressionStatement',
+                                                        expression: {
+                                                            type: 'ObjectExpression',
+                                                            properties: [
+                                                                {
+                                                                    type: 'Property',
+                                                                    key: {
+                                                                        type: 'Identifier',
+                                                                        name: 'id'
+                                                                    },
+                                                                    value: {
+                                                                        type: 'CallExpression',
+                                                                        callee: {
+                                                                            type: 'Identifier',
+                                                                            name: 'nextId'
+                                                                        },
+                                                                        arguments: []
+                                                                    },
+                                                                    kind: 'init'
+                                                                },
+                                                                {
+                                                                    type: 'Property',
+                                                                    key: {
+                                                                        type: 'Identifier',
+                                                                        name: 'key'
+                                                                    },
+                                                                    value: {
+                                                                        type: 'Identifier',
+                                                                        name: 'key'
+                                                                    },
+                                                                    kind: 'init'
+                                                                },
+                                                                {
+                                                                    type: 'Property',
+                                                                    key: {
+                                                                        type: 'Identifier',
+                                                                        name: 'value'
+                                                                    },
+                                                                    value: {
+                                                                        type: 'Identifier',
+                                                                        name: 'value'
+                                                                    },
+                                                                    kind: 'init'
+                                                                }
+                                                            ]
+                                                        }
+                                                    }]
+                                            },
+                                            remove: null
+                                        }]
+                                }
+                            }],
+                        bound: false
+                    }, {
+                        this: this,
+                        items: items,
+                        next: next,
+                        nextId: nextId,
+                        ion: ion,
+                        _ref9: _ref9,
+                        templates: templates,
+                        _ref12: _ref12
+                    });
+                }),
+                {
+                    alpha: 1,
+                    beta: 2,
+                    charlie: 3
+                },
+                {
+                    beta: 3,
+                    charlie: void 0
+                },
+                [
+                    {
+                        id: 0,
+                        key: 'alpha',
+                        value: 1
+                    },
+                    {
+                        id: 1,
+                        key: 'beta',
+                        value: 3
+                    }
+                ]
+            ];
+        }()
+    ];
+var _ref12 = {};
+for (var _i3 = 0; _i3 < templates.length; _i3++) {
+    var _ref13 = templates[_i3];
+    var name = _ref13[0];
+    var thisArg = _ref13[1];
+    var templateType = _ref13[2];
+    var argument = _ref13[3];
+    var patch = _ref13[4];
+    var expected = _ref13[5];
+    if (expected != null) {
+        _ref12[name] = function (thisArg, templateType, argument, patch, expected) {
+            return function (done) {
+                var template = templateType.template.call(thisArg, argument);
+                function checkIfDone(check) {
+                    if (JSON.stringify(check) === JSON.stringify(expected)) {
+                        template.deactivate();
+                        done();
+                    }
+                }
+                template.activate();
+                template.watch(function (value) {
+                    checkIfDone(value);
+                    ion.observe(value, function (changes) {
+                        checkIfDone(value);
+                    });
+                });
+                ion.patch(argument, patch);
+            };
+        }(thisArg, templateType, argument, patch, expected);
+    }
+}
+module.exports = exports = { test: _ref12 };
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/test/reactiveTemplates',_ion_test_reactiveTemplates_);
+    else
+      _ion_test_reactiveTemplates_.call(this, module, exports, require);
+  }
+  else {
+    _ion_test_reactiveTemplates_.call(this);
+  }
+}).call(this)
 //@ sourceMappingURL=./reactiveTemplates.map

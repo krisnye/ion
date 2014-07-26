@@ -2,6 +2,9 @@ void (function(){var _ion_es6_Set_ = function(module,exports,require){'use stric
 var ion = require('ion');
 require('./Map');
 function SetShim(items) {
+    if (items != null) {
+        throw new Error('Don\'t add items in the constructor, IE implementation of Set breaks this');
+    }
     var map = new Map();
     var methods = {
             has: function (key) {
@@ -26,12 +29,6 @@ function SetShim(items) {
         var value = methods[key];
         Object.defineProperty(this, key, { value: value });
     }
-    if (items != null) {
-        for (var _i = 0; _i < items.length; _i++) {
-            var item = items[_i];
-            this.add(item);
-        }
-    }
 }
 if (!(global.Set != null) || !(Set.prototype.forEach != null)) {
     console.warn('Shimming Set');
@@ -42,10 +39,9 @@ var test = exports.test = function () {
         var a = {};
         var b = function () {
         };
-        var set = new Set([
-                a,
-                b
-            ]);
+        var set = new Set();
+        set.add(a);
+        set.add(b);
         if (!set.has(a))
             throw new Error('Assertion Failed: (set.has(a))');
         if (!set.has(b))

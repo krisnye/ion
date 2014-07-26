@@ -7,7 +7,7 @@ export class IfStatement extends Statement
         activate: ->
             super
             @testExpression ?= @context.createRuntime(@test)
-            (@testExpression.watch)
+            @testExpression.watch(
                 @testExpressionWatcher ?= (value) =>
                     if value
                         if @alternateStatement?.isActive
@@ -20,10 +20,10 @@ export class IfStatement extends Statement
                         if @alternate?
                             @alternateStatement ?= @context.createRuntime(@alternate)
                             @alternateStatement.activate()
+            )
         deactivate: ->
             super
-            (@testExpression.unwatch)
-                @testExpressionWatcher
+            @testExpression.unwatch(@testExpressionWatcher)
             if @alternateStatement?.isActive
                 @alternateStatement?.deactivate()
             if @consequentStatement?.isActive

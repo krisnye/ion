@@ -30,7 +30,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                         ], ['node_modules'].concat(packageJson.build.client.exclude));
                     for (var key in _ref3) {
                         var source = _ref3[key];
-                        clientOutput[source.path.substring(nodepath.length)] = source.read();
+                        clientOutput.write(source.path.substring(nodepath.length), source.read());
                     }
                 }
             }
@@ -50,7 +50,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                         ], ['node_modules'].concat(packageJson.build.server.exclude));
                     for (var key in _ref5) {
                         var source = _ref5[key];
-                        serverOutput[source.path.substring(nodepath.length)] = source.read();
+                        serverOutput.write(source.path.substring(nodepath.length), source.read());
                     }
                 }
             }
@@ -86,35 +86,34 @@ module.exports = exports = ion.template(function (packagePatch) {
                 '.jar',
                 '.ion'
             ]);
-        for (var key in _ref6) {
-            var source = _ref6[key];
-            var target = output.getFile(key);
-            output[key] = source.read();
+        for (var path in _ref6) {
+            var file = _ref6[path];
+            output.write(path, file.read());
         }
     }
     {
         var _ref7 = input.search('.ion', 'js');
-        for (var key in _ref7) {
-            var source = _ref7[key];
-            var targetPath = builder.changeExtension(key, '.js');
-            output[targetPath] = builder.compileIon(source);
+        for (var path in _ref7) {
+            var file = _ref7[path];
+            var targetPath = builder.changeExtension(path, '.js');
+            output.write(targetPath, builder.compileIon(file));
         }
     }
     var pageOutput = output.getDirectory('WEB-INF/pages');
     {
         var _ref8 = input.search('.ionpage');
-        for (var key in _ref8) {
-            var source = _ref8[key];
-            var targetPath = builder.changeExtension(key, '.js');
-            pageOutput[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(source) + ' })';
+        for (var path in _ref8) {
+            var file = _ref8[path];
+            var targetPath = builder.changeExtension(path, '.js');
+            pageOutput.write(targetPath, '(function ' + path.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(file) + ' })');
         }
     }
     {
         var _ref9 = input.search('.coffeepage');
-        for (var key in _ref9) {
-            var source = _ref9[key];
-            var targetPath = builder.changeExtension(key, '.js');
-            pageOutput[targetPath] = '(function ' + key.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(source) + ' })';
+        for (var path in _ref9) {
+            var file = _ref9[path];
+            var targetPath = builder.changeExtension(path, '.js');
+            pageOutput.write(targetPath, '(function ' + path.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(file) + ' })');
         }
     }
 }, function (packagePatch) {
@@ -670,7 +669,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         alternate: null
                                     }
                                 ]
-                            }
+                            },
+                            remove: null
                         }
                     ]
                 },
@@ -887,53 +887,28 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         body: {
                                             type: 'BlockStatement',
                                             body: [{
-                                                    type: 'Property',
-                                                    key: {
-                                                        type: 'Identifier',
-                                                        name: 'clientOutput'
-                                                    },
-                                                    value: {
-                                                        type: 'ObjectExpression',
-                                                        properties: [{
-                                                                type: 'Property',
-                                                                key: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'MemberExpression',
-                                                                            computed: false,
-                                                                            object: {
-                                                                                type: 'Identifier',
-                                                                                name: 'source'
-                                                                            },
-                                                                            property: {
-                                                                                type: 'Identifier',
-                                                                                name: 'path'
-                                                                            }
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'substring'
-                                                                        }
-                                                                    },
-                                                                    arguments: [{
-                                                                            type: 'MemberExpression',
-                                                                            computed: false,
-                                                                            object: {
-                                                                                type: 'Identifier',
-                                                                                name: 'nodepath'
-                                                                            },
-                                                                            property: {
-                                                                                type: 'Identifier',
-                                                                                name: 'length'
-                                                                            }
-                                                                        }]
-                                                                },
-                                                                value: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
+                                                    type: 'ExpressionStatement',
+                                                    expression: {
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'clientOutput'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'write'
+                                                            }
+                                                        },
+                                                        arguments: [
+                                                            {
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
                                                                         type: 'MemberExpression',
                                                                         computed: false,
                                                                         object: {
@@ -942,23 +917,55 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                         },
                                                                         property: {
                                                                             type: 'Identifier',
-                                                                            name: 'read'
+                                                                            name: 'path'
                                                                         }
                                                                     },
-                                                                    arguments: []
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'substring'
+                                                                    }
                                                                 },
-                                                                kind: 'init',
-                                                                computed: true
-                                                            }]
-                                                    },
-                                                    kind: 'init'
+                                                                arguments: [{
+                                                                        type: 'MemberExpression',
+                                                                        computed: false,
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: 'nodepath'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'length'
+                                                                        }
+                                                                    }]
+                                                            },
+                                                            {
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
+                                                                        type: 'Identifier',
+                                                                        name: 'source'
+                                                                    },
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'read'
+                                                                    }
+                                                                },
+                                                                arguments: []
+                                                            }
+                                                        ]
+                                                    }
                                                 }]
-                                        }
+                                        },
+                                        remove: null
                                     }
                                 ]
-                            }
+                            },
+                            remove: null
                         }]
-                }
+                },
+                remove: null
             },
             {
                 type: 'ForOfStatement',
@@ -1171,53 +1178,28 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         body: {
                                             type: 'BlockStatement',
                                             body: [{
-                                                    type: 'Property',
-                                                    key: {
-                                                        type: 'Identifier',
-                                                        name: 'serverOutput'
-                                                    },
-                                                    value: {
-                                                        type: 'ObjectExpression',
-                                                        properties: [{
-                                                                type: 'Property',
-                                                                key: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'MemberExpression',
-                                                                            computed: false,
-                                                                            object: {
-                                                                                type: 'Identifier',
-                                                                                name: 'source'
-                                                                            },
-                                                                            property: {
-                                                                                type: 'Identifier',
-                                                                                name: 'path'
-                                                                            }
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'substring'
-                                                                        }
-                                                                    },
-                                                                    arguments: [{
-                                                                            type: 'MemberExpression',
-                                                                            computed: false,
-                                                                            object: {
-                                                                                type: 'Identifier',
-                                                                                name: 'nodepath'
-                                                                            },
-                                                                            property: {
-                                                                                type: 'Identifier',
-                                                                                name: 'length'
-                                                                            }
-                                                                        }]
-                                                                },
-                                                                value: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
+                                                    type: 'ExpressionStatement',
+                                                    expression: {
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'serverOutput'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'write'
+                                                            }
+                                                        },
+                                                        arguments: [
+                                                            {
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
                                                                         type: 'MemberExpression',
                                                                         computed: false,
                                                                         object: {
@@ -1226,23 +1208,55 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                         },
                                                                         property: {
                                                                             type: 'Identifier',
-                                                                            name: 'read'
+                                                                            name: 'path'
                                                                         }
                                                                     },
-                                                                    arguments: []
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'substring'
+                                                                    }
                                                                 },
-                                                                kind: 'init',
-                                                                computed: true
-                                                            }]
-                                                    },
-                                                    kind: 'init'
+                                                                arguments: [{
+                                                                        type: 'MemberExpression',
+                                                                        computed: false,
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: 'nodepath'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'length'
+                                                                        }
+                                                                    }]
+                                                            },
+                                                            {
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
+                                                                        type: 'Identifier',
+                                                                        name: 'source'
+                                                                    },
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'read'
+                                                                    }
+                                                                },
+                                                                arguments: []
+                                                            }
+                                                        ]
+                                                    }
                                                 }]
-                                        }
+                                        },
+                                        remove: null
                                     }
                                 ]
-                            }
+                            },
+                            remove: null
                         }]
-                }
+                },
+                remove: null
             },
             {
                 type: 'ExpressionStatement',
@@ -1527,7 +1541,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'key'
+                                name: 'path'
                             },
                             init: null
                         },
@@ -1535,7 +1549,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'source'
+                                name: 'file'
                             },
                             init: null
                         }
@@ -1598,74 +1612,71 @@ module.exports = exports = ion.template(function (packagePatch) {
                 },
                 body: {
                     type: 'BlockStatement',
-                    body: [
-                        {
-                            type: 'VariableDeclaration',
-                            declarations: [{
-                                    type: 'VariableDeclarator',
-                                    id: {
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
                                         type: 'Identifier',
-                                        name: 'target'
+                                        name: 'output'
                                     },
-                                    init: {
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'write'
+                                    }
+                                },
+                                arguments: [
+                                    {
+                                        type: 'Identifier',
+                                        name: 'path'
+                                    },
+                                    {
                                         type: 'CallExpression',
                                         callee: {
                                             type: 'MemberExpression',
                                             computed: false,
                                             object: {
                                                 type: 'Identifier',
-                                                name: 'output'
+                                                name: 'file'
                                             },
                                             property: {
                                                 type: 'Identifier',
-                                                name: 'getFile'
+                                                name: 'read'
                                             }
                                         },
-                                        arguments: [{
-                                                type: 'Identifier',
-                                                name: 'key'
-                                            }]
+                                        arguments: []
                                     }
-                                }],
-                            kind: 'let'
-                        },
-                        {
-                            type: 'Property',
-                            key: {
-                                type: 'Identifier',
-                                name: 'output'
-                            },
-                            value: {
-                                type: 'ObjectExpression',
-                                properties: [{
-                                        type: 'Property',
-                                        key: {
-                                            type: 'Identifier',
-                                            name: 'key'
-                                        },
-                                        value: {
-                                            type: 'CallExpression',
-                                            callee: {
-                                                type: 'MemberExpression',
-                                                computed: false,
-                                                object: {
-                                                    type: 'Identifier',
-                                                    name: 'source'
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'read'
-                                                }
-                                            },
-                                            arguments: []
-                                        },
-                                        kind: 'init',
-                                        computed: true
+                                ]
+                            }
+                        }]
+                },
+                remove: {
+                    type: 'BlockStatement',
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'output'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'delete'
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'path'
                                     }]
-                            },
-                            kind: 'init'
-                        }
-                    ]
+                            }
+                        }]
                 }
             },
             {
@@ -1677,7 +1688,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'key'
+                                name: 'path'
                             },
                             init: null
                         },
@@ -1685,7 +1696,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'source'
+                                name: 'file'
                             },
                             init: null
                         }
@@ -1745,7 +1756,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         arguments: [
                                             {
                                                 type: 'Identifier',
-                                                name: 'key'
+                                                name: 'path'
                                             },
                                             {
                                                 type: 'Literal',
@@ -1757,45 +1768,74 @@ module.exports = exports = ion.template(function (packagePatch) {
                             kind: 'let'
                         },
                         {
-                            type: 'Property',
-                            key: {
-                                type: 'Identifier',
-                                name: 'output'
-                            },
-                            value: {
-                                type: 'ObjectExpression',
-                                properties: [{
-                                        type: 'Property',
-                                        key: {
-                                            type: 'Identifier',
-                                            name: 'targetPath'
-                                        },
-                                        value: {
-                                            type: 'CallExpression',
-                                            callee: {
-                                                type: 'MemberExpression',
-                                                computed: false,
-                                                object: {
-                                                    type: 'Identifier',
-                                                    name: 'builder'
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'compileIon'
-                                                }
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'output'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'write'
+                                    }
+                                },
+                                arguments: [
+                                    {
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    },
+                                    {
+                                        type: 'CallExpression',
+                                        callee: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'builder'
                                             },
-                                            arguments: [{
-                                                    type: 'Identifier',
-                                                    name: 'source'
-                                                }]
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'compileIon'
+                                            }
                                         },
-                                        kind: 'init',
-                                        computed: true
-                                    }]
-                            },
-                            kind: 'init'
+                                        arguments: [{
+                                                type: 'Identifier',
+                                                name: 'file'
+                                            }]
+                                    }
+                                ]
+                            }
                         }
                     ]
+                },
+                remove: {
+                    type: 'BlockStatement',
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'output'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'delete'
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    }]
+                            }
+                        }]
                 }
             },
             {
@@ -1837,7 +1877,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'key'
+                                name: 'path'
                             },
                             init: null
                         },
@@ -1845,7 +1885,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'source'
+                                name: 'file'
                             },
                             init: null
                         }
@@ -1899,7 +1939,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         arguments: [
                                             {
                                                 type: 'Identifier',
-                                                name: 'key'
+                                                name: 'path'
                                             },
                                             {
                                                 type: 'Literal',
@@ -1911,20 +1951,30 @@ module.exports = exports = ion.template(function (packagePatch) {
                             kind: 'let'
                         },
                         {
-                            type: 'Property',
-                            key: {
-                                type: 'Identifier',
-                                name: 'pageOutput'
-                            },
-                            value: {
-                                type: 'ObjectExpression',
-                                properties: [{
-                                        type: 'Property',
-                                        key: {
-                                            type: 'Identifier',
-                                            name: 'targetPath'
-                                        },
-                                        value: {
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'pageOutput'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'write'
+                                    }
+                                },
+                                arguments: [
+                                    {
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    },
+                                    {
+                                        type: 'BinaryExpression',
+                                        operator: '+',
+                                        left: {
                                             type: 'BinaryExpression',
                                             operator: '+',
                                             left: {
@@ -1934,75 +1984,94 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                     type: 'BinaryExpression',
                                                     operator: '+',
                                                     left: {
-                                                        type: 'BinaryExpression',
-                                                        operator: '+',
-                                                        left: {
-                                                            type: 'Literal',
-                                                            value: '(function '
-                                                        },
-                                                        right: {
-                                                            type: 'CallExpression',
-                                                            callee: {
-                                                                type: 'MemberExpression',
-                                                                computed: false,
-                                                                object: {
-                                                                    type: 'Identifier',
-                                                                    name: 'key'
-                                                                },
-                                                                property: {
-                                                                    type: 'Identifier',
-                                                                    name: 'replace'
-                                                                }
-                                                            },
-                                                            arguments: [
-                                                                {
-                                                                    type: 'Literal',
-                                                                    value: /[\.\/\\]/g
-                                                                },
-                                                                {
-                                                                    type: 'Literal',
-                                                                    value: '_'
-                                                                }
-                                                            ]
-                                                        }
+                                                        type: 'Literal',
+                                                        value: '(function '
                                                     },
                                                     right: {
-                                                        type: 'Literal',
-                                                        value: '(){ '
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'path'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'replace'
+                                                            }
+                                                        },
+                                                        arguments: [
+                                                            {
+                                                                type: 'Literal',
+                                                                value: /[\.\/\\]/g
+                                                            },
+                                                            {
+                                                                type: 'Literal',
+                                                                value: '_'
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 right: {
-                                                    type: 'CallExpression',
-                                                    callee: {
-                                                        type: 'MemberExpression',
-                                                        computed: false,
-                                                        object: {
-                                                            type: 'Identifier',
-                                                            name: 'builder'
-                                                        },
-                                                        property: {
-                                                            type: 'Identifier',
-                                                            name: 'compileIon'
-                                                        }
-                                                    },
-                                                    arguments: [{
-                                                            type: 'Identifier',
-                                                            name: 'source'
-                                                        }]
+                                                    type: 'Literal',
+                                                    value: '(){ '
                                                 }
                                             },
                                             right: {
-                                                type: 'Literal',
-                                                value: ' })'
+                                                type: 'CallExpression',
+                                                callee: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'builder'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'compileIon'
+                                                    }
+                                                },
+                                                arguments: [{
+                                                        type: 'Identifier',
+                                                        name: 'file'
+                                                    }]
                                             }
                                         },
-                                        kind: 'init',
-                                        computed: true
-                                    }]
-                            },
-                            kind: 'init'
+                                        right: {
+                                            type: 'Literal',
+                                            value: ' })'
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     ]
+                },
+                remove: {
+                    type: 'BlockStatement',
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'pageOutput'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'delete'
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    }]
+                            }
+                        }]
                 }
             },
             {
@@ -2014,7 +2083,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'key'
+                                name: 'path'
                             },
                             init: null
                         },
@@ -2022,7 +2091,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'VariableDeclarator',
                             id: {
                                 type: 'Identifier',
-                                name: 'source'
+                                name: 'file'
                             },
                             init: null
                         }
@@ -2076,7 +2145,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         arguments: [
                                             {
                                                 type: 'Identifier',
-                                                name: 'key'
+                                                name: 'path'
                                             },
                                             {
                                                 type: 'Literal',
@@ -2088,20 +2157,30 @@ module.exports = exports = ion.template(function (packagePatch) {
                             kind: 'let'
                         },
                         {
-                            type: 'Property',
-                            key: {
-                                type: 'Identifier',
-                                name: 'pageOutput'
-                            },
-                            value: {
-                                type: 'ObjectExpression',
-                                properties: [{
-                                        type: 'Property',
-                                        key: {
-                                            type: 'Identifier',
-                                            name: 'targetPath'
-                                        },
-                                        value: {
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'pageOutput'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'write'
+                                    }
+                                },
+                                arguments: [
+                                    {
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    },
+                                    {
+                                        type: 'BinaryExpression',
+                                        operator: '+',
+                                        left: {
                                             type: 'BinaryExpression',
                                             operator: '+',
                                             left: {
@@ -2111,75 +2190,94 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                     type: 'BinaryExpression',
                                                     operator: '+',
                                                     left: {
-                                                        type: 'BinaryExpression',
-                                                        operator: '+',
-                                                        left: {
-                                                            type: 'Literal',
-                                                            value: '(function '
-                                                        },
-                                                        right: {
-                                                            type: 'CallExpression',
-                                                            callee: {
-                                                                type: 'MemberExpression',
-                                                                computed: false,
-                                                                object: {
-                                                                    type: 'Identifier',
-                                                                    name: 'key'
-                                                                },
-                                                                property: {
-                                                                    type: 'Identifier',
-                                                                    name: 'replace'
-                                                                }
-                                                            },
-                                                            arguments: [
-                                                                {
-                                                                    type: 'Literal',
-                                                                    value: /[\.\/\\]/g
-                                                                },
-                                                                {
-                                                                    type: 'Literal',
-                                                                    value: '_'
-                                                                }
-                                                            ]
-                                                        }
+                                                        type: 'Literal',
+                                                        value: '(function '
                                                     },
                                                     right: {
-                                                        type: 'Literal',
-                                                        value: '(){ '
+                                                        type: 'CallExpression',
+                                                        callee: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'path'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'replace'
+                                                            }
+                                                        },
+                                                        arguments: [
+                                                            {
+                                                                type: 'Literal',
+                                                                value: /[\.\/\\]/g
+                                                            },
+                                                            {
+                                                                type: 'Literal',
+                                                                value: '_'
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 right: {
-                                                    type: 'CallExpression',
-                                                    callee: {
-                                                        type: 'MemberExpression',
-                                                        computed: false,
-                                                        object: {
-                                                            type: 'Identifier',
-                                                            name: 'builder'
-                                                        },
-                                                        property: {
-                                                            type: 'Identifier',
-                                                            name: 'compileCoffeeScript'
-                                                        }
-                                                    },
-                                                    arguments: [{
-                                                            type: 'Identifier',
-                                                            name: 'source'
-                                                        }]
+                                                    type: 'Literal',
+                                                    value: '(){ '
                                                 }
                                             },
                                             right: {
-                                                type: 'Literal',
-                                                value: ' })'
+                                                type: 'CallExpression',
+                                                callee: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'builder'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'compileCoffeeScript'
+                                                    }
+                                                },
+                                                arguments: [{
+                                                        type: 'Identifier',
+                                                        name: 'file'
+                                                    }]
                                             }
                                         },
-                                        kind: 'init',
-                                        computed: true
-                                    }]
-                            },
-                            kind: 'init'
+                                        right: {
+                                            type: 'Literal',
+                                            value: ' })'
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     ]
+                },
+                remove: {
+                    type: 'BlockStatement',
+                    body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'pageOutput'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'delete'
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'targetPath'
+                                    }]
+                            }
+                        }]
                 }
             }
         ],

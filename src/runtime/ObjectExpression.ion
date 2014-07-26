@@ -10,7 +10,7 @@ export class ObjectExpression extends DynamicExpression
         activate: ->
             super
             @typeExpression ?= @context.createRuntime(@objectType ? null)
-            (@typeExpression.watch)
+            @typeExpression.watch(
                 @typeWatcher ?= (type) =>
                     let value
                     if not ion.is(@value, type)
@@ -27,6 +27,7 @@ export class ObjectExpression extends DynamicExpression
                         @statements.activate()
 
                     @setValue(value)
+            )
         deactivate: ->
             super
             @typeExpression.unwatch(@typeWatcher)

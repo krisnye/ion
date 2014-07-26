@@ -229,7 +229,7 @@ module.exports = exports = {
         encoding = 'utf8';
       }
       return fs.writeFileSync(file, content, encoding);
-    } else {
+    } else if (fs.existsSync(file)) {
       return fs.unlinkSync(file);
     }
   },

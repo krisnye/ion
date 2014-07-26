@@ -44,6 +44,33 @@ var Directory = ion.defineClass({
                 utility.write(path, content);
                 return content;
             },
+            read: function (path) {
+                if (this.hasOwnProperty(path) || this[path] != null) {
+                    return this[path];
+                }
+                path = this.getAbsoluteName(path);
+                if (fs.existsSync(path)) {
+                    return utility.read(path);
+                } else {
+                    return void 0;
+                }
+            },
+            write: function (path, content) {
+                if (!(content != null)) {
+                    return;
+                }
+                if (this.hasOwnProperty(path) || this[path] != null) {
+                    return this[path] = content;
+                }
+                path = this.getAbsoluteName(path);
+                console.log('Writing: ' + path);
+                utility.write(path, content);
+            },
+            delete: function (path) {
+                console.log('Deleting: ' + path);
+                path = this.getAbsoluteName(path);
+                utility.write(path, null);
+            },
             getFile: function (path) {
                 return new File(this.getAbsoluteName(path));
             },

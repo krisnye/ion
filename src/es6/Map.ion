@@ -55,9 +55,10 @@ if not (new Map()).keys?
     console.warn('Shimming Map.prototype.keys')
     Map.prototype.keys = ->
         let keys = []
-        (@forEach)
+        @forEach(
             (value, key) ->
                 keys.push(key)
+        )
         return keys
 
 export const test = ->

@@ -1141,7 +1141,8 @@ var templates = [
                                                                     }
                                                                 }
                                                             }]
-                                                    }
+                                                    },
+                                                    remove: null
                                                 }
                                             ]
                                         },

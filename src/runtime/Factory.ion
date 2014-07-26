@@ -138,7 +138,7 @@ export const
         return factory.createRuntime(context, ast)
     test = ->
         # try to get a factory for < operation
-        let factory = (getFactory)
+        let factory = getFactory(
             {}
                 type: 'BinaryExpression'
                 operator: '>'
@@ -148,5 +148,6 @@ export const
                 right:
                     type: 'Literal'
                     value: 2
+        )
         assert factory is lookup.type.BinaryExpression.operator[">"]
         assert lookup.type.BinaryExpression.operator[">"]?

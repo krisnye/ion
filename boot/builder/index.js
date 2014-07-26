@@ -159,7 +159,8 @@ module.exports = exports = {
     }
   },
   compileIon: compileIon = function(source, packageObject) {
-    return compileIonWithSourceMap(source, packageObject)[0];
+    var _ref;
+    return (_ref = compileIonWithSourceMap(source, packageObject)) != null ? _ref[0] : void 0;
   },
   compileIonWithSourceMap: compileIonWithSourceMap = function(source, packageObject) {
     var e, filename, input, ionCompiler, map, moduleId, _ref;

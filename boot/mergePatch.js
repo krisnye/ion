@@ -68,9 +68,14 @@ var merge = exports.merge = function (target, values, options) {
                 var patch = {};
                 for (var _i = 0; _i < changes.length; _i++) {
                     var change = changes[_i];
-                    patch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
+                    if (change.name[0] !== '_') {
+                        patch = patch != null ? patch : {};
+                        patch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
+                    }
                 }
-                queuePatch(patch);
+                if (patch != null) {
+                    queuePatch(patch);
+                }
             } catch (e) {
                 console.error(e);
             }

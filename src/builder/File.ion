@@ -32,10 +32,11 @@ export class File
             =>
                 let watcher
                 if fs.existsSync(@path)
-                    watcher = (fs.watch)
+                    watcher = fs.watch(
                         @path
                         =>
                             @modified = utility.getModified(@path)
+                    )
                 return -> watcher?.close()
         )
     properties:

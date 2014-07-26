@@ -7,7 +7,7 @@ export class ExpressionStatement extends Statement
         activate: ->
             super
             @runtimeExpression ?= @context.createRuntime(@expression)
-            (@runtimeExpression.watch)
+            @runtimeExpression.watch(
                 @runtimeExpressionWatcher ?= (value) =>
                     if @expressionValue isnt value
                         @expressionValue = value
@@ -15,7 +15,7 @@ export class ExpressionStatement extends Statement
                         @_remove = null
                         if @context.output? and value isnt undefined
                             @_remove = ion.add(@context.output, value)
+            )
         deactivate: ->
             super
-            (@runtimeExpression.unwatch)
-                @runtimeExpressionWatcher
+            @runtimeExpression.unwatch(@runtimeExpressionWatcher)

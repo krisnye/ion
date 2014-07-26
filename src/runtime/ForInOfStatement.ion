@@ -35,17 +35,19 @@ export class ForInOfStatement extends Statement
                     # console.log('collectionWatcher', collection)
                     if @collection isnt collection
                         if @collection?
-                            (@forEach)
+                            @forEach(
                                 @collection
                                 (key, value) =>
                                     @removeItem(key, value)
+                            )
                             ion.unobserve(@collection, @collectionObserver)
                         @collection = collection
                         if @collection?
-                            (@forEach)
+                            @forEach(
                                 @collection
                                 (key, value) =>
                                     @addItem(key, value)
+                            )
                             ion.observe(@collection, @collectionObserver ?= @applyChanges.bind(@))
             )
         deactivate: ->

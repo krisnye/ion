@@ -42,6 +42,9 @@ var CallExpression = ion.defineClass({
                 }
             },
             evaluate: function () {
+                if (!this.isActive) {
+                    return;
+                }
                 var value = void 0;
                 if (this.calleeValue != null && this.argumentsValue != null) {
                     try {

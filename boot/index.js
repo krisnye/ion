@@ -135,9 +135,9 @@ var patch = exports.patch = function () {
             }
             nodeObserveShim.observe(object, observer, property);
         } else if (object != null && observer != null && Object.observe != null && typeof object === 'object') {
-            observer.tryWrapper = observer.tryWrapper != null ? observer.tryWrapper : function () {
+            observer.tryWrapper = observer.tryWrapper != null ? observer.tryWrapper : function (changes) {
                 try {
-                    observer.apply(this, arguments);
+                    observer(changes);
                 } catch (error) {
                     console.error('Exception in Object.observe callback', error);
                 }
@@ -217,10 +217,10 @@ var patch = exports.patch = function () {
                 }
             };
         }
-        item.onAdded != null ? item.onAdded(container) : void 0;
+        item != null ? item.onAdded != null ? item.onAdded(container) : void 0 : void 0;
         return function () {
             remove();
-            item.onRemoved != null ? item.onRemoved(container) : void 0;
+            item != null ? item.onRemoved != null ? item.onRemoved(container) : void 0 : void 0;
         };
     }, defineProperties = exports.defineProperties = function (object, properties) {
         return Object.defineProperties(object, normalizeProperties(properties));
@@ -250,7 +250,8 @@ var patch = exports.patch = function () {
             var descriptor = Object.getOwnPropertyDescriptor(classFunction, key);
             return !(descriptor != null) || descriptor.writable || !(descriptor.get != null);
         };
-        var types = new Set([classFunction]);
+        var types = new Set();
+        types.add(classFunction);
         for (var i = definitions.length - 1; i >= 0; i--) {
             var definition = definitions[i];
             if (definition != null) {

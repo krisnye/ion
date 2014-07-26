@@ -79,7 +79,7 @@ export class Directory
             ion.makeReactive(
                 results
                 =>
-                    let unwatch = (watcher.watchDirectory)
+                    let unwatch = watcher.watchDirectory(
                         @path
                         options
                         (filename) =>
@@ -89,6 +89,7 @@ export class Directory
                                     results[path] = new File(filename)
                             else
                                 delete results[path]
+                    )
                     return unwatch
             )
             let files = utility.list(@path, options)

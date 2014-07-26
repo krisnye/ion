@@ -45,11 +45,12 @@ export class ArrayExpression extends DynamicExpression
             super
     test: ->
         const Context = import './Context'
-        let e = (new ArrayExpression)
+        let e = new ArrayExpression(
             context: new Context()
             elements: []
                 {type:'Literal', value: 1}
                 {type:'Literal', value: 2}
+        )
         let result = undefined
         const watcher(value) ->
             result = value

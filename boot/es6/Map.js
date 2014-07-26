@@ -11,11 +11,17 @@ var getId = function (key) {
     var id = key[idName];
     if (!(id != null)) {
         id = ++uniqueCounter;
-        Object.defineProperty(key, idName, { value: id });
+        Object.defineProperty(key, idName, {
+            value: id,
+            enumerable: false
+        });
     }
     return id;
 };
 function MapShim(pairs) {
+    if (pairs != null) {
+        throw new Error('Don\'t add items in the constructor, IE implementation of Set breaks this');
+    }
     var lookup = {};
     var keys = [];
     var methods = {
@@ -58,14 +64,6 @@ function MapShim(pairs) {
         var value = methods[key];
         Object.defineProperty(this, key, { value: value });
     }
-    if (pairs != null) {
-        for (var _i2 = 0; _i2 < pairs.length; _i2++) {
-            var _ref = pairs[_i2];
-            var key = _ref[0];
-            var value = _ref[1];
-            this.set(key, value);
-        }
-    }
 }
 if (!(global.Map != null) || !(Map.prototype.forEach != null)) {
     console.warn('Shimming Map');
@@ -83,16 +81,9 @@ if (!(new Map().keys != null)) {
 }
 var test = exports.test = function () {
         var Map = global.Map;
-        var map = new Map([
-                [
-                    'a',
-                    1
-                ],
-                [
-                    'b',
-                    2
-                ]
-            ]);
+        var map = new Map();
+        map.set('a', 1);
+        map.set('b', 2);
         if (!(Object.keys(map).length === 0))
             throw new Error('Assertion Failed: (Object.keys(map).length is 0)');
         if (!map.has('a'))
