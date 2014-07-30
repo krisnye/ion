@@ -1,66 +1,110 @@
 <html>
-<head>
-    <title>Tests</title>
-</head>
-<body>
-    <div id='content'></div>
-</body>
-<script id='template' type='ion'>
-const compiler = import 'ion/compiler'
-const {div,span,input,a,form,table,tbody,thead,tr,td,button,br,hr,textarea} = import 'ion/browser/elements'
-const samples = []
-    {}
-        title: "Variable Declarations"
-        ion: ""
-            let x
-            let y = 10, z = 9
-            const one = 1
-            const two = 2
-            const three = 3
+    <head>
+        <title>Ion Samples</title>
+        <script src="lib/_browser.js"></script>
+        <script type='ion'>
+        # we export our element creation functions as global variables
+        # so we can concisely use div(), span(), input() etc in scripts.
+        for name, fn of require('ion/browser/elements')
+            global[name] = fn
+        </script>
+        <style>
+        .description {
+            margin: 1em;
+        }
+        .sample {
+            background: #eeeeee;
+        }
+        </style>
+    </head>
+    <body>
+        <div>
+            <h2>Hello Sample</h2>
+            <div class='description'>
+            The dependent value will automatically update when focus leaves the input
+            </div>
+            <div class='sample'>
+                <script type='ion'>
+                return template ->
+                    let name = input()
+                        type: 'text'
+                        value: 'World'
+                    return div()
+                        div()
+                            "Name: "
+                            name
+                        div()
+                            "Hello {{name.value}}"
+                </script>
+            </div>
+        </div>
+        <div>
+            <h2>Todo Sample</h2>
+            <div class='description'>
+            The model is defined as global variable 'tasks'.
+            Try manipulating the model from the console:
+<pre>
+    tasks.Beta = true
+    tasks.Delta = false
+    delete tasks.Alpha
+</pre>
+            </div>
+            <div class='sample'>
+                <script type='ion'>
 
-const compile = (code) ->
-    try
-        return compiler.compile(code)
-    catch e
-        return e.toString()
-const hasError = (code) ->
-    try
-        compiler.compile(code)
-        return false
-    catch e
-        return true
+                # we will define the model globally as tasks variable
+                # so that we can manipulate it from the developer console
+                global.tasks =
+                    Alpha: true
+                    Beta: false
+                    Charlie: false
 
-activate template ->
-    content:
-        div()
-            'Samples'
-            for sample in samples
-                div()
-                    sample.title
-                textarea()
-                    keyup(e) ->
-                        sample.ion = @value
-                    style:
-                        display: 'inline-block'
-                        margin: '2px'
-                        verticalAlign: 'top'
-                    rows: sample.ion.split('\n').length
-                    sample.ion
-                div()
-                    style:
-                        display: 'inline-block'
-                        border: 'solid gray 1px'
-                        whiteSpace: 'pre'
-                        margin: '2px'
-                        color: hasError(sample.ion) ? 'red' : 'initial'
-                    compile(sample.ion)
-
-</script>
-<script src="lib/_browser.js"></script>
-<script>
-var compiler = require('ion/compiler')
-var compiled = compiler.compile(template.innerHTML)
-// console.log(compiled)
-eval(compiled)
-</script>
+                # now define the reactive view template
+                return template ->
+                    return div()
+                        div()
+                            "tasks: {{ JSON.stringify(tasks) }}"
+                        div()
+                            for name, complete of tasks
+                                div()
+                                    input()
+                                        type: 'checkbox'
+                                        checked: complete
+                                        change(e) ->
+                                            tasks[name] = @checked
+                                    span()
+                                        style:
+                                            display: 'inline-block'
+                                            width: '10em'
+                                        name
+                                    button()
+                                        "\u2212"
+                                        click(e) ->
+                                            delete tasks[name]
+                        div()
+                            form()
+                                let nameInput = input()
+                                    width: '10em'
+                                submit(e) ->
+                                    e.preventDefault()
+                                    let name = nameInput.value.trim()
+                                    if name.length > 0
+                                        tasks[name] = false
+                                    nameInput.select()
+                                input()
+                                    type: 'checkbox'
+                                    style:
+                                        visibility: 'hidden'
+                                span()
+                                    style:
+                                        display: 'inline-block'
+                                        width: '10em'
+                                    nameInput
+                                button()
+                                    type: 'submit'
+                                    "+"
+                </script>
+            </div>
+        </div>
+    </body>
 </html>

@@ -1,3 +1,0 @@
-
-# if run within the browser, then this automatically compiles any <script type='ion'> tags on page load.
-console.log('look to listen for on load')

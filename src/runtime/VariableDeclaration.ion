@@ -5,4 +5,4 @@ export class VariableDeclaration extends Statement
     constructor: ->
         super
         for {id:{name},init} in @declarations
-            @context.setVariable(name, init)
+            @context.setVariableFromAst(name, init)

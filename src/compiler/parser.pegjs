@@ -114,8 +114,9 @@
     }
 }
 
-Program = start:start body:Statement* end:end { return node("Program", {body:body}, start, end) }
+Program = start:start body:ProgramStatements end:end { return node("Program", {body:body}, start, end) }
 
+ProgramStatements = a:BlockStatement { return a.body } / Statement*
 Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ActivateStatement / ExpressionStatement) (eol / _ ',') { return a }
 ExportStatement = start:start export _ value:(VariableDeclaration / RightHandSideExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
 ReturnStatement = start:start return _ argument:RightHandSideExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }

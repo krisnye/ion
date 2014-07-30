@@ -62,7 +62,7 @@ export const
         const context = new Context()
         if args?
             for name, value of args
-                context.setVariable(name, value)
+                context.setVariableLiteral(name, value)
         return context.createRuntime(ast)
     nextTick = @process?.nextTick ? (fn) -> setTimeout(fn, 0)
     clone = (object, deep = false) ->

@@ -67,7 +67,33 @@ require.runTests = (callback) ->
     else
         fn()
 
+require.compileScripts = ->
+    ion = require 'ion'
+    compiler = require 'ion/compiler'
+    for scriptElement in document.querySelectorAll("script[type=ion]")
+        # we wrap all ion scripts to avoid global variable leaks
+        compiledWrapper = eval("(function(){ #{compiler.compile(scriptElement.innerText)} })")
+        # 'this' is the scriptElement within the scripts scope instead of the window
+        result = compiledWrapper.call(scriptElement)
+        if result?
+            if typeof result.template is 'function'
+                template = result.template.call(scriptElement)
+                removeLastResult = null
+                template.activate()
+                template.watch (templateResult) ->
+                    removeLastResult?()
+                    removeLastResult = null
+                    if templateResult?
+                        removeLastResult = ion.add scriptElement.parentElement, templateResult
+            else
+                ion.add scriptElement.parentElement, result
+
 if typeof module is "undefined"
     @require = require
 else
     module.exports = require
+
+# since this is the only code guaranteed to run on loading, we also try to compile script tags here.
+if global.window?
+    window.addEventListener 'load', (e) ->
+        require.compileScripts()

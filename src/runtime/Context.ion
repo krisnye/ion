@@ -44,9 +44,13 @@ export class Context
             # global values are considered to be constants.
             # we could consider caching these values within the context.
             let cachedGlobals = @root.globals ?= {}
-            return cachedGlobals[name] ?= new Literal({value:value})
-        setVariable: (name, node) ->
+            return cachedGlobals[name] ?= new Literal({value})
+        setVariableFromAst: (name, node) ->
             if name?
-                let variable = @variables[name] = @createRuntime(node)
-                return variable
-
+                @setVariableExpression(name, @createRuntime(node))
+        setVariableLiteral: (name, value) ->
+            if name?
+                @setVariableExpression(name, new Literal({value}))
+        setVariableExpression: (name, expression) ->
+            if name?
+                return @variables[name] = expression

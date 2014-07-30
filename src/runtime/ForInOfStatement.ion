@@ -59,9 +59,9 @@ export class ForInOfStatement extends Statement
                 # see if there is a cached statement with that value
                 let newContext = @context.newContext()
                 if @valueName?
-                    newContext.setVariable(@valueName, new DynamicExpression({value:value}))
+                    newContext.setVariableExpression(@valueName, new DynamicExpression({value:value}))
                 if @keyName?
-                    newContext.setVariable(@keyName, new DynamicExpression({value:key}))
+                    newContext.setVariableExpression(@keyName, new DynamicExpression({value:key}))
                 let statement = newContext.createRuntime(@body)
                 @statements[key] = statement
                 if activate

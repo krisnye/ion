@@ -126,8 +126,6 @@ const getFactory(ast, step = lookup) ->
 
 export const
     createRuntime = (context, ast) ->
-        if Expression.is(ast)
-            return ast
         if typeof ast?.type isnt 'string'
             ast =
                 type: 'Literal'

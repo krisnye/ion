@@ -49,7 +49,12 @@ export template (packagePatch) ->
 
     # build merged file, just so we can test locally with file:// protocol
     if packageJson.build.merge?
-        output.write(packageJson.build.merge, [outputFiles[name].read() for name in sortedFiles].join('\n'))
+        let mergedArray = []
+            for index, name of sortedFiles
+                [index]: outputFiles[name].read()
+            else
+                [index]: ""
+        output.write(packageJson.build.merge, mergedArray.join('\n'))
 
     # copy the package.json to the lib directory
     if packageJson.build.package

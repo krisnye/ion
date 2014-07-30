@@ -1355,6 +1355,11 @@ tests =
     'use strict';
     foo(bar(), baz(1, 2));
     """
+    # the following is similar to input from a script tag.
+    "\n            console.log('ion')": """
+    'use strict';
+    console.log('ion');
+    """
 
 if global.window?
     return
