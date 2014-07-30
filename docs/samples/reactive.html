@@ -1,20 +1,15 @@
 <html>
     <head>
-        <title>Ion Samples</title>
+        <title>Ion Reactive Samples</title>
         <script src="lib/_browser.js"></script>
         <script type='ion'>
-        # we export our element creation functions as global variables
-        # so we can concisely use div(), span(), input() etc in scripts.
+        # export element creation functions as global variables for convenience
         for name, fn of require('ion/browser/elements')
             global[name] = fn
         </script>
         <style>
-        .description {
-            margin: 1em;
-        }
-        .sample {
-            background: #eeeeee;
-        }
+        .description { margin: 1em; }
+        .sample { background: #eeeeee; }
         </style>
     </head>
     <body>
@@ -52,7 +47,7 @@
             <div class='sample'>
                 <script type='ion'>
 
-                # we will define the model globally as tasks variable
+                # we will define the model globally as tasks variable`
                 # so that we can manipulate it from the developer console
                 global.tasks =
                     Alpha: true

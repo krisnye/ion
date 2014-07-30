@@ -60,3 +60,5 @@ X   []
     object?.connected = presence.isConnected
 
     move brower/html to glass.
+
+    empty lines are being removed from multiline string literals
