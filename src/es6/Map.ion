@@ -1,3 +1,4 @@
+const ion = null
 # don't depend on ion for this.
 
 # the uniqueCounter and getId have to be defined outside of the MapShim constructor.
