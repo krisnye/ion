@@ -1,4 +1,4 @@
-let ion = require('ion')
+let ion = require('../')
 
 let changeHandler = change() ->
     ion.checkForChanges()

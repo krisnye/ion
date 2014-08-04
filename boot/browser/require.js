@@ -107,10 +107,50 @@ require.runTests = function(callback) {
   }
 };
 
+require.compileScripts = function() {
+  var compiledWrapper, compiler, ion, removeLastResult, result, scriptElement, template, _i, _len, _ref, _results;
+  ion = require('ion');
+  compiler = require('ion/compiler');
+  _ref = document.querySelectorAll("script[type=ion]");
+  _results = [];
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    scriptElement = _ref[_i];
+    compiledWrapper = eval("(function(){ " + (compiler.compile(scriptElement.innerText)) + " })");
+    result = compiledWrapper.call(scriptElement);
+    if (result != null) {
+      if (typeof result.template === 'function') {
+        template = result.template.call(scriptElement);
+        removeLastResult = null;
+        template.activate();
+        _results.push(template.watch(function(templateResult) {
+          if (typeof removeLastResult === "function") {
+            removeLastResult();
+          }
+          removeLastResult = null;
+          if (templateResult != null) {
+            return removeLastResult = ion.add(scriptElement.parentElement, templateResult);
+          }
+        }));
+      } else {
+        _results.push(ion.add(scriptElement.parentElement, result));
+      }
+    } else {
+      _results.push(void 0);
+    }
+  }
+  return _results;
+};
+
 if (typeof module === "undefined") {
   this.require = require;
 } else {
   module.exports = require;
+}
+
+if (global.window != null) {
+  window.addEventListener('load', function(e) {
+    return require.compileScripts();
+  });
 }
 
   }

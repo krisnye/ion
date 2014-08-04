@@ -93,7 +93,7 @@ exports.runTests = runTests = function(moduleIds, callback) {
   if (inc.length === 0) {
     return callback();
   } else {
-    duration = 10000;
+    duration = 1000;
     error = "Timed out after " + duration + " ms";
     warning = void 0;
     timeout = function() {

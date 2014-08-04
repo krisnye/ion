@@ -1,4 +1,13 @@
 void (function(){var _ion_browser_elements_ = function(module,exports,require){'use strict';
+var ion = require('../');
+var changeHandler = function change() {
+    ion.checkForChanges();
+};
+var changeElements = {
+        input: true,
+        select: true,
+        textarea: true
+    };
 var _ref2 = {};
 {
     var _ref = [
@@ -39,6 +48,9 @@ var _ref2 = {};
         _ref2[name] = function (name) {
             return function (attributes) {
                 var element = document.createElement(name);
+                if (changeElements[name]) {
+                    ion.add(element, changeHandler);
+                }
                 if (attributes != null) {
                     for (var key in attributes) {
                         var value = attributes[key];

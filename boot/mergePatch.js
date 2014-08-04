@@ -19,7 +19,8 @@ var merge = exports.merge = function (target, values, options) {
             if (deleteNull && value === deleteValue) {
                 delete target[key];
             } else {
-                target[key] = merge(target[key], value, options);
+                var newValue = merge(target[key], value, options);
+                target[key] = newValue;
             }
         }
         return target;

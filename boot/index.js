@@ -99,7 +99,7 @@ var patch = exports.patch = function () {
         if (args != null) {
             for (var name in args) {
                 var value = args[name];
-                context.setVariable(name, value);
+                context.setVariableLiteral(name, value);
             }
         }
         return context.createRuntime(ast);

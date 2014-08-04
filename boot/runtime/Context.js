@@ -50,10 +50,19 @@ var Context = ion.defineClass({
                 var cachedGlobals = this.root.globals = this.root.globals != null ? this.root.globals : {};
                 return cachedGlobals[name] = cachedGlobals[name] != null ? cachedGlobals[name] : new Literal({ value: value });
             },
-            setVariable: function (name, node) {
+            setVariableFromAst: function (name, node) {
                 if (name != null) {
-                    var variable = this.variables[name] = this.createRuntime(node);
-                    return variable;
+                    this.setVariableExpression(name, this.createRuntime(node));
+                }
+            },
+            setVariableLiteral: function (name, value) {
+                if (name != null) {
+                    this.setVariableExpression(name, new Literal({ value: value }));
+                }
+            },
+            setVariableExpression: function (name, expression) {
+                if (name != null) {
+                    return this.variables[name] = expression;
                 }
             }
         }

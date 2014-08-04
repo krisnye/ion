@@ -15,9 +15,9 @@ module.exports = exports = ion.template(function (packagePatch) {
     var moduleName = packageJson.name != null ? packageJson.name : '';
     var extensions = Object.keys(compilers);
     {
-        var _ref7 = input.search(extensions, packageJson.build.exclude);
-        for (var path in _ref7) {
-            var source = _ref7[path];
+        var _ref6 = input.search(extensions, packageJson.build.exclude);
+        for (var path in _ref6) {
+            var source = _ref6[path];
             var compiler = compilers[source.getExtension()];
             var targetPath = builder.changeExtension(path, '.js');
             if (compiler.compileWithSourceMap != null) {
@@ -69,12 +69,12 @@ module.exports = exports = ion.template(function (packagePatch) {
         };
     manifestFile.write(JSON.stringify(manifest, null, '  ', sortedFiles));
     if (packageJson.build.merge != null) {
-        var _ref6 = [];
-        for (var _i2 = 0; _i2 < sortedFiles.length; _i2++) {
-            var name = sortedFiles[_i2];
-            _ref6.push(outputFiles[name].read());
+        var mergedArray = [];
+        for (var index in sortedFiles) {
+            var name = sortedFiles[index];
+            mergedArray[index] = outputFiles[name].read();
         }
-        output.write(packageJson.build.merge, _ref6.join('\n'));
+        output.write(packageJson.build.merge, mergedArray.join('\n'));
     }
     if (packageJson.build.package) {
         output.write('package.json', JSON.stringify(ion.patch(ion.clone(packageJson), { main: void 0 }), null, '    '));
@@ -1438,7 +1438,107 @@ module.exports = exports = ion.template(function (packagePatch) {
                 },
                 consequent: {
                     type: 'BlockStatement',
-                    body: [{
+                    body: [
+                        {
+                            type: 'VariableDeclaration',
+                            declarations: [{
+                                    type: 'VariableDeclarator',
+                                    id: {
+                                        type: 'Identifier',
+                                        name: 'mergedArray'
+                                    },
+                                    init: {
+                                        type: 'ObjectExpression',
+                                        objectType: {
+                                            type: 'ArrayExpression',
+                                            elements: []
+                                        },
+                                        properties: [{
+                                                type: 'ForInStatement',
+                                                left: {
+                                                    type: 'VariableDeclaration',
+                                                    declarations: [
+                                                        {
+                                                            type: 'VariableDeclarator',
+                                                            id: {
+                                                                type: 'Identifier',
+                                                                name: 'index'
+                                                            },
+                                                            init: null
+                                                        },
+                                                        {
+                                                            type: 'VariableDeclarator',
+                                                            id: {
+                                                                type: 'Identifier',
+                                                                name: 'name'
+                                                            },
+                                                            init: null
+                                                        }
+                                                    ],
+                                                    kind: 'let'
+                                                },
+                                                right: {
+                                                    type: 'Identifier',
+                                                    name: 'sortedFiles'
+                                                },
+                                                body: {
+                                                    type: 'BlockStatement',
+                                                    body: [{
+                                                            type: 'Property',
+                                                            key: {
+                                                                type: 'Identifier',
+                                                                name: 'index'
+                                                            },
+                                                            value: {
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
+                                                                        type: 'MemberExpression',
+                                                                        computed: true,
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: 'outputFiles'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'name'
+                                                                        }
+                                                                    },
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'read'
+                                                                    }
+                                                                },
+                                                                arguments: []
+                                                            },
+                                                            kind: 'init',
+                                                            computed: true
+                                                        }]
+                                                },
+                                                remove: {
+                                                    type: 'BlockStatement',
+                                                    body: [{
+                                                            type: 'Property',
+                                                            key: {
+                                                                type: 'Identifier',
+                                                                name: 'index'
+                                                            },
+                                                            value: {
+                                                                type: 'Literal',
+                                                                value: ''
+                                                            },
+                                                            kind: 'init',
+                                                            computed: true
+                                                        }]
+                                                }
+                                            }]
+                                    }
+                                }],
+                            kind: 'let'
+                        },
+                        {
                             type: 'ExpressionStatement',
                             expression: {
                                 type: 'CallExpression',
@@ -1481,57 +1581,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             type: 'MemberExpression',
                                             computed: false,
                                             object: {
-                                                type: 'ObjectExpression',
-                                                objectType: {
-                                                    type: 'ArrayExpression',
-                                                    elements: []
-                                                },
-                                                properties: [{
-                                                        type: 'ForOfStatement',
-                                                        left: {
-                                                            type: 'VariableDeclaration',
-                                                            declarations: [{
-                                                                    type: 'VariableDeclarator',
-                                                                    id: {
-                                                                        type: 'Identifier',
-                                                                        name: 'name'
-                                                                    },
-                                                                    init: null
-                                                                }],
-                                                            kind: 'let'
-                                                        },
-                                                        right: {
-                                                            type: 'Identifier',
-                                                            name: 'sortedFiles'
-                                                        },
-                                                        body: {
-                                                            type: 'ExpressionStatement',
-                                                            expression: {
-                                                                type: 'CallExpression',
-                                                                callee: {
-                                                                    type: 'MemberExpression',
-                                                                    computed: false,
-                                                                    object: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: true,
-                                                                        object: {
-                                                                            type: 'Identifier',
-                                                                            name: 'outputFiles'
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'name'
-                                                                        }
-                                                                    },
-                                                                    property: {
-                                                                        type: 'Identifier',
-                                                                        name: 'read'
-                                                                    }
-                                                                },
-                                                                arguments: []
-                                                            }
-                                                        }
-                                                    }]
+                                                type: 'Identifier',
+                                                name: 'mergedArray'
                                             },
                                             property: {
                                                 type: 'Identifier',
@@ -1545,7 +1596,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     }
                                 ]
                             }
-                        }]
+                        }
+                    ]
                 },
                 alternate: null
             },

@@ -59,10 +59,10 @@ var ForInOfStatement = ion.defineClass({
                 if (value !== void 0) {
                     var newContext = this.context.newContext();
                     if (this.valueName != null) {
-                        newContext.setVariable(this.valueName, new DynamicExpression({ value: value }));
+                        newContext.setVariableExpression(this.valueName, new DynamicExpression({ value: value }));
                     }
                     if (this.keyName != null) {
-                        newContext.setVariable(this.keyName, new DynamicExpression({ value: key }));
+                        newContext.setVariableExpression(this.keyName, new DynamicExpression({ value: key }));
                     }
                     var statement = newContext.createRuntime(this.body);
                     this.statements[key] = statement;

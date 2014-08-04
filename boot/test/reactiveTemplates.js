@@ -112,7 +112,7 @@ var templates = [
             'blphb'
         ],
         [
-            'array comprehension',
+            'array comprehension for of',
             {},
             ion.template(function (properties) {
                 var _ref4 = [];
@@ -711,7 +711,7 @@ var templates = [
             7
         ],
         [
-            'array comprehensions',
+            'array comprehension for in',
             {},
             ion.template(function (_ref2) {
                 var items = _ref2.items;
@@ -1505,6 +1505,7 @@ for (var _i3 = 0; _i3 < templates.length; _i3++) {
                     });
                 });
                 ion.patch(argument, patch);
+                ion.checkForChanges();
             };
         }(thisArg, templateType, argument, patch, expected);
     }

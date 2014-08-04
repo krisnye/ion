@@ -1,4 +1,5 @@
 void (function(){var _ion_es6_Map_ = function(module,exports,require){'use strict';
+var ion = null;
 var uniqueCounter = 0;
 var idName = '__Map_id';
 var getId = function (key) {
@@ -49,9 +50,6 @@ function MapShim(pairs) {
                 lookup = {};
                 keys = [];
             },
-            keys: function () {
-                return keys.slice(0);
-            },
             forEach: function (callback, thisArg) {
                 for (var _i = 0; _i < keys.length; _i++) {
                     var key = keys[_i];
@@ -65,19 +63,9 @@ function MapShim(pairs) {
         Object.defineProperty(this, key, { value: value });
     }
 }
-if (!(global.Map != null) || !(Map.prototype.forEach != null)) {
+if (!((global.Map != null ? global.Map.prototype.forEach : void 0) != null)) {
     console.warn('Shimming Map');
     global.Map = MapShim;
-}
-if (!(new Map().keys != null)) {
-    console.warn('Shimming Map.prototype.keys');
-    Map.prototype.keys = function () {
-        var keys = [];
-        this.forEach(function (value, key) {
-            keys.push(key);
-        });
-        return keys;
-    };
 }
 var test = exports.test = function () {
         var Map = global.Map;
@@ -102,12 +90,6 @@ var test = exports.test = function () {
             throw new Error('Assertion Failed: (Object.keys(mykey1).length is 0)');
         if (!(map.get(mykey1) === 'one'))
             throw new Error('Assertion Failed: (map.get(mykey1) is "one")');
-        if (!(JSON.stringify(map.keys()) === JSON.stringify([
-                'a',
-                'b',
-                mykey1
-            ])))
-            throw new Error('Assertion Failed: (JSON.stringify(map.keys()) is JSON.stringify([\'a\',\'b\',mykey1]))');
     };
   }
   if (typeof require === 'function') {

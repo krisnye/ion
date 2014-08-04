@@ -207,9 +207,6 @@ function getFactory(ast, step) {
     return null;
 }
 var createRuntime = exports.createRuntime = function (context, ast) {
-        if (Expression.is(ast)) {
-            return ast;
-        }
         if (typeof (ast != null ? ast.type : void 0) !== 'string') {
             ast = {
                 type: 'Literal',

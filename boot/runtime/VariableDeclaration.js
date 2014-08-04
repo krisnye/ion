@@ -11,7 +11,7 @@ var VariableDeclaration = ion.defineClass({
                     var _ref2 = _ref[_i];
                     var name = _ref2.id.name;
                     var init = _ref2.init;
-                    this.context.setVariable(name, init);
+                    this.context.setVariableFromAst(name, init);
                 }
             }
         }

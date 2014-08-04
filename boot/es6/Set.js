@@ -1,5 +1,5 @@
 void (function(){var _ion_es6_Set_ = function(module,exports,require){'use strict';
-var ion = require('ion');
+var ion = require('../');
 require('./Map');
 function SetShim(items) {
     if (items != null) {
@@ -15,9 +15,6 @@ function SetShim(items) {
             },
             add: function (key) {
                 return map.set(key, true);
-            },
-            values: function () {
-                return map.keys();
             },
             forEach: function (callback, thisArg) {
                 map.forEach(ion.bind(function (value, key) {
