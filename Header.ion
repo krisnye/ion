@@ -1,0 +1,35 @@
+const
+    {div,span,input,a,form,table,tbody,thead,tr,td,button,br,hr} = import 'ion/browser/elements'
+    style = import 'glass/html/style'
+
+style.define(
+    module.id
+    ""
+        BODY {
+            user-select: none;
+            cursor: default;
+        }
+)
+
+export template ({}) ->
+    const
+        server = data["Server/default"]
+        me = data["User/me"]
+
+    return div()
+        style:
+            marginBottom: "0.5em"
+        div()
+            style:
+                padding: "0.5em"
+            "Viewpath 4: "
+            span()
+                me.nickname ? ""
+            span()
+                style:
+                    paddingLeft: "0.5em"
+                "("
+                a()
+                    href: (me ? server.logoutUrl : server.loginUrl) + document.location
+                    me ? "Logout" : "Login"
+                ")"
