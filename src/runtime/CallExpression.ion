@@ -39,27 +39,30 @@ module.exports = class CallExpression extends DynamicExpression
                 @template.unwatch(@templateWatcher)
                 @template.deactivate()
                 delete @template
-        evaluate: ->
-            if not @isActive
+        _evaluateInternal: ->
+            if not (@isActive and @calleeValue? and @argumentsValue?)
                 return
-
             let value = undefined
-            if @calleeValue? and @argumentsValue?
+            if @calleeValue.template
+                if @template?
+                    @template.unwatch(@templateWatcher)
+                # always use new on templates
+                @template = @calleeValue.template.apply(@thisArg, @argumentsValue)
+                @template.activate()
+                @template.watch(@templateWatcher ?= @setValue.bind(@))
+            else
+                if @type is 'NewExpression'
+                    # create a new with variable args
+                    value = ion.create(@calleeValue, @argumentsValue)
+                else # @type is 'CallExpression'
+                    value = @calleeValue.apply(@thisArg, @argumentsValue)
+                @setValue(value)
+        if DEBUG
+            evaluate: ->
                 try
-                    if @calleeValue.template
-                        if @template?
-                            @template.unwatch(@templateWatcher)
-                        # always use new on templates
-                        @template = @calleeValue.template.apply(@thisArg, @argumentsValue)
-                        @template.activate()
-                        @template.watch(@templateWatcher ?= @setValue.bind(@))
-                    else
-                        if @type is 'NewExpression'
-                            # create a new with variable args
-                            value = ion.create(@calleeValue, @argumentsValue)
-                        else # @type is 'CallExpression'
-                            value = @calleeValue.apply(@thisArg, @argumentsValue)
-                        @setValue(value)
+                    @_evaluateInternal()
                 catch e
                     # if we don't catch the errors, they might not be logged when occuring in an Object.observe callback
                     console.error(e.stack ? e)
+        else
+            evaluate: -> @_evaluateInternal()

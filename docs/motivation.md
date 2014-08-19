@@ -8,11 +8,13 @@ A brief history of web development
 
 ### 1st Generation: cgi-scripts
 
-This sucked.
+Executable programs ran from command line to handle web requests.
+Almost impossible to create ambitious web applications with these.
 
 ### 2nd Generation: Servlets
 
-This sucked less.
+Dedicated servers with classes authored to handle web requests.
+Better, but still very difficult to create ambitious web applications.
 
 ### 3rd Generation: Server Pages
 
