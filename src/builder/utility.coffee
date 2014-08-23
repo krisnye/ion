@@ -101,9 +101,8 @@ module.exports = exports =
             for file in fs.readdirSync(dir)
                 file = np.join dir, file
                 if not isMatch file, exclude, false
-                    if isFile file
-                        files.push file if isMatch file, options.include, true
-                    else if recursive
+                    files.push file if isMatch file, options.include, true
+                    if recursive and isDirectory file
                         list file, options, files
         files
     makeDirectories: makeDirectories = (dir) ->

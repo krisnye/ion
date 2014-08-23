@@ -51,7 +51,7 @@ export class Directory
                 return utility.read(path)
             else
                 return undefined
-        write: (path, content) ->
+        write: (path, content, encoding) ->
             if not content?
                 return
             if @hasOwnProperty(path) or @[path]?
@@ -59,7 +59,7 @@ export class Directory
 
             path = @getAbsoluteName(path)
             console.log("Writing: " + path)
-            utility.write(path, content)
+            utility.write(path, content, encoding)
         delete: (path) ->
             console.log("Deleting: " + path)
             path = @getAbsoluteName(path)
@@ -68,8 +68,8 @@ export class Directory
         getDirectory: (path) -> new Directory(@getAbsoluteName(path))
         getRelativeName: (path) -> np.relative(@path, String(path))
         getAbsoluteName: (path) -> np.join(@path, String(path))
-        search: (include, exclude) ->
-            let options =
+        search: (include, exclude, options) ->
+            options ?=
                 initial: false
             if include?
                 options.include = include

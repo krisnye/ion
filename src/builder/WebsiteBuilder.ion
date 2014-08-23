@@ -9,6 +9,7 @@ const
     serverJsDir = 'WEB-INF/js'
     serverJavaDir = 'WEB-INF/java'
     np = import 'path'
+    fs = import 'fs'
 
 
 export template (packagePatch) ->
@@ -64,7 +65,8 @@ export template (packagePatch) ->
 
     # Copy all other files from src to output
     for path, file of input.search(null, [".ionpage",".coffeepage",".coffee",".java",".class",".jar", ".ion"])
-        output.write(path, file.read())
+        if file.isFile
+            output.write(path, file.read(null), null)
     else
         output.delete(path)
 

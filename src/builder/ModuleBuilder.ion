@@ -1,9 +1,12 @@
 
 const
     ion = import '../'
+    np = import 'path'
     File = import './File'
     Directory = import './Directory'
     builder = import './'
+    utility = import './utility'
+
     compilers =
         ".coffee":
             compile: builder.compileCoffeeScript
@@ -20,22 +23,43 @@ export template (packagePatch) ->
     let input = new Directory(packageJson.directories.src ? 'src')
     let output = new Directory(packageJson.directories.lib ? 'lib')
     let moduleName = packageJson.name ? ''
+
     # build all source files with a single search
     let extensions = Object.keys(compilers)
     for path, source of input.search(extensions, packageJson.build.exclude)
-        let compiler = compilers[source.getExtension()]
-        let targetPath = builder.changeExtension(path, '.js')
-        if compiler.compileWithSourceMap?
-            let mapPath = builder.changeExtension(path, '.map')
-            let mapName = mapPath.split(/[\/\\]/g).slice(-1)[0]
-            let [code,map] = compiler.compileWithSourceMap(source, packageJson)
-            output.write(targetPath, code + "\n//@ sourceMappingURL=./" + mapName)
-            output.write(mapPath, map)
-        else
-            output.write(targetPath, compiler.compile(source, packageJson))
+        if not source.isDirectory
+            let compiler = compilers[source.getExtension()]
+            let targetPath = builder.changeExtension(path, '.js')
+            if compiler.compileWithSourceMap?
+                let mapPath = builder.changeExtension(path, '.map')
+                let mapName = mapPath.split(/[\/\\]/g).slice(-1)[0]
+                let [code,map] = compiler.compileWithSourceMap(source, packageJson)
+                output.write(targetPath, code + "\n//@ sourceMappingURL=./" + mapName)
+                output.write(mapPath, map)
+            else
+                output.write(targetPath, compiler.compile(source, packageJson))
     else
         output.delete(targetPath)
         output.delete(mapPath)
+
+    # build a default index file for each output directory
+    for path, file of input.search(null, extensions.concat(packageJson.build.exclude))
+        if file.isDirectory
+            # see if there is an input.js or input.ion file
+            let isInputFile = input.getFile(path + "/index.js").exists or input.getFile(path + "/index.ion").exists or input.getFile(path + "/index.coffee").exists
+            if not isInputFile
+                # then create an output file
+                let indexDirectory = output.getDirectory(path)
+                let indexFile = indexDirectory.getFile("index.js")
+                # get a list of all output files in that directory
+                let lines = []
+                    for key, childFile of indexDirectory.search(".js", null, {recursive:false})
+                        let name = key.substring(0, key.lastIndexOf('.js'))
+                        "exports['{{name}}'] = require('./{{name}}')"
+
+                let indexModuleId = np.join(moduleName, path, "index").replace(/\\/g, '/')
+                indexFile.write(builder.addBrowserShim(lines.join('\n'), indexModuleId))
+
     # build a manifest file with require.js at the top
     let outputFiles = output.search(".js", [/^_/, 'node_modules']) # ignore output _browser.js and node_modules
     let top = [key for key of outputFiles if key.endsWith('require.js')]

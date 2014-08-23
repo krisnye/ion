@@ -39,6 +39,10 @@ tests =
     }
     return _ref;
     """
+    # """
+    # template ->
+    #     let y = template -> 2
+    # """: null
 
 if global.window?
     return
