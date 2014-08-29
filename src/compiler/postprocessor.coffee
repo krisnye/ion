@@ -1024,25 +1024,14 @@ wrapTemplateInnerFunctions = (node, context) ->
 
 createTemplateFunctionClone = (node, context) ->
     if isFunctionNode(node) and node.template is true
-        # check that we aren't nested in another template
-        for ancestor in context.ancestorNodes by -1
-            if ancestor.template
-                throw context.error "Cannot nest templates", node
-        if node.bound
-            throw context.error "Templates cannot use the fat arrow (=>) binding syntax", node
         delete node.template
-        template = ion.clone node, true
-        template.type = 'Template'
-        # delete template.id
-        Object.defineProperties template,
-            type: {value:'Template'}
-        # node.template = template
-        # wrap the template in a call to ion.template
+        node.type = 'Template'
         ensureIonVariable context
         context.replace
             type: 'CallExpression'
             callee: getPathExpression 'ion.template'
-            arguments: [node,template]
+            arguments: [node]
+            toLiteral: -> @
 
 createTemplateRuntime = (node, context) ->
     if node.type is 'Template'
@@ -1140,17 +1129,12 @@ activateStatements = (node, context) ->
                 callee:
                     type: 'MemberExpression'
                     object:
-                        type: 'NewExpression'
-                        callee:
-                            type: 'MemberExpression'
-                            object: node.argument
-                            property:
-                                type: 'Identifier'
-                                name: 'template'
+                        type: 'CallExpression'
+                        callee: node.argument
                         arguments: []
                     property:
                         type: 'Identifier'
-                        name: 'activate'
+                        name: 'watch'
                 arguments: []
 
 variableDeclarationExpressions = (node, context) ->
@@ -1166,12 +1150,10 @@ variableDeclarationExpressions = (node, context) ->
 exports.postprocess = (program, options) ->
     steps = [
         [namedFunctionsAndNewArguments, superExpressions, activateStatements]
-        [destructuringAssignments]
+        [destructuringAssignments, callFunctionBindForFatArrows]
         [createTemplateFunctionClone]
-        [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions]
-        [checkVariableDeclarations]
-        [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows]
-        [validateTemplateNodes, classExpressions]
+        [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions, checkVariableDeclarations]
+        [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, validateTemplateNodes, classExpressions]
         [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments]
         [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression]
         [addUseStrictAndRequireIon]

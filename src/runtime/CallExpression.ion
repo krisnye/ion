@@ -37,7 +37,6 @@ module.exports = class CallExpression extends DynamicExpression
             @argumentExpressions.unwatch(@argumentWatcher)
             if @template?
                 @template.unwatch(@templateWatcher)
-                @template.deactivate()
                 delete @template
         _evaluateInternal: ->
             if not (@isActive and @calleeValue? and @argumentsValue?)
@@ -47,8 +46,7 @@ module.exports = class CallExpression extends DynamicExpression
                 if @template?
                     @template.unwatch(@templateWatcher)
                 # always use new on templates
-                @template = @calleeValue.template.apply(@thisArg, @argumentsValue)
-                @template.activate()
+                @template = @calleeValue.apply(@thisArg, @argumentsValue)
                 @template.watch(@templateWatcher ?= @setValue.bind(@))
             else
                 if @type is 'NewExpression'

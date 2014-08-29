@@ -4,7 +4,7 @@ build = (ionPath) ->
     options =
         build:
             merge: '_browser.js'
-    ModuleBuilder.template(options).activate()
+    ModuleBuilder(options).watch()
 
 task 'boot', "builds from the last stable version", -> build './boot'
 task 'watch', 'builds from the latest version', -> build './lib'

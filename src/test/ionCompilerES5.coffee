@@ -39,10 +39,6 @@ tests =
     }
     return _ref;
     """
-    # """
-    # template ->
-    #     let y = template -> 2
-    # """: null
 
 if global.window?
     return
@@ -52,9 +48,9 @@ exports.test = ->
         options = {target:'es5'}
         if expected is null
             console.log '---------------------------------------------------'
-            console.log JSON.stringify index.compile(input, ion.patch({postprocess:false}, options)), null, '  '
+            console.log JSON.stringify index.compile(input, ion.patch({postprocess:false,loc:false}, options)), null, '  '
             console.log '-Postprocessed-------------------------------------'
-            console.log JSON.stringify index.compile(input, ion.patch({generate:false}, options)), null, '  '
+            console.log JSON.stringify index.compile(input, ion.patch({generate:false,loc:false}, options)), null, '  '
             console.log '---------------------------------------------------'
             console.log index.compile input, ion.patch({loc:false}, options)
         else if typeof expected is 'object'

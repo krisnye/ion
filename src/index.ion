@@ -56,8 +56,8 @@ export const
             patch[key] = value
         return patch
     create = (type, args) -> variableArgConstructs[args.length](type, args)
-    template = (fn, template) ->
-        fn.template = template
+    template = (fn) ->
+        fn.template = true
         return fn
     createRuntime = (ast, args) ->
         const Context = import './runtime/Context'

@@ -1004,10 +1004,10 @@ tests =
         # cannot throw errors in templates
         throw new Error
     """: {line: 3, column: 5}
-    """
-    # cannot use => syntax in templates
-    export template => 0
-    """: {line: 2, column: 8}
+    # """
+    # # cannot use => syntax in templates
+    # export template => 0
+    # """: {line: 2, column: 8}
     """
     export template ->
         const x = 12
@@ -1266,53 +1266,6 @@ tests =
     return _ref;
     """
     """
-    export template add(x,y) -> x + y
-    """: """
-    'use strict';
-    const ion = require('ion');
-    module.exports = exports = ion.template(function add(x, y) {
-        return x + y;
-    }, function (x, y) {
-        return ion.createRuntime({
-            type: 'Template',
-            body: [{
-                    type: 'ReturnStatement',
-                    argument: {
-                        type: 'BinaryExpression',
-                        operator: '+',
-                        left: {
-                            type: 'Identifier',
-                            name: 'x'
-                        },
-                        right: {
-                            type: 'Identifier',
-                            name: 'y'
-                        }
-                    }
-                }],
-            bound: false
-        }, {
-            this: this,
-            x: x,
-            y: y
-        });
-    });
-    """
-    """
-    activate template ->
-    """: """
-    'use strict';
-    const ion = require('ion');
-    new (ion.template(function () {
-    }, function () {
-        return ion.createRuntime({
-            type: 'Template',
-            body: [],
-            bound: false
-        }, { this: this });
-    })).template().activate();
-    """
-    """
     content:
         name: 'foo'
         1
@@ -1360,6 +1313,11 @@ tests =
     'use strict';
     console.log('ion');
     """
+    # """
+    # let a = template ->
+    #     let b = template -> 1
+    #     return 2
+    # """: null
 
 if global.window?
     return

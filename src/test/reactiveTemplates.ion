@@ -81,8 +81,8 @@ const templates = []
         "nested templates"
         {}
         do ->
-            let sum = template ({deep:{a,b}}) -> a + b
             return template (object) ->
+                let sum = template ({deep:{a,b}}) -> a + b
                 return sum(object.one)
         {}
             one:
@@ -161,7 +161,7 @@ export
         for [name, thisArg, templateType,argument,patch,expected] in templates if expected?
             [name]: do (thisArg, templateType, argument, patch, expected) ->
                 return (done) ->
-                    let template = templateType.template.call(thisArg, argument)
+                    let template = templateType.call(thisArg, argument)
                     const checkIfDone (check) ->
                         # console.log(JSON.stringify({check,expected,argument}))
                         if JSON.stringify(check) is JSON.stringify(expected)

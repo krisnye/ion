@@ -263,6 +263,7 @@ Weaknesses:
 * Moderately complex learning curve.
 * Imperative javascript templating functions.
 * Only attempts to solve reactive dependencies for HTML user interfaces.
+* Virtual DOM and differencing algorithm is a hack designed to fix the inherent performance problem caused by using imperative functions which must be re-executed after every change.
 
 Imperative templates means that they have no choice but to re-render an entire function if any part of it changes.  Since you can nest functions, that means that you are potentially re-rendering the entire page when one partial input changes.  This is a huge problem, which they *solve* by introducing the Virtual DOM.  The Virtual DOM is basically an abstraction over the regular DOM.  They use a differencing algorithm to resolve changes made to the Virtual DOM and then apply only incremental changes to the actual DOM.  This is a very bad thing.  The Virtual DOM is intimately aware of the standard elements and attributes of the actual DOM.  What if you are targeting a new browser that exposes some new attributes that the Virtual DOM is unaware of?  Will you be able to set those values?  Does someone have to continue to update, extend and maintain this Virtual DOM codebase as the actual DOM evolves???
 
@@ -317,7 +318,7 @@ Imperative templates means that they have no choice but to re-render an entire f
 					div()
 						comment
 
-Ion is a new language that supports creating incrementally reactive template functions natively.
+Ion is a new language that supports creating incrementally reactive functions natively.
 
 * Syntax is inspired by CoffeeScripts indented notation but adheres as closely to EcmaScript 6 constructs as possible.
 * Regular imperative functions and reactive declarative template functions share the same syntax, with a few constructs (throw,while,for(;;)) not available from within templates.

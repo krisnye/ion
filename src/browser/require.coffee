@@ -76,10 +76,9 @@ require.compileScripts = ->
         # 'this' is the scriptElement within the scripts scope instead of the window
         result = compiledWrapper.call(scriptElement)
         if result?
-            if typeof result.template is 'function'
-                template = result.template.call(scriptElement)
+            if typeof result.template
+                template = result.call(scriptElement)
                 removeLastResult = null
-                template.activate()
                 template.watch (templateResult) ->
                     removeLastResult?()
                     removeLastResult = null

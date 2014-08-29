@@ -130,20 +130,20 @@ const templates = []
 export const
     test = ->
         for [templateType, args, expected] in templates if expected?
-            let template = templateType.template.apply(this, args)
-            template.activate()
+            let template = templateType.apply(this, args)
             let reactiveResult = null
-            template.watch((value) -> reactiveResult = value)
+            let watcher = (value) -> reactiveResult = value
+            template.watch(watcher)
             try
                 assert reactiveResult is expected or JSON.stringify(reactiveResult) is JSON.stringify(expected)
             catch e
                 console.log(reactiveResult, "!==", expected)
                 throw e
 
-            template.deactivate()
+            template.unwatch(watcher)
             assert reactiveResult is undefined
-            # also, call the template function imperatively and see that it's still the expected value
-            let imperativeResult = templateType.apply(null, args)
-            # console.log('imperativeResult: ', imperativeResult)
-            assert JSON.stringify(imperativeResult) is JSON.stringify(expected)
+            # # also, call the template function imperatively and see that it's still the expected value
+            # let imperativeResult = templateType.apply(null, args)
+            # # console.log('imperativeResult: ', imperativeResult)
+            # assert JSON.stringify(imperativeResult) is JSON.stringify(expected)
 
