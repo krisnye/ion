@@ -1,14 +1,17 @@
 const
     ion = import './'
 
+const typeKey = '$'
 export class Object extends null
     constructor: (properties) ->
         if properties?
             for key, value of properties
                 @[key] = value
-    typeKey: '$'
+    typeKey: typeKey
     is: (object) -> object?.constructor.types?.has?(@)
     properties:
+        [typeKey]:
+            type: 'string'
         toJSON: ->
             const properties = {}
             if @@id?

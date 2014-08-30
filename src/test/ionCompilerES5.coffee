@@ -39,6 +39,30 @@ tests =
     }
     return _ref;
     """
+    """
+    export class StampFilter
+        stamp: (key, object) ->
+            for name, property of key.type.properties if property.stamp
+                log(name)
+    """: """
+    'use strict';
+    var ion = require('ion');
+    var StampFilter = ion.defineClass({
+            name: 'StampFilter',
+            stamp: function (key, object) {
+                {
+                    var _ref = key.type.properties;
+                    for (var name in _ref) {
+                        var property = _ref[name];
+                        if (property.stamp) {
+                            log(name);
+                        }
+                    }
+                }
+            }
+        });
+    module.exports = exports = StampFilter;
+    """
 
 if global.window?
     return
