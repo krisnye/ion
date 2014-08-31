@@ -50,12 +50,14 @@ export template (packagePatch) ->
             if not isInputFile
                 # then create an output file
                 let indexDirectory = output.getDirectory(path)
-                let indexFile = indexDirectory.getFile("index.js")
+                let indexName = "index.js"
+                let indexFile = indexDirectory.getFile(indexName)
                 # get a list of all output files in that directory
                 let lines = []
                     for key, childFile of indexDirectory.search(".js", null, {recursive:false})
-                        let name = key.substring(0, key.lastIndexOf('.js'))
-                        "exports['{{name}}'] = require('./{{name}}')"
+                        if key isnt indexName
+                            let name = key.substring(0, key.lastIndexOf('.js'))
+                            "exports['{{name}}'] = require('./{{name}}')"
 
                 let indexModuleId = np.join(moduleName, path, "index").replace(/\\/g, '/')
                 indexFile.write(builder.addBrowserShim(lines.join('\n'), indexModuleId))

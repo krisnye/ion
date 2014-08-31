@@ -72,7 +72,7 @@ require.compileScripts = ->
     compiler = require 'ion/compiler'
     for scriptElement in document.querySelectorAll("script[type=ion]")
         # we wrap all ion scripts to avoid global variable leaks
-        compiledWrapper = eval("(function(){ #{compiler.compile(scriptElement.innerText)} })")
+        compiledWrapper = eval("(function(){ #{compiler.compile(scriptElement.innerHTML)} })")
         # 'this' is the scriptElement within the scripts scope instead of the window
         result = compiledWrapper.call(scriptElement)
         if result?
