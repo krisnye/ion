@@ -56,8 +56,8 @@ export const
             patch[key] = value
         return patch
     create = (type, args) -> variableArgConstructs[args.length](type, args)
-    template = (fn) ->
-        fn.template = true
+    template = (fn, template) ->
+        fn.template = template ? true
         return fn
     createRuntime = (ast, args) ->
         const Context = import './runtime/Context'
@@ -324,8 +324,4 @@ export const
 
 # if window, then on resize, check for changes
 if global.window?
-    global.window.addEventListener(
-        'resize'
-        ->
-            checkForChanges()
-    )
+    global.window.addEventListener('resize', checkForChanges)
