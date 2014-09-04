@@ -55,7 +55,7 @@ var Directory = ion.defineClass({
                     return void 0;
                 }
             },
-            write: function (path, content) {
+            write: function (path, content, encoding) {
                 if (!(content != null)) {
                     return;
                 }
@@ -64,7 +64,7 @@ var Directory = ion.defineClass({
                 }
                 path = this.getAbsoluteName(path);
                 console.log('Writing: ' + path);
-                utility.write(path, content);
+                utility.write(path, content, encoding);
             },
             delete: function (path) {
                 console.log('Deleting: ' + path);
@@ -83,8 +83,8 @@ var Directory = ion.defineClass({
             getAbsoluteName: function (path) {
                 return np.join(this.path, String(path));
             },
-            search: function (include, exclude) {
-                var options = { initial: false };
+            search: function (include, exclude, options) {
+                options = options != null ? options : { initial: false };
                 if (include != null) {
                     options.include = include;
                 }
@@ -102,6 +102,7 @@ var Directory = ion.defineClass({
                             } else {
                                 delete results[path];
                             }
+                            ion.checkForChanges();
                         }, this));
                     return unwatch;
                 }, this));

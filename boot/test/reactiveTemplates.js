@@ -1,16 +1,14 @@
 void (function(){var _ion_test_reactiveTemplates_ = function(module,exports,require){'use strict';
 var ion = require('../');
-var _ref9 = [];
+var _ref4 = [];
 {
-    _ref9.push('this');
+    _ref4.push('this');
     var object = {
             x: 1,
             y: 2
         };
-    _ref9.push(object);
-    _ref9.push(ion.template(function () {
-        return this.x + this.y;
-    }, function () {
+    _ref4.push(object);
+    _ref4.push(ion.template(function () {
         return ion.createRuntime({
             type: 'Template',
             body: [{
@@ -43,22 +41,20 @@ var _ref9 = [];
             this: this,
             object: object,
             ion: ion,
-            _ref9: _ref9,
+            _ref4: _ref4,
             templates: templates,
-            _ref12: _ref12
+            _ref5: _ref5
         });
     }));
-    _ref9.push(object);
-    _ref9.push({ x: 10 });
-    _ref9.push(12);
+    _ref4.push(object);
+    _ref4.push({ x: 10 });
+    _ref4.push(12);
 }
 var templates = [
         [
             'regular expression',
             {},
             ion.template(function (properties) {
-                return properties.name.replace(/a/g, 'b');
-            }, function (properties) {
                 return ion.createRuntime({
                     type: 'Template',
                     body: [{
@@ -102,9 +98,9 @@ var templates = [
                     this: this,
                     properties: properties,
                     ion: ion,
-                    _ref9: _ref9,
+                    _ref4: _ref4,
                     templates: templates,
-                    _ref12: _ref12
+                    _ref5: _ref5
                 });
             }),
             { name: 'alpha' },
@@ -115,11 +111,6 @@ var templates = [
             'array comprehension for of',
             {},
             ion.template(function (properties) {
-                var _ref4 = [];
-                for (var key in properties)
-                    _ref4.push(key);
-                return _ref4;
-            }, function (properties) {
                 return ion.createRuntime({
                     type: 'Template',
                     body: [{
@@ -163,9 +154,9 @@ var templates = [
                     this: this,
                     properties: properties,
                     ion: ion,
-                    _ref9: _ref9,
+                    _ref4: _ref4,
                     templates: templates,
-                    _ref12: _ref12
+                    _ref5: _ref5
                 });
             }),
             {
@@ -185,17 +176,6 @@ var templates = [
             'imperative functions',
             {},
             ion.template(function (properties) {
-                function double(a) {
-                    return a * 2;
-                }
-                var _ref6 = {};
-                for (var key in properties) {
-                    var value = properties[key];
-                    var value = properties[key];
-                    _ref6[key] = double(value);
-                }
-                return _ref6;
-            }, function (properties) {
                 return ion.createRuntime({
                     type: 'Template',
                     body: [
@@ -286,9 +266,9 @@ var templates = [
                     this: this,
                     properties: properties,
                     ion: ion,
-                    _ref9: _ref9,
+                    _ref4: _ref4,
                     templates: templates,
-                    _ref12: _ref12
+                    _ref5: _ref5
                 });
             }),
             {
@@ -310,14 +290,6 @@ var templates = [
             'for else statements',
             {},
             ion.template(function (properties) {
-                var _ref7 = {};
-                for (var key in properties) {
-                    var value = properties[key];
-                    var value = properties[key];
-                    _ref7[key] = value;
-                }
-                return _ref7;
-            }, function (properties) {
                 return ion.createRuntime({
                     type: 'Template',
                     body: [{
@@ -401,9 +373,9 @@ var templates = [
                     this: this,
                     properties: properties,
                     ion: ion,
-                    _ref9: _ref9,
+                    _ref4: _ref4,
                     templates: templates,
-                    _ref12: _ref12
+                    _ref5: _ref5
                 });
             }),
             {
@@ -424,20 +396,6 @@ var templates = [
             'shared variables functions',
             {},
             ion.template(function (properties) {
-                var factor = properties.factor != null ? properties.factor : 3;
-                function multiply(a) {
-                    return a * factor;
-                }
-                var _ref8 = {};
-                for (var key in properties) {
-                    var value = properties[key];
-                    var value = properties[key];
-                    if (key !== 'factor') {
-                        _ref8[key] = multiply(value);
-                    }
-                }
-                return _ref8;
-            }, function (properties) {
                 return ion.createRuntime({
                     type: 'Template',
                     body: [
@@ -599,9 +557,9 @@ var templates = [
                     this: this,
                     properties: properties,
                     ion: ion,
-                    _ref9: _ref9,
+                    _ref4: _ref4,
                     templates: templates,
-                    _ref12: _ref12
+                    _ref5: _ref5
                 });
             }),
             {
@@ -624,10 +582,6 @@ var templates = [
             'reactive destructured parameters',
             {},
             ion.template(function (_ref) {
-                var a = _ref.a;
-                var b = _ref.b;
-                return a + b;
-            }, function (_ref) {
                 return ion.createRuntime({
                     type: 'Template',
                     body: [
@@ -698,9 +652,9 @@ var templates = [
                     this: this,
                     _ref: _ref,
                     ion: ion,
-                    _ref9: _ref9,
+                    _ref4: _ref4,
                     templates: templates,
-                    _ref12: _ref12
+                    _ref5: _ref5
                 });
             }),
             {
@@ -714,15 +668,6 @@ var templates = [
             'array comprehension for in',
             {},
             ion.template(function (_ref2) {
-                var items = _ref2.items;
-                var _ref5 = [];
-                for (var _i = 0; _i < items.length; _i++) {
-                    var i = _i;
-                    var x = items[_i];
-                    _ref5.push(x + i);
-                }
-                return _ref5;
-            }, function (_ref2) {
                 return ion.createRuntime({
                     type: 'Template',
                     body: [
@@ -809,9 +754,9 @@ var templates = [
                     this: this,
                     _ref2: _ref2,
                     ion: ion,
-                    _ref9: _ref9,
+                    _ref4: _ref4,
                     templates: templates,
-                    _ref12: _ref12
+                    _ref5: _ref5
                 });
             }),
             {
@@ -833,8 +778,6 @@ var templates = [
             'changing object with function',
             {},
             ion.template(function (object) {
-                return object.sum();
-            }, function (object) {
                 return ion.createRuntime({
                     type: 'Template',
                     body: [{
@@ -861,9 +804,9 @@ var templates = [
                     this: this,
                     object: object,
                     ion: ion,
-                    _ref9: _ref9,
+                    _ref4: _ref4,
                     templates: templates,
-                    _ref12: _ref12
+                    _ref5: _ref5
                 });
             }),
             {
@@ -880,113 +823,119 @@ var templates = [
             'nested templates',
             {},
             function () {
-                var sum = ion.template(function (_ref3) {
-                        var a = _ref3.deep.a;
-                        var b = _ref3.deep.b;
-                        return a + b;
-                    }, function (_ref3) {
-                        return ion.createRuntime({
-                            type: 'Template',
-                            body: [
-                                {
-                                    type: 'VariableDeclaration',
-                                    declarations: [{
-                                            type: 'VariableDeclarator',
-                                            id: {
-                                                type: 'Identifier',
-                                                name: 'a'
-                                            },
-                                            init: {
-                                                type: 'MemberExpression',
-                                                object: {
-                                                    type: 'MemberExpression',
-                                                    object: {
-                                                        type: 'Identifier',
-                                                        name: '_ref3'
-                                                    },
-                                                    property: {
-                                                        type: 'Identifier',
-                                                        name: 'deep'
-                                                    },
-                                                    computed: false
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'a'
-                                                },
-                                                computed: false
-                                            }
-                                        }],
-                                    kind: 'let'
-                                },
-                                {
-                                    type: 'VariableDeclaration',
-                                    declarations: [{
-                                            type: 'VariableDeclarator',
-                                            id: {
-                                                type: 'Identifier',
-                                                name: 'b'
-                                            },
-                                            init: {
-                                                type: 'MemberExpression',
-                                                object: {
-                                                    type: 'MemberExpression',
-                                                    object: {
-                                                        type: 'Identifier',
-                                                        name: '_ref3'
-                                                    },
-                                                    property: {
-                                                        type: 'Identifier',
-                                                        name: 'deep'
-                                                    },
-                                                    computed: false
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'b'
-                                                },
-                                                computed: false
-                                            }
-                                        }],
-                                    kind: 'let'
-                                },
-                                {
-                                    type: 'ReturnStatement',
-                                    argument: {
-                                        type: 'BinaryExpression',
-                                        operator: '+',
-                                        left: {
-                                            type: 'Identifier',
-                                            name: 'a'
-                                        },
-                                        right: {
-                                            type: 'Identifier',
-                                            name: 'b'
-                                        }
-                                    }
-                                }
-                            ],
-                            bound: false,
-                            name: {
-                                type: 'Identifier',
-                                name: 'sum'
-                            }
-                        }, {
-                            this: this,
-                            _ref3: _ref3,
-                            sum: sum,
-                            ion: ion,
-                            _ref9: _ref9,
-                            templates: templates,
-                            _ref12: _ref12
-                        });
-                    });
                 return ion.template(function (object) {
-                    return sum(object.one);
-                }, function (object) {
                     return ion.createRuntime({
                         type: 'Template',
-                        body: [{
+                        body: [
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
+                                            name: 'sum'
+                                        },
+                                        init: ion.template(function (_ref3) {
+                                            return ion.createRuntime({
+                                                type: 'Template',
+                                                body: [
+                                                    {
+                                                        type: 'VariableDeclaration',
+                                                        declarations: [{
+                                                                type: 'VariableDeclarator',
+                                                                id: {
+                                                                    type: 'Identifier',
+                                                                    name: 'a'
+                                                                },
+                                                                init: {
+                                                                    type: 'MemberExpression',
+                                                                    object: {
+                                                                        type: 'MemberExpression',
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: '_ref3'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'deep'
+                                                                        },
+                                                                        computed: false
+                                                                    },
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'a'
+                                                                    },
+                                                                    computed: false
+                                                                }
+                                                            }],
+                                                        kind: 'let'
+                                                    },
+                                                    {
+                                                        type: 'VariableDeclaration',
+                                                        declarations: [{
+                                                                type: 'VariableDeclarator',
+                                                                id: {
+                                                                    type: 'Identifier',
+                                                                    name: 'b'
+                                                                },
+                                                                init: {
+                                                                    type: 'MemberExpression',
+                                                                    object: {
+                                                                        type: 'MemberExpression',
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: '_ref3'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'deep'
+                                                                        },
+                                                                        computed: false
+                                                                    },
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'b'
+                                                                    },
+                                                                    computed: false
+                                                                }
+                                                            }],
+                                                        kind: 'let'
+                                                    },
+                                                    {
+                                                        type: 'ReturnStatement',
+                                                        argument: {
+                                                            type: 'BinaryExpression',
+                                                            operator: '+',
+                                                            left: {
+                                                                type: 'Identifier',
+                                                                name: 'a'
+                                                            },
+                                                            right: {
+                                                                type: 'Identifier',
+                                                                name: 'b'
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                bound: false,
+                                                name: {
+                                                    type: 'Identifier',
+                                                    name: 'sum'
+                                                }
+                                            }, {
+                                                this: this,
+                                                _ref3: _ref3,
+                                                object: object,
+                                                ion: ion,
+                                                _ref4: _ref4,
+                                                templates: templates,
+                                                _ref5: _ref5
+                                            });
+                                        })
+                                    }],
+                                kind: 'let'
+                            },
+                            {
                                 type: 'ReturnStatement',
                                 argument: {
                                     type: 'CallExpression',
@@ -1007,16 +956,16 @@ var templates = [
                                             }
                                         }]
                                 }
-                            }],
+                            }
+                        ],
                         bound: false
                     }, {
                         this: this,
-                        object: object,
-                        sum: sum,
                         ion: ion,
-                        _ref9: _ref9,
+                        object: object,
+                        _ref4: _ref4,
                         templates: templates,
-                        _ref12: _ref12
+                        _ref5: _ref5
                     });
                 });
             }(),
@@ -1035,9 +984,6 @@ var templates = [
             'bidirectional properties',
             {},
             ion.template(function (object) {
-                object.x = object.y;
-                return object;
-            }, function (object) {
                 return ion.createRuntime({
                     type: 'Template',
                     body: [
@@ -1086,9 +1032,9 @@ var templates = [
                     this: this,
                     object: object,
                     ion: ion,
-                    _ref9: _ref9,
+                    _ref4: _ref4,
                     templates: templates,
-                    _ref12: _ref12
+                    _ref5: _ref5
                 });
             }),
             {
@@ -1105,11 +1051,6 @@ var templates = [
             'literal objects',
             {},
             ion.template(function () {
-                return {
-                    touch: 1,
-                    'touch-start': 2
-                };
-            }, function () {
                 return ion.createRuntime({
                     type: 'Template',
                     body: [{
@@ -1148,9 +1089,9 @@ var templates = [
                 }, {
                     this: this,
                     ion: ion,
-                    _ref9: _ref9,
+                    _ref4: _ref4,
                     templates: templates,
-                    _ref12: _ref12
+                    _ref5: _ref5
                 });
             }),
             {},
@@ -1160,7 +1101,7 @@ var templates = [
                 'touch-start': 2
             }
         ],
-        _ref9,
+        _ref4,
         function () {
             var Type = function () {
             };
@@ -1175,18 +1116,6 @@ var templates = [
                 'for in reuse values',
                 {},
                 ion.template(function (items) {
-                    var _ref10 = [];
-                    for (var _i2 = 0; _i2 < items.length; _i2++) {
-                        var index = _i2;
-                        var item = items[_i2];
-                        _ref10.push({
-                            id: nextId(),
-                            name: item.name,
-                            index: index
-                        });
-                    }
-                    return _ref10;
-                }, function (items) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -1299,9 +1228,9 @@ var templates = [
                         next: next,
                         nextId: nextId,
                         ion: ion,
-                        _ref9: _ref9,
+                        _ref4: _ref4,
                         templates: templates,
-                        _ref12: _ref12
+                        _ref5: _ref5
                     });
                 }),
                 [
@@ -1337,18 +1266,6 @@ var templates = [
                 'for of reuse keys',
                 {},
                 ion.template(function (items) {
-                    var _ref11 = [];
-                    for (var key in items) {
-                        var value = items[key];
-                        var value = items[key];
-                        _ref11.push({
-                            id: nextId(),
-                            key: key,
-                            value: value
-                        });
-                    }
-                    return _ref11;
-                }, function (items) {
                     return ion.createRuntime({
                         type: 'Template',
                         body: [{
@@ -1449,9 +1366,9 @@ var templates = [
                         next: next,
                         nextId: nextId,
                         ion: ion,
-                        _ref9: _ref9,
+                        _ref4: _ref4,
                         templates: templates,
-                        _ref12: _ref12
+                        _ref5: _ref5
                     });
                 }),
                 {
@@ -1478,19 +1395,19 @@ var templates = [
             ];
         }()
     ];
-var _ref12 = {};
-for (var _i3 = 0; _i3 < templates.length; _i3++) {
-    var _ref13 = templates[_i3];
-    var name = _ref13[0];
-    var thisArg = _ref13[1];
-    var templateType = _ref13[2];
-    var argument = _ref13[3];
-    var patch = _ref13[4];
-    var expected = _ref13[5];
+var _ref5 = {};
+for (var _i = 0; _i < templates.length; _i++) {
+    var _ref6 = templates[_i];
+    var name = _ref6[0];
+    var thisArg = _ref6[1];
+    var templateType = _ref6[2];
+    var argument = _ref6[3];
+    var patch = _ref6[4];
+    var expected = _ref6[5];
     if (expected != null) {
-        _ref12[name] = function (thisArg, templateType, argument, patch, expected) {
+        _ref5[name] = function (thisArg, templateType, argument, patch, expected) {
             return function (done) {
-                var template = templateType.template.call(thisArg, argument);
+                var template = templateType.call(thisArg, argument);
                 function checkIfDone(check) {
                     if (JSON.stringify(check) === JSON.stringify(expected)) {
                         template.deactivate();
@@ -1510,7 +1427,7 @@ for (var _i3 = 0; _i3 < templates.length; _i3++) {
         }(thisArg, templateType, argument, patch, expected);
     }
 }
-module.exports = exports = { test: _ref12 };
+module.exports = exports = { test: _ref5 };
   }
   if (typeof require === 'function') {
     if (require.register)

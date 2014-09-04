@@ -7,7 +7,8 @@ index = require('../compiler');
 tests = {
   "let x = 10": "'use strict';\nvar x = 10;",
   "let x = 10\nif foo\n    let y = 20\nif bar\n    const y = 30": "'use strict';\nvar x = 10;\nif (foo) {\n    var y = 20;\n}\nif (bar) {\n    var y = 30;\n}",
-  "return let grid = div()\n    child1(grid)\n    child2(grid)": "'use strict';\nvar ion = require('ion');\nvar grid = div();\nvar _ref = grid;\n{\n    ion.add(_ref, child1(grid));\n    ion.add(_ref, child2(grid));\n}\nreturn _ref;"
+  "return let grid = div()\n    child1(grid)\n    child2(grid)": "'use strict';\nvar ion = require('ion');\nvar grid = div();\nvar _ref = grid;\n{\n    ion.add(_ref, child1(grid));\n    ion.add(_ref, child2(grid));\n}\nreturn _ref;",
+  "export class StampFilter\n    stamp: (key, object) ->\n        for name, property of key.type.properties if property.stamp\n            log(name)": "'use strict';\nvar ion = require('ion');\nvar StampFilter = ion.defineClass({\n        name: 'StampFilter',\n        stamp: function (key, object) {\n            {\n                var _ref = key.type.properties;\n                for (var name in _ref) {\n                    var property = _ref[name];\n                    if (property.stamp) {\n                        log(name);\n                    }\n                }\n            }\n        }\n    });\nmodule.exports = exports = StampFilter;"
 };
 
 if (global.window != null) {
@@ -24,11 +25,13 @@ exports.test = function() {
     if (expected === null) {
       console.log('---------------------------------------------------');
       console.log(JSON.stringify(index.compile(input, ion.patch({
-        postprocess: false
+        postprocess: false,
+        loc: false
       }, options)), null, '  '));
       console.log('-Postprocessed-------------------------------------');
       console.log(JSON.stringify(index.compile(input, ion.patch({
-        generate: false
+        generate: false,
+        loc: false
       }, options)), null, '  '));
       console.log('---------------------------------------------------');
       console.log(index.compile(input, ion.patch({

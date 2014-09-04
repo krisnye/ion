@@ -10,12 +10,14 @@ var IfStatement = ion.defineClass({
                     if (value) {
                         if (this.alternateStatement != null ? this.alternateStatement.isActive : void 0) {
                             this.alternateStatement != null ? this.alternateStatement.deactivate() : void 0;
+                            delete this.alternateStatement;
                         }
                         this.consequentStatement = this.consequentStatement != null ? this.consequentStatement : this.context.createRuntime(this.consequent);
                         this.consequentStatement.activate();
                     } else {
                         if (this.consequentStatement != null ? this.consequentStatement.isActive : void 0) {
                             this.consequentStatement != null ? this.consequentStatement.deactivate() : void 0;
+                            delete this.consequentStatement;
                         }
                         if (this.alternate != null) {
                             this.alternateStatement = this.alternateStatement != null ? this.alternateStatement : this.context.createRuntime(this.alternate);

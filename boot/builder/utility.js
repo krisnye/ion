@@ -192,11 +192,10 @@ module.exports = exports = {
         file = _ref2[_i];
         file = np.join(dir, file);
         if (!isMatch(file, exclude, false)) {
-          if (isFile(file)) {
-            if (isMatch(file, options.include, true)) {
-              files.push(file);
-            }
-          } else if (recursive) {
+          if (isMatch(file, options.include, true)) {
+            files.push(file);
+          }
+          if (recursive && isDirectory(file)) {
             list(file, options, files);
           }
         }

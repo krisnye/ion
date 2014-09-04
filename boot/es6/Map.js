@@ -1,7 +1,7 @@
 void (function(){var _ion_es6_Map_ = function(module,exports,require){'use strict';
 var ion = null;
 var uniqueCounter = 0;
-var idName = '__Map_id';
+var idName = '_Map_id_';
 var getId = function (key) {
     if (!(key != null)) {
         return String(key);
@@ -11,11 +11,13 @@ var getId = function (key) {
     }
     var id = key[idName];
     if (!(id != null)) {
-        id = ++uniqueCounter;
-        Object.defineProperty(key, idName, {
-            value: id,
-            enumerable: false
-        });
+        var def = Object.getOwnPropertyDescriptor(key, idName);
+        if (def != null) {
+            id = def.value;
+        } else {
+            id = ++uniqueCounter;
+            Object.defineProperty(key, idName, { value: id });
+        }
     }
     return id;
 };

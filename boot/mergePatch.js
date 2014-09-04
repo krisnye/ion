@@ -65,22 +65,28 @@ var merge = exports.merge = function (target, values, options) {
             }
         };
         var watcher = function (changes) {
-            try {
-                var patch = {};
-                for (var _i = 0; _i < changes.length; _i++) {
-                    var change = changes[_i];
-                    if (change.name[0] !== '_') {
-                        patch = patch != null ? patch : {};
-                        patch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
-                    }
+            var patch = {};
+            for (var _i = 0; _i < changes.length; _i++) {
+                var change = changes[_i];
+                if (change.name[0] !== '_') {
+                    patch = patch != null ? patch : {};
+                    patch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
                 }
-                if (patch != null) {
-                    queuePatch(patch);
-                }
-            } catch (e) {
-                console.error(e);
+            }
+            if (patch != null) {
+                queuePatch(patch);
             }
         };
+        if (DEBUG) {
+            var innerWatcher = watcher;
+            watcher = function (changes) {
+                try {
+                    innerWatcher(changes);
+                } catch (e) {
+                    console.error(e);
+                }
+            };
+        }
         processPatch(object);
         ion.observe(object, watcher);
         return function () {

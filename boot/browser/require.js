@@ -115,13 +115,12 @@ require.compileScripts = function() {
   _results = [];
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     scriptElement = _ref[_i];
-    compiledWrapper = eval("(function(){ " + (compiler.compile(scriptElement.innerText)) + " })");
+    compiledWrapper = eval("(function(){ " + (compiler.compile(scriptElement.innerHTML)) + " })");
     result = compiledWrapper.call(scriptElement);
     if (result != null) {
-      if (typeof result.template === 'function') {
-        template = result.template.call(scriptElement);
+      if (typeof result.template) {
+        template = result.call(scriptElement);
         removeLastResult = null;
-        template.activate();
         _results.push(template.watch(function(templateResult) {
           if (typeof removeLastResult === "function") {
             removeLastResult();

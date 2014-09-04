@@ -8,61 +8,68 @@ var changeElements = {
         select: true,
         textarea: true
     };
-var _ref2 = {};
-{
-    var _ref = [
-            'div',
-            'span',
-            'input',
-            'textarea',
-            'a',
-            'br',
-            'button',
-            'caption',
-            'fieldset',
-            'form',
-            'frame',
-            'frameset',
-            'h1',
-            'h2',
-            'h3',
-            'h4',
-            'h5',
-            'h6',
-            'hr',
-            'legend',
-            'menu',
-            'option',
-            'select',
-            'script',
-            'pre',
-            'table',
-            'tbody',
-            'td',
-            'tr',
-            'thead',
-            'canvas'
-        ];
-    for (var _i = 0; _i < _ref.length; _i++) {
-        var name = _ref[_i];
-        _ref2[name] = function (name) {
-            return function (attributes) {
-                var element = document.createElement(name);
-                if (changeElements[name]) {
-                    ion.add(element, changeHandler);
+var elements = [
+        'div',
+        'span',
+        'input',
+        'textarea',
+        'a',
+        'br',
+        'img',
+        'button',
+        'caption',
+        'fieldset',
+        'form',
+        'frame',
+        'frameset',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'hr',
+        'legend',
+        'menu',
+        'option',
+        'select',
+        'script',
+        'pre',
+        'table',
+        'tbody',
+        'td',
+        'tr',
+        'thead',
+        'canvas',
+        'head',
+        'meta',
+        'body',
+        'script',
+        'section',
+        'header',
+        'footer',
+        'article'
+    ];
+var _ref = {};
+for (var _i = 0; _i < elements.length; _i++) {
+    var name = elements[_i];
+    _ref[name] = function (name) {
+        return function (attributes) {
+            var element = document.createElement(name);
+            if (changeElements[name]) {
+                ion.add(element, changeHandler);
+            }
+            if (attributes != null) {
+                for (var key in attributes) {
+                    var value = attributes[key];
+                    element.setAttribute(key, value);
                 }
-                if (attributes != null) {
-                    for (var key in attributes) {
-                        var value = attributes[key];
-                        element.setAttribute(key, value);
-                    }
-                }
-                return element;
-            };
-        }(name);
-    }
+            }
+            return element;
+        };
+    }(name);
 }
-module.exports = exports = _ref2;
+module.exports = exports = _ref;
   }
   if (typeof require === 'function') {
     if (require.register)

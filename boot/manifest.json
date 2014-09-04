@@ -1,8 +1,9 @@
 {
-  "modified": 1407190161899,
+  "modified": 1409800671000,
   "files": [
     "browser/require.js",
     "browser/elements.js",
+    "browser/index.js",
     "browser/tester.js",
     "builder/Directory.js",
     "builder/File.js",
@@ -46,6 +47,7 @@
     "runtime/Factory.js",
     "runtime/ForInOfStatement.js",
     "runtime/IfStatement.js",
+    "runtime/index.js",
     "runtime/Literal.js",
     "runtime/MemberExpression.js",
     "runtime/Node.js",
@@ -57,6 +59,7 @@
     "runtime/Template.js",
     "runtime/VariableDeclaration.js",
     "test/immediateTemplates.js",
+    "test/index.js",
     "test/ionCompiler.js",
     "test/ionCompilerES5.js",
     "test/reactiveTemplates.js"

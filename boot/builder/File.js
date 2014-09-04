@@ -28,6 +28,7 @@ var File = ion.defineClass({
                 if (fs.existsSync(this.path)) {
                     watcher = fs.watch(this.path, ion.bind(function () {
                         this.modified = utility.getModified(this.path);
+                        ion.checkForChanges();
                     }, this));
                 }
                 return function () {
@@ -36,9 +37,24 @@ var File = ion.defineClass({
             }, this));
         },
         properties: {
+            isFile: {
+                get: function () {
+                    return !this.isDirectory;
+                }
+            },
+            isDirectory: {
+                get: function () {
+                    return fs.statSync(this.path).isDirectory();
+                }
+            },
             directoryName: {
                 get: function () {
                     return np.dirname(this.path);
+                }
+            },
+            exists: {
+                get: function () {
+                    return fs.existsSync(this.path);
                 }
             },
             copyFrom: function (file) {

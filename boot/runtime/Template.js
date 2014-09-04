@@ -1,5 +1,6 @@
 void (function(){var _ion_runtime_Template_ = function(module,exports,require){'use strict';
-var ion = require('../'), BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression');
+var ion = require('../'), BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression'), noop = function () {
+    };
 var Template = ion.defineClass({
         name: 'Template',
         constructor: function Template() {
@@ -8,13 +9,18 @@ var Template = ion.defineClass({
         },
         properties: {
             watch: function (watcher) {
+                if (watcher == null)
+                    watcher = noop;
                 if (!this.isActive) {
-                    throw new Error('You must activate a Template before you watch it.');
+                    this.activate();
                 }
                 this.context.returnExpression.watch(watcher);
             },
             unwatch: function (watcher) {
                 this.context.returnExpression.unwatch(watcher);
+                if (!this.context.returnExpression.isActive) {
+                    this.deactivate();
+                }
             }
         }
     }, BlockStatement);

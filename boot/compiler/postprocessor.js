@@ -1431,31 +1431,17 @@ wrapTemplateInnerFunctions = function(node, context) {
 };
 
 createTemplateFunctionClone = function(node, context) {
-  var ancestor, template, _i, _ref1;
   if (isFunctionNode(node) && node.template === true) {
-    _ref1 = context.ancestorNodes;
-    for (_i = _ref1.length - 1; _i >= 0; _i += -1) {
-      ancestor = _ref1[_i];
-      if (ancestor.template) {
-        throw context.error("Cannot nest templates", node);
-      }
-    }
-    if (node.bound) {
-      throw context.error("Templates cannot use the fat arrow (=>) binding syntax", node);
-    }
     delete node.template;
-    template = ion.clone(node, true);
-    template.type = 'Template';
-    Object.defineProperties(template, {
-      type: {
-        value: 'Template'
-      }
-    });
+    node.type = 'Template';
     ensureIonVariable(context);
     return context.replace({
       type: 'CallExpression',
       callee: getPathExpression('ion.template'),
-      "arguments": [node, template]
+      "arguments": [node],
+      toLiteral: function() {
+        return this;
+      }
     });
   }
 };
@@ -1583,20 +1569,13 @@ activateStatements = function(node, context) {
         callee: {
           type: 'MemberExpression',
           object: {
-            type: 'NewExpression',
-            callee: {
-              type: 'MemberExpression',
-              object: node.argument,
-              property: {
-                type: 'Identifier',
-                name: 'template'
-              }
-            },
+            type: 'CallExpression',
+            callee: node.argument,
             "arguments": []
           },
           property: {
             type: 'Identifier',
-            name: 'activate'
+            name: 'watch'
           }
         },
         "arguments": []
@@ -1618,7 +1597,7 @@ variableDeclarationExpressions = function(node, context) {
 
 exports.postprocess = function(program, options) {
   var enter, exit, previousContext, steps, traversal, variable, _i, _len;
-  steps = [[namedFunctionsAndNewArguments, superExpressions, activateStatements], [destructuringAssignments], [createTemplateFunctionClone], [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions], [checkVariableDeclarations], [extractForLoopsInnerAndTest, extractForLoopRightVariable, extractReactiveForPatterns, callFunctionBindForFatArrows], [validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]];
+  steps = [[namedFunctionsAndNewArguments, superExpressions, activateStatements], [destructuringAssignments, callFunctionBindForFatArrows], [createTemplateFunctionClone], [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions, checkVariableDeclarations], [extractForLoopsInnerAndTest, extractForLoopRightVariable], [extractReactiveForPatterns, validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]];
   if ((options != null ? options.target : void 0) === 'es5') {
     steps.push([letAndConstToVar]);
   }

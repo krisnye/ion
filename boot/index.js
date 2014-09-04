@@ -1,6 +1,7 @@
 void (function(){var _ion_index_ = function(module,exports,require){'use strict';
 var ion = null;
 require('./es6');
+global.DEBUG = global.DEBUG != null ? global.DEBUG : false;
 var primitive = {
         string: true,
         number: true,
@@ -91,7 +92,7 @@ var patch = exports.patch = function () {
     }(), create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
     }, template = exports.template = function (fn, template) {
-        fn.template = template;
+        fn.template = template != null ? template : true;
         return fn;
     }, createRuntime = exports.createRuntime = function (ast, args) {
         var Context = require('./runtime/Context');
@@ -135,14 +136,16 @@ var patch = exports.patch = function () {
             }
             nodeObserveShim.observe(object, observer, property);
         } else if (object != null && observer != null && Object.observe != null && typeof object === 'object') {
-            observer.tryWrapper = observer.tryWrapper != null ? observer.tryWrapper : function (changes) {
-                try {
-                    observer(changes);
-                } catch (error) {
-                    console.error('Exception in Object.observe callback', error);
-                }
-            };
-            Object.observe(object, observer.tryWrapper);
+            if (DEBUG) {
+                observer.tryWrapper = observer.tryWrapper != null ? observer.tryWrapper : function (changes) {
+                    try {
+                        observer(changes);
+                    } catch (error) {
+                        console.error('Exception in Object.observe callback', error);
+                    }
+                };
+            }
+            Object.observe(object, observer.tryWrapper != null ? observer.tryWrapper : observer);
             object.addEventListener != null ? object.addEventListener('change', observer) : void 0;
         }
         object != null ? object.onObserved != null ? object.onObserved(observer, property) : void 0 : void 0;
@@ -193,7 +196,9 @@ var patch = exports.patch = function () {
             }
             container.appendChild(item);
             remove = function () {
-                container.removeChild(item);
+                if (item.parentNode === container) {
+                    container.removeChild(item);
+                }
             };
         } else {
             if (container.push != null) {
@@ -424,9 +429,7 @@ var patch = exports.patch = function () {
         }
     };
 if (global.window != null) {
-    global.window.addEventListener('resize', function () {
-        checkForChanges();
-    });
+    global.window.addEventListener('resize', checkForChanges);
 }
   }
   if (typeof require === 'function') {

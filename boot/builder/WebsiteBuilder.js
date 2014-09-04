@@ -1,122 +1,6 @@
 void (function(){var _ion_builder_WebsiteBuilder_ = function(module,exports,require){'use strict';
-var ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), utility = require('./utility'), ModuleBuilder = require('./ModuleBuilder'), clientJsDir = 'js', serverJsDir = 'WEB-INF/js', serverJavaDir = 'WEB-INF/java', np = require('path');
+var ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), utility = require('./utility'), ModuleBuilder = require('./ModuleBuilder'), clientJsDir = 'js', serverJsDir = 'WEB-INF/js', serverJavaDir = 'WEB-INF/java', np = require('path'), fs = require('fs');
 module.exports = exports = ion.template(function (packagePatch) {
-    var packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch != null ? packagePatch : {}), input = new Directory(packageJson.directories.src != null ? packageJson.directories.src : 'src'), output = new Directory(packageJson.directories.www != null ? packageJson.directories.www : 'debug'), clientOutput = output.getDirectory(clientJsDir), serverOutput = output.getDirectory(serverJsDir), nodepaths = ['node_modules'].concat(process.env.NODE_PATH.split(np.delimiter));
-    var glassPages = new Directory('../glass-pages/dist');
-    if (glassPages.exists) {
-        var javaDirectory = input.getDirectory(serverJavaDir);
-        {
-            var _ref = glassPages.search();
-            for (var key in _ref) {
-                var source = _ref[key];
-                var target = javaDirectory.getFile(key);
-                if (target.modified < source.modified) {
-                    target.copyFrom(source);
-                }
-            }
-        }
-    }
-    {
-        var _ref2 = packageJson.build.client.modules;
-        for (var _i = 0; _i < _ref2.length; _i++) {
-            var moduleName = _ref2[_i];
-            for (var _i2 = 0; _i2 < nodepaths.length; _i2++) {
-                var nodepath = nodepaths[_i2];
-                var directory = new Directory(np.join(nodepath, moduleName));
-                {
-                    var _ref3 = directory.search([
-                            '.js',
-                            '.map'
-                        ], ['node_modules'].concat(packageJson.build.client.exclude));
-                    for (var key in _ref3) {
-                        var source = _ref3[key];
-                        clientOutput.write(source.path.substring(nodepath.length), source.read());
-                    }
-                }
-            }
-        }
-    }
-    {
-        var _ref4 = packageJson.build.server.modules;
-        for (var _i3 = 0; _i3 < _ref4.length; _i3++) {
-            var moduleName = _ref4[_i3];
-            for (var _i4 = 0; _i4 < nodepaths.length; _i4++) {
-                var nodepath = nodepaths[_i4];
-                var directory = new Directory(np.join(nodepath, moduleName));
-                {
-                    var _ref5 = directory.search([
-                            '.js',
-                            '.map'
-                        ], ['node_modules'].concat(packageJson.build.server.exclude));
-                    for (var key in _ref5) {
-                        var source = _ref5[key];
-                        serverOutput.write(source.path.substring(nodepath.length), source.read());
-                    }
-                }
-            }
-        }
-    }
-    ModuleBuilder({
-        directories: {
-            src: input + '/js',
-            lib: output + '/' + clientJsDir
-        },
-        build: {
-            exclude: packageJson.build.client.exclude,
-            test: false
-        }
-    });
-    ModuleBuilder({
-        directories: {
-            src: input + '/js',
-            lib: output + '/' + serverJsDir
-        },
-        build: {
-            exclude: packageJson.build.server.exclude,
-            test: true
-        }
-    });
-    {
-        var _ref6 = input.search(null, [
-                '.ionpage',
-                '.coffeepage',
-                '.coffee',
-                '.java',
-                '.class',
-                '.jar',
-                '.ion'
-            ]);
-        for (var path in _ref6) {
-            var file = _ref6[path];
-            output.write(path, file.read());
-        }
-    }
-    {
-        var _ref7 = input.search('.ion', 'js');
-        for (var path in _ref7) {
-            var file = _ref7[path];
-            var targetPath = builder.changeExtension(path, '.js');
-            output.write(targetPath, builder.compileIon(file));
-        }
-    }
-    var pageOutput = output.getDirectory('WEB-INF/pages');
-    {
-        var _ref8 = input.search('.ionpage');
-        for (var path in _ref8) {
-            var file = _ref8[path];
-            var targetPath = builder.changeExtension(path, '.js');
-            pageOutput.write(targetPath, '(function ' + path.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileIon(file) + ' })');
-        }
-    }
-    {
-        var _ref9 = input.search('.coffeepage');
-        for (var path in _ref9) {
-            var file = _ref9[path];
-            var targetPath = builder.changeExtension(path, '.js');
-            pageOutput.write(targetPath, '(function ' + path.replace(/[\.\/\\]/g, '_') + '(){ ' + builder.compileCoffeeScript(file) + ' })');
-        }
-    }
-}, function (packagePatch) {
     return ion.createRuntime({
         type: 'Template',
         body: [
@@ -1613,44 +1497,70 @@ module.exports = exports = ion.template(function (packagePatch) {
                 body: {
                     type: 'BlockStatement',
                     body: [{
-                            type: 'ExpressionStatement',
-                            expression: {
-                                type: 'CallExpression',
-                                callee: {
-                                    type: 'MemberExpression',
-                                    computed: false,
-                                    object: {
-                                        type: 'Identifier',
-                                        name: 'output'
-                                    },
-                                    property: {
-                                        type: 'Identifier',
-                                        name: 'write'
-                                    }
+                            type: 'IfStatement',
+                            test: {
+                                type: 'MemberExpression',
+                                computed: false,
+                                object: {
+                                    type: 'Identifier',
+                                    name: 'file'
                                 },
-                                arguments: [
-                                    {
-                                        type: 'Identifier',
-                                        name: 'path'
-                                    },
-                                    {
-                                        type: 'CallExpression',
-                                        callee: {
-                                            type: 'MemberExpression',
-                                            computed: false,
-                                            object: {
-                                                type: 'Identifier',
-                                                name: 'file'
+                                property: {
+                                    type: 'Identifier',
+                                    name: 'isFile'
+                                }
+                            },
+                            consequent: {
+                                type: 'BlockStatement',
+                                body: [{
+                                        type: 'ExpressionStatement',
+                                        expression: {
+                                            type: 'CallExpression',
+                                            callee: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'output'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'write'
+                                                }
                                             },
-                                            property: {
-                                                type: 'Identifier',
-                                                name: 'read'
-                                            }
-                                        },
-                                        arguments: []
-                                    }
-                                ]
-                            }
+                                            arguments: [
+                                                {
+                                                    type: 'Identifier',
+                                                    name: 'path'
+                                                },
+                                                {
+                                                    type: 'CallExpression',
+                                                    callee: {
+                                                        type: 'MemberExpression',
+                                                        computed: false,
+                                                        object: {
+                                                            type: 'Identifier',
+                                                            name: 'file'
+                                                        },
+                                                        property: {
+                                                            type: 'Identifier',
+                                                            name: 'read'
+                                                        }
+                                                    },
+                                                    arguments: [{
+                                                            type: 'Literal',
+                                                            value: null
+                                                        }]
+                                                },
+                                                {
+                                                    type: 'Literal',
+                                                    value: null
+                                                }
+                                            ]
+                                        }
+                                    }]
+                            },
+                            alternate: null
                         }]
                 },
                 remove: {
@@ -2294,7 +2204,8 @@ module.exports = exports = ion.template(function (packagePatch) {
         clientJsDir: clientJsDir,
         serverJsDir: serverJsDir,
         serverJavaDir: serverJavaDir,
-        np: np
+        np: np,
+        fs: fs
     });
 });
   }
