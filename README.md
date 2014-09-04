@@ -15,5 +15,7 @@ Reactive programming provides the solution to this problem of dependency.  By in
 Syntax
 ------
 
-The basic syntax is similar to javascript harmony version with and indented structure inspired by coffeescript.
+The basic syntax is similar to javascript harmony version with an indented structure inspired by coffeescript.
+
+See docs/samples/syntax.html and reactive.html
 
