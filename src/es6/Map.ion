@@ -4,7 +4,7 @@ const ion = null
 # the uniqueCounter and getId have to be defined outside of the MapShim constructor.
 # otherwise some objects may end up with the same uniqueId if they are added to different Maps.
 let uniqueCounter = 0
-const idName = "__Map_id"
+const idName = "_Map_id_"
 const getId = (key) ->
     if not key?
         return String(key)
@@ -12,8 +12,15 @@ const getId = (key) ->
         return "_" + key
     let id = key[idName]
     if not id?
-        id = ++uniqueCounter
-        Object.defineProperty(key, idName, {value:id,enumerable:false})
+        # checking the definition shouldn't be necessary.
+        # but nodejs has an object returning undefined
+        # even though the definition says it has a value.
+        let def = Object.getOwnPropertyDescriptor(key, idName)
+        if def?
+            id = def.value
+        else
+            id = ++uniqueCounter
+            Object.defineProperty(key, idName, {value:id})
     return id
 
 const MapShim(pairs) ->
