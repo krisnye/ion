@@ -17,5 +17,6 @@ Syntax
 
 The basic syntax is similar to javascript harmony version with an indented structure inspired by coffeescript.
 
-See docs/samples/syntax.html and reactive.html
+See docs/samples/syntax.html and reactive.html for more information.
+
 
