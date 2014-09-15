@@ -89,7 +89,7 @@ exports.traverse = (program, enterCallback, exitCallback, variableCallback, prev
                 options.id =
                     type: 'Identifier'
                     name: options.id
-            options.id ?= @getNewInternalIdentifier()
+            options.id ?= @getNewInternalIdentifier(options.prefix)
             options.kind ?= 'let'
             # handle patterns.
             variable =

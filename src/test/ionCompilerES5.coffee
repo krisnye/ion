@@ -25,21 +25,6 @@ tests =
     }
     """
     """
-    return let grid = div()
-        child1(grid)
-        child2(grid)
-    """: """
-    'use strict';
-    var ion = require('ion');
-    var grid = div();
-    var _ref = grid;
-    {
-        ion.add(_ref, child1(grid));
-        ion.add(_ref, child2(grid));
-    }
-    return _ref;
-    """
-    """
     export class StampFilter
         stamp: (key, object) ->
             for name, property of key.type.properties if property.stamp
@@ -63,6 +48,23 @@ tests =
         });
     module.exports = exports = StampFilter;
     """
+    """
+    let element =
+        (body: 2)
+    """: """
+    'use strict';
+    var ion = require('ion');
+    var element = {};
+    {
+        var _body = 2;
+        element.body = _body;
+        ion.add(element, _body);
+    }
+    """
+    """
+    (foo: bar)
+        x: 1
+    """: {line:1, column:2}
 
 if global.window?
     return
@@ -72,11 +74,11 @@ exports.test = ->
         options = {target:'es5'}
         if expected is null
             console.log '---------------------------------------------------'
-            console.log JSON.stringify index.compile(input, ion.patch({postprocess:false,loc:false}, options)), null, '  '
+            console.log JSON.stringify index.compile(input, ion.patch({postprocess:false,loc:true}, options)), null, '  '
             console.log '-Postprocessed-------------------------------------'
-            console.log JSON.stringify index.compile(input, ion.patch({generate:false,loc:false}, options)), null, '  '
+            console.log JSON.stringify index.compile(input, ion.patch({generate:false,loc:true}, options)), null, '  '
             console.log '---------------------------------------------------'
-            console.log index.compile input, ion.patch({loc:false}, options)
+            console.log index.compile input, ion.patch({loc:true}, options)
         else if typeof expected is 'object'
             # expected to throw an error
             error = null

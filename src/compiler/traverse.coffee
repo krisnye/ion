@@ -20,6 +20,11 @@ exports.traverse = (graph, enterCallback, exitCallback) ->
                 removed++
             else
                 delete parent[@key()]
+        insertAfter: (node) ->
+            parent = @parent()
+            if not Array.isArray parent
+                throw new Error "Parent must be an array"
+            parent.splice(Number(@key()) + 1, 0, node)
         replace: (value) ->
             if value is undefined
                 throw new Error "You must specify a replacement value"

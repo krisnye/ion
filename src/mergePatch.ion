@@ -4,7 +4,7 @@ const
     deleteValue = null
 
 export const
-    # current options
+    # options:
     #   deleteNull: delete properties if value is null, default: true
     #   factory: function to use when constructing new objects, defaults to using plain objects {}
     merge = (target, values, options) ->

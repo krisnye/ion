@@ -117,7 +117,7 @@
 Program = start:start body:ProgramStatements end:end { return node("Program", {body:body}, start, end) }
 
 ProgramStatements = a:BlockStatement { return a.body } / Statement*
-Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ActivateStatement / ExpressionStatement) (eol / _ ',') { return a }
+Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / AddPropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ActivateStatement / ExpressionStatement) (eol / _ ',') { return a }
 ExportStatement = start:start export _ value:(VariableDeclaration / RightHandSideExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
 ReturnStatement = start:start return _ argument:RightHandSideExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
 ThrowStatement = start:start throw _ argument:RightHandSideExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
@@ -194,9 +194,18 @@ classExtends = extends _ baseClasses:elementList { return baseClasses }
 path = head:Identifier tail:('.' a:Identifier {return a})+ { return [head].concat(tail) }
 propertyLeft = key:(path / IdentifierName / StringOrNumberLiteral) { return {key:key} }
              / "[" _ key:InlineExpression _ "]" { return {key:key, computed: true} }
+AddPropertyDeclaration = start:start "(" _ declaration:PropertyDeclaration _ ")" properties:BlockStatement? end:end
+    {
+        declaration = clone(declaration)
+        if (properties != null)
+            declaration.value = node("ObjectExpression", {objectType:declaration.value,properties:properties.body}, start, end)
+        declaration.add = true
+        return declaration
+    }
+
 PropertyDeclaration
-    = start:start left:propertyLeft _ ":" bi:":"? _ value:RightHandSideExpression end:end
-    { return node("Property", { key: left.key, value:value, kind: 'init', computed:left.computed, bi: bi ? true : undefined }, start, end) }
+    = start:start left:propertyLeft _ ":" _ value:RightHandSideExpression end:end
+    { return node("Property", { key: left.key, value:value, kind: 'init', computed:left.computed }, start, end) }
 VariableDeclaration = &variableKind a:VariableDeclarationKindOptional { return a }
 VariableDeclarationKindOptional = start:start kind:variableKind? _ declarations:variableDeclaratorList end:end
     { return node("VariableDeclaration", {declarations:declarations, kind:kind != null ? kind : "let"}, start, end) }
@@ -208,9 +217,6 @@ VariableDeclarator
     = start:start &Identifier func:FunctionExpression end:end { return node("VariableDeclarator", {id:func.id,init:func}, start, end) }
     / start:start pattern:Pattern _ init:variableInitializer? end:end { return node("VariableDeclarator", {id:pattern,init:init}, start, end) }
 variableInitializer = "=" _ a:RightHandSideExpression { return a }
-
-VariableDeclarationExpression = start:start kind:variableKind _ id:Identifier _ "=" _ init:InlineExpression end:end
-{ return node("VariableDeclarationExpression", {declarations:[node("VariableDeclarator", {id:id,init:init})], kind:kind}, start, end) }
 
 Pattern = Identifier / ObjectPattern / ArrayPattern
 ObjectPattern = pattern:ObjectLiteral { /* due to packrat parsing, you MUST clone before modifying anything. */ pattern = clone(pattern); pattern.type = "ObjectPattern"; return pattern }
@@ -239,7 +245,7 @@ MultilineCallExpression = start:start callee:InlineExpression "(" indent eol arg
             return node("NewExpression", {callee: callee.callee, arguments: args}, start, end)
         return node("CallExpression", {callee: callee, arguments: args}, start, end)
     }
-InlineExpression =  AssignmentExpression / VariableDeclarationExpression
+InlineExpression =  AssignmentExpression
 AssignmentExpression = start:start left:ConditionalOrDefaultExpression _ op:("=" / "+=" / "-=" / "*=" / "/=" / "%=" / "<<=" / ">>=" / ">>>=" / "/=" / "^=" / "&=" / "??=" / "?=" / ":=") _ right:RightHandSideExpression end:end { return node("AssignmentExpression", {operator:op, left:left, right:right}, start, end) }
     / ConditionalOrDefaultExpression
 ConditionalOrDefaultExpression

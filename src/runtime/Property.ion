@@ -20,7 +20,6 @@ export class Property extends Statement
                         if currentValue?
                             @valueExpression.setLeftValue(currentValue)
 
-                    @restoreProperty()
                     @keyValue = key
                     @setProperty()
             )
@@ -29,37 +28,15 @@ export class Property extends Statement
                     @valueValue = value
                     @setProperty()
             )
-
-            if @bi
-                # then we need to observe the context output object for changes to the leftValue property.
-                # console.log('bidirectional!!!!!!!!!!!!!', @valueValue, @keyValue, @context.output)
-                ion.observe(
-                    @context.output
-                    @contextObserver ?= =>
-                        # console.log('CALLBACK FROM OBSERVER', @valueValue)
-                        let value = ion.get(@context.output, @keyValue)
-                        if value isnt undefined
-                            @valueExpression.setMemberValue(value)
-                    @keyValue
-                )
-
         deactivate: ->
             super
-            @restoreProperty()
             ion.unobserve(@context.output, @contextObserver, @leftValue)
             @keyExpression.unwatch(@keyWatcher)
             @valueExpression.unwatch(@valueWatcher)
-        restoreProperty: ->
-            # if @originalKey?
-            #     ion.set(@context.output, @originalKey, @originalValue)
-            #     @originalKey = undefined
-            #     @originalValue = undefined
         setProperty: (key = @keyValue, value = @valueValue) ->
             # we must have a key, and the value must not be undefined UNLESS the value is explicitly undefined!
             let explicitUndefined = @value.operator is 'void'
             if key? and (value isnt undefined or explicitUndefined)
                 let currentValue = ion.get(@context.output, key)
                 if explicitUndefined or currentValue isnt value
-                    @originalKey ?= key
-                    @originalValue ?= currentValue
                     ion.set(@context.output, key, value, not explicitUndefined)

@@ -11,6 +11,7 @@ export class Object extends null
     is: (object) -> object?.constructor.types?.has?(@)
     properties:
         [typeKey]:
+            visible: false
             type: 'string'
         toJSON: ->
             const properties = {}

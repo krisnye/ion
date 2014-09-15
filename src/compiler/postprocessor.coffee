@@ -1147,9 +1147,32 @@ variableDeclarationExpressions = (node, context) ->
         # replace this with a reference to the declared variable
         context.replace node.declarations[0].id
 
+addPropertyDeclaration = (node, context) ->
+    if node.type is 'Property' and node.add
+        parentNode = context.parentNode()
+        if not (parentNode.type is 'ObjectExpression')
+            throw context.error "property assignment only valid within ObjectExpression", node
+
+        temp = context.getVariable
+            prefix: "_" + (node.key.name ? "value")
+            init: node.value
+        tempId = temp.declarations[0].id
+
+        # replace with variable declaration
+        context.replace temp
+        # then addition of variable to parent
+        context.insertAfter
+            type: 'ExpressionStatement'
+            expression: tempId
+        # then property assignment to variable
+        context.insertAfter
+            type: 'Property'
+            key: node.key
+            value: tempId
+
 exports.postprocess = (program, options) ->
     steps = [
-        [namedFunctionsAndNewArguments, superExpressions, activateStatements]
+        [namedFunctionsAndNewArguments, superExpressions, activateStatements, addPropertyDeclaration]
         [destructuringAssignments, callFunctionBindForFatArrows]
         [createTemplateFunctionClone]
         [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions, checkVariableDeclarations]
