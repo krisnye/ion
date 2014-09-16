@@ -14,15 +14,14 @@ export class DynamicExpression extends import './Expression'
             if watchers.length is 0
                 @activate()
             watchers.push(watcher)
-            # notify watcher immediately if we have a defined value
-            let value = @getValue()
-            if value isnt undefined
+            # notify watcher immediately if we have a value
+            if @hasValue()
+                let value = @getValue()
                 @_notifyWatcher(watcher, value)
         unwatch: (watcher) ->
             @_watchers.remove(watcher)
-            # notify watcher immediately if we have a defined value
-            let value = @getValue()
-            if value isnt undefined
+            # notify watcher immediately if we have a value
+            if @hasValue()
                 @_notifyWatcher(watcher, undefined)
             # this must happen AFTER we notify the watcher,
             # otherwise it changes the value and the watcher may not be notified.
@@ -35,9 +34,10 @@ export class DynamicExpression extends import './Expression'
                 for watcher in @_watchers
                     @_notifyWatcher(watcher, value)
             return
+        hasValue: -> @hasOwnProperty('value')
         getValue: -> @value
         setValue: (value) ->
-            if value isnt @value
+            if value isnt @value or not @hasValue()
                 @value = value
                 @notify()
             return
