@@ -212,32 +212,6 @@ export const
             defineProperties(classFunction.prototype, classFunction.properties)
 
         return classFunction
-    get = (object, property) ->
-        if not (object? and property?)
-            return undefined
-        if object isnt @ and typeof object.get is 'function'
-            return object.get(property)
-        else
-            return object[property]
-    set = (object, property, value, deleteUndefined = true) ->
-        # console.log('ion.set', property, value)
-        if object?
-            if arguments.length is 2 and property?
-                # set all properties
-                for k, v of property
-                    set(object, k, v)
-                return
-
-            if object isnt @ and typeof object.set is 'function'
-                object.set(property, value)
-            else if deleteUndefined and value is undefined
-                delete object[property]
-            else
-                object[property] = value
-            # we will notify an object when it is set on another object
-            # if the object has an onSet 
-            value?.onSet?(object, property)
-        return value
     is = (instance, type) ->
         if not instance?
             return false

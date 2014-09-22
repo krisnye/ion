@@ -16,7 +16,7 @@ export class Property extends Statement
                     if key? and @valueExpression.setLeftValue?
                         # if there is a context.output then get the current key from that
                         # otherwise the key is probably referring to a variable
-                        let currentValue = @context.output ? ion.get(@context.output, key) : @context.get(key)
+                        let currentValue = @context.output ? @context.output?[key] : @context.get(key)
                         if currentValue?
                             @valueExpression.setLeftValue(currentValue)
 
@@ -37,6 +37,6 @@ export class Property extends Statement
             # we must have a key, and the value must not be undefined UNLESS the value is explicitly undefined!
             let explicitUndefined = @value.operator is 'void'
             if key? and (value isnt undefined or explicitUndefined)
-                let currentValue = ion.get(@context.output, key)
-                if explicitUndefined or currentValue isnt value
-                    ion.set(@context.output, key, value, not explicitUndefined)
+                let currentValue = @context.output?[key]
+                if explicitUndefined or currentValue isnt value and @context.output?
+                    @context.output[key] = value

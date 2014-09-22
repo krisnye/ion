@@ -28,6 +28,10 @@ module.exports = exports =
             # existing file path needs to be relative to the link path
             existingPath = np.relative value, key
             console.log "link EXISTING: #{existing}  LINK: #{value}"
+    runIonFile: (file) ->
+        src = fs.readFileSync(file, 'utf8')
+        js = require('../compiler').compile(src)
+        eval(js)
     runTests: do ->
         fn = (manifestFile) ->
             # convert the files to a name, moduleId map

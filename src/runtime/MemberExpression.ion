@@ -36,10 +36,10 @@ export class MemberExpression extends DynamicExpression
         updateValue: ->
             let value = undefined
             if @objectValue? and @propertyValue?
-                value = ion.get(@objectValue, @propertyValue)
+                value = @objectValue[@propertyValue]
             @setValue(value)
         # sets the underlying property value.  This may be used for two way binding.
         setMemberValue: (value) ->
             # console.log('setMemberValue BITCHES!', @objectValue, @propertyValue, value)
             if @objectValue? and @propertyValue?
-                ion.set(@objectValue, @propertyValue, value)
+                @objectValue[@propertyValue] = value
