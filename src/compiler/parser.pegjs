@@ -355,8 +355,8 @@ boolean = true / false
 regex = '/' a:regexBody '/' b:regexOptions { return new RegExp(a, b) }
 regexBody = $ ('\\' . / [^\/])*
 regexOptions = $ [gimy]*
-simpleString = "'" ('\\' (['\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / [^'\\\r\n])* "'"  { return eval(text()) }
-             / '"' ('\\' (["\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / [^"\\\r\n])* '"'  { return eval(text()) }
+simpleString = "'" content:('\\' (['\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / [^'\\\r\n])* "'"  { return eval(text()) }
+             / '"' content:('\\' (["\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / [^"\\\r\n])* '"'  { return JSON.parse(text()) }
 MultilineStringTemplate = start:start "\"\"" eol content:multilineStringTemplateContent end:end
     { return concatenate(unindent(content)) }
 multilineStringTemplateContent = indent a:(multilineStringTemplateLine / multilineStringTemplateContent)* outdent { return Array.prototype.concat.apply([], a) }
@@ -368,7 +368,7 @@ multilineStringLiteralContent = indent a:(multilineStringLiteralLine / multiline
 multilineStringLiteralLine = !indent !outdent eol? (!eol .)+ { return text() }
 stringInterpolation = "{{" _ expression:InlineExpression _ "}}" { return expression }
 StringTemplate = '"' a:(stringTemplateChars / stringInterpolation)* '"' { return concatenate(a) }
-stringTemplateChars = stringTemplateChar+ { return eval('"' + text() + '"') }
+stringTemplateChars = stringTemplateChar+ { return JSON.parse('"' + text() + '"') }
 stringTemplateChar = ('\\' ["\\\/bfnrt] / ('u' hexDigit hexDigit hexDigit hexDigit)) / !"{{" [^"\\\r\n]
 
 //  numerics
