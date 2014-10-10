@@ -15,6 +15,7 @@ let elements = []
     "table","tbody","td","tr","thead", "canvas"
     "head","meta","body","script"
     "section","header","footer","article"
+    "ul", "ol", "li", "label", "strong"
 
 export {}
     for name in elements
