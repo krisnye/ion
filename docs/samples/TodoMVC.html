@@ -31,6 +31,7 @@
                 let remaining = count - completed
                 let state =
                     filter: 'all'
+                    editing: null
                 return section({id:'todoapp'})
                     header({id:'header'})
                         h1()
@@ -56,6 +57,11 @@
                                 if filter(task)
                                     let {name,complete} = task
                                     li()
+                                        click(e) ->
+                                            if e.detail is 2
+                                                state.editing = index
+                                                e.preventDefault()
+                                                e.cancelPropagation()
                                         classList:
                                             if complete
                                                 'completed'
@@ -66,7 +72,22 @@
                                             change(e) ->
                                                 task.complete = @checked
                                         label()
-                                            name
+                                            if state.editing is index
+                                                let editor = input()
+                                                    change(e) ->
+                                                        let name = @value.trim()
+                                                        if name.length > 0
+                                                            task.name = name
+                                                        state.editing = false
+                                                    style:
+                                                        fontSize: 'inherit'
+                                                        fontFamily: 'inherit'
+                                                        margin: 0
+                                                    value: name
+                                                editor
+                                                void editor.select()
+                                            else
+                                                name
                                         button({class:'destroy'})
                                             click(e) ->
                                                 tasks.splice(index, 1)
