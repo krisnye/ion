@@ -17,7 +17,8 @@
             # so that we can manipulate it from the developer console
             # you can test this from the console:
             #     tasks.push({name:'Use Ion', complete:false})
-            global.tasks = []
+            global.tasks = JSON.parse(localStorage.getItem('tasks') ? "[]")
+            ion.patch.watch(tasks, -> localStorage.setItem('tasks', JSON.stringify(tasks)))
 
             let filters =
                 all: (task) -> true
@@ -79,10 +80,6 @@
                                                         if name.length > 0
                                                             task.name = name
                                                         state.editing = false
-                                                    style:
-                                                        fontSize: 'inherit'
-                                                        fontFamily: 'inherit'
-                                                        margin: 0
                                                     value: name
                                                 editor
                                                 void editor.select()
