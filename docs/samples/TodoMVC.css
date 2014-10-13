@@ -360,7 +360,7 @@ label[for='toggle-all'] {
     font-weight: bold;
 }
 
-#clear-completed {
+#clear {
     float: right;
     position: relative;
     line-height: 20px;
@@ -372,7 +372,7 @@ label[for='toggle-all'] {
     box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.2);
 }
 
-#clear-completed:hover {
+#clear:hover {
     background: rgba(0, 0, 0, 0.15);
     box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.3);
 }

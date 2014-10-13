@@ -17,8 +17,8 @@
             # so that we can manipulate it from the developer console
             # you can test this from the console:
             #     tasks.push({name:'Use Ion', complete:false})
-            global.tasks = JSON.parse(localStorage.getItem('tasks') ? "[]")
-            ion.patch.watch(tasks, -> localStorage.setItem('tasks', JSON.stringify(tasks)))
+            global.tasks = JSON.parse(localStorage.tasks ? "[]")
+            ion.patch.watch(tasks, -> localStorage.tasks = JSON.stringify(tasks))
 
             let filters =
                 all: (task) -> true
@@ -38,15 +38,15 @@
                         h1()
                             'todos'
                         form()
-                            let nameInput = input({id:'new-todo', placeholder:'What needs to be done?'})
-                            nameInput
+                            let nameField = input({id:'new-todo', placeholder:'What needs to be done?'})
+                            nameField
                             submit(e) ->
                                 e.preventDefault()
-                                let name = nameInput.value.trim()
-                                if name.length > 0
-                                    tasks.unshift({name,complete:false})
-                                nameInput.value = ''
-                                nameInput.select()
+                                let value = nameField.value.trim()
+                                if value.length > 0
+                                    tasks.unshift({nameField:value,complete:false})
+                                nameField.value = ''
+                                nameField.select()
                     section({id:'main'})
                         input({id:'toggle-all',type:'checkbox'})
                             change(e) ->
@@ -61,8 +61,6 @@
                                         click(e) ->
                                             if e.detail is 2
                                                 state.editing = index
-                                                e.preventDefault()
-                                                e.cancelPropagation()
                                         classList:
                                             if complete
                                                 'completed'
@@ -105,7 +103,7 @@
                                         click(e) ->
                                             state.filter = name
                                         name
-                        button({id:'clear-completed'})
+                        button({id:'clear'})
                             style:
                                 display: completed > 0 ? 'initial': 'none'
                             click(e) ->

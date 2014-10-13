@@ -1,0 +1,32 @@
+let fs = import 'fs'
+let np = import 'path'
+
+let total = 0
+let files = 0
+let printSize = (fileOrDirectory) ->
+    let stats = fs.statSync(fileOrDirectory)
+    if stats.isDirectory()
+        for file in fs.readdirSync(fileOrDirectory)
+            printSize(np.join(fileOrDirectory, file))
+    else
+        # ignore css
+        if fileOrDirectory.match(/\.css$/)
+            return
+        let content = fs.readFileSync(fileOrDirectory, 'utf8')
+        let size = 0
+        for line in content.split(/[\r\n]+/g)
+            let chars = line.trim()
+            let comment = chars.match(/^(#|(\/\/))/)
+            if not comment
+                size += chars.length
+        total += size
+        files++
+        console.log(fileOrDirectory + " : " + size)
+
+if require.main is module
+    let args = process.argv.slice(2)
+    for arg in args
+        printSize(arg)
+    console.log('---------------------------------------')
+    console.log('Total Files : ' + files)
+    console.log('Total Bytes : ' + total)
