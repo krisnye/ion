@@ -44,7 +44,7 @@
                                 e.preventDefault()
                                 let value = nameField.value.trim()
                                 if value.length > 0
-                                    tasks.unshift({nameField:value,complete:false})
+                                    tasks.unshift({name:value,complete:false})
                                 nameField.value = ''
                                 nameField.select()
                     section({id:'main'})
@@ -94,7 +94,7 @@
                                 remaining
                             " item{{remaining isnt 1 ? 's' : ''}} left"
                         ul({id:'filters'})
-                            for name in ['all','active','completed']
+                            for name of filters
                                 li()
                                     a()
                                         classList:
