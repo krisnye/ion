@@ -1,6 +1,6 @@
 {
     "name": "ion",
-    "version": "0.0.0",
+    "version": "0.9.1",
     "main": "lib/index",
     "directories": {
         "lib": "lib",
@@ -9,6 +9,7 @@
     "build": {
         "package": true
     },
+    "contributors": ["krisnye@gmail.com"],
     "dependencies": {
         "esprima": "1.1.x"
     },

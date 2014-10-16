@@ -7,6 +7,9 @@ return if @require?
 
 # This provides the require function in the browser
 require = (path) ->
+    if path is 'ion/browser/require'
+        return require
+
     originalPath = path
     m = modules[path]
     unless m

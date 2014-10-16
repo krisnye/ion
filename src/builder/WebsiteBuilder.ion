@@ -1,3 +1,6 @@
+if global.window
+    return
+
 const
     ion = import '../'
     File = import './File'

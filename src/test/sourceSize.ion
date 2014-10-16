@@ -1,3 +1,6 @@
+if global.window
+    return
+
 let fs = import 'fs'
 let np = import 'path'
 
