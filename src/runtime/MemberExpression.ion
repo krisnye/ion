@@ -19,15 +19,6 @@ export class MemberExpression extends DynamicExpression
                 @objectWatcher ?= (objectValue) =>
                     @objectValue = objectValue
                     @updateValue()
-                    # also observe the objectValue for changes
-                    @objectObserver?()
-                    if objectValue?
-                        @objectObserver = ion.observe(
-                            objectValue
-                            (changes) =>
-                                @updateValue()
-                            @propertyValue
-                        )
             )
         deactivate: ->
             super
@@ -38,6 +29,20 @@ export class MemberExpression extends DynamicExpression
             if @objectValue? and @propertyValue?
                 value = @objectValue[@propertyValue]
             @setValue(value)
+
+            # also observe the objectValue for changes
+            if @observedObject isnt @objectValue or @observedProperty isnt @propertyValue
+                @observedObject = @objectValue
+                @observedProperty = @propertyValue
+                @objectObserver?()
+                if @objectValue?
+                    @objectObserver = ion.observe(
+                        @objectValue
+                        (changes) =>
+                            @updateValue()
+                        @propertyValue
+                    )
+
         # sets the underlying property value.  This may be used for two way binding.
         setMemberValue: (value) ->
             # console.log('setMemberValue BITCHES!', @objectValue, @propertyValue, value)
