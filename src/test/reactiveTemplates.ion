@@ -112,13 +112,9 @@ const templates = []
         12
     do ->
         # this test verifies that statements are reused when a value shifts within an array
-        let Type = ->
-        let alpha = new Type
-            name: 'alpha'
-        let beta = new Type
-            name: 'beta'
-        let charlie = new Type
-            name: 'charlie'
+        let alpha = 100
+        let beta = 200
+        let charlie = 300
         let next = 0
         let nextId = -> next++
         return []
@@ -127,10 +123,10 @@ const templates = []
             template (items) ->
                 return []
                     for item, index in items
-                        { id: nextId(), name: item.name, index: index }
+                        { id: nextId(), number: item, index: index }
             [alpha,beta,charlie]
             {0:alpha,1:charlie,2:undefined}
-            [{id:0,name:'alpha',index:0},{id:2,name:'charlie',index:1}]
+            [{id:0,number:alpha,index:0},{id:2,number:charlie,index:1}]
     do ->
         # this test verifies that statements are reused when a value shifts within an array
         let next = 0
