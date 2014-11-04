@@ -21,6 +21,10 @@ export const
         return compileWithSourceMap(content, options)[0]
 
     compileWithSourceMap = (content, options = {}) ->
+        let header = ""
+        if content.startsWith("#!")
+            header = content.split(/\r|\n/)[0] + "\n"
+
         options.id ?= "unknown"
         options.loc ?= true
         options.target ?= 'es5'
@@ -60,4 +64,4 @@ export const
             # console.log(preprocessed)
             makePrettyError(e, content, options.id)
             throw e
-        return [result,sourceMap]
+        return [header + result,sourceMap]

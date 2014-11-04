@@ -149,6 +149,9 @@ module.exports = exports =
         return addBrowserShim source.read(), moduleId
 
     addBrowserShim: addBrowserShim = (sourceText, moduleId) ->
+        # don't shim if the source starts with a shebang
+        if sourceText.substring(0, 2) is "#!"
+            return sourceText
         # make sure the javascript isn't already shimmed, so we don't shim it twice.
         if moduleId?
             safeId = "_" + moduleId.replace(/[^a-zA-Z0-9]/g, '_') + "_"

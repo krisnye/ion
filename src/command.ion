@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+let args = process.argv.slice(2)
+if args.length is 0 or args[0] is '--help'
+    console.log(
+        ""
+            Usage: ion -m
+
+              -m   builds the current module defined by package.json
+    )
+    return
+if args[0] is "-m"
+    let ModuleBuilder = import "./builder/ModuleBuilder"
+    let options =
+        build:
+            merge: '_browser.js'
+    ModuleBuilder(options).watch()
