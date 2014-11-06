@@ -59,7 +59,7 @@ export template (packagePatch) ->
                     for key, childFile of indexDirectory.search(".js", null, {recursive:false})
                         if key isnt indexName
                             let name = key.substring(0, key.lastIndexOf('.js'))
-                            "exports['{{name}}'] = require('./{{name}}')"
+                            "Object.defineProperty(exports, '{{name}}', {get:function(){ return require('./{{name}}') }}) "
 
                 let indexModuleId = np.join(moduleName, path, "index").replace(/\\/g, '/')
                 indexFile.write(builder.addBrowserShim(lines.join('\n'), indexModuleId))
