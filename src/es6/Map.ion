@@ -55,7 +55,8 @@ const MapShim(pairs) ->
 
 # we will even replace Googles crap implementation of Map that doesn't yet have forEach
 if not global.Map?.prototype.forEach?
-    console.warn('Shimming Map')
+    if global.window
+        console.warn('Shimming Map')
     global.Map = MapShim
 
 export const test = ->

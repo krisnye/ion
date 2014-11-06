@@ -29,6 +29,14 @@ void (function(){var _ion_compiler_traverse_ = function(module,exports,require){
         return delete parent[this.key()];
       }
     },
+    insertAfter: function(node) {
+      var parent;
+      parent = this.parent();
+      if (!Array.isArray(parent)) {
+        throw new Error("Parent must be an array");
+      }
+      return parent.splice(Number(this.key()) + 1, 0, node);
+    },
     replace: function(value) {
       var parent;
       if (value === void 0) {

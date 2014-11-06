@@ -48,7 +48,12 @@ var elements = [
         'section',
         'header',
         'footer',
-        'article'
+        'article',
+        'ul',
+        'ol',
+        'li',
+        'label',
+        'strong'
     ];
 var _ref = {};
 for (var _i = 0; _i < elements.length; _i++) {

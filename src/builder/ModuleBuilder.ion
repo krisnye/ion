@@ -65,7 +65,7 @@ export template (packagePatch) ->
                 indexFile.write(builder.addBrowserShim(lines.join('\n'), indexModuleId))
 
     # build a manifest file with require.js at the top
-    let outputFiles = output.search(".js", [/^_/, 'node_modules']) # ignore output _browser.js and node_modules
+    let outputFiles = output.search(".js", [/^_/, 'node_modules'].concat(Object.keys(packageJson.build.merge ? {}))) # ignore output _browser.js and node_modules
     let top = [key for key of outputFiles if key.endsWith('require.js')]
     let sortedFiles = top.concat([key for key of outputFiles if not builder.isPrivate(key) and top.indexOf(key) < 0])
     let manifestFileName = "manifest.json"
@@ -77,15 +77,25 @@ export template (packagePatch) ->
 
     # build merged file, just so we can test locally with file:// protocol
     if packageJson.build.merge?
-        let mergedArray = []
-            for index, name of sortedFiles
-                [index]: outputFiles[name].read()
+        for mergeFile, options of packageJson.build.merge
+            let mergedArray = []
+                for index, name of sortedFiles
+                    if not utility.isMatch(name, options.exclude, false)
+                        [index]: outputFiles[name].read()
+                    else
+                        [index]: ""
+                else
+                    [index]: ""
+
+            let merged = mergedArray.join('\n')
+            if options.compress
+                let minified = require('uglify-js').minify(merged, {fromString:true}).code
+                new File(mergeFile).write(minified)
             else
-                [index]: ""
-        output.write(packageJson.build.merge, mergedArray.join('\n'))
+                new File(mergeFile).write(merged)
 
     # copy the package.json to the lib directory
-    if packageJson.build.package
+    if packageJson.build.package isnt false
         output.write('package.json', JSON.stringify(ion.patch(ion.clone(packageJson), {main:undefined}), null, '    '))
 
     # builder.test

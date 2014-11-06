@@ -215,7 +215,7 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
           };
         }
         if (options.id == null) {
-          options.id = this.getNewInternalIdentifier();
+          options.id = this.getNewInternalIdentifier(options.prefix);
         }
         if (options.kind == null) {
           options.kind = 'let';

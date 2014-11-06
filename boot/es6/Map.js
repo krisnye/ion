@@ -66,7 +66,9 @@ function MapShim(pairs) {
     }
 }
 if (!((global.Map != null ? global.Map.prototype.forEach : void 0) != null)) {
-    console.warn('Shimming Map');
+    if (global.window) {
+        console.warn('Shimming Map');
+    }
     global.Map = MapShim;
 }
 var test = exports.test = function () {

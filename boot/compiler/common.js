@@ -1,6 +1,8 @@
 void (function(){var _ion_compiler_common_ = function(module,exports,require){'use strict';
 var ion = require('../'), lineDelimiter = '\n', isEmpty = function (s) {
         return !(s != null) || s.length === 0 || (s.trim != null ? s.trim().length : void 0) === 0;
+    }, trimRight = function (s) {
+        return s.replace(/[\s\xA0]+$/g, '');
     };
 var indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdentToken = '}}}}', splitLines = exports.splitLines = function (s) {
         return s.split(lineDelimiter);
@@ -10,7 +12,7 @@ var indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdentTo
         regex = regex != null ? regex : /^([ ]*)/;
         return (regex.exec(s) != null ? regex.exec(s)[1].length : void 0) != null ? regex.exec(s)[1].length : Number.MAX_VALUE;
     }, unindentString = exports.unindentString = function (s, sourceMapping) {
-        var lines = splitLines(s.trimRight());
+        var lines = splitLines(trimRight(s));
         var minIndent = unindentLines(lines);
         if (sourceMapping != null) {
             sourceMapping.columnOffset = minIndent;

@@ -1,7 +1,8 @@
-void (function(){var _ion_test_index_ = function(module,exports,require){exports['immediateTemplates'] = require('./immediateTemplates')
-exports['ionCompiler'] = require('./ionCompiler')
-exports['ionCompilerES5'] = require('./ionCompilerES5')
-exports['reactiveTemplates'] = require('./reactiveTemplates')
+void (function(){var _ion_test_index_ = function(module,exports,require){Object.defineProperty(exports, 'immediateTemplates', {get:function(){ return require('./immediateTemplates') }}) 
+Object.defineProperty(exports, 'ionCompiler', {get:function(){ return require('./ionCompiler') }}) 
+Object.defineProperty(exports, 'ionCompilerES5', {get:function(){ return require('./ionCompilerES5') }}) 
+Object.defineProperty(exports, 'reactiveTemplates', {get:function(){ return require('./reactiveTemplates') }}) 
+Object.defineProperty(exports, 'sourceSize', {get:function(){ return require('./sourceSize') }}) 
   }
   if (typeof require === 'function') {
     if (require.register)

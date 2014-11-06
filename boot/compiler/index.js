@@ -24,6 +24,10 @@ var parse = exports.parse = function (content, options) {
     }, compileWithSourceMap = exports.compileWithSourceMap = function (content, options) {
         if (options == null)
             options = {};
+        var header = '';
+        if (content.startsWith('#!')) {
+            header = content.split(/\r|\n/)[0] + '\n';
+        }
         options.id = options.id != null ? options.id : 'unknown';
         options.loc = options.loc != null ? options.loc : true;
         options.target = options.target != null ? options.target : 'es5';
@@ -61,7 +65,7 @@ var parse = exports.parse = function (content, options) {
             throw e;
         }
         return [
-            result,
+            header + result,
             sourceMap
         ];
     };

@@ -3,7 +3,10 @@ var ion = require('./');
 var typeKey = '$';
 var _ref2 = {};
 {
-    _ref2[typeKey] = ion.patch(_ref2[typeKey], { type: 'string' });
+    _ref2[typeKey] = ion.patch(_ref2[typeKey], {
+        visible: false,
+        type: 'string'
+    });
     _ref2.toJSON = function () {
         var properties = {};
         if (this.constructor.id != null) {

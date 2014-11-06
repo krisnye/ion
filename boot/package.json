@@ -1,20 +1,48 @@
 {
     "name": "ion",
-    "version": "0.0.0",
+    "version": "0.9.1",
+    "bin": {
+        "ion": "builder/command.js"
+    },
     "directories": {
         "lib": "lib",
         "src": "src"
     },
     "build": {
         "package": true,
-        "merge": "_browser.js"
+        "merge": {
+            "ion-all.js": {
+                "exclude": [
+                    "builder"
+                ]
+            },
+            "ion-browser.js": {
+                "exclude": [
+                    "builder",
+                    "test",
+                    "compiler"
+                ]
+            },
+            "ion-min.js": {
+                "exclude": [
+                    "builder",
+                    "test",
+                    "compiler"
+                ],
+                "compress": true
+            }
+        }
     },
+    "contributors": [
+        "krisnye@gmail.com"
+    ],
     "dependencies": {
         "esprima": "1.1.x"
     },
     "devDependencies": {
         "pegjs": "0.8.x",
         "underscore": "1.6.x",
-        "source-map": "0.1.x"
+        "source-map": "0.1.x",
+        "uglify-js": "2.4.x"
     }
 }

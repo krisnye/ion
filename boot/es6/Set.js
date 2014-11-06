@@ -28,7 +28,9 @@ function SetShim(items) {
     }
 }
 if (!(global.Set != null) || !(Set.prototype.forEach != null)) {
-    console.warn('Shimming Set');
+    if (global.window) {
+        console.warn('Shimming Set');
+    }
     global.Set = SetShim;
 }
 var test = exports.test = function () {

@@ -1,4 +1,7 @@
 void (function(){var _ion_builder_WebsiteBuilder_ = function(module,exports,require){'use strict';
+if (global.window) {
+    return;
+}
 var ion = require('../'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), utility = require('./utility'), ModuleBuilder = require('./ModuleBuilder'), clientJsDir = 'js', serverJsDir = 'WEB-INF/js', serverJavaDir = 'WEB-INF/java', np = require('path'), fs = require('fs');
 module.exports = exports = ion.template(function (packagePatch) {
     return ion.createRuntime({

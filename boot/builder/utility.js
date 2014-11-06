@@ -132,7 +132,7 @@ module.exports = exports = {
     }
     value = normalizePath(value);
     if (typeof match === 'string') {
-      return value.substring(value.length - match.length) === match;
+      return value.startsWith(match) || value.endsWith(match);
     }
     value = value.split(/[\/\\]/g).pop();
     return typeof match.test === "function" ? match.test(value) : void 0;

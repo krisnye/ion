@@ -12,6 +12,9 @@ if (this.require != null) {
 
 require = function(path) {
   var i, m, object, originalPath, steps;
+  if (path === 'ion/browser/require') {
+    return require;
+  }
   originalPath = path;
   m = modules[path];
   if (!m) {

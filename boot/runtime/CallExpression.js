@@ -13,9 +13,16 @@ var _ref = {};
                 ion.unobserve(this.thisarg, this.thisObserver);
                 this.thisArg = thisArg;
                 if (!(this.calleeValue != null ? this.calleeValue.template : void 0)) {
-                    ion.observe(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (changes) {
-                        this.evaluate();
-                    }, this));
+                    var deep = Array.isArray(thisArg);
+                    if (deep) {
+                        ion.patch.watch(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (patch) {
+                            this.evaluate();
+                        }, this));
+                    } else {
+                        ion.observe(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function () {
+                            this.evaluate();
+                        }, this));
+                    }
                 }
             }
             this.evaluate();

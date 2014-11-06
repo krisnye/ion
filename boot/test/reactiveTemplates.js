@@ -981,73 +981,6 @@ var templates = [
             4
         ],
         [
-            'bidirectional properties',
-            {},
-            ion.template(function (object) {
-                return ion.createRuntime({
-                    type: 'Template',
-                    body: [
-                        {
-                            type: 'Property',
-                            key: {
-                                type: 'Identifier',
-                                name: 'object'
-                            },
-                            value: {
-                                type: 'ObjectExpression',
-                                properties: [{
-                                        type: 'Property',
-                                        key: {
-                                            type: 'Identifier',
-                                            name: 'x'
-                                        },
-                                        value: {
-                                            type: 'MemberExpression',
-                                            computed: false,
-                                            object: {
-                                                type: 'Identifier',
-                                                name: 'object'
-                                            },
-                                            property: {
-                                                type: 'Identifier',
-                                                name: 'y'
-                                            }
-                                        },
-                                        kind: 'init',
-                                        bi: true
-                                    }]
-                            },
-                            kind: 'init'
-                        },
-                        {
-                            type: 'ReturnStatement',
-                            argument: {
-                                type: 'Identifier',
-                                name: 'object'
-                            }
-                        }
-                    ],
-                    bound: false
-                }, {
-                    this: this,
-                    object: object,
-                    ion: ion,
-                    _ref4: _ref4,
-                    templates: templates,
-                    _ref5: _ref5
-                });
-            }),
-            {
-                x: 1,
-                y: 2
-            },
-            { x: 3 },
-            {
-                x: 3,
-                y: 3
-            }
-        ],
-        [
             'literal objects',
             {},
             ion.template(function () {
@@ -1103,11 +1036,9 @@ var templates = [
         ],
         _ref4,
         function () {
-            var Type = function () {
-            };
-            var alpha = ion.patch(new Type(), { name: 'alpha' });
-            var beta = ion.patch(new Type(), { name: 'beta' });
-            var charlie = ion.patch(new Type(), { name: 'charlie' });
+            var alpha = 100;
+            var beta = 200;
+            var charlie = 300;
             var next = 0;
             var nextId = function () {
                 return next++;
@@ -1181,19 +1112,11 @@ var templates = [
                                                                     type: 'Property',
                                                                     key: {
                                                                         type: 'Identifier',
-                                                                        name: 'name'
+                                                                        name: 'number'
                                                                     },
                                                                     value: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'Identifier',
-                                                                            name: 'item'
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'name'
-                                                                        }
+                                                                        type: 'Identifier',
+                                                                        name: 'item'
                                                                     },
                                                                     kind: 'init'
                                                                 },
@@ -1221,7 +1144,6 @@ var templates = [
                     }, {
                         this: this,
                         items: items,
-                        Type: Type,
                         alpha: alpha,
                         beta: beta,
                         charlie: charlie,
@@ -1246,12 +1168,12 @@ var templates = [
                 [
                     {
                         id: 0,
-                        name: 'alpha',
+                        number: alpha,
                         index: 0
                     },
                     {
                         id: 2,
-                        name: 'charlie',
+                        number: charlie,
                         index: 1
                     }
                 ]

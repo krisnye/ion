@@ -16,15 +16,14 @@ var DynamicExpression = ion.defineClass({
                     this.activate();
                 }
                 watchers.push(watcher);
-                var value = this.getValue();
-                if (value !== void 0) {
+                if (this.hasValue()) {
+                    var value = this.getValue();
                     this._notifyWatcher(watcher, value);
                 }
             },
             unwatch: function (watcher) {
                 this._watchers.remove(watcher);
-                var value = this.getValue();
-                if (value !== void 0) {
+                if (this.hasValue()) {
                     this._notifyWatcher(watcher, void 0);
                 }
                 if (this._watchers.length === 0) {
@@ -47,11 +46,14 @@ var DynamicExpression = ion.defineClass({
                 }
                 return;
             },
+            hasValue: function () {
+                return this.hasOwnProperty('value');
+            },
             getValue: function () {
                 return this.value;
             },
             setValue: function (value) {
-                if (value !== this.value) {
+                if (value !== this.value || !this.hasValue()) {
                     this.value = value;
                     this.notify();
                 }

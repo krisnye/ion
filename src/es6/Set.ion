@@ -19,7 +19,8 @@ const SetShim(items) ->
 
 # we will even replace Googles crap implementation of Map that doesn't yet have forEach or keys
 if not global.Set? or not Set.prototype.forEach?
-    console.warn('Shimming Set')
+    if global.window
+        console.warn('Shimming Set')
     global.Set = SetShim
 
 export const test = ->

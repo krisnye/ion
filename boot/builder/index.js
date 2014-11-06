@@ -45,6 +45,12 @@ module.exports = exports = {
     }
     return _results;
   },
+  runIonFile: function(file) {
+    var js, src;
+    src = fs.readFileSync(file, 'utf8');
+    js = require('../compiler').compile(src);
+    return eval(js);
+  },
   runTests: (function() {
     var fn;
     fn = function(manifestFile) {
@@ -194,6 +200,9 @@ module.exports = exports = {
   },
   addBrowserShim: addBrowserShim = function(sourceText, moduleId) {
     var safeId;
+    if (sourceText.substring(0, 2) === "#!") {
+      return sourceText;
+    }
     if (moduleId != null) {
       safeId = "_" + moduleId.replace(/[^a-zA-Z0-9]/g, '_') + "_";
       sourceText = "void (function(){var " + safeId + " = function(module,exports,require){" + sourceText + "\n  }\n  if (typeof require === 'function') {\n    if (require.register)\n      require.register('" + moduleId + "'," + safeId + ");\n    else\n      " + safeId + ".call(this, module, exports, require);\n  }\n  else {\n    " + safeId + ".call(this);\n  }\n}).call(this)";

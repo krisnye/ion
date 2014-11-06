@@ -9,12 +9,11 @@ var Property = ion.defineClass({
                 this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
                 this.keyExpression.watch(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : ion.bind(function (key) {
                     if (key != null && this.valueExpression.setLeftValue != null) {
-                        var currentValue = this.context.output ? ion.get(this.context.output, key) : this.context.get(key);
+                        var currentValue = this.context.output ? this.context.output != null ? this.context.output[key] : void 0 : this.context.get(key);
                         if (currentValue != null) {
                             this.valueExpression.setLeftValue(currentValue);
                         }
                     }
-                    this.restoreProperty();
                     this.keyValue = key;
                     this.setProperty();
                 }, this));
@@ -22,23 +21,12 @@ var Property = ion.defineClass({
                     this.valueValue = value;
                     this.setProperty();
                 }, this));
-                if (this.bi) {
-                    ion.observe(this.context.output, this.contextObserver = this.contextObserver != null ? this.contextObserver : ion.bind(function () {
-                        var value = ion.get(this.context.output, this.keyValue);
-                        if (value !== void 0) {
-                            this.valueExpression.setMemberValue(value);
-                        }
-                    }, this), this.keyValue);
-                }
             },
             deactivate: function () {
                 Property.super.prototype.deactivate.apply(this, arguments);
-                this.restoreProperty();
                 ion.unobserve(this.context.output, this.contextObserver, this.leftValue);
                 this.keyExpression.unwatch(this.keyWatcher);
                 this.valueExpression.unwatch(this.valueWatcher);
-            },
-            restoreProperty: function () {
             },
             setProperty: function (key, value) {
                 if (key == null)
@@ -47,11 +35,9 @@ var Property = ion.defineClass({
                     value = this.valueValue;
                 var explicitUndefined = this.value.operator === 'void';
                 if (key != null && (value !== void 0 || explicitUndefined)) {
-                    var currentValue = ion.get(this.context.output, key);
-                    if (explicitUndefined || currentValue !== value) {
-                        this.originalKey = this.originalKey != null ? this.originalKey : key;
-                        this.originalValue = this.originalValue != null ? this.originalValue : currentValue;
-                        ion.set(this.context.output, key, value, !explicitUndefined);
+                    var currentValue = this.context.output != null ? this.context.output[key] : void 0;
+                    if (explicitUndefined || currentValue !== value && this.context.output != null) {
+                        this.context.output[key] = value;
                     }
                 }
             }

@@ -14,12 +14,6 @@ var MemberExpression = ion.defineClass({
                 this.objectExpression.watch(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : ion.bind(function (objectValue) {
                     this.objectValue = objectValue;
                     this.updateValue();
-                    this.objectObserver != null ? this.objectObserver() : void 0;
-                    if (objectValue != null) {
-                        this.objectObserver = ion.observe(objectValue, ion.bind(function (changes) {
-                            this.updateValue();
-                        }, this), this.propertyValue);
-                    }
                 }, this));
             },
             deactivate: function () {
@@ -30,13 +24,23 @@ var MemberExpression = ion.defineClass({
             updateValue: function () {
                 var value = void 0;
                 if (this.objectValue != null && this.propertyValue != null) {
-                    value = ion.get(this.objectValue, this.propertyValue);
+                    value = this.objectValue[this.propertyValue];
                 }
                 this.setValue(value);
+                if (this.observedObject !== this.objectValue || this.observedProperty !== this.propertyValue) {
+                    this.observedObject = this.objectValue;
+                    this.observedProperty = this.propertyValue;
+                    this.objectObserver != null ? this.objectObserver() : void 0;
+                    if (this.objectValue != null) {
+                        this.objectObserver = ion.observe(this.objectValue, ion.bind(function (changes) {
+                            this.updateValue();
+                        }, this), this.propertyValue);
+                    }
+                }
             },
             setMemberValue: function (value) {
                 if (this.objectValue != null && this.propertyValue != null) {
-                    ion.set(this.objectValue, this.propertyValue, value);
+                    this.objectValue[this.propertyValue] = value;
                 }
             }
         }

@@ -1,10 +1,11 @@
 {
-  "modified": 1409800671000,
+  "modified": 1415308053455,
   "files": [
     "browser/require.js",
     "browser/elements.js",
     "browser/index.js",
     "browser/tester.js",
+    "builder/command.js",
     "builder/Directory.js",
     "builder/File.js",
     "builder/index.js",
@@ -62,6 +63,7 @@
     "test/index.js",
     "test/ionCompiler.js",
     "test/ionCompilerES5.js",
-    "test/reactiveTemplates.js"
+    "test/reactiveTemplates.js",
+    "test/sourceSize.js"
   ]
 }

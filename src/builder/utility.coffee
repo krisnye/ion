@@ -70,7 +70,9 @@ module.exports = exports =
                     return true
             return false
         value = normalizePath value
-        return value.substring(value.length-match.length) is match if typeof match is 'string'
+        if typeof match is 'string'
+            return value.startsWith(match) or value.endsWith(match)
+            # return value.substring(value.length-match.length) is match
         value = value.split(/[\/\\]/g).pop()
         return match.test?(value)
     defaultFileExclude: ["node_modules","www"]

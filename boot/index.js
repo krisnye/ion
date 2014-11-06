@@ -9,7 +9,7 @@ var primitive = {
         function: true
     }, isPrimitive = function (object) {
         return !(object != null) || primitive[typeof object] || false;
-    }, normalizeProperty = function (property) {
+    }, normalizeProperty = function (property, name) {
         if (typeof property === 'function') {
             property = {
                 writable: false,
@@ -24,13 +24,14 @@ var primitive = {
         if (property.hasOwnProperty('value')) {
             property.writable = property.writable != null ? property.writable : true;
         }
+        property.name = name;
         return property;
     }, normalizeProperties = function (properties) {
         if (properties == null)
             properties = {};
         for (var name in properties) {
             var property = properties[name];
-            properties[name] = normalizeProperty(property);
+            properties[name] = normalizeProperty(property, name);
         }
         return properties;
     }, variableArgConstructs = [
@@ -176,6 +177,12 @@ var patch = exports.patch = function () {
         var remove;
         if (typeof item === 'function' && ((item.name != null ? item.name.length : void 0) > 0 || item.id != null) && typeof container.addEventListener === 'function') {
             var name = item.id != null ? item.id : item.name;
+            var capture = false;
+            var captureSuffix = '_capture';
+            if (name.endsWith(captureSuffix)) {
+                capture = true;
+                name = name.substring(0, name.length - captureSuffix.length);
+            }
             if ((Object.observe != null ? Object.observe.checkForChanges : void 0) != null) {
                 var originalItem = item;
                 item = function () {
@@ -183,7 +190,7 @@ var patch = exports.patch = function () {
                     Object.observe.checkForChanges();
                 };
             }
-            container.addEventListener(name, item);
+            container.addEventListener(name, item, capture);
             remove = function () {
                 container.removeEventListener(name, item);
             };
@@ -276,36 +283,6 @@ var patch = exports.patch = function () {
             defineProperties(classFunction.prototype, classFunction.properties);
         }
         return classFunction;
-    }, get = exports.get = function (object, property) {
-        if (!(object != null && property != null)) {
-            return void 0;
-        }
-        if (object !== this && typeof object.get === 'function') {
-            return object.get(property);
-        } else {
-            return object[property];
-        }
-    }, set = exports.set = function (object, property, value, deleteUndefined) {
-        if (deleteUndefined == null)
-            deleteUndefined = true;
-        if (object != null) {
-            if (arguments.length === 2 && property != null) {
-                for (var k in property) {
-                    var v = property[k];
-                    set(object, k, v);
-                }
-                return;
-            }
-            if (object !== this && typeof object.set === 'function') {
-                object.set(property, value);
-            } else if (deleteUndefined && value === void 0) {
-                delete object[property];
-            } else {
-                object[property] = value;
-            }
-            value != null ? value.onSet != null ? value.onSet(object, property) : void 0 : void 0;
-        }
-        return value;
     }, is = exports.is = function (instance, type) {
         if (!(instance != null)) {
             return false;
