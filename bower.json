@@ -23,6 +23,7 @@
     "test",
     "tests",
     "docs",
-    "boot"
+    "boot",
+    "src"
   ]
 }
