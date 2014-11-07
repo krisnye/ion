@@ -16,19 +16,19 @@
     "build": {
         "package": true,
         "merge": {
-            "ion-all.js": {
+            "../dist/ion-all.js": {
                 "exclude": [
                     "builder"
                 ]
             },
-            "ion-browser.js": {
+            "../dist/ion-browser.js": {
                 "exclude": [
                     "builder",
                     "test",
                     "compiler"
                 ]
             },
-            "ion-min.js": {
+            "../dist/ion-min.js": {
                 "exclude": [
                     "builder",
                     "test",
