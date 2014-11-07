@@ -98,10 +98,10 @@ export template (packagePatch) ->
     # copy the package.json to the lib directory
     if packageJson.build.package isnt false
         output.write('package.json', JSON.stringify(ion.patch(ion.clone(packageJson), {main:undefined}), null, '    '))
-        # also copy the bower.json file if present
-        let bower = new File('bower.json')
-        if bower.exists
-            output.write('bower.json', bower.read())
+        # # also copy the bower.json file if present
+        # let bower = new File('bower.json')
+        # if bower.exists
+        #     output.write('bower.json', bower.read())
 
     # builder.test
     if packageJson.build.test isnt false

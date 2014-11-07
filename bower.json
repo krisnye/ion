@@ -6,7 +6,7 @@
     "krisnye <krisnye@gmail.com>"
   ],
   "description": "reactive javascript",
-  "main": "index.js",
+  "main": "lib/ion-browser.js",
   "moduleType": [
     "node"
   ],
