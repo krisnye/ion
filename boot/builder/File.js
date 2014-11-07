@@ -64,7 +64,15 @@ var File = ion.defineClass({
             },
             read: function (encoding) {
                 if (fs.existsSync(this.path)) {
-                    return utility.read(this.path, encoding);
+                    var modified = utility.getModified(this.path);
+                    var content;
+                    if (modified === this._lastModified) {
+                        content = this._content;
+                    } else {
+                        this._content = content = utility.read(this.path, encoding);
+                        this._lastModified = modified;
+                    }
+                    return content;
                 } else {
                     return null;
                 }

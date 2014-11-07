@@ -65,7 +65,8 @@ export template (packagePatch) ->
                 indexFile.write(builder.addBrowserShim(lines.join('\n'), indexModuleId))
 
     # build a manifest file with require.js at the top
-    let outputFiles = output.search(".js", [/^_/, 'node_modules'].concat(Object.keys(packageJson.build.merge ? {}))) # ignore output _browser.js and node_modules
+    # ignore output _browser.js and node_modules
+    let outputFiles = output.search(".js", [/^_/, 'node_modules'].concat(Object.keys(packageJson.build.merge ? {})))
     let top = [key for key of outputFiles if key.endsWith('require.js')]
     let sortedFiles = top.concat([key for key of outputFiles if not builder.isPrivate(key) and top.indexOf(key) < 0])
     let manifestFileName = "manifest.json"
@@ -90,13 +91,17 @@ export template (packagePatch) ->
             let merged = mergedArray.join('\n')
             if options.compress
                 let minified = require('uglify-js').minify(merged, {fromString:true}).code
-                new File(mergeFile).write(minified)
+                output.write(mergeFile, minified)
             else
-                new File(mergeFile).write(merged)
+                output.write(mergeFile, merged)
 
     # copy the package.json to the lib directory
     if packageJson.build.package isnt false
         output.write('package.json', JSON.stringify(ion.patch(ion.clone(packageJson), {main:undefined}), null, '    '))
+        # also copy the bower.json file if present
+        let bower = new File('bower.json')
+        if bower.exists
+            output.write('bower.json', bower.read())
 
     # builder.test
     if packageJson.build.test isnt false

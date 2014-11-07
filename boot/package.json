@@ -4,6 +4,11 @@
     "bin": {
         "ion": "builder/command.js"
     },
+    "scripts": {
+        "build": "ion -c",
+        "watch": "ion -w",
+        "boot": "node boot/builder/command.js -c"
+    },
     "directories": {
         "lib": "lib",
         "src": "src"
@@ -37,12 +42,12 @@
         "krisnye@gmail.com"
     ],
     "dependencies": {
-        "esprima": "1.1.x"
+        "esprima": "1.1.x",
+        "uglify-js": "2.4.x"
     },
     "devDependencies": {
         "pegjs": "0.8.x",
         "underscore": "1.6.x",
-        "source-map": "0.1.x",
-        "uglify-js": "2.4.x"
+        "source-map": "0.1.x"
     }
 }

@@ -307,7 +307,8 @@ exports.spawnTests = spawnTests = function(manifestFile) {
 };
 
 exports.runTests = runTests = function(moduleIds, callback) {
-  var array, duration, e, error, expectedCallbacks, getIncompleteCallbacks, handler, inc, key, module, moduleId, name, timeout, waitingForFinishTimeout, warning, _i, _len;
+  var array, duration, e, error, expectedCallbacks, getIncompleteCallbacks, handler, inc, key, module, moduleId, name, timeout, waitingForFinishTimeout, warning, _i, _len,
+    _this = this;
   if (!moduleIds) {
     throw new Error("moduleIds is required");
   }
@@ -366,17 +367,15 @@ exports.runTests = runTests = function(moduleIds, callback) {
     duration = 1000;
     error = "Timed out after " + duration + " ms";
     warning = void 0;
-    timeout = (function(_this) {
-      return function() {
-        var _j, _len1;
-        inc = getIncompleteCallbacks();
-        for (_j = 0, _len1 = inc.length; _j < _len1; _j++) {
-          name = inc[_j];
-          callback(name, error, warning);
-        }
-        return callback();
-      };
-    })(this);
+    timeout = function() {
+      var _j, _len1;
+      inc = getIncompleteCallbacks();
+      for (_j = 0, _len1 = inc.length; _j < _len1; _j++) {
+        name = inc[_j];
+        callback(name, error, warning);
+      }
+      return callback();
+    };
     if (global.setTimeout != null) {
       return waitingForFinishTimeout = setTimeout(timeout, duration);
     } else {
@@ -3324,3 +3323,28 @@ module.exports = exports = VariableDeclaration;
 
 
 
+
+void (function(){var _ion_WEB_INF_index_ = function(module,exports,require){
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/WEB-INF/index',_ion_WEB_INF_index_);
+    else
+      _ion_WEB_INF_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_WEB_INF_index_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_WEB_INF_java_index_ = function(module,exports,require){
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/WEB-INF/java/index',_ion_WEB_INF_java_index_);
+    else
+      _ion_WEB_INF_java_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_WEB_INF_java_index_.call(this);
+  }
+}).call(this)

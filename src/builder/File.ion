@@ -57,7 +57,15 @@ export class File
             console.log("Copied: {{np.normalize(@path)}}")
         read: (encoding) ->
             if fs.existsSync(@path)
-                return utility.read(@path, encoding)
+                # cache file content as long as the file remains unmodified
+                let modified = utility.getModified(@path)
+                let content
+                if modified is @_lastModified
+                    content = @_content
+                else
+                    @_content = content = utility.read(@path, encoding)
+                    @_lastModified = modified
+                return content
             else
                 return null
         getExtension: ->

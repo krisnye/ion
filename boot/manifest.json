@@ -1,5 +1,5 @@
 {
-  "modified": 1415308053455,
+  "modified": 1415310006428,
   "files": [
     "browser/require.js",
     "browser/elements.js",
@@ -64,6 +64,8 @@
     "test/ionCompiler.js",
     "test/ionCompilerES5.js",
     "test/reactiveTemplates.js",
-    "test/sourceSize.js"
+    "test/sourceSize.js",
+    "WEB-INF/index.js",
+    "WEB-INF/java/index.js"
   ]
 }

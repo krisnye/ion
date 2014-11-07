@@ -2436,25 +2436,24 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             type: 'MemberExpression',
                                                             computed: false,
                                                             object: {
-                                                                type: 'NewExpression',
-                                                                callee: {
-                                                                    type: 'Identifier',
-                                                                    name: 'File'
-                                                                },
-                                                                arguments: [{
-                                                                        type: 'Identifier',
-                                                                        name: 'mergeFile'
-                                                                    }]
+                                                                type: 'Identifier',
+                                                                name: 'output'
                                                             },
                                                             property: {
                                                                 type: 'Identifier',
                                                                 name: 'write'
                                                             }
                                                         },
-                                                        arguments: [{
+                                                        arguments: [
+                                                            {
+                                                                type: 'Identifier',
+                                                                name: 'mergeFile'
+                                                            },
+                                                            {
                                                                 type: 'Identifier',
                                                                 name: 'minified'
-                                                            }]
+                                                            }
+                                                        ]
                                                     }
                                                 }
                                             ]
@@ -2469,25 +2468,24 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             type: 'MemberExpression',
                                                             computed: false,
                                                             object: {
-                                                                type: 'NewExpression',
-                                                                callee: {
-                                                                    type: 'Identifier',
-                                                                    name: 'File'
-                                                                },
-                                                                arguments: [{
-                                                                        type: 'Identifier',
-                                                                        name: 'mergeFile'
-                                                                    }]
+                                                                type: 'Identifier',
+                                                                name: 'output'
                                                             },
                                                             property: {
                                                                 type: 'Identifier',
                                                                 name: 'write'
                                                             }
                                                         },
-                                                        arguments: [{
+                                                        arguments: [
+                                                            {
+                                                                type: 'Identifier',
+                                                                name: 'mergeFile'
+                                                            },
+                                                            {
                                                                 type: 'Identifier',
                                                                 name: 'merged'
-                                                            }]
+                                                            }
+                                                        ]
                                                     }
                                                 }]
                                         }
