@@ -1,0 +1,38 @@
+const ion = import '../'
+import './Map'
+
+const SetShim(items) ->
+    if items?
+        throw new Error("Don't add items in the constructor, IE implementation of Set breaks this")
+    let map = new Map
+    const methods =
+        has: (key) -> map.has(key)
+        delete: (key) -> map.delete(key)
+        add: (key) -> map.set(key, true)
+        forEach: (callback, thisArg) ->
+            map.forEach(
+                (value, key) =>
+                    callback.call(thisArg, key, @)
+            )
+    for key, value of methods
+        Object.defineProperty(@, key, {value})
+
+# we will even replace Googles crap implementation of Map that doesn't yet have forEach or keys
+if not global.Set? or not Set.prototype.forEach?
+    if global.window
+        console.warn('Shimming Set')
+    global.Set = SetShim
+
+export const test = ->
+    const Set = global.Set
+    let a = {}
+    let b = ->
+    let set = new Set()
+    set.add(a)
+    set.add(b)
+    assert set.has(a)
+    assert set.has(b)
+    set.delete(b)
+    assert not set.has(b)
+    set.add(b)
+    assert set.has(b)

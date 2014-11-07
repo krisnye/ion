@@ -1,0 +1,78 @@
+const
+    ion = import '../'
+    DynamicExpression = import './DynamicExpression'
+    ArrayExpression = import './ArrayExpression'
+
+module.exports = class CallExpression extends DynamicExpression
+    properties:
+        args: null
+        activate: ->
+            super
+            @calleeExpression ?= @context.createRuntime(@callee)
+            @calleeExpression.watch(
+                @calleeWatcher ?= (value) =>
+                    @calleeValue = value
+                    # get thisArg and watch for changes
+                    let thisArg = @calleeExpression.objectExpression?.value
+                    if thisArg isnt @thisArg
+                        ion.unobserve(@thisarg, @thisObserver)
+                        @thisArg = thisArg
+                        if not @calleeValue?.template # we don't need to watch the thisArg if the callee is a template
+                            let deep = Array.isArray(thisArg)
+                            if deep
+                                # console.log('deep watch man-------------------------', thisArg, @calleeValue)
+                                # deep watch
+                                ion.patch.watch(
+                                    thisArg
+                                    @thisObserver ?= (patch) =>
+                                        # console.log('deep change', patch)
+                                        @evaluate()
+                                )
+                            else
+                                # shallow observe
+                                ion.observe(
+                                    thisArg
+                                    @thisObserver ?= =>
+                                        @evaluate()
+                                )
+                    @evaluate()
+            )
+            @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:not @calleeValue?.template})
+            @argumentExpressions.watch(
+                @argumentWatcher ?= (value) =>
+                    @argumentsValue = value
+                    @evaluate()
+            )
+        deactivate: ->
+            super
+            @calleeExpression.unwatch(@calleeWatcher)
+            @argumentExpressions.unwatch(@argumentWatcher)
+            if @template?
+                @template.unwatch(@templateWatcher)
+                delete @template
+        _evaluateInternal: ->
+            if not (@isActive and @calleeValue? and @argumentsValue?)
+                return
+            let value = undefined
+            if @calleeValue.template
+                if @template?
+                    @template.unwatch(@templateWatcher)
+                # always use new on templates
+                @template = @calleeValue.apply(@thisArg, @argumentsValue)
+                @template.watch(@templateWatcher ?= @setValue.bind(@))
+            else
+                if @type is 'NewExpression'
+                    # create a new with variable args
+                    value = ion.create(@calleeValue, @argumentsValue)
+                else # @type is 'CallExpression'
+                    value = @calleeValue.apply(@thisArg, @argumentsValue)
+                @setValue(value)
+        if DEBUG
+            evaluate: ->
+                try
+                    @_evaluateInternal()
+                catch e
+                    # if we don't catch the errors, they might not be logged when occuring in an Object.observe callback
+                    console.error(e.stack ? e)
+        else
+            evaluate: -> @_evaluateInternal()

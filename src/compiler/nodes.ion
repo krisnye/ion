@@ -1,0 +1,38 @@
+const ion = import '../'
+
+export const
+    BlockStatement =
+        isBlock: true
+        newScope: true
+    Program =
+        isBlock: true
+        newScope: true
+        reactive: false
+    FunctionExpression =
+        isFunction: true
+        paramKind: 'let'
+        newScope: true
+        shadow: true
+        reactive: false
+    FunctionDeclaration = FunctionExpression
+    Template =
+        isFunction: true
+        paramKind: 'const'
+        newScope: true
+        shadow: true
+        reactive: true
+    ForStatement =
+        newScope: true
+        allowedInReactive: false
+    ForInStatement =
+        newScope: true
+    ForOfStatement =
+        newScope: true
+    ExportStatement =
+        allowedInReactive: false
+    ClassExpression =
+        allowedInReactive: false
+    ThrowStatement =
+        allowedInReactive: false
+    TryStatement =
+        allowedInReactive: false

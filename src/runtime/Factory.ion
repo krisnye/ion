@@ -1,0 +1,151 @@
+const ion = import '../'
+const Literal = import './Literal'
+const Expression = import './Expression'
+
+class Factory
+    properties:
+        runtime: './OperationExpression'
+        # creates a runtime construct from this operation
+        # with the specified context and AST node
+        createRuntime:
+            writable: true
+            value: (context, ast) ->
+                let properties = ion.clone(ast)
+                properties.context = context
+                properties.factory = @
+                let type = import @runtime
+                return new type(properties)
+
+const lookup =
+    type:
+        VariableDeclaration: new Factory
+            runtime: './VariableDeclaration'
+        ThisExpression: new Factory
+            createRuntime: (context, ast) -> context.getVariable('this')
+        Identifier: new Factory
+            createRuntime: (context, ast) -> context.getVariable(ast.name)
+        Function: new Factory
+            createRuntime: (context, ast) ->
+                let value = ast.value
+                if ast.context
+                    value = value(context)
+                return new Literal({value:value})
+        Template: new Factory
+            runtime: './Template'
+        Literal: new Factory
+            runtime: './Literal'
+        Property: new Factory
+            runtime: './Property'
+        IfStatement: new Factory
+            runtime: './IfStatement'
+        BlockStatement: new Factory
+            runtime: './BlockStatement'
+        ReturnStatement: new Factory
+            runtime: './ReturnStatement'
+        ObjectExpression: new Factory
+            runtime: './ObjectExpression'
+        ArrayExpression: new Factory
+            runtime: './ArrayExpression'
+        ExpressionStatement: new Factory
+            runtime: './ExpressionStatement'
+        ForOfStatement: new Factory
+            runtime: './ForInOfStatement'
+        ForInStatement: new Factory
+            runtime: './ForInOfStatement'
+        MemberExpression: new Factory
+            runtime: './MemberExpression'
+        CallExpression: new Factory
+            runtime: './CallExpression'
+        NewExpression: new Factory
+            runtime: './CallExpression'
+        UnaryExpression:
+            operator:
+                "!": new Factory
+                    evaluate: (a) -> not a
+                "typeof": new Factory
+                    evaluate: (a) -> typeof a
+                "void": new Factory
+                    evaluate: (a) -> void a
+                "-": new Factory
+                    evaluate: (a) -> - a
+                "+": new Factory
+                    evaluate: (a) -> + a
+                "~": new Factory
+                    evaluate: (a) -> ~ a
+                "?": new Factory
+                    evaluate: (a) -> a?
+        ConditionalExpression: new Factory
+            # unlike in imperative code, both consequent and alternate are always evaluated
+            evaluate: (test, consequent, alternate) -> test ? consequent : alternate
+        BinaryExpression:
+            operator:
+                "*": new Factory
+                    evaluate: (left, right) -> left * right
+                "/": new Factory
+                    evaluate: (left, right) -> left / right
+                "%": new Factory
+                    evaluate: (left, right) -> left % right
+                "+": new Factory
+                    evaluate: (left, right) -> left + right
+                "-": new Factory
+                    evaluate: (left, right) -> left - right
+                "&&": new Factory
+                    evaluate: (left, right) -> left and right
+                "||": new Factory
+                    evaluate: (left, right) -> left or right
+                "&": new Factory
+                    evaluate: (left, right) -> left & right
+                "|": new Factory
+                    evaluate: (left, right) -> left | right
+                "==": new Factory
+                    evaluate: (left, right) -> `left == right`
+                "!=": new Factory
+                    evaluate: (left, right) -> `left != right`
+                "===": new Factory
+                    evaluate: (left, right) -> left is right
+                "!==": new Factory
+                    evaluate: (left, right) -> left isnt right
+                "<": new Factory
+                    evaluate: (left, right) -> left < right
+                ">": new Factory
+                    evaluate: (left, right) -> left > right
+                "<=": new Factory
+                    evaluate: (left, right) -> left <= right
+                ">=": new Factory
+                    evaluate: (left, right) -> left >= right
+
+const getFactory(ast, step = lookup) ->
+    for key, values of step
+        let nodeValue = ast[key]
+        let next = values[nodeValue]
+        if next?
+            if next.constructor is Factory
+                return next
+            return getFactory(ast, next)
+    return null
+
+export const
+    createRuntime = (context, ast) ->
+        if typeof ast?.type isnt 'string'
+            ast =
+                type: 'Literal'
+                value: ast
+        let factory = getFactory(ast)
+        if not factory?
+            throw new Error("Factory not found for ast:\n{{JSON.stringify(ast, null, '  ')}}")
+        return factory.createRuntime(context, ast)
+    test = ->
+        # try to get a factory for < operation
+        let factory = getFactory(
+            {}
+                type: 'BinaryExpression'
+                operator: '>'
+                left:
+                    type: 'Literal'
+                    value: 1
+                right:
+                    type: 'Literal'
+                    value: 2
+        )
+        assert factory is lookup.type.BinaryExpression.operator[">"]
+        assert lookup.type.BinaryExpression.operator[">"]?

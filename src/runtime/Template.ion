@@ -1,0 +1,20 @@
+const
+    ion = import '../'
+    BlockStatement = import './BlockStatement'
+    DynamicExpression = import './DynamicExpression'
+    noop = ->
+
+export class Template extends BlockStatement
+    constructor: ->
+        super
+        @context.returnExpression = new DynamicExpression()
+    properties:
+        # Template also implements Expression interface
+        watch: (watcher = noop) ->
+            if not @isActive
+                @activate()
+            @context.returnExpression.watch(watcher)
+        unwatch: (watcher) ->
+            @context.returnExpression.unwatch(watcher)
+            if not @context.returnExpression.isActive
+                @deactivate()

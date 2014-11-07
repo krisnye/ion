@@ -1,0 +1,123 @@
+﻿<html>
+    <head>
+        <title>Ion • TodoMVC</title>
+        <script src="../../lib/_browser.js"></script>
+        <link rel="stylesheet" href="TodoMVC.css">
+        <script type='ion'>
+        # export element creation functions as global variables for convenience
+        for name, fn of require('ion/browser/elements')
+            global[name] = fn
+        </script>
+    </head>
+    <body>
+        <div>
+            <script type='ion'>
+
+            # we will define the model globally as tasks variable`
+            # so that we can manipulate it from the developer console
+            # you can test this from the console:
+            #     tasks.push({name:'Use Ion', complete:false})
+            global.tasks = JSON.parse(localStorage.tasks ? "[]")
+            ion.patch.watch(tasks, -> localStorage.tasks = JSON.stringify(tasks))
+
+            let filters =
+                all: (task) -> true
+                active: (task) -> not task.complete
+                completed: (task) -> task.complete
+
+            # now define the reactive view template
+            return template ->
+                let count = tasks.length
+                let completed = tasks.filter((task) -> task.complete).length
+                let remaining = count - completed
+                let state =
+                    filter: 'all'
+                    editing: null
+                return section({id:'todoapp'})
+                    header({id:'header'})
+                        h1()
+                            'todos'
+                        form()
+                            let nameField = input({id:'new-todo', placeholder:'What needs to be done?'})
+                            nameField
+                            submit(e) ->
+                                e.preventDefault()
+                                let value = nameField.value.trim()
+                                if value.length > 0
+                                    tasks.unshift({name:value,complete:false})
+                                nameField.value = ''
+                                nameField.select()
+                    section({id:'main'})
+                        input({id:'toggle-all',type:'checkbox'})
+                            change(e) ->
+                                for task in tasks
+                                    task.complete = @checked
+                        ul({id:'todo-list'})
+                            let filter = filters[state.filter]
+                            for task, index in tasks
+                                if filter(task)
+                                    let {name,complete} = task
+                                    li()
+                                        click(e) ->
+                                            if e.detail is 2
+                                                state.editing = index
+                                        classList:
+                                            if complete
+                                                'completed'
+                                        style:
+                                            order: index
+                                        input({class:'toggle',type:'checkbox'})
+                                            checked: complete
+                                            change(e) ->
+                                                task.complete = @checked
+                                        label()
+                                            if state.editing is index
+                                                let editor = input()
+                                                    change(e) ->
+                                                        let name = @value.trim()
+                                                        if name.length > 0
+                                                            task.name = name
+                                                        state.editing = false
+                                                    value: name
+                                                editor
+                                                void editor.select()
+                                            else
+                                                name
+                                        button({class:'destroy'})
+                                            click(e) ->
+                                                tasks.splice(index, 1)
+                    footer({id:'footer'})
+                        style:
+                            display: count > 0 ? 'initial': 'none'
+                        span({id:'todo-count'})
+                            strong()
+                                remaining
+                            " item{{remaining isnt 1 ? 's' : ''}} left"
+                        ul({id:'filters'})
+                            for name of filters
+                                li()
+                                    a()
+                                        classList:
+                                            if state.filter is name
+                                                'selected'
+                                        click(e) ->
+                                            state.filter = name
+                                        name
+                        button({id:'clear'})
+                            style:
+                                display: completed > 0 ? 'initial': 'none'
+                            click(e) ->
+                                # iterate tasks in reverse, remove any complete
+                                for let i = tasks.length - 1; i >= 0; i--
+                                    if tasks[i].complete
+                                        tasks.splice(i, 1)
+                            "Clear completed {{completed}}"
+            </script>
+        </div>
+        <footer id="info">
+            <p>Double-click to edit a todo</p>
+            <p>Created by <a href="https://github.com/krisnye/ion">The Ion Author</a></p>
+            <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+        </footer>
+    </body>
+</html>

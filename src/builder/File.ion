@@ -1,0 +1,79 @@
+
+if global.Window
+    return
+
+const
+    ion = import '../'
+    fs = import 'fs'
+    np = import 'path'
+    utility = import './utility'
+
+export class File
+    constructor: (path) ->
+        if path?.constructor is File
+            return path
+        if @constructor isnt File
+            return new File(path)
+        if typeof path isnt 'string'
+            throw new Error("path string is required")
+        Object.defineProperties(
+            @
+            {}
+                path:
+                    value: path
+                    enumerable: true
+                    writable: false
+        )
+        # set modified immediately
+        @modified = utility.getModified(path)
+        # make us reactive to observers.  Specifically we will just update our modified value as needed.
+        ion.makeReactive(
+            @
+            =>
+                let watcher
+                if fs.existsSync(@path)
+                    watcher = fs.watch(
+                        @path
+                        =>
+                            @modified = utility.getModified(@path)
+                            # explicit check is only because current
+                            # nodejs versions don't have Object.observe yet.
+                            ion.checkForChanges()
+                    )
+                return -> watcher?.close()
+        )
+    properties:
+        isFile:
+            get: -> not @isDirectory
+        isDirectory:
+            get: -> fs.statSync(@path).isDirectory()
+        directoryName:
+            get: -> np.dirname(@path)
+        exists:
+            get: -> fs.existsSync(@path)
+        copyFrom: (file) ->
+            file = File(file)
+            @write(file.read(null), null)
+            console.log("Copied: {{np.normalize(@path)}}")
+        read: (encoding) ->
+            if fs.existsSync(@path)
+                # cache file content as long as the file remains unmodified
+                let modified = utility.getModified(@path)
+                let content
+                if modified is @_lastModified
+                    content = @_content
+                else
+                    @_content = content = utility.read(@path, encoding)
+                    @_lastModified = modified
+                return content
+            else
+                return null
+        getExtension: ->
+            let index = @path.lastIndexOf('.')
+            return index < 0 ? "" : @path.substring(index)
+        write: (content, encoding) ->
+            if content? and content isnt @read(encoding)
+                utility.write(@path, content, encoding)
+        delete: -> utility.write(@path, null)
+        toString: -> @path
+        valueOf: -> @path

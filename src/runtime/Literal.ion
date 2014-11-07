@@ -1,0 +1,8 @@
+const ion = import '../'
+
+export class Literal extends import './Expression'
+    properties:
+        watch: (watcher) ->
+            watcher(@value)
+        unwatch: (watcher) ->
+            watcher(undefined)

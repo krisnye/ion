@@ -1,0 +1,3 @@
+const ion = import '../'
+
+export class Node

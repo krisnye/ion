@@ -1,0 +1,97 @@
+if global.window
+    return
+
+const
+    ion = import '../'
+    File = import './File'
+    Directory = import './Directory'
+    builder = import './'
+    utility = import './utility'
+    ModuleBuilder = import './ModuleBuilder'
+    clientJsDir = 'js'
+    serverJsDir = 'WEB-INF/js'
+    serverJavaDir = 'WEB-INF/java'
+    np = import 'path'
+    fs = import 'fs'
+
+
+export template (packagePatch) ->
+    const
+        packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch ? {})
+        input = new Directory(packageJson.directories.src ? 'src')
+        output = new Directory(packageJson.directories.www ? 'debug')
+        clientOutput = output.getDirectory(clientJsDir)
+        serverOutput = output.getDirectory(serverJsDir)
+        nodepaths = ['node_modules'].concat(process.env.NODE_PATH.split(np.delimiter))
+
+    # Copy local development versions of glass-pages to input directory if available
+    # They will be copied from src to the build directory by ant
+    let glassPages = new Directory('../glass-pages/dist')
+    if glassPages.exists
+        let javaDirectory = input.getDirectory(serverJavaDir)
+        for key, source of glassPages.search()
+            let target = javaDirectory.getFile(key)
+            if target.modified < source.modified
+                target.copyFrom(source)
+
+    # Copy client and server node modules to the output
+    for moduleName in packageJson.build.client.modules
+        for nodepath in nodepaths
+            let directory = new Directory(np.join(nodepath, moduleName))
+            for key, source of directory.search([".js",".map"], ["node_modules"].concat(packageJson.build.client.exclude))
+                clientOutput.write(source.path.substring(nodepath.length), source.read())
+    for moduleName in packageJson.build.server.modules
+        for nodepath in nodepaths
+            let directory = new Directory(np.join(nodepath, moduleName))
+            for key, source of directory.search([".js",".map"], ["node_modules"].concat(packageJson.build.server.exclude))
+                serverOutput.write(source.path.substring(nodepath.length), source.read())
+
+    # build client javascript
+    ModuleBuilder(
+        directories:
+            src:input + '/js' # client side javascript
+            lib:output + '/' + clientJsDir
+        build:
+            exclude: packageJson.build.client.exclude
+            test: false
+    )
+
+    # build server javascript
+    ModuleBuilder(
+        directories:
+            src:input + '/js' # server side javascript
+            lib:output + '/' + serverJsDir
+        build:
+            exclude: packageJson.build.server.exclude
+            test: true
+    )
+
+    # Copy all other files from src to output
+    for path, file of input.search(null, [".ionpage",".coffeepage",".coffee",".java",".class",".jar", ".ion"])
+        if file.isFile
+            output.write(path, file.read(null), null)
+    else
+        output.delete(path)
+
+    # Compile plain ion files, while excluding the js directory
+    for path, file of input.search(".ion", "js")
+        let targetPath = builder.changeExtension(path, ".js")
+        output.write(targetPath, builder.compileIon(file))
+    else
+        output.delete(targetPath)
+
+    # Compile ion pages
+    let pageOutput = output.getDirectory('WEB-INF/pages')
+    for path, file of input.search(".ionpage")
+        let targetPath = builder.changeExtension(path, ".js")
+        pageOutput.write(targetPath, "(function {{path.replace(/[\.\/\\]/g, '_')}}(){ {{builder.compileIon(file)}} })")
+    else
+        pageOutput.delete(targetPath)
+
+    # Compile coffee pages
+    # TODO: port all .coffeepages to .ionpages and delete this.
+    for path, file of input.search(".coffeepage")
+        let targetPath = builder.changeExtension(path, ".js")
+        pageOutput.write(targetPath, "(function {{path.replace(/[\.\/\\]/g, '_')}}(){ {{builder.compileCoffeeScript(file)}} })")
+    else
+        pageOutput.delete(targetPath)

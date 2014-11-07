@@ -1,0 +1,108 @@
+if global.window
+    return
+
+const
+    ion = import '../'
+    np = import 'path'
+    File = import './File'
+    Directory = import './Directory'
+    builder = import './'
+    utility = import './utility'
+
+    compilers =
+        ".coffee":
+            compile: builder.compileCoffeeScript
+        ".pegjs":
+            compile: builder.compilePegjs
+        ".js":
+            compile: builder.shimJavascript
+        ".ion":
+            compile: builder.compileIon
+            compileWithSourceMap: builder.compileIonWithSourceMap
+
+export template (packagePatch) ->
+    let packageJson = ion.patch(JSON.parse(new File('package.json').read()), packagePatch ? {})
+    let input = new Directory(packageJson.directories.src ? 'src')
+    let output = new Directory(packageJson.directories.lib ? 'lib')
+    let moduleName = packageJson.name ? ''
+
+    # build all source files with a single search
+    let extensions = Object.keys(compilers)
+    for path, source of input.search(extensions, packageJson.build.exclude)
+        if not source.isDirectory
+            let compiler = compilers[source.getExtension()]
+            let targetPath = builder.changeExtension(path, '.js')
+            if compiler.compileWithSourceMap?
+                let mapPath = builder.changeExtension(path, '.map')
+                let mapName = mapPath.split(/[\/\\]/g).slice(-1)[0]
+                let [code,map] = compiler.compileWithSourceMap(source, packageJson)
+                output.write(targetPath, code + "\n//@ sourceMappingURL=./" + mapName)
+                output.write(mapPath, map)
+            else
+                output.write(targetPath, compiler.compile(source, packageJson))
+    else
+        output.delete(targetPath)
+        output.delete(mapPath)
+
+    # build a default index file for each output directory
+    for path, file of input.search(null, extensions.concat(packageJson.build.exclude))
+        if file.isDirectory
+            # see if there is an input.js or input.ion file
+            let isInputFile = input.getFile(path + "/index.js").exists or input.getFile(path + "/index.ion").exists or input.getFile(path + "/index.coffee").exists
+            if not isInputFile
+                # then create an output file
+                let indexDirectory = output.getDirectory(path)
+                let indexName = "index.js"
+                let indexFile = indexDirectory.getFile(indexName)
+                # get a list of all output files in that directory
+                let lines = []
+                    for key, childFile of indexDirectory.search(".js", null, {recursive:false})
+                        if key isnt indexName
+                            let name = key.substring(0, key.lastIndexOf('.js'))
+                            "Object.defineProperty(exports, '{{name}}', {get:function(){ return require('./{{name}}') }}) "
+
+                let indexModuleId = np.join(moduleName, path, "index").replace(/\\/g, '/')
+                indexFile.write(builder.addBrowserShim(lines.join('\n'), indexModuleId))
+
+    # build a manifest file with require.js at the top
+    # ignore output _browser.js and node_modules
+    let outputFiles = output.search(".js", [/^_/, 'node_modules'].concat(Object.keys(packageJson.build.merge ? {})))
+    let top = [key for key of outputFiles if key.endsWith('require.js')]
+    let sortedFiles = top.concat([key for key of outputFiles if not builder.isPrivate(key) and top.indexOf(key) < 0])
+    let manifestFileName = "manifest.json"
+    let manifestFile = output.getFile(manifestFileName)
+    let manifest =
+        modified: Math.max.apply(null, [file.modified for path, file of outputFiles])
+        files: [builder.normalizePath(path) for path in sortedFiles]
+    manifestFile.write(JSON.stringify(manifest, null, '  ', sortedFiles))
+
+    # build merged file, just so we can test locally with file:// protocol
+    if packageJson.build.merge?
+        for mergeFile, options of packageJson.build.merge
+            let mergedArray = []
+                for index, name of sortedFiles
+                    if not utility.isMatch(name, options.exclude, false)
+                        [index]: outputFiles[name].read()
+                    else
+                        [index]: ""
+                else
+                    [index]: ""
+
+            let merged = mergedArray.join('\n')
+            if options.compress
+                let minified = require('uglify-js').minify(merged, {fromString:true}).code
+                output.write(mergeFile, minified)
+            else
+                output.write(mergeFile, merged)
+
+    # copy the package.json to the lib directory
+    if packageJson.build.package isnt false
+        output.write('package.json', JSON.stringify(ion.patch(ion.clone(packageJson), {main:undefined}), null, '    '))
+        # # also copy the bower.json file if present
+        # let bower = new File('bower.json')
+        # if bower.exists
+        #     output.write('bower.json', bower.read())
+
+    # builder.test
+    if packageJson.build.test isnt false
+        builder.runTests(manifestFile, manifestFile.modified)

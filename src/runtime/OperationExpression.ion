@@ -1,0 +1,33 @@
+const
+    ion = import '../'
+    DynamicExpression = import './DynamicExpression'
+
+module.exports = class OperationExpression extends DynamicExpression
+    constructor: (properties) ->
+        super
+        # default args for common types of BinaryExpressions
+        if not @args?
+            if @type is 'BinaryExpression'
+                @args = [@left, @right]
+            else if @type is 'UnaryExpression'
+                @args = [@argument]
+            else if @type is 'ConditionalExpression'
+                @args = [@test, @consequent, @alternate]
+    properties:
+        args: null
+        activate: ->
+            super
+            @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@args, observeElements:@factory.observe})
+            @argumentExpressions.watch(
+                @watcher ?= (value) =>
+                    @argumentValues = value
+                    @evaluate()
+            )
+        deactivate: ->
+            super
+            @argumentExpressions.unwatch(@watcher)
+        evaluate: ->
+            if not @factory.evaluate?
+                throw new Error("evaluate method not defined for operation: " + @factory)
+            let value = @factory.evaluate.apply(@context, @argumentValues)
+            @setValue(value)

@@ -1,0 +1,171 @@
+const
+    ion = import '../'
+    Statement = import './Statement'
+    DynamicExpression = import './DynamicExpression'
+
+export class ForInOfStatement extends Statement
+    properties:
+        toKey: (name) ->
+            if @type is 'ForOfStatement'
+                return parseInt(name)
+            else
+                return name
+        forEach: (collection, callback) ->
+            # console.log('forEach', collection)
+            if @type is 'ForOfStatement'
+                for let key = 0; key < collection.length; key++
+                    let value = collection[key]
+                    callback(key, value)
+            else
+                for key, value of collection
+                    callback(key, value)
+        activate: ->
+            super
+
+            if not @statements?
+                @statements = {}            
+                @valueName = @left.declarations[@type is 'ForOfStatement' ? 0 : 1]?.id.name
+                @keyName = @left.declarations[@type is 'ForOfStatement' ? 1 : 0]?.id.name
+
+            # we must create new contexts for every item in the list thingy.
+            # console.log('ForEachStatement.activate', @)
+            @collectionExpression ?= @context.createRuntime(@right)
+            @collectionExpression.watch(
+                @collectionWatcher ?= (collection) =>
+                    # console.log('collectionWatcher', collection)
+                    if @collection isnt collection
+                        if @collection?
+                            @forEach(
+                                @collection
+                                (key, value) =>
+                                    @removeItem(key, value)
+                            )
+                            ion.unobserve(@collection, @collectionObserver)
+                        @collection = collection
+                        if @collection?
+                            @forEach(
+                                @collection
+                                (key, value) =>
+                                    @addItem(key, value)
+                            )
+                            ion.observe(@collection, @collectionObserver ?= @applyChanges.bind(@))
+            )
+        deactivate: ->
+            super
+            @collectionExpression.unwatch(@collectionWatcher)
+        addItem: (key, value, activate = true) ->
+            # console.log('add ' + key + ' ' + value)
+            if value isnt undefined
+                # see if there is a cached statement with that value
+                let newContext = @context.newContext()
+                if @valueName?
+                    newContext.setVariableExpression(@valueName, new DynamicExpression({value:value}))
+                if @keyName?
+                    newContext.setVariableExpression(@keyName, new DynamicExpression({value:key}))
+                let statement = newContext.createRuntime(@body)
+                @statements[key] = statement
+                if activate
+                    statement.activate()
+                return statement
+        removeItem: (key, value) ->
+            let statement = @statements[key]
+            # console.log('remove ' + key + ' ' + value + ' ', statement)
+            if statement?
+                @disposeStatement(statement)
+            delete @statements[key]
+            return statement
+        disposeStatement: (statement) ->
+            # see if there is a remove function to call
+            if @remove?
+                let removeStatement = statement.context.createRuntime(@remove)
+                removeStatement.activate()
+            statement.deactivate()
+        summarize: (changes) ->
+            let ignoreProperty = (name) =>
+                if not name?
+                    return true
+                if name[0] is '_'
+                    return true
+                if name is 'length' and @type is 'ForOfStatement'
+                    return true
+                return false
+            let map = new Map
+            for {type,object,name,oldValue} in changes
+                if not ignoreProperty(name)
+                    if not map.has(name)
+                        map.set(name, {type,object,name,oldValue})
+                    else
+                        let change = map.get(name)
+                        # update the type.
+                        change.type = type
+            let array = []
+            map.forEach(
+                (change, name, object)->
+                    let newValue = change.object[name]
+                    if newValue isnt change.oldValue
+                        delete change.object
+                        array.push(change)
+            )
+            return array
+        applyChanges: (changes) ->
+            # prune the change messages down
+            # console.log('changes before', JSON.stringify(changes))
+            changes = @summarize(changes)
+            # console.log('changes after', JSON.stringify(changes))
+            if changes.length is 0
+                return
+
+            # for {name,type,oldValue} in changes
+            #     let newValue = @collection[name]
+            #     let key = @toKey(name)
+            #     if oldValue isnt undefined
+            #         @removeItem(key, oldValue)
+            #     if newValue isnt undefined
+            #         @addItem(key, newValue)
+
+            let recyclableStatements = new Map
+            let getRecycleKey = (key, value) => @type is 'ForOfStatement' ? value : key
+            let activateStatements = []
+
+            for {name,oldValue} in changes
+                let key = @toKey(name)
+                if oldValue isnt undefined
+                    let rkey = getRecycleKey(key, oldValue)
+                    let statement = @statements[key]
+                    if statement?
+                        delete @statements[key]
+                        recyclableStatements.set(rkey, statement)
+
+            for {name,oldValue} in changes
+                let newValue = @collection[name]
+                let key = @toKey(name)
+                if newValue isnt undefined
+                    let rkey = getRecycleKey(key, newValue)
+                    let statement = recyclableStatements.get(rkey)
+                    # let statement = null
+                    if statement?
+                        if @type is 'ForOfStatement'
+                            if @keyName?
+                                statement.context.variables[@keyName].setValue(key)
+                        else
+                            if @valueName?
+                                statement.context.variables[@valueName].setValue(newValue)
+                        @statements[key] = statement
+                        recyclableStatements.delete(rkey)
+                    else
+                        statement = @addItem(key, newValue, false)
+                        if statement?
+                            activateStatements.push(statement)
+
+            # it's important that old statements are deactivated BEFORE new statements are activated
+
+            # recyclableStatements are deactivated.
+            recyclableStatements.forEach(
+                (statement) =>
+                    @disposeStatement(statement)
+            )
+
+            # activate new statements
+            for statement in activateStatements
+                statement.activate()
+

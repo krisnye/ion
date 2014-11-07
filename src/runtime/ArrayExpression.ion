@@ -1,0 +1,58 @@
+const
+    ion = import '../'
+    DynamicExpression = import './DynamicExpression'
+
+export class ArrayExpression extends DynamicExpression
+    constructor: ->
+        super
+        if not @elements?
+            throw new Error("elements is required")
+        if not @context?
+            throw new Error("context is required")
+    properties:
+        observeElements: false
+        notifyIfActive: ->
+            if @isActive
+                @notify()
+        setArgumentValue: (key, value) ->
+            if @argumentValues[key] isnt value
+                if @observeElements
+                    ion.unobserve(@argumentValues[key], @itemObserver)
+                @argumentValues[key] = value
+                if @observeElements
+                    # console.log "observe items=============" + JSON.stringify value
+                    ion.observe(
+                        value
+                        @itemObserver ?= =>
+                            # console.log '=========observed========' + JSON.stringify(value)
+                            @notifyIfActive()
+                    )
+                @notifyIfActive()
+        activate: ->
+            if not @argumentValues?
+                @expressions = [@context.createRuntime(item) for item in @elements]
+                @argumentValues = []
+                @expressionWatchers = []
+                for let key = 0; key < @expressions.length; key++
+                    @expressionWatchers[key] = @setArgumentValue.bind(@, key)
+            for expression, key in @expressions
+                expression.watch(@expressionWatchers[key])
+            super
+            @setValue(@argumentValues)
+        deactivate: ->
+            for expression, key in @expressions
+                expression.unwatch(@expressionWatchers[key])
+            super
+    test: ->
+        const Context = import './Context'
+        let e = new ArrayExpression(
+            context: new Context()
+            elements: []
+                {type:'Literal', value: 1}
+                {type:'Literal', value: 2}
+        )
+        let result = undefined
+        const watcher(value) ->
+            result = value
+        e.watch(watcher)
+        assert JSON.stringify(result) is "[1,2]"

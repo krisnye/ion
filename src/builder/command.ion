@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+
+if require.main isnt module
+    return
+
+let args = process.argv.slice(2)
+if args.length is 0 or args[0] is '--help'
+    console.log(
+        ""
+            Usage: ion -c | -w | file-to-run
+
+              -c   compiles the local module defined in package.json
+              -w   compiles the local module defined in package.json and watch
+    )
+    return
+
+let ModuleBuilder = import '../builder/ModuleBuilder'
+if args[0] is "-c"
+    ModuleBuilder().watch()
+    process.exit()
+else if args[0] is "-w"
+    ModuleBuilder().watch()
+else
+    # import ion into global namespace
+    global.ion = import('../')
+    let File = import('./File')
+    let compiler = import('../compiler')
+    for arg in args
+        let file = new File(arg)
+        if not file.exists
+            throw new Error("File not found: {{arg}}")
+        let code = file.read()
+        let js = compiler.compile(code)
+        eval(js)

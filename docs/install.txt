@@ -1,0 +1,60 @@
+create github account
+
+install git (not their native app, it sucks)
+    https://help.github.com/articles/set-up-git
+    option > checkout as is, commit unix style line endings.
+
+setup credential helper
+    git config --global credential.helper cache
+
+install nodejs from nodejs.org
+
+make a /Projects directory on your local disk
+start
+install all the projects into this directory
+
+install an advanced version of nodejs, not the default, must be 0.11.8 or newer.
+    http://nodejs.org/dist/v0.11.9/x64/
+
+install legacy ion project branch 1.0
+    git clone https://github.com/krisnye/ion.git
+    cd ion
+    git checkout 1.0
+    git pull origin 1.0
+install same project into ionlanguage as branch 'language'
+    git clone https://github.com/krisnye/ion.git ionlanguage
+    cd ionlanguage
+    git checkout language
+    git pull origin language
+
+install coffeescript globally
+    npm install -g coffee-script
+
+install sublime text 3
+    open the projects folder so you can see all your projects easily.
+
+setup NODE_PATH environment variable to C:\Users\<Your Name>\AppData\Roaming\npm\node_modules
+Hack node to always use harmony features
+    go to C:\Program Files\nodejs
+    rename node.exe to _node.exe
+    create new file node.cmd with content
+        @_node.exe --harmony %*
+
+from ion directory
+    npm install
+    cake rebuild
+At this point the ion 1.0 branch should work.
+    cake watch
+        you should see green letters at end saying 26/26 Passed.
+
+If on Windows7 make sure you restart your command prompt with administrator priviledges
+
+from ionlanguage directory
+    npm install
+    cake dev
+At this point the ion language branch should work.
+    cake watch
+        you should see green errors.  There may be some JS_Parse_Errors
+
+enable experimental javascript in chrome.
+open index.html in chrome.  Should say 16/16 Passed.

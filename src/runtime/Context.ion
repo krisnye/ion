@@ -1,0 +1,56 @@
+
+const
+    ion = import '../'
+    Factory = import './Factory'
+    Literal = import './Literal'
+
+export class Context
+    constructor: (parent, output) ->
+        # the output object that values are written to
+        @output = output
+        # parent is either null or another Context
+        @parent = parent
+        # an object that maps variable names to variable expressions
+        @variables = {}
+        # store a reference to the root context
+        @root = @parent?.root ? @
+    properties:
+        newContext: (output = @output) -> new Context(@, output)
+        createRuntime: (node) -> Factory.createRuntime(@, node)
+        get: (name) ->
+            let variable = @getVariable(name)
+            if not variable?
+                throw new Error("Variable not found: '{{name}}'")
+            let value = variable.value
+            if value is undefined
+                let watcher = (a) ->
+                    if a isnt undefined
+                        value = a
+                variable.watch(watcher)
+                variable.unwatch(watcher)
+            return value
+        getVariable: (name) ->
+            let context = @, value
+            while context?
+                let variable = context.variables[name]
+                if variable?
+                    return variable
+                context = context.parent
+            # if the variable is not defined by us then it is probably a global variable.
+            # we do however require that it be a globally defined variable, otherwise we throw an error.
+            value = global[name]
+            if value is undefined
+                throw new Error("Variable not found: '{{name}}'")
+            # global values are considered to be constants.
+            # we could consider caching these values within the context.
+            let cachedGlobals = @root.globals ?= {}
+            return cachedGlobals[name] ?= new Literal({value})
+        setVariableFromAst: (name, node) ->
+            if name?
+                @setVariableExpression(name, @createRuntime(node))
+        setVariableLiteral: (name, value) ->
+            if name?
+                @setVariableExpression(name, new Literal({value}))
+        setVariableExpression: (name, expression) ->
+            if name?
+                return @variables[name] = expression

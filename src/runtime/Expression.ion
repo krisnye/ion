@@ -1,0 +1,6 @@
+const ion = import '../'
+
+export class Expression extends import './Node'
+    properties:
+        watch: (watcher) -> throw new Error("not implemented")
+        unwatch: (watcher) -> throw new Error("not implemented")

@@ -1,0 +1,25 @@
+const
+    ion = import './'
+
+const typeKey = '$'
+export class Object extends null
+    constructor: (properties) ->
+        if properties?
+            for key, value of properties
+                @[key] = value
+    typeKey: typeKey
+    is: (object) -> object?.constructor.types?.has?(@)
+    properties:
+        [typeKey]:
+            visible: false
+            type: 'string'
+        toJSON: ->
+            const properties = {}
+            if @@id?
+                properties[@@typeKey] = @@id
+            for key, value of @ if @hasOwnProperty(key)
+                properties[key] = value
+            return properties
+    test: ->
+        let object = new Object()
+        assert Object.is(object)
