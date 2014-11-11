@@ -44,8 +44,10 @@ export template (packagePatch) ->
         output.delete(targetPath)
         output.delete(mapPath)
 
-    # build a default index file for each output directory
-    for path, file of input.search(null, extensions.concat(packageJson.build.exclude))
+    # build a default index file for each output directory (including root)
+    let potentialIndexDirectories = input.search(null, extensions.concat(packageJson.build.exclude))
+        ["."]: input.getFile('.')
+    for path, file of potentialIndexDirectories
         if file.isDirectory
             # see if there is an input.js or input.ion file
             let isInputFile = input.getFile(path + "/index.js").exists or input.getFile(path + "/index.ion").exists or input.getFile(path + "/index.coffee").exists
