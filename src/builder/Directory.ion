@@ -87,6 +87,13 @@ export class Directory
                             if fs.existsSync(filename)
                                 if not results[path]?
                                     results[path] = new File(filename)
+                                else
+                                    let file = results[path]
+                                    let modified = utility.getModified(filename)
+                                    if modified isnt file.modified
+                                        file.modified = modified
+                                    else
+                                        return
                             else
                                 delete results[path]
                             # explicit check is only because current

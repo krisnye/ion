@@ -32,6 +32,8 @@ export template (packagePatch) ->
         if not source.isDirectory
             let compiler = compilers[source.getExtension()]
             let targetPath = builder.changeExtension(path, '.js')
+            # let outputFile = output.getFile(targetPath)
+            # if source.modified > outputFile.modified
             if compiler.compileWithSourceMap?
                 let mapPath = builder.changeExtension(path, '.map')
                 let mapName = mapPath.split(/[\/\\]/g).slice(-1)[0]
@@ -61,7 +63,7 @@ export template (packagePatch) ->
                     for key, childFile of indexDirectory.search(".js", null, {recursive:false})
                         if key isnt indexName
                             let name = key.substring(0, key.lastIndexOf('.js'))
-                            "Object.defineProperty(exports, '{{name}}', {get:function(){ return require('./{{name}}') }}) "
+                            "Object.defineProperty(exports, '{{name}}', {get:function(){ return require('./{{name}}') }, enumerable: true}) "
 
                 let indexModuleId = np.join(moduleName, path, "index").replace(/\\/g, '/')
                 indexFile.write(builder.addBrowserShim(lines.join('\n'), indexModuleId))
@@ -83,8 +85,9 @@ export template (packagePatch) ->
         for mergeFile, options of packageJson.build.merge
             let mergedArray = []
                 for index, name of sortedFiles
-                    if not utility.isMatch(name, options.exclude, false)
-                        [index]: outputFiles[name].read()
+                    let content = outputFiles[name].read()
+                    if not content.startsWith("#") and not utility.isMatch(name, options.exclude, false)
+                        [index]: content
                     else
                         [index]: ""
                 else

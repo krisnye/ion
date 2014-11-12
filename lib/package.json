@@ -4,8 +4,9 @@
     "bin": {
         "ion": "builder/command.js"
     },
+    "repository": "https://github.com/krisnye/ion.git",
     "scripts": {
-        "dev": "npm install && npm run boot && cd lib && npm link && cd ..",
+        "dev": "npm install && npm run boot && bower link && cd lib && npm link && cd ..",
         "build": "ion -c",
         "watch": "ion -w",
         "boot": "node boot/builder/command.js -c"

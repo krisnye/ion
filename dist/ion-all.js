@@ -340,9 +340,9 @@ module.exports = exports = _ref;
   }
 }).call(this)
 //@ sourceMappingURL=./elements.map
-void (function(){var _ion_browser_index_ = function(module,exports,require){Object.defineProperty(exports, 'elements', {get:function(){ return require('./elements') }}) 
-Object.defineProperty(exports, 'require', {get:function(){ return require('./require') }}) 
-Object.defineProperty(exports, 'tester', {get:function(){ return require('./tester') }}) 
+void (function(){var _ion_browser_index_ = function(module,exports,require){Object.defineProperty(exports, 'elements', {get:function(){ return require('./elements') }, enumerable: true}) 
+Object.defineProperty(exports, 'require', {get:function(){ return require('./require') }, enumerable: true}) 
+Object.defineProperty(exports, 'tester', {get:function(){ return require('./tester') }, enumerable: true}) 
   }
   if (typeof require === 'function') {
     if (require.register)
@@ -22623,26 +22623,26 @@ module.exports = exports = VariableDeclaration;
   }
 }).call(this)
 //@ sourceMappingURL=./VariableDeclaration.map
-void (function(){var _ion_runtime_index_ = function(module,exports,require){Object.defineProperty(exports, 'ArrayExpression', {get:function(){ return require('./ArrayExpression') }}) 
-Object.defineProperty(exports, 'BlockStatement', {get:function(){ return require('./BlockStatement') }}) 
-Object.defineProperty(exports, 'CallExpression', {get:function(){ return require('./CallExpression') }}) 
-Object.defineProperty(exports, 'Context', {get:function(){ return require('./Context') }}) 
-Object.defineProperty(exports, 'DynamicExpression', {get:function(){ return require('./DynamicExpression') }}) 
-Object.defineProperty(exports, 'Expression', {get:function(){ return require('./Expression') }}) 
-Object.defineProperty(exports, 'ExpressionStatement', {get:function(){ return require('./ExpressionStatement') }}) 
-Object.defineProperty(exports, 'Factory', {get:function(){ return require('./Factory') }}) 
-Object.defineProperty(exports, 'ForInOfStatement', {get:function(){ return require('./ForInOfStatement') }}) 
-Object.defineProperty(exports, 'IfStatement', {get:function(){ return require('./IfStatement') }}) 
-Object.defineProperty(exports, 'Literal', {get:function(){ return require('./Literal') }}) 
-Object.defineProperty(exports, 'MemberExpression', {get:function(){ return require('./MemberExpression') }}) 
-Object.defineProperty(exports, 'Node', {get:function(){ return require('./Node') }}) 
-Object.defineProperty(exports, 'ObjectExpression', {get:function(){ return require('./ObjectExpression') }}) 
-Object.defineProperty(exports, 'OperationExpression', {get:function(){ return require('./OperationExpression') }}) 
-Object.defineProperty(exports, 'Property', {get:function(){ return require('./Property') }}) 
-Object.defineProperty(exports, 'ReturnStatement', {get:function(){ return require('./ReturnStatement') }}) 
-Object.defineProperty(exports, 'Statement', {get:function(){ return require('./Statement') }}) 
-Object.defineProperty(exports, 'Template', {get:function(){ return require('./Template') }}) 
-Object.defineProperty(exports, 'VariableDeclaration', {get:function(){ return require('./VariableDeclaration') }}) 
+void (function(){var _ion_runtime_index_ = function(module,exports,require){Object.defineProperty(exports, 'ArrayExpression', {get:function(){ return require('./ArrayExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'BlockStatement', {get:function(){ return require('./BlockStatement') }, enumerable: true}) 
+Object.defineProperty(exports, 'CallExpression', {get:function(){ return require('./CallExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'Context', {get:function(){ return require('./Context') }, enumerable: true}) 
+Object.defineProperty(exports, 'DynamicExpression', {get:function(){ return require('./DynamicExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'Expression', {get:function(){ return require('./Expression') }, enumerable: true}) 
+Object.defineProperty(exports, 'ExpressionStatement', {get:function(){ return require('./ExpressionStatement') }, enumerable: true}) 
+Object.defineProperty(exports, 'Factory', {get:function(){ return require('./Factory') }, enumerable: true}) 
+Object.defineProperty(exports, 'ForInOfStatement', {get:function(){ return require('./ForInOfStatement') }, enumerable: true}) 
+Object.defineProperty(exports, 'IfStatement', {get:function(){ return require('./IfStatement') }, enumerable: true}) 
+Object.defineProperty(exports, 'Literal', {get:function(){ return require('./Literal') }, enumerable: true}) 
+Object.defineProperty(exports, 'MemberExpression', {get:function(){ return require('./MemberExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'Node', {get:function(){ return require('./Node') }, enumerable: true}) 
+Object.defineProperty(exports, 'ObjectExpression', {get:function(){ return require('./ObjectExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'OperationExpression', {get:function(){ return require('./OperationExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'Property', {get:function(){ return require('./Property') }, enumerable: true}) 
+Object.defineProperty(exports, 'ReturnStatement', {get:function(){ return require('./ReturnStatement') }, enumerable: true}) 
+Object.defineProperty(exports, 'Statement', {get:function(){ return require('./Statement') }, enumerable: true}) 
+Object.defineProperty(exports, 'Template', {get:function(){ return require('./Template') }, enumerable: true}) 
+Object.defineProperty(exports, 'VariableDeclaration', {get:function(){ return require('./VariableDeclaration') }, enumerable: true}) 
   }
   if (typeof require === 'function') {
     if (require.register)
@@ -24114,11 +24114,11 @@ var test = exports.test = function () {
   }
 }).call(this)
 //@ sourceMappingURL=./immediateTemplates.map
-void (function(){var _ion_test_index_ = function(module,exports,require){Object.defineProperty(exports, 'immediateTemplates', {get:function(){ return require('./immediateTemplates') }}) 
-Object.defineProperty(exports, 'ionCompiler', {get:function(){ return require('./ionCompiler') }}) 
-Object.defineProperty(exports, 'ionCompilerES5', {get:function(){ return require('./ionCompilerES5') }}) 
-Object.defineProperty(exports, 'reactiveTemplates', {get:function(){ return require('./reactiveTemplates') }}) 
-Object.defineProperty(exports, 'sourceSize', {get:function(){ return require('./sourceSize') }}) 
+void (function(){var _ion_test_index_ = function(module,exports,require){Object.defineProperty(exports, 'immediateTemplates', {get:function(){ return require('./immediateTemplates') }, enumerable: true}) 
+Object.defineProperty(exports, 'ionCompiler', {get:function(){ return require('./ionCompiler') }, enumerable: true}) 
+Object.defineProperty(exports, 'ionCompilerES5', {get:function(){ return require('./ionCompilerES5') }, enumerable: true}) 
+Object.defineProperty(exports, 'reactiveTemplates', {get:function(){ return require('./reactiveTemplates') }, enumerable: true}) 
+Object.defineProperty(exports, 'sourceSize', {get:function(){ return require('./sourceSize') }, enumerable: true}) 
   }
   if (typeof require === 'function') {
     if (require.register)
