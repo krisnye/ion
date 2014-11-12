@@ -32,9 +32,7 @@
     "contributors": ["krisnye@gmail.com"],
     "dependencies": {
         "esprima": "1.1.x",
-        "uglify-js": "2.4.x"
-    },
-    "devDependencies": {
+        "uglify-js": "2.4.x",
         "pegjs": "0.8.x",
         "underscore": "1.6.x",
         "source-map": "0.1.x"
