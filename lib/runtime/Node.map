@@ -1,1 +1,0 @@
-{"version":3,"sources":["Node.ion"],"names":["ion","Node"],"mappings":"aAAA;AAAA,IAAMA,GAAA,G,OAAM,CAAO,KAAP,CAAZ;IAEaC,I,qCAFb;2BAEaA,I","sourcesContent":["const ion = import '../'\n\nexport class Node\n"]}
