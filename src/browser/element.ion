@@ -8,7 +8,7 @@ let changeElements =
     select: true
     textarea: true
 let elements = []
-    "div","span","input","textarea","a","br","img"
+    "div","span","input","textarea","a","br","img", "p"
     "button","caption","fieldset","form","frame","frameset"
     "h1","h2","h3","h4","h5","h6","hr","legend"
     "menu","option","select","script","pre"
@@ -17,14 +17,17 @@ let elements = []
     "section","header","footer","article"
     "ul", "ol", "li", "label", "strong"
 
-export {}
+let elementFactory = (name, attributes, change) ->
+    let element = document.createElement(name)
+    if change
+        ion.add(element, changeHandler)
+    if attributes?
+        for key, value of attributes
+            element.setAttribute(key, value)
+    return element
+
+export elementFactory
     for name in elements
         [name]: do (name) ->
             return (attributes) ->
-                let element = document.createElement(name)
-                if changeElements[name]
-                    ion.add(element, changeHandler)
-                if attributes?
-                    for key, value of attributes
-                        element.setAttribute(key, value)
-                return element
+                return elementFactory(name, attributes, changeElements[name])

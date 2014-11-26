@@ -25,7 +25,7 @@ module.exports = class CallExpression extends DynamicExpression
                                 ion.patch.watch(
                                     thisArg
                                     @thisObserver ?= (patch) =>
-                                        # console.log('deep change', patch)
+                                        console.log('deep change', patch)
                                         @evaluate()
                                 )
                             else

@@ -88,7 +88,7 @@ export template (packagePatch) ->
                     let content = outputFiles[name].read()
                     if not content.startsWith("#") and not utility.isMatch(name, options.exclude, false)
                         # remove source mapping comments.
-                        [index]: content.replace(/[\r\n]+\/\/@[^\n]*/, '')
+                        [index]: content
                     else
                         [index]: ""
                 else
