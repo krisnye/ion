@@ -227,30 +227,6 @@ module.exports = exports = Object;
   }
 }).call(this)
 //@ sourceMappingURL=./Object.map
-void (function(){var _ion_WEB_INF_index_ = function(module,exports,require){
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('ion/WEB-INF/index',_ion_WEB_INF_index_);
-    else
-      _ion_WEB_INF_index_.call(this, module, exports, require);
-  }
-  else {
-    _ion_WEB_INF_index_.call(this);
-  }
-}).call(this)
-void (function(){var _ion_WEB_INF_java_index_ = function(module,exports,require){
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('ion/WEB-INF/java/index',_ion_WEB_INF_java_index_);
-    else
-      _ion_WEB_INF_java_index_.call(this, module, exports, require);
-  }
-  else {
-    _ion_WEB_INF_java_index_.call(this);
-  }
-}).call(this)
 void (function(){var _ion_browser_element_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var changeHandler = function change() {
@@ -2071,7 +2047,6 @@ var _ref = {};
                     var deep = Array.isArray(thisArg);
                     if (deep) {
                         ion.patch.watch(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (patch) {
-                            console.log('deep change', patch);
                             this.evaluate();
                         }, this));
                     } else {
@@ -3348,6 +3323,8 @@ Object.defineProperty(exports, 'VariableDeclaration', {get:function(){ return re
     _ion_runtime_index_.call(this);
   }
 }).call(this)
+
+
 
 
 

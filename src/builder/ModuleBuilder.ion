@@ -9,6 +9,19 @@ const
     builder = import './'
     utility = import './utility'
 
+    createDebugScript = (manifest, moduleName) ->
+        let scripts = []
+            for file in manifest.files
+                "/bower_components/{{moduleName}}/lib/{{file}}"
+        return ""
+            (function(files){
+                for (var i = 0; i < files.length; i++) {
+                    var script = document.createElement('script')
+                    script.setAttribute('src', files[i])
+                    document.head.appendChild(script)
+                }
+            })({{JSON.stringify(scripts)}});
+
     compilers =
         ".coffee":
             compile: builder.compileCoffeeScript
@@ -78,7 +91,9 @@ export template (packagePatch) ->
     let manifest =
         modified: Math.max.apply(null, [file.modified for path, file of outputFiles])
         files: [builder.normalizePath(path) for path in sortedFiles]
-    manifestFile.write(JSON.stringify(manifest, null, '  ', sortedFiles))
+    output.write(manifestFileName, JSON.stringify(manifest, null, '  ', sortedFiles))
+    # also write the debug script
+    output.write('_debug.js', createDebugScript(manifest, moduleName, sortedFiles))
 
     # build merged file, just so we can test locally with file:// protocol
     if packageJson.build.merge?
@@ -96,8 +111,8 @@ export template (packagePatch) ->
 
             let merged = mergedArray.join('\n')
             if options.compress
-                let minified = require('uglify-js').minify(merged, {fromString:true}).code
-                output.write(mergeFile, minified)
+                let minified = require('uglify-js').minify(merged, {fromString:true})
+                output.write(mergeFile, minified.code)
             else
                 output.write(mergeFile, merged)
 
