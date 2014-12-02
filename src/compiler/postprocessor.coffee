@@ -1027,11 +1027,30 @@ createTemplateFunctionClone = (node, context) ->
         delete node.template
         node.type = 'Template'
         ensureIonVariable context
-        context.replace
+        newNode = 
             type: 'CallExpression'
             callee: getPathExpression 'ion.template'
             arguments: [node]
             toLiteral: -> @
+
+        # if this is an inner template we must wrap it to get the parents scoped variables.
+        inner = context.parentReactive()
+        if inner
+            scope = context.getNewInternalIdentifier('_ps')
+            node.scope = scope
+            # replace the node with a function that will be called with context
+            newNode =
+                type: 'Function'
+                context: true
+                value:
+                    type: 'FunctionExpression'
+                    params: [scope]
+                    toLiteral: -> @
+                    body: block(
+                        type: 'ReturnStatement'
+                        argument: newNode
+                    )
+        context.replace newNode
 
 createTemplateRuntime = (node, context) ->
     if node.type is 'Template'
@@ -1068,7 +1087,7 @@ createTemplateRuntime = (node, context) ->
         delete template.params
         delete template.defaults
 
-        context.replace
+        newNode =
             type: 'FunctionExpression'
             params: params
             body:
@@ -1081,8 +1100,11 @@ createTemplateRuntime = (node, context) ->
                         arguments: [
                             nodeToLiteral template
                             args
+                            node.scope ? nullExpression
                         ]
                 ]
+
+        context.replace(newNode)
 
 javascriptExpressions = (node, context) ->
     if node.type is 'JavascriptExpression'

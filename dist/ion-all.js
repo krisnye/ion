@@ -166,67 +166,6 @@ if (global.window != null) {
     _ion_browser_require_.call(this);
   }
 }).call(this)
-void (function(){var _ion_Object_ = function(module,exports,require){'use strict';
-var ion = require('./');
-var typeKey = '$';
-var _ref2 = {};
-{
-    _ref2[typeKey] = ion.patch(_ref2[typeKey], {
-        visible: false,
-        type: 'string'
-    });
-    _ref2.toJSON = function () {
-        var properties = {};
-        if (this.constructor.id != null) {
-            properties[this.constructor.typeKey] = this.constructor.id;
-        }
-        {
-            var _ref = this;
-            for (var key in _ref) {
-                var value = _ref[key];
-                if (this.hasOwnProperty(key)) {
-                    properties[key] = value;
-                }
-            }
-        }
-        return properties;
-    };
-}
-var Object = ion.defineClass({
-        name: 'Object',
-        constructor: function Object(properties) {
-            if (properties != null) {
-                for (var key in properties) {
-                    var value = properties[key];
-                    var value = properties[key];
-                    this[key] = value;
-                }
-            }
-        },
-        typeKey: typeKey,
-        is: function (object) {
-            return object != null ? object.constructor.types != null ? object.constructor.types.has != null ? object.constructor.types.has(this) : void 0 : void 0 : void 0;
-        },
-        properties: _ref2,
-        test: function () {
-            var object = new Object();
-            if (!Object.is(object))
-                throw new Error('Assertion Failed: (Object.is(object))');
-        }
-    }, null);
-module.exports = exports = Object;
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('ion/Object',_ion_Object_);
-    else
-      _ion_Object_.call(this, module, exports, require);
-  }
-  else {
-    _ion_Object_.call(this);
-  }
-}).call(this)
-//@ sourceMappingURL=./Object.map
 void (function(){var _ion_browser_element_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var changeHandler = function change() {
@@ -320,7 +259,97 @@ module.exports = exports = _ref;
   }
 }).call(this)
 //@ sourceMappingURL=./element.map
+void (function(){var _ion_browser_elements_ = function(module,exports,require){'use strict';
+var ion = require('../');
+var changeHandler = function change() {
+    ion.checkForChanges();
+};
+var changeElements = {
+        input: true,
+        select: true,
+        textarea: true
+    };
+var elements = [
+        'div',
+        'span',
+        'input',
+        'textarea',
+        'a',
+        'br',
+        'img',
+        'button',
+        'caption',
+        'fieldset',
+        'form',
+        'frame',
+        'frameset',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'hr',
+        'legend',
+        'menu',
+        'option',
+        'select',
+        'script',
+        'pre',
+        'table',
+        'tbody',
+        'td',
+        'tr',
+        'thead',
+        'canvas',
+        'head',
+        'meta',
+        'body',
+        'script',
+        'section',
+        'header',
+        'footer',
+        'article',
+        'ul',
+        'ol',
+        'li',
+        'label',
+        'strong'
+    ];
+var _ref = {};
+for (var _i = 0; _i < elements.length; _i++) {
+    var name = elements[_i];
+    _ref[name] = function (name) {
+        return function (attributes) {
+            var element = document.createElement(name);
+            if (changeElements[name]) {
+                ion.add(element, changeHandler);
+            }
+            if (attributes != null) {
+                for (var key in attributes) {
+                    var value = attributes[key];
+                    element.setAttribute(key, value);
+                }
+            }
+            return element;
+        };
+    }(name);
+}
+module.exports = exports = _ref;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/browser/elements',_ion_browser_elements_);
+    else
+      _ion_browser_elements_.call(this, module, exports, require);
+  }
+  else {
+    _ion_browser_elements_.call(this);
+  }
+}).call(this)
+//@ sourceMappingURL=./elements.map
 void (function(){var _ion_browser_index_ = function(module,exports,require){Object.defineProperty(exports, 'element', {get:function(){ return require('./element') }, enumerable: true}) 
+Object.defineProperty(exports, 'elements', {get:function(){ return require('./elements') }, enumerable: true}) 
 Object.defineProperty(exports, 'require', {get:function(){ return require('./require') }, enumerable: true}) 
 Object.defineProperty(exports, 'tester', {get:function(){ return require('./tester') }, enumerable: true}) 
   }
@@ -372,7 +401,8 @@ exports.spawnTests = spawnTests = function(manifestFile) {
 };
 
 exports.runTests = runTests = function(moduleIds, callback) {
-  var array, duration, e, error, expectedCallbacks, getIncompleteCallbacks, handler, inc, key, module, moduleId, name, timeout, waitingForFinishTimeout, warning, _i, _len;
+  var array, duration, e, error, expectedCallbacks, getIncompleteCallbacks, handler, inc, key, module, moduleId, name, timeout, waitingForFinishTimeout, warning, _i, _len,
+    _this = this;
   if (!moduleIds) {
     throw new Error("moduleIds is required");
   }
@@ -431,17 +461,15 @@ exports.runTests = runTests = function(moduleIds, callback) {
     duration = 1000;
     error = "Timed out after " + duration + " ms";
     warning = void 0;
-    timeout = (function(_this) {
-      return function() {
-        var _j, _len1;
-        inc = getIncompleteCallbacks();
-        for (_j = 0, _len1 = inc.length; _j < _len1; _j++) {
-          name = inc[_j];
-          callback(name, error, warning);
-        }
-        return callback();
-      };
-    })(this);
+    timeout = function() {
+      var _j, _len1;
+      inc = getIncompleteCallbacks();
+      for (_j = 0, _len1 = inc.length; _j < _len1; _j++) {
+        name = inc[_j];
+        callback(name, error, warning);
+      }
+      return callback();
+    };
     if (global.setTimeout != null) {
       return waitingForFinishTimeout = setTimeout(timeout, duration);
     } else {
@@ -18682,7 +18710,7 @@ checkVariableDeclarations = {
       key = context.key();
       parent = context.parentNode();
       if (!(parent.type === 'MemberExpression' && key === 'property' || parent.type === 'Property' && key === 'key')) {
-        return ((_base = context.scope()).usage != null ? _base.usage : _base.usage = {})[node.name] = node;
+        return ((_base = context.scope()).usage != null ? (_base = context.scope()).usage : _base.usage = {})[node.name] = node;
       }
     }
   },
@@ -18757,7 +18785,7 @@ namedFunctionsAndNewArguments = function(node, context) {
   }
   if (node.type === 'Property' && node.value.type === 'FunctionExpression' && node.key.type === 'Identifier') {
     if (node.key.name !== 'constructor') {
-      return (_base1 = node.value).name != null ? _base1.name : _base1.name = node.key;
+      return (_base1 = node.value).name != null ? (_base1 = node.value).name : _base1.name = node.key;
     }
   }
 };
@@ -19065,23 +19093,45 @@ wrapTemplateInnerFunctions = function(node, context) {
 };
 
 createTemplateFunctionClone = function(node, context) {
+  var inner, newNode, scope;
   if (isFunctionNode(node) && node.template === true) {
     delete node.template;
     node.type = 'Template';
     ensureIonVariable(context);
-    return context.replace({
+    newNode = {
       type: 'CallExpression',
       callee: getPathExpression('ion.template'),
       "arguments": [node],
       toLiteral: function() {
         return this;
       }
-    });
+    };
+    inner = context.parentReactive();
+    if (inner) {
+      scope = context.getNewInternalIdentifier('_ps');
+      node.scope = scope;
+      newNode = {
+        type: 'Function',
+        context: true,
+        value: {
+          type: 'FunctionExpression',
+          params: [scope],
+          toLiteral: function() {
+            return this;
+          },
+          body: block({
+            type: 'ReturnStatement',
+            argument: newNode
+          })
+        }
+      };
+    }
+    return context.replace(newNode);
   }
 };
 
 createTemplateRuntime = function(node, context) {
-  var args, id, key, name, params, referenceIds, template, value, variables, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
+  var args, id, key, name, newNode, params, referenceIds, template, value, variables, _i, _j, _len, _len1, _ref1, _ref2, _ref3, _ref4;
   if (node.type === 'Template') {
     template = removeLocationInfo(node);
     args = {
@@ -19126,7 +19176,7 @@ createTemplateRuntime = function(node, context) {
     delete template.id;
     delete template.params;
     delete template.defaults;
-    return context.replace({
+    newNode = {
       type: 'FunctionExpression',
       params: params,
       body: {
@@ -19137,12 +19187,13 @@ createTemplateRuntime = function(node, context) {
             argument: {
               type: 'CallExpression',
               callee: getPathExpression('ion.createRuntime'),
-              "arguments": [nodeToLiteral(template), args]
+              "arguments": [nodeToLiteral(template), args, (_ref4 = node.scope) != null ? _ref4 : nullExpression]
             }
           }
         ]
       }
-    });
+    };
+    return context.replace(newNode);
   }
 };
 
@@ -19976,6 +20027,26 @@ if (!(function f() {}).name) {
     _ion_es6_Function_.call(this);
   }
 }).call(this)
+void (function(){var _ion_es6_index_ = function(module,exports,require){'use strict';
+require('./String');
+require('./Map');
+require('./Set');
+require('./Object');
+require('./Object.observe');
+require('./Function');
+require('./Array');
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/es6/index',_ion_es6_index_);
+    else
+      _ion_es6_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_es6_index_.call(this);
+  }
+}).call(this)
+//@ sourceMappingURL=./index.map
 void (function(){var _ion_es6_Map_ = function(module,exports,require){'use strict';
 var ion = null;
 var uniqueCounter = 0;
@@ -20443,26 +20514,6 @@ if (!String.prototype.contains ) {
     _ion_es6_String_.call(this);
   }
 }).call(this)
-void (function(){var _ion_es6_index_ = function(module,exports,require){'use strict';
-require('./String');
-require('./Map');
-require('./Set');
-require('./Object');
-require('./Object.observe');
-require('./Function');
-require('./Array');
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('ion/es6/index',_ion_es6_index_);
-    else
-      _ion_es6_index_.call(this, module, exports, require);
-  }
-  else {
-    _ion_es6_index_.call(this);
-  }
-}).call(this)
-//@ sourceMappingURL=./index.map
 void (function(){var _ion_index_ = function(module,exports,require){'use strict';
 var ion = null;
 require('./es6');
@@ -20560,9 +20611,9 @@ var patch = exports.patch = function () {
     }, template = exports.template = function (fn, template) {
         fn.template = template != null ? template : true;
         return fn;
-    }, createRuntime = exports.createRuntime = function (ast, args) {
+    }, createRuntime = exports.createRuntime = function (ast, args, parent) {
         var Context = require('./runtime/Context');
-        var context = new Context();
+        var context = new Context(parent);
         if (args != null) {
             for (var name in args) {
                 var value = args[name];
@@ -21181,6 +21232,67 @@ var merge = exports.merge = function (target, values, options) {
   }
 }).call(this)
 //@ sourceMappingURL=./mergePatch.map
+void (function(){var _ion_Object_ = function(module,exports,require){'use strict';
+var ion = require('./');
+var typeKey = '$';
+var _ref2 = {};
+{
+    _ref2[typeKey] = ion.patch(_ref2[typeKey], {
+        visible: false,
+        type: 'string'
+    });
+    _ref2.toJSON = function () {
+        var properties = {};
+        if (this.constructor.id != null) {
+            properties[this.constructor.typeKey] = this.constructor.id;
+        }
+        {
+            var _ref = this;
+            for (var key in _ref) {
+                var value = _ref[key];
+                if (this.hasOwnProperty(key)) {
+                    properties[key] = value;
+                }
+            }
+        }
+        return properties;
+    };
+}
+var Object = ion.defineClass({
+        name: 'Object',
+        constructor: function Object(properties) {
+            if (properties != null) {
+                for (var key in properties) {
+                    var value = properties[key];
+                    var value = properties[key];
+                    this[key] = value;
+                }
+            }
+        },
+        typeKey: typeKey,
+        is: function (object) {
+            return object != null ? object.constructor.types != null ? object.constructor.types.has != null ? object.constructor.types.has(this) : void 0 : void 0 : void 0;
+        },
+        properties: _ref2,
+        test: function () {
+            var object = new Object();
+            if (!Object.is(object))
+                throw new Error('Assertion Failed: (Object.is(object))');
+        }
+    }, null);
+module.exports = exports = Object;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/Object',_ion_Object_);
+    else
+      _ion_Object_.call(this, module, exports, require);
+  }
+  else {
+    _ion_Object_.call(this);
+  }
+}).call(this)
+//@ sourceMappingURL=./Object.map
 void (function(){var _ion_runtime_ArrayExpression_ = function(module,exports,require){'use strict';
 var ion = require('../'), DynamicExpression = require('./DynamicExpression');
 var ArrayExpression = ion.defineClass({
@@ -22202,6 +22314,37 @@ module.exports = exports = IfStatement;
   }
 }).call(this)
 //@ sourceMappingURL=./IfStatement.map
+void (function(){var _ion_runtime_index_ = function(module,exports,require){Object.defineProperty(exports, 'ArrayExpression', {get:function(){ return require('./ArrayExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'BlockStatement', {get:function(){ return require('./BlockStatement') }, enumerable: true}) 
+Object.defineProperty(exports, 'CallExpression', {get:function(){ return require('./CallExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'Context', {get:function(){ return require('./Context') }, enumerable: true}) 
+Object.defineProperty(exports, 'DynamicExpression', {get:function(){ return require('./DynamicExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'Expression', {get:function(){ return require('./Expression') }, enumerable: true}) 
+Object.defineProperty(exports, 'ExpressionStatement', {get:function(){ return require('./ExpressionStatement') }, enumerable: true}) 
+Object.defineProperty(exports, 'Factory', {get:function(){ return require('./Factory') }, enumerable: true}) 
+Object.defineProperty(exports, 'ForInOfStatement', {get:function(){ return require('./ForInOfStatement') }, enumerable: true}) 
+Object.defineProperty(exports, 'IfStatement', {get:function(){ return require('./IfStatement') }, enumerable: true}) 
+Object.defineProperty(exports, 'Literal', {get:function(){ return require('./Literal') }, enumerable: true}) 
+Object.defineProperty(exports, 'MemberExpression', {get:function(){ return require('./MemberExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'Node', {get:function(){ return require('./Node') }, enumerable: true}) 
+Object.defineProperty(exports, 'ObjectExpression', {get:function(){ return require('./ObjectExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'OperationExpression', {get:function(){ return require('./OperationExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'Property', {get:function(){ return require('./Property') }, enumerable: true}) 
+Object.defineProperty(exports, 'ReturnStatement', {get:function(){ return require('./ReturnStatement') }, enumerable: true}) 
+Object.defineProperty(exports, 'Statement', {get:function(){ return require('./Statement') }, enumerable: true}) 
+Object.defineProperty(exports, 'Template', {get:function(){ return require('./Template') }, enumerable: true}) 
+Object.defineProperty(exports, 'VariableDeclaration', {get:function(){ return require('./VariableDeclaration') }, enumerable: true}) 
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/index',_ion_runtime_index_);
+    else
+      _ion_runtime_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_index_.call(this);
+  }
+}).call(this)
 void (function(){var _ion_runtime_Literal_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var Literal = ion.defineClass({
@@ -22603,37 +22746,6 @@ module.exports = exports = VariableDeclaration;
   }
 }).call(this)
 //@ sourceMappingURL=./VariableDeclaration.map
-void (function(){var _ion_runtime_index_ = function(module,exports,require){Object.defineProperty(exports, 'ArrayExpression', {get:function(){ return require('./ArrayExpression') }, enumerable: true}) 
-Object.defineProperty(exports, 'BlockStatement', {get:function(){ return require('./BlockStatement') }, enumerable: true}) 
-Object.defineProperty(exports, 'CallExpression', {get:function(){ return require('./CallExpression') }, enumerable: true}) 
-Object.defineProperty(exports, 'Context', {get:function(){ return require('./Context') }, enumerable: true}) 
-Object.defineProperty(exports, 'DynamicExpression', {get:function(){ return require('./DynamicExpression') }, enumerable: true}) 
-Object.defineProperty(exports, 'Expression', {get:function(){ return require('./Expression') }, enumerable: true}) 
-Object.defineProperty(exports, 'ExpressionStatement', {get:function(){ return require('./ExpressionStatement') }, enumerable: true}) 
-Object.defineProperty(exports, 'Factory', {get:function(){ return require('./Factory') }, enumerable: true}) 
-Object.defineProperty(exports, 'ForInOfStatement', {get:function(){ return require('./ForInOfStatement') }, enumerable: true}) 
-Object.defineProperty(exports, 'IfStatement', {get:function(){ return require('./IfStatement') }, enumerable: true}) 
-Object.defineProperty(exports, 'Literal', {get:function(){ return require('./Literal') }, enumerable: true}) 
-Object.defineProperty(exports, 'MemberExpression', {get:function(){ return require('./MemberExpression') }, enumerable: true}) 
-Object.defineProperty(exports, 'Node', {get:function(){ return require('./Node') }, enumerable: true}) 
-Object.defineProperty(exports, 'ObjectExpression', {get:function(){ return require('./ObjectExpression') }, enumerable: true}) 
-Object.defineProperty(exports, 'OperationExpression', {get:function(){ return require('./OperationExpression') }, enumerable: true}) 
-Object.defineProperty(exports, 'Property', {get:function(){ return require('./Property') }, enumerable: true}) 
-Object.defineProperty(exports, 'ReturnStatement', {get:function(){ return require('./ReturnStatement') }, enumerable: true}) 
-Object.defineProperty(exports, 'Statement', {get:function(){ return require('./Statement') }, enumerable: true}) 
-Object.defineProperty(exports, 'Template', {get:function(){ return require('./Template') }, enumerable: true}) 
-Object.defineProperty(exports, 'VariableDeclaration', {get:function(){ return require('./VariableDeclaration') }, enumerable: true}) 
-  }
-  if (typeof require === 'function') {
-    if (require.register)
-      require.register('ion/runtime/index',_ion_runtime_index_);
-    else
-      _ion_runtime_index_.call(this, module, exports, require);
-  }
-  else {
-    _ion_runtime_index_.call(this);
-  }
-}).call(this)
 void (function(){var _ion_test_immediateTemplates_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var templates = [
@@ -22703,7 +22815,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             3
@@ -22750,7 +22862,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             {
@@ -22794,7 +22906,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             [
@@ -22921,7 +23033,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             [
@@ -23039,7 +23151,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             [
@@ -23181,7 +23293,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             [
@@ -23262,7 +23374,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             1
@@ -23295,7 +23407,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             2
@@ -23336,7 +23448,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             2
@@ -23407,7 +23519,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             [
@@ -23453,7 +23565,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             1
@@ -23508,7 +23620,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             1
@@ -23547,7 +23659,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             new Date(2011, 10, 5)
@@ -23569,7 +23681,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             /foo/
@@ -23699,7 +23811,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             {
@@ -23786,7 +23898,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             [
@@ -23868,7 +23980,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [{
                     a: 1,
@@ -23924,7 +24036,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [function () {
                     this.position = {
@@ -24007,7 +24119,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [
                 {
@@ -24050,7 +24162,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             ion.patch
@@ -24501,7 +24613,7 @@ var _ref4 = [];
             _ref4: _ref4,
             templates: templates,
             _ref5: _ref5
-        });
+        }, null);
     }));
     _ref4.push(object);
     _ref4.push({ x: 10 });
@@ -24558,7 +24670,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             { name: 'alpha' },
             {},
@@ -24614,7 +24726,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 a: 1,
@@ -24726,7 +24838,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 x: 1,
@@ -24833,7 +24945,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 x: 1,
@@ -25017,7 +25129,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 x: 1,
@@ -25112,7 +25224,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 a: 1,
@@ -25214,7 +25326,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 items: [
@@ -25264,7 +25376,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 sum: function () {
@@ -25290,105 +25402,139 @@ var templates = [
                                         type: 'VariableDeclarator',
                                         id: {
                                             type: 'Identifier',
+                                            name: 'factor'
+                                        },
+                                        init: {
+                                            type: 'Literal',
+                                            value: 2
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
                                             name: 'sum'
                                         },
-                                        init: ion.template(function (_ref3) {
-                                            return ion.createRuntime({
-                                                type: 'Template',
-                                                body: [
-                                                    {
-                                                        type: 'VariableDeclaration',
-                                                        declarations: [{
-                                                                type: 'VariableDeclarator',
-                                                                id: {
-                                                                    type: 'Identifier',
-                                                                    name: 'a'
-                                                                },
-                                                                init: {
-                                                                    type: 'MemberExpression',
-                                                                    object: {
-                                                                        type: 'MemberExpression',
-                                                                        object: {
+                                        init: {
+                                            type: 'Function',
+                                            context: true,
+                                            value: function (_ps) {
+                                                return ion.template(function (_ref3) {
+                                                    return ion.createRuntime({
+                                                        type: 'Template',
+                                                        body: [
+                                                            {
+                                                                type: 'VariableDeclaration',
+                                                                declarations: [{
+                                                                        type: 'VariableDeclarator',
+                                                                        id: {
                                                                             type: 'Identifier',
-                                                                            name: '_ref3'
+                                                                            name: 'a'
                                                                         },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'deep'
-                                                                        },
-                                                                        computed: false
-                                                                    },
-                                                                    property: {
-                                                                        type: 'Identifier',
-                                                                        name: 'a'
-                                                                    },
-                                                                    computed: false
-                                                                }
-                                                            }],
-                                                        kind: 'let'
-                                                    },
-                                                    {
-                                                        type: 'VariableDeclaration',
-                                                        declarations: [{
-                                                                type: 'VariableDeclarator',
-                                                                id: {
-                                                                    type: 'Identifier',
-                                                                    name: 'b'
-                                                                },
-                                                                init: {
-                                                                    type: 'MemberExpression',
-                                                                    object: {
-                                                                        type: 'MemberExpression',
-                                                                        object: {
-                                                                            type: 'Identifier',
-                                                                            name: '_ref3'
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'deep'
-                                                                        },
-                                                                        computed: false
-                                                                    },
-                                                                    property: {
-                                                                        type: 'Identifier',
-                                                                        name: 'b'
-                                                                    },
-                                                                    computed: false
-                                                                }
-                                                            }],
-                                                        kind: 'let'
-                                                    },
-                                                    {
-                                                        type: 'ReturnStatement',
-                                                        argument: {
-                                                            type: 'BinaryExpression',
-                                                            operator: '+',
-                                                            left: {
-                                                                type: 'Identifier',
-                                                                name: 'a'
+                                                                        init: {
+                                                                            type: 'MemberExpression',
+                                                                            object: {
+                                                                                type: 'MemberExpression',
+                                                                                object: {
+                                                                                    type: 'Identifier',
+                                                                                    name: '_ref3'
+                                                                                },
+                                                                                property: {
+                                                                                    type: 'Identifier',
+                                                                                    name: 'deep'
+                                                                                },
+                                                                                computed: false
+                                                                            },
+                                                                            property: {
+                                                                                type: 'Identifier',
+                                                                                name: 'a'
+                                                                            },
+                                                                            computed: false
+                                                                        }
+                                                                    }],
+                                                                kind: 'let'
                                                             },
-                                                            right: {
-                                                                type: 'Identifier',
-                                                                name: 'b'
+                                                            {
+                                                                type: 'VariableDeclaration',
+                                                                declarations: [{
+                                                                        type: 'VariableDeclarator',
+                                                                        id: {
+                                                                            type: 'Identifier',
+                                                                            name: 'b'
+                                                                        },
+                                                                        init: {
+                                                                            type: 'MemberExpression',
+                                                                            object: {
+                                                                                type: 'MemberExpression',
+                                                                                object: {
+                                                                                    type: 'Identifier',
+                                                                                    name: '_ref3'
+                                                                                },
+                                                                                property: {
+                                                                                    type: 'Identifier',
+                                                                                    name: 'deep'
+                                                                                },
+                                                                                computed: false
+                                                                            },
+                                                                            property: {
+                                                                                type: 'Identifier',
+                                                                                name: 'b'
+                                                                            },
+                                                                            computed: false
+                                                                        }
+                                                                    }],
+                                                                kind: 'let'
+                                                            },
+                                                            {
+                                                                type: 'ReturnStatement',
+                                                                argument: {
+                                                                    type: 'BinaryExpression',
+                                                                    operator: '*',
+                                                                    left: {
+                                                                        type: 'BinaryExpression',
+                                                                        operator: '+',
+                                                                        left: {
+                                                                            type: 'Identifier',
+                                                                            name: 'a'
+                                                                        },
+                                                                        right: {
+                                                                            type: 'Identifier',
+                                                                            name: 'b'
+                                                                        }
+                                                                    },
+                                                                    right: {
+                                                                        type: 'Identifier',
+                                                                        name: 'factor'
+                                                                    }
+                                                                }
                                                             }
+                                                        ],
+                                                        bound: false,
+                                                        name: {
+                                                            type: 'Identifier',
+                                                            name: 'sum'
+                                                        },
+                                                        scope: {
+                                                            type: 'Identifier',
+                                                            name: '_ps'
                                                         }
-                                                    }
-                                                ],
-                                                bound: false,
-                                                name: {
-                                                    type: 'Identifier',
-                                                    name: 'sum'
-                                                }
-                                            }, {
-                                                this: this,
-                                                _ref3: _ref3,
-                                                object: object,
-                                                ion: ion,
-                                                _ref4: _ref4,
-                                                templates: templates,
-                                                _ref5: _ref5
-                                            });
-                                        })
+                                                    }, {
+                                                        this: this,
+                                                        _ref3: _ref3,
+                                                        _ps: _ps,
+                                                        object: object,
+                                                        ion: ion,
+                                                        _ref4: _ref4,
+                                                        templates: templates,
+                                                        _ref5: _ref5
+                                                    }, _ps);
+                                                });
+                                            }
+                                        }
                                     }],
                                 kind: 'let'
                             },
@@ -25423,7 +25569,7 @@ var templates = [
                         _ref4: _ref4,
                         templates: templates,
                         _ref5: _ref5
-                    });
+                    }, null);
                 });
             }(),
             {
@@ -25435,7 +25581,7 @@ var templates = [
                 }
             },
             { one: { deep: { a: 2 } } },
-            4
+            8
         ],
         [
             'literal objects',
@@ -25482,7 +25628,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {},
             {},
@@ -25610,7 +25756,7 @@ var templates = [
                         _ref4: _ref4,
                         templates: templates,
                         _ref5: _ref5
-                    });
+                    }, null);
                 }),
                 [
                     alpha,
@@ -25748,7 +25894,7 @@ var templates = [
                         _ref4: _ref4,
                         templates: templates,
                         _ref5: _ref5
-                    });
+                    }, null);
                 }),
                 {
                     alpha: 1,
@@ -25881,4 +26027,27 @@ if (require.main === module) {
   }
 }).call(this)
 //@ sourceMappingURL=./sourceSize.map
-
+void (function(){var _ion_WEB_INF_index_ = function(module,exports,require){
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/WEB-INF/index',_ion_WEB_INF_index_);
+    else
+      _ion_WEB_INF_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_WEB_INF_index_.call(this);
+  }
+}).call(this)
+void (function(){var _ion_WEB_INF_java_index_ = function(module,exports,require){
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/WEB-INF/java/index',_ion_WEB_INF_java_index_);
+    else
+      _ion_WEB_INF_java_index_.call(this, module, exports, require);
+  }
+  else {
+    _ion_WEB_INF_java_index_.call(this);
+  }
+}).call(this)

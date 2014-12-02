@@ -82,7 +82,9 @@ const templates = []
         {}
         do ->
             return template (object) ->
-                let sum = template ({deep:{a,b}}) -> a + b
+                let factor = 2
+                let sum = template ({deep:{a,b}}) ->
+                    return (a + b) * factor
                 return sum(object.one)
         {}
             one:
@@ -93,7 +95,7 @@ const templates = []
             one:
                 deep:
                     a: 2
-        4
+        8
     []
         "literal objects"
         {}

@@ -61,9 +61,9 @@ export const
     template = (fn, template) ->
         fn.template = template ? true
         return fn
-    createRuntime = (ast, args) ->
+    createRuntime = (ast, args, parent) ->
         const Context = import './runtime/Context'
-        const context = new Context()
+        const context = new Context(parent)
         if args?
             for name, value of args
                 context.setVariableLiteral(name, value)
