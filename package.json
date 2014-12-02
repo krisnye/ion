@@ -3,7 +3,7 @@
     "version": "0.9.1",
     "main": "index",
     "bin": {
-        "ion": "builder/command.js"
+        "ion": "builder/_command.js"
     },
     "repository": "https://github.com/krisnye/ion.git",
     "scripts": {
