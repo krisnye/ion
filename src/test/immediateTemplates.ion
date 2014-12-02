@@ -51,7 +51,7 @@ const templates = []
     []
         template ->
             let object = {a:{b:1}}
-            return object.a.b
+            return object?.a?.b
         []
         1
     []

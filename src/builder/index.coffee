@@ -137,7 +137,7 @@ module.exports = exports =
             console.log "Compile: #{filename}"
             ionCompiler = require '../compiler'
             input = source.read()
-            [source,map] = ionCompiler.compileWithSourceMap(input, {id:filename,sourceMap:filename.split(/[\/\\]/).pop()})
+            [source,map] = ionCompiler.compileWithSourceMap(input, {source:moduleId + ".ion" ,sourceMap:filename.split(/[\/\\]/).pop()})
             source = addBrowserShim source, moduleId
             return [source,map]
         catch e

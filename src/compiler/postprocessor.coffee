@@ -359,7 +359,7 @@ existentialExpression = (node, context) ->
     # this could be more efficient by caching the left values
     # especially when the left side involves existential CallExpressions
     # should only apply within an imperative context
-    if node.type is 'MemberExpression' or node.type is 'CallExpression'
+    if node.type is 'MemberExpression' or node.type is 'CallExpression' and not context.reactive
         # search descendant objects for deepest existential child
         getExistentialDescendantObject = (check) ->
             result = null
@@ -938,7 +938,7 @@ validateTemplateNodes = (node, context) ->
 
 removeLocationInfo = (node) ->
     traverse node, (node) ->
-        if node.loc?
+        if node.loc? and not nodes[node?.type]?.location
             delete node.loc
         return node
 

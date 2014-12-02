@@ -25,7 +25,6 @@ export const
         if content.startsWith("#!")
             header = content.split(/\r|\n/)[0] + "\n"
 
-        options.id ?= "unknown"
         options.loc ?= true
         options.target ?= 'es5'
         const
@@ -41,9 +40,7 @@ export const
             sourceLocationsFixed = false
         try
             result = parser.parse(result, options)
-            if options.loc
-                result.loc.source = content
-            result = preprocessor.fixSourceLocations(result, sourceMapping)
+            result = preprocessor.fixSourceLocations(result, sourceMapping, options.source)
             sourceLocationsFixed = true
             if options.postprocess isnt false
                 result = postprocessor.postprocess(result, options)
@@ -51,7 +48,7 @@ export const
                     let generateOptions =
                         sourceMapWithCode: true
                         if not global.window?
-                            sourceMap: options.sourceMap ? options.id
+                            sourceMap: options.sourceMap ? options.source
                         sourceContent: content
                         verbatim: 'verbatim'
                     let output = escodegen.generate(result, generateOptions)

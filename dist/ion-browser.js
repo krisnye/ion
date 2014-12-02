@@ -2029,14 +2029,20 @@ module.exports = exports = BlockStatement;
 }).call(this)
 //@ sourceMappingURL=./BlockStatement.map
 void (function(){var _ion_runtime_CallExpression_ = function(module,exports,require){'use strict';
-var ion = require('../'), DynamicExpression = require('./DynamicExpression'), ArrayExpression = require('./ArrayExpression');
-var _ref = {};
+var ion = require('../'), _ref = require('./');
+var DynamicExpression = _ref.DynamicExpression;
+var ArrayExpression = _ref.ArrayExpression;
+var Factory = _ref.Factory;
+var _ref2 = {};
 {
-    _ref.args = null;
-    _ref.activate = function () {
+    _ref2.args = null;
+    _ref2.activate = function () {
         CallExpression.super.prototype.activate.apply(this, arguments);
         this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
         this.calleeExpression.watch(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : ion.bind(function (value) {
+            if (this.isActive && !(value != null) && !this.existential && (this.loc != null ? this.loc.start.source : void 0) != null) {
+                console.warn('Function is ' + value + ' (' + Factory.toCode(this.callee) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
+            }
             this.calleeValue = value;
             var thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
             if (thisArg !== this.thisArg) {
@@ -2067,7 +2073,7 @@ var _ref = {};
             this.evaluate();
         }, this));
     };
-    _ref.deactivate = function () {
+    _ref2.deactivate = function () {
         CallExpression.super.prototype.deactivate.apply(this, arguments);
         this.calleeExpression.unwatch(this.calleeWatcher);
         this.argumentExpressions.unwatch(this.argumentWatcher);
@@ -2076,7 +2082,7 @@ var _ref = {};
             delete this.template;
         }
     };
-    _ref._evaluateInternal = function () {
+    _ref2._evaluateInternal = function () {
         if (!(this.isActive && this.calleeValue != null && this.argumentsValue != null)) {
             return;
         }
@@ -2097,7 +2103,7 @@ var _ref = {};
         }
     };
     if (DEBUG) {
-        _ref.evaluate = function () {
+        _ref2.evaluate = function () {
             try {
                 this._evaluateInternal();
             } catch (e) {
@@ -2105,14 +2111,14 @@ var _ref = {};
             }
         };
     } else {
-        _ref.evaluate = function () {
+        _ref2.evaluate = function () {
             return this._evaluateInternal();
         };
     }
 }
 var CallExpression = ion.defineClass({
         name: 'CallExpression',
-        properties: _ref
+        properties: _ref2
     }, DynamicExpression);
 module.exports = CallExpression;
   }
@@ -2395,6 +2401,15 @@ var Factory = ion.defineClass({
                     var type = require(this.runtime);
                     return new type(properties);
                 }
+            },
+            toCode: {
+                writable: true,
+                value: function (ast) {
+                    if (ast.type === 'BinaryExpression') {
+                        return toCode(ast.left) + ast.operator + toCode(ast.right);
+                    }
+                    return '(' + ast.type + '?)';
+                }
             }
         }
     });
@@ -2405,11 +2420,17 @@ var lookup = {
             ThisExpression: ion.patch(new Factory(), {
                 createRuntime: function (context, ast) {
                     return context.getVariable('this');
+                },
+                toCode: function (ast) {
+                    return 'this';
                 }
             }),
             Identifier: ion.patch(new Factory(), {
                 createRuntime: function (context, ast) {
                     return context.getVariable(ast.name);
+                },
+                toCode: function (ast) {
+                    return ast.name;
                 }
             }),
             Function: ion.patch(new Factory(), {
@@ -2422,7 +2443,12 @@ var lookup = {
                 }
             }),
             Template: ion.patch(new Factory(), { runtime: './Template' }),
-            Literal: ion.patch(new Factory(), { runtime: './Literal' }),
+            Literal: ion.patch(new Factory(), {
+                runtime: './Literal',
+                toCode: function (ast) {
+                    return JSON.stringify(ast.value);
+                }
+            }),
             Property: ion.patch(new Factory(), { runtime: './Property' }),
             IfStatement: ion.patch(new Factory(), { runtime: './IfStatement' }),
             BlockStatement: ion.patch(new Factory(), { runtime: './BlockStatement' }),
@@ -2432,7 +2458,16 @@ var lookup = {
             ExpressionStatement: ion.patch(new Factory(), { runtime: './ExpressionStatement' }),
             ForOfStatement: ion.patch(new Factory(), { runtime: './ForInOfStatement' }),
             ForInStatement: ion.patch(new Factory(), { runtime: './ForInOfStatement' }),
-            MemberExpression: ion.patch(new Factory(), { runtime: './MemberExpression' }),
+            MemberExpression: ion.patch(new Factory(), {
+                runtime: './MemberExpression',
+                toCode: function (ast) {
+                    if (ast.computed) {
+                        return '' + toCode(ast.object) + '[' + toCode(ast.property) + ']';
+                    } else {
+                        return '' + toCode(ast.object) + '.' + toCode(ast.property);
+                    }
+                }
+            }),
             CallExpression: ion.patch(new Factory(), { runtime: './CallExpression' }),
             NewExpression: ion.patch(new Factory(), { runtime: './CallExpression' }),
             UnaryExpression: {
@@ -2586,7 +2621,9 @@ function getFactory(ast, step) {
     }
     return null;
 }
-var createRuntime = exports.createRuntime = function (context, ast) {
+var toCode = exports.toCode = function (ast) {
+        return getFactory(ast).toCode(ast);
+    }, createRuntime = exports.createRuntime = function (context, ast) {
         if (typeof (ast != null ? ast.type : void 0) !== 'string') {
             ast = {
                 type: 'Literal',
@@ -2917,7 +2954,9 @@ module.exports = exports = Literal;
 }).call(this)
 //@ sourceMappingURL=./Literal.map
 void (function(){var _ion_runtime_MemberExpression_ = function(module,exports,require){'use strict';
-var ion = require('../'), DynamicExpression = require('./DynamicExpression');
+var ion = require('../'), _ref = require('./');
+var DynamicExpression = _ref.DynamicExpression;
+var Factory = _ref.Factory;
 var MemberExpression = ion.defineClass({
         name: 'MemberExpression',
         properties: {
@@ -2925,12 +2964,12 @@ var MemberExpression = ion.defineClass({
                 MemberExpression.super.prototype.activate.apply(this, arguments);
                 this.objectExpression = this.objectExpression != null ? this.objectExpression : this.context.createRuntime(this.object);
                 this.propertyExpression = this.propertyExpression != null ? this.propertyExpression : this.context.createRuntime(this.computed ? this.property : this.property.name);
-                this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : ion.bind(function (propertyValue) {
-                    this.propertyValue = propertyValue;
-                    this.updateValue();
-                }, this));
                 this.objectExpression.watch(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : ion.bind(function (objectValue) {
                     this.objectValue = objectValue;
+                    this.updateValue();
+                }, this));
+                this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : ion.bind(function (propertyValue) {
+                    this.propertyValue = propertyValue;
                     this.updateValue();
                 }, this));
             },
@@ -2941,8 +2980,12 @@ var MemberExpression = ion.defineClass({
             },
             updateValue: function () {
                 var value = void 0;
-                if (this.objectValue != null && this.propertyValue != null) {
-                    value = this.objectValue[this.propertyValue];
+                if (this.objectValue != null) {
+                    if (this.propertyValue != null) {
+                        value = this.objectValue[this.propertyValue];
+                    }
+                } else if (this.isActive && !this.existential && (this.loc != null ? this.loc.start != null ? this.loc.start.source : void 0 : void 0) != null && this.hasOwnProperty('objectValue') && this.hasOwnProperty('propertyValue')) {
+                    console.warn('Cannot read ' + Factory.toCode(this.property) + ' property of ' + this.objectValue + ' (' + Factory.toCode(this.object) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
                 }
                 this.setValue(value);
                 if (this.observedObject !== this.objectValue || this.observedProperty !== this.propertyValue) {
@@ -2961,6 +3004,8 @@ var MemberExpression = ion.defineClass({
                     this.objectValue[this.propertyValue] = value;
                 }
             }
+        },
+        test: function () {
         }
     }, DynamicExpression);
 module.exports = exports = MemberExpression;

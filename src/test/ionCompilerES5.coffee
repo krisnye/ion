@@ -77,6 +77,9 @@ tests =
     #     let sum = template ({deep:{a,b}}) -> a + b
     #     return sum(object.one)
     # """: null
+    # """
+    # template -> alpha?()
+    # """: null
 
 if global.window?
     return
@@ -90,7 +93,7 @@ exports.test = ->
             console.log '-Postprocessed-------------------------------------'
             console.log JSON.stringify index.compile(input, ion.patch({generate:false,loc:true}, options)), null, '  '
             console.log '---------------------------------------------------'
-            console.log index.compile input, ion.patch({loc:true}, options)
+            console.log index.compile input, ion.patch({loc:true,source:'ionCompilerES5.js'}, options)
         else if typeof expected is 'object'
             # expected to throw an error
             error = null

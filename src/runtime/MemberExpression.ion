@@ -1,6 +1,6 @@
 const
     ion = import '../'
-    DynamicExpression = import './DynamicExpression'
+    {DynamicExpression,Factory} = import './'
 
 export class MemberExpression extends DynamicExpression
     properties:
@@ -9,15 +9,15 @@ export class MemberExpression extends DynamicExpression
             @objectExpression ?= @context.createRuntime(@object)
             @propertyExpression ?= @context.createRuntime(@computed ? @property : @property.name)
 
-            @propertyExpression.watch(
-                @propertyWatcher ?= (propertyValue) =>
-                    @propertyValue = propertyValue
-                    @updateValue()
-            )
-
             @objectExpression.watch(
                 @objectWatcher ?= (objectValue) =>
                     @objectValue = objectValue
+                    @updateValue()
+            )
+
+            @propertyExpression.watch(
+                @propertyWatcher ?= (propertyValue) =>
+                    @propertyValue = propertyValue
                     @updateValue()
             )
         deactivate: ->
@@ -26,8 +26,12 @@ export class MemberExpression extends DynamicExpression
             @propertyExpression.unwatch(@propertyWatcher)
         updateValue: ->
             let value = undefined
-            if @objectValue? and @propertyValue?
-                value = @objectValue[@propertyValue]
+            if @objectValue?
+                if @propertyValue?
+                    value = @objectValue[@propertyValue]
+            else if @isActive and not @existential and @loc?.start?.source? and @hasOwnProperty('objectValue') and @hasOwnProperty('propertyValue')
+                # we need to throw an exception here with location info
+                console.warn("Cannot read {{Factory.toCode(@property)}} property of {{@objectValue}} ({{Factory.toCode(@object)}}) ({{@loc.start.source}}:{{@loc.start.line}}:{{@loc.start.column + 1}})")
             @setValue(value)
 
             # also observe the objectValue for changes
@@ -48,3 +52,4 @@ export class MemberExpression extends DynamicExpression
             # console.log('setMemberValue BITCHES!', @objectValue, @propertyValue, value)
             if @objectValue? and @propertyValue?
                 @objectValue[@propertyValue] = value
+    test: ->

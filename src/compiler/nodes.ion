@@ -1,6 +1,10 @@
 const ion = import '../'
 
 export const
+    CallExpression =
+        location: true
+    MemberExpression =
+        location: true
     BlockStatement =
         isBlock: true
         newScope: true

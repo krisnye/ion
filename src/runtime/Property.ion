@@ -19,7 +19,6 @@ export class Property extends Statement
                         let currentValue = @context.output ? @context.output?[key] : @context.get(key)
                         if currentValue?
                             @valueExpression.setLeftValue(currentValue)
-
                     @keyValue = key
                     @setProperty()
             )
@@ -40,3 +39,4 @@ export class Property extends Statement
                 let currentValue = @context.output?[key]
                 if explicitUndefined or currentValue isnt value and @context.output?
                     @context.output[key] = value
+

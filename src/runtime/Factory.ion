@@ -15,6 +15,12 @@ class Factory
                 properties.factory = @
                 let type = import @runtime
                 return new type(properties)
+        toCode:
+            writable: true
+            value: (ast) ->
+                if ast.type is 'BinaryExpression'
+                    return toCode(ast.left) + ast.operator + toCode(ast.right)
+                return "({{ast.type}}?)"
 
 const lookup =
     type:
@@ -22,8 +28,10 @@ const lookup =
             runtime: './VariableDeclaration'
         ThisExpression: new Factory
             createRuntime: (context, ast) -> context.getVariable('this')
+            toCode: (ast) -> 'this'
         Identifier: new Factory
             createRuntime: (context, ast) -> context.getVariable(ast.name)
+            toCode: (ast) -> ast.name
         Function: new Factory
             createRuntime: (context, ast) ->
                 let value = ast.value
@@ -34,6 +42,7 @@ const lookup =
             runtime: './Template'
         Literal: new Factory
             runtime: './Literal'
+            toCode: (ast) -> JSON.stringify(ast.value)
         Property: new Factory
             runtime: './Property'
         IfStatement: new Factory
@@ -54,6 +63,11 @@ const lookup =
             runtime: './ForInOfStatement'
         MemberExpression: new Factory
             runtime: './MemberExpression'
+            toCode: (ast) ->
+                if ast.computed
+                    return "{{toCode(ast.object)}}[{{toCode(ast.property)}}]"
+                else
+                    return "{{toCode(ast.object)}}.{{toCode(ast.property)}}"
         CallExpression: new Factory
             runtime: './CallExpression'
         NewExpression: new Factory
@@ -125,6 +139,7 @@ const getFactory(ast, step = lookup) ->
     return null
 
 export const
+    toCode = (ast) -> getFactory(ast).toCode(ast)
     createRuntime = (context, ast) ->
         if typeof ast?.type isnt 'string'
             ast =

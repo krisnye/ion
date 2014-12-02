@@ -1,7 +1,6 @@
 const
     ion = import '../'
-    DynamicExpression = import './DynamicExpression'
-    ArrayExpression = import './ArrayExpression'
+    {DynamicExpression,ArrayExpression,Factory} = import './'
 
 module.exports = class CallExpression extends DynamicExpression
     properties:
@@ -11,6 +10,10 @@ module.exports = class CallExpression extends DynamicExpression
             @calleeExpression ?= @context.createRuntime(@callee)
             @calleeExpression.watch(
                 @calleeWatcher ?= (value) =>
+                    if @isActive and not value? and not @existential and @loc?.start.source?
+                        # we need to throw an exception here with location info
+                        console.warn("Function is {{value}} ({{Factory.toCode(@callee)}}) ({{@loc.start.source}}:{{@loc.start.line}}:{{@loc.start.column + 1}})")
+
                     @calleeValue = value
                     # get thisArg and watch for changes
                     let thisArg = @calleeExpression.objectExpression?.value
