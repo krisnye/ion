@@ -16,9 +16,7 @@ const
         return ""
             (function(files){
                 for (var i = 0; i < files.length; i++) {
-                    var script = document.createElement('script')
-                    script.setAttribute('src', files[i])
-                    document.head.appendChild(script)
+                    document.writeln("<script src='" + files[i] + "'></script>")
                 }
             })({{JSON.stringify(scripts)}});
 
@@ -51,7 +49,7 @@ export template (packagePatch) ->
                 let mapPath = builder.changeExtension(path, '.map')
                 let mapName = mapPath.split(/[\/\\]/g).slice(-1)[0]
                 let [code,map] = compiler.compileWithSourceMap(source, packageJson)
-                output.write(targetPath, code + "\n//@ sourceMappingURL=./" + mapName)
+                output.write(targetPath, code + "\n//# sourceMappingURL=./" + mapName)
                 output.write(mapPath, map)
             else
                 output.write(targetPath, compiler.compile(source, packageJson))
@@ -72,14 +70,14 @@ export template (packagePatch) ->
                 let indexName = "index.js"
                 let indexFile = indexDirectory.getFile(indexName)
                 # get a list of all output files in that directory
-                let lines = []
+                let lines = {}
                     for key, childFile of indexDirectory.search(".js", null, {recursive:false})
                         if key isnt indexName
                             let name = key.substring(0, key.lastIndexOf('.js'))
-                            "Object.defineProperty(exports, '{{name}}', {get:function(){ return require('./{{name}}') }, enumerable: true}) "
+                            [key]: "Object.defineProperty(exports, '{{name}}', {get:function(){ return require('./{{name}}') }, enumerable: true}) "
 
                 let indexModuleId = np.join(moduleName, path, "index").replace(/\\/g, '/')
-                indexFile.write(builder.addBrowserShim(lines.join('\n'), indexModuleId))
+                indexDirectory.write(indexName, builder.addBrowserShim([value for key, value of lines].join('\n'), indexModuleId))
 
     # build a manifest file with require.js at the top
     # ignore output _browser.js and node_modules
@@ -100,8 +98,8 @@ export template (packagePatch) ->
         for mergeFile, options of packageJson.build.merge
             let mergedArray = []
                 for index, name of sortedFiles
-                    let content = outputFiles[name].read()
-                    if not content.startsWith("#") and not utility.isMatch(name, options.exclude, false)
+                    let content = outputFiles[name].read?()
+                    if content? and not content.startsWith("#") and not utility.isMatch(name, options.exclude, false)
                         # remove source mapping comments.
                         [index]: content
                     else

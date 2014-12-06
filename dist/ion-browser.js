@@ -226,7 +226,7 @@ module.exports = exports = Object;
     _ion_Object_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Object.map
+//# sourceMappingURL=./Object.map
 void (function(){var _ion_browser_element_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var changeHandler = function change() {
@@ -319,7 +319,7 @@ module.exports = exports = _ref;
     _ion_browser_element_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./element.map
+//# sourceMappingURL=./element.map
 void (function(){var _ion_browser_index_ = function(module,exports,require){Object.defineProperty(exports, 'element', {get:function(){ return require('./element') }, enumerable: true}) 
 Object.defineProperty(exports, 'require', {get:function(){ return require('./require') }, enumerable: true}) 
 Object.defineProperty(exports, 'tester', {get:function(){ return require('./tester') }, enumerable: true}) 
@@ -640,7 +640,7 @@ if (!(Array.prototype.contains != null)) {
     _ion_es6_Array_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Array.map
+//# sourceMappingURL=./Array.map
 void (function(){var _ion_es6_Function_ = function(module,exports,require){
 // Fix Function#name on browsers that do not support it (IE):
 if (!(function f() {}).name) {
@@ -772,7 +772,7 @@ var test = exports.test = function () {
     _ion_es6_Map_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Map.map
+//# sourceMappingURL=./Map.map
 void (function(){var _ion_es6_Object_ = function(module,exports,require){'use strict';
 if (!(Object.is != null)) {
     Object.defineProperty(Object, 'is', {
@@ -798,7 +798,7 @@ if (!(Object.is != null)) {
     _ion_es6_Object_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Object.map
+//# sourceMappingURL=./Object.map
 void (function(){var _ion_es6_Object_observe_ = function(module,exports,require){'use strict';
 var clone = function (object, properties) {
     if (properties != null) {
@@ -1022,7 +1022,7 @@ if (!(Object.observe != null) && global.Map != null) {
     _ion_es6_Object_observe_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Object.observe.map
+//# sourceMappingURL=./Object.observe.map
 void (function(){var _ion_es6_Set_ = function(module,exports,require){'use strict';
 var ion = require('../');
 require('./Map');
@@ -1088,7 +1088,7 @@ var test = exports.test = function () {
     _ion_es6_Set_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Set.map
+//# sourceMappingURL=./Set.map
 void (function(){var _ion_es6_String_ = function(module,exports,require){if (!String.prototype.endsWith) {
     Object.defineProperty(String.prototype, 'endsWith', {
         enumerable: false,
@@ -1150,7 +1150,7 @@ require('./Array');
     _ion_es6_index_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./index.map
+//# sourceMappingURL=./index.map
 void (function(){var _ion_index_ = function(module,exports,require){'use strict';
 var ion = null;
 require('./es6');
@@ -1572,7 +1572,7 @@ if (global.window != null) {
     _ion_index_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./index.map
+//# sourceMappingURL=./index.map
 void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
 var ion = require('./'), isObject = function (a) {
         return a != null && typeof a === 'object';
@@ -1868,7 +1868,7 @@ var merge = exports.merge = function (target, values, options) {
     _ion_mergePatch_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./mergePatch.map
+//# sourceMappingURL=./mergePatch.map
 void (function(){var _ion_runtime_ArrayExpression_ = function(module,exports,require){'use strict';
 var ion = require('../'), DynamicExpression = require('./DynamicExpression');
 var ArrayExpression = ion.defineClass({
@@ -1979,7 +1979,7 @@ module.exports = exports = ArrayExpression;
     _ion_runtime_ArrayExpression_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./ArrayExpression.map
+//# sourceMappingURL=./ArrayExpression.map
 void (function(){var _ion_runtime_BlockStatement_ = function(module,exports,require){'use strict';
 var ion = require('../'), Statement = require('./Statement');
 var BlockStatement = ion.defineClass({
@@ -2027,7 +2027,7 @@ module.exports = exports = BlockStatement;
     _ion_runtime_BlockStatement_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./BlockStatement.map
+//# sourceMappingURL=./BlockStatement.map
 void (function(){var _ion_runtime_CallExpression_ = function(module,exports,require){'use strict';
 var ion = require('../'), _ref = require('./');
 var DynamicExpression = _ref.DynamicExpression;
@@ -2132,7 +2132,7 @@ module.exports = CallExpression;
     _ion_runtime_CallExpression_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./CallExpression.map
+//# sourceMappingURL=./CallExpression.map
 void (function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
 var ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal');
 var Context = ion.defineClass({
@@ -2214,7 +2214,7 @@ module.exports = exports = Context;
     _ion_runtime_Context_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Context.map
+//# sourceMappingURL=./Context.map
 void (function(){var _ion_runtime_DynamicExpression_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var DynamicExpression = ion.defineClass({
@@ -2319,7 +2319,7 @@ module.exports = exports = DynamicExpression;
     _ion_runtime_DynamicExpression_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./DynamicExpression.map
+//# sourceMappingURL=./DynamicExpression.map
 void (function(){var _ion_runtime_Expression_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var Expression = ion.defineClass({
@@ -2345,7 +2345,7 @@ module.exports = exports = Expression;
     _ion_runtime_Expression_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Expression.map
+//# sourceMappingURL=./Expression.map
 void (function(){var _ion_runtime_ExpressionStatement_ = function(module,exports,require){'use strict';
 var ion = require('../'), Statement = require('./Statement');
 var ExpressionStatement = ion.defineClass({
@@ -2383,7 +2383,7 @@ module.exports = exports = ExpressionStatement;
     _ion_runtime_ExpressionStatement_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./ExpressionStatement.map
+//# sourceMappingURL=./ExpressionStatement.map
 void (function(){var _ion_runtime_Factory_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var Literal = require('./Literal');
@@ -2664,7 +2664,7 @@ var toCode = exports.toCode = function (ast) {
     _ion_runtime_Factory_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Factory.map
+//# sourceMappingURL=./Factory.map
 void (function(){var _ion_runtime_ForInOfStatement_ = function(module,exports,require){'use strict';
 var ion = require('../'), Statement = require('./Statement'), DynamicExpression = require('./DynamicExpression');
 var ForInOfStatement = ion.defineClass({
@@ -2873,7 +2873,7 @@ module.exports = exports = ForInOfStatement;
     _ion_runtime_ForInOfStatement_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./ForInOfStatement.map
+//# sourceMappingURL=./ForInOfStatement.map
 void (function(){var _ion_runtime_IfStatement_ = function(module,exports,require){'use strict';
 var ion = require('../'), Statement = require('./Statement');
 var IfStatement = ion.defineClass({
@@ -2926,7 +2926,7 @@ module.exports = exports = IfStatement;
     _ion_runtime_IfStatement_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./IfStatement.map
+//# sourceMappingURL=./IfStatement.map
 void (function(){var _ion_runtime_Literal_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var Literal = ion.defineClass({
@@ -2952,7 +2952,7 @@ module.exports = exports = Literal;
     _ion_runtime_Literal_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Literal.map
+//# sourceMappingURL=./Literal.map
 void (function(){var _ion_runtime_MemberExpression_ = function(module,exports,require){'use strict';
 var ion = require('../'), _ref = require('./');
 var DynamicExpression = _ref.DynamicExpression;
@@ -3020,7 +3020,7 @@ module.exports = exports = MemberExpression;
     _ion_runtime_MemberExpression_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./MemberExpression.map
+//# sourceMappingURL=./MemberExpression.map
 void (function(){var _ion_runtime_Node_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var Node = ion.defineClass({ name: 'Node' });
@@ -3036,7 +3036,7 @@ module.exports = exports = Node;
     _ion_runtime_Node_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Node.map
+//# sourceMappingURL=./Node.map
 void (function(){var _ion_runtime_ObjectExpression_ = function(module,exports,require){'use strict';
 var ion = require('../'), DynamicExpression = require('./DynamicExpression');
 var ObjectExpression = ion.defineClass({
@@ -3086,7 +3086,7 @@ module.exports = exports = ObjectExpression;
     _ion_runtime_ObjectExpression_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./ObjectExpression.map
+//# sourceMappingURL=./ObjectExpression.map
 void (function(){var _ion_runtime_OperationExpression_ = function(module,exports,require){'use strict';
 var ion = require('../'), DynamicExpression = require('./DynamicExpression');
 var OperationExpression = ion.defineClass({
@@ -3149,7 +3149,7 @@ module.exports = OperationExpression;
     _ion_runtime_OperationExpression_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./OperationExpression.map
+//# sourceMappingURL=./OperationExpression.map
 void (function(){var _ion_runtime_Property_ = function(module,exports,require){'use strict';
 var ion = require('../'), Statement = require('./Statement');
 var Property = ion.defineClass({
@@ -3207,7 +3207,7 @@ module.exports = exports = Property;
     _ion_runtime_Property_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Property.map
+//# sourceMappingURL=./Property.map
 void (function(){var _ion_runtime_ReturnStatement_ = function(module,exports,require){'use strict';
 var ion = require('../'), Statement = require('./Statement');
 var ReturnStatement = ion.defineClass({
@@ -3238,7 +3238,7 @@ module.exports = exports = ReturnStatement;
     _ion_runtime_ReturnStatement_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./ReturnStatement.map
+//# sourceMappingURL=./ReturnStatement.map
 void (function(){var _ion_runtime_Statement_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var Statement = ion.defineClass({
@@ -3265,7 +3265,7 @@ module.exports = exports = Statement;
     _ion_runtime_Statement_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Statement.map
+//# sourceMappingURL=./Statement.map
 void (function(){var _ion_runtime_Template_ = function(module,exports,require){'use strict';
 var ion = require('../'), BlockStatement = require('./BlockStatement'), DynamicExpression = require('./DynamicExpression'), noop = function () {
     };
@@ -3304,7 +3304,7 @@ module.exports = exports = Template;
     _ion_runtime_Template_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Template.map
+//# sourceMappingURL=./Template.map
 void (function(){var _ion_runtime_VariableDeclaration_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var Statement = require('./Statement');
@@ -3335,7 +3335,7 @@ module.exports = exports = VariableDeclaration;
     _ion_runtime_VariableDeclaration_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./VariableDeclaration.map
+//# sourceMappingURL=./VariableDeclaration.map
 void (function(){var _ion_runtime_index_ = function(module,exports,require){Object.defineProperty(exports, 'ArrayExpression', {get:function(){ return require('./ArrayExpression') }, enumerable: true}) 
 Object.defineProperty(exports, 'BlockStatement', {get:function(){ return require('./BlockStatement') }, enumerable: true}) 
 Object.defineProperty(exports, 'CallExpression', {get:function(){ return require('./CallExpression') }, enumerable: true}) 

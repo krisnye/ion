@@ -65,21 +65,19 @@ tests =
     (foo: bar)
         x: 1
     """: {line:1, column:2}
-    # """
-    # let staticScope = 1
-    # let outer = template ->
-    #     let outerScope = 2
-    #     let inner = template (a) ->
-    #         return staticScope * outerScope
-    # """: null
-    # """
-    # return template (object) ->
-    #     let sum = template ({deep:{a,b}}) -> a + b
-    #     return sum(object.one)
-    # """: null
-    # """
-    # template -> alpha?()
-    # """: null
+    """
+    let foo = bar(
+        1
+        2
+    )
+    .toString(
+        "12"
+    )
+    .split(' ')
+    """: """
+    'use strict';
+    var foo = bar(1, 2).toString('12').split(' ');
+    """
 
 if global.window?
     return

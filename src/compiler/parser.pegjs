@@ -51,11 +51,13 @@
     }
     function leftAssociateCallsOrMembers(start, head, tail) {
         var result = head
-        for (var i = 0; i < tail.length; i++) {
-            var next = tail[i][1]
-            setLoc(next, start, tail[i][2])
-            next[tail[i][0]] = result
-            result = next
+        if (tail != null) {
+            for (var i = 0; i < tail.length; i++) {
+                var next = tail[i][1]
+                setLoc(next, start, tail[i][2])
+                next[tail[i][0]] = result
+                result = next
+            }
         }
         return result
     }
@@ -233,13 +235,25 @@ SpreadIdentifier
 //  Expressions
 //  We use javascript terms where available. http://www.ecma-international.org/ecma-262/5.1/#sec-A.3
 RightHandSideExpression = ImpliedObjectExpression / Expression
-Expression = MultilineExpression / InlineExpression
+Expression = start:start head:(MultilineExpression / InlineExpression)
+    tail:( eol _ &"." a:(tailCall / tailMember)* { return a } )*
+    {
+        // convert array of arrays to just a flat array
+        tail = tail.reduce(function(a,b){ return a.concat(b)}, [])
+        return leftAssociateCallsOrMembers(start, head, tail)
+    }
+MultilineChainExpression = eol? &"." e:(tailCall / tailMember)* { return e }
 MultilineExpression = ClassExpression / MultilineStringTemplate / MultilineStringLiteral / TypedObjectExpression / MultilineCallExpression
-multilineCallArguments
-    = (_ arg:Expression eol { return arg })+
-    / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end
-        { return [node("ObjectExpression", {properties:properties}, start, end)] }
-MultilineCallExpression = start:start callee:InlineExpression "(" indent eol args:multilineCallArguments end:end outdent eol _ ")"
+multilineArguments
+    =   "(" indent eol
+        args:(
+        (_ arg:Expression eol { return arg })+
+        / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end
+            { return [node("ObjectExpression", {properties:properties}, start, end)] }
+        )
+        outdent eol _ ")"
+    { return args}
+MultilineCallExpression = start:start callee:InlineExpression args:multilineArguments end:end
     {
         if (callee.type === 'NewExpression' && callee.arguments == null)
             return node("NewExpression", {callee: callee.callee, arguments: args}, start, end)
@@ -277,8 +291,8 @@ CallExpression = start:start head:MemberExpression tail:(tailCall / tailMember)*
 tailCall   = _ existential:("?" {return true})? args:arguments end:end { return ["callee", node("CallExpression", {callee:null, arguments:args, existential:existential || undefined}), end] }
 tailMember = _ existential:("?" {return true})? "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] }
            / _ existential:("?" {return true})? "." _ property:IdentifierName end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] }
-arguments
-    = "(" a:argumentList? ")" { return a ? a : [] }
+arguments = inlineArguments / multilineArguments
+inlineArguments = "(" a:argumentList? ")" { return a ? a : [] }
 argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
 
 MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
@@ -323,7 +337,7 @@ propertyAssignmentList = head:propertyAssignment tail:(_ "," _ item:propertyAssi
 propertyAssignment
     = PropertyDeclaration
     / start:start key:IdentifierName end:end { return node("Property", { key: key, value:clone(key), kind: 'init'}, start, end) }
-TypedObjectExpression = start:start !"(" type:InlineExpression properties:BlockStatement end:end
+TypedObjectExpression = start:start !"(" type:(MultilineCallExpression / InlineExpression) properties:BlockStatement end:end
     { return node("ObjectExpression", {objectType:type,properties:properties.body}, start, end) }
 ImpliedObjectExpression = start:start properties:BlockStatement end:end
     { return node("ObjectExpression", {properties:properties.body}, start, end) }
