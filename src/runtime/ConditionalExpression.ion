@@ -1,0 +1,36 @@
+const
+    ion = import '../'
+    DynamicExpression = import './DynamicExpression'
+
+module.exports = class ConditionalExpression extends DynamicExpression
+    # [@test, @consequent, @alternate]
+    properties:
+        activate: ->
+            super
+            @testExpression ?= @context.createRuntime(@test)
+            @testExpression.watch(
+                @testWatcher ?= (value) =>
+                    if not @hasOwnProperty('testValue') or Boolean(value) isnt Boolean(@testValue)
+                        @testValue = value
+                        if value
+                            @alternateExpression?.unwatch(@alternateWatcher)
+                            @consequentExpression ?= @context.createRuntime(@consequent)
+                            @consequentExpression.watch(
+                                @consequentWatcher ?= (value) =>
+                                    if @testValue
+                                        @setValue(value)
+                            )
+                        else
+                            @consequentExpression?.unwatch(@consequentWatcher)
+                            @alternateExpression ?= @context.createRuntime(@alternate)
+                            @alternateExpression.watch(
+                                @alternateWatcher ?= (value) =>
+                                    if not @testValue
+                                        @setValue(value)
+                            )
+            )
+        deactivate: ->
+            super
+            @testExpression.unwatch(@testWatcher)
+            @consequentExpression?.unwatch(@consequentWatcher)
+            @alternateExpression?.unwatch(@alternateWatcher)

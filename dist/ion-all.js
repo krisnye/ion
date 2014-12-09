@@ -21707,8 +21707,61 @@ module.exports = CallExpression;
   }
 }).call(this)
 //# sourceMappingURL=./CallExpression.map
+void (function(){var _ion_runtime_ConditionalExpression_ = function(module,exports,require){'use strict';
+var ion = require('../'), DynamicExpression = require('./DynamicExpression');
+var ConditionalExpression = ion.defineClass({
+        name: 'ConditionalExpression',
+        properties: {
+            activate: function () {
+                ConditionalExpression.super.prototype.activate.apply(this, arguments);
+                this.testExpression = this.testExpression != null ? this.testExpression : this.context.createRuntime(this.test);
+                this.testExpression.watch(this.testWatcher = this.testWatcher != null ? this.testWatcher : ion.bind(function (value) {
+                    if (!this.hasOwnProperty('testValue') || Boolean(value) !== Boolean(this.testValue)) {
+                        this.testValue = value;
+                        if (value) {
+                            this.alternateExpression != null ? this.alternateExpression.unwatch(this.alternateWatcher) : void 0;
+                            this.consequentExpression = this.consequentExpression != null ? this.consequentExpression : this.context.createRuntime(this.consequent);
+                            this.consequentExpression.watch(this.consequentWatcher = this.consequentWatcher != null ? this.consequentWatcher : ion.bind(function (value) {
+                                if (this.testValue) {
+                                    this.setValue(value);
+                                }
+                            }, this));
+                        } else {
+                            this.consequentExpression != null ? this.consequentExpression.unwatch(this.consequentWatcher) : void 0;
+                            this.alternateExpression = this.alternateExpression != null ? this.alternateExpression : this.context.createRuntime(this.alternate);
+                            this.alternateExpression.watch(this.alternateWatcher = this.alternateWatcher != null ? this.alternateWatcher : ion.bind(function (value) {
+                                if (!this.testValue) {
+                                    this.setValue(value);
+                                }
+                            }, this));
+                        }
+                    }
+                }, this));
+            },
+            deactivate: function () {
+                ConditionalExpression.super.prototype.deactivate.apply(this, arguments);
+                this.testExpression.unwatch(this.testWatcher);
+                this.consequentExpression != null ? this.consequentExpression.unwatch(this.consequentWatcher) : void 0;
+                this.alternateExpression != null ? this.alternateExpression.unwatch(this.alternateWatcher) : void 0;
+            }
+        }
+    }, DynamicExpression);
+module.exports = ConditionalExpression;
+  }
+  if (typeof require === 'function') {
+    if (require.register)
+      require.register('ion/runtime/ConditionalExpression',_ion_runtime_ConditionalExpression_);
+    else
+      _ion_runtime_ConditionalExpression_.call(this, module, exports, require);
+  }
+  else {
+    _ion_runtime_ConditionalExpression_.call(this);
+  }
+}).call(this)
+//# sourceMappingURL=./ConditionalExpression.map
 void (function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
-var ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal');
+var ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal'), noop = function () {
+    };
 var Context = ion.defineClass({
         name: 'Context',
         constructor: function Context(parent, output) {
@@ -21716,6 +21769,7 @@ var Context = ion.defineClass({
             this.parent = parent;
             this.variables = {};
             this.root = (this.parent != null ? this.parent.root : void 0) != null ? this.parent.root : this;
+            this._watched = {};
         },
         properties: {
             newContext: function (output) {
@@ -21731,17 +21785,7 @@ var Context = ion.defineClass({
                 if (!(variable != null)) {
                     throw new Error('Variable not found: \'' + name + '\'');
                 }
-                var value = variable.value;
-                if (value === void 0) {
-                    var watcher = function (a) {
-                        if (a !== void 0) {
-                            value = a;
-                        }
-                    };
-                    variable.watch(watcher);
-                    variable.unwatch(watcher);
-                }
-                return value;
+                return variable.value;
             },
             getVariable: function (name) {
                 var context = this, value;
@@ -21771,6 +21815,7 @@ var Context = ion.defineClass({
             },
             setVariableExpression: function (name, expression) {
                 if (name != null) {
+                    expression.watch(noop);
                     return this.variables[name] = expression;
                 }
             }
@@ -22083,11 +22128,7 @@ var lookup = {
                     })
                 }
             },
-            ConditionalExpression: ion.patch(new Factory(), {
-                evaluate: function (test, consequent, alternate) {
-                    return test ? consequent : alternate;
-                }
-            }),
+            ConditionalExpression: ion.patch(new Factory(), { runtime: './ConditionalExpression' }),
             BinaryExpression: {
                 operator: {
                     '*': ion.patch(new Factory(), {
@@ -22759,11 +22800,12 @@ var Property = ion.defineClass({
                     key = this.keyValue;
                 if (value == null)
                     value = this.valueValue;
-                var explicitUndefined = this.value.operator === 'void';
-                if (key != null && (value !== void 0 || explicitUndefined)) {
-                    var currentValue = this.context.output != null ? this.context.output[key] : void 0;
-                    if (explicitUndefined || currentValue !== value && this.context.output != null) {
-                        this.context.output[key] = value;
+                if (this.hasOwnProperty('keyValue') && this.hasOwnProperty('valueValue')) {
+                    if (key != null && this.context.output != null) {
+                        var currentValue = this.context.output[key];
+                        if (currentValue !== value) {
+                            this.context.output[key] = value;
+                        }
                     }
                 }
             }
@@ -22913,6 +22955,7 @@ module.exports = exports = VariableDeclaration;
 void (function(){var _ion_runtime_index_ = function(module,exports,require){Object.defineProperty(exports, 'ArrayExpression', {get:function(){ return require('./ArrayExpression') }, enumerable: true}) 
 Object.defineProperty(exports, 'BlockStatement', {get:function(){ return require('./BlockStatement') }, enumerable: true}) 
 Object.defineProperty(exports, 'CallExpression', {get:function(){ return require('./CallExpression') }, enumerable: true}) 
+Object.defineProperty(exports, 'ConditionalExpression', {get:function(){ return require('./ConditionalExpression') }, enumerable: true}) 
 Object.defineProperty(exports, 'Context', {get:function(){ return require('./Context') }, enumerable: true}) 
 Object.defineProperty(exports, 'DynamicExpression', {get:function(){ return require('./DynamicExpression') }, enumerable: true}) 
 Object.defineProperty(exports, 'Expression', {get:function(){ return require('./Expression') }, enumerable: true}) 

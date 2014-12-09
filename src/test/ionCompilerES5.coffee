@@ -78,6 +78,9 @@ tests =
     'use strict';
     var foo = bar(1, 2).toString('12').split(' ');
     """
+    # """
+    # template -> alpha ? beta
+    # """: null
 
 if global.window?
     return

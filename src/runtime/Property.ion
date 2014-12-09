@@ -34,9 +34,9 @@ export class Property extends Statement
             @valueExpression.unwatch(@valueWatcher)
         setProperty: (key = @keyValue, value = @valueValue) ->
             # we must have a key, and the value must not be undefined UNLESS the value is explicitly undefined!
-            let explicitUndefined = @value.operator is 'void'
-            if key? and (value isnt undefined or explicitUndefined)
-                let currentValue = @context.output?[key]
-                if explicitUndefined or currentValue isnt value and @context.output?
-                    @context.output[key] = value
+            if @hasOwnProperty('keyValue') and @hasOwnProperty('valueValue')
+                if key? and @context.output?
+                    let currentValue = @context.output[key]
+                    if currentValue isnt value
+                        @context.output[key] = value
 

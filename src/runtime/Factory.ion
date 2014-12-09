@@ -89,8 +89,9 @@ const lookup =
                 "?": new Factory
                     evaluate: (a) -> a?
         ConditionalExpression: new Factory
+            runtime: './ConditionalExpression'
             # unlike in imperative code, both consequent and alternate are always evaluated
-            evaluate: (test, consequent, alternate) -> test ? consequent : alternate
+            # evaluate: (test, consequent, alternate) -> test ? consequent : alternate
         BinaryExpression:
             operator:
                 "*": new Factory

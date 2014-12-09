@@ -3,6 +3,7 @@ const
     ion = import '../'
     Factory = import './Factory'
     Literal = import './Literal'
+    noop = ->
 
 export class Context
     constructor: (parent, output) ->
@@ -14,6 +15,8 @@ export class Context
         @variables = {}
         # store a reference to the root context
         @root = @parent?.root ? @
+        # track which variables we have watched for get property
+        @_watched = {}
     properties:
         newContext: (output = @output) -> new Context(@, output)
         createRuntime: (node) -> Factory.createRuntime(@, node)
@@ -21,14 +24,7 @@ export class Context
             let variable = @getVariable(name)
             if not variable?
                 throw new Error("Variable not found: '{{name}}'")
-            let value = variable.value
-            if value is undefined
-                let watcher = (a) ->
-                    if a isnt undefined
-                        value = a
-                variable.watch(watcher)
-                variable.unwatch(watcher)
-            return value
+            return variable.value
         getVariable: (name) ->
             let context = @, value
             while context?
@@ -53,4 +49,7 @@ export class Context
                 @setVariableExpression(name, new Literal({value}))
         setVariableExpression: (name, expression) ->
             if name?
+                # we always watch the expression to make sure it is created only once
+                # if we don't, then it may be created and destroyed multiple times which can cause bugs
+                expression.watch(noop)
                 return @variables[name] = expression
