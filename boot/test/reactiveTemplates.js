@@ -23,6 +23,20 @@ var _ref4 = [];
                             property: {
                                 type: 'Identifier',
                                 name: 'x'
+                            },
+                            loc: {
+                                start: {
+                                    line: 111,
+                                    column: 20,
+                                    fixed: true,
+                                    source: 'ion/test/reactiveTemplates.ion'
+                                },
+                                end: {
+                                    line: 111,
+                                    column: 26,
+                                    fixed: true,
+                                    source: 'ion/test/reactiveTemplates.ion'
+                                }
                             }
                         },
                         right: {
@@ -32,6 +46,20 @@ var _ref4 = [];
                             property: {
                                 type: 'Identifier',
                                 name: 'y'
+                            },
+                            loc: {
+                                start: {
+                                    line: 111,
+                                    column: 29,
+                                    fixed: true,
+                                    source: 'ion/test/reactiveTemplates.ion'
+                                },
+                                end: {
+                                    line: 111,
+                                    column: 35,
+                                    fixed: true,
+                                    source: 'ion/test/reactiveTemplates.ion'
+                                }
                             }
                         }
                     }
@@ -44,7 +72,7 @@ var _ref4 = [];
             _ref4: _ref4,
             templates: templates,
             _ref5: _ref5
-        });
+        }, null);
     }));
     _ref4.push(object);
     _ref4.push({ x: 10 });
@@ -74,11 +102,39 @@ var templates = [
                                         property: {
                                             type: 'Identifier',
                                             name: 'name'
+                                        },
+                                        loc: {
+                                            start: {
+                                                line: 8,
+                                                column: 19,
+                                                fixed: true,
+                                                source: 'ion/test/reactiveTemplates.ion'
+                                            },
+                                            end: {
+                                                line: 8,
+                                                column: 34,
+                                                fixed: true,
+                                                source: 'ion/test/reactiveTemplates.ion'
+                                            }
                                         }
                                     },
                                     property: {
                                         type: 'Identifier',
                                         name: 'replace'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 8,
+                                            column: 19,
+                                            fixed: true,
+                                            source: 'ion/test/reactiveTemplates.ion'
+                                        },
+                                        end: {
+                                            line: 8,
+                                            column: 42,
+                                            fixed: true,
+                                            source: 'ion/test/reactiveTemplates.ion'
+                                        }
                                     }
                                 },
                                 arguments: [
@@ -90,7 +146,21 @@ var templates = [
                                         type: 'Literal',
                                         value: 'b'
                                     }
-                                ]
+                                ],
+                                loc: {
+                                    start: {
+                                        line: 8,
+                                        column: 19,
+                                        fixed: true,
+                                        source: 'ion/test/reactiveTemplates.ion'
+                                    },
+                                    end: {
+                                        line: 8,
+                                        column: 53,
+                                        fixed: true,
+                                        source: 'ion/test/reactiveTemplates.ion'
+                                    }
+                                }
                             }
                         }],
                     bound: false
@@ -101,7 +171,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             { name: 'alpha' },
             {},
@@ -157,7 +227,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 a: 1,
@@ -250,7 +320,21 @@ var templates = [
                                                         arguments: [{
                                                                 type: 'Identifier',
                                                                 name: 'value'
-                                                            }]
+                                                            }],
+                                                        loc: {
+                                                            start: {
+                                                                line: 27,
+                                                                column: 27,
+                                                                fixed: true,
+                                                                source: 'ion/test/reactiveTemplates.ion'
+                                                            },
+                                                            end: {
+                                                                line: 27,
+                                                                column: 40,
+                                                                fixed: true,
+                                                                source: 'ion/test/reactiveTemplates.ion'
+                                                            }
+                                                        }
                                                     },
                                                     kind: 'init',
                                                     computed: true
@@ -269,7 +353,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 x: 1,
@@ -376,7 +460,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 x: 1,
@@ -422,6 +506,20 @@ var templates = [
                                                 property: {
                                                     type: 'Identifier',
                                                     name: 'factor'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 47,
+                                                        column: 25,
+                                                        fixed: true,
+                                                        source: 'ion/test/reactiveTemplates.ion'
+                                                    },
+                                                    end: {
+                                                        line: 47,
+                                                        column: 42,
+                                                        fixed: true,
+                                                        source: 'ion/test/reactiveTemplates.ion'
+                                                    }
                                                 }
                                             },
                                             right: {
@@ -439,6 +537,20 @@ var templates = [
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'factor'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 47,
+                                                    column: 25,
+                                                    fixed: true,
+                                                    source: 'ion/test/reactiveTemplates.ion'
+                                                },
+                                                end: {
+                                                    line: 47,
+                                                    column: 42,
+                                                    fixed: true,
+                                                    source: 'ion/test/reactiveTemplates.ion'
+                                                }
                                             }
                                         },
                                         alternate: {
@@ -539,7 +651,21 @@ var templates = [
                                                                     arguments: [{
                                                                             type: 'Identifier',
                                                                             name: 'value'
-                                                                        }]
+                                                                        }],
+                                                                    loc: {
+                                                                        start: {
+                                                                            line: 51,
+                                                                            column: 27,
+                                                                            fixed: true,
+                                                                            source: 'ion/test/reactiveTemplates.ion'
+                                                                        },
+                                                                        end: {
+                                                                            line: 51,
+                                                                            column: 42,
+                                                                            fixed: true,
+                                                                            source: 'ion/test/reactiveTemplates.ion'
+                                                                        }
+                                                                    }
                                                                 },
                                                                 kind: 'init',
                                                                 computed: true
@@ -560,7 +686,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 x: 1,
@@ -655,7 +781,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 a: 1,
@@ -757,7 +883,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 items: [
@@ -794,9 +920,37 @@ var templates = [
                                     property: {
                                         type: 'Identifier',
                                         name: 'sum'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 72,
+                                            column: 29,
+                                            fixed: true,
+                                            source: 'ion/test/reactiveTemplates.ion'
+                                        },
+                                        end: {
+                                            line: 72,
+                                            column: 39,
+                                            fixed: true,
+                                            source: 'ion/test/reactiveTemplates.ion'
+                                        }
                                     }
                                 },
-                                arguments: []
+                                arguments: [],
+                                loc: {
+                                    start: {
+                                        line: 72,
+                                        column: 29,
+                                        fixed: true,
+                                        source: 'ion/test/reactiveTemplates.ion'
+                                    },
+                                    end: {
+                                        line: 72,
+                                        column: 41,
+                                        fixed: true,
+                                        source: 'ion/test/reactiveTemplates.ion'
+                                    }
+                                }
                             }
                         }],
                     bound: false
@@ -807,7 +961,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {
                 sum: function () {
@@ -833,105 +987,139 @@ var templates = [
                                         type: 'VariableDeclarator',
                                         id: {
                                             type: 'Identifier',
+                                            name: 'factor'
+                                        },
+                                        init: {
+                                            type: 'Literal',
+                                            value: 2
+                                        }
+                                    }],
+                                kind: 'let'
+                            },
+                            {
+                                type: 'VariableDeclaration',
+                                declarations: [{
+                                        type: 'VariableDeclarator',
+                                        id: {
+                                            type: 'Identifier',
                                             name: 'sum'
                                         },
-                                        init: ion.template(function (_ref3) {
-                                            return ion.createRuntime({
-                                                type: 'Template',
-                                                body: [
-                                                    {
-                                                        type: 'VariableDeclaration',
-                                                        declarations: [{
-                                                                type: 'VariableDeclarator',
-                                                                id: {
-                                                                    type: 'Identifier',
-                                                                    name: 'a'
-                                                                },
-                                                                init: {
-                                                                    type: 'MemberExpression',
-                                                                    object: {
-                                                                        type: 'MemberExpression',
-                                                                        object: {
+                                        init: {
+                                            type: 'Function',
+                                            context: true,
+                                            value: function (_ps) {
+                                                return ion.template(function (_ref3) {
+                                                    return ion.createRuntime({
+                                                        type: 'Template',
+                                                        body: [
+                                                            {
+                                                                type: 'VariableDeclaration',
+                                                                declarations: [{
+                                                                        type: 'VariableDeclarator',
+                                                                        id: {
                                                                             type: 'Identifier',
-                                                                            name: '_ref3'
+                                                                            name: 'a'
                                                                         },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'deep'
-                                                                        },
-                                                                        computed: false
-                                                                    },
-                                                                    property: {
-                                                                        type: 'Identifier',
-                                                                        name: 'a'
-                                                                    },
-                                                                    computed: false
-                                                                }
-                                                            }],
-                                                        kind: 'let'
-                                                    },
-                                                    {
-                                                        type: 'VariableDeclaration',
-                                                        declarations: [{
-                                                                type: 'VariableDeclarator',
-                                                                id: {
-                                                                    type: 'Identifier',
-                                                                    name: 'b'
-                                                                },
-                                                                init: {
-                                                                    type: 'MemberExpression',
-                                                                    object: {
-                                                                        type: 'MemberExpression',
-                                                                        object: {
-                                                                            type: 'Identifier',
-                                                                            name: '_ref3'
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'deep'
-                                                                        },
-                                                                        computed: false
-                                                                    },
-                                                                    property: {
-                                                                        type: 'Identifier',
-                                                                        name: 'b'
-                                                                    },
-                                                                    computed: false
-                                                                }
-                                                            }],
-                                                        kind: 'let'
-                                                    },
-                                                    {
-                                                        type: 'ReturnStatement',
-                                                        argument: {
-                                                            type: 'BinaryExpression',
-                                                            operator: '+',
-                                                            left: {
-                                                                type: 'Identifier',
-                                                                name: 'a'
+                                                                        init: {
+                                                                            type: 'MemberExpression',
+                                                                            object: {
+                                                                                type: 'MemberExpression',
+                                                                                object: {
+                                                                                    type: 'Identifier',
+                                                                                    name: '_ref3'
+                                                                                },
+                                                                                property: {
+                                                                                    type: 'Identifier',
+                                                                                    name: 'deep'
+                                                                                },
+                                                                                computed: false
+                                                                            },
+                                                                            property: {
+                                                                                type: 'Identifier',
+                                                                                name: 'a'
+                                                                            },
+                                                                            computed: false
+                                                                        }
+                                                                    }],
+                                                                kind: 'let'
                                                             },
-                                                            right: {
-                                                                type: 'Identifier',
-                                                                name: 'b'
+                                                            {
+                                                                type: 'VariableDeclaration',
+                                                                declarations: [{
+                                                                        type: 'VariableDeclarator',
+                                                                        id: {
+                                                                            type: 'Identifier',
+                                                                            name: 'b'
+                                                                        },
+                                                                        init: {
+                                                                            type: 'MemberExpression',
+                                                                            object: {
+                                                                                type: 'MemberExpression',
+                                                                                object: {
+                                                                                    type: 'Identifier',
+                                                                                    name: '_ref3'
+                                                                                },
+                                                                                property: {
+                                                                                    type: 'Identifier',
+                                                                                    name: 'deep'
+                                                                                },
+                                                                                computed: false
+                                                                            },
+                                                                            property: {
+                                                                                type: 'Identifier',
+                                                                                name: 'b'
+                                                                            },
+                                                                            computed: false
+                                                                        }
+                                                                    }],
+                                                                kind: 'let'
+                                                            },
+                                                            {
+                                                                type: 'ReturnStatement',
+                                                                argument: {
+                                                                    type: 'BinaryExpression',
+                                                                    operator: '*',
+                                                                    left: {
+                                                                        type: 'BinaryExpression',
+                                                                        operator: '+',
+                                                                        left: {
+                                                                            type: 'Identifier',
+                                                                            name: 'a'
+                                                                        },
+                                                                        right: {
+                                                                            type: 'Identifier',
+                                                                            name: 'b'
+                                                                        }
+                                                                    },
+                                                                    right: {
+                                                                        type: 'Identifier',
+                                                                        name: 'factor'
+                                                                    }
+                                                                }
                                                             }
+                                                        ],
+                                                        bound: false,
+                                                        name: {
+                                                            type: 'Identifier',
+                                                            name: 'sum'
+                                                        },
+                                                        scope: {
+                                                            type: 'Identifier',
+                                                            name: '_ps'
                                                         }
-                                                    }
-                                                ],
-                                                bound: false,
-                                                name: {
-                                                    type: 'Identifier',
-                                                    name: 'sum'
-                                                }
-                                            }, {
-                                                this: this,
-                                                _ref3: _ref3,
-                                                object: object,
-                                                ion: ion,
-                                                _ref4: _ref4,
-                                                templates: templates,
-                                                _ref5: _ref5
-                                            });
-                                        })
+                                                    }, {
+                                                        this: this,
+                                                        _ref3: _ref3,
+                                                        _ps: _ps,
+                                                        object: object,
+                                                        ion: ion,
+                                                        _ref4: _ref4,
+                                                        templates: templates,
+                                                        _ref5: _ref5
+                                                    }, _ps);
+                                                });
+                                            }
+                                        }
                                     }],
                                 kind: 'let'
                             },
@@ -953,8 +1141,36 @@ var templates = [
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'one'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 88,
+                                                    column: 27,
+                                                    fixed: true,
+                                                    source: 'ion/test/reactiveTemplates.ion'
+                                                },
+                                                end: {
+                                                    line: 88,
+                                                    column: 37,
+                                                    fixed: true,
+                                                    source: 'ion/test/reactiveTemplates.ion'
+                                                }
                                             }
-                                        }]
+                                        }],
+                                    loc: {
+                                        start: {
+                                            line: 88,
+                                            column: 23,
+                                            fixed: true,
+                                            source: 'ion/test/reactiveTemplates.ion'
+                                        },
+                                        end: {
+                                            line: 88,
+                                            column: 38,
+                                            fixed: true,
+                                            source: 'ion/test/reactiveTemplates.ion'
+                                        }
+                                    }
                                 }
                             }
                         ],
@@ -966,7 +1182,7 @@ var templates = [
                         _ref4: _ref4,
                         templates: templates,
                         _ref5: _ref5
-                    });
+                    }, null);
                 });
             }(),
             {
@@ -978,7 +1194,7 @@ var templates = [
                 }
             },
             { one: { deep: { a: 2 } } },
-            4
+            8
         ],
         [
             'literal objects',
@@ -1025,7 +1241,7 @@ var templates = [
                     _ref4: _ref4,
                     templates: templates,
                     _ref5: _ref5
-                });
+                }, null);
             }),
             {},
             {},
@@ -1104,7 +1320,21 @@ var templates = [
                                                                             type: 'Identifier',
                                                                             name: 'nextId'
                                                                         },
-                                                                        arguments: []
+                                                                        arguments: [],
+                                                                        loc: {
+                                                                            start: {
+                                                                                line: 128,
+                                                                                column: 30,
+                                                                                fixed: true,
+                                                                                source: 'ion/test/reactiveTemplates.ion'
+                                                                            },
+                                                                            end: {
+                                                                                line: 128,
+                                                                                column: 38,
+                                                                                fixed: true,
+                                                                                source: 'ion/test/reactiveTemplates.ion'
+                                                                            }
+                                                                        }
                                                                     },
                                                                     kind: 'init'
                                                                 },
@@ -1153,7 +1383,7 @@ var templates = [
                         _ref4: _ref4,
                         templates: templates,
                         _ref5: _ref5
-                    });
+                    }, null);
                 }),
                 [
                     alpha,
@@ -1245,7 +1475,21 @@ var templates = [
                                                                             type: 'Identifier',
                                                                             name: 'nextId'
                                                                         },
-                                                                        arguments: []
+                                                                        arguments: [],
+                                                                        loc: {
+                                                                            start: {
+                                                                                line: 142,
+                                                                                column: 30,
+                                                                                fixed: true,
+                                                                                source: 'ion/test/reactiveTemplates.ion'
+                                                                            },
+                                                                            end: {
+                                                                                line: 142,
+                                                                                column: 38,
+                                                                                fixed: true,
+                                                                                source: 'ion/test/reactiveTemplates.ion'
+                                                                            }
+                                                                        }
                                                                     },
                                                                     kind: 'init'
                                                                 },
@@ -1291,7 +1535,7 @@ var templates = [
                         _ref4: _ref4,
                         templates: templates,
                         _ref5: _ref5
-                    });
+                    }, null);
                 }),
                 {
                     alpha: 1,
@@ -1361,4 +1605,4 @@ module.exports = exports = { test: _ref5 };
     _ion_test_reactiveTemplates_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./reactiveTemplates.map
+//# sourceMappingURL=./reactiveTemplates.map

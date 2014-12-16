@@ -17,4 +17,4 @@ require('./Array');
     _ion_es6_index_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./index.map
+//# sourceMappingURL=./index.map

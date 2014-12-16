@@ -1,5 +1,6 @@
 void (function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
-var ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal');
+var ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal'), noop = function () {
+    };
 var Context = ion.defineClass({
         name: 'Context',
         constructor: function Context(parent, output) {
@@ -7,6 +8,8 @@ var Context = ion.defineClass({
             this.parent = parent;
             this.variables = {};
             this.root = (this.parent != null ? this.parent.root : void 0) != null ? this.parent.root : this;
+            this._watched = {};
+            this._runtimes = {};
         },
         properties: {
             newContext: function (output) {
@@ -16,23 +19,22 @@ var Context = ion.defineClass({
             },
             createRuntime: function (node) {
                 return Factory.createRuntime(this, node);
+                if (!(node != null)) {
+                    return null;
+                }
+                var key = Factory.toCode(node);
+                var runtime = this._runtimes[key];
+                if (!(runtime != null)) {
+                    runtime = this._runtimes[key] = Factory.createRuntime(this, node);
+                }
+                return runtime;
             },
             get: function (name) {
                 var variable = this.getVariable(name);
                 if (!(variable != null)) {
                     throw new Error('Variable not found: \'' + name + '\'');
                 }
-                var value = variable.value;
-                if (value === void 0) {
-                    var watcher = function (a) {
-                        if (a !== void 0) {
-                            value = a;
-                        }
-                    };
-                    variable.watch(watcher);
-                    variable.unwatch(watcher);
-                }
-                return value;
+                return variable.value;
             },
             getVariable: function (name) {
                 var context = this, value;
@@ -62,6 +64,7 @@ var Context = ion.defineClass({
             },
             setVariableExpression: function (name, expression) {
                 if (name != null) {
+                    expression.watch(noop);
                     return this.variables[name] = expression;
                 }
             }
@@ -79,4 +82,4 @@ module.exports = exports = Context;
     _ion_runtime_Context_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Context.map
+//# sourceMappingURL=./Context.map

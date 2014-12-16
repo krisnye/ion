@@ -14,6 +14,7 @@ module.exports = class ConditionalExpression extends DynamicExpression
                         @testValue = value
                         if value
                             @alternateExpression?.unwatch(@alternateWatcher)
+                            @alternateExpression = null
                             @consequentExpression ?= @context.createRuntime(@consequent)
                             @consequentExpression.watch(
                                 @consequentWatcher ?= (value) =>
@@ -22,6 +23,7 @@ module.exports = class ConditionalExpression extends DynamicExpression
                             )
                         else
                             @consequentExpression?.unwatch(@consequentWatcher)
+                            @consequentExpression = null
                             @alternateExpression ?= @context.createRuntime(@alternate)
                             @alternateExpression.watch(
                                 @alternateWatcher ?= (value) =>

@@ -12,7 +12,8 @@ tests = {
   "(foo: bar)\n    x: 1": {
     line: 1,
     column: 2
-  }
+  },
+  "let foo = bar(\n    1\n    2\n)\n.toString(\n    \"12\"\n)\n.split(' ')": "'use strict';\nvar foo = bar(1, 2).toString('12').split(' ');"
 };
 
 if (global.window != null) {
@@ -39,7 +40,8 @@ exports.test = function() {
       }, options)), null, '  '));
       console.log('---------------------------------------------------');
       console.log(index.compile(input, ion.patch({
-        loc: true
+        loc: true,
+        source: 'ionCompilerES5.js'
       }, options)));
     } else if (typeof expected === 'object') {
       error = null;

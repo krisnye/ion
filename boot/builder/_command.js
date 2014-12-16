@@ -5,7 +5,7 @@ if (require.main !== module) {
 }
 var args = process.argv.slice(2);
 if (args.length === 0 || args[0] === '--help') {
-    console.log('Usage: ion -c | -w | file-to-run\n  -c   compiles the local module defined in package.json\r\n  -w   compiles the local module defined in package.json and watch');
+    console.log('Usage: ion -c | -w | file-to-run\n  -c   compiles the local module defined in package.json\n  -w   compiles the local module defined in package.json and watch');
     return;
 }
 var ModuleBuilder = require('../builder/ModuleBuilder');
@@ -29,4 +29,4 @@ if (args[0] === '-c') {
         eval(js);
     }
 }
-//@ sourceMappingURL=./command.map
+//# sourceMappingURL=./_command.map

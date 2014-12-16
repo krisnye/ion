@@ -15,12 +15,15 @@ class Factory
                 properties.factory = @
                 let type = import @runtime
                 return new type(properties)
+        canCache:
+            writable: true
+            value: (ast) -> false
         toCode:
             writable: true
             value: (ast) ->
                 if ast.type is 'BinaryExpression'
                     return toCode(ast.left) + ast.operator + toCode(ast.right)
-                return "({{ast.type}}?)"
+                return "({{JSON.stringify(ast)}})"
 
 const lookup =
     type:
@@ -31,6 +34,7 @@ const lookup =
             toCode: (ast) -> 'this'
         Identifier: new Factory
             createRuntime: (context, ast) -> context.getVariable(ast.name)
+            canCache: (ast) -> true
             toCode: (ast) -> ast.name
         Function: new Factory
             createRuntime: (context, ast) ->
@@ -42,6 +46,7 @@ const lookup =
             runtime: './Template'
         Literal: new Factory
             runtime: './Literal'
+            canCache: (ast) -> true
             toCode: (ast) -> JSON.stringify(ast.value)
         Property: new Factory
             runtime: './Property'
@@ -63,6 +68,7 @@ const lookup =
             runtime: './ForInOfStatement'
         MemberExpression: new Factory
             runtime: './MemberExpression'
+            canCache: (ast) -> canCache(ast.object) and canCache(ast.property)
             toCode: (ast) ->
                 if ast.computed
                     return "{{toCode(ast.object)}}[{{toCode(ast.property)}}]"
@@ -140,7 +146,23 @@ const getFactory(ast, step = lookup) ->
     return null
 
 export const
-    toCode = (ast) -> getFactory(ast).toCode(ast)
+    canCache = (ast) ->
+        if ast?
+            let factory = getFactory(ast)
+            if factory?
+                return factory.canCache(ast)
+        return false
+    toCode = (ast) ->
+        if ast?
+            let code = ast._toCode
+            if not code?
+                let factory = getFactory(ast)
+                if factory?
+                    code = factory.toCode(ast)
+                if code? and typeof ast is 'object'
+                    Object.defineProperty(ast, '_toCode', {value:code})
+            return code
+        return JSON.stringify(ast)
     createRuntime = (context, ast) ->
         if typeof ast?.type isnt 'string'
             ast =

@@ -15,6 +15,15 @@ var Factory = ion.defineClass({
                     var type = require(this.runtime);
                     return new type(properties);
                 }
+            },
+            toCode: {
+                writable: true,
+                value: function (ast) {
+                    if (ast.type === 'BinaryExpression') {
+                        return toCode(ast.left) + ast.operator + toCode(ast.right);
+                    }
+                    return '(' + JSON.stringify(ast) + ')';
+                }
             }
         }
     });
@@ -25,11 +34,17 @@ var lookup = {
             ThisExpression: ion.patch(new Factory(), {
                 createRuntime: function (context, ast) {
                     return context.getVariable('this');
+                },
+                toCode: function (ast) {
+                    return 'this';
                 }
             }),
             Identifier: ion.patch(new Factory(), {
                 createRuntime: function (context, ast) {
                     return context.getVariable(ast.name);
+                },
+                toCode: function (ast) {
+                    return ast.name;
                 }
             }),
             Function: ion.patch(new Factory(), {
@@ -42,7 +57,12 @@ var lookup = {
                 }
             }),
             Template: ion.patch(new Factory(), { runtime: './Template' }),
-            Literal: ion.patch(new Factory(), { runtime: './Literal' }),
+            Literal: ion.patch(new Factory(), {
+                runtime: './Literal',
+                toCode: function (ast) {
+                    return JSON.stringify(ast.value);
+                }
+            }),
             Property: ion.patch(new Factory(), { runtime: './Property' }),
             IfStatement: ion.patch(new Factory(), { runtime: './IfStatement' }),
             BlockStatement: ion.patch(new Factory(), { runtime: './BlockStatement' }),
@@ -52,7 +72,16 @@ var lookup = {
             ExpressionStatement: ion.patch(new Factory(), { runtime: './ExpressionStatement' }),
             ForOfStatement: ion.patch(new Factory(), { runtime: './ForInOfStatement' }),
             ForInStatement: ion.patch(new Factory(), { runtime: './ForInOfStatement' }),
-            MemberExpression: ion.patch(new Factory(), { runtime: './MemberExpression' }),
+            MemberExpression: ion.patch(new Factory(), {
+                runtime: './MemberExpression',
+                toCode: function (ast) {
+                    if (ast.computed) {
+                        return '' + toCode(ast.object) + '[' + toCode(ast.property) + ']';
+                    } else {
+                        return '' + toCode(ast.object) + '.' + toCode(ast.property);
+                    }
+                }
+            }),
             CallExpression: ion.patch(new Factory(), { runtime: './CallExpression' }),
             NewExpression: ion.patch(new Factory(), { runtime: './CallExpression' }),
             UnaryExpression: {
@@ -94,11 +123,7 @@ var lookup = {
                     })
                 }
             },
-            ConditionalExpression: ion.patch(new Factory(), {
-                evaluate: function (test, consequent, alternate) {
-                    return test ? consequent : alternate;
-                }
-            }),
+            ConditionalExpression: ion.patch(new Factory(), { runtime: './ConditionalExpression' }),
             BinaryExpression: {
                 operator: {
                     '*': ion.patch(new Factory(), {
@@ -206,7 +231,21 @@ function getFactory(ast, step) {
     }
     return null;
 }
-var createRuntime = exports.createRuntime = function (context, ast) {
+var toCode = exports.toCode = function (ast) {
+        var code = ast._toCode;
+        if (!(code != null)) {
+            var factory = getFactory(ast);
+            if (factory != null) {
+                code = factory.toCode(ast);
+            } else {
+                code = JSON.stringify(ast);
+            }
+            if (typeof ast === 'object') {
+                Object.defineProperty(ast, '_toCode', { value: code });
+            }
+        }
+        return code;
+    }, createRuntime = exports.createRuntime = function (context, ast) {
         if (typeof (ast != null ? ast.type : void 0) !== 'string') {
             ast = {
                 type: 'Literal',
@@ -247,4 +286,4 @@ var createRuntime = exports.createRuntime = function (context, ast) {
     _ion_runtime_Factory_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Factory.map
+//# sourceMappingURL=./Factory.map

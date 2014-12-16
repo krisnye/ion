@@ -180,7 +180,7 @@ module.exports = exports = {
       ionCompiler = require('../compiler');
       input = source.read();
       _ref = ionCompiler.compileWithSourceMap(input, {
-        id: filename,
+        source: moduleId + ".ion",
         sourceMap: filename.split(/[\/\\]/).pop()
       }), source = _ref[0], map = _ref[1];
       source = addBrowserShim(source, moduleId);

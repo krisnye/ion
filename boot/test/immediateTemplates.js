@@ -67,7 +67,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             3
@@ -114,7 +114,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             {
@@ -158,7 +158,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             [
@@ -285,7 +285,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             [
@@ -403,7 +403,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             [
@@ -545,7 +545,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             [
@@ -611,11 +611,41 @@ var templates = [
                                     property: {
                                         type: 'Identifier',
                                         name: 'a'
+                                    },
+                                    existential: true,
+                                    loc: {
+                                        start: {
+                                            line: 54,
+                                            column: 19,
+                                            fixed: true,
+                                            source: 'ion/test/immediateTemplates.ion'
+                                        },
+                                        end: {
+                                            line: 54,
+                                            column: 28,
+                                            fixed: true,
+                                            source: 'ion/test/immediateTemplates.ion'
+                                        }
                                     }
                                 },
                                 property: {
                                     type: 'Identifier',
                                     name: 'b'
+                                },
+                                existential: true,
+                                loc: {
+                                    start: {
+                                        line: 54,
+                                        column: 19,
+                                        fixed: true,
+                                        source: 'ion/test/immediateTemplates.ion'
+                                    },
+                                    end: {
+                                        line: 54,
+                                        column: 31,
+                                        fixed: true,
+                                        source: 'ion/test/immediateTemplates.ion'
+                                    }
                                 }
                             }
                         }
@@ -626,7 +656,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             1
@@ -659,7 +689,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             2
@@ -700,7 +730,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             2
@@ -771,7 +801,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             [
@@ -797,6 +827,20 @@ var templates = [
                                     property: {
                                         type: 'Identifier',
                                         name: 'min'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 73,
+                                            column: 20,
+                                            fixed: true,
+                                            source: 'ion/test/immediateTemplates.ion'
+                                        },
+                                        end: {
+                                            line: 73,
+                                            column: 28,
+                                            fixed: true,
+                                            source: 'ion/test/immediateTemplates.ion'
+                                        }
                                     }
                                 },
                                 arguments: [
@@ -808,7 +852,21 @@ var templates = [
                                         type: 'Literal',
                                         value: 2
                                     }
-                                ]
+                                ],
+                                loc: {
+                                    start: {
+                                        line: 73,
+                                        column: 20,
+                                        fixed: true,
+                                        source: 'ion/test/immediateTemplates.ion'
+                                    },
+                                    end: {
+                                        line: 73,
+                                        column: 34,
+                                        fixed: true,
+                                        source: 'ion/test/immediateTemplates.ion'
+                                    }
+                                }
                             }
                         }],
                     bound: false
@@ -817,7 +875,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             1
@@ -843,11 +901,39 @@ var templates = [
                                         property: {
                                             type: 'Identifier',
                                             name: 'min'
+                                        },
+                                        loc: {
+                                            start: {
+                                                line: 77,
+                                                column: 20,
+                                                fixed: true,
+                                                source: 'ion/test/immediateTemplates.ion'
+                                            },
+                                            end: {
+                                                line: 77,
+                                                column: 28,
+                                                fixed: true,
+                                                source: 'ion/test/immediateTemplates.ion'
+                                            }
                                         }
                                     },
                                     property: {
                                         type: 'Identifier',
                                         name: 'call'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 77,
+                                            column: 20,
+                                            fixed: true,
+                                            source: 'ion/test/immediateTemplates.ion'
+                                        },
+                                        end: {
+                                            line: 77,
+                                            column: 33,
+                                            fixed: true,
+                                            source: 'ion/test/immediateTemplates.ion'
+                                        }
                                     }
                                 },
                                 arguments: [
@@ -863,7 +949,21 @@ var templates = [
                                         type: 'Literal',
                                         value: 2
                                     }
-                                ]
+                                ],
+                                loc: {
+                                    start: {
+                                        line: 77,
+                                        column: 20,
+                                        fixed: true,
+                                        source: 'ion/test/immediateTemplates.ion'
+                                    },
+                                    end: {
+                                        line: 77,
+                                        column: 45,
+                                        fixed: true,
+                                        source: 'ion/test/immediateTemplates.ion'
+                                    }
+                                }
                             }
                         }],
                     bound: false
@@ -872,7 +972,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             1
@@ -911,7 +1011,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             new Date(2011, 10, 5)
@@ -933,7 +1033,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             /foo/
@@ -1063,7 +1163,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             {
@@ -1150,7 +1250,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             [
@@ -1232,7 +1332,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [{
                     a: 1,
@@ -1288,7 +1388,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [function () {
                     this.position = {
@@ -1335,6 +1435,20 @@ var templates = [
                                                 property: {
                                                     type: 'Identifier',
                                                     name: 'a'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 119,
+                                                        column: 19,
+                                                        fixed: true,
+                                                        source: 'ion/test/immediateTemplates.ion'
+                                                    },
+                                                    end: {
+                                                        line: 119,
+                                                        column: 26,
+                                                        fixed: true,
+                                                        source: 'ion/test/immediateTemplates.ion'
+                                                    }
                                                 }
                                             },
                                             right: {
@@ -1347,6 +1461,20 @@ var templates = [
                                                 property: {
                                                     type: 'Identifier',
                                                     name: 'b'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 119,
+                                                        column: 29,
+                                                        fixed: true,
+                                                        source: 'ion/test/immediateTemplates.ion'
+                                                    },
+                                                    end: {
+                                                        line: 119,
+                                                        column: 36,
+                                                        fixed: true,
+                                                        source: 'ion/test/immediateTemplates.ion'
+                                                    }
                                                 }
                                             }
                                         },
@@ -1371,7 +1499,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [
                 {
@@ -1405,6 +1533,20 @@ var templates = [
                                 property: {
                                     type: 'Identifier',
                                     name: 'patch'
+                                },
+                                loc: {
+                                    start: {
+                                        line: 126,
+                                        column: 20,
+                                        fixed: true,
+                                        source: 'ion/test/immediateTemplates.ion'
+                                    },
+                                    end: {
+                                        line: 126,
+                                        column: 29,
+                                        fixed: true,
+                                        source: 'ion/test/immediateTemplates.ion'
+                                    }
                                 }
                             }
                         }],
@@ -1414,7 +1556,7 @@ var templates = [
                     ion: ion,
                     templates: templates,
                     test: test
-                });
+                }, null);
             }),
             [],
             ion.patch
@@ -1457,4 +1599,4 @@ var test = exports.test = function () {
     _ion_test_immediateTemplates_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./immediateTemplates.map
+//# sourceMappingURL=./immediateTemplates.map

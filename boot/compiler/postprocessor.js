@@ -507,7 +507,7 @@ existentialExpression = function(node, context) {
       right: nullExpression
     });
   }
-  if (node.type === 'MemberExpression' || node.type === 'CallExpression') {
+  if (node.type === 'MemberExpression' || node.type === 'CallExpression' && !context.reactive) {
     getExistentialDescendantObject = function(check) {
       var result, _ref1;
       result = null;
@@ -1048,7 +1048,7 @@ checkVariableDeclarations = {
       key = context.key();
       parent = context.parentNode();
       if (!(parent.type === 'MemberExpression' && key === 'property' || parent.type === 'Property' && key === 'key')) {
-        return ((_base = context.scope()).usage != null ? (_base = context.scope()).usage : _base.usage = {})[node.name] = node;
+        return ((_base = context.scope()).usage != null ? _base.usage : _base.usage = {})[node.name] = node;
       }
     }
   },
@@ -1123,7 +1123,7 @@ namedFunctionsAndNewArguments = function(node, context) {
   }
   if (node.type === 'Property' && node.value.type === 'FunctionExpression' && node.key.type === 'Identifier') {
     if (node.key.name !== 'constructor') {
-      return (_base1 = node.value).name != null ? (_base1 = node.value).name : _base1.name = node.key;
+      return (_base1 = node.value).name != null ? _base1.name : _base1.name = node.key;
     }
   }
 };
@@ -1311,7 +1311,8 @@ validateTemplateNodes = function(node, context) {
 
 removeLocationInfo = function(node) {
   return traverse(node, function(node) {
-    if (node.loc != null) {
+    var _ref1;
+    if ((node.loc != null) && !((_ref1 = nodes[node != null ? node.type : void 0]) != null ? _ref1.location : void 0)) {
       delete node.loc;
     }
     return node;
@@ -1431,23 +1432,45 @@ wrapTemplateInnerFunctions = function(node, context) {
 };
 
 createTemplateFunctionClone = function(node, context) {
+  var inner, newNode, scope;
   if (isFunctionNode(node) && node.template === true) {
     delete node.template;
     node.type = 'Template';
     ensureIonVariable(context);
-    return context.replace({
+    newNode = {
       type: 'CallExpression',
       callee: getPathExpression('ion.template'),
       "arguments": [node],
       toLiteral: function() {
         return this;
       }
-    });
+    };
+    inner = context.parentReactive();
+    if (inner) {
+      scope = context.getNewInternalIdentifier('_ps');
+      node.scope = scope;
+      newNode = {
+        type: 'Function',
+        context: true,
+        value: {
+          type: 'FunctionExpression',
+          params: [scope],
+          toLiteral: function() {
+            return this;
+          },
+          body: block({
+            type: 'ReturnStatement',
+            argument: newNode
+          })
+        }
+      };
+    }
+    return context.replace(newNode);
   }
 };
 
 createTemplateRuntime = function(node, context) {
-  var args, id, key, name, params, referenceIds, template, value, variables, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
+  var args, id, key, name, newNode, params, referenceIds, template, value, variables, _i, _j, _len, _len1, _ref1, _ref2, _ref3, _ref4;
   if (node.type === 'Template') {
     template = removeLocationInfo(node);
     args = {
@@ -1492,7 +1515,7 @@ createTemplateRuntime = function(node, context) {
     delete template.id;
     delete template.params;
     delete template.defaults;
-    return context.replace({
+    newNode = {
       type: 'FunctionExpression',
       params: params,
       body: {
@@ -1503,12 +1526,13 @@ createTemplateRuntime = function(node, context) {
             argument: {
               type: 'CallExpression',
               callee: getPathExpression('ion.createRuntime'),
-              "arguments": [nodeToLiteral(template), args]
+              "arguments": [nodeToLiteral(template), args, (_ref4 = node.scope) != null ? _ref4 : nullExpression]
             }
           }
         ]
       }
-    });
+    };
+    return context.replace(newNode);
   }
 };
 

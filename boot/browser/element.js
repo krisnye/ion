@@ -1,4 +1,4 @@
-void (function(){var _ion_browser_elements_ = function(module,exports,require){'use strict';
+void (function(){var _ion_browser_element_ = function(module,exports,require){'use strict';
 var ion = require('../');
 var changeHandler = function change() {
     ion.checkForChanges();
@@ -16,6 +16,7 @@ var elements = [
         'a',
         'br',
         'img',
+        'p',
         'button',
         'caption',
         'fieldset',
@@ -55,22 +56,25 @@ var elements = [
         'label',
         'strong'
     ];
-var _ref = {};
+var elementFactory = function (name, attributes, change) {
+    var element = document.createElement(name);
+    if (change) {
+        ion.add(element, changeHandler);
+    }
+    if (attributes != null) {
+        for (var key in attributes) {
+            var value = attributes[key];
+            element.setAttribute(key, value);
+        }
+    }
+    return element;
+};
+var _ref = elementFactory;
 for (var _i = 0; _i < elements.length; _i++) {
     var name = elements[_i];
     _ref[name] = function (name) {
         return function (attributes) {
-            var element = document.createElement(name);
-            if (changeElements[name]) {
-                ion.add(element, changeHandler);
-            }
-            if (attributes != null) {
-                for (var key in attributes) {
-                    var value = attributes[key];
-                    element.setAttribute(key, value);
-                }
-            }
-            return element;
+            return elementFactory(name, attributes, changeElements[name]);
         };
     }(name);
 }
@@ -78,12 +82,12 @@ module.exports = exports = _ref;
   }
   if (typeof require === 'function') {
     if (require.register)
-      require.register('ion/browser/elements',_ion_browser_elements_);
+      require.register('ion/browser/element',_ion_browser_element_);
     else
-      _ion_browser_elements_.call(this, module, exports, require);
+      _ion_browser_element_.call(this, module, exports, require);
   }
   else {
-    _ion_browser_elements_.call(this);
+    _ion_browser_element_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./elements.map
+//# sourceMappingURL=./element.map

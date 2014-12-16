@@ -58,4 +58,4 @@ module.exports = exports = Object;
     _ion_Object_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Object.map
+//# sourceMappingURL=./Object.map

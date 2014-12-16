@@ -1,5 +1,7 @@
 void (function(){var _ion_runtime_MemberExpression_ = function(module,exports,require){'use strict';
-var ion = require('../'), DynamicExpression = require('./DynamicExpression');
+var ion = require('../'), _ref = require('./');
+var DynamicExpression = _ref.DynamicExpression;
+var Factory = _ref.Factory;
 var MemberExpression = ion.defineClass({
         name: 'MemberExpression',
         properties: {
@@ -7,12 +9,12 @@ var MemberExpression = ion.defineClass({
                 MemberExpression.super.prototype.activate.apply(this, arguments);
                 this.objectExpression = this.objectExpression != null ? this.objectExpression : this.context.createRuntime(this.object);
                 this.propertyExpression = this.propertyExpression != null ? this.propertyExpression : this.context.createRuntime(this.computed ? this.property : this.property.name);
-                this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : ion.bind(function (propertyValue) {
-                    this.propertyValue = propertyValue;
-                    this.updateValue();
-                }, this));
                 this.objectExpression.watch(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : ion.bind(function (objectValue) {
                     this.objectValue = objectValue;
+                    this.updateValue();
+                }, this));
+                this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : ion.bind(function (propertyValue) {
+                    this.propertyValue = propertyValue;
                     this.updateValue();
                 }, this));
             },
@@ -23,8 +25,12 @@ var MemberExpression = ion.defineClass({
             },
             updateValue: function () {
                 var value = void 0;
-                if (this.objectValue != null && this.propertyValue != null) {
-                    value = this.objectValue[this.propertyValue];
+                if (this.objectValue != null) {
+                    if (this.propertyValue != null) {
+                        value = this.objectValue[this.propertyValue];
+                    }
+                } else if (this.isActive && !this.existential && (this.loc != null ? this.loc.start != null ? this.loc.start.source : void 0 : void 0) != null && this.hasOwnProperty('objectValue') && this.hasOwnProperty('propertyValue')) {
+                    console.warn('Cannot read ' + Factory.toCode(this.property) + ' property of ' + this.objectValue + ' (' + Factory.toCode(this.object) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
                 }
                 this.setValue(value);
                 if (this.observedObject !== this.objectValue || this.observedProperty !== this.propertyValue) {
@@ -43,6 +49,8 @@ var MemberExpression = ion.defineClass({
                     this.objectValue[this.propertyValue] = value;
                 }
             }
+        },
+        test: function () {
         }
     }, DynamicExpression);
 module.exports = exports = MemberExpression;
@@ -57,4 +65,4 @@ module.exports = exports = MemberExpression;
     _ion_runtime_MemberExpression_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./MemberExpression.map
+//# sourceMappingURL=./MemberExpression.map

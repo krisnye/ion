@@ -221,4 +221,4 @@ if (!(Object.observe != null) && global.Map != null) {
     _ion_es6_Object_observe_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Object.observe.map
+//# sourceMappingURL=./Object.observe.map

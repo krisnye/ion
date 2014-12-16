@@ -28,17 +28,13 @@ var parse = exports.parse = function (content, options) {
         if (content.startsWith('#!')) {
             header = content.split(/\r|\n/)[0] + '\n';
         }
-        options.id = options.id != null ? options.id : 'unknown';
         options.loc = options.loc != null ? options.loc : true;
         options.target = options.target != null ? options.target : 'es5';
         var preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('./escodegen');
         var sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), sourceMap = null, preprocessed = result, sourceLocationsFixed = false;
         try {
             result = parser.parse(result, options);
-            if (options.loc) {
-                result.loc.source = content;
-            }
-            result = preprocessor.fixSourceLocations(result, sourceMapping);
+            result = preprocessor.fixSourceLocations(result, sourceMapping, options.source);
             sourceLocationsFixed = true;
             if (options.postprocess !== false) {
                 result = postprocessor.postprocess(result, options);
@@ -47,7 +43,7 @@ var parse = exports.parse = function (content, options) {
                     {
                         generateOptions.sourceMapWithCode = true;
                         if (!(global.window != null)) {
-                            generateOptions.sourceMap = options.sourceMap != null ? options.sourceMap : options.id;
+                            generateOptions.sourceMap = options.sourceMap != null ? options.sourceMap : options.source;
                         }
                         generateOptions.sourceContent = content;
                         generateOptions.verbatim = 'verbatim';
@@ -80,4 +76,4 @@ var parse = exports.parse = function (content, options) {
     _ion_compiler_index_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./index.map
+//# sourceMappingURL=./index.map

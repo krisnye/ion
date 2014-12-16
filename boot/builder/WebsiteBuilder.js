@@ -28,6 +28,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 property: {
                                     type: 'Identifier',
                                     name: 'patch'
+                                },
+                                loc: {
+                                    start: {
+                                        line: 20,
+                                        column: 22,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 20,
+                                        column: 31,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
                                 }
                             },
                             arguments: [
@@ -43,6 +57,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         property: {
                                             type: 'Identifier',
                                             name: 'parse'
+                                        },
+                                        loc: {
+                                            start: {
+                                                line: 20,
+                                                column: 32,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            },
+                                            end: {
+                                                line: 20,
+                                                column: 42,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            }
                                         }
                                     },
                                     arguments: [{
@@ -64,10 +92,52 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 property: {
                                                     type: 'Identifier',
                                                     name: 'read'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 20,
+                                                        column: 43,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 20,
+                                                        column: 72,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
                                                 }
                                             },
-                                            arguments: []
-                                        }]
+                                            arguments: [],
+                                            loc: {
+                                                start: {
+                                                    line: 20,
+                                                    column: 43,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 20,
+                                                    column: 74,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
+                                            }
+                                        }],
+                                    loc: {
+                                        start: {
+                                            line: 20,
+                                            column: 32,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        },
+                                        end: {
+                                            line: 20,
+                                            column: 75,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        }
+                                    }
                                 },
                                 {
                                     type: 'ConditionalExpression',
@@ -92,7 +162,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         properties: []
                                     }
                                 }
-                            ]
+                            ],
+                            loc: {
+                                start: {
+                                    line: 20,
+                                    column: 22,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 20,
+                                    column: 95,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            }
                         }
                     },
                     {
@@ -125,11 +209,39 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 property: {
                                                     type: 'Identifier',
                                                     name: 'directories'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 21,
+                                                        column: 30,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 21,
+                                                        column: 53,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
                                                 }
                                             },
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'src'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 21,
+                                                    column: 30,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 21,
+                                                    column: 57,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
                                             }
                                         },
                                         right: {
@@ -150,11 +262,39 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'directories'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 21,
+                                                    column: 30,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 21,
+                                                    column: 53,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
                                             }
                                         },
                                         property: {
                                             type: 'Identifier',
                                             name: 'src'
+                                        },
+                                        loc: {
+                                            start: {
+                                                line: 21,
+                                                column: 30,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            },
+                                            end: {
+                                                line: 21,
+                                                column: 57,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            }
                                         }
                                     },
                                     alternate: {
@@ -194,11 +334,39 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 property: {
                                                     type: 'Identifier',
                                                     name: 'directories'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 22,
+                                                        column: 31,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 22,
+                                                        column: 54,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
                                                 }
                                             },
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'www'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 22,
+                                                    column: 31,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 22,
+                                                    column: 58,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
                                             }
                                         },
                                         right: {
@@ -219,11 +387,39 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'directories'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 22,
+                                                    column: 31,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 22,
+                                                    column: 54,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
                                             }
                                         },
                                         property: {
                                             type: 'Identifier',
                                             name: 'www'
+                                        },
+                                        loc: {
+                                            start: {
+                                                line: 22,
+                                                column: 31,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            },
+                                            end: {
+                                                line: 22,
+                                                column: 58,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            }
                                         }
                                     },
                                     alternate: {
@@ -251,12 +447,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 property: {
                                     type: 'Identifier',
                                     name: 'getDirectory'
+                                },
+                                loc: {
+                                    start: {
+                                        line: 23,
+                                        column: 23,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 23,
+                                        column: 42,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
                                 }
                             },
                             arguments: [{
                                     type: 'Identifier',
                                     name: 'clientJsDir'
-                                }]
+                                }],
+                            loc: {
+                                start: {
+                                    line: 23,
+                                    column: 23,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 23,
+                                    column: 55,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            }
                         }
                     },
                     {
@@ -277,12 +501,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 property: {
                                     type: 'Identifier',
                                     name: 'getDirectory'
+                                },
+                                loc: {
+                                    start: {
+                                        line: 24,
+                                        column: 23,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 24,
+                                        column: 42,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
                                 }
                             },
                             arguments: [{
                                     type: 'Identifier',
                                     name: 'serverJsDir'
-                                }]
+                                }],
+                            loc: {
+                                start: {
+                                    line: 24,
+                                    column: 23,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 24,
+                                    column: 55,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            }
                         }
                     },
                     {
@@ -306,6 +558,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 property: {
                                     type: 'Identifier',
                                     name: 'concat'
+                                },
+                                loc: {
+                                    start: {
+                                        line: 25,
+                                        column: 20,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 25,
+                                        column: 43,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
                                 }
                             },
                             arguments: [{
@@ -326,16 +592,58 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 property: {
                                                     type: 'Identifier',
                                                     name: 'env'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 25,
+                                                        column: 44,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 25,
+                                                        column: 55,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
                                                 }
                                             },
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'NODE_PATH'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 25,
+                                                    column: 44,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 25,
+                                                    column: 65,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
                                             }
                                         },
                                         property: {
                                             type: 'Identifier',
                                             name: 'split'
+                                        },
+                                        loc: {
+                                            start: {
+                                                line: 25,
+                                                column: 44,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            },
+                                            end: {
+                                                line: 25,
+                                                column: 71,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            }
                                         }
                                     },
                                     arguments: [{
@@ -348,9 +656,51 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'delimiter'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 25,
+                                                    column: 72,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 25,
+                                                    column: 84,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
                                             }
-                                        }]
-                                }]
+                                        }],
+                                    loc: {
+                                        start: {
+                                            line: 25,
+                                            column: 44,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        },
+                                        end: {
+                                            line: 25,
+                                            column: 85,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        }
+                                    }
+                                }],
+                            loc: {
+                                start: {
+                                    line: 25,
+                                    column: 20,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 25,
+                                    column: 86,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            }
                         }
                     }
                 ],
@@ -390,6 +740,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                     property: {
                         type: 'Identifier',
                         name: 'exists'
+                    },
+                    loc: {
+                        start: {
+                            line: 30,
+                            column: 7,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        },
+                        end: {
+                            line: 30,
+                            column: 24,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        }
                     }
                 },
                 consequent: {
@@ -415,12 +779,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'getDirectory'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 31,
+                                                    column: 28,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 31,
+                                                    column: 46,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
                                             }
                                         },
                                         arguments: [{
                                                 type: 'Identifier',
                                                 name: 'serverJavaDir'
-                                            }]
+                                            }],
+                                        loc: {
+                                            start: {
+                                                line: 31,
+                                                column: 28,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            },
+                                            end: {
+                                                line: 31,
+                                                column: 61,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            }
+                                        }
                                     }
                                 }],
                             kind: 'let'
@@ -461,9 +853,37 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     property: {
                                         type: 'Identifier',
                                         name: 'search'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 32,
+                                            column: 27,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        },
+                                        end: {
+                                            line: 32,
+                                            column: 44,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        }
                                     }
                                 },
-                                arguments: []
+                                arguments: [],
+                                loc: {
+                                    start: {
+                                        line: 32,
+                                        column: 27,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 32,
+                                        column: 46,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
+                                }
                             },
                             body: {
                                 type: 'BlockStatement',
@@ -488,12 +908,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                         property: {
                                                             type: 'Identifier',
                                                             name: 'getFile'
+                                                        },
+                                                        loc: {
+                                                            start: {
+                                                                line: 33,
+                                                                column: 25,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            },
+                                                            end: {
+                                                                line: 33,
+                                                                column: 46,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            }
                                                         }
                                                     },
                                                     arguments: [{
                                                             type: 'Identifier',
                                                             name: 'key'
-                                                        }]
+                                                        }],
+                                                    loc: {
+                                                        start: {
+                                                            line: 33,
+                                                            column: 25,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 33,
+                                                            column: 51,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        }
+                                                    }
                                                 }
                                             }],
                                         kind: 'let'
@@ -513,6 +961,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 property: {
                                                     type: 'Identifier',
                                                     name: 'modified'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 34,
+                                                        column: 15,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 34,
+                                                        column: 30,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
                                                 }
                                             },
                                             right: {
@@ -525,6 +987,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 property: {
                                                     type: 'Identifier',
                                                     name: 'modified'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 34,
+                                                        column: 33,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 34,
+                                                        column: 48,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
                                                 }
                                             }
                                         },
@@ -544,12 +1020,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             property: {
                                                                 type: 'Identifier',
                                                                 name: 'copyFrom'
+                                                            },
+                                                            loc: {
+                                                                start: {
+                                                                    line: 35,
+                                                                    column: 16,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 35,
+                                                                    column: 31,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                }
                                                             }
                                                         },
                                                         arguments: [{
                                                                 type: 'Identifier',
                                                                 name: 'source'
-                                                            }]
+                                                            }],
+                                                        loc: {
+                                                            start: {
+                                                                line: 35,
+                                                                column: 16,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            },
+                                                            end: {
+                                                                line: 35,
+                                                                column: 39,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            }
+                                                        }
                                                     }
                                                 }]
                                         },
@@ -593,16 +1097,58 @@ module.exports = exports = ion.template(function (packagePatch) {
                             property: {
                                 type: 'Identifier',
                                 name: 'build'
+                            },
+                            loc: {
+                                start: {
+                                    line: 38,
+                                    column: 22,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 38,
+                                    column: 39,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
                             }
                         },
                         property: {
                             type: 'Identifier',
                             name: 'client'
+                        },
+                        loc: {
+                            start: {
+                                line: 38,
+                                column: 22,
+                                fixed: true,
+                                source: 'ion/builder/WebsiteBuilder.ion'
+                            },
+                            end: {
+                                line: 38,
+                                column: 46,
+                                fixed: true,
+                                source: 'ion/builder/WebsiteBuilder.ion'
+                            }
                         }
                     },
                     property: {
                         type: 'Identifier',
                         name: 'modules'
+                    },
+                    loc: {
+                        start: {
+                            line: 38,
+                            column: 22,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        },
+                        end: {
+                            line: 38,
+                            column: 54,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        }
                     }
                 },
                 body: {
@@ -654,6 +1200,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 property: {
                                                                     type: 'Identifier',
                                                                     name: 'join'
+                                                                },
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 40,
+                                                                        column: 42,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 40,
+                                                                        column: 49,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    }
                                                                 }
                                                             },
                                                             arguments: [
@@ -665,11 +1225,83 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     type: 'Identifier',
                                                                     name: 'moduleName'
                                                                 }
-                                                            ]
+                                                            ],
+                                                            loc: {
+                                                                start: {
+                                                                    line: 40,
+                                                                    column: 42,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 40,
+                                                                    column: 71,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                }
+                                                            }
                                                         }]
                                                 }
                                             }],
                                         kind: 'let'
+                                    },
+                                    {
+                                        type: 'ExpressionStatement',
+                                        expression: {
+                                            type: 'CallExpression',
+                                            callee: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'console'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'log'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 41,
+                                                        column: 12,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 41,
+                                                        column: 23,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
+                                                }
+                                            },
+                                            arguments: [{
+                                                    type: 'BinaryExpression',
+                                                    operator: '+',
+                                                    left: {
+                                                        type: 'Literal',
+                                                        value: 'checking client directory: '
+                                                    },
+                                                    right: {
+                                                        type: 'Identifier',
+                                                        name: 'directory'
+                                                    }
+                                                }],
+                                            loc: {
+                                                start: {
+                                                    line: 41,
+                                                    column: 12,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 41,
+                                                    column: 66,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
+                                            }
+                                        }
                                     },
                                     {
                                         type: 'ForInStatement',
@@ -707,6 +1339,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 property: {
                                                     type: 'Identifier',
                                                     name: 'search'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 42,
+                                                        column: 31,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 42,
+                                                        column: 47,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
                                                 }
                                             },
                                             arguments: [
@@ -730,14 +1376,25 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                         computed: false,
                                                         object: {
                                                             type: 'ArrayExpression',
-                                                            elements: [{
-                                                                    type: 'Literal',
-                                                                    value: 'node_modules'
-                                                                }]
+                                                            elements: []
                                                         },
                                                         property: {
                                                             type: 'Identifier',
                                                             name: 'concat'
+                                                        },
+                                                        loc: {
+                                                            start: {
+                                                                line: 42,
+                                                                column: 64,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            },
+                                                            end: {
+                                                                line: 42,
+                                                                column: 73,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            }
                                                         }
                                                     },
                                                     arguments: [{
@@ -756,20 +1413,90 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     property: {
                                                                         type: 'Identifier',
                                                                         name: 'build'
+                                                                    },
+                                                                    loc: {
+                                                                        start: {
+                                                                            line: 42,
+                                                                            column: 74,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                        },
+                                                                        end: {
+                                                                            line: 42,
+                                                                            column: 91,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                        }
                                                                     }
                                                                 },
                                                                 property: {
                                                                     type: 'Identifier',
                                                                     name: 'client'
+                                                                },
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 42,
+                                                                        column: 74,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 42,
+                                                                        column: 98,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    }
                                                                 }
                                                             },
                                                             property: {
                                                                 type: 'Identifier',
                                                                 name: 'exclude'
+                                                            },
+                                                            loc: {
+                                                                start: {
+                                                                    line: 42,
+                                                                    column: 74,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 42,
+                                                                    column: 106,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                }
                                                             }
-                                                        }]
+                                                        }],
+                                                    loc: {
+                                                        start: {
+                                                            line: 42,
+                                                            column: 64,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 42,
+                                                            column: 107,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        }
+                                                    }
                                                 }
-                                            ]
+                                            ],
+                                            loc: {
+                                                start: {
+                                                    line: 42,
+                                                    column: 31,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 42,
+                                                    column: 108,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
+                                            }
                                         },
                                         body: {
                                             type: 'BlockStatement',
@@ -787,6 +1514,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             property: {
                                                                 type: 'Identifier',
                                                                 name: 'write'
+                                                            },
+                                                            loc: {
+                                                                start: {
+                                                                    line: 43,
+                                                                    column: 16,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 43,
+                                                                    column: 34,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                }
                                                             }
                                                         },
                                                         arguments: [
@@ -805,11 +1546,39 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                         property: {
                                                                             type: 'Identifier',
                                                                             name: 'path'
+                                                                        },
+                                                                        loc: {
+                                                                            start: {
+                                                                                line: 43,
+                                                                                column: 35,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                                            },
+                                                                            end: {
+                                                                                line: 43,
+                                                                                column: 46,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                                            }
                                                                         }
                                                                     },
                                                                     property: {
                                                                         type: 'Identifier',
                                                                         name: 'substring'
+                                                                    },
+                                                                    loc: {
+                                                                        start: {
+                                                                            line: 43,
+                                                                            column: 35,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                        },
+                                                                        end: {
+                                                                            line: 43,
+                                                                            column: 56,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                        }
                                                                     }
                                                                 },
                                                                 arguments: [{
@@ -822,8 +1591,36 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                         property: {
                                                                             type: 'Identifier',
                                                                             name: 'length'
+                                                                        },
+                                                                        loc: {
+                                                                            start: {
+                                                                                line: 43,
+                                                                                column: 57,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                                            },
+                                                                            end: {
+                                                                                line: 43,
+                                                                                column: 72,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                                            }
                                                                         }
-                                                                    }]
+                                                                    }],
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 43,
+                                                                        column: 35,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 43,
+                                                                        column: 73,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    }
+                                                                }
                                                             },
                                                             {
                                                                 type: 'CallExpression',
@@ -837,11 +1634,53 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     property: {
                                                                         type: 'Identifier',
                                                                         name: 'read'
+                                                                    },
+                                                                    loc: {
+                                                                        start: {
+                                                                            line: 43,
+                                                                            column: 75,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                        },
+                                                                        end: {
+                                                                            line: 43,
+                                                                            column: 86,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                        }
                                                                     }
                                                                 },
-                                                                arguments: []
+                                                                arguments: [],
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 43,
+                                                                        column: 75,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 43,
+                                                                        column: 88,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    }
+                                                                }
                                                             }
-                                                        ]
+                                                        ],
+                                                        loc: {
+                                                            start: {
+                                                                line: 43,
+                                                                column: 16,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            },
+                                                            end: {
+                                                                line: 43,
+                                                                column: 89,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            }
+                                                        }
                                                     }
                                                 }]
                                         },
@@ -884,16 +1723,58 @@ module.exports = exports = ion.template(function (packagePatch) {
                             property: {
                                 type: 'Identifier',
                                 name: 'build'
+                            },
+                            loc: {
+                                start: {
+                                    line: 44,
+                                    column: 22,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 44,
+                                    column: 39,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
                             }
                         },
                         property: {
                             type: 'Identifier',
                             name: 'server'
+                        },
+                        loc: {
+                            start: {
+                                line: 44,
+                                column: 22,
+                                fixed: true,
+                                source: 'ion/builder/WebsiteBuilder.ion'
+                            },
+                            end: {
+                                line: 44,
+                                column: 46,
+                                fixed: true,
+                                source: 'ion/builder/WebsiteBuilder.ion'
+                            }
                         }
                     },
                     property: {
                         type: 'Identifier',
                         name: 'modules'
+                    },
+                    loc: {
+                        start: {
+                            line: 44,
+                            column: 22,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        },
+                        end: {
+                            line: 44,
+                            column: 54,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        }
                     }
                 },
                 body: {
@@ -945,6 +1826,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 property: {
                                                                     type: 'Identifier',
                                                                     name: 'join'
+                                                                },
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 46,
+                                                                        column: 42,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 46,
+                                                                        column: 49,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    }
                                                                 }
                                                             },
                                                             arguments: [
@@ -956,11 +1851,83 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     type: 'Identifier',
                                                                     name: 'moduleName'
                                                                 }
-                                                            ]
+                                                            ],
+                                                            loc: {
+                                                                start: {
+                                                                    line: 46,
+                                                                    column: 42,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 46,
+                                                                    column: 71,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                }
+                                                            }
                                                         }]
                                                 }
                                             }],
                                         kind: 'let'
+                                    },
+                                    {
+                                        type: 'ExpressionStatement',
+                                        expression: {
+                                            type: 'CallExpression',
+                                            callee: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'console'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'log'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 47,
+                                                        column: 12,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 47,
+                                                        column: 23,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
+                                                }
+                                            },
+                                            arguments: [{
+                                                    type: 'BinaryExpression',
+                                                    operator: '+',
+                                                    left: {
+                                                        type: 'Literal',
+                                                        value: 'checking server directory: '
+                                                    },
+                                                    right: {
+                                                        type: 'Identifier',
+                                                        name: 'directory'
+                                                    }
+                                                }],
+                                            loc: {
+                                                start: {
+                                                    line: 47,
+                                                    column: 12,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 47,
+                                                    column: 66,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
+                                            }
+                                        }
                                     },
                                     {
                                         type: 'ForInStatement',
@@ -998,6 +1965,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 property: {
                                                     type: 'Identifier',
                                                     name: 'search'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 48,
+                                                        column: 31,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 48,
+                                                        column: 47,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
                                                 }
                                             },
                                             arguments: [
@@ -1021,14 +2002,25 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                         computed: false,
                                                         object: {
                                                             type: 'ArrayExpression',
-                                                            elements: [{
-                                                                    type: 'Literal',
-                                                                    value: 'node_modules'
-                                                                }]
+                                                            elements: []
                                                         },
                                                         property: {
                                                             type: 'Identifier',
                                                             name: 'concat'
+                                                        },
+                                                        loc: {
+                                                            start: {
+                                                                line: 48,
+                                                                column: 64,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            },
+                                                            end: {
+                                                                line: 48,
+                                                                column: 73,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            }
                                                         }
                                                     },
                                                     arguments: [{
@@ -1047,20 +2039,90 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     property: {
                                                                         type: 'Identifier',
                                                                         name: 'build'
+                                                                    },
+                                                                    loc: {
+                                                                        start: {
+                                                                            line: 48,
+                                                                            column: 74,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                        },
+                                                                        end: {
+                                                                            line: 48,
+                                                                            column: 91,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                        }
                                                                     }
                                                                 },
                                                                 property: {
                                                                     type: 'Identifier',
                                                                     name: 'server'
+                                                                },
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 48,
+                                                                        column: 74,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 48,
+                                                                        column: 98,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    }
                                                                 }
                                                             },
                                                             property: {
                                                                 type: 'Identifier',
                                                                 name: 'exclude'
+                                                            },
+                                                            loc: {
+                                                                start: {
+                                                                    line: 48,
+                                                                    column: 74,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 48,
+                                                                    column: 106,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                }
                                                             }
-                                                        }]
+                                                        }],
+                                                    loc: {
+                                                        start: {
+                                                            line: 48,
+                                                            column: 64,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 48,
+                                                            column: 107,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        }
+                                                    }
                                                 }
-                                            ]
+                                            ],
+                                            loc: {
+                                                start: {
+                                                    line: 48,
+                                                    column: 31,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 48,
+                                                    column: 108,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
+                                            }
                                         },
                                         body: {
                                             type: 'BlockStatement',
@@ -1078,6 +2140,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             property: {
                                                                 type: 'Identifier',
                                                                 name: 'write'
+                                                            },
+                                                            loc: {
+                                                                start: {
+                                                                    line: 49,
+                                                                    column: 16,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 49,
+                                                                    column: 34,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                }
                                                             }
                                                         },
                                                         arguments: [
@@ -1096,11 +2172,39 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                         property: {
                                                                             type: 'Identifier',
                                                                             name: 'path'
+                                                                        },
+                                                                        loc: {
+                                                                            start: {
+                                                                                line: 49,
+                                                                                column: 35,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                                            },
+                                                                            end: {
+                                                                                line: 49,
+                                                                                column: 46,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                                            }
                                                                         }
                                                                     },
                                                                     property: {
                                                                         type: 'Identifier',
                                                                         name: 'substring'
+                                                                    },
+                                                                    loc: {
+                                                                        start: {
+                                                                            line: 49,
+                                                                            column: 35,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                        },
+                                                                        end: {
+                                                                            line: 49,
+                                                                            column: 56,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                        }
                                                                     }
                                                                 },
                                                                 arguments: [{
@@ -1113,8 +2217,36 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                         property: {
                                                                             type: 'Identifier',
                                                                             name: 'length'
+                                                                        },
+                                                                        loc: {
+                                                                            start: {
+                                                                                line: 49,
+                                                                                column: 57,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                                            },
+                                                                            end: {
+                                                                                line: 49,
+                                                                                column: 72,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                                            }
                                                                         }
-                                                                    }]
+                                                                    }],
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 49,
+                                                                        column: 35,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 49,
+                                                                        column: 73,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    }
+                                                                }
                                                             },
                                                             {
                                                                 type: 'CallExpression',
@@ -1128,11 +2260,53 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     property: {
                                                                         type: 'Identifier',
                                                                         name: 'read'
+                                                                    },
+                                                                    loc: {
+                                                                        start: {
+                                                                            line: 49,
+                                                                            column: 75,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                        },
+                                                                        end: {
+                                                                            line: 49,
+                                                                            column: 86,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                        }
                                                                     }
                                                                 },
-                                                                arguments: []
+                                                                arguments: [],
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 49,
+                                                                        column: 75,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 49,
+                                                                        column: 88,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                    }
+                                                                }
                                                             }
-                                                        ]
+                                                        ],
+                                                        loc: {
+                                                            start: {
+                                                                line: 49,
+                                                                column: 16,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            },
+                                                            end: {
+                                                                line: 49,
+                                                                column: 89,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            }
+                                                        }
                                                     }
                                                 }]
                                         },
@@ -1248,16 +2422,58 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             property: {
                                                                 type: 'Identifier',
                                                                 name: 'build'
+                                                            },
+                                                            loc: {
+                                                                start: {
+                                                                    line: 57,
+                                                                    column: 21,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 57,
+                                                                    column: 38,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                }
                                                             }
                                                         },
                                                         property: {
                                                             type: 'Identifier',
                                                             name: 'client'
+                                                        },
+                                                        loc: {
+                                                            start: {
+                                                                line: 57,
+                                                                column: 21,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            },
+                                                            end: {
+                                                                line: 57,
+                                                                column: 45,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            }
                                                         }
                                                     },
                                                     property: {
                                                         type: 'Identifier',
                                                         name: 'exclude'
+                                                    },
+                                                    loc: {
+                                                        start: {
+                                                            line: 57,
+                                                            column: 21,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 57,
+                                                            column: 53,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        }
                                                     }
                                                 },
                                                 kind: 'init'
@@ -1279,7 +2495,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     kind: 'init'
                                 }
                             ]
-                        }]
+                        }],
+                    loc: {
+                        start: {
+                            line: 52,
+                            column: 4,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        },
+                        end: {
+                            line: 59,
+                            column: 5,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        }
+                    }
                 }
             },
             {
@@ -1385,16 +2615,58 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             property: {
                                                                 type: 'Identifier',
                                                                 name: 'build'
+                                                            },
+                                                            loc: {
+                                                                start: {
+                                                                    line: 67,
+                                                                    column: 21,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 67,
+                                                                    column: 38,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                }
                                                             }
                                                         },
                                                         property: {
                                                             type: 'Identifier',
                                                             name: 'server'
+                                                        },
+                                                        loc: {
+                                                            start: {
+                                                                line: 67,
+                                                                column: 21,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            },
+                                                            end: {
+                                                                line: 67,
+                                                                column: 45,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            }
                                                         }
                                                     },
                                                     property: {
                                                         type: 'Identifier',
                                                         name: 'exclude'
+                                                    },
+                                                    loc: {
+                                                        start: {
+                                                            line: 67,
+                                                            column: 21,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 67,
+                                                            column: 53,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        }
                                                     }
                                                 },
                                                 kind: 'init'
@@ -1416,7 +2688,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     kind: 'init'
                                 }
                             ]
-                        }]
+                        }],
+                    loc: {
+                        start: {
+                            line: 62,
+                            column: 4,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        },
+                        end: {
+                            line: 69,
+                            column: 5,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        }
+                    }
                 }
             },
             {
@@ -1455,6 +2741,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                         property: {
                             type: 'Identifier',
                             name: 'search'
+                        },
+                        loc: {
+                            start: {
+                                line: 72,
+                                column: 22,
+                                fixed: true,
+                                source: 'ion/builder/WebsiteBuilder.ion'
+                            },
+                            end: {
+                                line: 72,
+                                column: 34,
+                                fixed: true,
+                                source: 'ion/builder/WebsiteBuilder.ion'
+                            }
                         }
                     },
                     arguments: [
@@ -1495,7 +2795,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 }
                             ]
                         }
-                    ]
+                    ],
+                    loc: {
+                        start: {
+                            line: 72,
+                            column: 22,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        },
+                        end: {
+                            line: 72,
+                            column: 110,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        }
+                    }
                 },
                 body: {
                     type: 'BlockStatement',
@@ -1511,6 +2825,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 property: {
                                     type: 'Identifier',
                                     name: 'isFile'
+                                },
+                                loc: {
+                                    start: {
+                                        line: 73,
+                                        column: 11,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 73,
+                                        column: 22,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
                                 }
                             },
                             consequent: {
@@ -1529,6 +2857,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 property: {
                                                     type: 'Identifier',
                                                     name: 'write'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 74,
+                                                        column: 12,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 74,
+                                                        column: 24,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
                                                 }
                                             },
                                             arguments: [
@@ -1548,18 +2890,60 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                         property: {
                                                             type: 'Identifier',
                                                             name: 'read'
+                                                        },
+                                                        loc: {
+                                                            start: {
+                                                                line: 74,
+                                                                column: 31,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            },
+                                                            end: {
+                                                                line: 74,
+                                                                column: 40,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            }
                                                         }
                                                     },
                                                     arguments: [{
                                                             type: 'Literal',
                                                             value: null
-                                                        }]
+                                                        }],
+                                                    loc: {
+                                                        start: {
+                                                            line: 74,
+                                                            column: 31,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 74,
+                                                            column: 46,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        }
+                                                    }
                                                 },
                                                 {
                                                     type: 'Literal',
                                                     value: null
                                                 }
-                                            ]
+                                            ],
+                                            loc: {
+                                                start: {
+                                                    line: 74,
+                                                    column: 12,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 74,
+                                                    column: 53,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
+                                            }
                                         }
                                     }]
                             },
@@ -1582,12 +2966,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     property: {
                                         type: 'Identifier',
                                         name: 'delete'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 76,
+                                            column: 8,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        },
+                                        end: {
+                                            line: 76,
+                                            column: 21,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        }
                                     }
                                 },
                                 arguments: [{
                                         type: 'Identifier',
                                         name: 'path'
-                                    }]
+                                    }],
+                                loc: {
+                                    start: {
+                                        line: 76,
+                                        column: 8,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 76,
+                                        column: 27,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
+                                }
                             }
                         }]
                 }
@@ -1628,6 +3040,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                         property: {
                             type: 'Identifier',
                             name: 'search'
+                        },
+                        loc: {
+                            start: {
+                                line: 79,
+                                column: 22,
+                                fixed: true,
+                                source: 'ion/builder/WebsiteBuilder.ion'
+                            },
+                            end: {
+                                line: 79,
+                                column: 34,
+                                fixed: true,
+                                source: 'ion/builder/WebsiteBuilder.ion'
+                            }
                         }
                     },
                     arguments: [
@@ -1639,7 +3065,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                             type: 'Literal',
                             value: 'js'
                         }
-                    ]
+                    ],
+                    loc: {
+                        start: {
+                            line: 79,
+                            column: 22,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        },
+                        end: {
+                            line: 79,
+                            column: 48,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        }
+                    }
                 },
                 body: {
                     type: 'BlockStatement',
@@ -1664,6 +3104,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'changeExtension'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 80,
+                                                    column: 25,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 80,
+                                                    column: 48,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
                                             }
                                         },
                                         arguments: [
@@ -1675,7 +3129,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 type: 'Literal',
                                                 value: '.js'
                                             }
-                                        ]
+                                        ],
+                                        loc: {
+                                            start: {
+                                                line: 80,
+                                                column: 25,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            },
+                                            end: {
+                                                line: 80,
+                                                column: 61,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            }
+                                        }
                                     }
                                 }],
                             kind: 'let'
@@ -1694,6 +3162,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     property: {
                                         type: 'Identifier',
                                         name: 'write'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 81,
+                                            column: 8,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        },
+                                        end: {
+                                            line: 81,
+                                            column: 20,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        }
                                     }
                                 },
                                 arguments: [
@@ -1713,14 +3195,56 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'compileIon'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 81,
+                                                    column: 33,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 81,
+                                                    column: 51,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
                                             }
                                         },
                                         arguments: [{
                                                 type: 'Identifier',
                                                 name: 'file'
-                                            }]
+                                            }],
+                                        loc: {
+                                            start: {
+                                                line: 81,
+                                                column: 33,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            },
+                                            end: {
+                                                line: 81,
+                                                column: 57,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            }
+                                        }
                                     }
-                                ]
+                                ],
+                                loc: {
+                                    start: {
+                                        line: 81,
+                                        column: 8,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 81,
+                                        column: 58,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
+                                }
                             }
                         }
                     ]
@@ -1741,12 +3265,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     property: {
                                         type: 'Identifier',
                                         name: 'delete'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 83,
+                                            column: 8,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        },
+                                        end: {
+                                            line: 83,
+                                            column: 21,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        }
                                     }
                                 },
                                 arguments: [{
                                         type: 'Identifier',
                                         name: 'targetPath'
-                                    }]
+                                    }],
+                                loc: {
+                                    start: {
+                                        line: 83,
+                                        column: 8,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 83,
+                                        column: 33,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
+                                }
                             }
                         }]
                 }
@@ -1771,12 +3323,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 property: {
                                     type: 'Identifier',
                                     name: 'getDirectory'
+                                },
+                                loc: {
+                                    start: {
+                                        line: 86,
+                                        column: 21,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 86,
+                                        column: 40,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
                                 }
                             },
                             arguments: [{
                                     type: 'Literal',
                                     value: 'WEB-INF/pages'
-                                }]
+                                }],
+                            loc: {
+                                start: {
+                                    line: 86,
+                                    column: 21,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 86,
+                                    column: 57,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            }
                         }
                     }],
                 kind: 'let'
@@ -1817,12 +3397,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                         property: {
                             type: 'Identifier',
                             name: 'search'
+                        },
+                        loc: {
+                            start: {
+                                line: 87,
+                                column: 22,
+                                fixed: true,
+                                source: 'ion/builder/WebsiteBuilder.ion'
+                            },
+                            end: {
+                                line: 87,
+                                column: 34,
+                                fixed: true,
+                                source: 'ion/builder/WebsiteBuilder.ion'
+                            }
                         }
                     },
                     arguments: [{
                             type: 'Literal',
                             value: '.ionpage'
-                        }]
+                        }],
+                    loc: {
+                        start: {
+                            line: 87,
+                            column: 22,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        },
+                        end: {
+                            line: 87,
+                            column: 46,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        }
+                    }
                 },
                 body: {
                     type: 'BlockStatement',
@@ -1847,6 +3455,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'changeExtension'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 88,
+                                                    column: 25,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 88,
+                                                    column: 48,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
                                             }
                                         },
                                         arguments: [
@@ -1858,7 +3480,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 type: 'Literal',
                                                 value: '.js'
                                             }
-                                        ]
+                                        ],
+                                        loc: {
+                                            start: {
+                                                line: 88,
+                                                column: 25,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            },
+                                            end: {
+                                                line: 88,
+                                                column: 61,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            }
+                                        }
                                     }
                                 }],
                             kind: 'let'
@@ -1877,6 +3513,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     property: {
                                         type: 'Identifier',
                                         name: 'write'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 89,
+                                            column: 8,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        },
+                                        end: {
+                                            line: 89,
+                                            column: 24,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        }
                                     }
                                 },
                                 arguments: [
@@ -1912,6 +3562,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             property: {
                                                                 type: 'Identifier',
                                                                 name: 'replace'
+                                                            },
+                                                            loc: {
+                                                                start: {
+                                                                    line: 89,
+                                                                    column: 50,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 89,
+                                                                    column: 62,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                }
                                                             }
                                                         },
                                                         arguments: [
@@ -1923,7 +3587,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 type: 'Literal',
                                                                 value: '_'
                                                             }
-                                                        ]
+                                                        ],
+                                                        loc: {
+                                                            start: {
+                                                                line: 89,
+                                                                column: 50,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            },
+                                                            end: {
+                                                                line: 89,
+                                                                column: 80,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            }
+                                                        }
                                                     }
                                                 },
                                                 right: {
@@ -1943,12 +3621,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                     property: {
                                                         type: 'Identifier',
                                                         name: 'compileIon'
+                                                    },
+                                                    loc: {
+                                                        start: {
+                                                            line: 89,
+                                                            column: 88,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 89,
+                                                            column: 106,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        }
                                                     }
                                                 },
                                                 arguments: [{
                                                         type: 'Identifier',
                                                         name: 'file'
-                                                    }]
+                                                    }],
+                                                loc: {
+                                                    start: {
+                                                        line: 89,
+                                                        column: 88,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 89,
+                                                        column: 112,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
+                                                }
                                             }
                                         },
                                         right: {
@@ -1956,7 +3662,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             value: ' })'
                                         }
                                     }
-                                ]
+                                ],
+                                loc: {
+                                    start: {
+                                        line: 89,
+                                        column: 8,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 89,
+                                        column: 119,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
+                                }
                             }
                         }
                     ]
@@ -1977,12 +3697,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     property: {
                                         type: 'Identifier',
                                         name: 'delete'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 91,
+                                            column: 8,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        },
+                                        end: {
+                                            line: 91,
+                                            column: 25,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        }
                                     }
                                 },
                                 arguments: [{
                                         type: 'Identifier',
                                         name: 'targetPath'
-                                    }]
+                                    }],
+                                loc: {
+                                    start: {
+                                        line: 91,
+                                        column: 8,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 91,
+                                        column: 37,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
+                                }
                             }
                         }]
                 }
@@ -2023,12 +3771,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                         property: {
                             type: 'Identifier',
                             name: 'search'
+                        },
+                        loc: {
+                            start: {
+                                line: 95,
+                                column: 22,
+                                fixed: true,
+                                source: 'ion/builder/WebsiteBuilder.ion'
+                            },
+                            end: {
+                                line: 95,
+                                column: 34,
+                                fixed: true,
+                                source: 'ion/builder/WebsiteBuilder.ion'
+                            }
                         }
                     },
                     arguments: [{
                             type: 'Literal',
                             value: '.coffeepage'
-                        }]
+                        }],
+                    loc: {
+                        start: {
+                            line: 95,
+                            column: 22,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        },
+                        end: {
+                            line: 95,
+                            column: 49,
+                            fixed: true,
+                            source: 'ion/builder/WebsiteBuilder.ion'
+                        }
+                    }
                 },
                 body: {
                     type: 'BlockStatement',
@@ -2053,6 +3829,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             property: {
                                                 type: 'Identifier',
                                                 name: 'changeExtension'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 96,
+                                                    column: 25,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 96,
+                                                    column: 48,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
                                             }
                                         },
                                         arguments: [
@@ -2064,7 +3854,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 type: 'Literal',
                                                 value: '.js'
                                             }
-                                        ]
+                                        ],
+                                        loc: {
+                                            start: {
+                                                line: 96,
+                                                column: 25,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            },
+                                            end: {
+                                                line: 96,
+                                                column: 61,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            }
+                                        }
                                     }
                                 }],
                             kind: 'let'
@@ -2083,6 +3887,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     property: {
                                         type: 'Identifier',
                                         name: 'write'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 97,
+                                            column: 8,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        },
+                                        end: {
+                                            line: 97,
+                                            column: 24,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        }
                                     }
                                 },
                                 arguments: [
@@ -2118,6 +3936,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             property: {
                                                                 type: 'Identifier',
                                                                 name: 'replace'
+                                                            },
+                                                            loc: {
+                                                                start: {
+                                                                    line: 97,
+                                                                    column: 50,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 97,
+                                                                    column: 62,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                                }
                                                             }
                                                         },
                                                         arguments: [
@@ -2129,7 +3961,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 type: 'Literal',
                                                                 value: '_'
                                                             }
-                                                        ]
+                                                        ],
+                                                        loc: {
+                                                            start: {
+                                                                line: 97,
+                                                                column: 50,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            },
+                                                            end: {
+                                                                line: 97,
+                                                                column: 80,
+                                                                fixed: true,
+                                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                                            }
+                                                        }
                                                     }
                                                 },
                                                 right: {
@@ -2149,12 +3995,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                     property: {
                                                         type: 'Identifier',
                                                         name: 'compileCoffeeScript'
+                                                    },
+                                                    loc: {
+                                                        start: {
+                                                            line: 97,
+                                                            column: 88,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 97,
+                                                            column: 115,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        }
                                                     }
                                                 },
                                                 arguments: [{
                                                         type: 'Identifier',
                                                         name: 'file'
-                                                    }]
+                                                    }],
+                                                loc: {
+                                                    start: {
+                                                        line: 97,
+                                                        column: 88,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 97,
+                                                        column: 121,
+                                                        fixed: true,
+                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                    }
+                                                }
                                             }
                                         },
                                         right: {
@@ -2162,7 +4036,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             value: ' })'
                                         }
                                     }
-                                ]
+                                ],
+                                loc: {
+                                    start: {
+                                        line: 97,
+                                        column: 8,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 97,
+                                        column: 128,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
+                                }
                             }
                         }
                     ]
@@ -2183,12 +4071,40 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     property: {
                                         type: 'Identifier',
                                         name: 'delete'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 99,
+                                            column: 8,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        },
+                                        end: {
+                                            line: 99,
+                                            column: 25,
+                                            fixed: true,
+                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                        }
                                     }
                                 },
                                 arguments: [{
                                         type: 'Identifier',
                                         name: 'targetPath'
-                                    }]
+                                    }],
+                                loc: {
+                                    start: {
+                                        line: 99,
+                                        column: 8,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    },
+                                    end: {
+                                        line: 99,
+                                        column: 37,
+                                        fixed: true,
+                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                    }
+                                }
                             }
                         }]
                 }
@@ -2209,7 +4125,7 @@ module.exports = exports = ion.template(function (packagePatch) {
         serverJavaDir: serverJavaDir,
         np: np,
         fs: fs
-    });
+    }, null);
 });
   }
   if (typeof require === 'function') {
@@ -2222,4 +4138,4 @@ module.exports = exports = ion.template(function (packagePatch) {
     _ion_builder_WebsiteBuilder_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./WebsiteBuilder.map
+//# sourceMappingURL=./WebsiteBuilder.map

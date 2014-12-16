@@ -106,4 +106,4 @@ var test = exports.test = function () {
     _ion_es6_Map_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Map.map
+//# sourceMappingURL=./Map.map

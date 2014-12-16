@@ -58,6 +58,27 @@ export const
             patch[key] = value
         return patch
     create = (type, args) -> variableArgConstructs[args.length](type, args)
+    setImmediate = do ->
+        if global.setImmediate?
+            return global.setImmediate
+        if global.document?
+            return do ->
+                let hiddenDiv = document.createElement("div")
+                let callbacks = []
+                new MutationObserver(
+                    (records) ->
+                        let cbList = callbacks
+                        callbacks = []
+                        for callback in cbList
+                            callback()
+                )
+                .observe(hiddenDiv, { attributes: true })
+            return setImmediate(callback) ->
+                if (callbacks.length is 0)
+                    hiddenDiv.setAttribute('yes', 'no')
+                callbacks.push(callback)
+        return (fn) ->
+            setTimeout(fn, 0)
     template = (fn, template) ->
         fn.template = template ? true
         return fn

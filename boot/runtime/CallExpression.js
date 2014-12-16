@@ -1,12 +1,18 @@
 void (function(){var _ion_runtime_CallExpression_ = function(module,exports,require){'use strict';
-var ion = require('../'), DynamicExpression = require('./DynamicExpression'), ArrayExpression = require('./ArrayExpression');
-var _ref = {};
+var ion = require('../'), _ref = require('./');
+var DynamicExpression = _ref.DynamicExpression;
+var ArrayExpression = _ref.ArrayExpression;
+var Factory = _ref.Factory;
+var _ref2 = {};
 {
-    _ref.args = null;
-    _ref.activate = function () {
+    _ref2.args = null;
+    _ref2.activate = function () {
         CallExpression.super.prototype.activate.apply(this, arguments);
         this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
         this.calleeExpression.watch(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : ion.bind(function (value) {
+            if (this.isActive && !(value != null) && !this.existential && (this.loc != null ? this.loc.start.source : void 0) != null) {
+                console.warn('Function is ' + value + ' (' + Factory.toCode(this.callee) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
+            }
             this.calleeValue = value;
             var thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
             if (thisArg !== this.thisArg) {
@@ -37,7 +43,7 @@ var _ref = {};
             this.evaluate();
         }, this));
     };
-    _ref.deactivate = function () {
+    _ref2.deactivate = function () {
         CallExpression.super.prototype.deactivate.apply(this, arguments);
         this.calleeExpression.unwatch(this.calleeWatcher);
         this.argumentExpressions.unwatch(this.argumentWatcher);
@@ -46,7 +52,7 @@ var _ref = {};
             delete this.template;
         }
     };
-    _ref._evaluateInternal = function () {
+    _ref2._evaluateInternal = function () {
         if (!(this.isActive && this.calleeValue != null && this.argumentsValue != null)) {
             return;
         }
@@ -67,7 +73,7 @@ var _ref = {};
         }
     };
     if (DEBUG) {
-        _ref.evaluate = function () {
+        _ref2.evaluate = function () {
             try {
                 this._evaluateInternal();
             } catch (e) {
@@ -75,14 +81,14 @@ var _ref = {};
             }
         };
     } else {
-        _ref.evaluate = function () {
+        _ref2.evaluate = function () {
             return this._evaluateInternal();
         };
     }
 }
 var CallExpression = ion.defineClass({
         name: 'CallExpression',
-        properties: _ref
+        properties: _ref2
     }, DynamicExpression);
 module.exports = CallExpression;
   }
@@ -96,4 +102,4 @@ module.exports = CallExpression;
     _ion_runtime_CallExpression_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./CallExpression.map
+//# sourceMappingURL=./CallExpression.map

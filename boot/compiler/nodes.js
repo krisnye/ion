@@ -1,6 +1,6 @@
 void (function(){var _ion_compiler_nodes_ = function(module,exports,require){'use strict';
 var ion = require('../');
-var BlockStatement = exports.BlockStatement = {
+var CallExpression = exports.CallExpression = { location: true }, MemberExpression = exports.MemberExpression = { location: true }, BlockStatement = exports.BlockStatement = {
         isBlock: true,
         newScope: true
     }, Program = exports.Program = {
@@ -34,4 +34,4 @@ var BlockStatement = exports.BlockStatement = {
     _ion_compiler_nodes_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./nodes.map
+//# sourceMappingURL=./nodes.map

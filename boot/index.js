@@ -92,12 +92,40 @@ var patch = exports.patch = function () {
         return patch;
     }(), create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
-    }, template = exports.template = function (fn, template) {
+    }, setImmediate = exports.setImmediate = function () {
+        if (global.setImmediate != null) {
+            return global.setImmediate;
+        }
+        if (global.document != null) {
+            return function () {
+                var hiddenDiv = document.createElement('div');
+                var callbacks = [];
+                var mo = new MutationObserver(function (records) {
+                        var cbList = callbacks;
+                        callbacks = [];
+                        for (var _i = 0; _i < cbList.length; _i++) {
+                            var callback = cbList[_i];
+                            callback();
+                        }
+                    });
+                mo.observe(hiddenDiv, { attributes: true });
+            }();
+            return function setImmediate(callback) {
+                if (callbacks.length === 0) {
+                    hiddenDiv.setAttribute('yes', 'no');
+                }
+                callbacks.push(callback);
+            };
+        }
+        return function (fn) {
+            setTimeout(fn, 0);
+        };
+    }(), template = exports.template = function (fn, template) {
         fn.template = template != null ? template : true;
         return fn;
-    }, createRuntime = exports.createRuntime = function (ast, args) {
+    }, createRuntime = exports.createRuntime = function (ast, args, parent) {
         var Context = require('./runtime/Context');
-        var context = new Context();
+        var context = new Context(parent);
         if (args != null) {
             for (var name in args) {
                 var value = args[name];
@@ -112,8 +140,8 @@ var patch = exports.patch = function () {
             deep = false;
         if (Array.isArray(object)) {
             var _ref = [];
-            for (var _i = 0; _i < object.length; _i++) {
-                var item = object[_i];
+            for (var _i2 = 0; _i2 < object.length; _i2++) {
+                var item = object[_i2];
                 _ref.push(deep ? clone(item, deep) : item);
             }
             return _ref;
@@ -419,4 +447,4 @@ if (global.window != null) {
     _ion_index_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./index.map
+//# sourceMappingURL=./index.map

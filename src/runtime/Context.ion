@@ -17,9 +17,20 @@ export class Context
         @root = @parent?.root ? @
         # track which variables we have watched for get property
         @_watched = {}
+        # runtime nodes keyed by toCode
+        @_runtimes = {}
     properties:
         newContext: (output = @output) -> new Context(@, output)
-        createRuntime: (node) -> Factory.createRuntime(@, node)
+        createRuntime: (node) ->
+            # if Factory.canCache(node)
+            #     let key = Factory.toCode(node)
+            #     if @_runtimes.hasOwnProperty(key)
+            #         return @_runtimes[key]
+            #     else
+            #         console.log('caching: ' + Factory.toCode(node))
+            #         return @_runtimes[key] = Factory.createRuntime(@, node)
+            # else
+            return Factory.createRuntime(@, node)
         get: (name) ->
             let variable = @getVariable(name)
             if not variable?

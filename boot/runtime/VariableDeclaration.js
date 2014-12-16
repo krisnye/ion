@@ -28,4 +28,4 @@ module.exports = exports = VariableDeclaration;
     _ion_runtime_VariableDeclaration_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./VariableDeclaration.map
+//# sourceMappingURL=./VariableDeclaration.map

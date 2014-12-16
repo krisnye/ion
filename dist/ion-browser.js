@@ -1245,7 +1245,34 @@ var patch = exports.patch = function () {
         return patch;
     }(), create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
-    }, template = exports.template = function (fn, template) {
+    }, setImmediate = exports.setImmediate = function () {
+        if (global.setImmediate != null) {
+            return global.setImmediate;
+        }
+        if (global.document != null) {
+            return function () {
+                var hiddenDiv = document.createElement('div');
+                var callbacks = [];
+                new MutationObserver(function (records) {
+                    var cbList = callbacks;
+                    callbacks = [];
+                    for (var _i = 0; _i < cbList.length; _i++) {
+                        var callback = cbList[_i];
+                        callback();
+                    }
+                }).observe(hiddenDiv, { attributes: true });
+            }();
+            return function setImmediate(callback) {
+                if (callbacks.length === 0) {
+                    hiddenDiv.setAttribute('yes', 'no');
+                }
+                callbacks.push(callback);
+            };
+        }
+        return function (fn) {
+            setTimeout(fn, 0);
+        };
+    }(), template = exports.template = function (fn, template) {
         fn.template = template != null ? template : true;
         return fn;
     }, createRuntime = exports.createRuntime = function (ast, args, parent) {
@@ -1265,8 +1292,8 @@ var patch = exports.patch = function () {
             deep = false;
         if (Array.isArray(object)) {
             var _ref = [];
-            for (var _i = 0; _i < object.length; _i++) {
-                var item = object[_i];
+            for (var _i2 = 0; _i2 < object.length; _i2++) {
+                var item = object[_i2];
                 _ref.push(deep ? clone(item, deep) : item);
             }
             return _ref;
@@ -2146,6 +2173,7 @@ var ConditionalExpression = ion.defineClass({
                         this.testValue = value;
                         if (value) {
                             this.alternateExpression != null ? this.alternateExpression.unwatch(this.alternateWatcher) : void 0;
+                            this.alternateExpression = null;
                             this.consequentExpression = this.consequentExpression != null ? this.consequentExpression : this.context.createRuntime(this.consequent);
                             this.consequentExpression.watch(this.consequentWatcher = this.consequentWatcher != null ? this.consequentWatcher : ion.bind(function (value) {
                                 if (this.testValue) {
@@ -2154,6 +2182,7 @@ var ConditionalExpression = ion.defineClass({
                             }, this));
                         } else {
                             this.consequentExpression != null ? this.consequentExpression.unwatch(this.consequentWatcher) : void 0;
+                            this.consequentExpression = null;
                             this.alternateExpression = this.alternateExpression != null ? this.alternateExpression : this.context.createRuntime(this.alternate);
                             this.alternateExpression.watch(this.alternateWatcher = this.alternateWatcher != null ? this.alternateWatcher : ion.bind(function (value) {
                                 if (!this.testValue) {
@@ -2196,6 +2225,7 @@ var Context = ion.defineClass({
             this.variables = {};
             this.root = (this.parent != null ? this.parent.root : void 0) != null ? this.parent.root : this;
             this._watched = {};
+            this._runtimes = {};
         },
         properties: {
             newContext: function (output) {
@@ -2447,13 +2477,19 @@ var Factory = ion.defineClass({
                     return new type(properties);
                 }
             },
+            canCache: {
+                writable: true,
+                value: function (ast) {
+                    return false;
+                }
+            },
             toCode: {
                 writable: true,
                 value: function (ast) {
                     if (ast.type === 'BinaryExpression') {
                         return toCode(ast.left) + ast.operator + toCode(ast.right);
                     }
-                    return '(' + ast.type + '?)';
+                    return '(' + JSON.stringify(ast) + ')';
                 }
             }
         }
@@ -2474,6 +2510,9 @@ var lookup = {
                 createRuntime: function (context, ast) {
                     return context.getVariable(ast.name);
                 },
+                canCache: function (ast) {
+                    return true;
+                },
                 toCode: function (ast) {
                     return ast.name;
                 }
@@ -2490,6 +2529,9 @@ var lookup = {
             Template: ion.patch(new Factory(), { runtime: './Template' }),
             Literal: ion.patch(new Factory(), {
                 runtime: './Literal',
+                canCache: function (ast) {
+                    return true;
+                },
                 toCode: function (ast) {
                     return JSON.stringify(ast.value);
                 }
@@ -2505,6 +2547,9 @@ var lookup = {
             ForInStatement: ion.patch(new Factory(), { runtime: './ForInOfStatement' }),
             MemberExpression: ion.patch(new Factory(), {
                 runtime: './MemberExpression',
+                canCache: function (ast) {
+                    return canCache(ast.object) && canCache(ast.property);
+                },
                 toCode: function (ast) {
                     if (ast.computed) {
                         return '' + toCode(ast.object) + '[' + toCode(ast.property) + ']';
@@ -2662,8 +2707,29 @@ function getFactory(ast, step) {
     }
     return null;
 }
-var toCode = exports.toCode = function (ast) {
-        return getFactory(ast).toCode(ast);
+var canCache = exports.canCache = function (ast) {
+        if (ast != null) {
+            var factory = getFactory(ast);
+            if (factory != null) {
+                return factory.canCache(ast);
+            }
+        }
+        return false;
+    }, toCode = exports.toCode = function (ast) {
+        if (ast != null) {
+            var code = ast._toCode;
+            if (!(code != null)) {
+                var factory = getFactory(ast);
+                if (factory != null) {
+                    code = factory.toCode(ast);
+                }
+                if (code != null && typeof ast === 'object') {
+                    Object.defineProperty(ast, '_toCode', { value: code });
+                }
+            }
+            return code;
+        }
+        return JSON.stringify(ast);
     }, createRuntime = exports.createRuntime = function (context, ast) {
         if (typeof (ast != null ? ast.type : void 0) !== 'string') {
             ast = {

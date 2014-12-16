@@ -1,10 +1,13 @@
 {
     "name": "ion",
     "version": "0.9.1",
+    "main": "index",
     "bin": {
-        "ion": "builder/command.js"
+        "ion": "builder/_command.js"
     },
+    "repository": "https://github.com/krisnye/ion.git",
     "scripts": {
+        "dev": "npm install && npm run boot && bower link && cd lib && npm link && cd ..",
         "build": "ion -c",
         "watch": "ion -w",
         "boot": "node boot/builder/command.js -c"
@@ -16,19 +19,19 @@
     "build": {
         "package": true,
         "merge": {
-            "ion-all.js": {
+            "../dist/ion-all.js": {
                 "exclude": [
                     "builder"
                 ]
             },
-            "ion-browser.js": {
+            "../dist/ion-browser.js": {
                 "exclude": [
                     "builder",
                     "test",
                     "compiler"
                 ]
             },
-            "ion-min.js": {
+            "../dist/ion-min.js": {
                 "exclude": [
                     "builder",
                     "test",
@@ -43,11 +46,10 @@
     ],
     "dependencies": {
         "esprima": "1.1.x",
-        "uglify-js": "2.4.x"
-    },
-    "devDependencies": {
+        "uglify-js": "2.4.x",
         "pegjs": "0.8.x",
         "underscore": "1.6.x",
-        "source-map": "0.1.x"
+        "source-map": "0.1.x",
+        "coffee-script": "1.8.x"
     }
 }

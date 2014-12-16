@@ -33,11 +33,12 @@ var Property = ion.defineClass({
                     key = this.keyValue;
                 if (value == null)
                     value = this.valueValue;
-                var explicitUndefined = this.value.operator === 'void';
-                if (key != null && (value !== void 0 || explicitUndefined)) {
-                    var currentValue = this.context.output != null ? this.context.output[key] : void 0;
-                    if (explicitUndefined || currentValue !== value && this.context.output != null) {
-                        this.context.output[key] = value;
+                if (this.hasOwnProperty('keyValue') && this.hasOwnProperty('valueValue')) {
+                    if (key != null && this.context.output != null) {
+                        var currentValue = this.context.output[key];
+                        if (currentValue !== value) {
+                            this.context.output[key] = value;
+                        }
                     }
                 }
             }
@@ -55,4 +56,4 @@ module.exports = exports = Property;
     _ion_runtime_Property_.call(this);
   }
 }).call(this)
-//@ sourceMappingURL=./Property.map
+//# sourceMappingURL=./Property.map
