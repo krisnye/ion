@@ -11,7 +11,7 @@
         "build": "ion -c",
         "watch": "ion -w",
         "boot": "node boot/builder/_command.js -c",
-        "postinstall": "npm run boot"
+        "prepublish": "npm run boot"
     },
     "directories": {
         "lib": "lib",
