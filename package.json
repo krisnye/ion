@@ -1,9 +1,9 @@
 {
     "name": "ion",
-    "version": "0.9.1",
+    "version": "0.9.3",
     "main": "index",
     "bin": {
-        "ion": "builder/_command.js"
+        "ion": "lib/builder/_command.js"
     },
     "repository": "https://github.com/krisnye/ion.git",
     "scripts": {
