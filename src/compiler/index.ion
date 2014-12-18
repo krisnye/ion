@@ -35,11 +35,19 @@ export const
         let
             sourceMapping = {}
             result = preprocessor.preprocess(content, sourceMapping)
+
             sourceMap = null
             preprocessed = result
             sourceLocationsFixed = false
+            dump = (description) ->
+                if options.debug
+                    console.log('-' + description + '--------------------------------------')
+                    console.log(typeof result is 'string' ? result : JSON.stringify(result, null, '  '))
+                    console.log('---------------------------------------------------')
         try
+            dump('Preprocessed')
             result = parser.parse(result, options)
+            dump('Parsed')
             result = preprocessor.fixSourceLocations(result, sourceMapping, options.source)
             sourceLocationsFixed = true
             if options.postprocess isnt false
@@ -53,6 +61,7 @@ export const
                         verbatim: 'verbatim'
                     let output = escodegen.generate(result, generateOptions)
                     result = output.code
+                    dump('Generated')
                     sourceMap = output.map?.toString()
         catch e
             if not sourceLocationsFixed

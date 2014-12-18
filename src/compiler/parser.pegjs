@@ -375,11 +375,11 @@ MultilineStringTemplate = start:start "\"\"" eol content:multilineStringTemplate
     { return concatenate(unindent(content)) }
 multilineStringTemplateContent = indent a:(multilineStringTemplateLine / multilineStringTemplateContent)* outdent { return Array.prototype.concat.apply([], a) }
 multilineStringTemplateLine = !indent !outdent a:(stringInterpolation / multilineStringTemplatePart) { return a }
-multilineStringTemplatePart = eol? (!"{{" !eol .)+ { return text() }
-MultilineStringLiteral = start:start "''" eol content:multilineStringLiteralContent end:end
+multilineStringTemplatePart = eol_nocomments? (!"{{" !eol_nocomments .)+ { return text() }
+MultilineStringLiteral = start:start "''" eol_nocomments content:multilineStringLiteralContent end:end
     { return concatenate(unindent(content)) }
 multilineStringLiteralContent = indent a:(multilineStringLiteralLine / multilineStringLiteralContent)* outdent { return Array.prototype.concat.apply([], a) }
-multilineStringLiteralLine = !indent !outdent eol? (!eol .)+ { return text() }
+multilineStringLiteralLine = !indent !outdent eol_nocomments? (!eol_nocomments .)+ { return text() }
 stringInterpolation = "{{" _ expression:InlineExpression _ "}}" { return expression }
 StringTemplate = '"' a:(stringTemplateChars / stringInterpolation)* '"' { return concatenate(a) }
 stringTemplateChars = stringTemplateChar+ { return JSON.parse('"' + text() + '"') }
@@ -458,4 +458,5 @@ _ 'space' = " "*
 
 comment = _ '#' (!"\n" .)+
 eol 'end of line' = _ comment? (eof / ("\r"? "\n" comment?)+)
+eol_nocomments = _ (eof / ("\r"? "\n")+)
 eof 'end of file' = !.

@@ -81,6 +81,14 @@ tests =
     # """
     # template -> alpha ? beta
     # """: null
+    """
+    ""
+        foo
+        bar #baz
+    """: """
+    'use strict';
+    'foo\\nbar #baz';
+    """
 
 if global.window?
     return
@@ -89,12 +97,7 @@ exports.test = ->
     for input, expected of tests
         options = {target:'es5'}
         if expected is null
-            console.log '---------------------------------------------------'
-            console.log JSON.stringify index.compile(input, ion.patch({postprocess:false,loc:true}, options)), null, '  '
-            console.log '-Postprocessed-------------------------------------'
-            console.log JSON.stringify index.compile(input, ion.patch({generate:false,loc:true}, options)), null, '  '
-            console.log '---------------------------------------------------'
-            console.log index.compile input, ion.patch({loc:true,source:'ionCompilerES5.js'}, options)
+            index.compile input, ion.patch({loc:false,source:'ionCompilerES5.js', debug:true}, options)
         else if typeof expected is 'object'
             # expected to throw an error
             error = null
