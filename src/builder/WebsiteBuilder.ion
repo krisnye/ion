@@ -37,13 +37,13 @@ export template (packagePatch) ->
     # Copy client and server node modules to the output
     for moduleName in packageJson.build.client.modules
         for nodepath in nodepaths
-            let directory = new Directory(np.join(nodepath, moduleName + "/lib"))
+            let directory = new Directory(np.join(nodepath, moduleName))
             console.log('checking client directory: ' + directory)
             for key, source of directory.search([".js",".map"], [].concat(packageJson.build.client.exclude))
                 clientOutput.write(source.path.substring(nodepath.length), source.read())
     for moduleName in packageJson.build.server.modules
         for nodepath in nodepaths
-            let directory = new Directory(np.join(nodepath, moduleName + "/lib"))
+            let directory = new Directory(np.join(nodepath, moduleName))
             console.log('checking server directory: ' + directory)
             for key, source of directory.search([".js",".map"], [].concat(packageJson.build.server.exclude))
                 serverOutput.write(source.path.substring(nodepath.length), source.read())

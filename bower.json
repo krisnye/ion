@@ -1,6 +1,6 @@
 {
   "name": "ion",
-  "version": "0.9.1",
+  "version": "0.9.6",
   "homepage": "https://github.com/krisnye/ion",
   "authors": [
     "krisnye <krisnye@gmail.com>"
@@ -23,7 +23,6 @@
     "test",
     "tests",
     "docs",
-    "boot",
-    "src"
+    "boot"
   ]
 }
