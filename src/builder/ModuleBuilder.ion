@@ -71,9 +71,9 @@ export template (packagePatch) ->
                 let indexFile = indexDirectory.getFile(indexName)
                 # get a list of all output files in that directory
                 let lines = {}
-                    for key, childFile of indexDirectory.search(".js", null, {recursive:false})
-                        if key isnt indexName
-                            let name = key.substring(0, key.lastIndexOf('.js'))
+                    for key, childFile of indexDirectory.search(null, null, {recursive:false})
+                        if key isnt indexName and (childFile.path.endsWith('.js') or childFile.isDirectory)
+                            let name = childFile.isDirectory ? key : key.substring(0, key.lastIndexOf('.js'))
                             [key]: "Object.defineProperty(exports, '{{name}}', {get:function(){ return require('./{{name}}') }, enumerable: true}) "
 
                 let indexModuleId = np.join(moduleName, path, "index").replace(/\\/g, '/')
@@ -93,34 +93,34 @@ export template (packagePatch) ->
     # also write the debug script
     output.write('_debug.js', createDebugScript(manifest, moduleName, sortedFiles))
 
-    # build merged file, just so we can test locally with file:// protocol
-    if packageJson.build.merge?
-        for mergeFile, options of packageJson.build.merge
-            let mergedArray = []
-                for index, name of sortedFiles
-                    let content = outputFiles[name].read?()
-                    if content? and not content.startsWith("#") and not utility.isMatch(name, options.exclude, false)
-                        # remove source mapping comments.
-                        [index]: content
-                    else
-                        [index]: ""
-                else
-                    [index]: ""
+    # # build merged file, just so we can test locally with file:// protocol
+    # if packageJson.build.merge?
+    #     for mergeFile, options of packageJson.build.merge
+    #         let mergedArray = []
+    #             for index, name of sortedFiles
+    #                 let content = outputFiles[name].read?()
+    #                 if content? and not content.startsWith("#") and not utility.isMatch(name, options.exclude, false)
+    #                     # remove source mapping comments.
+    #                     [index]: content
+    #                 else
+    #                     [index]: ""
+    #             else
+    #                 [index]: ""
 
-            let merged = mergedArray.join('\n')
-            if options.compress
-                let minified = require('uglify-js').minify(merged, {fromString:true})
-                output.write(mergeFile, minified.code)
-            else
-                output.write(mergeFile, merged)
+    #         let merged = mergedArray.join('\n')
+    #         if options.compress
+    #             let minified = require('uglify-js').minify(merged, {fromString:true})
+    #             output.write(mergeFile, minified.code)
+    #         else
+    #             output.write(mergeFile, merged)
 
-    # copy the package.json to the lib directory
-    if packageJson.build.package isnt false
-        output.write('package.json', JSON.stringify(ion.patch(ion.clone(packageJson), {main:undefined}), null, '    '))
-        # # also copy the bower.json file if present
-        # let bower = new File('bower.json')
-        # if bower.exists
-        #     output.write('bower.json', bower.read())
+    # # copy the package.json to the lib directory
+    # if packageJson.build.package isnt false
+    #     output.write('package.json', JSON.stringify(ion.patch(ion.clone(packageJson), {main:undefined}), null, '    '))
+    #     # # also copy the bower.json file if present
+    #     # let bower = new File('bower.json')
+    #     # if bower.exists
+    #     #     output.write('bower.json', bower.read())
 
     # builder.test
     if packageJson.build.test isnt false

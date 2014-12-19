@@ -1,7 +1,7 @@
 {
     "name": "ion",
-    "version": "0.9.3",
-    "main": "index",
+    "version": "0.9.4",
+    "main": "lib/index",
     "bin": {
         "ion": "lib/builder/_command.js"
     },
@@ -10,7 +10,8 @@
         "dev": "npm install && npm run boot && bower link && cd lib && npm link && cd ..",
         "build": "ion -c",
         "watch": "ion -w",
-        "boot": "node boot/builder/_command.js -c"
+        "boot": "node boot/builder/_command.js -c",
+        "prepublish": "npm run build"
     },
     "directories": {
         "lib": "lib",

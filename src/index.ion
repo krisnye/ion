@@ -324,6 +324,10 @@ export const
                 assert Array.isArray(object.a)
                 assert object.s is 'hello'
 
+for name in ["runtime", "compiler", "builder", "browser"]
+    do (name) ->
+        Object.defineProperty(exports, name, {enumerable: true, get: -> require("./" + name)})
+
 # if window, then on resize, check for changes
 if global.window?
     global.window.addEventListener('resize', checkForChanges)

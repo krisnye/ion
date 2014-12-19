@@ -323,6 +323,7 @@ module.exports = exports = _ref;
 void (function(){var _ion_browser_index_ = function(module,exports,require){Object.defineProperty(exports, 'element', {get:function(){ return require('./element') }, enumerable: true}) 
 Object.defineProperty(exports, 'require', {get:function(){ return require('./require') }, enumerable: true}) 
 Object.defineProperty(exports, 'tester', {get:function(){ return require('./tester') }, enumerable: true}) 
+Object.defineProperty(exports, '', {get:function(){ return require('./') }, enumerable: true}) 
   }
   if (typeof require === 'function') {
     if (require.register)
@@ -1298,12 +1299,12 @@ var patch = exports.patch = function () {
             }
             return _ref;
         } else if ((object != null ? object.constructor : void 0) === Object) {
-            var _ref2 = {};
+            var _ref3 = {};
             for (var key in object) {
                 var value = object[key];
-                _ref2[key] = deep ? clone(value, deep) : value;
+                _ref3[key] = deep ? clone(value, deep) : value;
             }
-            return _ref2;
+            return _ref3;
         } else {
             return object;
         }
@@ -1585,6 +1586,25 @@ var patch = exports.patch = function () {
             }
         }
     };
+{
+    var _ref2 = [
+            'runtime',
+            'compiler',
+            'builder',
+            'browser'
+        ];
+    for (var _i3 = 0; _i3 < _ref2.length; _i3++) {
+        var name = _ref2[_i3];
+        (function (name) {
+            Object.defineProperty(exports, name, {
+                enumerable: true,
+                get: function () {
+                    return require('./' + name);
+                }
+            });
+        }(name));
+    }
+}
 if (global.window != null) {
     global.window.addEventListener('resize', checkForChanges);
 }
@@ -3465,6 +3485,7 @@ Object.defineProperty(exports, 'ReturnStatement', {get:function(){ return requir
 Object.defineProperty(exports, 'Statement', {get:function(){ return require('./Statement') }, enumerable: true}) 
 Object.defineProperty(exports, 'Template', {get:function(){ return require('./Template') }, enumerable: true}) 
 Object.defineProperty(exports, 'VariableDeclaration', {get:function(){ return require('./VariableDeclaration') }, enumerable: true}) 
+Object.defineProperty(exports, '', {get:function(){ return require('./') }, enumerable: true}) 
   }
   if (typeof require === 'function') {
     if (require.register)

@@ -4,6 +4,7 @@ _ = require 'underscore' # imported for debounce/throttle methods
 utility = require './utility'
 fs = require 'fs'
 np = require 'path'
+ion = require '../'
 
 # this doesn't seem to work with Object.observe callbacks
 process.on 'uncaughtException', (e) ->
@@ -171,3 +172,8 @@ module.exports = exports =
                 }).call(this)
                 """
         return sourceText
+
+for name in ["ModuleBuilder", "WebsiteBuilder", "File", "Directory", "utility"]
+    do (name) ->
+        Object.defineProperty(exports, name, {enumerable: true, get: -> require("./" + name)})
+
