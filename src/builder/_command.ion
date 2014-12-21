@@ -18,9 +18,13 @@ let ModuleBuilder = import '../builder/ModuleBuilder'
 if args[0] is "-c" or args[0] is "-w"
     if args[1]?
         process.chdir(args[1])
-    ModuleBuilder().watch()
-    if args[0] is "-c"
-        process.exit()
+    try
+        ModuleBuilder().watch()
+        if args[0] is "-c"
+            process.exit()
+    catch e
+        console.error(e)
+        process.exit(1)
 else
     # import ion into global namespace
     global.ion = import('../')
