@@ -55,6 +55,9 @@ export template (packagePatch) ->
                 else
                     void output.write(targetPath, compiler.compile(source, packageJson))
                 [targetPath]: true
+                # also add the index for this file
+                [targetPath.slice(0, targetPath.lastIndexOf('/') + 1) + "index"]: true
+
         else
             void output.delete(targetPath)
             void output.delete(mapPath)
@@ -80,7 +83,7 @@ export template (packagePatch) ->
                             [key]: "Object.defineProperty(exports, '{{name}}', {get:function(){ return require('./{{name}}') }, enumerable: true}) "
 
                 let indexModuleId = np.join(moduleName, path, "index").replace(/\\/g, '/')
-                indexDirectory.write(indexName, builder.addBrowserShim([value for key, value of lines].join('\n'), indexModuleId))
+                void indexDirectory.write(indexName, builder.addBrowserShim([value for key, value of lines].join('\n'), indexModuleId))
 
     # build a manifest file with require.js at the top
     # ignore output _browser.js and node_modules
