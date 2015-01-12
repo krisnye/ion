@@ -1,9 +1,12 @@
 const
     ion = import './'
-    isObject = (a) -> a? and typeof a is 'object'
+    isObject = (a) ->
+        let type = typeof a
+        return a? and type is 'object' or type is 'function'
     deleteValue = null
 
 export const
+    canSetProperty = (object, key) -> not (typeof object is 'function' and key is 'name')
     # options:
     #   deleteNull: delete properties if value is null, default: true
     #   factory: function to use when constructing new objects, defaults to using plain objects {}
@@ -21,7 +24,8 @@ export const
                 delete target[key]
             else
                 let newValue = merge(target[key], value, options)
-                target[key] = newValue
+                if canSetProperty(target, key)
+                    target[key] = newValue
         return target
     # combines two patches to make a single patch
     combine = (patch1, patch2) -> merge(patch1, patch2, {deleteNull:false})

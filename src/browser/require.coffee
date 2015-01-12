@@ -97,5 +97,5 @@ else
 
 # since this is the only code guaranteed to run on loading, we also try to compile script tags here.
 if global.window?
-    window.addEventListener 'load', (e) ->
+    window.addEventListener (if global.Polymer then 'polymer-ready' else 'load'), (e) ->
         require.compileScripts()

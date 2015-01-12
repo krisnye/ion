@@ -1,6 +1,6 @@
 {
     "name": "ion",
-    "version": "0.9.9",
+    "version": "0.9.10",
     "main": "lib/index",
     "bin": {
         "ion": "lib/builder/_command.js"

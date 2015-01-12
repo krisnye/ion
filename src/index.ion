@@ -227,6 +227,7 @@ export const
                 for key, value of definition if key isnt 'test' or i is 0
                     if canSetClassProperty(key)
                         classFunction[key] = patch(classFunction[key], value)
+                        
         classFunction.types = types
 
         if classFunction.properties?

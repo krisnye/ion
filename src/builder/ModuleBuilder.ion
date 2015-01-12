@@ -9,10 +9,10 @@ const
     builder = import './'
     utility = import './utility'
 
-    createDebugScript = (manifest, moduleName) ->
+    createDebugScript = (manifest, moduleName, path) ->
         let scripts = []
             for file in manifest.files
-                "/bower_components/{{moduleName}}/lib/{{file}}"
+                "{{path}}{{moduleName}}/lib/{{file}}"
         return ""
             (function(files){
                 for (var i = 0; i < files.length; i++) {
@@ -55,8 +55,8 @@ export template (packagePatch) ->
                 else
                     void output.write(targetPath, compiler.compile(source, packageJson))
                 [targetPath]: true
-                # also add the index for this file
-                [targetPath.slice(0, targetPath.lastIndexOf('/') + 1) + "index"]: true
+                # also add the index for this file, since it may be generated in next section
+                [targetPath.slice(0, targetPath.lastIndexOf('/') + 1) + "index.js"]: true
 
         else
             void output.delete(targetPath)
@@ -98,7 +98,7 @@ export template (packagePatch) ->
         files: [builder.normalizePath(path) for path in sortedFiles]
     output.write(manifestFileName, JSON.stringify(manifest, null, '  ', sortedFiles))
     # also write the debug script
-    output.write('_debug.js', createDebugScript(manifest, moduleName, sortedFiles))
+    output.write('_debug.js', createDebugScript(manifest, moduleName, "/bower_components/"))
 
     # # build merged file, just so we can test locally with file:// protocol
     # if packageJson.build.merge?
