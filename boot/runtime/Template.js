@@ -8,16 +8,16 @@ var Template = ion.defineClass({
             this.context.returnExpression = new DynamicExpression();
         },
         properties: {
-            watch: function (watcher) {
+            watchValue: function (watcher) {
                 if (watcher == null)
                     watcher = noop;
                 if (!this.isActive) {
                     this.activate();
                 }
-                this.context.returnExpression.watch(watcher);
+                this.context.returnExpression.watchValue(watcher);
             },
-            unwatch: function (watcher) {
-                this.context.returnExpression.unwatch(watcher);
+            unwatchValue: function (watcher) {
+                this.context.returnExpression.unwatchValue(watcher);
                 if (!this.context.returnExpression.isActive) {
                     this.deactivate();
                 }

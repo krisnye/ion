@@ -717,7 +717,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseProgram() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 0,
+      var key    = peg$currPos * 180 + 0,
           cached = peg$cache[key];
 
       if (cached) {
@@ -756,7 +756,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseProgramStatements() {
       var s0, s1;
 
-      var key    = peg$currPos * 179 + 1,
+      var key    = peg$currPos * 180 + 1,
           cached = peg$cache[key];
 
       if (cached) {
@@ -788,7 +788,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 179 + 2,
+      var key    = peg$currPos * 180 + 2,
           cached = peg$cache[key];
 
       if (cached) {
@@ -898,7 +898,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseExportStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 3,
+      var key    = peg$currPos * 180 + 3,
           cached = peg$cache[key];
 
       if (cached) {
@@ -952,7 +952,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseReturnStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 4,
+      var key    = peg$currPos * 180 + 4,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1006,7 +1006,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseThrowStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 5,
+      var key    = peg$currPos * 180 + 5,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1057,7 +1057,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBreakStatement() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 6,
+      var key    = peg$currPos * 180 + 6,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1096,7 +1096,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseContinueStatement() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 7,
+      var key    = peg$currPos * 180 + 7,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1135,7 +1135,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseAssertStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 8,
+      var key    = peg$currPos * 180 + 8,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1192,7 +1192,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseExpressionStatement() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 9,
+      var key    = peg$currPos * 180 + 9,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1231,7 +1231,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseActivateStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 179 + 10,
+      var key    = peg$currPos * 180 + 10,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1297,7 +1297,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseIfStatement() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
-      var key    = peg$currPos * 179 + 11,
+      var key    = peg$currPos * 180 + 11,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1399,7 +1399,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseTryStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 179 + 12,
+      var key    = peg$currPos * 180 + 12,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1495,7 +1495,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsefinallyClause() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 179 + 13,
+      var key    = peg$currPos * 180 + 13,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1540,7 +1540,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsecatchClause() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 179 + 14,
+      var key    = peg$currPos * 180 + 14,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1609,7 +1609,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseIterationStatement() {
       var s0;
 
-      var key    = peg$currPos * 179 + 15,
+      var key    = peg$currPos * 180 + 15,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1633,7 +1633,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseWhileStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 179 + 16,
+      var key    = peg$currPos * 180 + 16,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1690,7 +1690,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseForInOfHead() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12;
 
-      var key    = peg$currPos * 179 + 17,
+      var key    = peg$currPos * 180 + 17,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1819,7 +1819,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseForInOfElseStatement() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 18,
+      var key    = peg$currPos * 180 + 18,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1882,7 +1882,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseForInOfStatement() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 19,
+      var key    = peg$currPos * 180 + 19,
           cached = peg$cache[key];
 
       if (cached) {
@@ -1936,7 +1936,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseForStatement() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14;
 
-      var key    = peg$currPos * 179 + 20,
+      var key    = peg$currPos * 180 + 20,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2065,7 +2065,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseArrayComprehension() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 179 + 21,
+      var key    = peg$currPos * 180 + 21,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2152,7 +2152,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBlockStatement() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 179 + 22,
+      var key    = peg$currPos * 180 + 22,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2214,7 +2214,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseClassExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 179 + 23,
+      var key    = peg$currPos * 180 + 23,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2292,7 +2292,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseclassName() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 24,
+      var key    = peg$currPos * 180 + 24,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2364,7 +2364,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseclassExtends() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 25,
+      var key    = peg$currPos * 180 + 25,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2403,7 +2403,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsepath() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 26,
+      var key    = peg$currPos * 180 + 26,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2487,7 +2487,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsepropertyLeft() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 27,
+      var key    = peg$currPos * 180 + 27,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2565,7 +2565,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseAddPropertyDeclaration() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 179 + 28,
+      var key    = peg$currPos * 180 + 28,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2649,7 +2649,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsePropertyDeclaration() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 29,
+      var key    = peg$currPos * 180 + 29,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2718,7 +2718,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseVariableDeclaration() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 179 + 30,
+      var key    = peg$currPos * 180 + 30,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2760,7 +2760,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseVariableDeclarationKindOptional() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 31,
+      var key    = peg$currPos * 180 + 31,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2814,7 +2814,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevariableKind() {
       var s0;
 
-      var key    = peg$currPos * 179 + 32,
+      var key    = peg$currPos * 180 + 32,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2835,7 +2835,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevariableDeclaratorList() {
       var s0;
 
-      var key    = peg$currPos * 179 + 33,
+      var key    = peg$currPos * 180 + 33,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2856,7 +2856,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseinlineVariableDeclaratorList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 34,
+      var key    = peg$currPos * 180 + 34,
           cached = peg$cache[key];
 
       if (cached) {
@@ -2960,7 +2960,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineVariableDeclaratorList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 35,
+      var key    = peg$currPos * 180 + 35,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3062,7 +3062,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseVariableDeclarator() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 36,
+      var key    = peg$currPos * 180 + 36,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3155,7 +3155,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevariableInitializer() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 37,
+      var key    = peg$currPos * 180 + 37,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3200,7 +3200,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsePattern() {
       var s0;
 
-      var key    = peg$currPos * 179 + 38,
+      var key    = peg$currPos * 180 + 38,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3224,7 +3224,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseObjectPattern() {
       var s0, s1;
 
-      var key    = peg$currPos * 179 + 39,
+      var key    = peg$currPos * 180 + 39,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3248,7 +3248,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseArrayPattern() {
       var s0, s1;
 
-      var key    = peg$currPos * 179 + 40,
+      var key    = peg$currPos * 180 + 40,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3272,7 +3272,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseSpreadPattern() {
       var s0;
 
-      var key    = peg$currPos * 179 + 41,
+      var key    = peg$currPos * 180 + 41,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3293,7 +3293,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsespread() {
       var s0;
 
-      var key    = peg$currPos * 179 + 42,
+      var key    = peg$currPos * 180 + 42,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3317,7 +3317,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseSpreadExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 43,
+      var key    = peg$currPos * 180 + 43,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3371,7 +3371,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseSpreadIdentifier() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 44,
+      var key    = peg$currPos * 180 + 44,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3425,7 +3425,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseRightHandSideExpression() {
       var s0;
 
-      var key    = peg$currPos * 179 + 45,
+      var key    = peg$currPos * 180 + 45,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3446,7 +3446,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 179 + 46,
+      var key    = peg$currPos * 180 + 46,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3599,7 +3599,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineChainExpression() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 179 + 47,
+      var key    = peg$currPos * 180 + 47,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3667,7 +3667,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineExpression() {
       var s0;
 
-      var key    = peg$currPos * 179 + 48,
+      var key    = peg$currPos * 180 + 48,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3697,7 +3697,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineArguments() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
-      var key    = peg$currPos * 179 + 49,
+      var key    = peg$currPos * 180 + 49,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3904,7 +3904,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineCallExpression() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 179 + 50,
+      var key    = peg$currPos * 180 + 50,
           cached = peg$cache[key];
 
       if (cached) {
@@ -3949,7 +3949,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseAssignmentExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 51,
+      var key    = peg$currPos * 180 + 51,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4147,7 +4147,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseConditionalOrDefaultExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
-      var key    = peg$currPos * 179 + 52,
+      var key    = peg$currPos * 180 + 52,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4372,7 +4372,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseLogicalOrExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 179 + 53,
+      var key    = peg$currPos * 180 + 53,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4480,7 +4480,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseLogicalAndExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 179 + 54,
+      var key    = peg$currPos * 180 + 54,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4588,7 +4588,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBitwiseOrExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 179 + 55,
+      var key    = peg$currPos * 180 + 55,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4708,7 +4708,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBitwiseXorExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 179 + 56,
+      var key    = peg$currPos * 180 + 56,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4828,7 +4828,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBitwiseAndExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 179 + 57,
+      var key    = peg$currPos * 180 + 57,
           cached = peg$cache[key];
 
       if (cached) {
@@ -4948,7 +4948,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseEqualityExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 179 + 58,
+      var key    = peg$currPos * 180 + 58,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5062,7 +5062,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseRelationalExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 179 + 59,
+      var key    = peg$currPos * 180 + 59,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5248,7 +5248,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseBitwiseShiftExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 179 + 60,
+      var key    = peg$currPos * 180 + 60,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5404,7 +5404,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseAdditiveExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 179 + 61,
+      var key    = peg$currPos * 180 + 61,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5542,7 +5542,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultiplicativeExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
-      var key    = peg$currPos * 179 + 62,
+      var key    = peg$currPos * 180 + 62,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5698,7 +5698,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseUnaryExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 63,
+      var key    = peg$currPos * 180 + 63,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5752,7 +5752,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunaryOperator() {
       var s0, s1;
 
-      var key    = peg$currPos * 179 + 64,
+      var key    = peg$currPos * 180 + 64,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5812,7 +5812,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseUpdateExpression() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 179 + 65,
+      var key    = peg$currPos * 180 + 65,
           cached = peg$cache[key];
 
       if (cached) {
@@ -5989,7 +5989,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseCallExpression() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 179 + 66,
+      var key    = peg$currPos * 180 + 66,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6039,7 +6039,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetailCall() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 179 + 67,
+      var key    = peg$currPos * 180 + 67,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6099,7 +6099,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetailMember() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
-      var key    = peg$currPos * 179 + 68,
+      var key    = peg$currPos * 180 + 68,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6258,7 +6258,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsearguments() {
       var s0;
 
-      var key    = peg$currPos * 179 + 69,
+      var key    = peg$currPos * 180 + 69,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6279,7 +6279,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseinlineArguments() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 70,
+      var key    = peg$currPos * 180 + 70,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6333,7 +6333,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseargumentList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 71,
+      var key    = peg$currPos * 180 + 71,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6437,7 +6437,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMemberExpression() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 179 + 72,
+      var key    = peg$currPos * 180 + 72,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6493,7 +6493,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseNewExpression() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 179 + 73,
+      var key    = peg$currPos * 180 + 73,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6553,7 +6553,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseImportExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 74,
+      var key    = peg$currPos * 180 + 74,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6607,7 +6607,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseDoExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 75,
+      var key    = peg$currPos * 180 + 75,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6658,7 +6658,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseFunctionExpression() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
-      var key    = peg$currPos * 179 + 76,
+      var key    = peg$currPos * 180 + 76,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6790,7 +6790,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseformalParameterList() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 77,
+      var key    = peg$currPos * 180 + 77,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6856,7 +6856,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseformalParameters() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 78,
+      var key    = peg$currPos * 180 + 78,
           cached = peg$cache[key];
 
       if (cached) {
@@ -6960,7 +6960,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseformalParameter() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 79,
+      var key    = peg$currPos * 180 + 79,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7002,7 +7002,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseformalParameterInitializer() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 80,
+      var key    = peg$currPos * 180 + 80,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7047,7 +7047,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsePrimaryExpression() {
       var s0, s1;
 
-      var key    = peg$currPos * 179 + 81,
+      var key    = peg$currPos * 180 + 81,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7092,7 +7092,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseJavascriptExpression() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 179 + 82,
+      var key    = peg$currPos * 180 + 82,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7234,7 +7234,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseArrayLiteral() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 83,
+      var key    = peg$currPos * 180 + 83,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7312,7 +7312,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseelementList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 84,
+      var key    = peg$currPos * 180 + 84,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7416,7 +7416,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseObjectLiteral() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 85,
+      var key    = peg$currPos * 180 + 85,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7494,7 +7494,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsepropertyAssignmentList() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 86,
+      var key    = peg$currPos * 180 + 86,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7598,7 +7598,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsepropertyAssignment() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 87,
+      var key    = peg$currPos * 180 + 87,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7640,7 +7640,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseTypedObjectExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 88,
+      var key    = peg$currPos * 180 + 88,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7709,7 +7709,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseImpliedObjectExpression() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 89,
+      var key    = peg$currPos * 180 + 89,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7748,7 +7748,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseGroupExpression() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 90,
+      var key    = peg$currPos * 180 + 90,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7817,7 +7817,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseIdentifier() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 179 + 91,
+      var key    = peg$currPos * 180 + 91,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7859,7 +7859,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseIdentifierName() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 92,
+      var key    = peg$currPos * 180 + 92,
           cached = peg$cache[key];
 
       if (cached) {
@@ -7898,7 +7898,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseThisExpression() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 179 + 93,
+      var key    = peg$currPos * 180 + 93,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8054,7 +8054,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseStringOrNumberLiteral() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 179 + 94,
+      var key    = peg$currPos * 180 + 94,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8099,7 +8099,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseLiteral() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 95,
+      var key    = peg$currPos * 180 + 95,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8183,7 +8183,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsestart() {
       var s0, s1;
 
-      var key    = peg$currPos * 179 + 96,
+      var key    = peg$currPos * 180 + 96,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8213,7 +8213,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseoffset() {
       var s0, s1;
 
-      var key    = peg$currPos * 179 + 97,
+      var key    = peg$currPos * 180 + 97,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8243,7 +8243,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseboolean() {
       var s0;
 
-      var key    = peg$currPos * 179 + 98,
+      var key    = peg$currPos * 180 + 98,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8264,7 +8264,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseregex() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 179 + 99,
+      var key    = peg$currPos * 180 + 99,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8321,7 +8321,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseregexBody() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 179 + 100,
+      var key    = peg$currPos * 180 + 100,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8419,7 +8419,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseregexOptions() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 179 + 101,
+      var key    = peg$currPos * 180 + 101,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8459,7 +8459,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsesimpleString() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
-      var key    = peg$currPos * 179 + 102,
+      var key    = peg$currPos * 180 + 102,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8860,7 +8860,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineStringTemplate() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 103,
+      var key    = peg$currPos * 180 + 103,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8917,7 +8917,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringTemplateContent() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 104,
+      var key    = peg$currPos * 180 + 104,
           cached = peg$cache[key];
 
       if (cached) {
@@ -8967,7 +8967,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringTemplateLine() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 105,
+      var key    = peg$currPos * 180 + 105,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9027,7 +9027,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringTemplatePart() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 179 + 106,
+      var key    = peg$currPos * 180 + 106,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9036,7 +9036,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       }
 
       s0 = peg$currPos;
-      s1 = peg$parseeol();
+      s1 = peg$parseeol_nocomments();
       if (s1 === peg$FAILED) {
         s1 = peg$c4;
       }
@@ -9062,7 +9062,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
         if (s4 !== peg$FAILED) {
           s5 = peg$currPos;
           peg$silentFails++;
-          s6 = peg$parseeol();
+          s6 = peg$parseeol_nocomments();
           peg$silentFails--;
           if (s6 === peg$FAILED) {
             s5 = peg$c16;
@@ -9116,7 +9116,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             if (s4 !== peg$FAILED) {
               s5 = peg$currPos;
               peg$silentFails++;
-              s6 = peg$parseeol();
+              s6 = peg$parseeol_nocomments();
               peg$silentFails--;
               if (s6 === peg$FAILED) {
                 s5 = peg$c16;
@@ -9172,7 +9172,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseMultilineStringLiteral() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 107,
+      var key    = peg$currPos * 180 + 107,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9191,7 +9191,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           if (peg$silentFails === 0) { peg$fail(peg$c232); }
         }
         if (s2 !== peg$FAILED) {
-          s3 = peg$parseeol();
+          s3 = peg$parseeol_nocomments();
           if (s3 !== peg$FAILED) {
             s4 = peg$parsemultilineStringLiteralContent();
             if (s4 !== peg$FAILED) {
@@ -9229,7 +9229,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringLiteralContent() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 108,
+      var key    = peg$currPos * 180 + 108,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9279,7 +9279,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsemultilineStringLiteralLine() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 109,
+      var key    = peg$currPos * 180 + 109,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9310,7 +9310,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
           s2 = peg$c0;
         }
         if (s2 !== peg$FAILED) {
-          s3 = peg$parseeol();
+          s3 = peg$parseeol_nocomments();
           if (s3 === peg$FAILED) {
             s3 = peg$c4;
           }
@@ -9319,7 +9319,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
             s5 = peg$currPos;
             s6 = peg$currPos;
             peg$silentFails++;
-            s7 = peg$parseeol();
+            s7 = peg$parseeol_nocomments();
             peg$silentFails--;
             if (s7 === peg$FAILED) {
               s6 = peg$c16;
@@ -9352,7 +9352,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
                 s5 = peg$currPos;
                 s6 = peg$currPos;
                 peg$silentFails++;
-                s7 = peg$parseeol();
+                s7 = peg$parseeol_nocomments();
                 peg$silentFails--;
                 if (s7 === peg$FAILED) {
                   s6 = peg$c16;
@@ -9412,7 +9412,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsestringInterpolation() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 110,
+      var key    = peg$currPos * 180 + 110,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9475,7 +9475,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseStringTemplate() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 111,
+      var key    = peg$currPos * 180 + 111,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9537,7 +9537,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsestringTemplateChars() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 179 + 112,
+      var key    = peg$currPos * 180 + 112,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9570,7 +9570,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsestringTemplateChar() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 113,
+      var key    = peg$currPos * 180 + 113,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9693,7 +9693,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenumber() {
       var s0;
 
-      var key    = peg$currPos * 179 + 114,
+      var key    = peg$currPos * 180 + 114,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9714,7 +9714,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedecimal() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 115,
+      var key    = peg$currPos * 180 + 115,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9902,7 +9902,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseinteger() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 179 + 116,
+      var key    = peg$currPos * 180 + 116,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9959,7 +9959,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedecimalDigit() {
       var s0;
 
-      var key    = peg$currPos * 179 + 117,
+      var key    = peg$currPos * 180 + 117,
           cached = peg$cache[key];
 
       if (cached) {
@@ -9983,7 +9983,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenonzeroDigit() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 179 + 118,
+      var key    = peg$currPos * 180 + 118,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10030,7 +10030,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedecimalInteger() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 119,
+      var key    = peg$currPos * 180 + 119,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10076,7 +10076,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsehexInteger() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 120,
+      var key    = peg$currPos * 180 + 120,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10124,7 +10124,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsehexDigit() {
       var s0;
 
-      var key    = peg$currPos * 179 + 121,
+      var key    = peg$currPos * 180 + 121,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10148,7 +10148,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseidentifier() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 122,
+      var key    = peg$currPos * 180 + 122,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10200,7 +10200,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseidentifierName() {
       var s0, s1, s2, s3, s4;
 
-      var key    = peg$currPos * 179 + 123,
+      var key    = peg$currPos * 180 + 123,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10248,7 +10248,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseidentifierStart() {
       var s0;
 
-      var key    = peg$currPos * 179 + 124,
+      var key    = peg$currPos * 180 + 124,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10278,7 +10278,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseidentifierPart() {
       var s0;
 
-      var key    = peg$currPos * 179 + 125,
+      var key    = peg$currPos * 180 + 125,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10311,7 +10311,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeEscapeSequence() {
       var s0, s1, s2, s3, s4, s5;
 
-      var key    = peg$currPos * 179 + 126,
+      var key    = peg$currPos * 180 + 126,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10368,7 +10368,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeLetter() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 179 + 127,
+      var key    = peg$currPos * 180 + 127,
           cached = peg$cache[key];
 
       if (cached) {
@@ -10885,7 +10885,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeCombiningMark() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 179 + 128,
+      var key    = peg$currPos * 180 + 128,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11054,7 +11054,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeDigit() {
       var s0, s1, s2;
 
-      var key    = peg$currPos * 179 + 129,
+      var key    = peg$currPos * 180 + 129,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11165,7 +11165,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseunicodeConnectorPunctuation() {
       var s0;
 
-      var key    = peg$currPos * 179 + 130,
+      var key    = peg$currPos * 180 + 130,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11189,7 +11189,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsezwnj() {
       var s0;
 
-      var key    = peg$currPos * 179 + 131,
+      var key    = peg$currPos * 180 + 131,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11213,7 +11213,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsezwj() {
       var s0;
 
-      var key    = peg$currPos * 179 + 132,
+      var key    = peg$currPos * 180 + 132,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11237,7 +11237,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsereserved() {
       var s0;
 
-      var key    = peg$currPos * 179 + 133,
+      var key    = peg$currPos * 180 + 133,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11339,7 +11339,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetrue() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 134,
+      var key    = peg$currPos * 180 + 134,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11387,7 +11387,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsefalse() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 135,
+      var key    = peg$currPos * 180 + 135,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11435,7 +11435,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenew() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 136,
+      var key    = peg$currPos * 180 + 136,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11482,7 +11482,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsethis() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 137,
+      var key    = peg$currPos * 180 + 137,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11529,7 +11529,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenull() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 138,
+      var key    = peg$currPos * 180 + 138,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11577,7 +11577,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseundefined() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 139,
+      var key    = peg$currPos * 180 + 139,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11625,7 +11625,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseand() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 140,
+      var key    = peg$currPos * 180 + 140,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11673,7 +11673,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseor() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 141,
+      var key    = peg$currPos * 180 + 141,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11721,7 +11721,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseis() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 142,
+      var key    = peg$currPos * 180 + 142,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11769,7 +11769,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseisnt() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 143,
+      var key    = peg$currPos * 180 + 143,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11817,7 +11817,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsenot() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 144,
+      var key    = peg$currPos * 180 + 144,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11865,7 +11865,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetypeof() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 145,
+      var key    = peg$currPos * 180 + 145,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11913,7 +11913,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevoid() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 146,
+      var key    = peg$currPos * 180 + 146,
           cached = peg$cache[key];
 
       if (cached) {
@@ -11961,7 +11961,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedelete() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 147,
+      var key    = peg$currPos * 180 + 147,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12009,7 +12009,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsevar() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 148,
+      var key    = peg$currPos * 180 + 148,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12056,7 +12056,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseconst() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 149,
+      var key    = peg$currPos * 180 + 149,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12104,7 +12104,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parselet() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 150,
+      var key    = peg$currPos * 180 + 150,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12152,7 +12152,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsein() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 151,
+      var key    = peg$currPos * 180 + 151,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12200,7 +12200,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseinstanceof() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 152,
+      var key    = peg$currPos * 180 + 152,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12248,7 +12248,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsewhile() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 153,
+      var key    = peg$currPos * 180 + 153,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12295,7 +12295,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsefor() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 154,
+      var key    = peg$currPos * 180 + 154,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12342,7 +12342,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseof() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 155,
+      var key    = peg$currPos * 180 + 155,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12389,7 +12389,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseif() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 156,
+      var key    = peg$currPos * 180 + 156,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12436,7 +12436,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseelse() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 157,
+      var key    = peg$currPos * 180 + 157,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12483,7 +12483,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsereturn() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 158,
+      var key    = peg$currPos * 180 + 158,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12530,7 +12530,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetry() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 159,
+      var key    = peg$currPos * 180 + 159,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12577,7 +12577,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsecatch() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 160,
+      var key    = peg$currPos * 180 + 160,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12624,7 +12624,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsefinally() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 161,
+      var key    = peg$currPos * 180 + 161,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12671,7 +12671,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsethrow() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 162,
+      var key    = peg$currPos * 180 + 162,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12718,7 +12718,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsebreak() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 163,
+      var key    = peg$currPos * 180 + 163,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12765,7 +12765,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsecontinue() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 164,
+      var key    = peg$currPos * 180 + 164,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12812,7 +12812,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsedo() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 165,
+      var key    = peg$currPos * 180 + 165,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12859,7 +12859,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseimport() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 166,
+      var key    = peg$currPos * 180 + 166,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12906,7 +12906,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseexport() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 167,
+      var key    = peg$currPos * 180 + 167,
           cached = peg$cache[key];
 
       if (cached) {
@@ -12953,7 +12953,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseclass() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 168,
+      var key    = peg$currPos * 180 + 168,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13000,7 +13000,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseextends() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 169,
+      var key    = peg$currPos * 180 + 169,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13047,7 +13047,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseassert() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 170,
+      var key    = peg$currPos * 180 + 170,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13094,7 +13094,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsetemplate() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 171,
+      var key    = peg$currPos * 180 + 171,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13141,7 +13141,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseactivate() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 172,
+      var key    = peg$currPos * 180 + 172,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13188,7 +13188,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseindent() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 173,
+      var key    = peg$currPos * 180 + 173,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13241,7 +13241,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseoutdent() {
       var s0, s1, s2, s3;
 
-      var key    = peg$currPos * 179 + 174,
+      var key    = peg$currPos * 180 + 174,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13294,7 +13294,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parse_() {
       var s0, s1;
 
-      var key    = peg$currPos * 179 + 175,
+      var key    = peg$currPos * 180 + 175,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13335,7 +13335,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parsecomment() {
       var s0, s1, s2, s3, s4, s5, s6;
 
-      var key    = peg$currPos * 179 + 176,
+      var key    = peg$currPos * 180 + 176,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13458,7 +13458,7 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
     function peg$parseeol() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
-      var key    = peg$currPos * 179 + 177,
+      var key    = peg$currPos * 180 + 177,
           cached = peg$cache[key];
 
       if (cached) {
@@ -13590,10 +13590,112 @@ void (function(){var _ion_compiler_parser_ = function(module,exports,require){mo
       return s0;
     }
 
+    function peg$parseeol_nocomments() {
+      var s0, s1, s2, s3, s4, s5;
+
+      var key    = peg$currPos * 180 + 178,
+          cached = peg$cache[key];
+
+      if (cached) {
+        peg$currPos = cached.nextPos;
+        return cached.result;
+      }
+
+      s0 = peg$currPos;
+      s1 = peg$parse_();
+      if (s1 !== peg$FAILED) {
+        s2 = peg$parseeof();
+        if (s2 === peg$FAILED) {
+          s2 = [];
+          s3 = peg$currPos;
+          if (input.charCodeAt(peg$currPos) === 13) {
+            s4 = peg$c465;
+            peg$currPos++;
+          } else {
+            s4 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c466); }
+          }
+          if (s4 === peg$FAILED) {
+            s4 = peg$c4;
+          }
+          if (s4 !== peg$FAILED) {
+            if (input.charCodeAt(peg$currPos) === 10) {
+              s5 = peg$c462;
+              peg$currPos++;
+            } else {
+              s5 = peg$FAILED;
+              if (peg$silentFails === 0) { peg$fail(peg$c463); }
+            }
+            if (s5 !== peg$FAILED) {
+              s4 = [s4, s5];
+              s3 = s4;
+            } else {
+              peg$currPos = s3;
+              s3 = peg$c0;
+            }
+          } else {
+            peg$currPos = s3;
+            s3 = peg$c0;
+          }
+          if (s3 !== peg$FAILED) {
+            while (s3 !== peg$FAILED) {
+              s2.push(s3);
+              s3 = peg$currPos;
+              if (input.charCodeAt(peg$currPos) === 13) {
+                s4 = peg$c465;
+                peg$currPos++;
+              } else {
+                s4 = peg$FAILED;
+                if (peg$silentFails === 0) { peg$fail(peg$c466); }
+              }
+              if (s4 === peg$FAILED) {
+                s4 = peg$c4;
+              }
+              if (s4 !== peg$FAILED) {
+                if (input.charCodeAt(peg$currPos) === 10) {
+                  s5 = peg$c462;
+                  peg$currPos++;
+                } else {
+                  s5 = peg$FAILED;
+                  if (peg$silentFails === 0) { peg$fail(peg$c463); }
+                }
+                if (s5 !== peg$FAILED) {
+                  s4 = [s4, s5];
+                  s3 = s4;
+                } else {
+                  peg$currPos = s3;
+                  s3 = peg$c0;
+                }
+              } else {
+                peg$currPos = s3;
+                s3 = peg$c0;
+              }
+            }
+          } else {
+            s2 = peg$c0;
+          }
+        }
+        if (s2 !== peg$FAILED) {
+          s1 = [s1, s2];
+          s0 = s1;
+        } else {
+          peg$currPos = s0;
+          s0 = peg$c0;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$c0;
+      }
+
+      peg$cache[key] = { nextPos: peg$currPos, result: s0 };
+
+      return s0;
+    }
+
     function peg$parseeof() {
       var s0, s1;
 
-      var key    = peg$currPos * 179 + 178,
+      var key    = peg$currPos * 180 + 179,
           cached = peg$cache[key];
 
       if (cached) {

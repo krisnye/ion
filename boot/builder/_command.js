@@ -9,11 +9,20 @@ if (args.length === 0 || args[0] === '--help') {
     return;
 }
 var ModuleBuilder = require('../builder/ModuleBuilder');
-if (args[0] === '-c') {
-    ModuleBuilder().watch();
-    process.exit();
-} else if (args[0] === '-w') {
-    ModuleBuilder().watch();
+if (args[0] === '-c' || args[0] === '-w') {
+    if (args[1] != null) {
+        process.chdir(args[1]);
+    }
+    try {
+        ModuleBuilder().watchValue();
+        if (args[0] === '-c') {
+            process.exit();
+        }
+    } catch (e) {
+        console.log('fuck you------------------------------');
+        console.error(e.stack);
+        process.exit(1);
+    }
 } else {
     global.ion = require('../');
     var File = require('./File');

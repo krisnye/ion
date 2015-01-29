@@ -1,4 +1,4 @@
-void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compileIonWithSourceMap, compilePegjs, exports, fs, getModuleId, isPrivate, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _;
+void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compileIonWithSourceMap, compilePegjs, exports, fs, getModuleId, ion, isPrivate, name, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _, _fn, _i, _len, _ref;
 
 if (global.window) {
   return;
@@ -11,6 +11,8 @@ utility = require('./utility');
 fs = require('fs');
 
 np = require('path');
+
+ion = require('../');
 
 process.on('uncaughtException', function(e) {
   var _ref;
@@ -210,6 +212,20 @@ module.exports = exports = {
     return sourceText;
   }
 };
+
+_ref = ["ModuleBuilder", "WebsiteBuilder", "File", "Directory", "utility"];
+_fn = function(name) {
+  return Object.defineProperty(exports, name, {
+    enumerable: true,
+    get: function() {
+      return require("./" + name);
+    }
+  });
+};
+for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+  name = _ref[_i];
+  _fn(name);
+}
 
   }
   if (typeof require === 'function') {

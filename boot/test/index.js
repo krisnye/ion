@@ -3,6 +3,7 @@ Object.defineProperty(exports, 'ionCompiler', {get:function(){ return require('.
 Object.defineProperty(exports, 'ionCompilerES5', {get:function(){ return require('./ionCompilerES5') }, enumerable: true}) 
 Object.defineProperty(exports, 'reactiveTemplates', {get:function(){ return require('./reactiveTemplates') }, enumerable: true}) 
 Object.defineProperty(exports, 'sourceSize', {get:function(){ return require('./sourceSize') }, enumerable: true}) 
+Object.defineProperty(exports, '', {get:function(){ return require('./') }, enumerable: true}) 
   }
   if (typeof require === 'function') {
     if (require.register)

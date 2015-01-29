@@ -6,7 +6,7 @@ var ExpressionStatement = ion.defineClass({
             activate: function () {
                 ExpressionStatement.super.prototype.activate.apply(this, arguments);
                 this.runtimeExpression = this.runtimeExpression != null ? this.runtimeExpression : this.context.createRuntime(this.expression);
-                this.runtimeExpression.watch(this.runtimeExpressionWatcher = this.runtimeExpressionWatcher != null ? this.runtimeExpressionWatcher : ion.bind(function (value) {
+                this.runtimeExpression.watchValue(this.runtimeExpressionWatcher = this.runtimeExpressionWatcher != null ? this.runtimeExpressionWatcher : ion.bind(function (value) {
                     if (this.expressionValue !== value) {
                         this.expressionValue = value;
                         this._remove != null ? this._remove() : void 0;
@@ -19,7 +19,7 @@ var ExpressionStatement = ion.defineClass({
             },
             deactivate: function () {
                 ExpressionStatement.super.prototype.deactivate.apply(this, arguments);
-                this.runtimeExpression.unwatch(this.runtimeExpressionWatcher);
+                this.runtimeExpression.unwatchValue(this.runtimeExpressionWatcher);
             }
         }
     }, Statement);

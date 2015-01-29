@@ -31,7 +31,7 @@ var ForInOfStatement = ion.defineClass({
                     this.keyName = this.left.declarations[this.type === 'ForOfStatement' ? 1 : 0] != null ? this.left.declarations[this.type === 'ForOfStatement' ? 1 : 0].id.name : void 0;
                 }
                 this.collectionExpression = this.collectionExpression != null ? this.collectionExpression : this.context.createRuntime(this.right);
-                this.collectionExpression.watch(this.collectionWatcher = this.collectionWatcher != null ? this.collectionWatcher : ion.bind(function (collection) {
+                this.collectionExpression.watchValue(this.collectionWatcher = this.collectionWatcher != null ? this.collectionWatcher : ion.bind(function (collection) {
                     if (this.collection !== collection) {
                         if (this.collection != null) {
                             this.forEach(this.collection, ion.bind(function (key, value) {
@@ -51,7 +51,7 @@ var ForInOfStatement = ion.defineClass({
             },
             deactivate: function () {
                 ForInOfStatement.super.prototype.deactivate.apply(this, arguments);
-                this.collectionExpression.unwatch(this.collectionWatcher);
+                this.collectionExpression.unwatchValue(this.collectionWatcher);
             },
             addItem: function (key, value, activate) {
                 if (activate == null)

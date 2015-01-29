@@ -9,7 +9,7 @@ var _ref2 = {};
     _ref2.activate = function () {
         CallExpression.super.prototype.activate.apply(this, arguments);
         this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
-        this.calleeExpression.watch(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : ion.bind(function (value) {
+        this.calleeExpression.watchValue(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : ion.bind(function (value) {
             if (this.isActive && !(value != null) && !this.existential && (this.loc != null ? this.loc.start.source : void 0) != null) {
                 console.warn('Function is ' + value + ' (' + Factory.toCode(this.callee) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
             }
@@ -17,11 +17,12 @@ var _ref2 = {};
             var thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
             if (thisArg !== this.thisArg) {
                 ion.unobserve(this.thisarg, this.thisObserver);
+                this.unwatch != null ? this.unwatch() : void 0;
                 this.thisArg = thisArg;
                 if (!(this.calleeValue != null ? this.calleeValue.template : void 0)) {
                     var deep = Array.isArray(thisArg);
                     if (deep) {
-                        ion.patch.watch(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (patch) {
+                        this.unwatch = ion.patch.watch(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (patch) {
                             this.evaluate();
                         }, this));
                     } else {
@@ -38,17 +39,17 @@ var _ref2 = {};
             elements: this.arguments,
             observeElements: !(this.calleeValue != null ? this.calleeValue.template : void 0)
         });
-        this.argumentExpressions.watch(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
+        this.argumentExpressions.watchValue(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
             this.argumentsValue = value;
             this.evaluate();
         }, this));
     };
     _ref2.deactivate = function () {
         CallExpression.super.prototype.deactivate.apply(this, arguments);
-        this.calleeExpression.unwatch(this.calleeWatcher);
-        this.argumentExpressions.unwatch(this.argumentWatcher);
+        this.calleeExpression.unwatchValue(this.calleeWatcher);
+        this.argumentExpressions.unwatchValue(this.argumentWatcher);
         if (this.template != null) {
-            this.template.unwatch(this.templateWatcher);
+            this.template.unwatchValue(this.templateWatcher);
             delete this.template;
         }
     };
@@ -59,10 +60,10 @@ var _ref2 = {};
         var value = void 0;
         if (this.calleeValue.template) {
             if (this.template != null) {
-                this.template.unwatch(this.templateWatcher);
+                this.template.unwatchValue(this.templateWatcher);
             }
             this.template = this.calleeValue.apply(this.thisArg, this.argumentsValue);
-            this.template.watch(this.templateWatcher = this.templateWatcher != null ? this.templateWatcher : this.setValue.bind(this));
+            this.template.watchValue(this.templateWatcher = this.templateWatcher != null ? this.templateWatcher : this.setValue.bind(this));
         } else {
             if (this.type === 'NewExpression') {
                 value = ion.create(this.calleeValue, this.argumentsValue);

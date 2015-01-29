@@ -9,19 +9,19 @@ var MemberExpression = ion.defineClass({
                 MemberExpression.super.prototype.activate.apply(this, arguments);
                 this.objectExpression = this.objectExpression != null ? this.objectExpression : this.context.createRuntime(this.object);
                 this.propertyExpression = this.propertyExpression != null ? this.propertyExpression : this.context.createRuntime(this.computed ? this.property : this.property.name);
-                this.objectExpression.watch(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : ion.bind(function (objectValue) {
+                this.objectExpression.watchValue(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : ion.bind(function (objectValue) {
                     this.objectValue = objectValue;
                     this.updateValue();
                 }, this));
-                this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : ion.bind(function (propertyValue) {
+                this.propertyExpression.watchValue(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : ion.bind(function (propertyValue) {
                     this.propertyValue = propertyValue;
                     this.updateValue();
                 }, this));
             },
             deactivate: function () {
                 MemberExpression.super.prototype.deactivate.apply(this, arguments);
-                this.objectExpression.unwatch(this.objectWatcher);
-                this.propertyExpression.unwatch(this.propertyWatcher);
+                this.objectExpression.unwatchValue(this.objectWatcher);
+                this.propertyExpression.unwatchValue(this.propertyWatcher);
             },
             updateValue: function () {
                 var value = void 0;

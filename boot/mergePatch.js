@@ -1,8 +1,11 @@
 void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
 var ion = require('./'), isObject = function (a) {
-        return a != null && typeof a === 'object';
+        var type = typeof a;
+        return a != null && type === 'object' || type === 'function';
     }, deleteValue = null;
-var merge = exports.merge = function (target, values, options) {
+var canSetProperty = exports.canSetProperty = function (object, key) {
+        return !(typeof object === 'function' && key === 'name');
+    }, merge = exports.merge = function (target, values, options) {
         var deleteNull = (options != null ? options.deleteNull : void 0) != null ? options.deleteNull : true;
         if ((values != null ? values.constructor : void 0) !== Object) {
             return values;
@@ -20,7 +23,9 @@ var merge = exports.merge = function (target, values, options) {
                 delete target[key];
             } else {
                 var newValue = merge(target[key], value, options);
-                target[key] = newValue;
+                if (canSetProperty(target, key)) {
+                    target[key] = newValue;
+                }
             }
         }
         return target;

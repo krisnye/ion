@@ -54,7 +54,7 @@ var ArrayExpression = ion.defineClass({
                     for (var _i2 = 0; _i2 < _ref3.length; _i2++) {
                         var key = _i2;
                         var expression = _ref3[_i2];
-                        expression.watch(this.expressionWatchers[key]);
+                        expression.watchValue(this.expressionWatchers[key]);
                     }
                 }
                 ArrayExpression.super.prototype.activate.apply(this, arguments);
@@ -66,7 +66,7 @@ var ArrayExpression = ion.defineClass({
                     for (var _i3 = 0; _i3 < _ref4.length; _i3++) {
                         var key = _i3;
                         var expression = _ref4[_i3];
-                        expression.unwatch(this.expressionWatchers[key]);
+                        expression.unwatchValue(this.expressionWatchers[key]);
                     }
                 }
                 ArrayExpression.super.prototype.deactivate.apply(this, arguments);
@@ -91,9 +91,10 @@ var ArrayExpression = ion.defineClass({
             function watcher(value) {
                 result = value;
             }
-            e.watch(watcher);
+            e.watchValue(watcher);
             if (!(JSON.stringify(result) === '[1,2]'))
                 throw new Error('Assertion Failed: (JSON.stringify(result) is "[1,2]")');
+            e.unwatchValue(watcher);
         }
     }, DynamicExpression);
 module.exports = exports = ArrayExpression;

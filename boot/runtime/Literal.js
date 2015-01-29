@@ -3,10 +3,10 @@ var ion = require('../');
 var Literal = ion.defineClass({
         name: 'Literal',
         properties: {
-            watch: function (watcher) {
+            watchValue: function (watcher) {
                 watcher(this.value);
             },
-            unwatch: function (watcher) {
+            unwatchValue: function (watcher) {
                 watcher(void 0);
             }
         }

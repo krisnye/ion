@@ -1574,7 +1574,7 @@ var test = exports.test = function () {
                 var watcher = function (value) {
                     return reactiveResult = value;
                 };
-                template.watch(watcher);
+                template.watchValue(watcher);
                 try {
                     if (!(reactiveResult === expected || JSON.stringify(reactiveResult) === JSON.stringify(expected)))
                         throw new Error('Assertion Failed: (reactiveResult is expected or JSON.stringify(reactiveResult) is JSON.stringify(expected))');
@@ -1582,7 +1582,7 @@ var test = exports.test = function () {
                     console.log(reactiveResult, '!==', expected);
                     throw e;
                 }
-                template.unwatch(watcher);
+                template.unwatchValue(watcher);
                 if (!(reactiveResult === void 0))
                     throw new Error('Assertion Failed: (reactiveResult is undefined)');
             }

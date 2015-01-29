@@ -1581,7 +1581,7 @@ for (var _i = 0; _i < templates.length; _i++) {
                     }
                 }
                 template.activate();
-                template.watch(function (value) {
+                template.watchValue(function (value) {
                     checkIfDone(value);
                     ion.observe(value, function (changes) {
                         checkIfDone(value);

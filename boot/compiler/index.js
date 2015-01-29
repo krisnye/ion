@@ -31,9 +31,17 @@ var parse = exports.parse = function (content, options) {
         options.loc = options.loc != null ? options.loc : true;
         options.target = options.target != null ? options.target : 'es5';
         var preprocessor = require('./preprocessor'), parser = require('./parser'), postprocessor = require('./postprocessor'), escodegen = require('./escodegen');
-        var sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), sourceMap = null, preprocessed = result, sourceLocationsFixed = false;
+        var sourceMapping = {}, result = preprocessor.preprocess(content, sourceMapping), sourceMap = null, preprocessed = result, sourceLocationsFixed = false, dump = function (description) {
+                if (options.debug) {
+                    console.log('-' + description + '--------------------------------------');
+                    console.log(typeof result === 'string' ? result : JSON.stringify(result, null, '  '));
+                    console.log('---------------------------------------------------');
+                }
+            };
         try {
+            dump('Preprocessed');
             result = parser.parse(result, options);
+            dump('Parsed');
             result = preprocessor.fixSourceLocations(result, sourceMapping, options.source);
             sourceLocationsFixed = true;
             if (options.postprocess !== false) {
@@ -50,6 +58,7 @@ var parse = exports.parse = function (content, options) {
                     }
                     var output = escodegen.generate(result, generateOptions);
                     result = output.code;
+                    dump('Generated');
                     sourceMap = output.map != null ? output.map.toString() : void 0;
                 }
             }

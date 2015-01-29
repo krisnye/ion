@@ -124,7 +124,7 @@ require.compileScripts = function() {
       if (typeof result.template) {
         template = result.call(scriptElement);
         removeLastResult = null;
-        _results.push(template.watch(function(templateResult) {
+        _results.push(template.watchValue(function(templateResult) {
           if (typeof removeLastResult === "function") {
             removeLastResult();
           }
@@ -150,7 +150,7 @@ if (typeof module === "undefined") {
 }
 
 if (global.window != null) {
-  window.addEventListener('load', function(e) {
+  window.addEventListener((global.Polymer ? 'polymer-ready' : 'load'), function(e) {
     return require.compileScripts();
   });
 }

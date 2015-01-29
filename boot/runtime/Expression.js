@@ -3,11 +3,11 @@ var ion = require('../');
 var Expression = ion.defineClass({
         name: 'Expression',
         properties: {
-            watch: function (watcher) {
-                throw new Error('not implemented');
+            watchValue: function (watcher) {
+                return this.watch(watcher);
             },
-            unwatch: function (watcher) {
-                throw new Error('not implemented');
+            unwatchValue: function (watcher) {
+                return this.unwatch(watcher);
             }
         }
     }, require('./Node'));

@@ -13,7 +13,8 @@ tests = {
     line: 1,
     column: 2
   },
-  "let foo = bar(\n    1\n    2\n)\n.toString(\n    \"12\"\n)\n.split(' ')": "'use strict';\nvar foo = bar(1, 2).toString('12').split(' ');"
+  "let foo = bar(\n    1\n    2\n)\n.toString(\n    \"12\"\n)\n.split(' ')": "'use strict';\nvar foo = bar(1, 2).toString('12').split(' ');",
+  "\"\"\n    foo\n    bar #baz": "'use strict';\n'foo\\nbar #baz';"
 };
 
 if (global.window != null) {
@@ -28,21 +29,11 @@ exports.test = function() {
       target: 'es5'
     };
     if (expected === null) {
-      console.log('---------------------------------------------------');
-      console.log(JSON.stringify(index.compile(input, ion.patch({
-        postprocess: false,
-        loc: true
-      }, options)), null, '  '));
-      console.log('-Postprocessed-------------------------------------');
-      console.log(JSON.stringify(index.compile(input, ion.patch({
-        generate: false,
-        loc: true
-      }, options)), null, '  '));
-      console.log('---------------------------------------------------');
-      console.log(index.compile(input, ion.patch({
-        loc: true,
-        source: 'ionCompilerES5.js'
-      }, options)));
+      index.compile(input, ion.patch({
+        loc: false,
+        source: 'ionCompilerES5.js',
+        debug: true
+      }, options));
     } else if (typeof expected === 'object') {
       error = null;
       try {

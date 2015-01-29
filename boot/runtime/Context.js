@@ -19,15 +19,6 @@ var Context = ion.defineClass({
             },
             createRuntime: function (node) {
                 return Factory.createRuntime(this, node);
-                if (!(node != null)) {
-                    return null;
-                }
-                var key = Factory.toCode(node);
-                var runtime = this._runtimes[key];
-                if (!(runtime != null)) {
-                    runtime = this._runtimes[key] = Factory.createRuntime(this, node);
-                }
-                return runtime;
             },
             get: function (name) {
                 var variable = this.getVariable(name);
@@ -64,7 +55,7 @@ var Context = ion.defineClass({
             },
             setVariableExpression: function (name, expression) {
                 if (name != null) {
-                    expression.watch(noop);
+                    expression.watchValue(noop);
                     return this.variables[name] = expression;
                 }
             }

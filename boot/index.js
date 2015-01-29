@@ -1,7 +1,7 @@
 void (function(){var _ion_index_ = function(module,exports,require){'use strict';
 var ion = null;
 require('./es6');
-global.DEBUG = global.DEBUG != null ? global.DEBUG : false;
+global.DEBUG = global.DEBUG != null ? global.DEBUG : true;
 var primitive = {
         string: true,
         number: true,
@@ -100,15 +100,14 @@ var patch = exports.patch = function () {
             return function () {
                 var hiddenDiv = document.createElement('div');
                 var callbacks = [];
-                var mo = new MutationObserver(function (records) {
-                        var cbList = callbacks;
-                        callbacks = [];
-                        for (var _i = 0; _i < cbList.length; _i++) {
-                            var callback = cbList[_i];
-                            callback();
-                        }
-                    });
-                mo.observe(hiddenDiv, { attributes: true });
+                new MutationObserver(function (records) {
+                    var cbList = callbacks;
+                    callbacks = [];
+                    for (var _i = 0; _i < cbList.length; _i++) {
+                        var callback = cbList[_i];
+                        callback();
+                    }
+                }).observe(hiddenDiv, { attributes: true });
             }();
             return function setImmediate(callback) {
                 if (callbacks.length === 0) {
@@ -146,12 +145,12 @@ var patch = exports.patch = function () {
             }
             return _ref;
         } else if ((object != null ? object.constructor : void 0) === Object) {
-            var _ref2 = {};
+            var _ref3 = {};
             for (var key in object) {
                 var value = object[key];
-                _ref2[key] = deep ? clone(value, deep) : value;
+                _ref3[key] = deep ? clone(value, deep) : value;
             }
-            return _ref2;
+            return _ref3;
         } else {
             return object;
         }
@@ -223,7 +222,7 @@ var patch = exports.patch = function () {
                 container.removeEventListener(name, item);
             };
         } else if (container.nodeType === 1) {
-            if (typeof item !== 'string' && !(item.nodeType != null)) {
+            if (typeof item !== 'string' && !((item != null ? item.nodeType : void 0) != null)) {
                 item = JSON.stringify(item);
             }
             if (typeof item === 'string') {
@@ -433,6 +432,25 @@ var patch = exports.patch = function () {
             }
         }
     };
+{
+    var _ref2 = [
+            'runtime',
+            'compiler',
+            'builder',
+            'browser'
+        ];
+    for (var _i3 = 0; _i3 < _ref2.length; _i3++) {
+        var name = _ref2[_i3];
+        (function (name) {
+            Object.defineProperty(exports, name, {
+                enumerable: true,
+                get: function () {
+                    return require('./' + name);
+                }
+            });
+        }(name));
+    }
+}
 if (global.window != null) {
     global.window.addEventListener('resize', checkForChanges);
 }

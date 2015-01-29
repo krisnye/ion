@@ -6,13 +6,13 @@ var ReturnStatement = ion.defineClass({
             activate: function () {
                 ReturnStatement.super.prototype.activate.apply(this, arguments);
                 this.argumentExpression = this.argumentExpression != null ? this.argumentExpression : this.context.createRuntime(this.argument);
-                this.argumentExpression.watch(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
+                this.argumentExpression.watchValue(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
                     return this.context.returnExpression.setValue(value);
                 }, this));
             },
             deactivate: function () {
                 ReturnStatement.super.prototype.deactivate.apply(this, arguments);
-                this.argumentExpression.unwatch(this.argumentWatcher);
+                this.argumentExpression.unwatchValue(this.argumentWatcher);
             }
         }
     }, Statement);

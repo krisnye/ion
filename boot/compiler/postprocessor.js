@@ -1599,7 +1599,7 @@ activateStatements = function(node, context) {
           },
           property: {
             type: 'Identifier',
-            name: 'watch'
+            name: 'watchValue'
           }
         },
         "arguments": []
