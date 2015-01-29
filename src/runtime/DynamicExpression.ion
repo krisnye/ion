@@ -9,7 +9,7 @@ export class DynamicExpression extends import './Expression'
         deactivate: ->
             # called when we no longer have watchers
             @isActive = false
-        watch: (watcher) ->
+        watchValue: (watcher) ->
             let watchers = @_watchers ?= []
             if watchers.length is 0
                 @activate()
@@ -18,7 +18,7 @@ export class DynamicExpression extends import './Expression'
             if @hasValue()
                 let value = @getValue()
                 @_notifyWatcher(watcher, value)
-        unwatch: (watcher) ->
+        unwatchValue: (watcher) ->
             @_watchers.remove(watcher)
             # notify watcher immediately if we have a value
             if @hasValue()
@@ -49,14 +49,14 @@ export class DynamicExpression extends import './Expression'
         const watcher = (value) ->
             if value isnt undefined
                 total += value
-        d.watch(watcher)
+        d.watchValue(watcher)
         assert total is 10
         d.setValue(10)
         assert d.getValue() is 10
         assert total is 20
         d.setValue(20)
         assert total is 40
-        d.unwatch(watcher)
+        d.unwatchValue(watcher)
         assert total is 40
         d.setValue(50)
         assert total is 40

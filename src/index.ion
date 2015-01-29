@@ -2,7 +2,8 @@ const ion = null # shouldn't depend on itself
 
 import './es6'
 
-global.DEBUG ?= false
+# with this set to false we will miss any errors in Object.observe callbacks.
+global.DEBUG ?= true
 
 const
     primitive = {string:true,number:true,boolean:true,function:true}
@@ -163,7 +164,7 @@ export const
             remove = ->
                 container.removeEventListener(name, item)
         else if container.nodeType is 1
-            if typeof item isnt 'string' and not item.nodeType?
+            if typeof item isnt 'string' and not item?.nodeType?
                 item = JSON.stringify(item)
             if typeof item is 'string'
                 item = document.createTextNode(item)

@@ -62,5 +62,5 @@ export class Context
             if name?
                 # we always watch the expression to make sure it is created only once
                 # if we don't, then it may be created and destroyed multiple times which can cause bugs
-                expression.watch(noop)
+                expression.watchValue(noop)
                 return @variables[name] = expression

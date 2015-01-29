@@ -30,7 +30,7 @@ export class ForInOfStatement extends Statement
             # we must create new contexts for every item in the list thingy.
             # console.log('ForEachStatement.activate', @)
             @collectionExpression ?= @context.createRuntime(@right)
-            @collectionExpression.watch(
+            @collectionExpression.watchValue(
                 @collectionWatcher ?= (collection) =>
                     # console.log('collectionWatcher', collection)
                     if @collection isnt collection
@@ -52,7 +52,7 @@ export class ForInOfStatement extends Statement
             )
         deactivate: ->
             super
-            @collectionExpression.unwatch(@collectionWatcher)
+            @collectionExpression.unwatchValue(@collectionWatcher)
         addItem: (key, value, activate = true) ->
             # console.log('add ' + key + ' ' + value)
             if value isnt undefined

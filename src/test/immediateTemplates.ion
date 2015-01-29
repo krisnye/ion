@@ -133,14 +133,14 @@ export const
             let template = templateType.apply(this, args)
             let reactiveResult = null
             let watcher = (value) -> reactiveResult = value
-            template.watch(watcher)
+            template.watchValue(watcher)
             try
                 assert reactiveResult is expected or JSON.stringify(reactiveResult) is JSON.stringify(expected)
             catch e
                 console.log(reactiveResult, "!==", expected)
                 throw e
 
-            template.unwatch(watcher)
+            template.unwatchValue(watcher)
             assert reactiveResult is undefined
             # # also, call the template function imperatively and see that it's still the expected value
             # let imperativeResult = templateType.apply(null, args)

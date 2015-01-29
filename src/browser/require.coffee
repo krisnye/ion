@@ -82,7 +82,7 @@ require.compileScripts = ->
             if typeof result.template
                 template = result.call(scriptElement)
                 removeLastResult = null
-                template.watch (templateResult) ->
+                template.watchValue (templateResult) ->
                     removeLastResult?()
                     removeLastResult = null
                     if templateResult?

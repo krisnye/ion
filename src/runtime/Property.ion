@@ -9,9 +9,9 @@ export class Property extends Statement
             # create the runtime expressions
             @keyExpression ?= @context.createRuntime(@computed ? @key : (@key.name ? @key.value))
             @valueExpression ?= @context.createRuntime(@value)
-            # then watch them, this way, the keywatcher can set the left value on the right hand side
+            # then watchValue them, this way, the keywatcher can set the left value on the right hand side
             # before it is activated
-            @keyExpression.watch(
+            @keyExpression.watchValue(
                 @keyWatcher ?= (key) =>
                     if key? and @valueExpression.setLeftValue?
                         # if there is a context.output then get the current key from that
@@ -22,7 +22,7 @@ export class Property extends Statement
                     @keyValue = key
                     @setProperty()
             )
-            @valueExpression.watch(
+            @valueExpression.watchValue(
                 @valueWatcher ?= (value) =>
                     @valueValue = value
                     @setProperty()
@@ -30,8 +30,8 @@ export class Property extends Statement
         deactivate: ->
             super
             ion.unobserve(@context.output, @contextObserver, @leftValue)
-            @keyExpression.unwatch(@keyWatcher)
-            @valueExpression.unwatch(@valueWatcher)
+            @keyExpression.unwatchValue(@keyWatcher)
+            @valueExpression.unwatchValue(@valueWatcher)
         setProperty: (key = @keyValue, value = @valueValue) ->
             # we must have a key, and the value must not be undefined UNLESS the value is explicitly undefined!
             if @hasOwnProperty('keyValue') and @hasOwnProperty('valueValue')

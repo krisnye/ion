@@ -8,24 +8,24 @@ module.exports = class ConditionalExpression extends DynamicExpression
         activate: ->
             super
             @testExpression ?= @context.createRuntime(@test)
-            @testExpression.watch(
+            @testExpression.watchValue(
                 @testWatcher ?= (value) =>
                     if not @hasOwnProperty('testValue') or Boolean(value) isnt Boolean(@testValue)
                         @testValue = value
                         if value
-                            @alternateExpression?.unwatch(@alternateWatcher)
+                            @alternateExpression?.unwatchValue(@alternateWatcher)
                             @alternateExpression = null
                             @consequentExpression ?= @context.createRuntime(@consequent)
-                            @consequentExpression.watch(
+                            @consequentExpression.watchValue(
                                 @consequentWatcher ?= (value) =>
                                     if @testValue
                                         @setValue(value)
                             )
                         else
-                            @consequentExpression?.unwatch(@consequentWatcher)
+                            @consequentExpression?.unwatchValue(@consequentWatcher)
                             @consequentExpression = null
                             @alternateExpression ?= @context.createRuntime(@alternate)
-                            @alternateExpression.watch(
+                            @alternateExpression.watchValue(
                                 @alternateWatcher ?= (value) =>
                                     if not @testValue
                                         @setValue(value)
@@ -33,6 +33,6 @@ module.exports = class ConditionalExpression extends DynamicExpression
             )
         deactivate: ->
             super
-            @testExpression.unwatch(@testWatcher)
-            @consequentExpression?.unwatch(@consequentWatcher)
-            @alternateExpression?.unwatch(@alternateWatcher)
+            @testExpression.unwatchValue(@testWatcher)
+            @consequentExpression?.unwatchValue(@consequentWatcher)
+            @alternateExpression?.unwatchValue(@alternateWatcher)

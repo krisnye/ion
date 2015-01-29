@@ -1072,14 +1072,14 @@ tests =
     """
     """
     class DynamicExpression
-        watch: ->
+        watchValue: ->
             let x = @x ?= []
     """: """
     'use strict';
     const ion = require('ion');
     const DynamicExpression = ion.defineClass({
             name: 'DynamicExpression',
-            watch: function () {
+            watchValue: function () {
                 let x = this.x = this.x != null ? this.x : [];
             }
         });

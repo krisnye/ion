@@ -8,24 +8,25 @@ module.exports = class CallExpression extends DynamicExpression
         activate: ->
             super
             @calleeExpression ?= @context.createRuntime(@callee)
-            @calleeExpression.watch(
+            @calleeExpression.watchValue(
                 @calleeWatcher ?= (value) =>
                     if @isActive and not value? and not @existential and @loc?.start.source?
                         # we need to throw an exception here with location info
                         console.warn("Function is {{value}} ({{Factory.toCode(@callee)}}) ({{@loc.start.source}}:{{@loc.start.line}}:{{@loc.start.column + 1}})")
 
                     @calleeValue = value
-                    # get thisArg and watch for changes
+                    # get thisArg and watchValue for changes
                     let thisArg = @calleeExpression.objectExpression?.value
                     if thisArg isnt @thisArg
                         ion.unobserve(@thisarg, @thisObserver)
+                        @unwatch?()
                         @thisArg = thisArg
-                        if not @calleeValue?.template # we don't need to watch the thisArg if the callee is a template
+                        if not @calleeValue?.template # we don't need to watchValue the thisArg if the callee is a template
                             let deep = Array.isArray(thisArg)
                             if deep
-                                # console.log('deep watch man-------------------------', thisArg, @calleeValue)
-                                # deep watch
-                                ion.patch.watch(
+                                # console.log('deep watchValue man-------------------------', thisArg, @calleeValue)
+                                # deep watchValue
+                                @unwatch = ion.patch.watch(
                                     thisArg
                                     @thisObserver ?= (patch) =>
                                         # console.log('deep change', patch)
@@ -41,17 +42,17 @@ module.exports = class CallExpression extends DynamicExpression
                     @evaluate()
             )
             @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:not @calleeValue?.template})
-            @argumentExpressions.watch(
+            @argumentExpressions.watchValue(
                 @argumentWatcher ?= (value) =>
                     @argumentsValue = value
                     @evaluate()
             )
         deactivate: ->
             super
-            @calleeExpression.unwatch(@calleeWatcher)
-            @argumentExpressions.unwatch(@argumentWatcher)
+            @calleeExpression.unwatchValue(@calleeWatcher)
+            @argumentExpressions.unwatchValue(@argumentWatcher)
             if @template?
-                @template.unwatch(@templateWatcher)
+                @template.unwatchValue(@templateWatcher)
                 delete @template
         _evaluateInternal: ->
             if not (@isActive and @calleeValue? and @argumentsValue?)
@@ -59,10 +60,10 @@ module.exports = class CallExpression extends DynamicExpression
             let value = undefined
             if @calleeValue.template
                 if @template?
-                    @template.unwatch(@templateWatcher)
+                    @template.unwatchValue(@templateWatcher)
                 # always use new on templates
                 @template = @calleeValue.apply(@thisArg, @argumentsValue)
-                @template.watch(@templateWatcher ?= @setValue.bind(@))
+                @template.watchValue(@templateWatcher ?= @setValue.bind(@))
             else
                 if @type is 'NewExpression'
                     # create a new with variable args

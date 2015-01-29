@@ -10,11 +10,11 @@ export class Template extends BlockStatement
         @context.returnExpression = new DynamicExpression()
     properties:
         # Template also implements Expression interface
-        watch: (watcher = noop) ->
+        watchValue: (watcher = noop) ->
             if not @isActive
                 @activate()
-            @context.returnExpression.watch(watcher)
-        unwatch: (watcher) ->
-            @context.returnExpression.unwatch(watcher)
+            @context.returnExpression.watchValue(watcher)
+        unwatchValue: (watcher) ->
+            @context.returnExpression.unwatchValue(watcher)
             if not @context.returnExpression.isActive
                 @deactivate()

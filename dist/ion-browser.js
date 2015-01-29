@@ -124,7 +124,7 @@ require.compileScripts = function() {
       if (typeof result.template) {
         template = result.call(scriptElement);
         removeLastResult = null;
-        _results.push(template.watch(function(templateResult) {
+        _results.push(template.watchValue(function(templateResult) {
           if (typeof removeLastResult === "function") {
             removeLastResult();
           }
@@ -150,7 +150,7 @@ if (typeof module === "undefined") {
 }
 
 if (global.window != null) {
-  window.addEventListener('load', function(e) {
+  window.addEventListener((global.Polymer ? 'polymer-ready' : 'load'), function(e) {
     return require.compileScripts();
   });
 }
@@ -323,7 +323,6 @@ module.exports = exports = _ref;
 void (function(){var _ion_browser_index_ = function(module,exports,require){Object.defineProperty(exports, 'element', {get:function(){ return require('./element') }, enumerable: true}) 
 Object.defineProperty(exports, 'require', {get:function(){ return require('./require') }, enumerable: true}) 
 Object.defineProperty(exports, 'tester', {get:function(){ return require('./tester') }, enumerable: true}) 
-Object.defineProperty(exports, '', {get:function(){ return require('./') }, enumerable: true}) 
   }
   if (typeof require === 'function') {
     if (require.register)
@@ -1155,7 +1154,7 @@ require('./Array');
 void (function(){var _ion_index_ = function(module,exports,require){'use strict';
 var ion = null;
 require('./es6');
-global.DEBUG = global.DEBUG != null ? global.DEBUG : false;
+global.DEBUG = global.DEBUG != null ? global.DEBUG : true;
 var primitive = {
         string: true,
         number: true,
@@ -1376,7 +1375,7 @@ var patch = exports.patch = function () {
                 container.removeEventListener(name, item);
             };
         } else if (container.nodeType === 1) {
-            if (typeof item !== 'string' && !(item.nodeType != null)) {
+            if (typeof item !== 'string' && !((item != null ? item.nodeType : void 0) != null)) {
                 item = JSON.stringify(item);
             }
             if (typeof item === 'string') {
@@ -1622,9 +1621,12 @@ if (global.window != null) {
 //# sourceMappingURL=./index.map
 void (function(){var _ion_mergePatch_ = function(module,exports,require){'use strict';
 var ion = require('./'), isObject = function (a) {
-        return a != null && typeof a === 'object';
+        var type = typeof a;
+        return a != null && type === 'object' || type === 'function';
     }, deleteValue = null;
-var merge = exports.merge = function (target, values, options) {
+var canSetProperty = exports.canSetProperty = function (object, key) {
+        return !(typeof object === 'function' && key === 'name');
+    }, merge = exports.merge = function (target, values, options) {
         var deleteNull = (options != null ? options.deleteNull : void 0) != null ? options.deleteNull : true;
         if ((values != null ? values.constructor : void 0) !== Object) {
             return values;
@@ -1642,7 +1644,9 @@ var merge = exports.merge = function (target, values, options) {
                 delete target[key];
             } else {
                 var newValue = merge(target[key], value, options);
-                target[key] = newValue;
+                if (canSetProperty(target, key)) {
+                    target[key] = newValue;
+                }
             }
         }
         return target;
@@ -1972,7 +1976,7 @@ var ArrayExpression = ion.defineClass({
                     for (var _i2 = 0; _i2 < _ref3.length; _i2++) {
                         var key = _i2;
                         var expression = _ref3[_i2];
-                        expression.watch(this.expressionWatchers[key]);
+                        expression.watchValue(this.expressionWatchers[key]);
                     }
                 }
                 ArrayExpression.super.prototype.activate.apply(this, arguments);
@@ -1984,7 +1988,7 @@ var ArrayExpression = ion.defineClass({
                     for (var _i3 = 0; _i3 < _ref4.length; _i3++) {
                         var key = _i3;
                         var expression = _ref4[_i3];
-                        expression.unwatch(this.expressionWatchers[key]);
+                        expression.unwatchValue(this.expressionWatchers[key]);
                     }
                 }
                 ArrayExpression.super.prototype.deactivate.apply(this, arguments);
@@ -2009,9 +2013,10 @@ var ArrayExpression = ion.defineClass({
             function watcher(value) {
                 result = value;
             }
-            e.watch(watcher);
+            e.watchValue(watcher);
             if (!(JSON.stringify(result) === '[1,2]'))
                 throw new Error('Assertion Failed: (JSON.stringify(result) is "[1,2]")');
+            e.unwatchValue(watcher);
         }
     }, DynamicExpression);
 module.exports = exports = ArrayExpression;
@@ -2086,7 +2091,7 @@ var _ref2 = {};
     _ref2.activate = function () {
         CallExpression.super.prototype.activate.apply(this, arguments);
         this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
-        this.calleeExpression.watch(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : ion.bind(function (value) {
+        this.calleeExpression.watchValue(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : ion.bind(function (value) {
             if (this.isActive && !(value != null) && !this.existential && (this.loc != null ? this.loc.start.source : void 0) != null) {
                 console.warn('Function is ' + value + ' (' + Factory.toCode(this.callee) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
             }
@@ -2094,11 +2099,12 @@ var _ref2 = {};
             var thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
             if (thisArg !== this.thisArg) {
                 ion.unobserve(this.thisarg, this.thisObserver);
+                this.unwatch != null ? this.unwatch() : void 0;
                 this.thisArg = thisArg;
                 if (!(this.calleeValue != null ? this.calleeValue.template : void 0)) {
                     var deep = Array.isArray(thisArg);
                     if (deep) {
-                        ion.patch.watch(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (patch) {
+                        this.unwatch = ion.patch.watch(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (patch) {
                             this.evaluate();
                         }, this));
                     } else {
@@ -2115,17 +2121,17 @@ var _ref2 = {};
             elements: this.arguments,
             observeElements: !(this.calleeValue != null ? this.calleeValue.template : void 0)
         });
-        this.argumentExpressions.watch(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
+        this.argumentExpressions.watchValue(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
             this.argumentsValue = value;
             this.evaluate();
         }, this));
     };
     _ref2.deactivate = function () {
         CallExpression.super.prototype.deactivate.apply(this, arguments);
-        this.calleeExpression.unwatch(this.calleeWatcher);
-        this.argumentExpressions.unwatch(this.argumentWatcher);
+        this.calleeExpression.unwatchValue(this.calleeWatcher);
+        this.argumentExpressions.unwatchValue(this.argumentWatcher);
         if (this.template != null) {
-            this.template.unwatch(this.templateWatcher);
+            this.template.unwatchValue(this.templateWatcher);
             delete this.template;
         }
     };
@@ -2136,10 +2142,10 @@ var _ref2 = {};
         var value = void 0;
         if (this.calleeValue.template) {
             if (this.template != null) {
-                this.template.unwatch(this.templateWatcher);
+                this.template.unwatchValue(this.templateWatcher);
             }
             this.template = this.calleeValue.apply(this.thisArg, this.argumentsValue);
-            this.template.watch(this.templateWatcher = this.templateWatcher != null ? this.templateWatcher : this.setValue.bind(this));
+            this.template.watchValue(this.templateWatcher = this.templateWatcher != null ? this.templateWatcher : this.setValue.bind(this));
         } else {
             if (this.type === 'NewExpression') {
                 value = ion.create(this.calleeValue, this.argumentsValue);
@@ -2188,23 +2194,23 @@ var ConditionalExpression = ion.defineClass({
             activate: function () {
                 ConditionalExpression.super.prototype.activate.apply(this, arguments);
                 this.testExpression = this.testExpression != null ? this.testExpression : this.context.createRuntime(this.test);
-                this.testExpression.watch(this.testWatcher = this.testWatcher != null ? this.testWatcher : ion.bind(function (value) {
+                this.testExpression.watchValue(this.testWatcher = this.testWatcher != null ? this.testWatcher : ion.bind(function (value) {
                     if (!this.hasOwnProperty('testValue') || Boolean(value) !== Boolean(this.testValue)) {
                         this.testValue = value;
                         if (value) {
-                            this.alternateExpression != null ? this.alternateExpression.unwatch(this.alternateWatcher) : void 0;
+                            this.alternateExpression != null ? this.alternateExpression.unwatchValue(this.alternateWatcher) : void 0;
                             this.alternateExpression = null;
                             this.consequentExpression = this.consequentExpression != null ? this.consequentExpression : this.context.createRuntime(this.consequent);
-                            this.consequentExpression.watch(this.consequentWatcher = this.consequentWatcher != null ? this.consequentWatcher : ion.bind(function (value) {
+                            this.consequentExpression.watchValue(this.consequentWatcher = this.consequentWatcher != null ? this.consequentWatcher : ion.bind(function (value) {
                                 if (this.testValue) {
                                     this.setValue(value);
                                 }
                             }, this));
                         } else {
-                            this.consequentExpression != null ? this.consequentExpression.unwatch(this.consequentWatcher) : void 0;
+                            this.consequentExpression != null ? this.consequentExpression.unwatchValue(this.consequentWatcher) : void 0;
                             this.consequentExpression = null;
                             this.alternateExpression = this.alternateExpression != null ? this.alternateExpression : this.context.createRuntime(this.alternate);
-                            this.alternateExpression.watch(this.alternateWatcher = this.alternateWatcher != null ? this.alternateWatcher : ion.bind(function (value) {
+                            this.alternateExpression.watchValue(this.alternateWatcher = this.alternateWatcher != null ? this.alternateWatcher : ion.bind(function (value) {
                                 if (!this.testValue) {
                                     this.setValue(value);
                                 }
@@ -2215,9 +2221,9 @@ var ConditionalExpression = ion.defineClass({
             },
             deactivate: function () {
                 ConditionalExpression.super.prototype.deactivate.apply(this, arguments);
-                this.testExpression.unwatch(this.testWatcher);
-                this.consequentExpression != null ? this.consequentExpression.unwatch(this.consequentWatcher) : void 0;
-                this.alternateExpression != null ? this.alternateExpression.unwatch(this.alternateWatcher) : void 0;
+                this.testExpression.unwatchValue(this.testWatcher);
+                this.consequentExpression != null ? this.consequentExpression.unwatchValue(this.consequentWatcher) : void 0;
+                this.alternateExpression != null ? this.alternateExpression.unwatchValue(this.alternateWatcher) : void 0;
             }
         }
     }, DynamicExpression);
@@ -2291,7 +2297,7 @@ var Context = ion.defineClass({
             },
             setVariableExpression: function (name, expression) {
                 if (name != null) {
-                    expression.watch(noop);
+                    expression.watchValue(noop);
                     return this.variables[name] = expression;
                 }
             }
@@ -2322,7 +2328,7 @@ var DynamicExpression = ion.defineClass({
             deactivate: function () {
                 this.isActive = false;
             },
-            watch: function (watcher) {
+            watchValue: function (watcher) {
                 var watchers = this._watchers = this._watchers != null ? this._watchers : [];
                 if (watchers.length === 0) {
                     this.activate();
@@ -2333,7 +2339,7 @@ var DynamicExpression = ion.defineClass({
                     this._notifyWatcher(watcher, value);
                 }
             },
-            unwatch: function (watcher) {
+            unwatchValue: function (watcher) {
                 this._watchers.remove(watcher);
                 if (this.hasValue()) {
                     this._notifyWatcher(watcher, void 0);
@@ -2383,7 +2389,7 @@ var DynamicExpression = ion.defineClass({
                     total += value;
                 }
             };
-            d.watch(watcher);
+            d.watchValue(watcher);
             if (!(total === 10))
                 throw new Error('Assertion Failed: (total is 10)');
             d.setValue(10);
@@ -2394,7 +2400,7 @@ var DynamicExpression = ion.defineClass({
             d.setValue(20);
             if (!(total === 40))
                 throw new Error('Assertion Failed: (total is 40)');
-            d.unwatch(watcher);
+            d.unwatchValue(watcher);
             if (!(total === 40))
                 throw new Error('Assertion Failed: (total is 40)');
             d.setValue(50);
@@ -2420,11 +2426,11 @@ var ion = require('../');
 var Expression = ion.defineClass({
         name: 'Expression',
         properties: {
-            watch: function (watcher) {
-                throw new Error('not implemented');
+            watchValue: function (watcher) {
+                return this.watch(watcher);
             },
-            unwatch: function (watcher) {
-                throw new Error('not implemented');
+            unwatchValue: function (watcher) {
+                return this.unwatch(watcher);
             }
         }
     }, require('./Node'));
@@ -2449,7 +2455,7 @@ var ExpressionStatement = ion.defineClass({
             activate: function () {
                 ExpressionStatement.super.prototype.activate.apply(this, arguments);
                 this.runtimeExpression = this.runtimeExpression != null ? this.runtimeExpression : this.context.createRuntime(this.expression);
-                this.runtimeExpression.watch(this.runtimeExpressionWatcher = this.runtimeExpressionWatcher != null ? this.runtimeExpressionWatcher : ion.bind(function (value) {
+                this.runtimeExpression.watchValue(this.runtimeExpressionWatcher = this.runtimeExpressionWatcher != null ? this.runtimeExpressionWatcher : ion.bind(function (value) {
                     if (this.expressionValue !== value) {
                         this.expressionValue = value;
                         this._remove != null ? this._remove() : void 0;
@@ -2462,7 +2468,7 @@ var ExpressionStatement = ion.defineClass({
             },
             deactivate: function () {
                 ExpressionStatement.super.prototype.deactivate.apply(this, arguments);
-                this.runtimeExpression.unwatch(this.runtimeExpressionWatcher);
+                this.runtimeExpression.unwatchValue(this.runtimeExpressionWatcher);
             }
         }
     }, Statement);
@@ -2825,7 +2831,7 @@ var ForInOfStatement = ion.defineClass({
                     this.keyName = this.left.declarations[this.type === 'ForOfStatement' ? 1 : 0] != null ? this.left.declarations[this.type === 'ForOfStatement' ? 1 : 0].id.name : void 0;
                 }
                 this.collectionExpression = this.collectionExpression != null ? this.collectionExpression : this.context.createRuntime(this.right);
-                this.collectionExpression.watch(this.collectionWatcher = this.collectionWatcher != null ? this.collectionWatcher : ion.bind(function (collection) {
+                this.collectionExpression.watchValue(this.collectionWatcher = this.collectionWatcher != null ? this.collectionWatcher : ion.bind(function (collection) {
                     if (this.collection !== collection) {
                         if (this.collection != null) {
                             this.forEach(this.collection, ion.bind(function (key, value) {
@@ -2845,7 +2851,7 @@ var ForInOfStatement = ion.defineClass({
             },
             deactivate: function () {
                 ForInOfStatement.super.prototype.deactivate.apply(this, arguments);
-                this.collectionExpression.unwatch(this.collectionWatcher);
+                this.collectionExpression.unwatchValue(this.collectionWatcher);
             },
             addItem: function (key, value, activate) {
                 if (activate == null)
@@ -3009,7 +3015,7 @@ var IfStatement = ion.defineClass({
             activate: function () {
                 IfStatement.super.prototype.activate.apply(this, arguments);
                 this.testExpression = this.testExpression != null ? this.testExpression : this.context.createRuntime(this.test);
-                this.testExpression.watch(this.testExpressionWatcher = this.testExpressionWatcher != null ? this.testExpressionWatcher : ion.bind(function (value) {
+                this.testExpression.watchValue(this.testExpressionWatcher = this.testExpressionWatcher != null ? this.testExpressionWatcher : ion.bind(function (value) {
                     if (value) {
                         if (this.alternateStatement != null ? this.alternateStatement.isActive : void 0) {
                             this.alternateStatement != null ? this.alternateStatement.deactivate() : void 0;
@@ -3031,7 +3037,7 @@ var IfStatement = ion.defineClass({
             },
             deactivate: function () {
                 IfStatement.super.prototype.deactivate.apply(this, arguments);
-                this.testExpression.unwatch(this.testExpressionWatcher);
+                this.testExpression.unwatchValue(this.testExpressionWatcher);
                 if (this.alternateStatement != null ? this.alternateStatement.isActive : void 0) {
                     this.alternateStatement != null ? this.alternateStatement.deactivate() : void 0;
                 }
@@ -3059,10 +3065,10 @@ var ion = require('../');
 var Literal = ion.defineClass({
         name: 'Literal',
         properties: {
-            watch: function (watcher) {
+            watchValue: function (watcher) {
                 watcher(this.value);
             },
-            unwatch: function (watcher) {
+            unwatchValue: function (watcher) {
                 watcher(void 0);
             }
         }
@@ -3091,19 +3097,19 @@ var MemberExpression = ion.defineClass({
                 MemberExpression.super.prototype.activate.apply(this, arguments);
                 this.objectExpression = this.objectExpression != null ? this.objectExpression : this.context.createRuntime(this.object);
                 this.propertyExpression = this.propertyExpression != null ? this.propertyExpression : this.context.createRuntime(this.computed ? this.property : this.property.name);
-                this.objectExpression.watch(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : ion.bind(function (objectValue) {
+                this.objectExpression.watchValue(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : ion.bind(function (objectValue) {
                     this.objectValue = objectValue;
                     this.updateValue();
                 }, this));
-                this.propertyExpression.watch(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : ion.bind(function (propertyValue) {
+                this.propertyExpression.watchValue(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : ion.bind(function (propertyValue) {
                     this.propertyValue = propertyValue;
                     this.updateValue();
                 }, this));
             },
             deactivate: function () {
                 MemberExpression.super.prototype.deactivate.apply(this, arguments);
-                this.objectExpression.unwatch(this.objectWatcher);
-                this.propertyExpression.unwatch(this.propertyWatcher);
+                this.objectExpression.unwatchValue(this.objectWatcher);
+                this.propertyExpression.unwatchValue(this.propertyWatcher);
             },
             updateValue: function () {
                 var value = void 0;
@@ -3175,7 +3181,7 @@ var ObjectExpression = ion.defineClass({
             activate: function () {
                 ObjectExpression.super.prototype.activate.apply(this, arguments);
                 this.typeExpression = this.typeExpression != null ? this.typeExpression : this.context.createRuntime(this.objectType != null ? this.objectType : null);
-                this.typeExpression.watch(this.typeWatcher = this.typeWatcher != null ? this.typeWatcher : ion.bind(function (type) {
+                this.typeExpression.watchValue(this.typeWatcher = this.typeWatcher != null ? this.typeWatcher : ion.bind(function (type) {
                     var value;
                     if (!ion.is(this.value, type)) {
                         this.statements != null ? this.statements.deactivate() : void 0;
@@ -3197,7 +3203,7 @@ var ObjectExpression = ion.defineClass({
             },
             deactivate: function () {
                 ObjectExpression.super.prototype.deactivate.apply(this, arguments);
-                this.typeExpression.unwatch(this.typeWatcher);
+                this.typeExpression.unwatchValue(this.typeWatcher);
             }
         }
     }, DynamicExpression);
@@ -3246,14 +3252,14 @@ var OperationExpression = ion.defineClass({
                     elements: this.args,
                     observeElements: this.factory.observe
                 });
-                this.argumentExpressions.watch(this.watcher = this.watcher != null ? this.watcher : ion.bind(function (value) {
+                this.argumentExpressions.watchValue(this.watcher = this.watcher != null ? this.watcher : ion.bind(function (value) {
                     this.argumentValues = value;
                     this.evaluate();
                 }, this));
             },
             deactivate: function () {
                 OperationExpression.super.prototype.deactivate.apply(this, arguments);
-                this.argumentExpressions.unwatch(this.watcher);
+                this.argumentExpressions.unwatchValue(this.watcher);
             },
             evaluate: function () {
                 if (!(this.factory.evaluate != null)) {
@@ -3286,7 +3292,7 @@ var Property = ion.defineClass({
                 Property.super.prototype.activate.apply(this, arguments);
                 this.keyExpression = this.keyExpression != null ? this.keyExpression : this.context.createRuntime(this.computed ? this.key : this.key.name != null ? this.key.name : this.key.value);
                 this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
-                this.keyExpression.watch(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : ion.bind(function (key) {
+                this.keyExpression.watchValue(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : ion.bind(function (key) {
                     if (key != null && this.valueExpression.setLeftValue != null) {
                         var currentValue = this.context.output ? this.context.output != null ? this.context.output[key] : void 0 : this.context.get(key);
                         if (currentValue != null) {
@@ -3296,7 +3302,7 @@ var Property = ion.defineClass({
                     this.keyValue = key;
                     this.setProperty();
                 }, this));
-                this.valueExpression.watch(this.valueWatcher = this.valueWatcher != null ? this.valueWatcher : ion.bind(function (value) {
+                this.valueExpression.watchValue(this.valueWatcher = this.valueWatcher != null ? this.valueWatcher : ion.bind(function (value) {
                     this.valueValue = value;
                     this.setProperty();
                 }, this));
@@ -3304,8 +3310,8 @@ var Property = ion.defineClass({
             deactivate: function () {
                 Property.super.prototype.deactivate.apply(this, arguments);
                 ion.unobserve(this.context.output, this.contextObserver, this.leftValue);
-                this.keyExpression.unwatch(this.keyWatcher);
-                this.valueExpression.unwatch(this.valueWatcher);
+                this.keyExpression.unwatchValue(this.keyWatcher);
+                this.valueExpression.unwatchValue(this.valueWatcher);
             },
             setProperty: function (key, value) {
                 if (key == null)
@@ -3344,13 +3350,13 @@ var ReturnStatement = ion.defineClass({
             activate: function () {
                 ReturnStatement.super.prototype.activate.apply(this, arguments);
                 this.argumentExpression = this.argumentExpression != null ? this.argumentExpression : this.context.createRuntime(this.argument);
-                this.argumentExpression.watch(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
+                this.argumentExpression.watchValue(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
                     return this.context.returnExpression.setValue(value);
                 }, this));
             },
             deactivate: function () {
                 ReturnStatement.super.prototype.deactivate.apply(this, arguments);
-                this.argumentExpression.unwatch(this.argumentWatcher);
+                this.argumentExpression.unwatchValue(this.argumentWatcher);
             }
         }
     }, Statement);
@@ -3404,16 +3410,16 @@ var Template = ion.defineClass({
             this.context.returnExpression = new DynamicExpression();
         },
         properties: {
-            watch: function (watcher) {
+            watchValue: function (watcher) {
                 if (watcher == null)
                     watcher = noop;
                 if (!this.isActive) {
                     this.activate();
                 }
-                this.context.returnExpression.watch(watcher);
+                this.context.returnExpression.watchValue(watcher);
             },
-            unwatch: function (watcher) {
-                this.context.returnExpression.unwatch(watcher);
+            unwatchValue: function (watcher) {
+                this.context.returnExpression.unwatchValue(watcher);
                 if (!this.context.returnExpression.isActive) {
                     this.deactivate();
                 }
@@ -3485,7 +3491,6 @@ Object.defineProperty(exports, 'ReturnStatement', {get:function(){ return requir
 Object.defineProperty(exports, 'Statement', {get:function(){ return require('./Statement') }, enumerable: true}) 
 Object.defineProperty(exports, 'Template', {get:function(){ return require('./Template') }, enumerable: true}) 
 Object.defineProperty(exports, 'VariableDeclaration', {get:function(){ return require('./VariableDeclaration') }, enumerable: true}) 
-Object.defineProperty(exports, '', {get:function(){ return require('./') }, enumerable: true}) 
   }
   if (typeof require === 'function') {
     if (require.register)

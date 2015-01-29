@@ -9,21 +9,21 @@ export class MemberExpression extends DynamicExpression
             @objectExpression ?= @context.createRuntime(@object)
             @propertyExpression ?= @context.createRuntime(@computed ? @property : @property.name)
 
-            @objectExpression.watch(
+            @objectExpression.watchValue(
                 @objectWatcher ?= (objectValue) =>
                     @objectValue = objectValue
                     @updateValue()
             )
 
-            @propertyExpression.watch(
+            @propertyExpression.watchValue(
                 @propertyWatcher ?= (propertyValue) =>
                     @propertyValue = propertyValue
                     @updateValue()
             )
         deactivate: ->
             super
-            @objectExpression.unwatch(@objectWatcher)
-            @propertyExpression.unwatch(@propertyWatcher)
+            @objectExpression.unwatchValue(@objectWatcher)
+            @propertyExpression.unwatchValue(@propertyWatcher)
         updateValue: ->
             let value = undefined
             if @objectValue?

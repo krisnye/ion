@@ -36,12 +36,12 @@ export class ArrayExpression extends DynamicExpression
                 for let key = 0; key < @expressions.length; key++
                     @expressionWatchers[key] = @setArgumentValue.bind(@, key)
             for expression, key in @expressions
-                expression.watch(@expressionWatchers[key])
+                expression.watchValue(@expressionWatchers[key])
             super
             @setValue(@argumentValues)
         deactivate: ->
             for expression, key in @expressions
-                expression.unwatch(@expressionWatchers[key])
+                expression.unwatchValue(@expressionWatchers[key])
             super
     test: ->
         const Context = import './Context'
@@ -54,5 +54,6 @@ export class ArrayExpression extends DynamicExpression
         let result = undefined
         const watcher(value) ->
             result = value
-        e.watch(watcher)
+        e.watchValue(watcher)
         assert JSON.stringify(result) is "[1,2]"
+        e.unwatchValue(watcher)
