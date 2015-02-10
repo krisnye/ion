@@ -36,8 +36,8 @@ export class File
                         @path
                         =>
                             let modified = utility.getModified(@path)
+                            @modified = modified
                             if modified isnt @modified
-                                @modified = modified
                                 # explicit check is only because current
                                 # nodejs versions don't have Object.observe yet.
                                 ion.checkForChanges()

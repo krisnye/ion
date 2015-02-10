@@ -54,10 +54,10 @@ export template (packagePatch) ->
                     void output.write(mapPath, map)
                 else
                     void output.write(targetPath, compiler.compile(source, packageJson))
-                [targetPath]: true
+                [targetPath]: output.getFile(targetPath)
                 # also add the index for this file, since it may be generated in next section
-                [targetPath.slice(0, targetPath.lastIndexOf('/') + 1) + "index.js"]: true
-
+                let indexPath = targetPath.slice(0, targetPath.lastIndexOf('/') + 1) + "index.js"
+                [indexPath]: output.getFile(indexPath)
         else
             void output.delete(targetPath)
             void output.delete(mapPath)

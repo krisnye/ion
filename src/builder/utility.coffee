@@ -90,7 +90,12 @@ module.exports = exports =
         try
             if fs.existsSync path
                 stats = fs.statSync path
-                return stats.mtime?.getTime() ? 0
+                if stats.mtime?
+                    date = new Date(stats.mtime)
+                    time = date.getTime()
+                    return time
+                else
+                    return 0
         catch e
             console.warn e
         return 0
