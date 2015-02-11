@@ -210,13 +210,11 @@ var patch = exports.patch = function () {
                 capture = true;
                 name = name.substring(0, name.length - captureSuffix.length);
             }
-            if ((Object.observe != null ? Object.observe.checkForChanges : void 0) != null) {
-                var originalItem = item;
-                item = function () {
-                    originalItem.apply(this, arguments);
-                    Object.observe.checkForChanges();
-                };
-            }
+            var originalItem = item;
+            item = function () {
+                originalItem.apply(this, arguments);
+                checkForChanges();
+            };
             container.addEventListener(name, item, capture);
             remove = function () {
                 container.removeEventListener(name, item);

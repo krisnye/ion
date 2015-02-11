@@ -29,8 +29,6 @@ var MemberExpression = ion.defineClass({
                     if (this.propertyValue != null) {
                         value = this.objectValue[this.propertyValue];
                     }
-                } else if (this.isActive && !this.existential && (this.loc != null ? this.loc.start != null ? this.loc.start.source : void 0 : void 0) != null && this.hasOwnProperty('objectValue') && this.hasOwnProperty('propertyValue')) {
-                    console.warn('Cannot read ' + Factory.toCode(this.property) + ' property of ' + this.objectValue + ' (' + Factory.toCode(this.object) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
                 }
                 this.setValue(value);
                 if (this.observedObject !== this.objectValue || this.observedProperty !== this.propertyValue) {

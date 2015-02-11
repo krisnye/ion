@@ -156,11 +156,17 @@ module.exports = exports = {
     return fs.utimesSync(file, now, now);
   },
   getModified: getModified = function(path) {
-    var e, stats, _ref, _ref1;
+    var date, e, stats, time;
     try {
       if (fs.existsSync(path)) {
         stats = fs.statSync(path);
-        return (_ref = (_ref1 = stats.mtime) != null ? _ref1.getTime() : void 0) != null ? _ref : 0;
+        if (stats.mtime != null) {
+          date = new Date(stats.mtime);
+          time = date.getTime();
+          return time;
+        } else {
+          return 0;
+        }
       }
     } catch (_error) {
       e = _error;

@@ -14,7 +14,8 @@ tests = {
     column: 2
   },
   "let foo = bar(\n    1\n    2\n)\n.toString(\n    \"12\"\n)\n.split(' ')": "'use strict';\nvar foo = bar(1, 2).toString('12').split(' ');",
-  "\"\"\n    foo\n    bar #baz": "'use strict';\n'foo\\nbar #baz';"
+  "\"\"\n    foo\n    bar #baz": "'use strict';\n'foo\\nbar #baz';",
+  "let object =\n    x: 10\n    property visible:\n        get: -> true\n    y: 20": "'use strict';\nvar object = Object.defineProperties({\n        x: 10,\n        y: 20\n    }, {\n        visible: {\n            get: function () {\n                return true;\n            }\n        }\n    });"
 };
 
 if (global.window != null) {

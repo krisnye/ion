@@ -28,8 +28,8 @@ var File = ion.defineClass({
                 if (fs.existsSync(this.path)) {
                     watcher = fs.watch(this.path, ion.bind(function () {
                         var modified = utility.getModified(this.path);
+                        this.modified = modified;
                         if (modified !== this.modified) {
-                            this.modified = modified;
                             ion.checkForChanges();
                         }
                     }, this));

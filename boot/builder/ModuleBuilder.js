@@ -1499,129 +1499,230 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 name: 'targetPath'
                                                             },
                                                             value: {
-                                                                type: 'Literal',
-                                                                value: true
-                                                            },
-                                                            kind: 'init',
-                                                            computed: true
-                                                        },
-                                                        {
-                                                            type: 'Property',
-                                                            key: {
-                                                                type: 'BinaryExpression',
-                                                                operator: '+',
-                                                                left: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'Identifier',
-                                                                            name: 'targetPath'
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'slice'
-                                                                        },
-                                                                        loc: {
-                                                                            start: {
-                                                                                line: 59,
-                                                                                column: 17,
-                                                                                fixed: true,
-                                                                                source: 'ion/builder/ModuleBuilder.ion'
-                                                                            },
-                                                                            end: {
-                                                                                line: 59,
-                                                                                column: 33,
-                                                                                fixed: true,
-                                                                                source: 'ion/builder/ModuleBuilder.ion'
-                                                                            }
-                                                                        }
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
+                                                                        type: 'Identifier',
+                                                                        name: 'output'
                                                                     },
-                                                                    arguments: [
-                                                                        {
-                                                                            type: 'Literal',
-                                                                            value: 0
-                                                                        },
-                                                                        {
-                                                                            type: 'BinaryExpression',
-                                                                            operator: '+',
-                                                                            left: {
-                                                                                type: 'CallExpression',
-                                                                                callee: {
-                                                                                    type: 'MemberExpression',
-                                                                                    computed: false,
-                                                                                    object: {
-                                                                                        type: 'Identifier',
-                                                                                        name: 'targetPath'
-                                                                                    },
-                                                                                    property: {
-                                                                                        type: 'Identifier',
-                                                                                        name: 'lastIndexOf'
-                                                                                    },
-                                                                                    loc: {
-                                                                                        start: {
-                                                                                            line: 59,
-                                                                                            column: 37,
-                                                                                            fixed: true,
-                                                                                            source: 'ion/builder/ModuleBuilder.ion'
-                                                                                        },
-                                                                                        end: {
-                                                                                            line: 59,
-                                                                                            column: 59,
-                                                                                            fixed: true,
-                                                                                            source: 'ion/builder/ModuleBuilder.ion'
-                                                                                        }
-                                                                                    }
-                                                                                },
-                                                                                arguments: [{
-                                                                                        type: 'Literal',
-                                                                                        value: '/'
-                                                                                    }],
-                                                                                loc: {
-                                                                                    start: {
-                                                                                        line: 59,
-                                                                                        column: 37,
-                                                                                        fixed: true,
-                                                                                        source: 'ion/builder/ModuleBuilder.ion'
-                                                                                    },
-                                                                                    end: {
-                                                                                        line: 59,
-                                                                                        column: 64,
-                                                                                        fixed: true,
-                                                                                        source: 'ion/builder/ModuleBuilder.ion'
-                                                                                    }
-                                                                                }
-                                                                            },
-                                                                            right: {
-                                                                                type: 'Literal',
-                                                                                value: 1
-                                                                            }
-                                                                        }
-                                                                    ],
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'getFile'
+                                                                    },
                                                                     loc: {
                                                                         start: {
-                                                                            line: 59,
-                                                                            column: 17,
+                                                                            line: 57,
+                                                                            column: 30,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
                                                                         },
                                                                         end: {
-                                                                            line: 59,
-                                                                            column: 69,
+                                                                            line: 57,
+                                                                            column: 44,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
                                                                         }
                                                                     }
                                                                 },
-                                                                right: {
-                                                                    type: 'Literal',
-                                                                    value: 'index.js'
+                                                                arguments: [{
+                                                                        type: 'Identifier',
+                                                                        name: 'targetPath'
+                                                                    }],
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 57,
+                                                                        column: 30,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 57,
+                                                                        column: 56,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                    }
                                                                 }
                                                             },
+                                                            kind: 'init',
+                                                            computed: true
+                                                        },
+                                                        {
+                                                            type: 'VariableDeclaration',
+                                                            declarations: [{
+                                                                    type: 'VariableDeclarator',
+                                                                    id: {
+                                                                        type: 'Identifier',
+                                                                        name: 'indexPath'
+                                                                    },
+                                                                    init: {
+                                                                        type: 'BinaryExpression',
+                                                                        operator: '+',
+                                                                        left: {
+                                                                            type: 'CallExpression',
+                                                                            callee: {
+                                                                                type: 'MemberExpression',
+                                                                                computed: false,
+                                                                                object: {
+                                                                                    type: 'Identifier',
+                                                                                    name: 'targetPath'
+                                                                                },
+                                                                                property: {
+                                                                                    type: 'Identifier',
+                                                                                    name: 'slice'
+                                                                                },
+                                                                                loc: {
+                                                                                    start: {
+                                                                                        line: 59,
+                                                                                        column: 32,
+                                                                                        fixed: true,
+                                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                                    },
+                                                                                    end: {
+                                                                                        line: 59,
+                                                                                        column: 48,
+                                                                                        fixed: true,
+                                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            arguments: [
+                                                                                {
+                                                                                    type: 'Literal',
+                                                                                    value: 0
+                                                                                },
+                                                                                {
+                                                                                    type: 'BinaryExpression',
+                                                                                    operator: '+',
+                                                                                    left: {
+                                                                                        type: 'CallExpression',
+                                                                                        callee: {
+                                                                                            type: 'MemberExpression',
+                                                                                            computed: false,
+                                                                                            object: {
+                                                                                                type: 'Identifier',
+                                                                                                name: 'targetPath'
+                                                                                            },
+                                                                                            property: {
+                                                                                                type: 'Identifier',
+                                                                                                name: 'lastIndexOf'
+                                                                                            },
+                                                                                            loc: {
+                                                                                                start: {
+                                                                                                    line: 59,
+                                                                                                    column: 52,
+                                                                                                    fixed: true,
+                                                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                                                },
+                                                                                                end: {
+                                                                                                    line: 59,
+                                                                                                    column: 74,
+                                                                                                    fixed: true,
+                                                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                                                }
+                                                                                            }
+                                                                                        },
+                                                                                        arguments: [{
+                                                                                                type: 'Literal',
+                                                                                                value: '/'
+                                                                                            }],
+                                                                                        loc: {
+                                                                                            start: {
+                                                                                                line: 59,
+                                                                                                column: 52,
+                                                                                                fixed: true,
+                                                                                                source: 'ion/builder/ModuleBuilder.ion'
+                                                                                            },
+                                                                                            end: {
+                                                                                                line: 59,
+                                                                                                column: 79,
+                                                                                                fixed: true,
+                                                                                                source: 'ion/builder/ModuleBuilder.ion'
+                                                                                            }
+                                                                                        }
+                                                                                    },
+                                                                                    right: {
+                                                                                        type: 'Literal',
+                                                                                        value: 1
+                                                                                    }
+                                                                                }
+                                                                            ],
+                                                                            loc: {
+                                                                                start: {
+                                                                                    line: 59,
+                                                                                    column: 32,
+                                                                                    fixed: true,
+                                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                                },
+                                                                                end: {
+                                                                                    line: 59,
+                                                                                    column: 84,
+                                                                                    fixed: true,
+                                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        right: {
+                                                                            type: 'Literal',
+                                                                            value: 'index.js'
+                                                                        }
+                                                                    }
+                                                                }],
+                                                            kind: 'let'
+                                                        },
+                                                        {
+                                                            type: 'Property',
+                                                            key: {
+                                                                type: 'Identifier',
+                                                                name: 'indexPath'
+                                                            },
                                                             value: {
-                                                                type: 'Literal',
-                                                                value: true
+                                                                type: 'CallExpression',
+                                                                callee: {
+                                                                    type: 'MemberExpression',
+                                                                    computed: false,
+                                                                    object: {
+                                                                        type: 'Identifier',
+                                                                        name: 'output'
+                                                                    },
+                                                                    property: {
+                                                                        type: 'Identifier',
+                                                                        name: 'getFile'
+                                                                    },
+                                                                    loc: {
+                                                                        start: {
+                                                                            line: 60,
+                                                                            column: 29,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                                        },
+                                                                        end: {
+                                                                            line: 60,
+                                                                            column: 43,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                                        }
+                                                                    }
+                                                                },
+                                                                arguments: [{
+                                                                        type: 'Identifier',
+                                                                        name: 'indexPath'
+                                                                    }],
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 60,
+                                                                        column: 29,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 60,
+                                                                        column: 54,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                    }
+                                                                }
                                                             },
                                                             kind: 'init',
                                                             computed: true
