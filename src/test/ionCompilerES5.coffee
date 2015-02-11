@@ -89,6 +89,25 @@ tests =
     'use strict';
     'foo\\nbar #baz';
     """
+    """
+    let object =
+        x: 10
+        property visible:
+            get: -> true
+        y: 20
+    """: """
+    'use strict';
+    var object = Object.defineProperties({
+            x: 10,
+            y: 20
+        }, {
+            visible: {
+                get: function () {
+                    return true;
+                }
+            }
+        });
+    """
 
 if global.window?
     return

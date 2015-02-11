@@ -119,7 +119,7 @@
 Program = start:start body:ProgramStatements end:end { return node("Program", {body:body}, start, end) }
 
 ProgramStatements = a:BlockStatement { return a.body } / Statement*
-Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / AddPropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ActivateStatement / ExpressionStatement) (eol / _ ',') { return a }
+Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / PropertyDefinition / AddPropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ActivateStatement / ExpressionStatement) (eol / _ ',') { return a }
 ExportStatement = start:start export _ value:(VariableDeclaration / RightHandSideExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
 ReturnStatement = start:start return _ argument:RightHandSideExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
 ThrowStatement = start:start throw _ argument:RightHandSideExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
@@ -205,6 +205,10 @@ AddPropertyDeclaration = start:start "(" _ declaration:PropertyDeclaration _ ")"
         return declaration
     }
 
+PropertyDefinition
+    //  represents a new property definition such as would be used with Object.defineProperty(..)
+    = start:start "property " _ left:propertyLeft _ ":" _ value:RightHandSideExpression end:end
+    { return node("Property", { key: left.key, value:value, kind: 'init', computed:left.computed, define:true }, start, end) }
 PropertyDeclaration
     = start:start left:propertyLeft _ ":" _ value:RightHandSideExpression end:end
     { return node("Property", { key: left.key, value:value, kind: 'init', computed:left.computed }, start, end) }

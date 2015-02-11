@@ -1192,9 +1192,34 @@ addPropertyDeclaration = (node, context) ->
             key: node.key
             value: tempId
 
+propertyDefinitions = (node, context) ->
+    if node.type is 'ObjectExpression'
+        # get all properties that have a define
+        definitions = null
+        for property in node.properties
+            if property.define
+                definitions ?= []
+                definitions.push(property)
+        if definitions?
+            # remove from properties
+            for def in definitions
+                node.properties.remove(def)
+                def.define = false
+
+            context.replace
+                type: 'CallExpression'
+                callee: getPathExpression 'Object.defineProperties'
+                arguments: [
+                    node
+                    {
+                        type: 'ObjectExpression'
+                        properties: definitions
+                    }
+                ]
+
 exports.postprocess = (program, options) ->
     steps = [
-        [namedFunctionsAndNewArguments, superExpressions, activateStatements, addPropertyDeclaration]
+        [namedFunctionsAndNewArguments, superExpressions, activateStatements, addPropertyDeclaration, propertyDefinitions]
         [destructuringAssignments, callFunctionBindForFatArrows]
         [createTemplateFunctionClone]
         [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions, checkVariableDeclarations]
