@@ -19,3 +19,5 @@ export class ExpressionStatement extends Statement
         deactivate: ->
             super
             @runtimeExpression.unwatchValue(@runtimeExpressionWatcher)
+            @_remove?()
+            @_remove = null

@@ -168,8 +168,7 @@ export const
                 item = document.createTextNode(item)
             container.appendChild(item)
             remove = ->
-                if item.parentNode is container
-                    container.removeChild(item)
+                item.parentNode?.removeChild(item)
         else
             if container.push?
                 container.push(item)

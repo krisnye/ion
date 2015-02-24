@@ -30,5 +30,7 @@ export class IfStatement extends Statement
             @testExpression.unwatchValue(@testExpressionWatcher)
             if @alternateStatement?.isActive
                 @alternateStatement?.deactivate()
+                delete @alternateStatement
             if @consequentStatement?.isActive
                 @consequentStatement?.deactivate()
+                delete @consequentStatement
