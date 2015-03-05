@@ -13,10 +13,12 @@ module.exports = class CallExpression extends DynamicExpression
                     if @isActive and not value? and not @existential and @loc?.start.source?
                         # we need to throw an exception here with location info
                         console.warn("Function is {{value}} ({{Factory.toCode(@callee)}}) ({{@loc.start.source}}:{{@loc.start.line}}:{{@loc.start.column + 1}})")
-
                     @calleeValue = value
-                    # get thisArg and watchValue for changes
-                    let thisArg = @calleeExpression.objectExpression?.value
+                    @evaluate()
+            )
+            # get thisArg and watchValue for changes
+            @calleeExpression.objectExpression?.watchValue(
+                @thisWatcher ?= (thisArg) =>
                     if thisArg isnt @thisArg
                         ion.unobserve(@thisarg, @thisObserver)
                         @unwatch?()
@@ -39,7 +41,7 @@ module.exports = class CallExpression extends DynamicExpression
                                     @thisObserver ?= =>
                                         @evaluate()
                                 )
-                    @evaluate()
+                        @evaluate()
             )
             @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:not @calleeValue?.template})
             @argumentExpressions.watchValue(
@@ -51,6 +53,8 @@ module.exports = class CallExpression extends DynamicExpression
             super
             @calleeExpression.unwatchValue(@calleeWatcher)
             @argumentExpressions.unwatchValue(@argumentWatcher)
+            if @thisWatcher?
+                @calleeExpression.objectExpression.unwatchValue(@thisWatcher)
             if @template?
                 @template.unwatchValue(@templateWatcher)
                 delete @template

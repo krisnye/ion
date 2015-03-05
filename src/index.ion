@@ -46,8 +46,9 @@ const
     isObjectObservable = do ->
         let Node = global.Node ? ->
         let NodeList = global.NodeList ? ->
+        let Location = global.Location ? ->
         return (a) ->
-            if a instanceof Node or a instanceof NodeList
+            if a instanceof Node or a instanceof NodeList or a instanceof Location
                 return false
             return true
 
