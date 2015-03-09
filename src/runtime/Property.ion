@@ -37,6 +37,7 @@ export class Property extends Statement
             if @hasOwnProperty('keyValue') and @hasOwnProperty('valueValue')
                 if key? and @context.output?
                     let currentValue = @context.output[key]
-                    if currentValue isnt value
+                    # we never assign undefined UNLESS it's explicit using the void operator
+                    if currentValue isnt value and (value isnt undefined or @valueExpression.operator is 'void')
                         @context.output[key] = value
 

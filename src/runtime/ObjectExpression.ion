@@ -9,19 +9,20 @@ export class ObjectExpression extends DynamicExpression
             @value = value
         activate: ->
             super
+            # its not really a type watcher any longer, that is historical
+            # its just watching for an instance            
             @typeExpression ?= @context.createRuntime(@objectType ? null)
             @typeExpression.watchValue(
-                @typeWatcher ?= (type) =>
-                    let value
-                    if not ion.is(@value, type)
+                @typeWatcher ?= (value) =>
+                    if not @value or value?
                         @statements?.deactivate()
                         @statements = null
-                        value = type ? {}
+                        value ?= {}
                     else
                         # a default value could have been passed in
                         value = @value
 
-                    if value? and not @statements?
+                    if not @statements?
                         let newContext = @context.newContext(value)
                         @statements = newContext.createRuntime({type:'BlockStatement', body:@properties})
                         @statements.activate()
