@@ -108,11 +108,11 @@ tests =
             }
         });
     """
-    """
-    template ->
-        foo:
-            x: 1
-    """: null
+    # """
+    # template ->
+    #     foo:
+    #         x: 1
+    # """: null
 
 if global.window?
     return

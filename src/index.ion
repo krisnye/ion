@@ -162,21 +162,23 @@ export const
             container.addEventListener(name, item, capture)
             remove = ->
                 container.removeEventListener(name, item)
-        else if container.nodeType is 1
-            if typeof item isnt 'string' and not item?.nodeType?
-                item = JSON.stringify(item)
-            if typeof item is 'string'
-                item = document.createTextNode(item)
-            container.appendChild(item)
-            remove = ->
-                item.parentNode?.removeChild(item)
         else
-            if container.push?
+            if container.nodeType is 1
+                if typeof item isnt 'string' and not item?.nodeType?
+                    item = JSON.stringify(item)
+                if typeof item is 'string'
+                    item = document.createTextNode(item)
+                container.appendChild(item)
+            else if container.push?
                 container.push(item)
             else
                 container.add(item)
             remove = ->
-                if container.lastIndexOf? and container.removeAt?
+                if item.removeSelf?
+                    item.removeSelf()
+                else if item.parentNode?
+                    item.parentNode.removeChild(item)
+                else if container.lastIndexOf? and container.removeAt?
                     let index = container.lastIndexOf(item)
                     if index >= 0
                         container.removeAt(index)
