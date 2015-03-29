@@ -30,7 +30,7 @@ export const
     # combines two patches to make a single patch
     combine = (patch1, patch2) -> merge(patch1, patch2, {deleteNull:false})
     # watches object for changes and calls the handler with patches
-    watch = (object, handler, callInitial = true) ->
+    watch = (object, handler, priority = 0, callInitial = true) ->
         if not isObject(object)
             throw new Error("Cannot watch: #{object}")
         # recurse watching and unwatching
@@ -51,7 +51,7 @@ export const
                             let basePatch = {}
                             basePatch[name] = patch
                             queuePatch(basePatch)
-                        subWatchers[name] = watch(value, subHandler, false)
+                        subWatchers[name] = watch(value, subHandler, priority, false)
         let pendingTimeout = null
         let queuePatch = (patch) ->
             if not callInitial
@@ -76,21 +76,13 @@ export const
                     patch[change.name] = object[change.name] ? deleteValue
             if patch?
                 queuePatch(patch)
-        if DEBUG
-            let innerWatcher = watcher
-            watcher = (changes) ->
-                try
-                    innerWatcher(changes)
-                catch e
-                    # catch and log errors, because object observe callbacks suppress errors
-                    console.error(e)
 
         # call process patch on the object to watch children
         processPatch(object)
-        ion.observe(object, watcher)
+        let unobserve = ion.observe(object, watcher, {priority})
         # return an function that lets us unwatch
         return ->
-            ion.unobserve(object, watcher)
+            unobserve()
             # unwatch subWatchers
             for key, value of subWatchers
                 value()

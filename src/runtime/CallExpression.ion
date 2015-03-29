@@ -8,7 +8,7 @@ module.exports = class CallExpression extends DynamicExpression
         activate: ->
             super
             @calleeExpression ?= @context.createRuntime(@callee)
-            @calleeExpression.watchValue(
+            @unobserveCallee = @calleeExpression.observe(
                 @calleeWatcher ?= (value) =>
                     if @isActive and not value? and not @existential and @loc?.start.source?
                         # we need to throw an exception here with location info
@@ -16,19 +16,17 @@ module.exports = class CallExpression extends DynamicExpression
                     @calleeValue = value
                     @evaluate()
             )
-            # get thisArg and watchValue for changes
-            @calleeExpression.objectExpression?.watchValue(
+            # get thisArg and observe for changes
+            @unobserveCalleeObject = @calleeExpression.objectExpression?.observe(
                 @thisWatcher ?= (thisArg) =>
                     if thisArg isnt @thisArg
-                        ion.unobserve(@thisarg, @thisObserver)
-                        @unwatch?()
+                        @unobserveThis?()
                         @thisArg = thisArg
-                        if not @calleeValue?.template # we don't need to watchValue the thisArg if the callee is a template
-                            let deep = Array.isArray(thisArg)
-                            if deep
-                                # console.log('deep watchValue man-------------------------', thisArg, @calleeValue)
-                                # deep watchValue
-                                @unwatch = ion.patch.watch(
+                        if not @calleeValue?.template # we don't need to observe the thisArg if the callee is a template
+                            if @calleeExpression.objectExpression.deep or Array.isArray(thisArg)
+                                # console.log('deep observe man-------------------------', thisArg, @calleeValue)
+                                # deep observe
+                                @unobserveThis = ion.patch.watch(
                                     thisArg
                                     @thisObserver ?= (patch) =>
                                         # console.log('deep change', patch)
@@ -36,38 +34,35 @@ module.exports = class CallExpression extends DynamicExpression
                                 )
                             else
                                 # shallow observe
-                                ion.observe(
+                                @unobserveThis = ion.observe(
                                     thisArg
                                     @thisObserver ?= =>
                                         @evaluate()
+                                    {priority:@context.depth}
                                 )
                         @evaluate()
             )
             @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:not @calleeValue?.template})
-            @argumentExpressions.watchValue(
+            @unobserveArguments = @argumentExpressions.observe(
                 @argumentWatcher ?= (value) =>
                     @argumentsValue = value
                     @evaluate()
             )
         deactivate: ->
             super
-            @calleeExpression.unwatchValue(@calleeWatcher)
-            @argumentExpressions.unwatchValue(@argumentWatcher)
-            if @thisWatcher?
-                @calleeExpression.objectExpression.unwatchValue(@thisWatcher)
-            if @template?
-                @template.unwatchValue(@templateWatcher)
-                delete @template
-        _evaluateInternal: ->
+            @unobserveCallee()
+            @unobserveArguments()
+            @unobserveCalleeObject?()
+            @unobserveTemplate?()
+        evaluate: ->
             if not (@isActive and @calleeValue? and @argumentsValue?)
                 return
             let value = undefined
             if @calleeValue.template
-                if @template?
-                    @template.unwatchValue(@templateWatcher)
+                @unobserveTemplate?()
                 # always use new on templates
                 @template = @calleeValue.apply(@thisArg, @argumentsValue)
-                @template.watchValue(@templateWatcher ?= @setValue.bind(@))
+                @unobserveTemplate = @template.observe(@templateWatcher ?= @setValue.bind(@))
             else
                 if @type is 'NewExpression'
                     # create a new with variable args
@@ -75,12 +70,3 @@ module.exports = class CallExpression extends DynamicExpression
                 else # @type is 'CallExpression'
                     value = @calleeValue.apply(@thisArg, @argumentsValue)
                 @setValue(value)
-        if DEBUG
-            evaluate: ->
-                try
-                    @_evaluateInternal()
-                catch e
-                    # if we don't catch the errors, they might not be logged when occuring in an Object.observe callback
-                    console.error(e.stack ? e)
-        else
-            evaluate: -> @_evaluateInternal()

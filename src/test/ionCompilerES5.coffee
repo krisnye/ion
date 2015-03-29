@@ -109,9 +109,7 @@ tests =
         });
     """
     # """
-    # template ->
-    #     foo:
-    #         x: 1
+    # template -> foo(deep bar)
     # """: null
 
 if global.window?

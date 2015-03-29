@@ -18,14 +18,14 @@ module.exports = class OperationExpression extends DynamicExpression
         activate: ->
             super
             @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@args, observeElements:@factory.observe})
-            @argumentExpressions.watchValue(
-                @watcher ?= (value) =>
+            @unobserve = @argumentExpressions.observe(
+                @observer ?= (value) =>
                     @argumentValues = value
                     @evaluate()
             )
         deactivate: ->
             super
-            @argumentExpressions.unwatchValue(@watcher)
+            @unobserve()
         evaluate: ->
             if not @factory.evaluate?
                 throw new Error("evaluate method not defined for operation: " + @factory)

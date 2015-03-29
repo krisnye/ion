@@ -239,15 +239,20 @@ SpreadIdentifier
 //  Expressions
 //  We use javascript terms where available. http://www.ecma-international.org/ecma-262/5.1/#sec-A.3
 RightHandSideExpression = ImpliedObjectExpression / Expression
-Expression = start:start head:(MultilineExpression / InlineExpression)
+Expression = start:start deep:"deep "? _ head:(MultilineExpression / InlineExpression)
     tail:( eol _ &"." a:(tailCall / tailMember)* { return a } )*
     {
         // convert array of arrays to just a flat array
         tail = tail.reduce(function(a,b){ return a.concat(b)}, [])
-        return leftAssociateCallsOrMembers(start, head, tail)
+        var e = leftAssociateCallsOrMembers(start, head, tail)
+        if (deep)
+            e.deep = true
+        return e
     }
 MultilineChainExpression = eol? &"." e:(tailCall / tailMember)* { return e }
-MultilineExpression = ClassExpression / MultilineStringTemplate / MultilineStringLiteral / TypedObjectExpression / MultilineCallExpression
+MultilineExpression = ClassExpression / MultilineStringTemplate / MultilineStringLiteral / VoidTypedObjectExpression / TypedObjectExpression / MultilineCallExpression
+VoidTypedObjectExpression = start:start "void" _ e:TypedObjectExpression end:end
+    { return node('UnaryExpression', {operator:"void", argument:e}, start, end) }
 multilineArguments
     =   "(" indent eol
         args:(
@@ -297,7 +302,7 @@ tailMember = _ existential:("?" {return true})? "[" _ property:InlineExpression 
            / _ existential:("?" {return true})? "." _ property:IdentifierName end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] }
 arguments = inlineArguments / multilineArguments
 inlineArguments = "(" a:argumentList? ")" { return a ? a : [] }
-argumentList = a:InlineExpression b:(_ "," _ c:InlineExpression {return c})* { return [a].concat(b) }
+argumentList = a:Expression b:(_ "," _ c:Expression {return c})* { return [a].concat(b) }
 
 MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }
 
@@ -313,7 +318,7 @@ DoExpression = start:start do _ f:Expression end:end
             args = []
         return node("CallExpression", {callee:f,arguments:args}, start, end)
     }
-FunctionExpression = start:start template:template? _ id:Identifier? _ params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(InlineExpression / ThrowStatement / BlockStatement)? end:end
+FunctionExpression = start:start template:template? _ id:Identifier? _ params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(Expression / ThrowStatement / BlockStatement)? end:end
     {
         if (params == null) params = []
         paramPatterns = params.map(function(x) { return x[0] })

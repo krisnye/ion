@@ -1,4 +1,5 @@
 const ion = null # shouldn't depend on itself
+const noop = ->
 
 import './es6'
 
@@ -55,10 +56,10 @@ const
 export const
     patch = do ->
         let mergePatch = import './mergePatch'
-        let patch = (object, patch) -> mergePatch.merge(object, patch)
+        let patchFunction = (object, patch) -> mergePatch.merge(object, patch)
         for key, value of mergePatch
-            patch[key] = value
-        return patch
+            patchFunction[key] = value
+        return patchFunction
     create = (type, args) -> variableArgConstructs[args.length](type, args)
     setImmediate = do ->
         if global.setImmediate?
@@ -92,45 +93,47 @@ export const
                 context.setVariableLiteral(name, value)
         return context.createRuntime(ast)
     nextTick = @process?.nextTick ? (fn) -> setTimeout(fn, 0)
-    clone = (object, deep = false) ->
+    clone = (object, _deep = false) ->
         if Array.isArray(object)
-            return [deep ? clone(item, deep) : item for item in object]
+            return [_deep ? clone(item, _deep) : item for item in object]
         else if object?.constructor is Object
             return {}
                 for key, value of object
-                    [key]: deep ? clone(value, deep) : value
+                    [key]: _deep ? clone(value, _deep) : value
         else
             return object
-    observe = (object, observer, property) ->
+    observe = (object, observer, options) ->
         if object is global or object is console
-            return
+            return noop
+        let property = options?.property
+        let priority = options?.priority
+        let wrapper = null
         # property is optional
-        if not isObjectObservable(object)
+        let observable = isObjectObservable(object)
+        if not observable
             if not property?
-                return
+                return noop
             nodeObserveShim.observe(object, observer, property)
         else if object? and observer? and Object.observe? and typeof object is 'object'
             if DEBUG
-                observer.tryWrapper ?= (changes) ->
+                wrapper = (changes) ->
                     try
                         observer(changes)
                     catch error
                         console.error('Exception in Object.observe callback', error)
-            Object.observe(object, observer.tryWrapper ? observer)
+            Object.observe(object, wrapper ? observer)
             # watch change on dom elements
             object.addEventListener?('change', observer)
         object?.onObserved?(observer, property)
-    unobserve = (object, observer, property) ->
-        # property is optional
-        if not isObjectObservable(object)
-            if not property?
-                return
-            nodeObserveShim.unobserve(object, observer, property)
-        else if object? and observer? and Object.unobserve? and typeof object is 'object'
-            Object.unobserve(object, observer.tryWrapper ? observer)
-            # unwatch change on dom elements
-            object.removeEventListener?('change', observer)
-        object?.unObserved?(observer, property)
+        # return a function that can be used to unboserve
+        return ->
+            if not observable
+                nodeObserveShim.unobserve(object, observer, property)
+            else if object? and observer? and Object.unobserve? and typeof object is 'object'
+                Object.unobserve(object, wrapper ? observer)
+                # unwatch change on dom elements
+                object.removeEventListener?('change', observer)
+            object?.unObserved?(observer, property)
     checkForChanges = ->
         if Object.observe.checkForChanges?
             Object.observe.checkForChanges()
@@ -158,7 +161,8 @@ export const
             let originalItem = item
             item = ->
                 originalItem.apply(@, arguments)
-                checkForChanges()
+                # checkForChanges()
+                requestAnimationFrame(checkForChanges)
             container.addEventListener(name, item, capture)
             remove = ->
                 container.removeEventListener(name, item)

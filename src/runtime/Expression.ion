@@ -2,5 +2,4 @@ const ion = import '../'
 
 export class Expression extends import './Node'
     properties:
-        watchValue: (watcher) -> @watch(watcher)
-        unwatchValue: (watcher) -> @unwatch(watcher)
+        observe: (callback) ->

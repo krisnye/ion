@@ -153,10 +153,18 @@ export
                     const checkIfDone (check) ->
                         # console.log(JSON.stringify({check,expected,argument}))
                         if JSON.stringify(check) is JSON.stringify(expected)
-                            template.deactivate()
+                            # in case of immediate response, unobserve may not have been set yet
+                            if unobserve?
+                                unobserve()
+                            else
+                                setTimeout(
+                                    ->
+                                        unobserve()
+                                    0
+                                )
                             done()
                     template.activate()
-                    template.watchValue(
+                    let unobserve = template.observe(
                         (value) ->
                             checkIfDone(value)
                             ion.observe(

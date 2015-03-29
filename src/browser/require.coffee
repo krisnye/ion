@@ -82,13 +82,13 @@ require.compileScripts = ->
             if typeof result.template
                 template = result.call(scriptElement)
                 removeLastResult = null
-                template.watchValue (templateResult) ->
+                template.observe (templateResult) ->
                     removeLastResult?()
                     removeLastResult = null
                     if templateResult?
                         removeLastResult = ion.add scriptElement.parentElement, templateResult
             else
-                ion.add scriptElement.parentElement, result
+                ion.add(scriptElement.parentElement, result)
 
 if typeof module is "undefined"
     @require = require

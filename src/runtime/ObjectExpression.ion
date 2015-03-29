@@ -12,7 +12,7 @@ export class ObjectExpression extends DynamicExpression
             # its not really a type watcher any longer, that is historical
             # its just watching for an instance            
             @typeExpression ?= @context.createRuntime(@objectType ? null)
-            @typeExpression.watchValue(
+            @unobserve = @typeExpression.observe(
                 @typeWatcher ?= (value) =>
                     if not @value or value?
                         @statements?.deactivate()
@@ -31,4 +31,4 @@ export class ObjectExpression extends DynamicExpression
             )
         deactivate: ->
             super
-            @typeExpression.unwatchValue(@typeWatcher)
+            @unobserve()

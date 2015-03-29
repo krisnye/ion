@@ -7,9 +7,10 @@ export class ReturnStatement extends Statement
         activate: ->
             super
             @argumentExpression ?= @context.createRuntime(@argument)
-            @argumentExpression.watchValue(
+            @unobserve = @argumentExpression.observe(
                 @argumentWatcher ?= (value) => @context.returnExpression.setValue(value)
             )
         deactivate: ->
             super
-            @argumentExpression.unwatchValue(@argumentWatcher)
+            @argumentWatcher?(undefined)
+            @unobserve()

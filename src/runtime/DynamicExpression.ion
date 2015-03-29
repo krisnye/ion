@@ -9,30 +9,27 @@ export class DynamicExpression extends import './Expression'
         deactivate: ->
             # called when we no longer have watchers
             @isActive = false
-        watchValue: (watcher) ->
+        observe: (observer) ->
             let watchers = @_watchers ?= []
             if watchers.length is 0
                 @activate()
-            watchers.push(watcher)
-            # notify watcher immediately if we have a value
+            watchers.push(observer)
+            # notify observer immediately if we have a value
             if @hasValue()
                 let value = @getValue()
-                @_notifyWatcher(watcher, value)
-        unwatchValue: (watcher) ->
-            @_watchers.remove(watcher)
-            # notify watcher immediately if we have a value
-            if @hasValue()
-                @_notifyWatcher(watcher, undefined)
-            # this must happen AFTER we notify the watcher,
-            # otherwise it changes the value and the watcher may not be notified.
-            if @_watchers.length is 0
-                @deactivate()
-        _notifyWatcher: (watcher, value) -> watcher.call(@, value)
+                @_notifyWatcher(observer, value)
+            return =>
+                @_watchers.remove(observer)
+                # this must happen AFTER we notify the observer,
+                # otherwise it changes the value and the observer may not be notified.
+                if @_watchers.length is 0
+                    @deactivate()
+        _notifyWatcher: (observer, value) -> observer.call(@, value)
         notify: ->
             if @_watchers?
                 let value = @getValue()
-                for watcher in @_watchers
-                    @_notifyWatcher(watcher, value)
+                for observer in @_watchers
+                    @_notifyWatcher(observer, value)
             return
         hasValue: -> @hasOwnProperty('value')
         getValue: -> @value
@@ -46,17 +43,17 @@ export class DynamicExpression extends import './Expression'
         if d.getValue() isnt undefined
             throw "d.getValue() != undefined"
         let total = 10
-        const watcher = (value) ->
+        const observer = (value) ->
             if value isnt undefined
                 total += value
-        d.watchValue(watcher)
+        let unobserve = d.observe(observer)
         assert total is 10
         d.setValue(10)
         assert d.getValue() is 10
         assert total is 20
         d.setValue(20)
         assert total is 40
-        d.unwatchValue(watcher)
+        unobserve()
         assert total is 40
         d.setValue(50)
         assert total is 40

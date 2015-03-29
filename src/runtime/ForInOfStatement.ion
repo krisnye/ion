@@ -30,7 +30,7 @@ export class ForInOfStatement extends Statement
             # we must create new contexts for every item in the list thingy.
             # console.log('ForEachStatement.activate', @)
             @collectionExpression ?= @context.createRuntime(@right)
-            @collectionExpression.watchValue(
+            @unobserveExpression = @collectionExpression.observe(
                 @collectionWatcher ?= (collection) =>
                     # console.log('collectionWatcher', collection)
                     if @collection isnt collection
@@ -40,7 +40,7 @@ export class ForInOfStatement extends Statement
                                 (key, value) =>
                                     @removeItem(key, value)
                             )
-                            ion.unobserve(@collection, @collectionObserver)
+                            @unobserveCollection()
                         @collection = collection
                         if @collection?
                             @forEach(
@@ -48,11 +48,12 @@ export class ForInOfStatement extends Statement
                                 (key, value) =>
                                     @addItem(key, value)
                             )
-                            ion.observe(@collection, @collectionObserver ?= @applyChanges.bind(@))
+                            @unobserveCollection = ion.observe(@collection, @collectionObserver ?= @applyChanges.bind(@), {priority:@context.depth})
             )
         deactivate: ->
             super
-            @collectionExpression.unwatchValue(@collectionWatcher)
+            @collectionWatcher?(undefined)
+            @unobserveExpression()
         addItem: (key, value, activate = true) ->
             # console.log('add ' + key + ' ' + value)
             if value isnt undefined

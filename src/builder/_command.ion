@@ -19,7 +19,7 @@ if args[0] is "-c" or args[0] is "-w"
     if args[1]?
         process.chdir(args[1])
     try
-        ModuleBuilder().watchValue()
+        ModuleBuilder().observe()
         if args[0] is "-c"
             process.exit()
     catch e

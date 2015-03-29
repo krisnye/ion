@@ -11,25 +11,21 @@ export class Context
         @output = output
         # parent is either null or another Context
         @parent = parent
+        # calculate and set the depth
+        @depth = parent? ? parent.depth + 1 : 0
         # an object that maps variable names to variable expressions
         @variables = {}
         # store a reference to the root context
         @root = @parent?.root ? @
-        # track which variables we have watched for get property
-        @_watched = {}
         # runtime nodes keyed by toCode
         @_runtimes = {}
+        # variable unobserve functions
+        @_unobserve = []
+        # if there is a return expression, copy it
+        @returnExpression = parent?.returnExpression
     properties:
         newContext: (output = @output) -> new Context(@, output)
         createRuntime: (node) ->
-            # if Factory.canCache(node)
-            #     let key = Factory.toCode(node)
-            #     if @_runtimes.hasOwnProperty(key)
-            #         return @_runtimes[key]
-            #     else
-            #         console.log('caching: ' + Factory.toCode(node))
-            #         return @_runtimes[key] = Factory.createRuntime(@, node)
-            # else
             return Factory.createRuntime(@, node)
         get: (name) ->
             let variable = @getVariable(name)
@@ -60,7 +56,13 @@ export class Context
                 @setVariableExpression(name, new Literal({value}))
         setVariableExpression: (name, expression) ->
             if name?
+                if @variables[name]?
+                    throw new Error("Variable {{name}} is already defined")
                 # we always watch the expression to make sure it is created only once
                 # if we don't, then it may be created and destroyed multiple times which can cause bugs
-                expression.watchValue(noop)
+                @_unobserve.push(expression.observe(noop))
                 return @variables[name] = expression
+        dispose: ->
+            for unobserve in @_unobserve
+                unobserve()
+            @_unobserve.length = 0

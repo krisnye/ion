@@ -1156,7 +1156,7 @@ activateStatements = (node, context) ->
                         arguments: []
                     property:
                         type: 'Identifier'
-                        name: 'watchValue'
+                        name: 'observe'
                 arguments: []
 
 variableDeclarationExpressions = (node, context) ->

@@ -9,21 +9,21 @@ export class MemberExpression extends DynamicExpression
             @objectExpression ?= @context.createRuntime(@object)
             @propertyExpression ?= @context.createRuntime(@computed ? @property : @property.name)
 
-            @objectExpression.watchValue(
+            @unobserveObject = @objectExpression.observe(
                 @objectWatcher ?= (objectValue) =>
                     @objectValue = objectValue
                     @updateValue()
             )
 
-            @propertyExpression.watchValue(
+            @unobserveProperty = @propertyExpression.observe(
                 @propertyWatcher ?= (propertyValue) =>
                     @propertyValue = propertyValue
                     @updateValue()
             )
         deactivate: ->
             super
-            @objectExpression.unwatchValue(@objectWatcher)
-            @propertyExpression.unwatchValue(@propertyWatcher)
+            @unobserveObject()
+            @unobserveProperty()
         updateValue: ->
             let value = undefined
             if @objectValue?
@@ -44,7 +44,7 @@ export class MemberExpression extends DynamicExpression
                         @objectValue
                         (changes) =>
                             @updateValue()
-                        @propertyValue
+                        {property:@propertyValue, priority:@context.depth}
                     )
 
         # sets the underlying property value.  This may be used for two way binding.

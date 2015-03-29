@@ -7,30 +7,30 @@ export class IfStatement extends Statement
         activate: ->
             super
             @testExpression ?= @context.createRuntime(@test)
-            @testExpression.watchValue(
-                @testExpressionWatcher ?= (value) =>
+            @unobserve = @testExpression.observe(
+                @testExpressionObserver ?= (value) =>
                     if value
                         if @alternateStatement?.isActive
-                            @alternateStatement?.deactivate()
+                            @alternateStatement.deactivate()
                             # we don't have to necessarily delete old statements
                             # but behavior is more predictable this way
-                            delete @alternateStatement
-                        @consequentStatement ?= @context.createRuntime(@consequent)
+                            @alternateStatement = null
+                        @consequentStatement = @context.newContext().createRuntime(@consequent)
                         @consequentStatement.activate()
                     else
                         if @consequentStatement?.isActive
-                            @consequentStatement?.deactivate()
-                            delete @consequentStatement
+                            @consequentStatement.deactivate()
+                            @consequentStatement = null
                         if @alternate?
-                            @alternateStatement ?= @context.createRuntime(@alternate)
+                            @alternateStatement = @context.newContext().createRuntime(@alternate)
                             @alternateStatement.activate()
             )
         deactivate: ->
             super
-            @testExpression.unwatchValue(@testExpressionWatcher)
+            @unobserve()
             if @alternateStatement?.isActive
                 @alternateStatement?.deactivate()
-                delete @alternateStatement
+                @alternateStatement = null
             if @consequentStatement?.isActive
                 @consequentStatement?.deactivate()
-                delete @consequentStatement
+                @consequentStatement = null
