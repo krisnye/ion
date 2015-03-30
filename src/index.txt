@@ -1,0 +1,362 @@
+const ion = null # shouldn't depend on itself
+const noop = ->
+
+import './es6'
+
+# with this set to false we will miss any errors in Object.observe callbacks.
+global.DEBUG ?= true
+
+const
+    primitive = {string:true,number:true,boolean:true,function:true}
+    isPrimitive = (object) -> not object? or primitive[typeof object] or false
+    normalizeProperty = (property, name) ->
+        if typeof property is 'function'
+            property =
+                writable: false
+                value: property
+        else if isPrimitive(property) or Array.isArray(property)
+            property =
+                value: property
+
+        if not property.get? and not property.set? and not property.hasOwnProperty('value')
+            property.value = undefined
+
+        if property.hasOwnProperty('value')
+            property.writable ?= true
+
+        property.name = name
+
+        return property
+    normalizeProperties = (properties = {}) ->
+        for name, property of properties
+            properties[name] = normalizeProperty(property, name)
+        return properties
+    variableArgConstructs = []
+        (type, a) -> new type()
+        (type, a) -> new type(a[0])
+        (type, a) -> new type(a[0], a[1])
+        (type, a) -> new type(a[0], a[1], a[2])
+        (type, a) -> new type(a[0], a[1], a[2], a[3])
+        (type, a) -> new type(a[0], a[1], a[2], a[3], a[4])
+        (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5])
+        (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6])
+        (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7])
+        (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8])
+        (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
+    nodeObserveShim = Object.observe?.checkForChanges ? Object : import('./es6/Object.observe').createShim()
+    isObjectObservable = do ->
+        let Node = global.Node ? ->
+        let NodeList = global.NodeList ? ->
+        let Location = global.Location ? ->
+        return (a) ->
+            if a instanceof Node or a instanceof NodeList or a instanceof Location
+                return false
+            return true
+    prioritizeCallback = do ->
+        let queue = []
+        let timeoutId = null
+        let flush = ->
+            queue.sort((a, b) -> a.priority - b.priority)
+            for {callback, args, priority} in queue
+                callback.apply(null, args)
+            queue.length = 0
+            timeoutId = null
+        return (callback, priority) ->
+            return ->
+                let args = Array.prototype.slice.call(arguments, 0)
+                queue.push({callback, args, priority})
+                timeoutId ?= setTimeout(flush, 0)
+
+export const
+    patch = do ->
+        let mergePatch = import './mergePatch'
+        let patchFunction = (object, patch) -> mergePatch.merge(object, patch)
+        for key, value of mergePatch
+            patchFunction[key] = value
+        return patchFunction
+    create = (type, args) -> variableArgConstructs[args.length](type, args)
+    setImmediate = do ->
+        if global.setImmediate?
+            return global.setImmediate
+        if global.document?
+            return do ->
+                let hiddenDiv = document.createElement("div")
+                let callbacks = []
+                new MutationObserver(
+                    (records) ->
+                        let cbList = callbacks
+                        callbacks = []
+                        for callback in cbList
+                            callback()
+                )
+                .observe(hiddenDiv, { attributes: true })
+            return setImmediate(callback) ->
+                if (callbacks.length is 0)
+                    hiddenDiv.setAttribute('yes', 'no')
+                callbacks.push(callback)
+        return (fn) ->
+            setTimeout(fn, 0)
+    template = (fn, template) ->
+        fn.template = template ? true
+        return fn
+    createRuntime = (ast, args, parent) ->
+        const Context = import './runtime/Context'
+        const context = new Context(parent)
+        if args?
+            for name, value of args
+                context.setVariableLiteral(name, value)
+        return context.createRuntime(ast)
+    nextTick = @process?.nextTick ? (fn) -> setTimeout(fn, 0)
+    clone = (object, _deep = false) ->
+        if Array.isArray(object)
+            return [_deep ? clone(item, _deep) : item for item in object]
+        else if object?.constructor is Object
+            return {}
+                for key, value of object
+                    [key]: _deep ? clone(value, _deep) : value
+        else
+            return object
+    observe = (object, observer, options) ->
+        if object is global or object is console
+            return noop
+        let property = options?.property
+        let priority = options?.priority ? 0
+        let removed = false
+        # wrap the observer in a prioritizing function
+        # if priority > 0
+        #     # wrap the function with a check to make sure hasn't been removed
+        #     let originalObserver = observer
+        #     observer = ->
+        #         if not removed
+        #             originalObserver.apply(null, arguments)
+        #     observer = prioritizeCallback(observer, priority)
+        # property is optional
+        let observable = isObjectObservable(object)
+        if not observable
+            if not property?
+                return noop
+            nodeObserveShim.observe(object, observer, property)
+        else if object? and observer? and Object.observe? and typeof object is 'object'
+            # if DEBUG
+            #     wrapper = (changes) ->
+            #         try
+            #             observer(changes)
+            #         catch error
+            #             console.error('Exception in Object.observe callback', error)
+            Object.observe(object, observer)
+            # watch change on dom elements
+            object.addEventListener?('change', observer)
+        object?.onObserved?(observer, property)
+        # return a function that can be used to unboserve
+        return ->
+            removed = true
+            if not observable
+                nodeObserveShim.unobserve(object, observer, property)
+            else if object? and observer? and Object.unobserve? and typeof object is 'object'
+                Object.unobserve(object, observer)
+                # unwatch change on dom elements
+                object.removeEventListener?('change', observer)
+            object?.unObserved?(observer, property)
+    checkForChanges = ->
+        if Object.observe.checkForChanges?
+            Object.observe.checkForChanges()
+        else
+            nodeObserveShim.observe.checkForChanges()
+    bind = (fn, thisArg) ->
+        let newFn = fn.bind(thisArg)
+        # the function name has semantic meaning for us when adding a function to an element
+        # (see add function below)
+        # so we copy the function name to the new bound function id property when binding
+        # (function.name is readonly)
+        if fn.name?.length > 0
+            newFn.id = fn.id ? fn.name
+        return newFn
+    add = (container, item) ->
+        let remove
+        if typeof item is 'function' and (item.name?.length > 0 or item.id?) and typeof container.addEventListener is 'function'
+            let name = item.id ? item.name
+            let capture = false
+            let captureSuffix = '_capture'
+            if name.endsWith(captureSuffix)
+                capture = true
+                name = name.substring(0, name.length - captureSuffix.length)
+            # we wrap all event handlers and call checkForChanges after
+            let originalItem = item
+            item = ->
+                originalItem.apply(@, arguments)
+                # checkForChanges()
+                requestAnimationFrame(checkForChanges)
+            container.addEventListener(name, item, capture)
+            remove = ->
+                container.removeEventListener(name, item)
+        else
+            if container.nodeType is 1
+                if typeof item isnt 'string' and not item?.nodeType?
+                    item = JSON.stringify(item)
+                if typeof item is 'string'
+                    item = document.createTextNode(item)
+                container.appendChild(item)
+            else if container.push?
+                container.push(item)
+            else
+                container.add(item)
+            remove = ->
+                if item.removeSelf?
+                    item.removeSelf()
+                else if item.parentNode?
+                    item.parentNode.removeChild(item)
+                else if container.lastIndexOf? and container.removeAt?
+                    let index = container.lastIndexOf(item)
+                    if index >= 0
+                        container.removeAt(index)
+                else if typeof container.remove is 'function'
+                    container.remove(item)
+                else if Array.isArray(container)
+                    let index = container.lastIndexOf(item)
+                    if index >= 0
+                        container.splice(index, 1)
+
+        item?.onAdded?(container)
+        # returns a function which can be used to remove the item
+        return ->
+            remove()
+            item?.onRemoved?(container)
+    defineProperties = (object, properties) -> Object.defineProperties(object, normalizeProperties(properties))
+    defineClass = (...definitions) ->
+        const classDefinition = definitions[0]
+        if definitions[1] is undefined
+            # extend our base object by default unless user sets extends to null explicitly.
+            definitions[1] = import './Object'
+        classDefinition.super = definitions[1]
+        const name = classDefinition.name ? classDefinition.id?.match(/([a-z_0-9\$]+)(\.js)?$/i)?[1]
+        if not name?
+            throw new Error('missing name property')
+        let classFunction
+        if classDefinition.hasOwnProperty('constructor')
+            classFunction = classDefinition.constructor
+        else if classDefinition.super?
+            classFunction = eval("(function {{name}}() { {{name}}.super.apply(this, arguments); })")
+        else
+            classFunction = eval("(function {{name}}() {})")
+
+        # successively merge patch the definitions onto the new class
+        let canSetClassProperty = (key) ->
+            if key is 'name'
+                return false
+            let descriptor = Object.getOwnPropertyDescriptor(classFunction, key)
+            return not descriptor? or descriptor.writable or not descriptor.get?
+
+        let types = new Set()   # a map of all types
+        types.add(classFunction)
+        for let i = definitions.length - 1; i >= 0; i--
+            let definition = definitions[i]
+            if definition?
+                types.add(definition)
+                for key, value of definition if key isnt 'test' or i is 0
+                    if canSetClassProperty(key)
+                        classFunction[key] = patch(classFunction[key], value)
+                        
+        classFunction.types = types
+
+        if classFunction.properties?
+            defineProperties(classFunction.prototype, classFunction.properties)
+
+        return classFunction
+    is = (instance, type) ->
+        if not instance?
+            return false
+        if not type?
+            return true
+        if typeof type is 'function'
+            if typeof instance.is is 'function'
+                return instance.is(type)
+            return instance instanceof type
+        else
+            return instance is type
+    makeReactive = (object, activate) ->
+        let observeCount = 0
+        let deactivate = null
+        return Object.defineProperties(
+            object
+            {}
+                onObserved:
+                    value: ->
+                        observeCount++
+                        if observeCount is 1
+                            deactivate = activate.call(object)
+                unObserved:
+                    value: ->
+                        observeCount--
+                        if observeCount is 0
+                            deactivate?()
+        )
+    serialize = (object) -> JSON.stringify(object)
+    deserialize = do ->
+        let extractType = (object) ->
+            let typeKey = import('ion/Object').typeKey
+            # we should strongly type our objects when created, so make a factory
+            let typeName = object[typeKey]
+            if not typeName?
+                return Object
+            let type = import(typeName)
+            if not type.serializable
+                throw new Error("Type is not serializable: {{ typeName }}")
+            # remove the type field from the source object
+            delete object[typeKey]
+            return type
+        let deserialize = (object) ->
+            if typeof object is 'string'
+                object = JSON.parse(object)
+            let typeKey = import('ion/Object').typeKey
+            # we should strongly type our objects when created, so make a factory
+            let typeName = object[typeKey]
+            if typeName?
+                let type = import(typeName)
+                if not type.serializable
+                    throw new Error("Type is not serializable: {{ typeName }}")
+                let typedObject = new type
+                for key, value of object if key isnt typeKey
+                    typedObject[key] = object[key]
+                return typedObject
+            else
+                return object
+        deserialize.extractType = extractType
+        return deserialize
+    test =
+        defineClass: ->
+            const Foo = defineClass(
+                {}
+                    id: "Foo"
+                    constructor: (number) ->
+                        @number = number
+                    properties:
+                        getValue: -> @number
+            )
+            assert new Foo(2).getValue() is 2
+        defineProperties:
+            "should allow primitive values": ->
+                const object = {}
+                const result = defineProperties(
+                    object
+                    {}
+                        f: -> "function"
+                        i: 2
+                        b: true
+                        a: []
+                        s: "hello"
+                )
+                assert object is result
+                assert typeof object.f is 'function'
+                assert object.f() is 'function'
+                assert object.i is 2
+                assert object.b is true
+                assert Array.isArray(object.a)
+                assert object.s is 'hello'
+
+for name in ["runtime", "compiler", "builder", "browser"]
+    do (name) ->
+        Object.defineProperty(exports, name, {enumerable: true, get: -> require("./" + name)})
+
+# if window, then on resize, check for changes
+if global.window?
+    global.window.addEventListener('resize', checkForChanges)

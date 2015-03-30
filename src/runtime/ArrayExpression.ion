@@ -23,7 +23,7 @@ export class ArrayExpression extends DynamicExpression
                         @itemObserver ?= =>
                             @notifyIfActive()
                         let priority = @context.depth
-                        @unobserveExpressionValues[key] = expression.deep ? ion.patch.watch(value, @itemObserver, priority) : ion.observe(value, @itemObserver, {priority})
+                        @unobserveExpressionValues[key] = expression.deep ? ion.patch.watch(value, @itemObserver) : ion.observe(value, @itemObserver, {priority})
                 @notifyIfActive()
         activate: ->
             @expressions = [@context.createRuntime(item) for item in @elements]
