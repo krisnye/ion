@@ -54,18 +54,18 @@ export const
                         subWatchers[name] = watch(value, subHandler, priority, false)
         let pendingTimeout = null
         let queuePatch = (patch) ->
-            if not callInitial
-                handler(patch)
-            else
-                pendingPatch = combine(pendingPatch, patch)
-                processPatch(pendingPatch)
-                pendingTimeout ?= setTimeout(
-                    ->
-                        handler(pendingPatch)
-                        pendingPatch = null
-                        pendingTimeout = null
-                    0
-                )
+            # if not callInitial
+            handler(patch)
+            # else
+            #     pendingPatch = combine(pendingPatch, patch)
+            #     processPatch(pendingPatch)
+            #     pendingTimeout ?= setTimeout(
+            #         ->
+            #             handler(pendingPatch)
+            #             pendingPatch = null
+            #             pendingTimeout = null
+            #         10
+            #     )
         let watcher = (changes) ->
             let patch = {}
             for change in changes
@@ -76,6 +76,14 @@ export const
                     patch[change.name] = object[change.name] ? deleteValue
             if patch?
                 queuePatch(patch)
+        # if DEBUG
+        #     let innerWatcher = watcher
+        #     watcher = (changes) ->
+        #         try
+        #             innerWatcher(changes)
+        #         catch e
+        #             # catch and log errors, because object observe callbacks suppress errors
+        #             console.error(e)
 
         # call process patch on the object to watch children
         processPatch(object)

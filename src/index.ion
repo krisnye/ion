@@ -52,6 +52,20 @@ const
             if a instanceof Node or a instanceof NodeList or a instanceof Location
                 return false
             return true
+    prioritizeCallback = do ->
+        let queue = []
+        let timeoutId = null
+        let flush = ->
+            queue.sort((a, b) -> a.priority - b.priority)
+            for {callback, args, priority} in queue
+                callback.apply(null, args)
+            queue.length = 0
+            timeoutId = null
+        return (callback, priority) ->
+            return ->
+                let args = Array.prototype.slice.call(arguments, 0)
+                queue.push({callback, args, priority})
+                timeoutId ?= setTimeout(flush, 0)
 
 export const
     patch = do ->
@@ -106,8 +120,16 @@ export const
         if object is global or object is console
             return noop
         let property = options?.property
-        let priority = options?.priority
-        let wrapper = null
+        let priority = options?.priority ? 0
+        let removed = false
+        # wrap the observer in a prioritizing function
+        # if priority > 0
+        #     # wrap the function with a check to make sure hasn't been removed
+        #     let originalObserver = observer
+        #     observer = ->
+        #         if not removed
+        #             originalObserver.apply(null, arguments)
+        #     observer = prioritizeCallback(observer, priority)
         # property is optional
         let observable = isObjectObservable(object)
         if not observable
@@ -115,22 +137,23 @@ export const
                 return noop
             nodeObserveShim.observe(object, observer, property)
         else if object? and observer? and Object.observe? and typeof object is 'object'
-            if DEBUG
-                wrapper = (changes) ->
-                    try
-                        observer(changes)
-                    catch error
-                        console.error('Exception in Object.observe callback', error)
-            Object.observe(object, wrapper ? observer)
+            # if DEBUG
+            #     wrapper = (changes) ->
+            #         try
+            #             observer(changes)
+            #         catch error
+            #             console.error('Exception in Object.observe callback', error)
+            Object.observe(object, observer)
             # watch change on dom elements
             object.addEventListener?('change', observer)
         object?.onObserved?(observer, property)
         # return a function that can be used to unboserve
         return ->
+            removed = true
             if not observable
                 nodeObserveShim.unobserve(object, observer, property)
             else if object? and observer? and Object.unobserve? and typeof object is 'object'
-                Object.unobserve(object, wrapper ? observer)
+                Object.unobserve(object, observer)
                 # unwatch change on dom elements
                 object.removeEventListener?('change', observer)
             object?.unObserved?(observer, property)
