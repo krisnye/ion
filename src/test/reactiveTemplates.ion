@@ -29,18 +29,6 @@ const templates = []
         {x:4,z:3,y:undefined}
         {x:8,y:4,z:6}
     []
-        "for else statements"
-        {}
-        template (properties) ->
-            return {}
-                for key, value of properties
-                    [key]: value
-                else
-                    [key]: undefined
-        {x:1,y:2}
-        {x:4,y:undefined,z:3}
-        {x:4,z:3}
-    []
         "shared variables functions"
         {}
         template (properties) ->
@@ -146,28 +134,41 @@ const templates = []
 
 export
     test:
+        let lowestBefore = Number.MAX_SAFE_INTEGER
+        let totalComplete = 0
         for [name, thisArg, templateType,argument,patch,expected] in templates if expected?
             [name]: do (thisArg, templateType, argument, patch, expected) ->
                 return (done) ->
+                    let beforeCount = ion.observe.count ? 0
                     let template = templateType.call(thisArg, argument)
+                    const finished = ->
+                        unobserve()
+                        unobserveValue?()
+                        let afterCount = ion.observe.count ? 0
+                        # console.log({beforeCount,watchCount,afterCount})
+                        totalComplete++
+                        lowestBefore = Math.min(beforeCount, lowestBefore)
+                        if totalComplete is templates.length and afterCount isnt lowestBefore
+                            done("ion.observe memory leak detected, beforeCount: {{lowestBefore}}, afterCount: {{afterCount}}")
+                        else
+                            done()
+
                     const checkIfDone (check) ->
                         # console.log(JSON.stringify({check,expected,argument}))
                         if JSON.stringify(check) is JSON.stringify(expected)
                             # in case of immediate response, unobserve may not have been set yet
                             if unobserve?
-                                unobserve()
+                                finished()
                             else
-                                setTimeout(
-                                    ->
-                                        unobserve()
-                                    0
-                                )
-                            done()
+                                setTimeout(finished, 0)
                     template.activate()
+                    let watchCount = ion.observe.count ? 0
+                    let unobserveValue
                     let unobserve = template.observe(
                         (value) ->
                             checkIfDone(value)
-                            ion.observe(
+                            unobserveValue?()
+                            unobserveValue = ion.observe(
                                 value
                                 (changes) ->
                                     checkIfDone(value)

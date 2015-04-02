@@ -31,4 +31,5 @@ export class ObjectExpression extends DynamicExpression
             )
         deactivate: ->
             super
+            @statements?.deactivate()
             @unobserve()

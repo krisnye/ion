@@ -136,6 +136,8 @@ export const
             if not property?
                 return noop
             nodeObserveShim.observe(object, observer, property)
+            # console.log('observe shim ' + JSON.stringify(object))
+            observe.count = (observe.count ? 0) + 1
         else if object? and observer? and Object.observe? and typeof object is 'object'
             # if DEBUG
             #     wrapper = (changes) ->
@@ -144,6 +146,8 @@ export const
             #         catch error
             #             console.error('Exception in Object.observe callback', error)
             Object.observe(object, observer)
+            # console.log('observe ' + JSON.stringify(object))
+            observe.count = (observe.count ? 0) + 1
             # watch change on dom elements
             object.addEventListener?('change', observer)
         object?.onObserved?(observer, property)
@@ -152,8 +156,12 @@ export const
             removed = true
             if not observable
                 nodeObserveShim.unobserve(object, observer, property)
+                # console.log('unobserve shim ' + JSON.stringify(object))
+                observe.count--
             else if object? and observer? and Object.unobserve? and typeof object is 'object'
                 Object.unobserve(object, observer)
+                # console.log('unobserve ' + JSON.stringify(object))
+                observe.count--
                 # unwatch change on dom elements
                 object.removeEventListener?('change', observer)
             object?.unObserved?(observer, property)

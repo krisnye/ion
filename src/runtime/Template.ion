@@ -15,6 +15,7 @@ export class Template extends BlockStatement
                 @activate()
             @unobserve = @context.returnExpression.observe(watcher)
             return =>
+                @unobserve()
+                console.log('template deactivate ' + @context.returnExpression.isActive)
                 if not @context.returnExpression.isActive
                     @deactivate()
-                @unobserve()

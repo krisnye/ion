@@ -9,21 +9,24 @@ export class MemberExpression extends DynamicExpression
             @objectExpression ?= @context.createRuntime(@object)
             @propertyExpression ?= @context.createRuntime(@computed ? @property : @property.name)
 
+            # observe the property first so it is available when we get the object
+            @unobserveProperty = @propertyExpression.observe(
+                @propertyWatcher ?= (propertyValue) =>
+                    @propertyValue = propertyValue
+                    @updateValue()
+            )
+
             @unobserveObject = @objectExpression.observe(
                 @objectWatcher ?= (objectValue) =>
                     @objectValue = objectValue
                     @updateValue()
             )
 
-            @unobserveProperty = @propertyExpression.observe(
-                @propertyWatcher ?= (propertyValue) =>
-                    @propertyValue = propertyValue
-                    @updateValue()
-            )
         deactivate: ->
             super
             @unobserveObject()
             @unobserveProperty()
+            @unobserveObjectValue?()
         updateValue: ->
             let value = undefined
             if @objectValue?
@@ -38,9 +41,9 @@ export class MemberExpression extends DynamicExpression
             if @observedObject isnt @objectValue or @observedProperty isnt @propertyValue
                 @observedObject = @objectValue
                 @observedProperty = @propertyValue
-                @objectObserver?()
+                @unobserveObjectValue?()
                 if @objectValue?
-                    @objectObserver = ion.observe(
+                    @unobserveObjectValue = ion.observe(
                         @objectValue
                         (changes) =>
                             @updateValue()

@@ -84,32 +84,41 @@ export const createShim = ->
                 if not oldValue.hasOwnProperty(name)
                     checkForChange(name)
         return changes
-    observe.checkForChanges = ->
-        let maxCycles = 10
-        # we have to run multiple cycles in case callbacks cause further change propagation
-        for let i = 0; i < maxCycles; i++
-            let totalChanges = 0
-            let pendingChanges = []
-            # traverse all objects and find changes
-            map.forEach(
-                (meta, key) ->
-                    let properties = meta.all > 0 ? null : meta.properties
-                    let changes = getChanges(meta.clone, meta.object, properties)
-                    if changes?
-                        totalChanges++
-                        meta.clone = clone(meta.object, properties)
-                        # callbacks must be deferred until after ALL changes have been found
-                        pendingChanges.push([changes, meta.callbacks.slice(0), meta])
-            )
-            if totalChanges is 0
-                return
-            for [changes, callbacks] in pendingChanges
-                # console.log(i, changes)
-                for callback in callbacks
-                    callback(changes)
+    observe.checkForChanges = do ->
+        let timeout = null
+        let check = ->
+            let maxCycles = 10
+            # we have to run multiple cycles in case callbacks cause further change propagation
+            for let i = 0; i < maxCycles; i++
+                let totalChanges = 0
+                let pendingChanges = []
+                # traverse all objects and find changes
+                map.forEach(
+                    (meta, key) ->
+                        let properties = meta.all > 0 ? null : meta.properties
+                        let changes = getChanges(meta.clone, meta.object, properties)
+                        if changes?
+                            totalChanges++
+                            meta.clone = clone(meta.object, properties)
+                            # callbacks must be deferred until after ALL changes have been found
+                            pendingChanges.push([changes, meta.callbacks.slice(0), meta])
+                )
+                if totalChanges is 0
+                    timeout = null
+                    return
+                for [changes, callbacks] in pendingChanges
+                    # console.log(i, changes)
+                    for callback in callbacks
+                        callback(changes)
 
-        # we have hit max cycles, indicates a circular dependency error
-        throw new Error("Circular Object.observe dependency")
+            # we have hit max cycles, indicates a circular dependency error
+            throw new Error("Circular Object.observe dependency")
+
+        return (forceImmediate) ->
+            if forceImmediate
+                check()
+            else
+                timeout ?= setTimeout(check, 10)
 
     return {observe,unobserve}
 
@@ -127,7 +136,7 @@ export const test = ->
     object.a = 2
     delete object.b
     object.c = 5
-    observe.checkForChanges()
+    observe.checkForChanges(true)
     assert JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1,"object":{"a":2,"c":5}},{"type":"delete","name":"b","oldValue":{"c":2,"d":3},"object":{"a":2,"c":5}},{"type":"add","name":"c","object":{"a":2,"c":5}}])
     unobserve(object, handler)
 

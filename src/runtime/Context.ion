@@ -19,8 +19,6 @@ export class Context
         @root = @parent?.root ? @
         # runtime nodes keyed by toCode
         @_runtimes = {}
-        # variable unobserve functions
-        @_unobserve = []
         # if there is a return expression, copy it
         @returnExpression = parent?.returnExpression
     properties:
@@ -50,19 +48,15 @@ export class Context
             return cachedGlobals[name] ?= new Literal({value})
         setVariableFromAst: (name, node) ->
             if name?
-                @setVariableExpression(name, @createRuntime(node))
+                return @setVariableExpression(name, @createRuntime(node))
         setVariableLiteral: (name, value) ->
             if name?
-                @setVariableExpression(name, new Literal({value}))
+                return @setVariableExpression(name, new Literal({value}))
         setVariableExpression: (name, expression) ->
             if name?
                 if @variables[name]?
                     throw new Error("Variable {{name}} is already defined")
                 # we always watch the expression to make sure it is created only once
                 # if we don't, then it may be created and destroyed multiple times which can cause bugs
-                @_unobserve.push(expression.observe(noop))
-                return @variables[name] = expression
-        dispose: ->
-            for unobserve in @_unobserve
-                unobserve()
-            @_unobserve.length = 0
+                @variables[name] = expression
+                return expression

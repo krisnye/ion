@@ -21,6 +21,7 @@ module.exports = class CallExpression extends DynamicExpression
                 @thisWatcher ?= (thisArg) =>
                     if thisArg isnt @thisArg
                         @unobserveThis?()
+                        @unobserveThis = null
                         @thisArg = thisArg
                         if not @calleeValue?.template # we don't need to observe the thisArg if the callee is a template
                             if @calleeExpression.objectExpression.deep or Array.isArray(thisArg)
@@ -54,6 +55,7 @@ module.exports = class CallExpression extends DynamicExpression
             @unobserveArguments()
             @unobserveCalleeObject?()
             @unobserveTemplate?()
+            @unobserveThis?()
         evaluate: ->
             if not (@isActive and @calleeValue? and @argumentsValue?)
                 return

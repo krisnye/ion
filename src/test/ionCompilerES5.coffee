@@ -111,6 +111,10 @@ tests =
     # """
     # template -> foo(deep bar)
     # """: null
+    # """
+    # template (properties) ->
+    #     return [key for key of properties]
+    # """: null
 
 if global.window?
     return

@@ -40,7 +40,8 @@ export class ForInOfStatement extends Statement
                                 (key, value) =>
                                     @removeItem(key, value)
                             )
-                            @unobserveCollection()
+                        @unobserveCollection?()
+                        @unobserveCollection = null
                         @collection = collection
                         if @collection?
                             @forEach(
@@ -48,12 +49,13 @@ export class ForInOfStatement extends Statement
                                 (key, value) =>
                                     @addItem(key, value)
                             )
-                            @unobserveCollection = ion.observe(@collection, @collectionObserver ?= @applyChanges.bind(@), {priority:@context.depth})
+                            @unobserveCollection = ion.observe(@collection, (@collectionObserver ?= @applyChanges.bind(@)), {priority:@context.depth})
             )
         deactivate: ->
             super
             @collectionWatcher?(undefined)
             @unobserveExpression()
+            @unobserveCollection?()
         addItem: (key, value, activate = true) ->
             # console.log('add ' + key + ' ' + value)
             if value isnt undefined

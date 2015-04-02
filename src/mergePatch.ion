@@ -54,18 +54,19 @@ export const
                         subWatchers[name] = watch(value, subHandler, priority, false)
         let pendingTimeout = null
         let queuePatch = (patch) ->
-            # if not callInitial
-            handler(patch)
-            # else
-            #     pendingPatch = combine(pendingPatch, patch)
-            #     processPatch(pendingPatch)
-            #     pendingTimeout ?= setTimeout(
-            #         ->
-            #             handler(pendingPatch)
-            #             pendingPatch = null
-            #             pendingTimeout = null
-            #         10
-            #     )
+            # console.log(JSON.stringify(patch))
+            if not callInitial
+                handler(patch)
+            else
+                pendingPatch = combine(pendingPatch, patch)
+                processPatch(pendingPatch)
+                pendingTimeout ?= setTimeout(
+                    ->
+                        handler(pendingPatch)
+                        pendingPatch = null
+                        pendingTimeout = null
+                    0
+                )
         let watcher = (changes) ->
             let patch = {}
             for change in changes
@@ -125,66 +126,66 @@ export const
             if isChange(oldValue[name], newValue[name])
                 return true
         return false
-    test = do ->
-        const equal = (a, b) -> not isChange(a, b) and not isChange(b, a)
-        return
-            merge: ->
-                assert equal({a:{b:2,c:3},d:4}, merge({a:{b:2}}, {a:{c:3},d:4}))
-                assert equal({b:2}, merge(null, {b:2}))
-                assert equal({a:1,b:2}, merge({a:1,b:2,c:3}, {c:undefined}))
-                let double = (x) -> x * 2
-                assert equal({a:double}, merge({},{a:double}))
-            isChange: ->
-                assert isChange({a:1}, null)
-                assert not isChange(null, null)
-                assert isChange(undefined, null)
-                assert isChange(null, undefined)
-                assert not isChange({a:1}, {a:1})
-                assert not isChange({a:{b:2,c:3}}, {a:{b:2}})
-                assert isChange({a:{b:2}}, {a:{b:3}})
-                assert not isChange({a:1}, {b:null})
-            diff: ->
-                assert equal({b:2}, diff({a:1}, {a:1,b:2}))
-                assert equal({a:{b:3,c:null}}, diff({a:{b:2,c:4}}, {a:{b:3}}))
-                assert equal({a:1}, diff(null, {a:1}))
-                assert equal({c:{d:{f:4}}}, diff({a:1,b:2,c:{d:{e:1,f:2}}}, {a:1,b:2,c:{d:{e:1,f:4}}}))
-                assert equal(null, diff({a:1}, undefined))
-                assert equal(null, diff({a:1}, null))
-                assert equal(undefined, diff({a:{b:2}}, {a:{b:2}}))
-            observe: (done) ->
-                if not Object.observe?
-                    return done(null, "Object.observe missing.")
-                let source =
-                    name: 'Kris'
-                    age: 41
-                    children: 
-                        Sadera:
-                            grandchildren:
-                                One: 1
-                                Two: 2
-                        Orion: {}
-                        Third: {}
-                let target = ion.clone(source, true)
-                let unwatch = watch(
-                    source
-                    (patch) ->
-                        target = merge(target, patch)
-                        # should be immediate assert
-                        if equal(source, target)
-                            done()
-                            unwatch()
-                )
-                source:
-                    name: 'Fred'
-                    children:
-                        Orion:
-                            a: 1
-                            b: 2
-                            c: 12
-                        Sadera:
-                            grandchildren:
-                                three: 3
-                # todo: delete a property in a literal?
-                delete source.children.Third
-                # temp requirement
-                ion.checkForChanges()
+    # test = do ->
+    #     const equal = (a, b) -> not isChange(a, b) and not isChange(b, a)
+    #     return
+    #         merge: ->
+    #             assert equal({a:{b:2,c:3},d:4}, merge({a:{b:2}}, {a:{c:3},d:4}))
+    #             assert equal({b:2}, merge(null, {b:2}))
+    #             assert equal({a:1,b:2}, merge({a:1,b:2,c:3}, {c:undefined}))
+    #             let double = (x) -> x * 2
+    #             assert equal({a:double}, merge({},{a:double}))
+    #         isChange: ->
+    #             assert isChange({a:1}, null)
+    #             assert not isChange(null, null)
+    #             assert isChange(undefined, null)
+    #             assert isChange(null, undefined)
+    #             assert not isChange({a:1}, {a:1})
+    #             assert not isChange({a:{b:2,c:3}}, {a:{b:2}})
+    #             assert isChange({a:{b:2}}, {a:{b:3}})
+    #             assert not isChange({a:1}, {b:null})
+    #         diff: ->
+    #             assert equal({b:2}, diff({a:1}, {a:1,b:2}))
+    #             assert equal({a:{b:3,c:null}}, diff({a:{b:2,c:4}}, {a:{b:3}}))
+    #             assert equal({a:1}, diff(null, {a:1}))
+    #             assert equal({c:{d:{f:4}}}, diff({a:1,b:2,c:{d:{e:1,f:2}}}, {a:1,b:2,c:{d:{e:1,f:4}}}))
+    #             assert equal(null, diff({a:1}, undefined))
+    #             assert equal(null, diff({a:1}, null))
+    #             assert equal(undefined, diff({a:{b:2}}, {a:{b:2}}))
+    #         observe: (done) ->
+    #             if not Object.observe?
+    #                 return done(null, "Object.observe missing.")
+    #             let source =
+    #                 name: 'Kris'
+    #                 age: 41
+    #                 children: 
+    #                     Sadera:
+    #                         grandchildren:
+    #                             One: 1
+    #                             Two: 2
+    #                     Orion: {}
+    #                     Third: {}
+    #             let target = ion.clone(source, true)
+    #             let unwatch = watch(
+    #                 source
+    #                 (patch) ->
+    #                     target = merge(target, patch)
+    #                     # should be immediate assert
+    #                     if equal(source, target)
+    #                         done()
+    #                         unwatch()
+    #             )
+    #             source:
+    #                 name: 'Fred'
+    #                 children:
+    #                     Orion:
+    #                         a: 1
+    #                         b: 2
+    #                         c: 12
+    #                     Sadera:
+    #                         grandchildren:
+    #                             three: 3
+    #             # todo: delete a property in a literal?
+    #             delete source.children.Third
+    #             # temp requirement
+    #             ion.checkForChanges()

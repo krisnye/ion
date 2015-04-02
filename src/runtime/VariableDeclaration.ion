@@ -1,8 +1,20 @@
 const ion = import '../'
 const Statement = import './Statement'
+const noop = ->
 
 export class VariableDeclaration extends Statement
     constructor: ->
         super
-        for {id:{name},init} in @declarations
-            @context.setVariableFromAst(name, init)
+    properties:
+        activate: ->
+            @unobserves = []
+            for {id:{name},init} in @declarations
+                let expression = @context.setVariableFromAst(name, init)
+                # we always observe our variable expressions, to ensure they are only called once
+                # otherwise the subexpressions can be called multiple times which can cause bugs
+                if expression?
+                    @unobserves.push(expression.observe(noop))
+        deactivate: ->
+            for unobserve in @unobserves
+                unobserve()
+            @unobserves = null
