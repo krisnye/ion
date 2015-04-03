@@ -1055,6 +1055,7 @@ createTemplateFunctionClone = (node, context) ->
 createTemplateRuntime = (node, context) ->
     if node.type is 'Template'
         template = removeLocationInfo node
+        templateId = node.id
 
         # create an arguments object that contains all the parameter values.
         args =
@@ -1083,7 +1084,7 @@ createTemplateRuntime = (node, context) ->
         params = template.params
         # remove the extra blockStatement.
         template.body = template.body.body
-        delete template.id
+        # delete template.id
         delete template.params
         delete template.defaults
 
@@ -1103,6 +1104,8 @@ createTemplateRuntime = (node, context) ->
                             node.scope ? nullExpression
                         ]
                 ]
+        if templateId?
+            newNode.id = templateId
 
         context.replace(newNode)
 
@@ -1158,6 +1161,16 @@ activateStatements = (node, context) ->
                         type: 'Identifier'
                         name: 'observe'
                 arguments: []
+
+hoistVariables = (node, context) ->
+    # if node.type is 'BlockStatement' and context.reactive
+    #     # sort all children, put variables to the top.
+    #     node.body.sort(
+    #         (a, b) ->
+    #             aValue = if a.type is 'VariableDeclaration' then 1 else 0
+    #             bValue = if b.type is 'VariableDeclaration' then 1 else 0
+    #             return bValue - aValue
+    #     )
 
 variableDeclarationExpressions = (node, context) ->
     if node.type is 'VariableDeclarationExpression'
@@ -1222,7 +1235,7 @@ exports.postprocess = (program, options) ->
         [namedFunctionsAndNewArguments, superExpressions, activateStatements, addPropertyDeclaration, propertyDefinitions]
         [destructuringAssignments, callFunctionBindForFatArrows]
         [createTemplateFunctionClone]
-        [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions, checkVariableDeclarations]
+        [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions, checkVariableDeclarations, hoistVariables]
         [extractForLoopsInnerAndTest, extractForLoopRightVariable]
         [extractReactiveForPatterns, validateTemplateNodes, classExpressions]
         [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments]

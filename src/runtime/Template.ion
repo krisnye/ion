@@ -4,6 +4,8 @@ const
     DynamicExpression = import './DynamicExpression'
     noop = ->
 
+let count = 0
+
 export class Template extends BlockStatement
     constructor: ->
         super
@@ -13,9 +15,22 @@ export class Template extends BlockStatement
         observe: (watcher = noop) ->
             if not @isActive
                 @activate()
-            @unobserve = @context.returnExpression.observe(watcher)
+            let unobserve = @context.returnExpression.observe(watcher)
             return =>
-                @unobserve()
-                console.log('template deactivate ' + @context.returnExpression.isActive)
+                unobserve()
                 if not @context.returnExpression.isActive
                     @deactivate()
+        activate: ->
+            super
+            count++
+            # if @id?
+            #     console.log('++ activate template ' + count + ", observers: " + ion.observe.count)
+        deactivate: ->
+            super
+            count--
+            # if @id?
+            #     console.log('-- deactivate template ' + count + ", observers: " + ion.observe.count)
+        toString: -> @id? ? "Template {{@id.name}}" : "Template"
+
+        # TODO: Always use new on templates that should be disposed???
+        # expressions what are called on templates are not being removed some how.  Figure it out.

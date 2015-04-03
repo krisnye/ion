@@ -116,7 +116,9 @@ export const
                     [key]: _deep ? clone(value, _deep) : value
         else
             return object
+    observers = []
     observe = (object, observer, options) ->
+        let original = observer
         if object is global or object is console
             return noop
         let property = options?.property
@@ -137,31 +139,33 @@ export const
                 return noop
             nodeObserveShim.observe(object, observer, property)
             # console.log('observe shim ' + JSON.stringify(object))
-            observe.count = (observe.count ? 0) + 1
         else if object? and observer? and Object.observe? and typeof object is 'object'
-            # if DEBUG
-            #     wrapper = (changes) ->
-            #         try
-            #             observer(changes)
-            #         catch error
-            #             console.error('Exception in Object.observe callback', error)
+            if DEBUG
+                let initial = observer
+                # NEVER, EVER REMOVE THIS WRAPPER UNLESS YOU WANT HIDDEN ERRORS TO MAKE YOUR LIFE HELL
+                observer = (changes) ->
+                    try
+                        initial(changes)
+                    catch error
+                        console.error('Exception in Object.observe callback', error)
             Object.observe(object, observer)
             # console.log('observe ' + JSON.stringify(object))
-            observe.count = (observe.count ? 0) + 1
             # watch change on dom elements
             object.addEventListener?('change', observer)
         object?.onObserved?(observer, property)
         # return a function that can be used to unboserve
+        observe.count = (observe.count ? 0) + 1
+        observers.push(original)
         return ->
+            observers.remove(original)
+            observe.count--
             removed = true
             if not observable
                 nodeObserveShim.unobserve(object, observer, property)
                 # console.log('unobserve shim ' + JSON.stringify(object))
-                observe.count--
             else if object? and observer? and Object.unobserve? and typeof object is 'object'
                 Object.unobserve(object, observer)
                 # console.log('unobserve ' + JSON.stringify(object))
-                observe.count--
                 # unwatch change on dom elements
                 object.removeEventListener?('change', observer)
             object?.unObserved?(observer, property)
@@ -209,9 +213,9 @@ export const
             else
                 container.add(item)
             remove = ->
-                if item.removeSelf?
+                if item?.removeSelf?
                     item.removeSelf()
-                else if item.parentNode?
+                else if item?.parentNode?
                     item.parentNode.removeChild(item)
                 else if container.lastIndexOf? and container.removeAt?
                     let index = container.lastIndexOf(item)

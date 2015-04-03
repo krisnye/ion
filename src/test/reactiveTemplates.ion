@@ -148,7 +148,7 @@ export
                         # console.log({beforeCount,watchCount,afterCount})
                         totalComplete++
                         lowestBefore = Math.min(beforeCount, lowestBefore)
-                        if totalComplete is templates.length and afterCount isnt lowestBefore
+                        if totalComplete is templates.length and afterCount > lowestBefore
                             done("ion.observe memory leak detected, beforeCount: {{lowestBefore}}, afterCount: {{afterCount}}")
                         else
                             done()

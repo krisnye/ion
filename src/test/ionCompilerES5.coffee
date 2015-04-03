@@ -109,11 +109,7 @@ tests =
         });
     """
     # """
-    # template -> foo(deep bar)
-    # """: null
-    # """
-    # template (properties) ->
-    #     return [key for key of properties]
+    # template foo() ->
     # """: null
 
 if global.window?

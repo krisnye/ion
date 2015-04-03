@@ -54,14 +54,15 @@ module.exports = class CallExpression extends DynamicExpression
             @unobserveCallee()
             @unobserveArguments()
             @unobserveCalleeObject?()
-            @unobserveTemplate?()
             @unobserveThis?()
+            @unobserveTemplate?()
         evaluate: ->
+            let value = undefined
+            @unobserveTemplate?()
+            @unobserveTemplate = null
             if not (@isActive and @calleeValue? and @argumentsValue?)
                 return
-            let value = undefined
             if @calleeValue.template
-                @unobserveTemplate?()
                 # always use new on templates
                 @template = @calleeValue.apply(@thisArg, @argumentsValue)
                 @unobserveTemplate = @template.observe(@templateWatcher ?= @setValue.bind(@))
