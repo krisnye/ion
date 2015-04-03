@@ -116,9 +116,9 @@ export const
                     [key]: _deep ? clone(value, _deep) : value
         else
             return object
-    observers = []
+    # observers = []
     observe = (object, observer, options) ->
-        let original = observer
+        # let original = observer
         if object is global or object is console
             return noop
         let property = options?.property
@@ -155,9 +155,9 @@ export const
         object?.onObserved?(observer, property)
         # return a function that can be used to unboserve
         observe.count = (observe.count ? 0) + 1
-        observers.push(original)
+        # observers.push(original)
         return ->
-            observers.remove(original)
+            # observers.remove(original)
             observe.count--
             removed = true
             if not observable

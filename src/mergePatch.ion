@@ -35,8 +35,8 @@ export const
         if not isObject(object)
             throw new Error("Cannot watch: #{object}")
         watch.count = (watch.count ? 0) + 1
-        watch.objects ?= []
-        watch.objects.push(object)
+        # watch.objects ?= []
+        # watch.objects.push(object)
         let watching = true
         let propertyWatchers = {}
         let watchProperties = (changes) ->
@@ -74,7 +74,7 @@ export const
         )
         return ->
             watch.count--
-            watch.objects.remove(object)
+            # watch.objects.remove(object)
             watching = false
             unobserve()
             unobserve = null
