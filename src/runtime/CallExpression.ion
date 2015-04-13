@@ -57,19 +57,24 @@ module.exports = class CallExpression extends DynamicExpression
             @unobserveThis?()
             @unobserveTemplate?()
         evaluate: ->
+            if not (@isActive and @calleeValue? and @argumentsValue? and (@thisArg? or not @calleeExpression.objectExpression?))
+                return
             let value = undefined
             @unobserveTemplate?()
             @unobserveTemplate = null
-            if not (@isActive and @calleeValue? and @argumentsValue?)
-                return
-            if @calleeValue.template
-                # always use new on templates
-                @template = @calleeValue.apply(@thisArg, @argumentsValue)
-                @unobserveTemplate = @template.observe(@templateWatcher ?= @setValue.bind(@))
-            else
-                if @type is 'NewExpression'
-                    # create a new with variable args
-                    value = ion.create(@calleeValue, @argumentsValue)
-                else # @type is 'CallExpression'
-                    value = @calleeValue.apply(@thisArg, @argumentsValue)
-                @setValue(value)
+            try
+                if @calleeValue.template
+                    # always use new on templates
+                    @template = @calleeValue.apply(@thisArg, @argumentsValue)
+                    @unobserveTemplate = @template.observe(@templateWatcher ?= @setValue.bind(@))
+                else
+                    if @type is 'NewExpression'
+                        # create a new with variable args
+                        value = ion.create(@calleeValue, @argumentsValue)
+                    else # @type is 'CallExpression'
+                        value = @calleeValue.apply(@thisArg, @argumentsValue)
+                    @setValue(value)
+            catch e
+                let start = @loc.start
+                console.error("Call Error at {{start.source}} (line:{{start.line}},column:{{start.column}})")
+                throw e
