@@ -30,14 +30,14 @@ var OperationExpression = ion.defineClass({
                     elements: this.args,
                     observeElements: this.factory.observe
                 });
-                this.argumentExpressions.watchValue(this.watcher = this.watcher != null ? this.watcher : ion.bind(function (value) {
+                this.unobserve = this.argumentExpressions.observe(this.observer = this.observer != null ? this.observer : ion.bind(function (value) {
                     this.argumentValues = value;
                     this.evaluate();
                 }, this));
             },
             deactivate: function () {
                 OperationExpression.super.prototype.deactivate.apply(this, arguments);
-                this.argumentExpressions.unwatchValue(this.watcher);
+                this.unobserve();
             },
             evaluate: function () {
                 if (!(this.factory.evaluate != null)) {

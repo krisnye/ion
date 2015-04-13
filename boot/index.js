@@ -1,5 +1,7 @@
 void (function(){var _ion_index_ = function(module,exports,require){'use strict';
 var ion = null;
+var noop = function () {
+};
 require('./es6');
 global.DEBUG = global.DEBUG != null ? global.DEBUG : true;
 var primitive = {
@@ -73,23 +75,53 @@ var primitive = {
             };
         var NodeList = global.NodeList != null ? global.NodeList : function () {
             };
+        var Location = global.Location != null ? global.Location : function () {
+            };
         return function (a) {
-            if (a instanceof Node || a instanceof NodeList) {
+            if (a instanceof Node || a instanceof NodeList || a instanceof Location) {
                 return false;
             }
             return true;
         };
+    }(), prioritizeCallback = function () {
+        var queue = [];
+        var timeoutId = null;
+        var flush = function () {
+            queue.sort(function (a, b) {
+                return a.priority - b.priority;
+            });
+            for (var _i = 0; _i < queue.length; _i++) {
+                var _ref3 = queue[_i];
+                var callback = _ref3.callback;
+                var args = _ref3.args;
+                var priority = _ref3.priority;
+                callback.apply(null, args);
+            }
+            queue.length = 0;
+            timeoutId = null;
+        };
+        return function (callback, priority) {
+            return function () {
+                var args = Array.prototype.slice.call(arguments, 0);
+                queue.push({
+                    callback: callback,
+                    args: args,
+                    priority: priority
+                });
+                timeoutId = timeoutId != null ? timeoutId : setTimeout(flush, 0);
+            };
+        };
     }();
 var patch = exports.patch = function () {
         var mergePatch = require('./mergePatch');
-        var patch = function (object, patch) {
+        var patchFunction = function (object, patch) {
             return mergePatch.merge(object, patch);
         };
         for (var key in mergePatch) {
             var value = mergePatch[key];
-            patch[key] = value;
+            patchFunction[key] = value;
         }
-        return patch;
+        return patchFunction;
     }(), create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
     }, setImmediate = exports.setImmediate = function () {
@@ -103,8 +135,8 @@ var patch = exports.patch = function () {
                 new MutationObserver(function (records) {
                     var cbList = callbacks;
                     callbacks = [];
-                    for (var _i = 0; _i < cbList.length; _i++) {
-                        var callback = cbList[_i];
+                    for (var _i2 = 0; _i2 < cbList.length; _i2++) {
+                        var callback = cbList[_i2];
                         callback();
                     }
                 }).observe(hiddenDiv, { attributes: true });
@@ -134,60 +166,66 @@ var patch = exports.patch = function () {
         return context.createRuntime(ast);
     }, nextTick = exports.nextTick = (this.process != null ? this.process.nextTick : void 0) != null ? this.process.nextTick : function (fn) {
         return setTimeout(fn, 0);
-    }, clone = exports.clone = function (object, deep) {
-        if (deep == null)
-            deep = false;
+    }, clone = exports.clone = function (object, _deep) {
+        if (_deep == null)
+            _deep = false;
         if (Array.isArray(object)) {
             var _ref = [];
-            for (var _i2 = 0; _i2 < object.length; _i2++) {
-                var item = object[_i2];
-                _ref.push(deep ? clone(item, deep) : item);
+            for (var _i3 = 0; _i3 < object.length; _i3++) {
+                var item = object[_i3];
+                _ref.push(_deep ? clone(item, _deep) : item);
             }
             return _ref;
         } else if ((object != null ? object.constructor : void 0) === Object) {
-            var _ref3 = {};
+            var _ref4 = {};
             for (var key in object) {
                 var value = object[key];
-                _ref3[key] = deep ? clone(value, deep) : value;
+                _ref4[key] = _deep ? clone(value, _deep) : value;
             }
-            return _ref3;
+            return _ref4;
         } else {
             return object;
         }
-    }, observe = exports.observe = function (object, observer, property) {
+    }, observe = exports.observe = function (object, observer, options) {
         if (object === global || object === console) {
-            return;
+            return noop;
         }
-        if (!isObjectObservable(object)) {
+        var property = options != null ? options.property : void 0;
+        var priority = (options != null ? options.priority : void 0) != null ? options.priority : 0;
+        var removed = false;
+        var observable = isObjectObservable(object);
+        if (!observable) {
             if (!(property != null)) {
-                return;
+                return noop;
             }
             nodeObserveShim.observe(object, observer, property);
         } else if (object != null && observer != null && Object.observe != null && typeof object === 'object') {
             if (DEBUG) {
-                observer.tryWrapper = observer.tryWrapper != null ? observer.tryWrapper : function (changes) {
+                var initial = observer;
+                observer = function (changes) {
                     try {
-                        observer(changes);
+                        initial(changes);
                     } catch (error) {
                         console.error('Exception in Object.observe callback', error);
                     }
                 };
             }
-            Object.observe(object, observer.tryWrapper != null ? observer.tryWrapper : observer);
+            Object.observe(object, observer);
             object.addEventListener != null ? object.addEventListener('change', observer) : void 0;
         }
         object != null ? object.onObserved != null ? object.onObserved(observer, property) : void 0 : void 0;
-    }, unobserve = exports.unobserve = function (object, observer, property) {
-        if (!isObjectObservable(object)) {
-            if (!(property != null)) {
-                return;
+        observe.count = (observe.count != null ? observe.count : 0) + 1;
+        return function () {
+            observe.count--;
+            removed = true;
+            if (!observable) {
+                nodeObserveShim.unobserve(object, observer, property);
+            } else if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
+                Object.unobserve(object, observer);
+                object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
             }
-            nodeObserveShim.unobserve(object, observer, property);
-        } else if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
-            Object.unobserve(object, observer.tryWrapper != null ? observer.tryWrapper : observer);
-            object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
-        }
-        object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
+            object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
+        };
     }, checkForChanges = exports.checkForChanges = function () {
         if (Object.observe.checkForChanges != null) {
             Object.observe.checkForChanges();
@@ -213,33 +251,32 @@ var patch = exports.patch = function () {
             var originalItem = item;
             item = function () {
                 originalItem.apply(this, arguments);
-                checkForChanges();
+                requestAnimationFrame(checkForChanges);
             };
             container.addEventListener(name, item, capture);
             remove = function () {
                 container.removeEventListener(name, item);
             };
-        } else if (container.nodeType === 1) {
-            if (typeof item !== 'string' && !((item != null ? item.nodeType : void 0) != null)) {
-                item = JSON.stringify(item);
-            }
-            if (typeof item === 'string') {
-                item = document.createTextNode(item);
-            }
-            container.appendChild(item);
-            remove = function () {
-                if (item.parentNode === container) {
-                    container.removeChild(item);
-                }
-            };
         } else {
-            if (container.push != null) {
+            if (container.nodeType === 1) {
+                if (typeof item !== 'string' && !((item != null ? item.nodeType : void 0) != null)) {
+                    item = JSON.stringify(item);
+                }
+                if (typeof item === 'string') {
+                    item = document.createTextNode(item);
+                }
+                container.appendChild(item);
+            } else if (container.push != null) {
                 container.push(item);
             } else {
                 container.add(item);
             }
             remove = function () {
-                if (container.lastIndexOf != null && container.removeAt != null) {
+                if ((item != null ? item.removeSelf : void 0) != null) {
+                    item.removeSelf();
+                } else if ((item != null ? item.parentNode : void 0) != null) {
+                    item.parentNode.removeChild(item);
+                } else if (container.lastIndexOf != null && container.removeAt != null) {
                     var index = container.lastIndexOf(item);
                     if (index >= 0) {
                         container.removeAt(index);
@@ -437,8 +474,8 @@ var patch = exports.patch = function () {
             'builder',
             'browser'
         ];
-    for (var _i3 = 0; _i3 < _ref2.length; _i3++) {
-        var name = _ref2[_i3];
+    for (var _i4 = 0; _i4 < _ref2.length; _i4++) {
+        var name = _ref2[_i4];
         (function (name) {
             Object.defineProperty(exports, name, {
                 enumerable: true,

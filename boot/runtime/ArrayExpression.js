@@ -18,43 +18,41 @@ var ArrayExpression = ion.defineClass({
                     this.notify();
                 }
             },
-            setArgumentValue: function (key, value) {
+            setArgumentValue: function (key, expression, value) {
                 if (this.argumentValues[key] !== value) {
-                    if (this.observeElements) {
-                        ion.unobserve(this.argumentValues[key], this.itemObserver);
-                    }
+                    this.unobserveExpressionValues[key] != null ? this.unobserveExpressionValues[key]() : void 0;
                     this.argumentValues[key] = value;
                     if (this.observeElements) {
-                        ion.observe(value, this.itemObserver = this.itemObserver != null ? this.itemObserver : ion.bind(function () {
-                            this.notifyIfActive();
-                        }, this));
+                        if (value != null) {
+                            this.itemObserver = this.itemObserver != null ? this.itemObserver : ion.bind(function () {
+                                this.notifyIfActive();
+                            }, this);
+                            var priority = this.context.depth;
+                            this.unobserveExpressionValues[key] = expression.deep ? ion.patch.watch(value, this.itemObserver) : ion.observe(value, this.itemObserver, { priority: priority });
+                        }
                     }
                     this.notifyIfActive();
                 }
             },
             activate: function () {
-                if (!(this.argumentValues != null)) {
-                    var _ref = [];
-                    {
-                        var _ref2 = this.elements;
-                        for (var _i = 0; _i < _ref2.length; _i++) {
-                            var item = _ref2[_i];
-                            _ref.push(this.context.createRuntime(item));
-                        }
-                    }
-                    this.expressions = _ref;
-                    this.argumentValues = [];
-                    this.expressionWatchers = [];
-                    for (var key = 0; key < this.expressions.length; key++) {
-                        this.expressionWatchers[key] = this.setArgumentValue.bind(this, key);
+                var _ref = [];
+                {
+                    var _ref2 = this.elements;
+                    for (var _i = 0; _i < _ref2.length; _i++) {
+                        var item = _ref2[_i];
+                        _ref.push(this.context.createRuntime(item));
                     }
                 }
+                this.expressions = _ref;
+                this.argumentValues = [];
+                this.unobserveExpressionValues = [];
+                this.unobserveExpressions = [];
                 {
                     var _ref3 = this.expressions;
                     for (var _i2 = 0; _i2 < _ref3.length; _i2++) {
                         var key = _i2;
                         var expression = _ref3[_i2];
-                        expression.watchValue(this.expressionWatchers[key]);
+                        this.unobserveExpressions.push(expression.observe(this.setArgumentValue.bind(this, key, expression)));
                     }
                 }
                 ArrayExpression.super.prototype.activate.apply(this, arguments);
@@ -66,7 +64,14 @@ var ArrayExpression = ion.defineClass({
                     for (var _i3 = 0; _i3 < _ref4.length; _i3++) {
                         var key = _i3;
                         var expression = _ref4[_i3];
-                        expression.unwatchValue(this.expressionWatchers[key]);
+                        this.unobserveExpressionValues[key] != null ? this.unobserveExpressionValues[key]() : void 0;
+                    }
+                }
+                {
+                    var _ref5 = this.unobserveExpressions;
+                    for (var _i4 = 0; _i4 < _ref5.length; _i4++) {
+                        var unobserve = _ref5[_i4];
+                        unobserve();
                     }
                 }
                 ArrayExpression.super.prototype.deactivate.apply(this, arguments);
@@ -91,10 +96,10 @@ var ArrayExpression = ion.defineClass({
             function watcher(value) {
                 result = value;
             }
-            e.watchValue(watcher);
+            var unobserve = e.observe(watcher);
             if (!(JSON.stringify(result) === '[1,2]'))
                 throw new Error('Assertion Failed: (JSON.stringify(result) is "[1,2]")');
-            e.unwatchValue(watcher);
+            unobserve();
         }
     }, DynamicExpression);
 module.exports = exports = ArrayExpression;

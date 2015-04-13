@@ -5,6 +5,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [
                         {
                             type: 'VariableDeclaration',
@@ -73,9 +74,180 @@ var templates = [
             3
         ],
         [
+            ion.template(function (rows) {
+                return ion.createRuntime({
+                    type: 'Template',
+                    id: null,
+                    body: [{
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'ObjectExpression',
+                                objectType: {
+                                    type: 'ArrayExpression',
+                                    elements: []
+                                },
+                                properties: [{
+                                        type: 'ForOfStatement',
+                                        left: {
+                                            type: 'VariableDeclaration',
+                                            declarations: [{
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'item'
+                                                    },
+                                                    init: null
+                                                }],
+                                            kind: 'let'
+                                        },
+                                        right: {
+                                            type: 'Identifier',
+                                            name: 'rows'
+                                        },
+                                        body: {
+                                            type: 'BlockStatement',
+                                            body: [{
+                                                    type: 'IfStatement',
+                                                    test: {
+                                                        type: 'UnaryExpression',
+                                                        operator: '?',
+                                                        argument: {
+                                                            type: 'Identifier',
+                                                            name: 'item'
+                                                        }
+                                                    },
+                                                    consequent: {
+                                                        type: 'BlockStatement',
+                                                        body: [{
+                                                                type: 'ExpressionStatement',
+                                                                expression: {
+                                                                    type: 'CallExpression',
+                                                                    callee: {
+                                                                        type: 'MemberExpression',
+                                                                        computed: false,
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: 'item'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'toString'
+                                                                        },
+                                                                        loc: {
+                                                                            start: {
+                                                                                line: 18,
+                                                                                column: 24,
+                                                                                fixed: true,
+                                                                                source: 'ion/test/immediateTemplates.ion'
+                                                                            },
+                                                                            end: {
+                                                                                line: 18,
+                                                                                column: 37,
+                                                                                fixed: true,
+                                                                                source: 'ion/test/immediateTemplates.ion'
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    arguments: [],
+                                                                    loc: {
+                                                                        start: {
+                                                                            line: 18,
+                                                                            column: 24,
+                                                                            fixed: true,
+                                                                            source: 'ion/test/immediateTemplates.ion'
+                                                                        },
+                                                                        end: {
+                                                                            line: 18,
+                                                                            column: 39,
+                                                                            fixed: true,
+                                                                            source: 'ion/test/immediateTemplates.ion'
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }]
+                                                    },
+                                                    alternate: {
+                                                        type: 'BlockStatement',
+                                                        body: [{
+                                                                type: 'ExpressionStatement',
+                                                                expression: {
+                                                                    type: 'Literal',
+                                                                    value: '<null>'
+                                                                }
+                                                            }]
+                                                    }
+                                                }]
+                                        },
+                                        remove: {
+                                            type: 'BlockStatement',
+                                            body: [{
+                                                    type: 'ExpressionStatement',
+                                                    expression: {
+                                                        type: 'UnaryExpression',
+                                                        operator: 'void',
+                                                        argument: {
+                                                            type: 'MemberExpression',
+                                                            computed: false,
+                                                            object: {
+                                                                type: 'Identifier',
+                                                                name: 'rows'
+                                                            },
+                                                            property: {
+                                                                type: 'Identifier',
+                                                                name: 'length'
+                                                            },
+                                                            loc: {
+                                                                start: {
+                                                                    line: 23,
+                                                                    column: 25,
+                                                                    fixed: true,
+                                                                    source: 'ion/test/immediateTemplates.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 23,
+                                                                    column: 36,
+                                                                    fixed: true,
+                                                                    source: 'ion/test/immediateTemplates.ion'
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }]
+                                        }
+                                    }]
+                            }
+                        }],
+                    bound: false
+                }, {
+                    this: this,
+                    rows: rows,
+                    ion: ion,
+                    templates: templates,
+                    test: test
+                }, null);
+            }),
+            [[
+                    1,
+                    null,
+                    2,
+                    3,
+                    null,
+                    4
+                ]],
+            [
+                '1',
+                '<null>',
+                '2',
+                '3',
+                '<null>',
+                '4'
+            ]
+        ],
+        [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -126,6 +298,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -170,6 +343,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [
                         {
                             type: 'VariableDeclaration',
@@ -298,6 +472,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [
                         {
                             type: 'VariableDeclaration',
@@ -416,6 +591,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [
                         {
                             type: 'VariableDeclaration',
@@ -558,6 +734,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [
                         {
                             type: 'VariableDeclaration',
@@ -615,13 +792,13 @@ var templates = [
                                     existential: true,
                                     loc: {
                                         start: {
-                                            line: 54,
+                                            line: 74,
                                             column: 19,
                                             fixed: true,
                                             source: 'ion/test/immediateTemplates.ion'
                                         },
                                         end: {
-                                            line: 54,
+                                            line: 74,
                                             column: 28,
                                             fixed: true,
                                             source: 'ion/test/immediateTemplates.ion'
@@ -635,13 +812,13 @@ var templates = [
                                 existential: true,
                                 loc: {
                                     start: {
-                                        line: 54,
+                                        line: 74,
                                         column: 19,
                                         fixed: true,
                                         source: 'ion/test/immediateTemplates.ion'
                                     },
                                     end: {
-                                        line: 54,
+                                        line: 74,
                                         column: 31,
                                         fixed: true,
                                         source: 'ion/test/immediateTemplates.ion'
@@ -665,6 +842,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -698,6 +876,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -739,6 +918,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [
                         {
                             type: 'VariableDeclaration',
@@ -813,6 +993,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -830,13 +1011,13 @@ var templates = [
                                     },
                                     loc: {
                                         start: {
-                                            line: 73,
+                                            line: 93,
                                             column: 20,
                                             fixed: true,
                                             source: 'ion/test/immediateTemplates.ion'
                                         },
                                         end: {
-                                            line: 73,
+                                            line: 93,
                                             column: 28,
                                             fixed: true,
                                             source: 'ion/test/immediateTemplates.ion'
@@ -855,13 +1036,13 @@ var templates = [
                                 ],
                                 loc: {
                                     start: {
-                                        line: 73,
+                                        line: 93,
                                         column: 20,
                                         fixed: true,
                                         source: 'ion/test/immediateTemplates.ion'
                                     },
                                     end: {
-                                        line: 73,
+                                        line: 93,
                                         column: 34,
                                         fixed: true,
                                         source: 'ion/test/immediateTemplates.ion'
@@ -884,6 +1065,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -904,13 +1086,13 @@ var templates = [
                                         },
                                         loc: {
                                             start: {
-                                                line: 77,
+                                                line: 97,
                                                 column: 20,
                                                 fixed: true,
                                                 source: 'ion/test/immediateTemplates.ion'
                                             },
                                             end: {
-                                                line: 77,
+                                                line: 97,
                                                 column: 28,
                                                 fixed: true,
                                                 source: 'ion/test/immediateTemplates.ion'
@@ -923,13 +1105,13 @@ var templates = [
                                     },
                                     loc: {
                                         start: {
-                                            line: 77,
+                                            line: 97,
                                             column: 20,
                                             fixed: true,
                                             source: 'ion/test/immediateTemplates.ion'
                                         },
                                         end: {
-                                            line: 77,
+                                            line: 97,
                                             column: 33,
                                             fixed: true,
                                             source: 'ion/test/immediateTemplates.ion'
@@ -952,13 +1134,13 @@ var templates = [
                                 ],
                                 loc: {
                                     start: {
-                                        line: 77,
+                                        line: 97,
                                         column: 20,
                                         fixed: true,
                                         source: 'ion/test/immediateTemplates.ion'
                                     },
                                     end: {
-                                        line: 77,
+                                        line: 97,
                                         column: 45,
                                         fixed: true,
                                         source: 'ion/test/immediateTemplates.ion'
@@ -981,6 +1163,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -1020,6 +1203,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -1042,6 +1226,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -1180,6 +1365,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -1262,6 +1448,7 @@ var templates = [
             ion.template(function (_ref) {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [
                         {
                             type: 'VariableDeclaration',
@@ -1344,6 +1531,7 @@ var templates = [
             ion.template(function (type) {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -1407,6 +1595,7 @@ var templates = [
             ion.template(function (input, output) {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [
                         {
                             type: 'Property',
@@ -1438,13 +1627,13 @@ var templates = [
                                                 },
                                                 loc: {
                                                     start: {
-                                                        line: 119,
+                                                        line: 139,
                                                         column: 19,
                                                         fixed: true,
                                                         source: 'ion/test/immediateTemplates.ion'
                                                     },
                                                     end: {
-                                                        line: 119,
+                                                        line: 139,
                                                         column: 26,
                                                         fixed: true,
                                                         source: 'ion/test/immediateTemplates.ion'
@@ -1464,13 +1653,13 @@ var templates = [
                                                 },
                                                 loc: {
                                                     start: {
-                                                        line: 119,
+                                                        line: 139,
                                                         column: 29,
                                                         fixed: true,
                                                         source: 'ion/test/immediateTemplates.ion'
                                                     },
                                                     end: {
-                                                        line: 119,
+                                                        line: 139,
                                                         column: 36,
                                                         fixed: true,
                                                         source: 'ion/test/immediateTemplates.ion'
@@ -1521,6 +1710,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -1536,13 +1726,13 @@ var templates = [
                                 },
                                 loc: {
                                     start: {
-                                        line: 126,
+                                        line: 146,
                                         column: 20,
                                         fixed: true,
                                         source: 'ion/test/immediateTemplates.ion'
                                     },
                                     end: {
-                                        line: 126,
+                                        line: 146,
                                         column: 29,
                                         fixed: true,
                                         source: 'ion/test/immediateTemplates.ion'
@@ -1564,6 +1754,7 @@ var templates = [
     ];
 var test = exports.test = function () {
         for (var _i = 0; _i < templates.length; _i++) {
+            var index = _i;
             var _ref2 = templates[_i];
             var templateType = _ref2[0];
             var args = _ref2[1];
@@ -1571,10 +1762,11 @@ var test = exports.test = function () {
             if (expected != null) {
                 var template = templateType.apply(this, args);
                 var reactiveResult = null;
-                var watcher = function (value) {
-                    return reactiveResult = value;
-                };
-                template.watchValue(watcher);
+                var beforeCount = ion.observe.count != null ? ion.observe.count : 0;
+                var unobserve = template.observe(function (value) {
+                        return reactiveResult = value;
+                    });
+                var watchCount = ion.observe.count != null ? ion.observe.count : 0;
                 try {
                     if (!(reactiveResult === expected || JSON.stringify(reactiveResult) === JSON.stringify(expected)))
                         throw new Error('Assertion Failed: (reactiveResult is expected or JSON.stringify(reactiveResult) is JSON.stringify(expected))');
@@ -1582,9 +1774,11 @@ var test = exports.test = function () {
                     console.log(reactiveResult, '!==', expected);
                     throw e;
                 }
-                template.unwatchValue(watcher);
-                if (!(reactiveResult === void 0))
-                    throw new Error('Assertion Failed: (reactiveResult is undefined)');
+                unobserve();
+                var afterCount = ion.observe.count != null ? ion.observe.count : 0;
+                if (afterCount !== beforeCount) {
+                    throw new Error('Template observe leak in template ' + index + '.  Before: ' + beforeCount + ', After: ' + afterCount);
+                }
             }
         }
     };

@@ -109,38 +109,49 @@ var createShim = exports.createShim = function () {
             return changes;
         };
         observe.checkForChanges = function () {
-            var maxCycles = 10;
-            for (var i = 0; i < maxCycles; i++) {
-                var totalChanges = 0;
-                var pendingChanges = [];
-                map.forEach(function (meta, key) {
-                    var properties = meta.all > 0 ? null : meta.properties;
-                    var changes = getChanges(meta.clone, meta.object, properties);
-                    if (changes != null) {
-                        totalChanges++;
-                        meta.clone = clone(meta.object, properties);
-                        pendingChanges.push([
-                            changes,
-                            meta.callbacks.slice(0),
-                            meta
-                        ]);
+            var timeout = null;
+            var check = function () {
+                var maxCycles = 10;
+                for (var i = 0; i < maxCycles; i++) {
+                    var totalChanges = 0;
+                    var pendingChanges = [];
+                    map.forEach(function (meta, key) {
+                        var properties = meta.all > 0 ? null : meta.properties;
+                        var changes = getChanges(meta.clone, meta.object, properties);
+                        if (changes != null) {
+                            totalChanges++;
+                            meta.clone = clone(meta.object, properties);
+                            pendingChanges.push([
+                                changes,
+                                meta.callbacks.slice(0),
+                                meta
+                            ]);
+                        }
+                    });
+                    if (totalChanges === 0) {
+                        timeout = null;
+                        return;
                     }
-                });
-                if (totalChanges === 0) {
-                    return;
-                }
-                for (var _i = 0; _i < pendingChanges.length; _i++) {
-                    var _ref6 = pendingChanges[_i];
-                    var changes = _ref6[0];
-                    var callbacks = _ref6[1];
-                    for (var _i2 = 0; _i2 < callbacks.length; _i2++) {
-                        var callback = callbacks[_i2];
-                        callback(changes);
+                    for (var _i = 0; _i < pendingChanges.length; _i++) {
+                        var _ref6 = pendingChanges[_i];
+                        var changes = _ref6[0];
+                        var callbacks = _ref6[1];
+                        for (var _i2 = 0; _i2 < callbacks.length; _i2++) {
+                            var callback = callbacks[_i2];
+                            callback(changes);
+                        }
                     }
                 }
-            }
-            throw new Error('Circular Object.observe dependency');
-        };
+                throw new Error('Circular Object.observe dependency');
+            };
+            return function (forceImmediate) {
+                if (forceImmediate) {
+                    check();
+                } else {
+                    timeout = timeout != null ? timeout : setTimeout(check, 10);
+                }
+            };
+        }();
         return {
             observe: observe,
             unobserve: unobserve
@@ -165,7 +176,7 @@ var test = exports.test = function () {
         object.a = 2;
         delete object.b;
         object.c = 5;
-        observe.checkForChanges();
+        observe.checkForChanges(true);
         if (!(JSON.stringify(changes) === JSON.stringify([
                 {
                     'type': 'update',

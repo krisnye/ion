@@ -6,6 +6,7 @@ var ion = require('../'), File = require('./File'), Directory = require('./Direc
 module.exports = exports = ion.template(function (packagePatch) {
     return ion.createRuntime({
         type: 'Template',
+        id: null,
         body: [
             {
                 type: 'VariableDeclaration',

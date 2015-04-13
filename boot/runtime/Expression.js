@@ -3,11 +3,7 @@ var ion = require('../');
 var Expression = ion.defineClass({
         name: 'Expression',
         properties: {
-            watchValue: function (watcher) {
-                return this.watch(watcher);
-            },
-            unwatchValue: function (watcher) {
-                return this.unwatch(watcher);
+            observe: function (callback) {
             }
         }
     }, require('./Node'));

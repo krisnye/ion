@@ -6,23 +6,18 @@ var ConditionalExpression = ion.defineClass({
             activate: function () {
                 ConditionalExpression.super.prototype.activate.apply(this, arguments);
                 this.testExpression = this.testExpression != null ? this.testExpression : this.context.createRuntime(this.test);
-                this.testExpression.watchValue(this.testWatcher = this.testWatcher != null ? this.testWatcher : ion.bind(function (value) {
+                this.unobserveTest = this.testExpression.observe(this.testObserver = this.testObserver != null ? this.testObserver : ion.bind(function (value) {
                     if (!this.hasOwnProperty('testValue') || Boolean(value) !== Boolean(this.testValue)) {
                         this.testValue = value;
+                        this.unobserveExpression != null ? this.unobserveExpression() : void 0;
                         if (value) {
-                            this.alternateExpression != null ? this.alternateExpression.unwatchValue(this.alternateWatcher) : void 0;
-                            this.alternateExpression = null;
-                            this.consequentExpression = this.consequentExpression != null ? this.consequentExpression : this.context.createRuntime(this.consequent);
-                            this.consequentExpression.watchValue(this.consequentWatcher = this.consequentWatcher != null ? this.consequentWatcher : ion.bind(function (value) {
+                            this.unobserveExpression = this.context.createRuntime(this.consequent).observe(this.consequentObserver = this.consequentObserver != null ? this.consequentObserver : ion.bind(function (value) {
                                 if (this.testValue) {
                                     this.setValue(value);
                                 }
                             }, this));
                         } else {
-                            this.consequentExpression != null ? this.consequentExpression.unwatchValue(this.consequentWatcher) : void 0;
-                            this.consequentExpression = null;
-                            this.alternateExpression = this.alternateExpression != null ? this.alternateExpression : this.context.createRuntime(this.alternate);
-                            this.alternateExpression.watchValue(this.alternateWatcher = this.alternateWatcher != null ? this.alternateWatcher : ion.bind(function (value) {
+                            this.unobserveExpression = this.context.createRuntime(this.alternate).observe(this.alternateObserver = this.alternateObserver != null ? this.alternateObserver : ion.bind(function (value) {
                                 if (!this.testValue) {
                                     this.setValue(value);
                                 }
@@ -33,9 +28,8 @@ var ConditionalExpression = ion.defineClass({
             },
             deactivate: function () {
                 ConditionalExpression.super.prototype.deactivate.apply(this, arguments);
-                this.testExpression.unwatchValue(this.testWatcher);
-                this.consequentExpression != null ? this.consequentExpression.unwatchValue(this.consequentWatcher) : void 0;
-                this.alternateExpression != null ? this.alternateExpression.unwatchValue(this.alternateWatcher) : void 0;
+                this.unobserveTest();
+                this.unobserveExpression != null ? this.unobserveExpression() : void 0;
             }
         }
     }, DynamicExpression);

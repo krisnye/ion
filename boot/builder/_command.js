@@ -14,7 +14,7 @@ if (args[0] === '-c' || args[0] === '-w') {
         process.chdir(args[1]);
     }
     try {
-        ModuleBuilder().watchValue();
+        ModuleBuilder().observe();
         if (args[0] === '-c') {
             process.exit();
         }

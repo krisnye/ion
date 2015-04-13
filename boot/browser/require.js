@@ -124,7 +124,7 @@ require.compileScripts = function() {
       if (typeof result.template) {
         template = result.call(scriptElement);
         removeLastResult = null;
-        _results.push(template.watchValue(function(templateResult) {
+        _results.push(template.observe(function(templateResult) {
           if (typeof removeLastResult === "function") {
             removeLastResult();
           }

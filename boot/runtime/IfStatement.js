@@ -6,21 +6,21 @@ var IfStatement = ion.defineClass({
             activate: function () {
                 IfStatement.super.prototype.activate.apply(this, arguments);
                 this.testExpression = this.testExpression != null ? this.testExpression : this.context.createRuntime(this.test);
-                this.testExpression.watchValue(this.testExpressionWatcher = this.testExpressionWatcher != null ? this.testExpressionWatcher : ion.bind(function (value) {
+                this.unobserve = this.testExpression.observe(this.testExpressionObserver = this.testExpressionObserver != null ? this.testExpressionObserver : ion.bind(function (value) {
                     if (value) {
                         if (this.alternateStatement != null ? this.alternateStatement.isActive : void 0) {
-                            this.alternateStatement != null ? this.alternateStatement.deactivate() : void 0;
-                            delete this.alternateStatement;
+                            this.alternateStatement.deactivate();
+                            this.alternateStatement = null;
                         }
-                        this.consequentStatement = this.consequentStatement != null ? this.consequentStatement : this.context.createRuntime(this.consequent);
+                        this.consequentStatement = this.context.newContext().createRuntime(this.consequent);
                         this.consequentStatement.activate();
                     } else {
                         if (this.consequentStatement != null ? this.consequentStatement.isActive : void 0) {
-                            this.consequentStatement != null ? this.consequentStatement.deactivate() : void 0;
-                            delete this.consequentStatement;
+                            this.consequentStatement.deactivate();
+                            this.consequentStatement = null;
                         }
                         if (this.alternate != null) {
-                            this.alternateStatement = this.alternateStatement != null ? this.alternateStatement : this.context.createRuntime(this.alternate);
+                            this.alternateStatement = this.context.newContext().createRuntime(this.alternate);
                             this.alternateStatement.activate();
                         }
                     }
@@ -28,12 +28,14 @@ var IfStatement = ion.defineClass({
             },
             deactivate: function () {
                 IfStatement.super.prototype.deactivate.apply(this, arguments);
-                this.testExpression.unwatchValue(this.testExpressionWatcher);
+                this.unobserve();
                 if (this.alternateStatement != null ? this.alternateStatement.isActive : void 0) {
                     this.alternateStatement != null ? this.alternateStatement.deactivate() : void 0;
+                    this.alternateStatement = null;
                 }
                 if (this.consequentStatement != null ? this.consequentStatement.isActive : void 0) {
                     this.consequentStatement != null ? this.consequentStatement.deactivate() : void 0;
+                    this.consequentStatement = null;
                 }
             }
         }

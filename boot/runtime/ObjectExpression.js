@@ -9,16 +9,15 @@ var ObjectExpression = ion.defineClass({
             activate: function () {
                 ObjectExpression.super.prototype.activate.apply(this, arguments);
                 this.typeExpression = this.typeExpression != null ? this.typeExpression : this.context.createRuntime(this.objectType != null ? this.objectType : null);
-                this.typeExpression.watchValue(this.typeWatcher = this.typeWatcher != null ? this.typeWatcher : ion.bind(function (type) {
-                    var value;
-                    if (!ion.is(this.value, type)) {
+                this.unobserve = this.typeExpression.observe(this.typeWatcher = this.typeWatcher != null ? this.typeWatcher : ion.bind(function (value) {
+                    if (!this.value || value != null) {
                         this.statements != null ? this.statements.deactivate() : void 0;
                         this.statements = null;
-                        value = type != null ? type : {};
+                        value = value != null ? value : {};
                     } else {
                         value = this.value;
                     }
-                    if (value != null && !(this.statements != null)) {
+                    if (!(this.statements != null)) {
                         var newContext = this.context.newContext(value);
                         this.statements = newContext.createRuntime({
                             type: 'BlockStatement',
@@ -31,7 +30,8 @@ var ObjectExpression = ion.defineClass({
             },
             deactivate: function () {
                 ObjectExpression.super.prototype.deactivate.apply(this, arguments);
-                this.typeExpression.unwatchValue(this.typeWatcher);
+                this.statements != null ? this.statements.deactivate() : void 0;
+                this.unobserve();
             }
         }
     }, DynamicExpression);

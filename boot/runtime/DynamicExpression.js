@@ -10,28 +10,25 @@ var DynamicExpression = ion.defineClass({
             deactivate: function () {
                 this.isActive = false;
             },
-            watchValue: function (watcher) {
+            observe: function (observer) {
                 var watchers = this._watchers = this._watchers != null ? this._watchers : [];
                 if (watchers.length === 0) {
                     this.activate();
                 }
-                watchers.push(watcher);
+                watchers.push(observer);
                 if (this.hasValue()) {
                     var value = this.getValue();
-                    this._notifyWatcher(watcher, value);
+                    this._notifyWatcher(observer, value);
                 }
+                return ion.bind(function () {
+                    this._watchers.remove(observer);
+                    if (this._watchers.length === 0) {
+                        this.deactivate();
+                    }
+                }, this);
             },
-            unwatchValue: function (watcher) {
-                this._watchers.remove(watcher);
-                if (this.hasValue()) {
-                    this._notifyWatcher(watcher, void 0);
-                }
-                if (this._watchers.length === 0) {
-                    this.deactivate();
-                }
-            },
-            _notifyWatcher: function (watcher, value) {
-                return watcher.call(this, value);
+            _notifyWatcher: function (observer, value) {
+                return observer.call(this, value);
             },
             notify: function () {
                 if (this._watchers != null) {
@@ -39,8 +36,8 @@ var DynamicExpression = ion.defineClass({
                     {
                         var _ref = this._watchers;
                         for (var _i = 0; _i < _ref.length; _i++) {
-                            var watcher = _ref[_i];
-                            this._notifyWatcher(watcher, value);
+                            var observer = _ref[_i];
+                            this._notifyWatcher(observer, value);
                         }
                     }
                 }
@@ -66,12 +63,12 @@ var DynamicExpression = ion.defineClass({
                 throw 'd.getValue() != undefined';
             }
             var total = 10;
-            var watcher = function (value) {
+            var observer = function (value) {
                 if (value !== void 0) {
                     total += value;
                 }
             };
-            d.watchValue(watcher);
+            var unobserve = d.observe(observer);
             if (!(total === 10))
                 throw new Error('Assertion Failed: (total is 10)');
             d.setValue(10);
@@ -82,7 +79,7 @@ var DynamicExpression = ion.defineClass({
             d.setValue(20);
             if (!(total === 40))
                 throw new Error('Assertion Failed: (total is 40)');
-            d.unwatchValue(watcher);
+            unobserve();
             if (!(total === 40))
                 throw new Error('Assertion Failed: (total is 40)');
             d.setValue(50);

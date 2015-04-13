@@ -31,27 +31,30 @@ var ForInOfStatement = ion.defineClass({
                     this.keyName = this.left.declarations[this.type === 'ForOfStatement' ? 1 : 0] != null ? this.left.declarations[this.type === 'ForOfStatement' ? 1 : 0].id.name : void 0;
                 }
                 this.collectionExpression = this.collectionExpression != null ? this.collectionExpression : this.context.createRuntime(this.right);
-                this.collectionExpression.watchValue(this.collectionWatcher = this.collectionWatcher != null ? this.collectionWatcher : ion.bind(function (collection) {
+                this.unobserveExpression = this.collectionExpression.observe(this.collectionWatcher = this.collectionWatcher != null ? this.collectionWatcher : ion.bind(function (collection) {
                     if (this.collection !== collection) {
                         if (this.collection != null) {
                             this.forEach(this.collection, ion.bind(function (key, value) {
                                 this.removeItem(key, value);
                             }, this));
-                            ion.unobserve(this.collection, this.collectionObserver);
                         }
+                        this.unobserveCollection != null ? this.unobserveCollection() : void 0;
+                        this.unobserveCollection = null;
                         this.collection = collection;
                         if (this.collection != null) {
                             this.forEach(this.collection, ion.bind(function (key, value) {
                                 this.addItem(key, value);
                             }, this));
-                            ion.observe(this.collection, this.collectionObserver = this.collectionObserver != null ? this.collectionObserver : this.applyChanges.bind(this));
+                            this.unobserveCollection = ion.observe(this.collection, this.collectionObserver = this.collectionObserver != null ? this.collectionObserver : this.applyChanges.bind(this), { priority: this.context.depth });
                         }
                     }
                 }, this));
             },
             deactivate: function () {
                 ForInOfStatement.super.prototype.deactivate.apply(this, arguments);
-                this.collectionExpression.unwatchValue(this.collectionWatcher);
+                this.collectionWatcher != null ? this.collectionWatcher(void 0) : void 0;
+                this.unobserveExpression();
+                this.unobserveCollection != null ? this.unobserveCollection() : void 0;
             },
             addItem: function (key, value, activate) {
                 if (activate == null)
@@ -84,6 +87,7 @@ var ForInOfStatement = ion.defineClass({
                 if (this.remove != null) {
                     var removeStatement = statement.context.createRuntime(this.remove);
                     removeStatement.activate();
+                    removeStatement.deactivate();
                 }
                 statement.deactivate();
             },
@@ -136,60 +140,89 @@ var ForInOfStatement = ion.defineClass({
                 if (changes.length === 0) {
                     return;
                 }
-                var recyclableStatements = new Map();
                 var getRecycleKey = ion.bind(function (key, value) {
                         return this.type === 'ForOfStatement' ? value : key;
                     }, this);
-                var activateStatements = [];
+                var canRecycle = true;
+                var checkRecycleKeys = new Map();
                 for (var _i2 = 0; _i2 < changes.length; _i2++) {
                     var _ref2 = changes[_i2];
                     var name = _ref2.name;
                     var oldValue = _ref2.oldValue;
-                    var key = this.toKey(name);
-                    if (oldValue !== void 0) {
-                        var rkey = getRecycleKey(key, oldValue);
-                        var statement = this.statements[key];
-                        if (statement != null) {
-                            delete this.statements[key];
-                            recyclableStatements.set(rkey, statement);
-                        }
+                    var checkKey = getRecycleKey(name, oldValue);
+                    if (!checkKey || checkRecycleKeys.has(checkKey)) {
+                        canRecycle = false;
+                        break;
                     }
                 }
-                for (var _i3 = 0; _i3 < changes.length; _i3++) {
-                    var _ref3 = changes[_i3];
-                    var name = _ref3.name;
-                    var oldValue = _ref3.oldValue;
-                    var newValue = this.collection[name];
-                    var key = this.toKey(name);
-                    if (newValue !== void 0) {
-                        var rkey = getRecycleKey(key, newValue);
-                        var statement = recyclableStatements.get(rkey);
-                        if (statement != null) {
-                            if (this.type === 'ForOfStatement') {
-                                if (this.keyName != null) {
-                                    statement.context.variables[this.keyName].setValue(key);
-                                }
-                            } else {
-                                if (this.valueName != null) {
-                                    statement.context.variables[this.valueName].setValue(newValue);
-                                }
-                            }
-                            this.statements[key] = statement;
-                            recyclableStatements.delete(rkey);
-                        } else {
-                            statement = this.addItem(key, newValue, false);
+                if (!canRecycle) {
+                    for (var _i3 = 0; _i3 < changes.length; _i3++) {
+                        var _ref3 = changes[_i3];
+                        var name = _ref3.name;
+                        var type = _ref3.type;
+                        var oldValue = _ref3.oldValue;
+                        var newValue = this.collection != null ? this.collection[name] : void 0;
+                        var key = this.toKey(name);
+                        if (oldValue !== void 0) {
+                            this.removeItem(key, oldValue);
+                        }
+                        if (newValue !== void 0) {
+                            this.addItem(key, newValue);
+                        }
+                    }
+                } else {
+                    var recyclableStatements = new Map();
+                    var activateStatements = [];
+                    for (var _i4 = 0; _i4 < changes.length; _i4++) {
+                        var _ref4 = changes[_i4];
+                        var name = _ref4.name;
+                        var oldValue = _ref4.oldValue;
+                        var key = this.toKey(name);
+                        if (oldValue !== void 0) {
+                            var rkey = getRecycleKey(key, oldValue);
+                            var statement = this.statements[key];
                             if (statement != null) {
-                                activateStatements.push(statement);
+                                delete this.statements[key];
+                                recyclableStatements.set(rkey, statement);
                             }
                         }
                     }
-                }
-                recyclableStatements.forEach(ion.bind(function (statement) {
-                    this.disposeStatement(statement);
-                }, this));
-                for (var _i4 = 0; _i4 < activateStatements.length; _i4++) {
-                    var statement = activateStatements[_i4];
-                    statement.activate();
+                    for (var _i5 = 0; _i5 < changes.length; _i5++) {
+                        var _ref5 = changes[_i5];
+                        var name = _ref5.name;
+                        var oldValue = _ref5.oldValue;
+                        var newValue = this.collection != null ? this.collection[name] : void 0;
+                        var key = this.toKey(name);
+                        if (newValue !== void 0) {
+                            var rkey = getRecycleKey(key, newValue);
+                            var statement = recyclableStatements.get(rkey);
+                            if (statement != null) {
+                                if (this.type === 'ForOfStatement') {
+                                    if (this.keyName != null) {
+                                        statement.context.variables[this.keyName].setValue(key);
+                                    }
+                                } else {
+                                    if (this.valueName != null) {
+                                        statement.context.variables[this.valueName].setValue(newValue);
+                                    }
+                                }
+                                this.statements[key] = statement;
+                                recyclableStatements.delete(rkey);
+                            } else {
+                                statement = this.addItem(key, newValue, false);
+                                if (statement != null) {
+                                    activateStatements.push(statement);
+                                }
+                            }
+                        }
+                    }
+                    recyclableStatements.forEach(ion.bind(function (statement) {
+                        this.disposeStatement(statement);
+                    }, this));
+                    for (var _i6 = 0; _i6 < activateStatements.length; _i6++) {
+                        var statement = activateStatements[_i6];
+                        statement.activate();
+                    }
                 }
             }
         }

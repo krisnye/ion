@@ -3,93 +3,83 @@ var ion = require('../'), _ref = require('./');
 var DynamicExpression = _ref.DynamicExpression;
 var ArrayExpression = _ref.ArrayExpression;
 var Factory = _ref.Factory;
-var _ref2 = {};
-{
-    _ref2.args = null;
-    _ref2.activate = function () {
-        CallExpression.super.prototype.activate.apply(this, arguments);
-        this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
-        this.calleeExpression.watchValue(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : ion.bind(function (value) {
-            if (this.isActive && !(value != null) && !this.existential && (this.loc != null ? this.loc.start.source : void 0) != null) {
-                console.warn('Function is ' + value + ' (' + Factory.toCode(this.callee) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
-            }
-            this.calleeValue = value;
-            var thisArg = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.value : void 0;
-            if (thisArg !== this.thisArg) {
-                ion.unobserve(this.thisarg, this.thisObserver);
-                this.unwatch != null ? this.unwatch() : void 0;
-                this.thisArg = thisArg;
-                if (!(this.calleeValue != null ? this.calleeValue.template : void 0)) {
-                    var deep = Array.isArray(thisArg);
-                    if (deep) {
-                        this.unwatch = ion.patch.watch(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (patch) {
-                            this.evaluate();
-                        }, this));
-                    } else {
-                        ion.observe(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function () {
-                            this.evaluate();
-                        }, this));
-                    }
-                }
-            }
-            this.evaluate();
-        }, this));
-        this.argumentExpressions = this.argumentExpressions != null ? this.argumentExpressions : this.context.createRuntime({
-            type: 'ArrayExpression',
-            elements: this.arguments,
-            observeElements: !(this.calleeValue != null ? this.calleeValue.template : void 0)
-        });
-        this.argumentExpressions.watchValue(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
-            this.argumentsValue = value;
-            this.evaluate();
-        }, this));
-    };
-    _ref2.deactivate = function () {
-        CallExpression.super.prototype.deactivate.apply(this, arguments);
-        this.calleeExpression.unwatchValue(this.calleeWatcher);
-        this.argumentExpressions.unwatchValue(this.argumentWatcher);
-        if (this.template != null) {
-            this.template.unwatchValue(this.templateWatcher);
-            delete this.template;
-        }
-    };
-    _ref2._evaluateInternal = function () {
-        if (!(this.isActive && this.calleeValue != null && this.argumentsValue != null)) {
-            return;
-        }
-        var value = void 0;
-        if (this.calleeValue.template) {
-            if (this.template != null) {
-                this.template.unwatchValue(this.templateWatcher);
-            }
-            this.template = this.calleeValue.apply(this.thisArg, this.argumentsValue);
-            this.template.watchValue(this.templateWatcher = this.templateWatcher != null ? this.templateWatcher : this.setValue.bind(this));
-        } else {
-            if (this.type === 'NewExpression') {
-                value = ion.create(this.calleeValue, this.argumentsValue);
-            } else {
-                value = this.calleeValue.apply(this.thisArg, this.argumentsValue);
-            }
-            this.setValue(value);
-        }
-    };
-    if (DEBUG) {
-        _ref2.evaluate = function () {
-            try {
-                this._evaluateInternal();
-            } catch (e) {
-                console.error(e.stack != null ? e.stack : e);
-            }
-        };
-    } else {
-        _ref2.evaluate = function () {
-            return this._evaluateInternal();
-        };
-    }
-}
 var CallExpression = ion.defineClass({
         name: 'CallExpression',
-        properties: _ref2
+        properties: {
+            args: null,
+            activate: function () {
+                CallExpression.super.prototype.activate.apply(this, arguments);
+                this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
+                this.unobserveCallee = this.calleeExpression.observe(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : ion.bind(function (value) {
+                    if (this.isActive && !(value != null) && !this.existential && (this.loc != null ? this.loc.start.source : void 0) != null) {
+                        console.warn('Function is ' + value + ' (' + Factory.toCode(this.callee) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
+                    }
+                    this.calleeValue = value;
+                    this.evaluate();
+                }, this));
+                this.unobserveCalleeObject = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.observe(this.thisWatcher = this.thisWatcher != null ? this.thisWatcher : ion.bind(function (thisArg) {
+                    if (thisArg !== this.thisArg) {
+                        this.unobserveThis != null ? this.unobserveThis() : void 0;
+                        this.unobserveThis = null;
+                        this.thisArg = thisArg;
+                        if (!(this.calleeValue != null ? this.calleeValue.template : void 0)) {
+                            if (this.calleeExpression.objectExpression.deep || Array.isArray(thisArg)) {
+                                this.unobserveThis = ion.patch.watch(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (patch) {
+                                    this.evaluate();
+                                }, this));
+                            } else {
+                                this.unobserveThis = ion.observe(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function () {
+                                    this.evaluate();
+                                }, this), { priority: this.context.depth });
+                            }
+                        }
+                        this.evaluate();
+                    }
+                }, this)) : void 0;
+                this.argumentExpressions = this.argumentExpressions != null ? this.argumentExpressions : this.context.createRuntime({
+                    type: 'ArrayExpression',
+                    elements: this.arguments,
+                    observeElements: !(this.calleeValue != null ? this.calleeValue.template : void 0)
+                });
+                this.unobserveArguments = this.argumentExpressions.observe(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
+                    this.argumentsValue = value;
+                    this.evaluate();
+                }, this));
+            },
+            deactivate: function () {
+                CallExpression.super.prototype.deactivate.apply(this, arguments);
+                this.unobserveCallee();
+                this.unobserveArguments();
+                this.unobserveCalleeObject != null ? this.unobserveCalleeObject() : void 0;
+                this.unobserveThis != null ? this.unobserveThis() : void 0;
+                this.unobserveTemplate != null ? this.unobserveTemplate() : void 0;
+            },
+            evaluate: function () {
+                if (!(this.isActive && this.calleeValue != null && this.argumentsValue != null && (this.thisArg != null || !(this.calleeExpression.objectExpression != null)))) {
+                    return;
+                }
+                var value = void 0;
+                this.unobserveTemplate != null ? this.unobserveTemplate() : void 0;
+                this.unobserveTemplate = null;
+                try {
+                    if (this.calleeValue.template) {
+                        this.template = this.calleeValue.apply(this.thisArg, this.argumentsValue);
+                        this.unobserveTemplate = this.template.observe(this.templateWatcher = this.templateWatcher != null ? this.templateWatcher : this.setValue.bind(this));
+                    } else {
+                        if (this.type === 'NewExpression') {
+                            value = ion.create(this.calleeValue, this.argumentsValue);
+                        } else {
+                            value = this.calleeValue.apply(this.thisArg, this.argumentsValue);
+                        }
+                        this.setValue(value);
+                    }
+                } catch (e) {
+                    var start = this.loc.start;
+                    console.error('Call Error at ' + start.source + ' (line:' + start.line + ',column:' + start.column + ')');
+                    throw e;
+                }
+            }
+        }
     }, DynamicExpression);
 module.exports = CallExpression;
   }

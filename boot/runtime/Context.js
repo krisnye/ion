@@ -6,10 +6,11 @@ var Context = ion.defineClass({
         constructor: function Context(parent, output) {
             this.output = output;
             this.parent = parent;
+            this.depth = parent != null ? parent.depth + 1 : 0;
             this.variables = {};
             this.root = (this.parent != null ? this.parent.root : void 0) != null ? this.parent.root : this;
-            this._watched = {};
             this._runtimes = {};
+            this.returnExpression = parent != null ? parent.returnExpression : void 0;
         },
         properties: {
             newContext: function (output) {
@@ -45,18 +46,21 @@ var Context = ion.defineClass({
             },
             setVariableFromAst: function (name, node) {
                 if (name != null) {
-                    this.setVariableExpression(name, this.createRuntime(node));
+                    return this.setVariableExpression(name, this.createRuntime(node));
                 }
             },
             setVariableLiteral: function (name, value) {
                 if (name != null) {
-                    this.setVariableExpression(name, new Literal({ value: value }));
+                    return this.setVariableExpression(name, new Literal({ value: value }));
                 }
             },
             setVariableExpression: function (name, expression) {
                 if (name != null) {
-                    expression.watchValue(noop);
-                    return this.variables[name] = expression;
+                    if (this.variables[name] != null) {
+                        throw new Error('Variable ' + name + ' is already defined');
+                    }
+                    this.variables[name] = expression;
+                    return expression;
                 }
             }
         }

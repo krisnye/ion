@@ -7,7 +7,7 @@ var Property = ion.defineClass({
                 Property.super.prototype.activate.apply(this, arguments);
                 this.keyExpression = this.keyExpression != null ? this.keyExpression : this.context.createRuntime(this.computed ? this.key : this.key.name != null ? this.key.name : this.key.value);
                 this.valueExpression = this.valueExpression != null ? this.valueExpression : this.context.createRuntime(this.value);
-                this.keyExpression.watchValue(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : ion.bind(function (key) {
+                this.unobserveKey = this.keyExpression.observe(this.keyWatcher = this.keyWatcher != null ? this.keyWatcher : ion.bind(function (key) {
                     if (key != null && this.valueExpression.setLeftValue != null) {
                         var currentValue = this.context.output ? this.context.output != null ? this.context.output[key] : void 0 : this.context.get(key);
                         if (currentValue != null) {
@@ -17,16 +17,15 @@ var Property = ion.defineClass({
                     this.keyValue = key;
                     this.setProperty();
                 }, this));
-                this.valueExpression.watchValue(this.valueWatcher = this.valueWatcher != null ? this.valueWatcher : ion.bind(function (value) {
+                this.unobserveValue = this.valueExpression.observe(this.valueWatcher = this.valueWatcher != null ? this.valueWatcher : ion.bind(function (value) {
                     this.valueValue = value;
                     this.setProperty();
                 }, this));
             },
             deactivate: function () {
                 Property.super.prototype.deactivate.apply(this, arguments);
-                ion.unobserve(this.context.output, this.contextObserver, this.leftValue);
-                this.keyExpression.unwatchValue(this.keyWatcher);
-                this.valueExpression.unwatchValue(this.valueWatcher);
+                this.unobserveKey();
+                this.unobserveValue();
             },
             setProperty: function (key, value) {
                 if (key == null)
@@ -36,7 +35,7 @@ var Property = ion.defineClass({
                 if (this.hasOwnProperty('keyValue') && this.hasOwnProperty('valueValue')) {
                     if (key != null && this.context.output != null) {
                         var currentValue = this.context.output[key];
-                        if (currentValue !== value) {
+                        if (currentValue !== value && (value !== void 0 || this.valueExpression.operator === 'void')) {
                             this.context.output[key] = value;
                         }
                     }

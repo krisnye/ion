@@ -2,7 +2,9 @@ void (function(){var _ion_mergePatch_ = function(module,exports,require){'use st
 var ion = require('./'), isObject = function (a) {
         var type = typeof a;
         return a != null && type === 'object' || type === 'function';
-    }, deleteValue = null;
+    }, deleteValue = null, isPrivate = function (name) {
+        return name[0] === '_';
+    };
 var canSetProperty = exports.canSetProperty = function (object, key) {
         return !(typeof object === 'function' && key === 'name');
     }, merge = exports.merge = function (target, values, options) {
@@ -31,75 +33,66 @@ var canSetProperty = exports.canSetProperty = function (object, key) {
         return target;
     }, combine = exports.combine = function (patch1, patch2) {
         return merge(patch1, patch2, { deleteNull: false });
-    }, watch = exports.watch = function (object, handler, callInitial) {
-        if (callInitial == null)
-            callInitial = true;
+    }, watch = exports.watch = function (object, handler, priority) {
         if (!isObject(object)) {
             throw new Error('Cannot watch: #{object}');
         }
-        var subWatchers = {};
-        var pendingPatch = null;
-        var processPatch = function (patchValues) {
-            for (var name in patchValues) {
-                subWatchers[name] != null ? subWatchers[name]() : void 0;
-                var value = object[name];
-                if (isObject(value)) {
-                    (function (name) {
-                        var subHandler = function (patch) {
-                            var basePatch = {};
-                            basePatch[name] = patch;
-                            queuePatch(basePatch);
-                        };
-                        subWatchers[name] = watch(value, subHandler, false);
-                    }(name));
-                }
+        watch.count = (watch.count != null ? watch.count : 0) + 1;
+        var watching = true;
+        var propertyWatchers = {};
+        var watchProperties = function (changes) {
+            var properties = (changes != null ? changes.map(function (a) {
+                    return a.name;
+                }) : void 0) != null ? changes.map(function (a) {
+                    return a.name;
+                }) : Object.keys(object);
+            for (var _i = 0; _i < properties.length; _i++) {
+                var name = properties[_i];
+                (function (name) {
+                    if (watching) {
+                        propertyWatchers[name] != null ? propertyWatchers[name]() : void 0;
+                        var value = object[name];
+                        if (isObject(value)) {
+                            propertyWatchers[name] = watch(value, function (patch) {
+                                var _ref = {};
+                                _ref[name] = patch;
+                                handler(_ref);
+                            }, priority);
+                        } else {
+                            delete propertyWatchers[name];
+                        }
+                    }
+                }(name));
             }
         };
-        var pendingTimeout = null;
-        var queuePatch = function (patch) {
-            if (!callInitial) {
-                handler(patch);
-            } else {
-                pendingPatch = combine(pendingPatch, patch);
-                processPatch(pendingPatch);
-                pendingTimeout = pendingTimeout != null ? pendingTimeout : setTimeout(function () {
-                    handler(pendingPatch);
-                    pendingPatch = null;
-                    pendingTimeout = null;
-                }, 0);
-            }
-        };
-        var watcher = function (changes) {
-            var patch = {};
-            for (var _i = 0; _i < changes.length; _i++) {
-                var change = changes[_i];
-                if (change.name[0] !== '_') {
-                    patch = patch != null ? patch : {};
-                    patch[change.name] = object[change.name] != null ? object[change.name] : deleteValue;
+        watchProperties(null);
+        var unobserve = ion.observe(object, function (changes) {
+                if (watching) {
+                    var patch = null;
+                    for (var _i2 = 0; _i2 < changes.length; _i2++) {
+                        var _ref2 = changes[_i2];
+                        var name = _ref2.name;
+                        if (!isPrivate(name)) {
+                            patch = patch != null ? patch : {};
+                            patch[name] = object[name] != null ? object[name] : deleteValue;
+                        }
+                    }
+                    watchProperties(changes);
+                    if (patch != null) {
+                        handler(patch);
+                    }
                 }
-            }
-            if (patch != null) {
-                queuePatch(patch);
-            }
-        };
-        if (DEBUG) {
-            var innerWatcher = watcher;
-            watcher = function (changes) {
-                try {
-                    innerWatcher(changes);
-                } catch (e) {
-                    console.error(e);
-                }
-            };
-        }
-        processPatch(object);
-        ion.observe(object, watcher);
+            });
         return function () {
-            ion.unobserve(object, watcher);
-            for (var key in subWatchers) {
-                var value = subWatchers[key];
-                value();
+            watch.count--;
+            watching = false;
+            unobserve();
+            unobserve = null;
+            for (var key in propertyWatchers) {
+                var unwatch = propertyWatchers[key];
+                unwatch();
             }
+            propertyWatchers = null;
         };
     }, diff = exports.diff = function (oldValue, newValue) {
         if (oldValue === newValue) {

@@ -26,9 +26,12 @@ var BlockStatement = ion.defineClass({
             },
             deactivate: function () {
                 BlockStatement.super.prototype.deactivate.apply(this, arguments);
-                for (var i = this.statements.length - 1; i >= 0; i--) {
-                    var statement = this.statements[i];
-                    statement.deactivate();
+                {
+                    var _ref4 = this.statements;
+                    for (var _i3 = 0; _i3 < _ref4.length; _i3++) {
+                        var statement = _ref4[_i3];
+                        statement.deactivate();
+                    }
                 }
             }
         }

@@ -11,6 +11,7 @@ var _ref4 = [];
     _ref4.push(ion.template(function () {
         return ion.createRuntime({
             type: 'Template',
+            id: null,
             body: [{
                     type: 'ReturnStatement',
                     argument: {
@@ -26,13 +27,13 @@ var _ref4 = [];
                             },
                             loc: {
                                 start: {
-                                    line: 111,
+                                    line: 99,
                                     column: 20,
                                     fixed: true,
                                     source: 'ion/test/reactiveTemplates.ion'
                                 },
                                 end: {
-                                    line: 111,
+                                    line: 99,
                                     column: 26,
                                     fixed: true,
                                     source: 'ion/test/reactiveTemplates.ion'
@@ -49,13 +50,13 @@ var _ref4 = [];
                             },
                             loc: {
                                 start: {
-                                    line: 111,
+                                    line: 99,
                                     column: 29,
                                     fixed: true,
                                     source: 'ion/test/reactiveTemplates.ion'
                                 },
                                 end: {
-                                    line: 111,
+                                    line: 99,
                                     column: 35,
                                     fixed: true,
                                     source: 'ion/test/reactiveTemplates.ion'
@@ -85,6 +86,7 @@ var templates = [
             ion.template(function (properties) {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -183,6 +185,7 @@ var templates = [
             ion.template(function (properties) {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -248,6 +251,7 @@ var templates = [
             ion.template(function (properties) {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [
                         {
                             type: 'VariableDeclaration',
@@ -371,117 +375,12 @@ var templates = [
             }
         ],
         [
-            'for else statements',
-            {},
-            ion.template(function (properties) {
-                return ion.createRuntime({
-                    type: 'Template',
-                    body: [{
-                            type: 'ReturnStatement',
-                            argument: {
-                                type: 'ObjectExpression',
-                                objectType: {
-                                    type: 'ObjectExpression',
-                                    properties: []
-                                },
-                                properties: [{
-                                        type: 'ForInStatement',
-                                        left: {
-                                            type: 'VariableDeclaration',
-                                            declarations: [
-                                                {
-                                                    type: 'VariableDeclarator',
-                                                    id: {
-                                                        type: 'Identifier',
-                                                        name: 'key'
-                                                    },
-                                                    init: null
-                                                },
-                                                {
-                                                    type: 'VariableDeclarator',
-                                                    id: {
-                                                        type: 'Identifier',
-                                                        name: 'value'
-                                                    },
-                                                    init: null
-                                                }
-                                            ],
-                                            kind: 'let'
-                                        },
-                                        right: {
-                                            type: 'Identifier',
-                                            name: 'properties'
-                                        },
-                                        body: {
-                                            type: 'BlockStatement',
-                                            body: [{
-                                                    type: 'Property',
-                                                    key: {
-                                                        type: 'Identifier',
-                                                        name: 'key'
-                                                    },
-                                                    value: {
-                                                        type: 'Identifier',
-                                                        name: 'value'
-                                                    },
-                                                    kind: 'init',
-                                                    computed: true
-                                                }]
-                                        },
-                                        remove: {
-                                            type: 'BlockStatement',
-                                            body: [{
-                                                    type: 'Property',
-                                                    key: {
-                                                        type: 'Identifier',
-                                                        name: 'key'
-                                                    },
-                                                    value: {
-                                                        type: 'UnaryExpression',
-                                                        operator: 'void',
-                                                        prefix: true,
-                                                        argument: {
-                                                            type: 'Literal',
-                                                            value: 0
-                                                        }
-                                                    },
-                                                    kind: 'init',
-                                                    computed: true
-                                                }]
-                                        }
-                                    }]
-                            }
-                        }],
-                    bound: false
-                }, {
-                    this: this,
-                    properties: properties,
-                    ion: ion,
-                    _ref4: _ref4,
-                    templates: templates,
-                    _ref5: _ref5
-                }, null);
-            }),
-            {
-                x: 1,
-                y: 2
-            },
-            {
-                x: 4,
-                y: void 0,
-                z: 3
-            },
-            {
-                x: 4,
-                z: 3
-            }
-        ],
-        [
             'shared variables functions',
             {},
             ion.template(function (properties) {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [
                         {
                             type: 'VariableDeclaration',
@@ -509,13 +408,13 @@ var templates = [
                                                 },
                                                 loc: {
                                                     start: {
-                                                        line: 47,
+                                                        line: 35,
                                                         column: 25,
                                                         fixed: true,
                                                         source: 'ion/test/reactiveTemplates.ion'
                                                     },
                                                     end: {
-                                                        line: 47,
+                                                        line: 35,
                                                         column: 42,
                                                         fixed: true,
                                                         source: 'ion/test/reactiveTemplates.ion'
@@ -540,13 +439,13 @@ var templates = [
                                             },
                                             loc: {
                                                 start: {
-                                                    line: 47,
+                                                    line: 35,
                                                     column: 25,
                                                     fixed: true,
                                                     source: 'ion/test/reactiveTemplates.ion'
                                                 },
                                                 end: {
-                                                    line: 47,
+                                                    line: 35,
                                                     column: 42,
                                                     fixed: true,
                                                     source: 'ion/test/reactiveTemplates.ion'
@@ -654,13 +553,13 @@ var templates = [
                                                                         }],
                                                                     loc: {
                                                                         start: {
-                                                                            line: 51,
+                                                                            line: 39,
                                                                             column: 27,
                                                                             fixed: true,
                                                                             source: 'ion/test/reactiveTemplates.ion'
                                                                         },
                                                                         end: {
-                                                                            line: 51,
+                                                                            line: 39,
                                                                             column: 42,
                                                                             fixed: true,
                                                                             source: 'ion/test/reactiveTemplates.ion'
@@ -710,6 +609,7 @@ var templates = [
             ion.template(function (_ref) {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [
                         {
                             type: 'VariableDeclaration',
@@ -796,6 +696,7 @@ var templates = [
             ion.template(function (_ref2) {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [
                         {
                             type: 'VariableDeclaration',
@@ -906,6 +807,7 @@ var templates = [
             ion.template(function (object) {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -923,13 +825,13 @@ var templates = [
                                     },
                                     loc: {
                                         start: {
-                                            line: 72,
+                                            line: 60,
                                             column: 29,
                                             fixed: true,
                                             source: 'ion/test/reactiveTemplates.ion'
                                         },
                                         end: {
-                                            line: 72,
+                                            line: 60,
                                             column: 39,
                                             fixed: true,
                                             source: 'ion/test/reactiveTemplates.ion'
@@ -939,13 +841,13 @@ var templates = [
                                 arguments: [],
                                 loc: {
                                     start: {
-                                        line: 72,
+                                        line: 60,
                                         column: 29,
                                         fixed: true,
                                         source: 'ion/test/reactiveTemplates.ion'
                                     },
                                     end: {
-                                        line: 72,
+                                        line: 60,
                                         column: 41,
                                         fixed: true,
                                         source: 'ion/test/reactiveTemplates.ion'
@@ -980,6 +882,7 @@ var templates = [
                 return ion.template(function (object) {
                     return ion.createRuntime({
                         type: 'Template',
+                        id: null,
                         body: [
                             {
                                 type: 'VariableDeclaration',
@@ -1011,6 +914,7 @@ var templates = [
                                                 return ion.template(function (_ref3) {
                                                     return ion.createRuntime({
                                                         type: 'Template',
+                                                        id: null,
                                                         body: [
                                                             {
                                                                 type: 'VariableDeclaration',
@@ -1144,13 +1048,13 @@ var templates = [
                                             },
                                             loc: {
                                                 start: {
-                                                    line: 88,
+                                                    line: 76,
                                                     column: 27,
                                                     fixed: true,
                                                     source: 'ion/test/reactiveTemplates.ion'
                                                 },
                                                 end: {
-                                                    line: 88,
+                                                    line: 76,
                                                     column: 37,
                                                     fixed: true,
                                                     source: 'ion/test/reactiveTemplates.ion'
@@ -1159,13 +1063,13 @@ var templates = [
                                         }],
                                     loc: {
                                         start: {
-                                            line: 88,
+                                            line: 76,
                                             column: 23,
                                             fixed: true,
                                             source: 'ion/test/reactiveTemplates.ion'
                                         },
                                         end: {
-                                            line: 88,
+                                            line: 76,
                                             column: 38,
                                             fixed: true,
                                             source: 'ion/test/reactiveTemplates.ion'
@@ -1202,6 +1106,7 @@ var templates = [
             ion.template(function () {
                 return ion.createRuntime({
                     type: 'Template',
+                    id: null,
                     body: [{
                             type: 'ReturnStatement',
                             argument: {
@@ -1265,6 +1170,7 @@ var templates = [
                 ion.template(function (items) {
                     return ion.createRuntime({
                         type: 'Template',
+                        id: null,
                         body: [{
                                 type: 'ReturnStatement',
                                 argument: {
@@ -1323,13 +1229,13 @@ var templates = [
                                                                         arguments: [],
                                                                         loc: {
                                                                             start: {
-                                                                                line: 128,
+                                                                                line: 116,
                                                                                 column: 30,
                                                                                 fixed: true,
                                                                                 source: 'ion/test/reactiveTemplates.ion'
                                                                             },
                                                                             end: {
-                                                                                line: 128,
+                                                                                line: 116,
                                                                                 column: 38,
                                                                                 fixed: true,
                                                                                 source: 'ion/test/reactiveTemplates.ion'
@@ -1420,6 +1326,7 @@ var templates = [
                 ion.template(function (items) {
                     return ion.createRuntime({
                         type: 'Template',
+                        id: null,
                         body: [{
                                 type: 'ReturnStatement',
                                 argument: {
@@ -1478,13 +1385,13 @@ var templates = [
                                                                         arguments: [],
                                                                         loc: {
                                                                             start: {
-                                                                                line: 142,
+                                                                                line: 130,
                                                                                 column: 30,
                                                                                 fixed: true,
                                                                                 source: 'ion/test/reactiveTemplates.ion'
                                                                             },
                                                                             end: {
-                                                                                line: 142,
+                                                                                line: 130,
                                                                                 column: 38,
                                                                                 fixed: true,
                                                                                 source: 'ion/test/reactiveTemplates.ion'
@@ -1562,35 +1469,58 @@ var templates = [
         }()
     ];
 var _ref5 = {};
-for (var _i = 0; _i < templates.length; _i++) {
-    var _ref6 = templates[_i];
-    var name = _ref6[0];
-    var thisArg = _ref6[1];
-    var templateType = _ref6[2];
-    var argument = _ref6[3];
-    var patch = _ref6[4];
-    var expected = _ref6[5];
-    if (expected != null) {
-        _ref5[name] = function (thisArg, templateType, argument, patch, expected) {
-            return function (done) {
-                var template = templateType.call(thisArg, argument);
-                function checkIfDone(check) {
-                    if (JSON.stringify(check) === JSON.stringify(expected)) {
-                        template.deactivate();
-                        done();
+{
+    var lowestBefore = Number.MAX_SAFE_INTEGER;
+    var totalComplete = 0;
+    for (var _i = 0; _i < templates.length; _i++) {
+        var _ref6 = templates[_i];
+        var name = _ref6[0];
+        var thisArg = _ref6[1];
+        var templateType = _ref6[2];
+        var argument = _ref6[3];
+        var patch = _ref6[4];
+        var expected = _ref6[5];
+        if (expected != null) {
+            _ref5[name] = function (thisArg, templateType, argument, patch, expected) {
+                return function (done) {
+                    var beforeCount = ion.observe.count != null ? ion.observe.count : 0;
+                    var template = templateType.call(thisArg, argument);
+                    var finished = function () {
+                        unobserve();
+                        unobserveValue != null ? unobserveValue() : void 0;
+                        var afterCount = ion.observe.count != null ? ion.observe.count : 0;
+                        totalComplete++;
+                        lowestBefore = Math.min(beforeCount, lowestBefore);
+                        if (totalComplete === templates.length && afterCount > lowestBefore) {
+                            done('ion.observe memory leak detected, beforeCount: ' + lowestBefore + ', afterCount: ' + afterCount);
+                        } else {
+                            done();
+                        }
+                    };
+                    function checkIfDone(check) {
+                        if (JSON.stringify(check) === JSON.stringify(expected)) {
+                            if (unobserve != null) {
+                                finished();
+                            } else {
+                                setTimeout(finished, 0);
+                            }
+                        }
                     }
-                }
-                template.activate();
-                template.watchValue(function (value) {
-                    checkIfDone(value);
-                    ion.observe(value, function (changes) {
-                        checkIfDone(value);
-                    });
-                });
-                ion.patch(argument, patch);
-                ion.checkForChanges();
-            };
-        }(thisArg, templateType, argument, patch, expected);
+                    template.activate();
+                    var watchCount = ion.observe.count != null ? ion.observe.count : 0;
+                    var unobserveValue;
+                    var unobserve = template.observe(function (value) {
+                            checkIfDone(value);
+                            unobserveValue != null ? unobserveValue() : void 0;
+                            unobserveValue = ion.observe(value, function (changes) {
+                                checkIfDone(value);
+                            });
+                        });
+                    ion.patch(argument, patch);
+                    ion.checkForChanges();
+                };
+            }(thisArg, templateType, argument, patch, expected);
+        }
     }
 }
 module.exports = exports = { test: _ref5 };
