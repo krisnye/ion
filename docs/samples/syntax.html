@@ -1,10 +1,11 @@
 <html>
     <head>
         <title>Code Samples</title>
-        <script src="../../lib/_browser.js"></script>
+        <script src="/bower_components/ion/lib/_debug.js"></script>
         <script type='ion'>
-        for name, fn of require('ion/browser/elements')
-            global[name] = fn
+        for name in ["div","span","h1","h2","h3","h4","textarea","input"]
+            do (name) ->
+                global[name] = -> document.createElement(name)
         </script>
     </head>
     <body>
