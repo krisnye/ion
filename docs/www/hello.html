@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <title>Ion Reactive Samples</title>
+        <script src="/bower_components/ion/lib/_debug.js"></script>
+        <script type='ion'>
+        for name in ["div","span","h1","h2","h3","h4","textarea","input","form","button"]
+            do (name) ->
+                global[name] = -> document.createElement(name)
+        </script>
+        <style>
+        .description { margin: 1em; }
+        .sample { background: #eeeeee; }
+        </style>
+    </head>
+    <body>
+        <div>
+            <h2>Hello Sample</h2>
+            <div class='description'>
+            The dependent value will automatically update as you type
+            </div>
+            <div class='sample'>
+                <script type='ion'>
+                let model = {name:"World"}
+                return template ->
+                    return div()
+                        div()
+                            "Name: "
+                            input()
+                                type: 'text'
+                                value: 'World'
+                                keyup(e) ->
+                                    model.name = @value
+                        div()
+                            "Hello {{model.name}}"
+                </script>
+            </div>
+        </div>
+    </body>
+</html>

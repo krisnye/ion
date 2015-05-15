@@ -1,12 +1,17 @@
 ﻿<html>
     <head>
         <title>Ion • TodoMVC</title>
-        <script src="../../lib/_browser.js"></script>
+        <script src="/bower_components/ion/lib/_debug.js"></script>
         <link rel="stylesheet" href="TodoMVC.css">
         <script type='ion'>
-        # export element creation functions as global variables for convenience
-        for name, fn of require('ion/browser/elements')
-            global[name] = fn
+        for name in ["div","span","h1","h2","h3","h4","textarea","input","form","button","section","header","footer","ul","li","label","strong","a"]
+            do (name) ->
+                global[name] = (attributes) ->
+                    let element = document.createElement(name)
+                    if attributes?
+                        for key, value of attributes
+                            element.setAttribute(key, value)
+                    return element
         </script>
     </head>
     <body>

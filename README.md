@@ -20,3 +20,22 @@ The basic syntax is similar to javascript harmony version with an indented struc
 See docs/samples/syntax.html and reactive.html for more information.
 
 
+Development Setup
+_____
+
+Install the latest version of NodeJS
+Install bower with
+    sudo npm install -g bower
+Clone this repository
+Change into the ion directory
+
+Run this command to setup the dev environment:
+    npm run dev
+If that fails, then look at the "dev" script in the package.json and run the commands individually in order, using sudo if needed.  Commands in the script are all separated by &&.
+
+Start the sample server with:
+    node server
+    Should say "Listening on port 9090"
+
+Browse to http://localhost:9090
+
