@@ -41,7 +41,7 @@ const
                         if not isPrivate(name)
                             patch ?= {}
                             # we convert undefined values from delete into explicit nulls
-                            patch[name] = object[name] ? deleteValue
+                            patch[name] = object.hasOwnProperty(name) ? object[name] : deleteValue
                     watchProperties(changes)
                     if patch?
                         handler(patch)
@@ -126,8 +126,11 @@ export const
         if not (oldValue? and newValue? and typeof newValue is 'object' and typeof oldValue is 'object')
             return true
         for name of newValue
-            if newValue[name] is null and not oldValue.hasOwnProperty(name)
-                continue
+            if not oldValue.hasOwnProperty(name)
+                if not newValue[name]?
+                    continue
+                else
+                    return true
             if isChange(oldValue[name], newValue[name])
                 return true
         return false
