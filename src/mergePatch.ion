@@ -5,33 +5,7 @@ const
         return a? and type is 'object' or type is 'function'
     deleteValue = null
     isPrivate = (name) -> name[0] is '_'
-
-export const
-    canSetProperty = (object, key) -> not (typeof object is 'function' and key is 'name')
-    # options:
-    #   deleteNull: delete properties if value is null, default: true
-    #   factory: function to use when constructing new objects, defaults to using plain objects {}
-    merge = (target, values, options) ->
-        let deleteNull = options?.deleteNull ? true
-        if values?.constructor isnt Object
-            return values
-        if not isObject(target)
-            if options?.factory?
-                target = options.factory(values)
-            else
-                target = {}
-        for key, value of values
-            if deleteNull and value is deleteValue
-                delete target[key]
-            else
-                let newValue = merge(target[key], value, options)
-                if canSetProperty(target, key)
-                    target[key] = newValue
-        return target
-    # combines two patches to make a single patch
-    combine = (patch1, patch2) -> merge(patch1, patch2, {deleteNull:false})
-    # watches object for changes and calls the handler with patches
-    watch = (object, handler, priority) ->
+    watchImmediate = (object, handler, priority) ->
         if not isObject(object)
             throw new Error("Cannot watch: #{object}")
         watch.count = (watch.count ? 0) + 1
@@ -82,76 +56,46 @@ export const
                 unwatch()
             propertyWatchers = null
 
-    # watch = (object, handler, priority = 0, callInitial = true) ->
-    #     if callInitial
-    #         watch.count = (watch.count ? 0) + 1
-    #     if not isObject(object)
-    #         throw new Error("Cannot watch: #{object}")
-    #     # recurse watching and unwatching
-    #     let subWatchers = {}
-    #     # pending patch allows several changes at simultaneous levels of the
-    #     # heirarchy to be combined into a single patch call
-    #     let pendingPatch = null
-    #     let processPatch = (patchValues) ->
-    #         # watch sub objects
-    #         for name of patchValues
-    #             # unwatch any current value being watched
-    #             # now watch sub values if we can
-    #             subWatchers[name]?()
-    #             let value = object[name]
-    #             if isObject(value)
-    #                 do (name) ->
-    #                     let subHandler = (patch) ->
-    #                         queuePatch({[name]:patch})
-    #                     subWatchers[name] = watch(value, subHandler, priority, false)
-    #     let pendingTimeout = null
-    #     let queuePatch = (patch) ->
-    #         # console.log(JSON.stringify(patch))
-    #         if not callInitial
-    #             handler(patch)
-    #         else
-    #             pendingPatch = combine(pendingPatch, patch)
-    #             processPatch(pendingPatch)
-    #             pendingTimeout ?= setTimeout(
-    #                 ->
-    #                     handler(pendingPatch)
-    #                     pendingPatch = null
-    #                     pendingTimeout = null
-    #                 0
-    #             )
-    #     let watcher = (changes) ->
-    #         let patch = null
-    #         for change in changes
-    #             # we ignore names that start with underscore, they are considered private
-    #             if change.name[0] isnt '_'
-    #                 patch ?= {}
-    #                 # we convert undefined values from delete into explicit nulls
-    #                 patch[change.name] = object[change.name] ? deleteValue
-    #         if patch?
-    #             queuePatch(patch)
-    #     # if DEBUG
-    #     #     let innerWatcher = watcher
-    #     #     watcher = (changes) ->
-    #     #         try
-    #     #             innerWatcher(changes)
-    #     #         catch e
-    #     #             # catch and log errors, because object observe callbacks suppress errors
-    #     #             console.error(e)
-
-    #     # call process patch on the object to watch children
-    #     processPatch(object)
-    #     let unobserve = ion.observe(object, watcher, {priority})
-    #     # return an function that lets us unwatch
-    #     return ->
-    #         if callInitial
-    #             watch.count--
-    #         try
-    #             unobserve()
-    #             # unwatch subWatchers
-    #             for key, value of subWatchers
-    #                 value()
-    #         catch e
-    #             console.error('Error in mergePatch unwatch')
+export const
+    canSetProperty = (object, key) -> not (typeof object is 'function' and key is 'name')
+    # options:
+    #   deleteNull: delete properties if value is null, default: true
+    #   factory: function to use when constructing new objects, defaults to using plain objects {}
+    merge = (target, values, options) ->
+        let deleteNull = options?.deleteNull ? true
+        if values?.constructor isnt Object
+            return values
+        if not isObject(target)
+            if options?.factory?
+                target = options.factory(values)
+            else
+                target = {}
+        for key, value of values
+            if deleteNull and value is deleteValue
+                delete target[key]
+            else
+                let newValue = merge(target[key], value, options)
+                if canSetProperty(target, key)
+                    target[key] = newValue
+        return target
+    # combines two patches to make a single patch
+    combine = (patch1, patch2) -> merge(patch1, patch2, {deleteNull:false})
+    # watches object for changes and calls the handler with patches
+    watch = (object, handler, priority) ->
+        # this version delays callbacks in order to merge all simultaneous changes
+        # into a single patch object before calling the main handler
+        let active = false
+        let combinedPatch = undefined
+        let finalCallback = ->
+            handler(combinedPatch)
+            active = false
+            combinedPatch = undefined
+        let delayedHandler = (patch) ->
+            combinedPatch = combine(combinedPatch, patch)
+            if not active
+                ion.setImmediate(finalCallback)
+                active = true
+        return watchImmediate(object, delayedHandler, priority)
     diff = (oldValue, newValue) ->
         # returns a patch which can convert from the oldValue to the newValue
         # returns undefined if there is no difference between them

@@ -126,6 +126,22 @@ module.exports = exports =
         catch e
             console.error e
 
+    # this compiles a pegs parser and returns the result.  Does not write to the target file.
+    compilePegs: compilePegs = (source, packageObject) ->
+        return if source.modified is 0
+        moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
+        filename = source.path
+        try
+            peg = require('pegs').parser
+            console.log "Building: #{filename}"
+            input = source.read()
+            parser = peg.parse(input)
+            source = parser
+            source = addBrowserShim source, moduleId
+            return source
+        catch e
+            console.error e
+
     compileIon: compileIon = (source, packageObject) -> compileIonWithSourceMap(source, packageObject)?[0]
 
     # this compiles ion and returns the result.  Does not write to the target file.

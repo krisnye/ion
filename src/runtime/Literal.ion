@@ -1,7 +1,8 @@
 const ion = import '../'
+const noop = ->
 
 export class Literal extends import './Expression'
     properties:
         observe: (observer) ->
             observer(@value)
-            return ->
+            return noop

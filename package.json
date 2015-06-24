@@ -38,6 +38,7 @@
         "esprima": "1.1.x",
         "uglify-js": "2.4.x",
         "pegjs": "0.8.x",
+        "pegjs": "0.0.x",
         "underscore": "1.6.x",
         "source-map": "0.1.x",
         "coffee-script": "1.8.x",
