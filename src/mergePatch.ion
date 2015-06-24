@@ -106,10 +106,14 @@ export const
             return newValue ? null
         let patch = undefined
         for name of oldValue if oldValue.hasOwnProperty(name)
-            let propertyDiff = diff(oldValue[name], newValue[name])
-            if propertyDiff isnt undefined
+            if not newValue.hasOwnProperty(name)
                 patch ?= {}
-                patch[name] = propertyDiff
+                patch[name] = null
+            else
+                let propertyDiff = diff(oldValue[name], newValue[name])
+                if propertyDiff isnt undefined
+                    patch ?= {}
+                    patch[name] = propertyDiff
         for name of newValue if newValue.hasOwnProperty(name) and not oldValue.hasOwnProperty(name)
             patch ?= {}
             patch[name] = newValue[name]
