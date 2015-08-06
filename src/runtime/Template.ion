@@ -32,5 +32,14 @@ export class Template extends BlockStatement
             #     console.log('-- deactivate template ' + count + ", observers: " + ion.observe.count)
         toString: -> @id? ? "Template {{@id.name}}" : "Template"
 
-        # TODO: Always use new on templates that should be disposed???
-        # expressions what are called on templates are not being removed some how.  Figure it out.
+        # addToDOM: (parent) ->
+        #     console.log('-------addTemplateToDom')
+        #     let removePrevious = null
+        #     let unwatch = @observe(
+        #         (value) ->
+        #             removePrevious?()
+        #             if value?
+        #                 removePrevious = ion.add(parent, value)
+        #     )
+        #     console.log('------=TODO: unwatch template when dom item manually removed.')
+

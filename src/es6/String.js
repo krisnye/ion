@@ -24,8 +24,15 @@ if (!String.prototype.startsWith) {
   });
 }
 
+// deprecated in favor of includes
 if (!String.prototype.contains ) {
     String.prototype.contains = function() {
+        return this.indexOf(arguments) !== -1;
+    };
+}
+
+if (!String.prototype.includes ) {
+    String.prototype.includes = function() {
         return this.indexOf(arguments) !== -1;
     };
 }

@@ -19,10 +19,20 @@ if not Array.prototype.remove?
                         @splice(index, 1)
     )
 
+# deprecated in favor of includes
+# retained temporarily for compatibility with Element.classList.contains method, since IE returns an array
 if not Array.prototype.contains?
     Object.defineProperty(
         Array.prototype
         'contains'
+        {}
+            value: (item) -> @indexOf(item) >= 0
+    )
+
+if not Array.prototype.includes?
+    Object.defineProperty(
+        Array.prototype
+        'includes'
         {}
             value: (item) -> @indexOf(item) >= 0
     )

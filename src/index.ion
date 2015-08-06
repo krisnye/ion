@@ -300,9 +300,7 @@ export const
             # remove the type field from the source object
             delete object[typeKey]
             return type
-        let deserialize = (object) ->
-            if typeof object is 'string'
-                object = JSON.parse(object)
+        let convertType = (object) ->
             let typeKey = import('ion/Object').typeKey
             # we should strongly type our objects when created, so make a factory
             let typeName = object[typeKey]
@@ -312,11 +310,20 @@ export const
                     throw new Error("Type is not serializable: {{ typeName }}")
                 let typedObject = new type
                 for key, value of object if key isnt typeKey
-                    typedObject[key] = object[key]
-                return typedObject
-            else
-                return object
+                    typedObject[key] = value
+                object = typedObject
+            # convert recursively
+            for key, value of object
+                if value?.constructor is Object
+                    object[key] = convertType(value)
+            return object
+        let deserialize = (object) ->
+            if typeof object is 'string'
+                object = JSON.parse(object)
+
+            return convertType(object)
         deserialize.extractType = extractType
+        deserialize.convertType = convertType
         return deserialize
     test =
         defineClass: ->

@@ -22,7 +22,7 @@ export template (packagePatch) ->
         output = new Directory(packageJson.directories.www ? 'debug')
         clientOutput = output.getDirectory(clientJsDir)
         serverOutput = output.getDirectory(serverJsDir)
-        nodepaths = ['node_modules'].concat(process.env.NODE_PATH.split(np.delimiter))
+        nodepaths = ['node_modules'].concat(process.env.NODE_PATH?.split(np.delimiter) ? [])
 
     # Copy local development versions of glass-pages to input directory if available
     # They will be copied from src to the build directory by ant

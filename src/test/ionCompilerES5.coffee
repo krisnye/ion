@@ -111,6 +111,16 @@ tests =
     # """
     # template foo() ->
     # """: null
+    """
+    return {a:b ? c}
+        d
+    """: """
+    'use strict';
+    var ion = require('ion');
+    var _ref = { a: b != null ? b : c };
+    ion.add(_ref, d);
+    return _ref;
+    """
 
 if global.window?
     return

@@ -77,4 +77,5 @@ module.exports = class CallExpression extends DynamicExpression
             catch e
                 let start = @loc.start
                 console.error("Call Error at {{start.source}} (line:{{start.line}},column:{{start.column}})")
+                console.error(e)
                 throw e
