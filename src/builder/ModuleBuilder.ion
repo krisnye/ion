@@ -101,7 +101,7 @@ export template (packagePatch) ->
         files: [builder.normalizePath(path) for path in sortedFiles]
     output.write(manifestFileName, JSON.stringify(manifest, null, '  ', sortedFiles))
     # also write the debug script
-    output.write('_debug.js', createDebugScript(manifest, moduleName, "/bower_components/"))
+    output.write('_debug.js', createDebugScript(manifest, moduleName, "/js/"))
 
     # # build merged file, just so we can test locally with file:// protocol
     # if packageJson.build.merge?
