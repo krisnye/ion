@@ -7,7 +7,7 @@
     },
     "repository": "https://github.com/krisnye/ion.git",
     "scripts": {
-        "dev": "npm install && npm run boot && bower link && cd lib && npm link && cd ..",
+        "dev": "npm install && npm run boot && cd lib && npm link && cd ..",
         "build": "ion -c",
         "watch": "ion -w",
         "boot": "node boot/builder/_command.js -c"
@@ -38,7 +38,6 @@
         "esprima": "1.1.x",
         "uglify-js": "2.4.x",
         "pegjs": "0.8.x",
-        "pegs": "0.0.x",
         "underscore": "1.6.x",
         "source-map": "0.1.x",
         "coffee-script": "1.8.x",
