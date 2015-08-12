@@ -7,6 +7,8 @@ import './es6'
 global.DEBUG ?= true
 
 const
+    valueTypes = {string:true,number:true,boolean:true}
+    isValueType = (object) -> not object? or valueTypes[typeof object] ? false
     primitive = {string:true,number:true,boolean:true,function:true}
     isPrimitive = (object) -> not object? or primitive[typeof object] or false
     normalizeProperty = (property, name) ->
@@ -68,6 +70,7 @@ const
                 timeoutId ?= setTimeout(flush, 0)
 
 export const
+    runFile = (file) -> require('./builder').runFile(file)
     patch = do ->
         let mergePatch = import './mergePatch'
         let patchFunction = (object, patch) -> mergePatch.merge(object, patch)
@@ -103,7 +106,7 @@ export const
     # observers = []
     observe = (object, observer, options) ->
         # let original = observer
-        if object is global or object is console
+        if object is global or object is console or isValueType(object)
             return noop
         let property = options?.property
         let priority = options?.priority ? 0
@@ -142,17 +145,21 @@ export const
         # observers.push(original)
         return ->
             # observers.remove(original)
-            observe.count--
-            removed = true
-            if not observable
-                nodeObserveShim.unobserve(object, observer, property)
-                # console.log('unobserve shim ' + JSON.stringify(object))
-            else if object? and observer? and Object.unobserve? and typeof object is 'object'
-                Object.unobserve(object, observer)
-                # console.log('unobserve ' + JSON.stringify(object))
-                # unwatch change on dom elements
-                object.removeEventListener?('change', observer)
-            object?.unObserved?(observer, property)
+            if not removed
+                observe.count--
+                removed = true
+                if not observable
+                    nodeObserveShim.unobserve(object, observer, property)
+                    # console.log('unobserve shim ' + JSON.stringify(object))
+                else if object? and observer? and Object.unobserve? and typeof object is 'object'
+                    Object.unobserve(object, observer)
+                    # console.log('unobserve ' + JSON.stringify(object))
+                    # unwatch change on dom elements
+                    object.removeEventListener?('change', observer)
+                object?.unObserved?(observer, property)
+            else
+                # debugger
+                console.warn("unobserve should not be called multiple times!")
     checkForChanges = ->
         if Object.observe.checkForChanges?
             Object.observe.checkForChanges()

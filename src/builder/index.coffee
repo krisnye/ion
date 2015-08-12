@@ -29,9 +29,13 @@ module.exports = exports =
             # existing file path needs to be relative to the link path
             existingPath = np.relative value, key
             console.log "link EXISTING: #{existing}  LINK: #{value}"
-    runIonFile: (file) ->
-        src = fs.readFileSync(file, 'utf8')
-        js = require('../compiler').compile(src)
+    runFile: (file) ->
+        if not fs.existsSync(file)
+            console.warn("File not found: {{file}}")
+            return
+
+        code = utility.read(file)
+        js = ion.compiler.compile(code)
         eval(js)
     runTests: do ->
         fn = (manifestFile) ->

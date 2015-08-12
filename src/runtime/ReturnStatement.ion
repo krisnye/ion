@@ -13,4 +13,7 @@ export class ReturnStatement extends Statement
         deactivate: ->
             super
             @argumentWatcher?(undefined)
-            @unobserve()
+            @argumentWatcher = null
+            @unobserve?()
+            @unobserve = null
+

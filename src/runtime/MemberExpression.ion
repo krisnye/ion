@@ -24,9 +24,12 @@ export class MemberExpression extends DynamicExpression
 
         deactivate: ->
             super
-            @unobserveObject()
-            @unobserveProperty()
+            @unobserveObject?()
+            @unobserveObject = null
+            @unobserveProperty?()
+            @unobserveProperty = null
             @unobserveObjectValue?()
+            @unobserveObjectValue = null
         updateValue: ->
             let value = undefined
             if @objectValue?
@@ -42,6 +45,7 @@ export class MemberExpression extends DynamicExpression
                 @observedObject = @objectValue
                 @observedProperty = @propertyValue
                 @unobserveObjectValue?()
+                @unobserveObjectValue = null
                 if @objectValue?
                     @unobserveObjectValue = ion.observe(
                         @objectValue

@@ -23,18 +23,10 @@ if args[0] is "-c" or args[0] is "-w"
         if args[0] is "-c"
             process.exit()
     catch e
-        console.log('fuck you------------------------------')
         console.error(e.stack)
         process.exit(1)
 else
-    # import ion into global namespace
-    global.ion = import('../')
-    let File = import('./File')
-    let compiler = import('../compiler')
+    # import ion into global namespace.. why?
+    let ion = import('../')
     for arg in args
-        let file = new File(arg)
-        if not file.exists
-            throw new Error("File not found: {{arg}}")
-        let code = file.read()
-        let js = compiler.compile(code)
-        eval(js)
+        ion.runFile(arg)

@@ -283,11 +283,24 @@ destructuringAssignments = (node, context) ->
 
     # variable assignments
     if node.type is 'VariableDeclaration' and context.isParentBlock()
-        for declarator in node.declarations when isPattern declarator.id
+        count = 0
+        for declarator, declaratorIndex in node.declarations when isPattern declarator.id
             pattern = declarator.id
             tempId = context.getNewInternalIdentifier()
             declarator.id = tempId
-            count = 0
+            # we must extract the init and add it later, otherwise...
+            # it may reference a value which hasn't been destructured yet from a previous declarator
+            if declarator.init? and declaratorIndex > 0
+                context.addStatement {
+                        type: 'ExpressionStatement'
+                        expression:
+                            type: 'AssignmentExpression'
+                            operator: '='
+                            left: tempId
+                            right: declarator.init
+                    }, ++count
+                declarator.init = null
+                node.kind = 'let'
             forEachDestructuringAssignment pattern, tempId, (id, expression) ->
                 context.addStatement {
                         type: 'VariableDeclaration'
@@ -1229,6 +1242,14 @@ propertyDefinitions = (node, context) ->
                         properties: definitions
                     }
                 ]
+
+# expandVariableDeclarations = (node, context) ->
+#     if node.type is 'VariableDeclaration' and node.declarations.length > 1
+#         for declaration in node.declarations.splice(1, node.declarations.length - 1)
+#             context.addStatement
+#                 type: node.type
+#                 declarations: [declaration]
+#                 kind: node.kind
 
 exports.postprocess = (program, options) ->
     steps = [
