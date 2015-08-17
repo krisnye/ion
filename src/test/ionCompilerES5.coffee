@@ -121,15 +121,6 @@ tests =
     ion.add(_ref, d);
     return _ref;
     """
-    """
-    template (properties) ->
-        let factor = properties.factor ? 3
-        const multiply(a) -> a * factor
-        return {}
-            for key, value of properties if key isnt 'factor'
-                [key]: multiply(value)
-    """: null
-
 
 if global.window?
     return
