@@ -124,6 +124,8 @@ export const
             return false
         if not (oldValue? and newValue? and typeof newValue is 'object' and typeof oldValue is 'object')
             return true
+        if Array.isArray(newValue) and JSON.stringify(oldValue) isnt JSON.stringify(newValue)
+            return true
         for name of newValue
             if not oldValue.hasOwnProperty(name)
                 if not newValue[name]?
@@ -142,6 +144,7 @@ export const
                 assert equal({a:1,b:2}, merge({a:1,b:2,c:3}, {c:undefined}))
                 let double = (x) -> x * 2
                 assert equal({a:double}, merge({},{a:double}))
+                assert equal({a:[]}, merge({a:[1,2]}, {a:[]}))
             isChange: ->
                 assert isChange({a:1}, null)
                 assert not isChange(null, null)
@@ -151,6 +154,7 @@ export const
                 assert not isChange({a:{b:2,c:3}}, {a:{b:2}})
                 assert isChange({a:{b:2}}, {a:{b:3}})
                 assert not isChange({a:1}, {b:null})
+                assert isChange({a:[1,2]}, {a:[]})
             diff: ->
                 assert equal({b:2}, diff({a:1}, {a:1,b:2}))
                 assert equal({a:{b:3,c:null}}, diff({a:{b:2,c:4}}, {a:{b:3}}))
