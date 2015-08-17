@@ -9,21 +9,25 @@ export class DynamicExpression extends import './Expression'
         deactivate: ->
             # called when we no longer have watchers
             @isActive = false
-        observe: (observer) ->
+        observe: (observer, options) ->
+            let originalObserver = observer
+            let removed = false
             let watchers = @_watchers ?= []
             if watchers.length is 0
                 @activate()
             watchers.push(observer)
-            # notify observer immediately if we have a value
+            # notify original observer immediately if we have a value
             if @hasValue()
                 let value = @getValue()
-                @_notifyWatcher(observer, value)
+                @_notifyWatcher(originalObserver, value)
             return =>
-                @_watchers.remove(observer)
-                # this must happen AFTER we notify the observer,
-                # otherwise it changes the value and the observer may not be notified.
-                if @_watchers.length is 0
-                    @deactivate()
+                if not removed
+                    removed = true
+                    @_watchers.remove(observer)
+                    # this must happen AFTER we notify the observer,
+                    # otherwise it changes the value and the observer may not be notified.
+                    if @_watchers.length is 0
+                        @deactivate()
         _notifyWatcher: (observer, value) -> observer.call(@, value)
         notify: ->
             if @_watchers?

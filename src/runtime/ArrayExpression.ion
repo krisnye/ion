@@ -17,13 +17,13 @@ export class ArrayExpression extends DynamicExpression
         setArgumentValue: (key, expression, value) ->
             if @argumentValues[key] isnt value
                 @unobserveExpressionValues[key]?()
+                @unobserveExpressionValues[key] = null
                 @argumentValues[key] = value
                 if @observeElements
                     if value?
                         @itemObserver ?= =>
                             @notifyIfActive()
-                        let priority = @context.depth
-                        @unobserveExpressionValues[key] = expression.deep ? ion.patch.watch(value, @itemObserver) : ion.observe(value, @itemObserver, {priority})
+                        @unobserveExpressionValues[key] = expression.deep ? ion.patch.watch(value, @itemObserver) : ion.observe(value, @itemObserver)
                 @notifyIfActive()
         activate: ->
             @expressions = [@context.createRuntime(item) for item in @elements]

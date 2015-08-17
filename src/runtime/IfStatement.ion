@@ -1,6 +1,7 @@
 const
     ion = import '../'
-    Statement = import './Statement'
+    {Statement,Factory} = import './'
+
 
 export class IfStatement extends Statement
     properties:

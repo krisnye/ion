@@ -5,7 +5,7 @@ const
         return a? and type is 'object' or type is 'function'
     deleteValue = null
     isPrivate = (name) -> name[0] is '_'
-    watchImmediate = (object, handler, priority) ->
+    watchImmediate = (object, handler) ->
         if not isObject(object)
             throw new Error("Cannot watch: #{object}")
         watch.count = (watch.count ? 0) + 1
@@ -25,7 +25,6 @@ const
                                 value
                                 (patch) ->
                                     handler({[name]:patch})
-                                priority
                             )
                         else
                             delete propertyWatchers[name]
@@ -81,7 +80,7 @@ export const
     # combines two patches to make a single patch
     combine = (patch1, patch2) -> merge(patch1, patch2, {deleteNull:false})
     # watches object for changes and calls the handler with patches
-    watch = (object, handler, priority) ->
+    watch = (object, handler) ->
         # this version delays callbacks in order to merge all simultaneous changes
         # into a single patch object before calling the main handler
         let active = false
@@ -95,7 +94,7 @@ export const
             if not active
                 ion.setImmediate(finalCallback)
                 active = true
-        return watchImmediate(object, delayedHandler, priority)
+        return watchImmediate(object, delayedHandler)
     diff = (oldValue, newValue) ->
         # returns a patch which can convert from the oldValue to the newValue
         # returns undefined if there is no difference between them

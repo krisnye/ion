@@ -54,20 +54,6 @@ const
             if a instanceof Node or a instanceof NodeList or a instanceof Location
                 return false
             return true
-    prioritizeCallback = do ->
-        let queue = []
-        let timeoutId = null
-        let flush = ->
-            queue.sort((a, b) -> a.priority - b.priority)
-            for {callback, args, priority} in queue
-                callback.apply(null, args)
-            queue.length = 0
-            timeoutId = null
-        return (callback, priority) ->
-            return ->
-                let args = Array.prototype.slice.call(arguments, 0)
-                queue.push({callback, args, priority})
-                timeoutId ?= setTimeout(flush, 0)
 
 export const
     runFile = (file) -> require('./builder').runFile(file)
@@ -78,9 +64,16 @@ export const
             patchFunction[key] = value
         return patchFunction
     create = (type, args) -> variableArgConstructs[args.length](type, args)
+    nextTick = (callback) ->
+        if global.process?.nextTick?
+            global.process.nextTick(callback)
+        else
+            setImmediate(callback)
     setImmediate = do ->
         if global.setImmediate?
             return global.setImmediate
+        # if global.nextTick?
+        #     return global.nextTick
         return (fn) ->
             setTimeout(fn, 0)
     template = (fn, template) ->
@@ -93,7 +86,6 @@ export const
             for name, value of args
                 context.setVariableLiteral(name, value)
         return context.createRuntime(ast)
-    nextTick = @process?.nextTick ? (fn) -> setTimeout(fn, 0)
     clone = (object, _deep = false) ->
         if Array.isArray(object)
             return [_deep ? clone(item, _deep) : item for item in object]
@@ -109,16 +101,7 @@ export const
         if object is global or object is console or isValueType(object)
             return noop
         let property = options?.property
-        let priority = options?.priority ? 0
         let removed = false
-        # wrap the observer in a prioritizing function
-        # if priority > 0
-        #     # wrap the function with a check to make sure hasn't been removed
-        #     let originalObserver = observer
-        #     observer = ->
-        #         if not removed
-        #             originalObserver.apply(null, arguments)
-        #     observer = prioritizeCallback(observer, priority)
         # property is optional
         let observable = isObjectObservable(object)
         if not observable
@@ -146,6 +129,7 @@ export const
         return ->
             # observers.remove(original)
             if not removed
+                # console.log('removing')
                 observe.count--
                 removed = true
                 if not observable

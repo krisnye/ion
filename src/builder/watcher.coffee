@@ -1,5 +1,6 @@
 return if global.window
 
+ion = require 'ion'
 fs = require 'fs'
 np = require 'path'
 util = require './utility'
@@ -30,7 +31,7 @@ exports.watchDirectory = (dirname, options, listener) ->
     notifyListener = (filename, curr, prev, change, async=false) ->
         if filter filename
             if async
-                process.nextTick -> listener filename, curr, prev, change
+                ion.setImmediate -> listener filename, curr, prev, change
             else
                 listener filename, curr, prev, change
 

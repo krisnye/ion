@@ -39,7 +39,6 @@ module.exports = class CallExpression extends DynamicExpression
                                     thisArg
                                     @thisObserver ?= =>
                                         @evaluate()
-                                    {priority:@context.depth}
                                 )
                         @evaluate()
             )

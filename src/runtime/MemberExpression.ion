@@ -13,14 +13,16 @@ export class MemberExpression extends DynamicExpression
             @unobserveProperty = @propertyExpression.observe(
                 @propertyWatcher ?= (propertyValue) =>
                     @propertyValue = propertyValue
-                    @updateValue()
+                    @queueUpdate()
             )
 
             @unobserveObject = @objectExpression.observe(
                 @objectWatcher ?= (objectValue) =>
                     @objectValue = objectValue
-                    @updateValue()
+                    @queueUpdate()
             )
+
+            @updateValue(true)
 
         deactivate: ->
             super
@@ -30,7 +32,9 @@ export class MemberExpression extends DynamicExpression
             @unobserveProperty = null
             @unobserveObjectValue?()
             @unobserveObjectValue = null
-        updateValue: ->
+        queueUpdate: ->
+            ion.nextTick(this.updateValue.bind(this))
+        updateValue: (force) ->
             let value = undefined
             if @objectValue?
                 if @propertyValue?
@@ -50,8 +54,8 @@ export class MemberExpression extends DynamicExpression
                     @unobserveObjectValue = ion.observe(
                         @objectValue
                         (changes) =>
-                            @updateValue()
-                        {property:@propertyValue, priority:@context.depth}
+                            @queueUpdate()
+                        {property:@propertyValue}
                     )
 
         # sets the underlying property value.  This may be used for two way binding.

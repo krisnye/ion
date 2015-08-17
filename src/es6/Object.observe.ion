@@ -118,7 +118,7 @@ export const createShim = ->
             if forceImmediate
                 check()
             else
-                timeout ?= setTimeout(check, 10)
+                timeout ?= setTimeout(check, 0)
 
     return {observe,unobserve}
 
