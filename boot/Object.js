@@ -5,7 +5,12 @@ var _ref2 = {};
 {
     _ref2[typeKey] = ion.patch(_ref2[typeKey], {
         visible: false,
-        type: 'string'
+        type: 'string',
+        get: function () {
+            return this.constructor.id;
+        },
+        set: function () {
+        }
     });
     _ref2.toJSON = function () {
         var properties = {};

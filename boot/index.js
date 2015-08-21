@@ -4,7 +4,13 @@ var noop = function () {
 };
 require('./es6');
 global.DEBUG = global.DEBUG != null ? global.DEBUG : true;
-var primitive = {
+var valueTypes = {
+        string: true,
+        number: true,
+        boolean: true
+    }, isValueType = function (object) {
+        return (!(object != null) || valueTypes[typeof object]) != null ? !(object != null) || valueTypes[typeof object] : false;
+    }, primitive = {
         string: true,
         number: true,
         boolean: true,
@@ -83,36 +89,10 @@ var primitive = {
             }
             return true;
         };
-    }(), prioritizeCallback = function () {
-        var queue = [];
-        var timeoutId = null;
-        var flush = function () {
-            queue.sort(function (a, b) {
-                return a.priority - b.priority;
-            });
-            for (var _i = 0; _i < queue.length; _i++) {
-                var _ref3 = queue[_i];
-                var callback = _ref3.callback;
-                var args = _ref3.args;
-                var priority = _ref3.priority;
-                callback.apply(null, args);
-            }
-            queue.length = 0;
-            timeoutId = null;
-        };
-        return function (callback, priority) {
-            return function () {
-                var args = Array.prototype.slice.call(arguments, 0);
-                queue.push({
-                    callback: callback,
-                    args: args,
-                    priority: priority
-                });
-                timeoutId = timeoutId != null ? timeoutId : setTimeout(flush, 0);
-            };
-        };
     }();
-var patch = exports.patch = function () {
+var runFile = exports.runFile = function (file) {
+        return require('./builder').runFile(file);
+    }, patch = exports.patch = function () {
         var mergePatch = require('./mergePatch');
         var patchFunction = function (object, patch) {
             return mergePatch.merge(object, patch);
@@ -124,29 +104,15 @@ var patch = exports.patch = function () {
         return patchFunction;
     }(), create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
+    }, nextTick = exports.nextTick = function (callback) {
+        if ((global.process != null ? global.process.nextTick : void 0) != null) {
+            global.process.nextTick(callback);
+        } else {
+            setImmediate(callback);
+        }
     }, setImmediate = exports.setImmediate = function () {
         if (global.setImmediate != null) {
             return global.setImmediate;
-        }
-        if (global.document != null) {
-            return function () {
-                var hiddenDiv = document.createElement('div');
-                var callbacks = [];
-                new MutationObserver(function (records) {
-                    var cbList = callbacks;
-                    callbacks = [];
-                    for (var _i2 = 0; _i2 < cbList.length; _i2++) {
-                        var callback = cbList[_i2];
-                        callback();
-                    }
-                }).observe(hiddenDiv, { attributes: true });
-            }();
-            return function setImmediate(callback) {
-                if (callbacks.length === 0) {
-                    hiddenDiv.setAttribute('yes', 'no');
-                }
-                callbacks.push(callback);
-            };
         }
         return function (fn) {
             setTimeout(fn, 0);
@@ -164,34 +130,31 @@ var patch = exports.patch = function () {
             }
         }
         return context.createRuntime(ast);
-    }, nextTick = exports.nextTick = (this.process != null ? this.process.nextTick : void 0) != null ? this.process.nextTick : function (fn) {
-        return setTimeout(fn, 0);
     }, clone = exports.clone = function (object, _deep) {
         if (_deep == null)
             _deep = false;
         if (Array.isArray(object)) {
             var _ref = [];
-            for (var _i3 = 0; _i3 < object.length; _i3++) {
-                var item = object[_i3];
+            for (var _i = 0; _i < object.length; _i++) {
+                var item = object[_i];
                 _ref.push(_deep ? clone(item, _deep) : item);
             }
             return _ref;
         } else if ((object != null ? object.constructor : void 0) === Object) {
-            var _ref4 = {};
+            var _ref3 = {};
             for (var key in object) {
                 var value = object[key];
-                _ref4[key] = _deep ? clone(value, _deep) : value;
+                _ref3[key] = _deep ? clone(value, _deep) : value;
             }
-            return _ref4;
+            return _ref3;
         } else {
             return object;
         }
     }, observe = exports.observe = function (object, observer, options) {
-        if (object === global || object === console) {
+        if (object === global || object === console || isValueType(object)) {
             return noop;
         }
         var property = options != null ? options.property : void 0;
-        var priority = (options != null ? options.priority : void 0) != null ? options.priority : 0;
         var removed = false;
         var observable = isObjectObservable(object);
         if (!observable) {
@@ -216,15 +179,19 @@ var patch = exports.patch = function () {
         object != null ? object.onObserved != null ? object.onObserved(observer, property) : void 0 : void 0;
         observe.count = (observe.count != null ? observe.count : 0) + 1;
         return function () {
-            observe.count--;
-            removed = true;
-            if (!observable) {
-                nodeObserveShim.unobserve(object, observer, property);
-            } else if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
-                Object.unobserve(object, observer);
-                object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
+            if (!removed) {
+                observe.count--;
+                removed = true;
+                if (!observable) {
+                    nodeObserveShim.unobserve(object, observer, property);
+                } else if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
+                    Object.unobserve(object, observer);
+                    object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
+                }
+                object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
+            } else {
+                console.warn('unobserve should not be called multiple times!');
             }
-            object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
         };
     }, checkForChanges = exports.checkForChanges = function () {
         if (Object.observe.checkForChanges != null) {
@@ -397,10 +364,7 @@ var patch = exports.patch = function () {
             delete object[typeKey];
             return type;
         };
-        var deserialize = function (object) {
-            if (typeof object === 'string') {
-                object = JSON.parse(object);
-            }
+        var convertType = function (object) {
             var typeKey = require('ion/Object').typeKey;
             var typeName = object[typeKey];
             if (typeName != null) {
@@ -412,15 +376,27 @@ var patch = exports.patch = function () {
                 for (var key in object) {
                     var value = object[key];
                     if (key !== typeKey) {
-                        typedObject[key] = object[key];
+                        typedObject[key] = value;
                     }
                 }
-                return typedObject;
-            } else {
-                return object;
+                object = typedObject;
             }
+            for (var key in object) {
+                var value = object[key];
+                if ((value != null ? value.constructor : void 0) === Object) {
+                    object[key] = convertType(value);
+                }
+            }
+            return object;
+        };
+        var deserialize = function (object) {
+            if (typeof object === 'string') {
+                object = JSON.parse(object);
+            }
+            return convertType(object);
         };
         deserialize.extractType = extractType;
+        deserialize.convertType = convertType;
         return deserialize;
     }(), test = exports.test = {
         defineClass: function () {
@@ -474,8 +450,8 @@ var patch = exports.patch = function () {
             'builder',
             'browser'
         ];
-    for (var _i4 = 0; _i4 < _ref2.length; _i4++) {
-        var name = _ref2[_i4];
+    for (var _i2 = 0; _i2 < _ref2.length; _i2++) {
+        var name = _ref2[_i2];
         (function (name) {
             Object.defineProperty(exports, name, {
                 enumerable: true,

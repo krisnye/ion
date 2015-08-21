@@ -11,9 +11,9 @@ var VariableDeclaration = ion.defineClass({
             {
                 var _ref = this.declarations;
                 for (var _i = 0; _i < _ref.length; _i++) {
-                    var _ref5 = _ref[_i];
-                    var name = _ref5.id.name;
-                    var init = _ref5.init;
+                    var _ref6 = _ref[_i];
+                    var name = _ref6.id.name;
+                    var init = _ref6.init;
                     _ref4.push(this.context.setVariableFromAst(name, init));
                 }
             }
@@ -21,15 +21,15 @@ var VariableDeclaration = ion.defineClass({
         },
         properties: {
             activate: function () {
-                var _ref6 = [];
+                var _ref5 = [];
                 {
                     var _ref2 = this.expressions;
                     for (var _i2 = 0; _i2 < _ref2.length; _i2++) {
                         var expression = _ref2[_i2];
-                        _ref6.push(expression.observe(noop));
+                        _ref5.push(expression.observe(noop));
                     }
                 }
-                this.unobserves = _ref6;
+                this.unobserves = _ref5;
             },
             deactivate: function () {
                 {

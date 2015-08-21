@@ -28,8 +28,8 @@ var File = ion.defineClass({
                 if (fs.existsSync(this.path)) {
                     watcher = fs.watch(this.path, ion.bind(function () {
                         var modified = utility.getModified(this.path);
-                        this.modified = modified;
-                        if (modified !== this.modified) {
+                        if (this.modified !== modified) {
+                            this.modified = modified;
                             ion.checkForChanges();
                         }
                     }, this));
@@ -52,7 +52,7 @@ var File = ion.defineClass({
             },
             directoryName: {
                 get: function () {
-                    return np.dirname(this.path);
+                    return np.dirname(this.path) != null ? np.dirname(this.path) : '';
                 }
             },
             exists: {
@@ -62,8 +62,13 @@ var File = ion.defineClass({
             },
             copyFrom: function (file) {
                 file = File(file);
-                this.write(file.read(null), null);
-                console.log('Copied: ' + np.normalize(this.path));
+                var content = file.read(null);
+                if (content.length === 0) {
+                    console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n' + file + ' ' + file.modified + '\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+                } else {
+                    this.write(content, null);
+                    console.log('Copied: ' + np.normalize(this.path));
+                }
             },
             read: function () {
                 var _lastModified = {};
@@ -75,8 +80,14 @@ var File = ion.defineClass({
                         if (modified === _lastModified[this.path]) {
                             content = _content[this.path];
                         } else {
-                            _content[this.path] = content = utility.read(this.path, encoding);
-                            _lastModified[this.path] = modified;
+                            content = utility.read(this.path, encoding);
+                            if (content.length > 0) {
+                                _content[this.path] = content;
+                                _lastModified[this.path] = modified;
+                            } else {
+                                delete _content[this.path];
+                                delete _lastModified[this.path];
+                            }
                         }
                         return content;
                     } else {

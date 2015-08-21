@@ -21,14 +21,14 @@ var ArrayExpression = ion.defineClass({
             setArgumentValue: function (key, expression, value) {
                 if (this.argumentValues[key] !== value) {
                     this.unobserveExpressionValues[key] != null ? this.unobserveExpressionValues[key]() : void 0;
+                    this.unobserveExpressionValues[key] = null;
                     this.argumentValues[key] = value;
                     if (this.observeElements) {
                         if (value != null) {
                             this.itemObserver = this.itemObserver != null ? this.itemObserver : ion.bind(function () {
                                 this.notifyIfActive();
                             }, this);
-                            var priority = this.context.depth;
-                            this.unobserveExpressionValues[key] = expression.deep ? ion.patch.watch(value, this.itemObserver) : ion.observe(value, this.itemObserver, { priority: priority });
+                            this.unobserveExpressionValues[key] = expression.deep ? ion.patch.watch(value, this.itemObserver) : ion.observe(value, this.itemObserver);
                         }
                     }
                     this.notifyIfActive();

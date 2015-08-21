@@ -9,17 +9,6 @@ const
     builder = import './'
     utility = import './utility'
 
-    createDebugScript = (manifest, moduleName, path) ->
-        let scripts = []
-            for file in manifest.files
-                "{{path}}{{moduleName}}/lib/{{file}}"
-        return ""
-            (function(files){
-                for (var i = 0; i < files.length; i++) {
-                    document.writeln("<script src='" + files[i] + "'></script>")
-                }
-            })({{JSON.stringify(scripts)}});
-
     compilers =
         ".coffee":
             compile: builder.compileCoffeeScript
@@ -41,29 +30,20 @@ export template (packagePatch) ->
 
     # build all source files with a single search, and also build a list of their output names
     let extensions = Object.keys(compilers)
-    let outputFiles = {}
-        for path, source of input.search(extensions, packageJson.build.exclude)
-            if not source.isDirectory
-                let compiler = compilers[source.getExtension()]
-                let targetPath = builder.changeExtension(path, '.js')
-                # let outputFile = output.getFile(targetPath)
-                # if source.modified > outputFile.modified
-                if compiler.compileWithSourceMap?
-                    let mapPath = builder.changeExtension(path, '.map')
-                    let mapName = mapPath.split(/[\/\\]/g).slice(-1)[0]
-                    let [code,map] = compiler.compileWithSourceMap(source, packageJson)
-                    void output.write(targetPath, code + "\n//# sourceMappingURL=./" + mapName)
-                    void output.write(mapPath, map)
-                else
-                    void output.write(targetPath, compiler.compile(source, packageJson))
-                [targetPath]: output.getFile(targetPath)
-                # also add the index for this file, since it may be generated in next section
-                let indexPath = targetPath.slice(0, targetPath.lastIndexOf('/') + 1) + "index.js"
-                [indexPath]: output.getFile(indexPath)
-        else
-            void output.delete(targetPath)
-            void output.delete(mapPath)
-            delete [targetPath]
+    for path, source of input.search(extensions, packageJson.build.exclude)
+        if not source.isDirectory
+            let compiler = compilers[source.getExtension()]
+            let targetPath = builder.changeExtension(path, '.js')
+            # let outputFile = output.getFile(targetPath)
+            # if source.modified > outputFile.modified
+            if compiler.compileWithSourceMap?
+                let mapPath = builder.changeExtension(path, '.map')
+                let mapName = mapPath.split(/[\/\\]/g).slice(-1)[0]
+                let [code,map] = compiler.compileWithSourceMap(source, packageJson)
+                void output.write(targetPath, code + "\n//# sourceMappingURL=./" + mapName)
+                void output.write(mapPath, map)
+            else
+                void output.write(targetPath, compiler.compile(source, packageJson))
 
     # build a default index file for each output directory (including root)
     let potentialIndexDirectories = input.search(null, extensions.concat(packageJson.build.exclude))
@@ -82,16 +62,15 @@ export template (packagePatch) ->
                     for key, childFile of indexDirectory.search(null, null, {recursive:false})
                         if key isnt indexName and (childFile.path.endsWith('.js') or childFile.isDirectory)
                             let name = childFile.isDirectory ? key : key.substring(0, key.lastIndexOf('.js'))
-                            if not name.startsWith('_')
+                            if not name.startsWith('_') and name isnt ''
                                 [key]: "Object.defineProperty(exports, '{{name}}', {get:function(){ return require('./{{name}}') }, enumerable: true}) "
 
                 let indexModuleId = np.join(moduleName, path, "index").replace(/\\/g, '/')
                 void indexDirectory.write(indexName, builder.addBrowserShim([value for key, value of lines].join('\n'), indexModuleId))
 
     # build a manifest file with require.js at the top
-    # ignore output _browser.js and node_modules
 
-    # output.search(".js", [/^_/, 'node_modules'].concat(Object.keys(packageJson.build.merge ? {})))
+    let outputFiles = output.search(".js", [/^_/, 'node_modules'].concat(packageJson.build.exclude))
     let top = [key for key of outputFiles if key.endsWith('require.js')]
     let sortedFiles = top.concat([key for key of outputFiles if not builder.isPrivate(key) and top.indexOf(key) < 0])
     let manifestFileName = "manifest.json"
@@ -100,37 +79,6 @@ export template (packagePatch) ->
         modified: Math.max.apply(null, [file.modified for path, file of outputFiles])
         files: [builder.normalizePath(path) for path in sortedFiles]
     output.write(manifestFileName, JSON.stringify(manifest, null, '  ', sortedFiles))
-    # also write the debug script
-    output.write('_debug.js', createDebugScript(manifest, moduleName, "/js/"))
-
-    # # build merged file, just so we can test locally with file:// protocol
-    # if packageJson.build.merge?
-    #     for mergeFile, options of packageJson.build.merge
-    #         let mergedArray = []
-    #             for index, name of sortedFiles
-    #                 let content = outputFiles[name].read?()
-    #                 if content? and not content.startsWith("#") and not utility.isMatch(name, options.exclude, false)
-    #                     # remove source mapping comments.
-    #                     [index]: content
-    #                 else
-    #                     [index]: ""
-    #             else
-    #                 [index]: ""
-
-    #         let merged = mergedArray.join('\n')
-    #         if options.compress
-    #             let minified = require('uglify-js').minify(merged, {fromString:true})
-    #             output.write(mergeFile, minified.code)
-    #         else
-    #             output.write(mergeFile, merged)
-
-    # # copy the package.json to the lib directory
-    # if packageJson.build.package isnt false
-    #     output.write('package.json', JSON.stringify(ion.patch(ion.clone(packageJson), {main:undefined}), null, '    '))
-    #     # # also copy the bower.json file if present
-    #     # let bower = new File('bower.json')
-    #     # if bower.exists
-    #     #     output.write('bower.json', bower.read())
 
     # builder.test
     if packageJson.build.test isnt false

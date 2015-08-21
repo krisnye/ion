@@ -1,5 +1,8 @@
 void (function(){var _ion_runtime_IfStatement_ = function(module,exports,require){'use strict';
-var ion = require('../'), Statement = require('./Statement');
+var ion = require('../'), _ref;
+_ref = require('./');
+var Statement = _ref.Statement;
+var Factory = _ref.Factory;
 var IfStatement = ion.defineClass({
         name: 'IfStatement',
         properties: {

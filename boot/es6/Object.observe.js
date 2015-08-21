@@ -148,7 +148,7 @@ var createShim = exports.createShim = function () {
                 if (forceImmediate) {
                     check();
                 } else {
-                    timeout = timeout != null ? timeout : setTimeout(check, 10);
+                    timeout = timeout != null ? timeout : setTimeout(check, 0);
                 }
             };
         }();

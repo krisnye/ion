@@ -1,8 +1,10 @@
-void (function(){var _ion_builder_watcher_ = function(module,exports,require){var allWatchers, fs, np, util;
+void (function(){var _ion_builder_watcher_ = function(module,exports,require){var allWatchers, fs, ion, np, util;
 
 if (global.window) {
   return;
 }
+
+ion = require('../');
 
 fs = require('fs');
 
@@ -45,7 +47,7 @@ exports.watchDirectory = function(dirname, options, listener) {
     }
     if (filter(filename)) {
       if (async) {
-        return process.nextTick(function() {
+        return ion.setImmediate(function() {
           return listener(filename, curr, prev, change);
         });
       } else {

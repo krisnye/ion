@@ -19,23 +19,14 @@ if (args[0] === '-c' || args[0] === '-w') {
             process.exit();
         }
     } catch (e) {
-        console.log('fuck you------------------------------');
         console.error(e.stack);
         process.exit(1);
     }
 } else {
-    global.ion = require('../');
-    var File = require('./File');
-    var compiler = require('../compiler');
+    var ion = require('../');
     for (var _i = 0; _i < args.length; _i++) {
         var arg = args[_i];
-        var file = new File(arg);
-        if (!file.exists) {
-            throw new Error('File not found: ' + arg);
-        }
-        var code = file.read();
-        var js = compiler.compile(code);
-        eval(js);
+        ion.runFile(arg);
     }
 }
 //# sourceMappingURL=./_command.map

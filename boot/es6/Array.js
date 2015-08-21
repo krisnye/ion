@@ -22,6 +22,13 @@ if (!(Array.prototype.contains != null)) {
         }
     });
 }
+if (!(Array.prototype.includes != null)) {
+    Object.defineProperty(Array.prototype, 'includes', {
+        value: function (item) {
+            return this.indexOf(item) >= 0;
+        }
+    });
+}
   }
   if (typeof require === 'function') {
     if (require.register)

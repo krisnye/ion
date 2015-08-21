@@ -1,5 +1,6 @@
 void (function(){var _ion_runtime_CallExpression_ = function(module,exports,require){'use strict';
-var ion = require('../'), _ref = require('./');
+var ion = require('../'), _ref;
+_ref = require('./');
 var DynamicExpression = _ref.DynamicExpression;
 var ArrayExpression = _ref.ArrayExpression;
 var Factory = _ref.Factory;
@@ -30,7 +31,7 @@ var CallExpression = ion.defineClass({
                             } else {
                                 this.unobserveThis = ion.observe(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function () {
                                     this.evaluate();
-                                }, this), { priority: this.context.depth });
+                                }, this));
                             }
                         }
                         this.evaluate();
@@ -76,6 +77,7 @@ var CallExpression = ion.defineClass({
                 } catch (e) {
                     var start = this.loc.start;
                     console.error('Call Error at ' + start.source + ' (line:' + start.line + ',column:' + start.column + ')');
+                    console.error(e);
                     throw e;
                 }
             }

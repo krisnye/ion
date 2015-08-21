@@ -11,6 +11,9 @@ var Directory = ion.defineClass({
             }
         },
         properties: {
+            create: function () {
+                utility.makeDirectories(this.path);
+            },
             exists: {
                 get: function () {
                     return fs.existsSync(this.path);

@@ -1,6 +1,6 @@
 return if global.window
 
-ion = require 'ion'
+ion = require '../'
 fs = require 'fs'
 np = require 'path'
 util = require './utility'

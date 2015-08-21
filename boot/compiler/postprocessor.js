@@ -381,7 +381,7 @@ nodejsModules = function(node, context) {
 };
 
 destructuringAssignments = function(node, context) {
-  var count, declarator, expression, index, pattern, statement, statements, tempId, _i, _j, _k, _len, _len1, _len2, _ref1, _ref2;
+  var count, declarator, declaratorIndex, expression, index, pattern, statement, statements, tempId, _i, _j, _k, _len, _len1, _len2, _ref1, _ref2;
   if (isFunctionNode(node)) {
     _ref1 = node.params;
     for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
@@ -412,16 +412,29 @@ destructuringAssignments = function(node, context) {
     }
   }
   if (node.type === 'VariableDeclaration' && context.isParentBlock()) {
+    count = 0;
     _ref2 = node.declarations;
-    for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-      declarator = _ref2[_k];
+    for (declaratorIndex = _k = 0, _len2 = _ref2.length; _k < _len2; declaratorIndex = ++_k) {
+      declarator = _ref2[declaratorIndex];
       if (!(isPattern(declarator.id))) {
         continue;
       }
       pattern = declarator.id;
       tempId = context.getNewInternalIdentifier();
       declarator.id = tempId;
-      count = 0;
+      if ((declarator.init != null) && declaratorIndex > 0) {
+        context.addStatement({
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            operator: '=',
+            left: tempId,
+            right: declarator.init
+          }
+        }, ++count);
+        declarator.init = null;
+        node.kind = 'let';
+      }
       forEachDestructuringAssignment(pattern, tempId, function(id, expression) {
         return context.addStatement({
           type: 'VariableDeclaration',
@@ -1685,7 +1698,7 @@ propertyDefinitions = function(node, context) {
 
 exports.postprocess = function(program, options) {
   var enter, exit, previousContext, steps, traversal, variable, _i, _len;
-  steps = [[namedFunctionsAndNewArguments, superExpressions, activateStatements, addPropertyDeclaration, propertyDefinitions], [destructuringAssignments, callFunctionBindForFatArrows], [createTemplateFunctionClone], [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions, checkVariableDeclarations, hoistVariables], [extractForLoopsInnerAndTest, extractForLoopRightVariable], [extractReactiveForPatterns, validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]];
+  steps = [[namedFunctionsAndNewArguments, superExpressions, activateStatements, addPropertyDeclaration, propertyDefinitions], [destructuringAssignments, callFunctionBindForFatArrows], [createTemplateFunctionClone], [javascriptExpressions, arrayComprehensionsToES5, variableDeclarationExpressions, checkVariableDeclarations, hoistVariables], [extractForLoopsInnerAndTest, extractForLoopRightVariable], [extractReactiveForPatterns, validateTemplateNodes, classExpressions], [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators], [defaultOperatorsToConditionals], [wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments], [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression], [addUseStrictAndRequireIon], [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]];
   if ((options != null ? options.target : void 0) === 'es5') {
     steps.push([letAndConstToVar]);
   }

@@ -10,7 +10,9 @@ var DynamicExpression = ion.defineClass({
             deactivate: function () {
                 this.isActive = false;
             },
-            observe: function (observer) {
+            observe: function (observer, options) {
+                var originalObserver = observer;
+                var removed = false;
                 var watchers = this._watchers = this._watchers != null ? this._watchers : [];
                 if (watchers.length === 0) {
                     this.activate();
@@ -18,12 +20,15 @@ var DynamicExpression = ion.defineClass({
                 watchers.push(observer);
                 if (this.hasValue()) {
                     var value = this.getValue();
-                    this._notifyWatcher(observer, value);
+                    this._notifyWatcher(originalObserver, value);
                 }
                 return ion.bind(function () {
-                    this._watchers.remove(observer);
-                    if (this._watchers.length === 0) {
-                        this.deactivate();
+                    if (!removed) {
+                        removed = true;
+                        this._watchers.remove(observer);
+                        if (this._watchers.length === 0) {
+                            this.deactivate();
+                        }
                     }
                 }, this);
             },

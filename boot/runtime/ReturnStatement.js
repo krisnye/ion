@@ -13,7 +13,9 @@ var ReturnStatement = ion.defineClass({
             deactivate: function () {
                 ReturnStatement.super.prototype.deactivate.apply(this, arguments);
                 this.argumentWatcher != null ? this.argumentWatcher(void 0) : void 0;
-                this.unobserve();
+                this.argumentWatcher = null;
+                this.unobserve != null ? this.unobserve() : void 0;
+                this.unobserve = null;
             }
         }
     }, Statement);

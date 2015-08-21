@@ -1,4 +1,4 @@
-void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compileIonWithSourceMap, compilePegjs, exports, fs, getModuleId, ion, isPrivate, name, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _, _fn, _i, _len, _ref;
+void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compileIonWithSourceMap, compilePegjs, compilePegs, exports, fs, getModuleId, ion, isPrivate, name, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _, _fn, _i, _len, _ref;
 
 if (global.window) {
   return;
@@ -47,10 +47,14 @@ module.exports = exports = {
     }
     return _results;
   },
-  runIonFile: function(file) {
-    var js, src;
-    src = fs.readFileSync(file, 'utf8');
-    js = require('../compiler').compile(src);
+  runFile: function(file) {
+    var code, js;
+    if (!fs.existsSync(file)) {
+      console.warn("File not found: {{file}}");
+      return;
+    }
+    code = utility.read(file);
+    js = ion.compiler.compile(code);
     return eval(js);
   },
   runTests: (function() {
@@ -159,6 +163,26 @@ module.exports = exports = {
         output: "source"
       });
       source = "module.exports = " + parser;
+      source = addBrowserShim(source, moduleId);
+      return source;
+    } catch (_error) {
+      e = _error;
+      return console.error(e);
+    }
+  },
+  compilePegs: compilePegs = function(source, packageObject) {
+    var e, filename, input, moduleId, parser, peg;
+    if (source.modified === 0) {
+      return;
+    }
+    moduleId = typeof packageObject === 'string' ? packageObject : getModuleId(source, packageObject);
+    filename = source.path;
+    try {
+      peg = require('pegs').parser;
+      console.log("Building: " + filename);
+      input = source.read();
+      parser = peg.parse(input);
+      source = parser;
       source = addBrowserShim(source, moduleId);
       return source;
     } catch (_error) {

@@ -1,12 +1,13 @@
 void (function(){var _ion_runtime_Literal_ = function(module,exports,require){'use strict';
 var ion = require('../');
+var noop = function () {
+};
 var Literal = ion.defineClass({
         name: 'Literal',
         properties: {
             observe: function (observer) {
                 observer(this.value);
-                return function () {
-                };
+                return noop;
             }
         }
     }, require('./Expression'));
