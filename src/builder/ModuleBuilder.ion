@@ -36,14 +36,14 @@ export template (packagePatch) ->
             let targetPath = builder.changeExtension(path, '.js')
             # let outputFile = output.getFile(targetPath)
             # if source.modified > outputFile.modified
-            if compiler.compileWithSourceMap?
-                let mapPath = builder.changeExtension(path, '.map')
-                let mapName = mapPath.split(/[\/\\]/g).slice(-1)[0]
-                let [code,map] = compiler.compileWithSourceMap(source, packageJson)
-                void output.write(targetPath, code + "\n//# sourceMappingURL=./" + mapName)
-                void output.write(mapPath, map)
-            else
-                void output.write(targetPath, compiler.compile(source, packageJson))
+            # if compiler.compileWithSourceMap?
+            #     let mapPath = builder.changeExtension(path, '.map')
+            #     let mapName = mapPath.split(/[\/\\]/g).slice(-1)[0]
+            #     let [code,map] = compiler.compileWithSourceMap(source, packageJson)
+            #     void output.write(targetPath, code + "\n//# sourceMappingURL=./" + mapName)
+            #     void output.write(mapPath, map)
+            # else
+            void output.write(targetPath, compiler.compile(source, packageJson))
 
     # build a default index file for each output directory (including root)
     let potentialIndexDirectories = input.search(null, extensions.concat(packageJson.build.exclude))

@@ -4,9 +4,10 @@ const
 const typeKey = '$'
 export class Object extends null
     constructor: (properties) ->
-        if properties?
-            for key, value of properties
-                @[key] = value
+        for arg in arguments
+            if arg?
+                for key, value of arg
+                    @[key] = value
     typeKey: typeKey
     is: (object) -> object?.constructor.types?.has?(@)
     properties:

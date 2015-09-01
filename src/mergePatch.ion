@@ -74,7 +74,7 @@ export const
                 delete target[key]
             else
                 let newValue = merge(target[key], value, options)
-                if canSetProperty(target, key)
+                if newValue isnt target[key] and canSetProperty(target, key)
                     target[key] = newValue
         return target
     # combines two patches to make a single patch

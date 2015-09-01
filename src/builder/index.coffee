@@ -167,7 +167,8 @@ module.exports = exports =
     shimJavascript: shimJavascript = (source, packageObject) ->
         return if source.modified is 0
         moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
-        return addBrowserShim source.read(), moduleId
+        result = addBrowserShim source.read(), moduleId
+        return result
 
     addBrowserShim: addBrowserShim = (sourceText, moduleId) ->
         # don't shim if the source starts with a shebang

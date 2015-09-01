@@ -1,0 +1,106 @@
+
+const
+    ion = import 'ion'
+    {builder} = ion
+    {File,Directory,utility,ModuleBuilder} = builder
+    clientJsDir = 'js'
+    serverJsDir = 'WEB-INF/js'
+    serverJavaDir = 'WEB-INF/java'
+    np = import 'path'
+    fs = import 'fs'
+
+export template ->
+    const
+        packageJson = JSON.parse(new File('package.json').read())
+        input = new Directory(packageJson.directories.src ? 'src')
+        output = new Directory(packageJson.directories.www ? 'debug')
+        clientOutput = output.getDirectory(clientJsDir)
+        serverOutput = output.getDirectory(serverJsDir)
+        nodepaths = ['node_modules']
+
+    # Copy local development versions of glass-pages to input directory if available
+    # They will be copied from src to the build directory by ant
+    let glassPages = new Directory('../glass-pages/dist')
+    if glassPages.exists
+        let javaDirectory = input.getDirectory(serverJavaDir)
+        for key, source of glassPages.search()
+            let target = javaDirectory.getFile(key)
+            if target.modified < source.modified
+                target.copyFrom(source)
+
+    let copyModules = template (modules, outputDirectory) ->
+        for moduleName in modules
+            for nodepath in nodepaths
+                let directory = new Directory(np.join(nodepath, moduleName + "/lib"))
+                for key, source of directory.search([".js",".map",".json"], [].concat(packageJson.build.client.exclude))
+                    let target = outputDirectory.getFile(source.path.substring(nodepath.length))
+                    if target.modified < source.modified
+                        target.copyFrom(source)
+                else
+                    target.delete()
+
+    copyModules(packageJson.build.client.modules, clientOutput)
+    copyModules(packageJson.build.server.modules, serverOutput)
+
+    # build client javascript
+    ModuleBuilder(
+        directories:
+            src:input + '/js' # client side javascript
+            lib:output + '/' + clientJsDir
+        build:
+            exclude: packageJson.build.client.exclude
+            test: false
+    )
+
+    # build server javascript
+    ModuleBuilder(
+        directories:
+            src:input + '/js' # server side javascript
+            lib:output + '/' + serverJsDir
+        build:
+            exclude: packageJson.build.server.exclude
+            test: true
+    )
+
+    # Copy all other files from src to output
+    for path, file of input.search(null, [".js", ".DS_Store", ".ionpage",".coffeepage",".coffee",".java",".class",".jar", ".ion"])
+        if file.isFile
+            output.write(path, file.read(null), null)
+    else
+        output.delete(path)
+
+    # Compile plain ion files, while excluding the js directory
+    for path, file of input.search(".ion", "js")
+        let targetPath = builder.changeExtension(path, ".js")
+        output.write(targetPath, builder.compileIon(file))
+    else
+        output.delete(targetPath)
+
+    # Compile ion pages
+    let pageOutput = output.getDirectory('WEB-INF/pages')
+    for path, file of input.search(".ionpage")
+        let targetPath = builder.changeExtension(path, ".js")
+        pageOutput.write(targetPath, "(function {{path.replace(/[\.\/\\]/g, '_')}}(){ {{builder.compileIon(file)}} })")
+    else
+        pageOutput.delete(targetPath)
+
+    # Build our scripts debug include file.
+    let files = {}
+        for manifestFilename in packageJson.build.manifests
+            let manifestFile = clientOutput.getFile(manifestFilename)
+            let manifest = JSON.parse(manifestFile.read())
+            for jsfile in manifest.files
+                let jspath = np.join(manifestFile.directoryName, jsfile).substring(output.path.length)
+                [jspath]: true
+            else
+                [jspath]: false
+    let scripts = [key for key, value of files if value]
+    output.write(
+        "scripts.js"
+        ""
+            ({{JSON.stringify(scripts)}}
+            .forEach(function(a) {
+                
+                document.writeln("<script src='" + a + "'></script>")
+            }));
+    )
