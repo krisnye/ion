@@ -74,7 +74,7 @@ export const
             let id = global.setImmediate(callback)
             return -> global.clearImmediate(id)
         else
-            let id = setTimeout(fn, 0)
+            let id = setTimeout(callback, 0)
             return -> clearTimeout(id)
     template = (fn, template) ->
         fn.template = template ? true
