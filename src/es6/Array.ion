@@ -4,7 +4,6 @@ if not Array.prototype.add?
         Array.prototype
         'add'
         {}
-            configurable: true
             value: (item, index) ->
                 @splice(index, 0, item)
     )
@@ -14,7 +13,6 @@ if not Array.prototype.remove?
         Array.prototype
         'remove'
         {}
-            configurable: true
             value: ->
                 for item in arguments
                     let index = @lastIndexOf(item)
