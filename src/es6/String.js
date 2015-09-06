@@ -1,7 +1,7 @@
 if (!String.prototype.endsWith) {
     Object.defineProperty(String.prototype, 'endsWith', {
         enumerable: false,
-        configurable: false,
+        configurable: true,
         writable: false,
         value: function (searchString, position) {
             position = position || this.length;
@@ -15,7 +15,7 @@ if (!String.prototype.endsWith) {
 if (!String.prototype.startsWith) {
   Object.defineProperty(String.prototype, 'startsWith', {
     enumerable: false,
-    configurable: false,
+    configurable: true,
     writable: false,
     value: function (searchString, position) {
       position = position || 0;
