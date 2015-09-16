@@ -29,14 +29,27 @@ export class Property extends Statement
             )
         deactivate: ->
             super
-            @unobserveKey()
-            @unobserveValue()
+            @unobserveKey?()
+            @unobserveKey = null
+            @unobserveValue?()
+            @unobserveValue = null
+            @restoreInitialPropertyValue?()
+            @restoreInitialPropertyValue = null
         setProperty: (key = @keyValue, value = @valueValue) ->
             # we must have a key, and the value must not be undefined UNLESS the value is explicitly undefined!
             if @hasOwnProperty('keyValue') and @hasOwnProperty('valueValue')
+                @restoreInitialPropertyValue?()
+                @restoreInitialPropertyValue = null
                 if key? and @context.output?
-                    let currentValue = @context.output[key]
-                    # we never assign undefined UNLESS it's explicit using the void operator
-                    if currentValue isnt value and (value isnt undefined or @valueExpression.operator is 'void')
+                    let initialValue = @context.output[key]
+                    let initialHasProperty = @context.output.hasOwnProperty(key)
+                    if initialValue isnt value
                         @context.output[key] = value
+                        let afterHasProperty = @context.output.hasOwnProperty(key)
+                        @restoreInitialPropertyValue = ->
+                            if not initialHasProperty and afterHasProperty
+                                delete @context.output[key]
+                            else
+                                @context.output[key] = initialValue
+
 
