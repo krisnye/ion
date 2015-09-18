@@ -45,7 +45,7 @@ export class Property extends Statement
                         @restoreInitialPropertyValue = ->
                             if not initialHasProperty and initialValue is undefined
                                 delete @context.output[key]
-                            else
+                            else if @context.output[key] isnt initialValue
                                 @context.output[key] = initialValue
 
                     if initialValue isnt value
