@@ -28,19 +28,17 @@ export class ForInOfStatement extends Statement
                 @keyName = @left.declarations[@type is 'ForOfStatement' ? 1 : 0]?.id.name
 
             # we must create new contexts for every item in the list thingy.
-            # console.log('ForEachStatement.activate', @)
             @collectionExpression ?= @context.createRuntime(@right)
             @unobserveExpression = @collectionExpression.observe(
                 @collectionWatcher ?= (collection) =>
                     # console.log('collectionWatcher', collection)
                     if @collection isnt collection
-                        if @collection?
-                            @forEach(
-                                @collection
-                                (key, value) =>
-                                    @removeItem(key, value)
-                            )
                         @unobserveCollection?()
+                        if @collection?
+                            #   we cannot simply iterate the this.collection since it's values may have changed
+                            #   this could result in orphaned statements.  We must remove all current statements.
+                            for key of @statements
+                                @removeItem(key)
                         @unobserveCollection = null
                         @collection = collection
                         if @collection?
@@ -57,7 +55,10 @@ export class ForInOfStatement extends Statement
             @unobserveExpression()
             @unobserveCollection?()
         addItem: (key, value, activate = true) ->
-            # console.log('add ' + key + ' ' + value)
+            # console.log('addItem', key, value, activate)
+            let currentStatement = @statements[key]
+            if currentStatement?
+                throw new Error("There should not be a current statement for this key: " + key)
             if value isnt undefined
                 # see if there is a cached statement with that value
                 let newContext = @context.newContext()
@@ -71,8 +72,8 @@ export class ForInOfStatement extends Statement
                     statement.activate()
                 return statement
         removeItem: (key, value) ->
+            # console.log('removeItem', key, value)
             let statement = @statements[key]
-            # console.log('remove ' + key + ' ' + value + ' ', statement)
             if statement?
                 @disposeStatement(statement)
             delete @statements[key]
@@ -96,13 +97,14 @@ export class ForInOfStatement extends Statement
                 return false
             let map = new Map
             for {type,object,name,oldValue} in changes
-                if not ignoreProperty(name)
-                    if not map.has(name)
-                        map.set(name, {type,object,name,oldValue})
-                    else
-                        let change = map.get(name)
-                        # update the type.
-                        change.type = type
+                if object is @collection # if we are getting a late message from the old collection, disregard
+                    if not ignoreProperty(name)
+                        if not map.has(name)
+                            map.set(name, {type,object,name,oldValue})
+                        else
+                            let change = map.get(name)
+                            # update the type.
+                            change.type = type
             let array = []
             map.forEach(
                 (change, name, object)->

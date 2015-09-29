@@ -14,7 +14,7 @@ module.exports = class CallExpression extends DynamicExpression
                         # we need to throw an exception here with location info
                         console.warn("Function is {{value}} ({{Factory.toCode(@callee)}}) ({{@loc.start.source}}:{{@loc.start.line}}:{{@loc.start.column + 1}})")
                     @calleeValue = value
-                    @evaluate()
+                    @queueEvaluate()
             )
             # get thisArg and observe for changes
             @unobserveCalleeObject = @calleeExpression.objectExpression?.observe(
@@ -31,34 +31,67 @@ module.exports = class CallExpression extends DynamicExpression
                                     thisArg
                                     @thisObserver ?= (patch) =>
                                         # console.log('deep change', patch)
-                                        @evaluate()
+                                        @queueEvaluate()
                                 )
                             else
                                 # shallow observe
                                 @unobserveThis = ion.observe(
                                     thisArg
                                     @thisObserver ?= =>
-                                        @evaluate()
+                                        @queueEvaluate()
                                 )
-                        @evaluate()
+                        @queueEvaluate()
             )
             @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:not @calleeValue?.template})
             @unobserveArguments = @argumentExpressions.observe(
                 @argumentWatcher ?= (value) =>
                     @argumentsValue = value
-                    @evaluate()
+                    @queueEvaluate()
             )
         deactivate: ->
             super
+            @cancelQueuedEvaluate?()
             @unobserveCallee()
             @unobserveArguments()
             @unobserveCalleeObject?()
             @unobserveThis?()
             @unobserveTemplate?()
+        queueEvaluate: ->
+            if not @hasEvaluated?
+                @evaluate()
+            else if not @cancelQueuedEvaluate?
+                @cancelQueuedEvaluate = ion.nextTick(@evaluate.bind(@))
         evaluate: ->
+            @cancelQueuedEvaluate = null
+
             if not (@isActive and @calleeValue? and @argumentsValue? and (@thisArg? or not @calleeExpression.objectExpression?))
                 return
+
+
+            @hasEvaluated = true
+
             let value = undefined
+
+            if @unobserveTemplate? and @lastCalleeValue is @calleeValue and @lastThisArg is @thisArg
+                #   if only the arguments have changed, we don't need to call a template again,
+                #   we can just change the previous argument values
+                for arg, index in @argumentsValue
+                    if @lastArgumentsValue[index] isnt arg
+                        @lastArgumentsValue[index] = arg
+                # console.log('change template arguments template-------------------')
+                return
+
+            # if @calleeValue.template
+            #     console.log('reevaluate template-------------------')
+            #     console.log(
+            #         thisArgChanged: @lastThisArg isnt @thisArg
+            #         calleeChanged: @lastCalleeValue isnt @calleeValue
+            #     )
+
+            @lastCalleeValue = @calleeValue
+            @lastArgumentsValue = @argumentsValue
+            @lastThisArg = @thisArg
+
             @unobserveTemplate?()
             @unobserveTemplate = null
             try

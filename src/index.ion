@@ -159,6 +159,7 @@ export const
             newFn.id = fn.id ? fn.name
         return newFn
     add = (container, item) ->
+        let originalItem = item
         let remove
         if typeof item is 'function' and (item.name?.length > 0 or item.id?) and typeof container.addEventListener is 'function'
             let name = item.id ? item.name
@@ -168,7 +169,6 @@ export const
                 capture = true
                 name = name.substring(0, name.length - captureSuffix.length)
             # we wrap all event handlers and call checkForChanges after
-            let originalItem = item
             item = ->
                 originalItem.apply(@, arguments)
                 # checkForChanges()
@@ -177,6 +177,9 @@ export const
             remove = ->
                 container.removeEventListener(name, item)
         else
+            # console.log('+', originalItem)
+            # if originalItem is 'High'
+            #     debugger
             if container.nodeType is 1
                 if typeof item isnt 'string' and not item?.nodeType?
                     item = JSON.stringify(item)
@@ -188,6 +191,9 @@ export const
             else
                 container.add(item)
             remove = ->
+                # console.log('-', originalItem)
+                # if originalItem is 'High'
+                #     debugger
                 if item?.removeSelf?
                     item.removeSelf()
                 else if item?.parentNode?

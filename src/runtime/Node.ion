@@ -1,3 +1,5 @@
 const ion = import '../'
 
 export class Node
+    properties:
+        toCode: -> import('./Factory').toCode(@ast)

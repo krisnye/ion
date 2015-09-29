@@ -15,6 +15,7 @@ class Factory
                 properties.factory = @
                 let type = import @runtime
                 return new type(properties)
+                    ast: ast
         canCache:
             writable: true
             value: (ast) -> false
