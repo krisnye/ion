@@ -56,8 +56,7 @@ export class ForInOfStatement extends Statement
             @unobserveCollection?()
         addItem: (key, value, activate = true) ->
             # console.log('addItem', key, value, activate)
-            let currentStatement = @statements[key]
-            if currentStatement?
+            if @statements.hasOwnProperty(key)
                 throw new Error("There should not be a current statement for this key: " + key)
             if value isnt undefined
                 # see if there is a cached statement with that value
