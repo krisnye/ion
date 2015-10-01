@@ -11,3 +11,33 @@ if not Object.is?
                     return true
                 return a isnt a and b isnt b
     )
+
+#   compatible with Sugar extensions, remove later when we refactor away our custom Array add method.
+Object.isEmpty = (object) ->
+    if not object?
+        return true
+    if typeof object is 'string'
+        return object.trim().length is 0
+    if Array.isArray(object)
+        return object.length is 0
+    if object.constructor is Object
+        for key of object
+            return false
+        return true
+    return false
+
+export const test = ->
+    assert Object.isEmpty(null)
+    assert Object.isEmpty()
+    assert Object.isEmpty(undefined)
+    assert Object.isEmpty([])
+    assert Object.isEmpty({})
+    assert Object.isEmpty("")
+    assert Object.isEmpty(" ")
+    assert not Object.isEmpty([1])
+    assert not Object.isEmpty({x:1})
+    assert not Object.isEmpty("h")
+    assert not Object.isEmpty(true)
+    assert not Object.isEmpty(false)
+    assert not Object.isEmpty(45)
+    assert not Object.isEmpty(new Date())
