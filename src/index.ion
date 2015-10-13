@@ -144,11 +144,17 @@ export const
             else
                 # debugger
                 console.warn("unobserve should not be called multiple times!")
-    checkForChanges = ->
-        if Object.observe.checkForChanges?
-            Object.observe.checkForChanges()
-        else
-            nodeObserveShim.observe.checkForChanges()
+    checkForChanges = do ->
+        let checkInternal = ->
+            if Object.observe.checkForChanges?
+                Object.observe.checkForChanges()
+            else
+                nodeObserveShim.observe.checkForChanges()
+        return ->
+            #   check immediately
+            checkInternal()
+            #   check again in a few, for Safari
+            setTimeout(checkInternal, 10)
     bind = (fn, thisArg) ->
         let newFn = fn.bind(thisArg)
         # the function name has semantic meaning for us when adding a function to an element
