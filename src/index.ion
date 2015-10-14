@@ -177,8 +177,7 @@ export const
             # we wrap all event handlers and call checkForChanges after
             item = ->
                 originalItem.apply(@, arguments)
-                # checkForChanges()
-                requestAnimationFrame(checkForChanges)
+                checkForChanges()
             container.addEventListener(name, item, capture)
             remove = ->
                 container.removeEventListener(name, item)
