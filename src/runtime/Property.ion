@@ -50,3 +50,4 @@ export class Property extends Statement
 
                     if initialValue isnt value
                         @context.output[key] = value
+
