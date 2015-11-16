@@ -23,9 +23,11 @@ export class ObjectExpression extends DynamicExpression
                         value = @value
 
                     if not @statements?
-                        let newContext = @context.newContext(value)
-                        @statements = newContext.createRuntime({type:'BlockStatement', body:@properties})
+                        let context = @context.newContext(value)
+                        context.setFastInsert(true)
+                        @statements = context.createRuntime({type:'BlockStatement', body:@properties})
                         @statements.activate()
+                        context.setFastInsert(false)
 
                     @setValue(value)
             )

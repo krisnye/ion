@@ -1243,13 +1243,12 @@ propertyDefinitions = (node, context) ->
                     }
                 ]
 
-# expandVariableDeclarations = (node, context) ->
-#     if node.type is 'VariableDeclaration' and node.declarations.length > 1
-#         for declaration in node.declarations.splice(1, node.declarations.length - 1)
-#             context.addStatement
-#                 type: node.type
-#                 declarations: [declaration]
-#                 kind: node.kind
+addOrderPropertyToStatements = (node, context) ->
+    if (node.body or node.properties)
+        for statement, index in (node.body ? node.properties)
+            order = String.fromCharCode(48 + index)
+            statement.order = order
+            # console.log("---------> " + order)
 
 exports.postprocess = (program, options) ->
     steps = [
@@ -1262,6 +1261,7 @@ exports.postprocess = (program, options) ->
         [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators]
         [defaultOperatorsToConditionals]
         [wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments]
+        [addOrderPropertyToStatements]
         [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression]
         [addUseStrictAndRequireIon]
         [nodejsModules, spreadExpressions, assertStatements, functionDeclarations]

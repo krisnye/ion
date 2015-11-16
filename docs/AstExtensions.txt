@@ -44,3 +44,6 @@ X   +AssertStatement
         expression: Expression
     +JavascriptExpression
         text: String
+
+    All Statements
+        order: String   // used for ordering inserted objects

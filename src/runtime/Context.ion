@@ -5,8 +5,43 @@ const
     Literal = import './Literal'
     noop = ->
 
+const createArrayInserter = (container) ->
+    let baseLength = container.length
+    let insertionOrders = []
+
+    return (value, order, fastInsert) ->
+        insertionOrders.push(order)
+        if fastInsert
+            container.push(value)
+        else
+            insertionOrders.sort()
+            let index = insertionOrders.indexOf(order)
+            container.splice(baseLength + index, 0, value)
+            # console.log('----- slow inserter -----> ' + order, value)
+
+        # return remove function
+        return ->
+            let index = insertionOrders.indexOf(order)
+            if index < 0
+                throw new Error("Insertion order {{JSON.stringify(order)}} not found {{JSON.stringify(insertionOrders)}}")
+            # console.log('remove: ' + JSON.stringify({value,index,insertionOrders,container}))
+            # remove from insertionOrder
+            insertionOrders.splice(index, 1)
+            # remove from container at baseLength plus index
+            container.splice(baseLength + index, 1)
+
+const createDefaultInserter = (container) ->
+    return (value, order, fastInsert) ->
+        return ion.add(container, value)
+
+const createInserter = (container) ->
+    if Array.isArray(container)
+        return createArrayInserter(container)
+    else
+        return createDefaultInserter(container)
+
 export class Context
-    constructor: (parent, output) ->
+    constructor: (parent, output, order) ->
         # the output object that values are written to
         @output = output
         # parent is either null or another Context
@@ -16,15 +51,28 @@ export class Context
         # an object that maps variable names to variable expressions
         @variables = {}
         # store a reference to the root context
-        @root = @parent?.root ? @
+        @root = parent?.root ? @
         # runtime nodes keyed by toCode
         @_runtimes = {}
         # if there is a return expression, copy it
         @returnExpression = parent?.returnExpression
+        # if this is a new output object then create a new list of objects inserted into output object
+        # they are keyed by order string
+        if output is parent?.output
+            @inserter = parent?.inserter
+            @order = (parent?.order ? "") + (order ? "")
+        else
+            @inserter = createInserter(output)
+            @order = order ? ""
     properties:
-        newContext: (output = @output) -> new Context(@, output)
+        newContext: (output = @output, order) -> new Context(@, output, order)
         createRuntime: (node) ->
             return Factory.createRuntime(@, node)
+        setFastInsert: (value) ->
+            @inserter.fastInsert = value
+        insert: (value, order) ->
+            order = @order + (order ? "")
+            return @inserter(value, order, @inserter.fastInsert)
         get: (name) ->
             let variable = @getVariable(name)
             if not variable?

@@ -121,6 +121,18 @@ tests =
     ion.add(_ref, d);
     return _ref;
     """
+    # """
+    # template ->
+    #     return []
+    #         if alpha
+    #             alpha
+    #         "Beta"
+    #         "Charlie"
+    #         for x in delta
+    #             x
+    #             y
+    #             z
+    # """: null
 
 if global.window?
     return
