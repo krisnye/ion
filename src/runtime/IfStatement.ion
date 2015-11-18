@@ -16,16 +16,16 @@ export class IfStatement extends Statement
                             # we don't have to necessarily delete old statements
                             # but behavior is more predictable this way
                             @alternateStatement = null
-                        let context = @context.newContext()
-                        @consequentStatement = context.createRuntime(@consequent, @order)
+                        let context = @context.newContext(null, @order)
+                        @consequentStatement = context.createRuntime(@consequent)
                         @consequentStatement.activate()
                     else
                         if @consequentStatement?.isActive
                             @consequentStatement.deactivate()
                             @consequentStatement = null
                         if @alternate?
-                            let context = @context.newContext()
-                            @alternateStatement = context.createRuntime(@alternate, @order)
+                            let context = @context.newContext(null, @order)
+                            @alternateStatement = context.createRuntime(@alternate)
                             @alternateStatement.activate()
             )
         deactivate: ->

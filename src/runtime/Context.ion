@@ -8,8 +8,13 @@ const
 const createArrayInserter = (container) ->
     let baseLength = container.length
     let insertionOrders = []
+    let insertionValues = {}
+    let pendingOrderChanges = {} # oldOrder => newOrder
 
-    return (value, order, fastInsert) ->
+    let insertInternal = (value, order, fastInsert) ->
+        if insertionValues[order]?
+            throw new Error("Cannot add a new item with the same order as an existing item: {{JSON.stringify({order,previousValue:insertionValues[order],newValue:value})}}")
+        insertionValues[order] = value
         insertionOrders.push(order)
         if fastInsert
             container.push(value)
@@ -18,22 +23,62 @@ const createArrayInserter = (container) ->
             let index = insertionOrders.indexOf(order)
             container.splice(baseLength + index, 0, value)
             # console.log('----- slow inserter -----> ' + order, value)
+    let removeInternal = (value, order) ->
+        # order MAY change during reactive runtime, so we may have to look it back up
+        if insertionValues[order] isnt value
+            # then we must find the new order for this value... this could be a fucking big bug source IF our values are equivalent primitives
+            order = null
+            for key, insertedValue of insertionValues
+                if insertedValue is value
+                    order = key
+                    break
+            if order is null
+                throw new Error("Could not find value in insertionValues " + value)
 
-        # return remove function
-        return ->
-            let index = insertionOrders.indexOf(order)
-            if index < 0
-                throw new Error("Insertion order {{JSON.stringify(order)}} not found {{JSON.stringify(insertionOrders)}}")
-            # console.log('remove: ' + JSON.stringify({value,index,insertionOrders,container}))
-            # remove from insertionOrder
-            insertionOrders.splice(index, 1)
-            # remove from container at baseLength plus index
-            container.splice(baseLength + index, 1)
+        let index = insertionOrders.indexOf(order)
+        if index < 0
+            throw new Error("Insertion order {{JSON.stringify(order)}} not found {{JSON.stringify(insertionOrders)}}")
+        # console.log('remove: ' + JSON.stringify({value,index,insertionOrders,container}))
+        # remove from insertionOrder
+        insertionOrders.splice(index, 1)
+        # remove from container at baseLength plus index
+        container.splice(baseLength + index, 1)
+        # delete from insertion values
+        delete insertionValues[order]
+
+    return
+        insert: (value, order, fastInsert) ->
+            insertInternal(value, order, fastInsert)
+            return -> removeInternal(value, order)
+        update: (oldOrder, newOrder) ->
+            if oldOrder? and newOrder?
+                pendingOrderChanges[oldOrder] = newOrder
+            else
+                # console.log("======> APPLY PENDING ORDER CHANGES: {{JSON.stringify(pendingOrderChanges)}}")
+
+                let reinsertValues = {}
+                # console.log("==================== BEGIN {{oldOrder}} -> {{newOrder}}")
+                for let i = insertionOrders.length - 1; i >= 0; i--
+                    # console.log(">>> " + JSON.stringify({i,insertionOrders}))
+                    let order = insertionOrders[i]
+                    for oldOrderValue, newOrderValue of pendingOrderChanges
+                        if order.startsWith(oldOrderValue)
+                            # console.log('------ REMOVING ' + JSON.stringify({order, oldOrder:oldOrderValue, newOrder:newOrderValue}))
+                            let insertedValue = insertionValues[order]
+                            reinsertValues[newOrderValue + order.substring(oldOrderValue.length)] = insertedValue
+                            removeInternal(insertedValue, order)
+
+                # new re-add changed values
+                for order, value of reinsertValues
+                    # console.log('+++++++ READDING ' + JSON.stringify({order}))
+                    insertInternal(value, order)
+                # console.log('==================== END')
 
 const createDefaultInserter = (container) ->
-    return (value, order, fastInsert) ->
-        return ion.add(container, value)
-
+    return
+        insert: (value, order, fastInsert) ->
+            return ion.add(container, value)
+        update: (oldOrder, newOrder) ->
 const createInserter = (container) ->
     if Array.isArray(container)
         return createArrayInserter(container)
@@ -58,21 +103,30 @@ export class Context
         @returnExpression = parent?.returnExpression
         # if this is a new output object then create a new list of objects inserted into output object
         # they are keyed by order string
-        if output is parent?.output
-            @inserter = parent?.inserter
-            @order = (parent?.order ? "") + (order ? "")
-        else
-            @inserter = createInserter(output)
-            @order = order ? ""
+        @inserter = output is parent?.output ? parent?.inserter : createInserter(output)
+        @order = order
     properties:
         newContext: (output = @output, order) -> new Context(@, output, order)
         createRuntime: (node) ->
             return Factory.createRuntime(@, node)
         setFastInsert: (value) ->
             @inserter.fastInsert = value
+        order:
+            get: ->
+                let value = @_order ? ""
+                if @output? and @output is @parent?.output
+                    value = @parent.order + value
+                return value
+            set: (value) ->
+                let _order = @_order
+                let oldValue = @order
+                @_order = value ? ""
+                let newValue = @order
+                if _order? and newValue isnt oldValue
+                    @inserter.update(oldValue, newValue)
         insert: (value, order) ->
             order = @order + (order ? "")
-            return @inserter(value, order, @inserter.fastInsert)
+            return @inserter.insert(value, order, @inserter.fastInsert)
         get: (name) ->
             let variable = @getVariable(name)
             if not variable?
