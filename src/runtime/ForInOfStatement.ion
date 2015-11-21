@@ -207,7 +207,7 @@ export class ForInOfStatement extends Statement
                     # We must now also update the new order on the context, since it may cause insertion locations to shift
                     context.order = @getOrderForKey(key)
                 # all of these contexts share the same inserter, which is the same as the one in our context.  Now we update all orders simultaneously.
-                @context.inserter.update()
+                @context.inserter?.update()
 
                 # activate new statements
                 for statement in activateStatements

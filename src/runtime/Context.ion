@@ -110,7 +110,8 @@ export class Context
         createRuntime: (node) ->
             return Factory.createRuntime(@, node)
         setFastInsert: (value) ->
-            @inserter.fastInsert = value
+            if @inserter?
+                @inserter.fastInsert = value
         order:
             get: ->
                 let value = @_order ? ""
@@ -123,7 +124,7 @@ export class Context
                 @_order = value ? ""
                 let newValue = @order
                 if _order? and newValue isnt oldValue
-                    @inserter.update(oldValue, newValue)
+                    @inserter?.update(oldValue, newValue)
         insert: (value, order) ->
             order = @order + (order ? "")
             return @inserter.insert(value, order, @inserter.fastInsert)
