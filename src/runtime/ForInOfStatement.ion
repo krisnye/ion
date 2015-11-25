@@ -119,15 +119,17 @@ export class ForInOfStatement extends Statement
                 (change, name, object)->
                     let newValue = change.object[name]
                     if newValue isnt change.oldValue
+                        # also store newValue on change for debug reasons
+                        # change.newValue = newValue
                         delete change.object
                         array.push(change)
             )
             return array
         applyChanges: (changes) ->
             # prune the change messages down
-            # console.log('changes before', JSON.stringify(changes))
+            # console.log('changes before', changes)
             changes = @summarize(changes)
-            # console.log('changes after', JSON.stringify(changes))
+            # console.log('changes after', changes)
             if changes.length is 0
                 return
 
@@ -205,6 +207,9 @@ export class ForInOfStatement extends Statement
                 # update recycled context orders
                 for [key,context] in contextsToUpdateOrder
                     # We must now also update the new order on the context, since it may cause insertion locations to shift
+                    let oldOrder = context.order
+                    let newOrder = @getOrderForKey(key)
+                    # console.log("{{oldOrder}} ----> {{newOrder}}")
                     context.order = @getOrderForKey(key)
                 # all of these contexts share the same inserter, which is the same as the one in our context.  Now we update all orders simultaneously.
                 @context.inserter?.update()

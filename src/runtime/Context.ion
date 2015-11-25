@@ -12,6 +12,7 @@ const createArrayInserter = (container) ->
     let pendingOrderChanges = {} # oldOrder => newOrder
 
     let insertInternal = (value, order, fastInsert) ->
+        # console.log("+ {{order}} {{value}}")
         if insertionValues[order]?
             throw new Error("Cannot add a new item with the same order as an existing item: {{JSON.stringify({order,previousValue:insertionValues[order],newValue:value})}}")
         insertionValues[order] = value
@@ -24,6 +25,7 @@ const createArrayInserter = (container) ->
             container.splice(baseLength + index, 0, value)
             # console.log('----- slow inserter -----> ' + order, value)
     let removeInternal = (value, order) ->
+        # console.log("- {{order}} {{value}}")
         # order MAY change during reactive runtime, so we may have to look it back up
         if insertionValues[order] isnt value
             # then we must find the new order for this value... this could be a fucking big bug source IF our values are equivalent primitives
@@ -63,8 +65,8 @@ const createArrayInserter = (container) ->
                     let order = insertionOrders[i]
                     for oldOrderValue, newOrderValue of pendingOrderChanges
                         if order.startsWith(oldOrderValue)
-                            # console.log('------ REMOVING ' + JSON.stringify({order, oldOrder:oldOrderValue, newOrder:newOrderValue}))
                             let insertedValue = insertionValues[order]
+                            # console.log('------ REMOVING ' + insertedValue + " " + JSON.stringify({order, oldOrder:oldOrderValue, newOrder:newOrderValue}))
                             reinsertValues[newOrderValue + order.substring(oldOrderValue.length)] = insertedValue
                             removeInternal(insertedValue, order)
 
@@ -72,6 +74,9 @@ const createArrayInserter = (container) ->
                 for order, value of reinsertValues
                     # console.log('+++++++ READDING ' + JSON.stringify({order}))
                     insertInternal(value, order)
+
+                # now reset pendingOrderChanges
+                pendingOrderChanges = {}
                 # console.log('==================== END')
 
 const createDefaultInserter = (container) ->
