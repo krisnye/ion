@@ -28,18 +28,18 @@ const templates = []
         {x:1,y:2}
         {x:4,z:3,y:undefined}
         {x:8,z:6}
-    []
-        "shared variables functions"
-        {}
-        template (properties) ->
-            let factor = properties.factor ? 3
-            const multiply(a) -> a * factor
-            return {}
-                for key, value of properties if key isnt 'factor'
-                    [key]: multiply(value)
-        {x:1,y:2}
-        {x:4,y:undefined,z:5,factor:10}
-        {x:40,z:50}
+    # []
+    #     "shared variables functions"
+    #     {}
+    #     template (properties) ->
+    #         let factor = properties.factor ? 3
+    #         const multiply(a) -> a * factor
+    #         return {}
+    #             for key, value of properties if key isnt 'factor'
+    #                 [key]: multiply(value)
+    #     {x:1,y:2}
+    #     {x:4,y:undefined,z:5,factor:10}
+    #     {x:40,z:50}
     []
         "reactive destructured parameters"
         {}

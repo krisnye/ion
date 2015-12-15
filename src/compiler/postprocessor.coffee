@@ -963,7 +963,7 @@ isReferenceNode = (node, context) ->
     if isFunctionNode(parentNode)
         return false
     # ignore variable declarations
-    if parentNode?.type is 'VariableDeclarator'
+    if parentNode?.type is 'VariableDeclarator' and context.key() is 'id'
         return false
     # ignore member expression right hand identifiers
     if parentNode?.type is 'MemberExpression' and not parentNode?.computed and context.key() is 'property'
@@ -979,17 +979,18 @@ getReferenceIdentifiers = (node, callback) ->
     callback ?= (node) ->
         results[node.name] = node
     traverse node, (node, context) ->
-        if isReferenceNode(node, context)
+        isRef = isReferenceNode(node, context)
+        if isRef
             callback(node, context)
     return results
 
 # gets all identifiers, except member access properties
 getExternalIdentifiers = (node, callback) ->
     getReferenceIdentifiers node, (node, context) ->
-            # ignore internally defined variables
-            if context.getVariableInfo(node.name)?
-                return
-            callback(node, context)
+        # ignore internally defined variables
+        if context.getVariableInfo(node.name)?
+            return
+        callback(node, context)
     return
 
 wrapTemplateInnerFunctions = (node, context) ->
@@ -1259,8 +1260,8 @@ exports.postprocess = (program, options) ->
         [extractForLoopsInnerAndTest, extractForLoopRightVariable]
         [extractReactiveForPatterns, validateTemplateNodes, classExpressions]
         [createForInLoopValueVariable, convertForInToForLength, typedObjectExpressions, propertyStatements, defaultAssignmentsToDefaultOperators]
-        [defaultOperatorsToConditionals]
-        [wrapTemplateInnerFunctions, nodejsModules, destructuringAssignments]
+        [defaultOperatorsToConditionals, destructuringAssignments]
+        [wrapTemplateInnerFunctions, nodejsModules]
         [addOrderPropertyToStatements]
         [existentialExpression, createTemplateRuntime, functionParameterDefaultValuesToES5, patchAssignmentExpression]
         [addUseStrictAndRequireIon]

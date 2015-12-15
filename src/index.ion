@@ -3,9 +3,6 @@ const noop = ->
 
 import './es6'
 
-# with this set to false we will miss any errors in Object.observe callbacks.
-global.DEBUG ?= true
-
 const
     valueTypes = {string:true,number:true,boolean:true}
     isValueType = (object) -> not object? or valueTypes[typeof object] ? false
@@ -45,7 +42,7 @@ const
         (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7])
         (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8])
         (type, a) -> new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
-    nodeObserveShim = Object.observe?.checkForChanges ? Object : import('./es6/Object.observe').createShim()
+    observeShim = import './es6/Object.observe'
     isObjectObservable = do ->
         let Node = global.Node ? ->
         let NodeList = global.NodeList ? ->
@@ -64,18 +61,32 @@ export const
             patchFunction[key] = value
         return patchFunction
     create = (type, args) -> variableArgConstructs[args.length](type, args)
-    nextTick = (callback) ->
+    setImmediate = (callback) ->
         if global.process?.nextTick?
             global.process.nextTick(callback)
-        else
-            setImmediate(callback)
-    setImmediate = (callback) ->
-        if global.setImmediate?
+        else if global.setImmediate?
             let id = global.setImmediate(callback)
             return -> global.clearImmediate(id)
         else
-            let id = setTimeout(callback, 0)
+            let id = setTimeout(callback, 50)
             return -> clearTimeout(id)
+    requestAnimationFrame = (callback) ->
+        if global.requestAnimationFrame?
+            return global.requestAnimationFrame(callback)
+        else if global?.nextTick?
+            global.process.nextTick(callback)
+        else
+            setImmediate(callback)
+    throttleAnimation = (callback) ->
+        # ensures that a callback is not called any more often than an animation frame is available.
+        let awaitingCallbackArgs = null
+        let animationFrameCallback = ->
+            callback.apply(null, awaitingCallbackArgs)
+            awaitingCallbackArgs = null
+        return ->
+            if not awaitingCallbackArgs?
+                requestAnimationFrame(animationFrameCallback)
+            awaitingCallbackArgs = Array.prototype.slice.call(arguments, 0)
     template = (fn, template) ->
         fn.template = template ? true
         return fn
@@ -104,21 +115,14 @@ export const
         let removed = false
         # property is optional
         let observable = isObjectObservable(object)
+
         if not observable
             if not property?
                 return noop
-            nodeObserveShim.observe(object, observer, property)
+            observeShim.observe(object, observer, property)
             # console.log('observe shim ' + JSON.stringify(object))
-        else if object? and observer? and Object.observe? and typeof object is 'object'
-            if DEBUG
-                let initial = observer
-                # NEVER, EVER REMOVE THIS WRAPPER UNLESS YOU WANT HIDDEN ERRORS TO MAKE YOUR LIFE HELL
-                observer = (changes) ->
-                    try
-                        initial(changes)
-                    catch error
-                        console.error('Exception in Object.observe callback', error)
-            Object.observe(object, observer)
+        else if object? and observer? and typeof object is 'object'
+            observeShim.observe(object, observer)
             # console.log('observe ' + JSON.stringify(object))
             # watch change on dom elements
             object.addEventListener?('change', observer)
@@ -133,7 +137,7 @@ export const
                 observe.count--
                 removed = true
                 if not observable
-                    nodeObserveShim.unobserve(object, observer, property)
+                    observeShim.unobserve(object, observer, property)
                     # console.log('unobserve shim ' + JSON.stringify(object))
                 else if object? and observer? and Object.unobserve? and typeof object is 'object'
                     Object.unobserve(object, observer)
@@ -144,17 +148,14 @@ export const
             else
                 # debugger
                 console.warn("unobserve should not be called multiple times!")
-    checkForChanges = do ->
-        let checkInternal = ->
-            if Object.observe.checkForChanges?
-                Object.observe.checkForChanges()
-            else
-                nodeObserveShim.observe.checkForChanges()
-        return ->
-            #   check immediately
-            checkInternal()
-            #   check again in a few, for Safari
-            setTimeout(checkInternal, 10)
+    checkForChanges = observeShim.checkForChanges
+    changed = do ->
+        # let throttledCheck = throttleAnimation(checkForChanges)
+        return (object) ->
+            observeShim.changed(object)
+            # throttledCheck()
+    nextCheck = (callback) ->
+        observeShim.nextCheck(callback)
     bind = (fn, thisArg) ->
         let newFn = fn.bind(thisArg)
         # the function name has semantic meaning for us when adding a function to an element
@@ -174,17 +175,15 @@ export const
             if name.endsWith(captureSuffix)
                 capture = true
                 name = name.substring(0, name.length - captureSuffix.length)
-            # we wrap all event handlers and call checkForChanges after
-            item = ->
-                originalItem.apply(@, arguments)
-                checkForChanges()
+            if item.toString().indexOf('checkForChanges') < 0
+                # we wrap all event handlers and call checkForChanges after, UNLESS they call it themselves.
+                item = ->
+                    originalItem.apply(@, arguments)
+                    checkForChanges()
             container.addEventListener(name, item, capture)
             remove = ->
                 container.removeEventListener(name, item)
         else
-            # console.log('+', originalItem)
-            # if originalItem is 'High'
-            #     debugger
             if container.nodeType is 1
                 if typeof item isnt 'string' and not item?.nodeType?
                     item = JSON.stringify(item)
@@ -196,9 +195,6 @@ export const
             else
                 container.add(item)
             remove = ->
-                # console.log('-', originalItem)
-                # if originalItem is 'High'
-                #     debugger
                 if item?.removeSelf?
                     item.removeSelf()
                 else if item?.parentNode?

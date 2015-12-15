@@ -86,9 +86,11 @@ require.compileScripts = ->
                     removeLastResult?()
                     removeLastResult = null
                     if templateResult?
-                        removeLastResult = ion.add scriptElement.parentElement, templateResult
+                        scriptElement.parentElement.appendChild(templateResult)
+                        removeLastResult = -> scriptElement.parentElement.removeChild(templateResult)
             else
-                ion.add(scriptElement.parentElement, result)
+                scriptElement.parentElement.appendChild(document.createTextNode(result))
+    ion.checkForChanges()
 
 if typeof module is "undefined"
     @require = require
@@ -99,3 +101,4 @@ else
 if global.window?
     window.addEventListener (if global.Polymer then 'polymer-ready' else 'load'), (e) ->
         require.compileScripts()
+

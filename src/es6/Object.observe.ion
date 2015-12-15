@@ -1,51 +1,20 @@
 
-const clone = (object, properties) ->
-    if properties?
-        return {}
-            for key of properties
-                [key]: object[key]
-    else
-        return {}
-            for key, value of object
-                [key]: value
 
-export const createShim = ->
-    # multiple callbacks on same object.
-    let map = new Map()
-
-    let observe = (object, callback, property) ->
-        # console.log('+observe', property)
-        let meta = map.get(object)
-        if not meta?
-            meta =
-                object: object
-                properties: {}
-                all: 0
-                clone: clone(object, property ? {[property]:0} : null)
-                callbacks: []
-            map.set(object, meta)
-        if property?
-            meta.properties[property] ?= 0
-            meta.properties[property]++
+let
+    observerMap = new Map()
+    nextCheckMap = new Map()
+    changedObjects = new Map()
+const
+    clone = (object, properties) ->
+        if properties?
+            return {}
+                for key of properties
+                    [key]: object[key]
         else
-            meta.all++
-        meta.callbacks.push(callback)
-    let unobserve = (object, callback, property) ->
-        # console.log('-unobserve', object, callback)
-        let meta = map.get(object)
-        if meta?
-            meta.callbacks.remove(callback)
-            if meta.callbacks.length is 0
-                # remove no longer observed objects
-                map.delete(object)
-            if property?
-                meta.properties[property]--
-                if meta.properties[property] is 0
-                    delete meta.properties[property]
-            else
-                meta.all--
-
-    let getChanges = (oldValue, newValue, properties) ->
+            return {}
+                for key, value of object
+                    [key]: value
+    getChanges = (oldValue, newValue, properties) ->
         let changes = null
         let change = (type, name, oldValue, object) ->
             changes ?= []
@@ -84,63 +53,107 @@ export const createShim = ->
                 if not oldValue.hasOwnProperty(name)
                     checkForChange(name)
         return changes
-    observe.checkForChanges = do ->
-        let timeout = null
-        let check = ->
-            let maxCycles = 10
-            # we have to run multiple cycles in case callbacks cause further change propagation
-            for let i = 0; i < maxCycles; i++
-                let totalChanges = 0
-                let pendingChanges = []
-                # traverse all objects and find changes
-                map.forEach(
-                    (meta, key) ->
-                        let properties = meta.all > 0 ? null : meta.properties
-                        let changes = getChanges(meta.clone, meta.object, properties)
-                        if changes?
-                            totalChanges++
-                            meta.clone = clone(meta.object, properties)
-                            # callbacks must be deferred until after ALL changes have been found
-                            pendingChanges.push([changes, meta.callbacks.slice(0), meta])
-                )
-                if totalChanges is 0
-                    timeout = null
-                    return
-                for [changes, callbacks] in pendingChanges
-                    # console.log(i, changes)
-                    for callback in callbacks
+
+export const
+    observe = (object, callback, property) ->
+        # console.log('+observe', property)
+        let meta = observerMap.get(object)
+        if not meta?
+            meta =
+                object: object
+                properties: {}
+                all: 0
+                clone: clone(object, property ? {[property]:0} : null)
+                callbacks: []
+            observerMap.set(object, meta)
+        if property?
+            meta.properties[property] ?= 0
+            meta.properties[property]++
+        else
+            meta.all++
+        meta.callbacks.push(callback)
+    unobserve = (object, callback, property) ->
+        # console.log('-unobserve', object, callback)
+        let meta = observerMap.get(object)
+        if meta?
+            meta.callbacks.remove(callback)
+            if meta.callbacks.length is 0
+                # remove no longer observed objects
+                observerMap.delete(object)
+            if property?
+                meta.properties[property]--
+                if meta.properties[property] is 0
+                    delete meta.properties[property]
+            else
+                meta.all--
+    nextCheck = (fn) ->
+        # console.log('++++ nextCheck ============================')
+        nextCheckMap.set(fn, fn)
+    changed = (obj) ->
+        for object in arguments
+            # console.log('changed ' + JSON.stringify(object))
+            changedObjects.set(object, object)
+    checkForChanges = () ->
+        let onlyChanged = false
+        if arguments.length > 0
+            onlyChanged = true
+            for arg in arguments
+                changed(arg)
+
+        let maxCycles = 10
+        # we have to run multiple cycles in case callbacks cause further change propagation
+        for let i = 0; i < maxCycles; i++
+            # console.log('-------- check for changes ' + i + ' ' + forceAll + ' ' + changedObjects.size + ' ' + nextCheckMap.size)
+            # traverse all objects and find changes
+            let check = (meta) ->
+                let properties = meta.all > 0 ? null : meta.properties
+                let changes = getChanges(meta.clone, meta.object, properties)
+                if changes?
+                    # console.log('changes: ' + JSON.stringify(changes))
+                    meta.clone = clone(meta.object, properties)
+                    # callbacks must be deferred until after ALL changes have been found
+                    for callback in meta.callbacks
                         callback(changes)
 
-            # we have hit max cycles, indicates a circular dependency error
-            throw new Error("Circular Object.observe dependency")
-
-        return (forceImmediate) ->
-            if forceImmediate
-                check()
+            if onlyChanged or i > 0
+                changedObjects.forEach(
+                    (object) ->
+                        let meta = observerMap.get(object)
+                        changedObjects.delete(object)
+                        if meta?
+                            check(meta)
+                )
             else
-                timeout ?= setTimeout(check, 0)
+                observerMap.forEach(check)
 
-    return {observe,unobserve}
+            #   then call all nextChecks.
+            nextCheckMap.forEach(
+                (callback) ->
+                    nextCheckMap.delete(callback)
+                    callback()
+            )
 
-export const test = ->
-    let {observe,unobserve} = createShim()
-    let object =
-        a: 1
-        b:
-            c: 2
-            d: 3
-    let changes
-    let handler = (c) ->
-        changes = c
-    observe(object, handler)
-    object.a = 2
-    delete object.b
-    object.c = 5
-    observe.checkForChanges(true)
-    assert JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1,"object":{"a":2,"c":5}},{"type":"delete","name":"b","oldValue":{"c":2,"d":3},"object":{"a":2,"c":5}},{"type":"add","name":"c","object":{"a":2,"c":5}}])
-    unobserve(object, handler)
+            if changedObjects.size is 0
+                return
 
-if not Object.observe? and global.Map?
-    console.warn('Shimming Object.observe')
-    for key, value of createShim()
-        Object[key] = value
+        # we have hit max cycles, indicates a circular dependency error
+        throw new Error("Circular Object.observe dependency")
+
+    test = ->
+        let object =
+            a: 1
+            b:
+                c: 2
+                d: 3
+        let changes
+        let handler = (c) ->
+            changes = c
+        observe(object, handler)
+        object.a = 2
+        delete object.b
+        object.c = 5
+        changed(object)
+        checkForChanges()
+        assert JSON.stringify(changes) is JSON.stringify([{"type":"update","name":"a","oldValue":1,"object":{"a":2,"c":5}},{"type":"delete","name":"b","oldValue":{"c":2,"d":3},"object":{"a":2,"c":5}},{"type":"add","name":"c","object":{"a":2,"c":5}}])
+        unobserve(object, handler)
+

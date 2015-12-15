@@ -133,6 +133,41 @@ tests =
     #             y
     #             z
     # """: null
+    """
+    template (model) ->
+        return (e) ->
+            let {listModel} = model
+
+    """: """
+    'use strict';
+    var ion = require('ion');
+    ion.template(function (model) {
+        return ion.createRuntime({
+            type: 'Template',
+            id: null,
+            body: [{
+                    type: 'ReturnStatement',
+                    argument: {
+                        type: 'Function',
+                        context: true,
+                        value: function (_context) {
+                            return function (e) {
+                                var model = _context.get('model');
+                                var _ref = model;
+                                var listModel = _ref.listModel;
+                            };
+                        }
+                    },
+                    order: '0'
+                }],
+            bound: false
+        }, {
+            this: this,
+            model: model
+        }, null);
+    });
+    """
+
 
 if global.window?
     return

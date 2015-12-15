@@ -24,6 +24,7 @@ const
                             propertyWatchers[name] = watch(
                                 value
                                 (patch) ->
+                                    # console.log('WATCH PROPERTIES ' + JSON.stringify({[name]:patch}))
                                     handler({[name]:patch})
                             )
                         else
@@ -43,6 +44,7 @@ const
                             patch[name] = object.hasOwnProperty(name) ? object[name] : deleteValue
                     watchProperties(changes)
                     if patch?
+                        # console.log('OBSERVE ' + JSON.stringify(patch))
                         handler(patch)
         )
         return ->
@@ -72,10 +74,13 @@ export const
         for key, value of values
             if deleteNull and value is deleteValue
                 delete target[key]
+                ion.changed(target)
             else
                 let newValue = merge(target[key], value, options)
                 if newValue isnt target[key] and canSetProperty(target, key)
                     target[key] = newValue
+                    # console.log('*****patch*********')
+                    ion.changed(target)
         return target
     # combines two patches to make a single patch
     combine = (patch1, patch2) -> merge(patch1, patch2, {deleteNull:false})
@@ -92,7 +97,7 @@ export const
         let delayedHandler = (patch) ->
             combinedPatch = combine(combinedPatch, patch)
             if not active
-                ion.setImmediate(finalCallback)
+                ion.nextCheck(finalCallback)
                 active = true
         return watchImmediate(object, delayedHandler)
     diff = (oldValue, newValue) ->
@@ -164,8 +169,7 @@ export const
                 assert equal(null, diff({a:1}, null))
                 assert equal(undefined, diff({a:{b:2}}, {a:{b:2}}))
             observe: (done) ->
-                if not Object.observe?
-                    return done(null, "Object.observe missing.")
+                # console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
                 let source =
                     name: 'Kris'
                     age: 41
@@ -180,6 +184,7 @@ export const
                 let unwatch = watch(
                     source
                     (patch) ->
+                        # console.log("........... " + JSON.stringify(patch))
                         target = merge(target, patch)
                         # should be immediate assert
                         if equal(source, target)
@@ -200,3 +205,4 @@ export const
                 delete source.children.Third
                 # temp requirement
                 ion.checkForChanges()
+                # console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')

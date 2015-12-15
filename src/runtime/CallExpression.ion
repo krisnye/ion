@@ -24,7 +24,7 @@ module.exports = class CallExpression extends DynamicExpression
                         @unobserveThis = null
                         @thisArg = thisArg
                         if not @calleeValue?.template # we don't need to observe the thisArg if the callee is a template
-                            if @calleeExpression.objectExpression.deep or Array.isArray(thisArg)
+                            if @calleeExpression.objectExpression.deep
                                 # console.log('deep observe man-------------------------', thisArg, @calleeValue)
                                 # deep observe
                                 @unobserveThis = ion.patch.watch(
@@ -60,7 +60,7 @@ module.exports = class CallExpression extends DynamicExpression
             if not @hasEvaluated?
                 @evaluate()
             else if not @cancelQueuedEvaluate?
-                @cancelQueuedEvaluate = ion.nextTick(@evaluate.bind(@))
+                @cancelQueuedEvaluate = ion.nextCheck(@boundEvaluate ?= @evaluate.bind(@))
         evaluate: ->
             @cancelQueuedEvaluate = null
 

@@ -12,17 +12,21 @@ export class MemberExpression extends DynamicExpression
             # observe the property first so it is available when we get the object
             @unobserveProperty = @propertyExpression.observe(
                 @propertyWatcher ?= (propertyValue) =>
-                    @propertyValue = propertyValue
-                    @queueUpdate()
+                    # we convert to string since property indexers must always be treated as strings anyways in javascript
+                    propertyValue = propertyValue?.toString()
+                    if @propertyValue isnt propertyValue
+                        @propertyValue = propertyValue
+                        @queueUpdate("propertyChanged")
             )
 
             @unobserveObject = @objectExpression.observe(
                 @objectWatcher ?= (objectValue) =>
-                    @objectValue = objectValue
-                    @queueUpdate()
+                    if @objectValue isnt objectValue
+                        @objectValue = objectValue
+                        @queueUpdate("objectChanged")
             )
 
-            @updateValue(true)
+            @updateValue()
 
         deactivate: ->
             super
@@ -32,9 +36,9 @@ export class MemberExpression extends DynamicExpression
             @unobserveProperty = null
             @unobserveObjectValue?()
             @unobserveObjectValue = null
-        queueUpdate: ->
-            ion.nextTick(this.updateValue.bind(this))
-        updateValue: (force) ->
+        queueUpdate: (reason) ->
+            ion.nextCheck(@boundUpdate ?= this.updateValue.bind(this))
+        updateValue: ->
             let value = undefined
             if @objectValue?
                 if @propertyValue?
@@ -48,19 +52,23 @@ export class MemberExpression extends DynamicExpression
             if @observedObject isnt @objectValue or @observedProperty isnt @propertyValue
                 @observedObject = @objectValue
                 @observedProperty = @propertyValue
-                @unobserveObjectValue?()
+                # do NOT unobserve the old property until the new one has been observed.
+                # this will prevent unnecessary re-quering in the event that the observed item is the same.
+                let oldUnobserveObjectValue = @unobserveObjectValue
                 @unobserveObjectValue = null
                 if @objectValue?
                     @unobserveObjectValue = ion.observe(
                         @objectValue
                         (changes) =>
-                            @queueUpdate()
+                            @queueUpdate("objectValueChanged")
                         {property:@propertyValue}
                     )
+                # now we can release any previous observation.
+                oldUnobserveObjectValue?()
 
-        # sets the underlying property value.  This may be used for two way binding.
-        setMemberValue: (value) ->
-            # console.log('setMemberValue BITCHES!', @objectValue, @propertyValue, value)
-            if @objectValue? and @propertyValue?
-                @objectValue[@propertyValue] = value
+        # # sets the underlying property value.  This may be used for two way binding.
+        # setMemberValue: (value) ->
+        #     console.log('setMemberValue BITCHES!', @objectValue, @propertyValue, value)
+        #     if @objectValue? and @propertyValue?
+        #         @objectValue[@propertyValue] = value
     test: ->

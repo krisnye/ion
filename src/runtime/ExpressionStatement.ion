@@ -15,6 +15,7 @@ export class ExpressionStatement extends Statement
                         @_remove = null
                         if @context.output? and value isnt undefined
                             @_remove = @context.insert(value, @order)
+                        ion.changed(@context.output)
             )
         deactivate: ->
             super
@@ -22,3 +23,4 @@ export class ExpressionStatement extends Statement
             @unobserve()
             @_remove?()
             @_remove = null
+            ion.changed(@context.output)

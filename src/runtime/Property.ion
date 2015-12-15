@@ -47,7 +47,9 @@ export class Property extends Statement
                                 delete @context.output[key]
                             else if @context.output[key] isnt initialValue
                                 @context.output[key] = initialValue
+                            ion.changed(@context.output)
 
                     if initialValue isnt value
                         @context.output[key] = value
+                        ion.changed(@context.output)
 

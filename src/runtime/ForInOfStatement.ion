@@ -119,17 +119,14 @@ export class ForInOfStatement extends Statement
                 (change, name, object)->
                     let newValue = change.object[name]
                     if newValue isnt change.oldValue
-                        # also store newValue on change for debug reasons
-                        # change.newValue = newValue
                         delete change.object
                         array.push(change)
             )
             return array
         applyChanges: (changes) ->
+            let originalChanges = changes
             # prune the change messages down
-            # console.log('changes before', changes)
             changes = @summarize(changes)
-            # console.log('changes after', changes)
             if changes.length is 0
                 return
 
@@ -137,13 +134,15 @@ export class ForInOfStatement extends Statement
 
             # we can only use the fast recycle method IF there are no duplicate keys in the changes, and none are null
             let canRecycle = true
-            if canRecycle
-                let checkRecycleKeys = new Map
-                for {name, oldValue} in changes
-                    let checkKey = getRecycleKey(name, oldValue)
-                    if not checkKey or checkRecycleKeys.has(checkKey)
-                        canRecycle = false
-                        break
+            #   since we implemented result sort ordering, we can now always recycle.
+
+            # if canRecycle
+            #     let checkRecycleKeys = new Map
+            #     for {name, oldValue} in changes
+            #         let checkKey = getRecycleKey(name, oldValue)
+            #         if checkKey? and checkRecycleKeys.has(checkKey)
+            #             canRecycle = false
+            #             break
 
             if not canRecycle
                 for {name,type,oldValue} in changes
