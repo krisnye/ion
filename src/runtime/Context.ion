@@ -6,8 +6,12 @@ const
     noop = ->
 
 const createArrayInserter = (container) ->
+    # need to override sort..
     return
-        isOrdered: (value) -> true
+        isOrdered: (value) ->
+            if container.sortCompareFunction?
+                return false
+            return container.unordered isnt true
         convert: (value) -> value
         getLength: -> container.length
         add: (value, index) ->
@@ -16,6 +20,7 @@ const createArrayInserter = (container) ->
             else
                 container.push(value)
         remove: (index, value, moving) ->
+            index ?= container.indexOf(value)
             container.splice(index, 1)
 
 const isNode = (value) -> typeof value?.nodeType is "number"
@@ -76,8 +81,8 @@ const createOrderManager = (container) ->
 
     let baseLength = inserter.getLength()
     let insertionOrders = []
-    let insertionValues = {}
-    let pendingOrderChanges = {} # oldOrder => newOrder
+    let insertionValues = {}        # order => value
+    let pendingOrderChanges = {}    # oldOrder => newOrder
 
     let insertInternal = (value, order, fastInsert) ->
         if insertionValues[order]?
@@ -145,7 +150,6 @@ const createOrderManager = (container) ->
                 for order, value of reinsertValues
                     # if value?.debug
                     #     console.log('REINSERTING+++++++++', insertedValue)
-
                     insertInternal(value, order)
 
                 # now reset pendingOrderChanges
