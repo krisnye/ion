@@ -35,6 +35,10 @@ export class Property extends Statement
             @unobserveValue = null
             @restoreInitialPropertyValue?()
             @restoreInitialPropertyValue = null
+        setOutputValue: (key, value) ->
+            # console.log('set value', @context.output, key, value)
+            @context.output[key] = @lastAssignedValue = value
+            ion.changed(@context.output)
         setProperty: (key = @keyValue, value = @valueValue) ->
             # we must have a key, and the value must not be undefined UNLESS the value is explicitly undefined!
             if @hasOwnProperty('keyValue') and @hasOwnProperty('valueValue')
@@ -43,13 +47,8 @@ export class Property extends Statement
                     if not @restoreInitialPropertyValue?
                         let initialHasProperty = @context.output.hasOwnProperty(key)
                         @restoreInitialPropertyValue = ->
-                            if not initialHasProperty and initialValue is undefined
+                            if @context.output[key] is @lastAssignedValue
                                 delete @context.output[key]
-                            else if @context.output[key] isnt initialValue
-                                @context.output[key] = initialValue
-                            ion.changed(@context.output)
-
                     if initialValue isnt value
-                        @context.output[key] = value
-                        ion.changed(@context.output)
+                        @setOutputValue(key, value)
 
