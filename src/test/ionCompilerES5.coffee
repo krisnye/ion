@@ -167,7 +167,9 @@ tests =
         }, null);
     });
     """
-
+    # """
+    # JSON.stringify(deep object)
+    # """: null
 
 if global.window?
     return

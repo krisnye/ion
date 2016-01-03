@@ -31,10 +31,18 @@ const lookup =
         VariableDeclaration: new Factory
             runtime: './VariableDeclaration'
         ThisExpression: new Factory
-            createRuntime: (context, ast) -> context.getVariable('this')
+            createRuntime: (context, ast) ->
+                let expression = context.getVariable('this')
+                if ast.deep
+                    expression.deep = true
+                return expression
             toCode: (ast) -> 'this'
         Identifier: new Factory
-            createRuntime: (context, ast) -> context.getVariable(ast.name)
+            createRuntime: (context, ast) ->
+                let expression = context.getVariable(ast.name)
+                if ast.deep
+                    expression.deep = true
+                return expression
             canCache: (ast) -> true
             toCode: (ast) -> ast.name
         Function: new Factory

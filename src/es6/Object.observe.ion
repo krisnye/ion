@@ -94,37 +94,25 @@ export const
             # console.log('changed ' + JSON.stringify(object))
             changedObjects.set(object, object)
     checkForChanges = () ->
-        let onlyChanged = false
-        if arguments.length > 0
-            onlyChanged = true
-            for arg in arguments
-                changed(arg)
 
         let maxCycles = 10
         # we have to run multiple cycles in case callbacks cause further change propagation
         for let i = 0; i < maxCycles; i++
             # console.log('-------- check for changes ' + i + ' ' + forceAll + ' ' + changedObjects.size + ' ' + nextCheckMap.size)
             # traverse all objects and find changes
+            let changeCount = 0
             let check = (meta) ->
                 let properties = meta.all > 0 ? null : meta.properties
                 let changes = getChanges(meta.clone, meta.object, properties)
                 if changes?
+                    changeCount++
                     # console.log('changes: ' + JSON.stringify(changes))
                     meta.clone = clone(meta.object, properties)
                     # callbacks must be deferred until after ALL changes have been found
                     for callback in meta.callbacks
                         callback(changes)
 
-            if onlyChanged or i > 0
-                changedObjects.forEach(
-                    (object) ->
-                        let meta = observerMap.get(object)
-                        changedObjects.delete(object)
-                        if meta?
-                            check(meta)
-                )
-            else
-                observerMap.forEach(check)
+            observerMap.forEach(check)
 
             #   then call all nextChecks.
             nextCheckMap.forEach(
@@ -133,7 +121,7 @@ export const
                     callback()
             )
 
-            if changedObjects.size is 0
+            if changeCount is 0 and nextCheckMap.size is 0
                 return
 
         # we have hit max cycles, indicates a circular dependency error

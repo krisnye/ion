@@ -19,9 +19,11 @@ export class ArrayExpression extends DynamicExpression
                 @unobserveExpressionValues[key]?()
                 @unobserveExpressionValues[key] = null
                 @argumentValues[key] = value
+                # console.log('----setArgumentValue ' + @observeElements + ' ' + expression.deep + ' ' + Object.keys(expression) + ' ' + JSON.stringify(value))
                 if @observeElements
                     if value?
                         @itemObserver ?= =>
+                            # console.log('item observer ' + expression.deep)
                             @notifyIfActive()
                         @unobserveExpressionValues[key] = expression.deep ? ion.patch.watch(value, @itemObserver) : ion.observe(value, @itemObserver)
                 @notifyIfActive()

@@ -46,9 +46,13 @@ export class Property extends Statement
                     let initialValue = @context.output[key]
                     if not @restoreInitialPropertyValue?
                         let initialHasProperty = @context.output.hasOwnProperty(key)
+                        let descriptor = Object.getOwnPropertyDescriptor(@context.output, key)
                         @restoreInitialPropertyValue = ->
                             if @context.output[key] is @lastAssignedValue
-                                delete @context.output[key]
+                                if descriptor?.configurable isnt false
+                                    delete @context.output[key]
+                                else
+                                    @context.output[key] = initialValue
                     if initialValue isnt value
                         @setOutputValue(key, value)
 
