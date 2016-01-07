@@ -53,6 +53,12 @@ const
             return true
 
 export const
+    freeze = (object, deep = true) ->
+        Object.freeze(object)
+        if deep
+            for key, value of object if value? and typeof value is 'object'
+                freeze(value, deep)
+        return object
     # sort = [{name:true},{age:false}]
     createSortFunction = (sorts) ->
         return (a, b) ->
@@ -80,9 +86,7 @@ export const
         return patchFunction
     create = (type, args) -> variableArgConstructs[args.length](type, args)
     setImmediate = (callback) ->
-        if global.process?.nextTick?
-            global.process.nextTick(callback)
-        else if global.setImmediate?
+        if global.setImmediate?
             let id = global.setImmediate(callback)
             return -> global.clearImmediate(id)
         else
@@ -313,8 +317,6 @@ export const
             let type = import(typeName)
             if not type.serializable
                 throw new Error("Type is not serializable: {{ typeName }}")
-            # remove the type field from the source object
-            delete object[typeKey]
             return type
         let convertType = (object) ->
             let typeKey = import('ion/Object').typeKey
