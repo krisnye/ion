@@ -94,7 +94,7 @@ export const
             # console.log('changed ' + JSON.stringify(object))
             changedObjects.set(object, object)
     checkForChanges = () ->
-
+        let changes
         let maxCycles = 10
         # we have to run multiple cycles in case callbacks cause further change propagation
         for let i = 0; i < maxCycles; i++
@@ -103,7 +103,7 @@ export const
             let changeCount = 0
             let check = (meta) ->
                 let properties = meta.all > 0 ? null : meta.properties
-                let changes = getChanges(meta.clone, meta.object, properties)
+                changes = getChanges(meta.clone, meta.object, properties)
                 if changes?
                     changeCount++
                     # console.log('changes: ' + JSON.stringify(changes))
@@ -115,11 +115,14 @@ export const
             observerMap.forEach(check)
 
             #   then call all nextChecks.
-            nextCheckMap.forEach(
+            let currentCheckMap = nextCheckMap
+            nextCheckMap = new Map()
+
+            currentCheckMap.forEach(
                 (callback) ->
-                    nextCheckMap.delete(callback)
                     callback()
             )
+            currentCheckMap.clear()
 
             if changeCount is 0 and nextCheckMap.size is 0
                 return
