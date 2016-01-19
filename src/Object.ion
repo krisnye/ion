@@ -14,12 +14,10 @@ export class Object extends null
         [typeKey]:
             visible: false
             type: 'string'
-            get: -> @@id
+            get: -> @constructor.name
             set: ->
         toJSON: ->
-            const properties = {}
-            if @@id?
-                properties[@@typeKey] = @@id
+            const properties = {[typeKey]: @[typeKey]}
             for key, value of @ if @hasOwnProperty(key)
                 properties[key] = value
             return properties

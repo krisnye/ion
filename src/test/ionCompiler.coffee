@@ -560,7 +560,7 @@ tests =
     """: """
     'use strict';
     const ion = require('ion');
-    let point = ion.patch(new Point(10, 20), { z: 30 });
+    let point = ion.patch.combine(new Point(10, 20), { z: 30 });
     """
     """
     let object = {x:1, y:2}
@@ -580,7 +580,7 @@ tests =
     """: """
     'use strict';
     const ion = require('ion');
-    let origin = ion.patch(new Point(), {
+    let origin = ion.patch.combine(new Point(), {
             x: 1,
             y: 2
         });
@@ -596,12 +596,12 @@ tests =
     """: """
     'use strict';
     const ion = require('ion');
-    let origin = ion.patch(new Line(), {
-            a: ion.patch(new Point(), {
+    let origin = ion.patch.combine(new Line(), {
+            a: ion.patch.combine(new Point(), {
                 x: 0,
                 y: 0
             }),
-            b: ion.patch(new Point(), {
+            b: ion.patch.combine(new Point(), {
                 x: 10,
                 y: 20
             })
@@ -625,11 +625,11 @@ tests =
     {
         input.x = 10;
         input.y = 20;
-        input.z = ion.patch(input.z, {
+        input.z = ion.patch.combine(input.z, {
             a: 1,
             b: 2
         });
-        input.w = ion.patch(new Point(), {
+        input.w = ion.patch.combine(new Point(), {
             x: 0,
             y: 0
         });
@@ -1154,7 +1154,7 @@ tests =
     'use strict';
     const ion = require('ion');
     let output;
-    output = ion.patch(output, {
+    output = ion.patch.combine(output, {
         x: 1,
         y: 2
     });
@@ -1260,7 +1260,7 @@ tests =
     const ion = require('ion');
     let _ref = {};
     {
-        _ref.style = ion.patch(_ref.style, { fontSize: '0.7em' });
+        _ref.style = ion.patch.combine(_ref.style, { fontSize: '0.7em' });
         ion.add(_ref, 'delete');
     }
     return _ref;

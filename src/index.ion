@@ -308,38 +308,31 @@ export const
         )
     serialize = (object) -> JSON.stringify(object)
     deserialize = do ->
-        let extractType = (object) ->
-            let typeKey = import('ion/Object').typeKey
+        let extractType = (object, namespace) ->
+            let typeKey = import('./Object').typeKey
             # we should strongly type our objects when created, so make a factory
             let typeName = object[typeKey]
             if not typeName?
-                return Object
-            let type = import(typeName)
+                return null
+            typeName = typeName.split(/\//g).pop() # legacy/name/correction, only use last step
+            let type = namespace[typeName]
             if not type.serializable
                 throw new Error("Type is not serializable: {{ typeName }}")
             return type
-        let convertType = (object) ->
-            let typeKey = import('ion/Object').typeKey
-            # we should strongly type our objects when created, so make a factory
-            let typeName = object[typeKey]
-            if typeName?
-                let type = import(typeName)
-                if not type.serializable
-                    throw new Error("Type is not serializable: {{ typeName }}")
-                let typedObject = new type
-                for key, value of object if key isnt typeKey
-                    typedObject[key] = value
-                object = typedObject
+        let convertType = (object, namespace) ->
+            let type = extractType(object, namespace)
+            if type?
+                object = new type(object)
             # convert recursively
             for key, value of object
                 if value?.constructor is Object
-                    object[key] = convertType(value)
+                    object[key] = convertType(value, namespace)
             return object
-        let deserialize = (object) ->
+        let deserialize = (object, namespace) ->
             if typeof object is 'string'
                 object = JSON.parse(object)
 
-            return convertType(object)
+            return convertType(object, namespace)
         deserialize.extractType = extractType
         deserialize.convertType = convertType
         return deserialize

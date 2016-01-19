@@ -557,7 +557,7 @@ typedObjectExpressions = (node, context) ->
                 ensureIonVariable context
                 context.replace
                     type: 'CallExpression'
-                    callee: getPathExpression 'ion.patch'
+                    callee: getPathExpression 'ion.patch.combine'
                     arguments: [objectType, node]
                 return
 
@@ -666,7 +666,7 @@ propertyStatements = (node, context) ->
                     ensureIonVariable(context)
                     right =
                         type: 'CallExpression'
-                        callee: getPathExpression 'ion.patch'
+                        callee: getPathExpression 'ion.patch.combine'
                         arguments: [ion.clone(left, true), node.value]
                 else
                     right = node.value
@@ -713,7 +713,7 @@ patchAssignmentExpression = (node, context) ->
             left: node.left
             right:
                 type: 'CallExpression'
-                callee: getPathExpression 'ion.patch'
+                callee: getPathExpression 'ion.patch.combine'
                 arguments: [ion.clone(node.left, true), node.right]
 
 classExpressions = (node, context) ->
