@@ -60,8 +60,9 @@ export class Directory
                 return @[path] = content
 
             path = @getAbsoluteName(path)
-            console.log("Writing: " + path)
-            utility.write(path, content, encoding)
+            if utility.read(path, encoding) isnt content
+                console.log("Writing: " + path)
+                utility.write(path, content, encoding)
         delete: (path) ->
             console.log("Deleting: " + path)
             path = @getAbsoluteName(path)

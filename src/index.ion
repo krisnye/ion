@@ -80,7 +80,7 @@ export const
     runFile = (file) -> require('./builder').runFile(file)
     patch = do ->
         let mergePatch = import './mergePatch'
-        let patchFunction = (object, patch) -> mergePatch.merge(object, patch)
+        let patchFunction = (object, patch, schema) -> mergePatch.merge(object, patch, null, schema)
         for key, value of mergePatch
             patchFunction[key] = value
         return patchFunction

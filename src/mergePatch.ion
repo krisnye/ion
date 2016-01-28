@@ -56,13 +56,18 @@ const
             for key, unwatch of propertyWatchers
                 unwatch()
             propertyWatchers = null
+    increment = /[+-]\d+/
 
 export const
     canSetProperty = (object, key) -> not (typeof object is 'function' and key is 'name')
     # options:
     #   deleteNull: delete properties if value is null, default: true
     #   factory: function to use when constructing new objects, defaults to using plain objects {}
-    merge = (target, values, options) ->
+    merge = (target, values, options, schema) ->
+
+        if schema?.type is 'integer' and increment.test(values)
+            values = (typeof target is 'number' ? target : 0) + parseInt(values.substring(1))
+
         let deleteNull = options?.deleteNull ? true
         if values?.constructor isnt Object
             return values
@@ -76,7 +81,8 @@ export const
                 delete target[key]
                 ion.changed(target)
             else
-                let newValue = merge(target[key], value, options)
+                let itemSchema = schema?.items ? schema?.properties?[key]
+                let newValue = merge(target[key], value, options, itemSchema)
                 if newValue isnt target[key] and canSetProperty(target, key)
                     target[key] = newValue
                     # console.log('*****patch*********')

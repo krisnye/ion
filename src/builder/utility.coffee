@@ -125,7 +125,9 @@ module.exports = exports =
     read: read = (file, encoding) ->
         if encoding == undefined
             encoding = 'utf8'
-        fs.readFileSync(file, encoding)
+        if not fs.existsSync file
+            return null
+        return fs.readFileSync(file, encoding)
     write: write = (file, content, encoding) ->
         makeParentDirectories file
         if content?
