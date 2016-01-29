@@ -1,6 +1,6 @@
 
 const
-    ion = import 'ion'
+    ion = import '../'
     {builder} = ion
     {File,Directory,utility,ModuleBuilder} = builder
     clientJsDir = 'js'
