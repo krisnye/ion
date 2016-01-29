@@ -1,4 +1,5 @@
 .DS_Store
+lib
 src/test/input
 src/test/output
 node_modules
