@@ -370,237 +370,7 @@ var templates = [
             },
             {
                 x: 8,
-                y: 4,
                 z: 6
-            }
-        ],
-        [
-            'shared variables functions',
-            {},
-            ion.template(function (properties) {
-                return ion.createRuntime({
-                    type: 'Template',
-                    id: null,
-                    body: [
-                        {
-                            type: 'VariableDeclaration',
-                            declarations: [{
-                                    type: 'VariableDeclarator',
-                                    id: {
-                                        type: 'Identifier',
-                                        name: 'factor'
-                                    },
-                                    init: {
-                                        type: 'ConditionalExpression',
-                                        test: {
-                                            type: 'BinaryExpression',
-                                            operator: '!=',
-                                            left: {
-                                                type: 'MemberExpression',
-                                                computed: false,
-                                                object: {
-                                                    type: 'Identifier',
-                                                    name: 'properties'
-                                                },
-                                                property: {
-                                                    type: 'Identifier',
-                                                    name: 'factor'
-                                                },
-                                                loc: {
-                                                    start: {
-                                                        line: 35,
-                                                        column: 25,
-                                                        fixed: true,
-                                                        source: 'ion/test/reactiveTemplates.ion'
-                                                    },
-                                                    end: {
-                                                        line: 35,
-                                                        column: 42,
-                                                        fixed: true,
-                                                        source: 'ion/test/reactiveTemplates.ion'
-                                                    }
-                                                }
-                                            },
-                                            right: {
-                                                type: 'Literal',
-                                                value: null
-                                            }
-                                        },
-                                        consequent: {
-                                            type: 'MemberExpression',
-                                            computed: false,
-                                            object: {
-                                                type: 'Identifier',
-                                                name: 'properties'
-                                            },
-                                            property: {
-                                                type: 'Identifier',
-                                                name: 'factor'
-                                            },
-                                            loc: {
-                                                start: {
-                                                    line: 35,
-                                                    column: 25,
-                                                    fixed: true,
-                                                    source: 'ion/test/reactiveTemplates.ion'
-                                                },
-                                                end: {
-                                                    line: 35,
-                                                    column: 42,
-                                                    fixed: true,
-                                                    source: 'ion/test/reactiveTemplates.ion'
-                                                }
-                                            }
-                                        },
-                                        alternate: {
-                                            type: 'Literal',
-                                            value: 3
-                                        }
-                                    }
-                                }],
-                            kind: 'let'
-                        },
-                        {
-                            type: 'VariableDeclaration',
-                            declarations: [{
-                                    type: 'VariableDeclarator',
-                                    id: {
-                                        type: 'Identifier',
-                                        name: 'multiply'
-                                    },
-                                    init: {
-                                        type: 'Function',
-                                        context: true,
-                                        value: function (_context) {
-                                            return function multiply(a) {
-                                                var factor = _context.get('factor');
-                                                return a * factor;
-                                            };
-                                        }
-                                    }
-                                }],
-                            kind: 'const'
-                        },
-                        {
-                            type: 'ReturnStatement',
-                            argument: {
-                                type: 'ObjectExpression',
-                                objectType: {
-                                    type: 'ObjectExpression',
-                                    properties: []
-                                },
-                                properties: [{
-                                        type: 'ForInStatement',
-                                        left: {
-                                            type: 'VariableDeclaration',
-                                            declarations: [
-                                                {
-                                                    type: 'VariableDeclarator',
-                                                    id: {
-                                                        type: 'Identifier',
-                                                        name: 'key'
-                                                    },
-                                                    init: null
-                                                },
-                                                {
-                                                    type: 'VariableDeclarator',
-                                                    id: {
-                                                        type: 'Identifier',
-                                                        name: 'value'
-                                                    },
-                                                    init: null
-                                                }
-                                            ],
-                                            kind: 'let'
-                                        },
-                                        right: {
-                                            type: 'Identifier',
-                                            name: 'properties'
-                                        },
-                                        body: {
-                                            type: 'BlockStatement',
-                                            body: [{
-                                                    type: 'IfStatement',
-                                                    test: {
-                                                        type: 'BinaryExpression',
-                                                        operator: '!==',
-                                                        left: {
-                                                            type: 'Identifier',
-                                                            name: 'key'
-                                                        },
-                                                        right: {
-                                                            type: 'Literal',
-                                                            value: 'factor'
-                                                        }
-                                                    },
-                                                    consequent: {
-                                                        type: 'BlockStatement',
-                                                        body: [{
-                                                                type: 'Property',
-                                                                key: {
-                                                                    type: 'Identifier',
-                                                                    name: 'key'
-                                                                },
-                                                                value: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'Identifier',
-                                                                        name: 'multiply'
-                                                                    },
-                                                                    arguments: [{
-                                                                            type: 'Identifier',
-                                                                            name: 'value'
-                                                                        }],
-                                                                    loc: {
-                                                                        start: {
-                                                                            line: 39,
-                                                                            column: 27,
-                                                                            fixed: true,
-                                                                            source: 'ion/test/reactiveTemplates.ion'
-                                                                        },
-                                                                        end: {
-                                                                            line: 39,
-                                                                            column: 42,
-                                                                            fixed: true,
-                                                                            source: 'ion/test/reactiveTemplates.ion'
-                                                                        }
-                                                                    }
-                                                                },
-                                                                kind: 'init',
-                                                                computed: true
-                                                            }]
-                                                    }
-                                                }]
-                                        },
-                                        remove: null
-                                    }]
-                            }
-                        }
-                    ],
-                    bound: false
-                }, {
-                    this: this,
-                    properties: properties,
-                    ion: ion,
-                    _ref4: _ref4,
-                    templates: templates,
-                    _ref5: _ref5
-                }, null);
-            }),
-            {
-                x: 1,
-                y: 2
-            },
-            {
-                x: 4,
-                y: void 0,
-                z: 5,
-                factor: 10
-            },
-            {
-                x: 40,
-                y: 6,
-                z: 50
             }
         ],
         [
@@ -1156,6 +926,247 @@ var templates = [
             }
         ],
         _ref4,
+        [
+            'correct ordering of array items',
+            {},
+            ion.template(function (object) {
+                return ion.createRuntime({
+                    type: 'Template',
+                    id: null,
+                    body: [{
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'ObjectExpression',
+                                objectType: {
+                                    type: 'ArrayExpression',
+                                    elements: [
+                                        {
+                                            type: 'Literal',
+                                            value: 1
+                                        },
+                                        {
+                                            type: 'Literal',
+                                            value: 2
+                                        }
+                                    ]
+                                },
+                                properties: [
+                                    {
+                                        type: 'IfStatement',
+                                        test: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'object'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'a'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 108,
+                                                    column: 19,
+                                                    fixed: true,
+                                                    source: 'ion/test/reactiveTemplates.ion'
+                                                },
+                                                end: {
+                                                    line: 108,
+                                                    column: 27,
+                                                    fixed: true,
+                                                    source: 'ion/test/reactiveTemplates.ion'
+                                                }
+                                            }
+                                        },
+                                        consequent: {
+                                            type: 'BlockStatement',
+                                            body: [{
+                                                    type: 'ExpressionStatement',
+                                                    expression: {
+                                                        type: 'Literal',
+                                                        value: 'Alpha'
+                                                    }
+                                                }]
+                                        },
+                                        alternate: null
+                                    },
+                                    {
+                                        type: 'ExpressionStatement',
+                                        expression: {
+                                            type: 'Literal',
+                                            value: 'Beta'
+                                        }
+                                    },
+                                    {
+                                        type: 'ForInStatement',
+                                        left: {
+                                            type: 'VariableDeclaration',
+                                            declarations: [{
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'key'
+                                                    },
+                                                    init: null
+                                                }],
+                                            kind: 'let'
+                                        },
+                                        right: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'object'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'keys'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 111,
+                                                    column: 27,
+                                                    fixed: true,
+                                                    source: 'ion/test/reactiveTemplates.ion'
+                                                },
+                                                end: {
+                                                    line: 111,
+                                                    column: 38,
+                                                    fixed: true,
+                                                    source: 'ion/test/reactiveTemplates.ion'
+                                                }
+                                            }
+                                        },
+                                        body: {
+                                            type: 'BlockStatement',
+                                            body: [{
+                                                    type: 'ExpressionStatement',
+                                                    expression: {
+                                                        type: 'Identifier',
+                                                        name: 'key'
+                                                    }
+                                                }]
+                                        },
+                                        remove: null
+                                    },
+                                    {
+                                        type: 'ExpressionStatement',
+                                        expression: {
+                                            type: 'Literal',
+                                            value: 'Charlie'
+                                        }
+                                    },
+                                    {
+                                        type: 'ForOfStatement',
+                                        left: {
+                                            type: 'VariableDeclaration',
+                                            declarations: [{
+                                                    type: 'VariableDeclarator',
+                                                    id: {
+                                                        type: 'Identifier',
+                                                        name: 'item'
+                                                    },
+                                                    init: null
+                                                }],
+                                            kind: 'let'
+                                        },
+                                        right: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'object'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'items'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 114,
+                                                    column: 28,
+                                                    fixed: true,
+                                                    source: 'ion/test/reactiveTemplates.ion'
+                                                },
+                                                end: {
+                                                    line: 114,
+                                                    column: 40,
+                                                    fixed: true,
+                                                    source: 'ion/test/reactiveTemplates.ion'
+                                                }
+                                            }
+                                        },
+                                        body: {
+                                            type: 'BlockStatement',
+                                            body: [{
+                                                    type: 'ExpressionStatement',
+                                                    expression: {
+                                                        type: 'Identifier',
+                                                        name: 'item'
+                                                    }
+                                                }]
+                                        },
+                                        remove: null
+                                    },
+                                    {
+                                        type: 'ExpressionStatement',
+                                        expression: {
+                                            type: 'Literal',
+                                            value: 'Delta'
+                                        }
+                                    }
+                                ]
+                            }
+                        }],
+                    bound: false
+                }, {
+                    this: this,
+                    object: object,
+                    ion: ion,
+                    _ref4: _ref4,
+                    templates: templates,
+                    _ref5: _ref5
+                }, null);
+            }),
+            {
+                a: false,
+                keys: {
+                    c: 1,
+                    b: 2,
+                    a: 3
+                },
+                items: [
+                    3,
+                    2,
+                    1
+                ]
+            },
+            {
+                a: true,
+                keys: {
+                    c: void 0,
+                    d: 4,
+                    aa: 1
+                },
+                items: { 0: 4 }
+            },
+            [
+                1,
+                2,
+                'Alpha',
+                'Beta',
+                'b',
+                'a',
+                'd',
+                'aa',
+                'Charlie',
+                4,
+                2,
+                1,
+                'Delta'
+            ]
+        ],
         function () {
             var alpha = 100;
             var beta = 200;
@@ -1229,13 +1240,13 @@ var templates = [
                                                                         arguments: [],
                                                                         loc: {
                                                                             start: {
-                                                                                line: 116,
+                                                                                line: 143,
                                                                                 column: 30,
                                                                                 fixed: true,
                                                                                 source: 'ion/test/reactiveTemplates.ion'
                                                                             },
                                                                             end: {
-                                                                                line: 116,
+                                                                                line: 143,
                                                                                 column: 38,
                                                                                 fixed: true,
                                                                                 source: 'ion/test/reactiveTemplates.ion'
@@ -1297,19 +1308,19 @@ var templates = [
                     charlie
                 ],
                 {
-                    0: alpha,
-                    1: charlie,
+                    0: charlie,
+                    1: alpha,
                     2: void 0
                 },
                 [
                     {
-                        id: 0,
-                        number: alpha,
+                        id: 2,
+                        number: charlie,
                         index: 0
                     },
                     {
-                        id: 2,
-                        number: charlie,
+                        id: 0,
+                        number: alpha,
                         index: 1
                     }
                 ]
@@ -1385,13 +1396,13 @@ var templates = [
                                                                         arguments: [],
                                                                         loc: {
                                                                             start: {
-                                                                                line: 130,
+                                                                                line: 157,
                                                                                 column: 30,
                                                                                 fixed: true,
                                                                                 source: 'ion/test/reactiveTemplates.ion'
                                                                             },
                                                                             end: {
-                                                                                line: 130,
+                                                                                line: 157,
                                                                                 column: 38,
                                                                                 fixed: true,
                                                                                 source: 'ion/test/reactiveTemplates.ion'
@@ -1466,7 +1477,79 @@ var templates = [
                     }
                 ]
             ];
-        }()
+        }(),
+        [
+            'deep args',
+            {},
+            ion.template(function (object) {
+                return ion.createRuntime({
+                    type: 'Template',
+                    id: null,
+                    body: [{
+                            type: 'ReturnStatement',
+                            argument: {
+                                type: 'CallExpression',
+                                callee: {
+                                    type: 'MemberExpression',
+                                    computed: false,
+                                    object: {
+                                        type: 'Identifier',
+                                        name: 'JSON'
+                                    },
+                                    property: {
+                                        type: 'Identifier',
+                                        name: 'stringify'
+                                    },
+                                    loc: {
+                                        start: {
+                                            line: 164,
+                                            column: 29,
+                                            fixed: true,
+                                            source: 'ion/test/reactiveTemplates.ion'
+                                        },
+                                        end: {
+                                            line: 164,
+                                            column: 43,
+                                            fixed: true,
+                                            source: 'ion/test/reactiveTemplates.ion'
+                                        }
+                                    }
+                                },
+                                arguments: [{
+                                        type: 'Identifier',
+                                        name: 'object',
+                                        deep: true
+                                    }],
+                                loc: {
+                                    start: {
+                                        line: 164,
+                                        column: 29,
+                                        fixed: true,
+                                        source: 'ion/test/reactiveTemplates.ion'
+                                    },
+                                    end: {
+                                        line: 164,
+                                        column: 56,
+                                        fixed: true,
+                                        source: 'ion/test/reactiveTemplates.ion'
+                                    }
+                                }
+                            }
+                        }],
+                    bound: false
+                }, {
+                    this: this,
+                    object: object,
+                    ion: ion,
+                    _ref4: _ref4,
+                    templates: templates,
+                    _ref5: _ref5
+                }, null);
+            }),
+            { z: { b: 2 } },
+            { z: { b: 20 } },
+            '{"z":{"b":20}}'
+        ]
     ];
 var _ref5 = {};
 {
@@ -1517,7 +1600,7 @@ var _ref5 = {};
                             });
                         });
                     ion.patch(argument, patch);
-                    ion.checkForChanges();
+                    ion.sync();
                 };
             }(thisArg, templateType, argument, patch, expected);
         }

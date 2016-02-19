@@ -16,7 +16,7 @@ var CallExpression = ion.defineClass({
                         console.warn('Function is ' + value + ' (' + Factory.toCode(this.callee) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
                     }
                     this.calleeValue = value;
-                    this.evaluate();
+                    this.queueEvaluate();
                 }, this));
                 this.unobserveCalleeObject = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.observe(this.thisWatcher = this.thisWatcher != null ? this.thisWatcher : ion.bind(function (thisArg) {
                     if (thisArg !== this.thisArg) {
@@ -24,17 +24,17 @@ var CallExpression = ion.defineClass({
                         this.unobserveThis = null;
                         this.thisArg = thisArg;
                         if (!(this.calleeValue != null ? this.calleeValue.template : void 0)) {
-                            if (this.calleeExpression.objectExpression.deep || Array.isArray(thisArg)) {
+                            if (this.calleeExpression.objectExpression.deep) {
                                 this.unobserveThis = ion.patch.watch(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (patch) {
-                                    this.evaluate();
+                                    this.queueEvaluate();
                                 }, this));
                             } else {
                                 this.unobserveThis = ion.observe(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function () {
-                                    this.evaluate();
+                                    this.queueEvaluate();
                                 }, this));
                             }
                         }
-                        this.evaluate();
+                        this.queueEvaluate();
                     }
                 }, this)) : void 0;
                 this.argumentExpressions = this.argumentExpressions != null ? this.argumentExpressions : this.context.createRuntime({
@@ -44,22 +44,48 @@ var CallExpression = ion.defineClass({
                 });
                 this.unobserveArguments = this.argumentExpressions.observe(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
                     this.argumentsValue = value;
-                    this.evaluate();
+                    this.queueEvaluate();
                 }, this));
             },
             deactivate: function () {
                 CallExpression.super.prototype.deactivate.apply(this, arguments);
+                this.cancelQueuedEvaluate != null ? this.cancelQueuedEvaluate() : void 0;
                 this.unobserveCallee();
                 this.unobserveArguments();
                 this.unobserveCalleeObject != null ? this.unobserveCalleeObject() : void 0;
                 this.unobserveThis != null ? this.unobserveThis() : void 0;
                 this.unobserveTemplate != null ? this.unobserveTemplate() : void 0;
             },
+            queueEvaluate: function () {
+                if (!(this.hasEvaluated != null)) {
+                    this.evaluate();
+                } else if (!(this.cancelQueuedEvaluate != null)) {
+                    this.cancelQueuedEvaluate = ion.nextCheck(this.boundEvaluate = this.boundEvaluate != null ? this.boundEvaluate : this.evaluate.bind(this));
+                }
+            },
             evaluate: function () {
+                this.cancelQueuedEvaluate = null;
                 if (!(this.isActive && this.calleeValue != null && this.argumentsValue != null && (this.thisArg != null || !(this.calleeExpression.objectExpression != null)))) {
                     return;
                 }
+                this.hasEvaluated = true;
                 var value = void 0;
+                if (this.unobserveTemplate != null && this.lastCalleeValue === this.calleeValue && this.lastThisArg === this.thisArg) {
+                    {
+                        var _ref2 = this.argumentsValue;
+                        for (var _i = 0; _i < _ref2.length; _i++) {
+                            var index = _i;
+                            var arg = _ref2[_i];
+                            if (this.lastArgumentsValue[index] !== arg) {
+                                this.lastArgumentsValue[index] = arg;
+                            }
+                        }
+                    }
+                    return;
+                }
+                this.lastCalleeValue = this.calleeValue;
+                this.lastArgumentsValue = this.argumentsValue;
+                this.lastThisArg = this.thisArg;
                 this.unobserveTemplate != null ? this.unobserveTemplate() : void 0;
                 this.unobserveTemplate = null;
                 try {

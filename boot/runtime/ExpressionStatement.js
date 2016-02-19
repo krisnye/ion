@@ -12,8 +12,9 @@ var ExpressionStatement = ion.defineClass({
                         this._remove != null ? this._remove() : void 0;
                         this._remove = null;
                         if (this.context.output != null && value !== void 0) {
-                            this._remove = ion.add(this.context.output, value);
+                            this._remove = this.context.insert(value, this.order);
                         }
+                        ion.changed(this.context.output);
                     }
                 }, this));
             },
@@ -23,6 +24,7 @@ var ExpressionStatement = ion.defineClass({
                 this.unobserve();
                 this._remove != null ? this._remove() : void 0;
                 this._remove = null;
+                ion.changed(this.context.output);
             }
         }
     }, Statement);

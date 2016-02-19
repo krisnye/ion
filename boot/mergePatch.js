@@ -65,10 +65,13 @@ var ion = require('./'), isObject = function (a) {
             }
             propertyWatchers = null;
         };
-    };
+    }, increment = /[+-]\d+/;
 var canSetProperty = exports.canSetProperty = function (object, key) {
         return !(typeof object === 'function' && key === 'name');
-    }, merge = exports.merge = function (target, values, options) {
+    }, merge = exports.merge = function (target, values, options, schema) {
+        if ((schema != null ? schema.type : void 0) === 'integer' && increment.test(values)) {
+            values = (typeof target === 'number' ? target : 0) + parseInt(values.substring(1));
+        }
         var deleteNull = (options != null ? options.deleteNull : void 0) != null ? options.deleteNull : true;
         if ((values != null ? values.constructor : void 0) !== Object) {
             return values;
@@ -84,10 +87,13 @@ var canSetProperty = exports.canSetProperty = function (object, key) {
             var value = values[key];
             if (deleteNull && value === deleteValue) {
                 delete target[key];
+                ion.changed(target);
             } else {
-                var newValue = merge(target[key], value, options);
-                if (canSetProperty(target, key)) {
+                var itemSchema = (schema != null ? schema.items : void 0) != null ? schema.items : schema != null ? schema.properties != null ? schema.properties[key] : void 0 : void 0;
+                var newValue = merge(target[key], value, options, itemSchema);
+                if (newValue !== target[key] && canSetProperty(target, key)) {
                     target[key] = newValue;
+                    ion.changed(target);
                 }
             }
         }
@@ -105,7 +111,7 @@ var canSetProperty = exports.canSetProperty = function (object, key) {
         var delayedHandler = function (patch) {
             combinedPatch = combine(combinedPatch, patch);
             if (!active) {
-                ion.setImmediate(finalCallback);
+                ion.nextCheck(finalCallback);
                 active = true;
             }
         };
@@ -281,9 +287,6 @@ var canSetProperty = exports.canSetProperty = function (object, key) {
                     throw new Error('Assertion Failed: (equal(undefined, diff({a:{b:2}}, {a:{b:2}})))');
             },
             observe: function (done) {
-                if (!(Object.observe != null)) {
-                    return done(null, 'Object.observe missing.');
-                }
                 var source = {
                         name: 'Kris',
                         age: 41,
@@ -318,7 +321,7 @@ var canSetProperty = exports.canSetProperty = function (object, key) {
                     });
                 }
                 delete source.children.Third;
-                ion.checkForChanges();
+                ion.sync();
             }
         };
     }();

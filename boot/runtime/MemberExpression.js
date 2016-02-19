@@ -11,14 +11,19 @@ var MemberExpression = ion.defineClass({
                 this.objectExpression = this.objectExpression != null ? this.objectExpression : this.context.createRuntime(this.object);
                 this.propertyExpression = this.propertyExpression != null ? this.propertyExpression : this.context.createRuntime(this.computed ? this.property : this.property.name);
                 this.unobserveProperty = this.propertyExpression.observe(this.propertyWatcher = this.propertyWatcher != null ? this.propertyWatcher : ion.bind(function (propertyValue) {
-                    this.propertyValue = propertyValue;
-                    this.queueUpdate();
+                    propertyValue = propertyValue != null ? propertyValue.toString() : void 0;
+                    if (this.propertyValue !== propertyValue) {
+                        this.propertyValue = propertyValue;
+                        this.queueUpdate('propertyChanged');
+                    }
                 }, this));
                 this.unobserveObject = this.objectExpression.observe(this.objectWatcher = this.objectWatcher != null ? this.objectWatcher : ion.bind(function (objectValue) {
-                    this.objectValue = objectValue;
-                    this.queueUpdate();
+                    if (this.objectValue !== objectValue) {
+                        this.objectValue = objectValue;
+                        this.queueUpdate('objectChanged');
+                    }
                 }, this));
-                this.updateValue(true);
+                this.updateValue();
             },
             deactivate: function () {
                 MemberExpression.super.prototype.deactivate.apply(this, arguments);
@@ -29,10 +34,10 @@ var MemberExpression = ion.defineClass({
                 this.unobserveObjectValue != null ? this.unobserveObjectValue() : void 0;
                 this.unobserveObjectValue = null;
             },
-            queueUpdate: function () {
-                ion.nextTick(this.updateValue.bind(this));
+            queueUpdate: function (reason) {
+                ion.nextCheck(this.boundUpdate = this.boundUpdate != null ? this.boundUpdate : this.updateValue.bind(this));
             },
-            updateValue: function (force) {
+            updateValue: function () {
                 var value = void 0;
                 if (this.objectValue != null) {
                     if (this.propertyValue != null) {
@@ -45,18 +50,14 @@ var MemberExpression = ion.defineClass({
                 if (this.observedObject !== this.objectValue || this.observedProperty !== this.propertyValue) {
                     this.observedObject = this.objectValue;
                     this.observedProperty = this.propertyValue;
-                    this.unobserveObjectValue != null ? this.unobserveObjectValue() : void 0;
+                    var oldUnobserveObjectValue = this.unobserveObjectValue;
                     this.unobserveObjectValue = null;
                     if (this.objectValue != null) {
                         this.unobserveObjectValue = ion.observe(this.objectValue, ion.bind(function (changes) {
-                            this.queueUpdate();
+                            this.queueUpdate('objectValueChanged');
                         }, this), { property: this.propertyValue });
                     }
-                }
-            },
-            setMemberValue: function (value) {
-                if (this.objectValue != null && this.propertyValue != null) {
-                    this.objectValue[this.propertyValue] = value;
+                    oldUnobserveObjectValue != null ? oldUnobserveObjectValue() : void 0;
                 }
             }
         },

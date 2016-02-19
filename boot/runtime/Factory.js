@@ -13,7 +13,7 @@ var Factory = ion.defineClass({
                     properties.context = context;
                     properties.factory = this;
                     var type = require(this.runtime);
-                    return new type(properties);
+                    return ion.patch(new type(properties), { ast: ast });
                 }
             },
             canCache: {
@@ -39,7 +39,11 @@ var lookup = {
             VariableDeclaration: ion.patch(new Factory(), { runtime: './VariableDeclaration' }),
             ThisExpression: ion.patch(new Factory(), {
                 createRuntime: function (context, ast) {
-                    return context.getVariable('this');
+                    var expression = context.getVariable('this');
+                    if (ast.deep) {
+                        expression.deep = true;
+                    }
+                    return expression;
                 },
                 toCode: function (ast) {
                     return 'this';
@@ -47,7 +51,11 @@ var lookup = {
             }),
             Identifier: ion.patch(new Factory(), {
                 createRuntime: function (context, ast) {
-                    return context.getVariable(ast.name);
+                    var expression = context.getVariable(ast.name);
+                    if (ast.deep) {
+                        expression.deep = true;
+                    }
+                    return expression;
                 },
                 canCache: function (ast) {
                     return true;

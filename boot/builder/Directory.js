@@ -66,8 +66,10 @@ var Directory = ion.defineClass({
                     return this[path] = content;
                 }
                 path = this.getAbsoluteName(path);
-                console.log('Writing: ' + path);
-                utility.write(path, content, encoding);
+                if (utility.read(path, encoding) !== content) {
+                    console.log('Writing: ' + path);
+                    utility.write(path, content, encoding);
+                }
             },
             delete: function (path) {
                 console.log('Deleting: ' + path);
@@ -113,7 +115,7 @@ var Directory = ion.defineClass({
                             } else {
                                 delete results[path];
                             }
-                            ion.checkForChanges();
+                            ion.sync();
                         }, this));
                     return unwatch;
                 }, this));

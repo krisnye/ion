@@ -24,8 +24,16 @@ var Property = ion.defineClass({
             },
             deactivate: function () {
                 Property.super.prototype.deactivate.apply(this, arguments);
-                this.unobserveKey();
-                this.unobserveValue();
+                this.unobserveKey != null ? this.unobserveKey() : void 0;
+                this.unobserveKey = null;
+                this.unobserveValue != null ? this.unobserveValue() : void 0;
+                this.unobserveValue = null;
+                this.restoreInitialPropertyValue != null ? this.restoreInitialPropertyValue() : void 0;
+                this.restoreInitialPropertyValue = null;
+            },
+            setOutputValue: function (key, value) {
+                this.context.output[key] = this.lastAssignedValue = value;
+                ion.changed(this.context.output);
             },
             setProperty: function (key, value) {
                 if (key == null)
@@ -34,9 +42,22 @@ var Property = ion.defineClass({
                     value = this.valueValue;
                 if (this.hasOwnProperty('keyValue') && this.hasOwnProperty('valueValue')) {
                     if (key != null && this.context.output != null) {
-                        var currentValue = this.context.output[key];
-                        if (currentValue !== value && (value !== void 0 || this.valueExpression.operator === 'void')) {
-                            this.context.output[key] = value;
+                        var initialValue = this.context.output[key];
+                        if (!(this.restoreInitialPropertyValue != null)) {
+                            var initialHasProperty = this.context.output.hasOwnProperty(key);
+                            var descriptor = Object.getOwnPropertyDescriptor(this.context.output, key);
+                            this.restoreInitialPropertyValue = function () {
+                                if (this.context.output[key] === this.lastAssignedValue) {
+                                    if ((descriptor != null ? descriptor.configurable : void 0) !== false) {
+                                        delete this.context.output[key];
+                                    } else {
+                                        this.context.output[key] = initialValue;
+                                    }
+                                }
+                            };
+                        }
+                        if (initialValue !== value) {
+                            this.setOutputValue(key, value);
                         }
                     }
                 }

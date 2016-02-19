@@ -33,12 +33,12 @@ var ForInOfStatement = ion.defineClass({
                 this.collectionExpression = this.collectionExpression != null ? this.collectionExpression : this.context.createRuntime(this.right);
                 this.unobserveExpression = this.collectionExpression.observe(this.collectionWatcher = this.collectionWatcher != null ? this.collectionWatcher : ion.bind(function (collection) {
                     if (this.collection !== collection) {
-                        if (this.collection != null) {
-                            this.forEach(this.collection, ion.bind(function (key, value) {
-                                this.removeItem(key, value);
-                            }, this));
-                        }
                         this.unobserveCollection != null ? this.unobserveCollection() : void 0;
+                        if (this.collection != null) {
+                            for (var key in this.statements) {
+                                this.removeItem(key);
+                            }
+                        }
                         this.unobserveCollection = null;
                         this.collection = collection;
                         if (this.collection != null) {
@@ -56,18 +56,34 @@ var ForInOfStatement = ion.defineClass({
                 this.unobserveExpression();
                 this.unobserveCollection != null ? this.unobserveCollection() : void 0;
             },
+            keyToUnicodeChar: function (key) {
+                if (typeof key === 'number') {
+                    return String.fromCharCode(48 + key);
+                } else {
+                    this.keyCache = this.keyCache != null ? this.keyCache : {};
+                    this.keyCacheCount = this.keyCacheCount != null ? this.keyCacheCount : 0;
+                    return this.keyCache[key] = this.keyCache[key] != null ? this.keyCache[key] : String.fromCharCode(48 + this.keyCacheCount++);
+                }
+            },
+            getOrderForKey: function (key) {
+                return this.order + this.keyToUnicodeChar(key);
+            },
             addItem: function (key, value, activate) {
                 if (activate == null)
                     activate = true;
+                if (this.statements.hasOwnProperty(key)) {
+                    throw new Error('There should not be a current statement for this key: ' + key);
+                }
                 if (value !== void 0) {
-                    var newContext = this.context.newContext();
+                    var order = this.getOrderForKey(key);
+                    var context = this.context.newContext(void 0, order);
                     if (this.valueName != null) {
-                        newContext.setVariableExpression(this.valueName, new DynamicExpression({ value: value }));
+                        context.setVariableExpression(this.valueName, new DynamicExpression({ value: value }));
                     }
                     if (this.keyName != null) {
-                        newContext.setVariableExpression(this.keyName, new DynamicExpression({ value: key }));
+                        context.setVariableExpression(this.keyName, new DynamicExpression({ value: key }));
                     }
-                    var statement = newContext.createRuntime(this.body);
+                    var statement = context.createRuntime(this.body);
                     this.statements[key] = statement;
                     if (activate) {
                         statement.activate();
@@ -111,17 +127,19 @@ var ForInOfStatement = ion.defineClass({
                     var object = _ref.object;
                     var name = _ref.name;
                     var oldValue = _ref.oldValue;
-                    if (!ignoreProperty(name)) {
-                        if (!map.has(name)) {
-                            map.set(name, {
-                                type: type,
-                                object: object,
-                                name: name,
-                                oldValue: oldValue
-                            });
-                        } else {
-                            var change = map.get(name);
-                            change.type = type;
+                    if (object === this.collection) {
+                        if (!ignoreProperty(name)) {
+                            if (!map.has(name)) {
+                                map.set(name, {
+                                    type: type,
+                                    object: object,
+                                    name: name,
+                                    oldValue: oldValue
+                                });
+                            } else {
+                                var change = map.get(name);
+                                change.type = type;
+                            }
                         }
                     }
                 }
@@ -136,6 +154,7 @@ var ForInOfStatement = ion.defineClass({
                 return array;
             },
             applyChanges: function (changes) {
+                var originalChanges = changes;
                 changes = this.summarize(changes);
                 if (changes.length === 0) {
                     return;
@@ -144,23 +163,12 @@ var ForInOfStatement = ion.defineClass({
                         return this.type === 'ForOfStatement' ? value : key;
                     }, this);
                 var canRecycle = true;
-                var checkRecycleKeys = new Map();
-                for (var _i2 = 0; _i2 < changes.length; _i2++) {
-                    var _ref2 = changes[_i2];
-                    var name = _ref2.name;
-                    var oldValue = _ref2.oldValue;
-                    var checkKey = getRecycleKey(name, oldValue);
-                    if (!checkKey || checkRecycleKeys.has(checkKey)) {
-                        canRecycle = false;
-                        break;
-                    }
-                }
                 if (!canRecycle) {
-                    for (var _i3 = 0; _i3 < changes.length; _i3++) {
-                        var _ref3 = changes[_i3];
-                        var name = _ref3.name;
-                        var type = _ref3.type;
-                        var oldValue = _ref3.oldValue;
+                    for (var _i2 = 0; _i2 < changes.length; _i2++) {
+                        var _ref2 = changes[_i2];
+                        var name = _ref2.name;
+                        var type = _ref2.type;
+                        var oldValue = _ref2.oldValue;
                         var newValue = this.collection != null ? this.collection[name] : void 0;
                         var key = this.toKey(name);
                         if (oldValue !== void 0) {
@@ -173,10 +181,10 @@ var ForInOfStatement = ion.defineClass({
                 } else {
                     var recyclableStatements = new Map();
                     var activateStatements = [];
-                    for (var _i4 = 0; _i4 < changes.length; _i4++) {
-                        var _ref4 = changes[_i4];
-                        var name = _ref4.name;
-                        var oldValue = _ref4.oldValue;
+                    for (var _i3 = 0; _i3 < changes.length; _i3++) {
+                        var _ref3 = changes[_i3];
+                        var name = _ref3.name;
+                        var oldValue = _ref3.oldValue;
                         var key = this.toKey(name);
                         if (oldValue !== void 0) {
                             var rkey = getRecycleKey(key, oldValue);
@@ -187,23 +195,29 @@ var ForInOfStatement = ion.defineClass({
                             }
                         }
                     }
-                    for (var _i5 = 0; _i5 < changes.length; _i5++) {
-                        var _ref5 = changes[_i5];
-                        var name = _ref5.name;
-                        var oldValue = _ref5.oldValue;
+                    var contextsToUpdateOrder = [];
+                    for (var _i4 = 0; _i4 < changes.length; _i4++) {
+                        var _ref4 = changes[_i4];
+                        var name = _ref4.name;
+                        var oldValue = _ref4.oldValue;
                         var newValue = this.collection != null ? this.collection[name] : void 0;
                         var key = this.toKey(name);
                         if (newValue !== void 0) {
                             var rkey = getRecycleKey(key, newValue);
                             var statement = recyclableStatements.get(rkey);
                             if (statement != null) {
+                                var context = statement.context;
                                 if (this.type === 'ForOfStatement') {
                                     if (this.keyName != null) {
-                                        statement.context.variables[this.keyName].setValue(key);
+                                        context.variables[this.keyName].setValue(key);
                                     }
+                                    contextsToUpdateOrder.push([
+                                        key,
+                                        context
+                                    ]);
                                 } else {
                                     if (this.valueName != null) {
-                                        statement.context.variables[this.valueName].setValue(newValue);
+                                        context.variables[this.valueName].setValue(newValue);
                                     }
                                 }
                                 this.statements[key] = statement;
@@ -219,6 +233,15 @@ var ForInOfStatement = ion.defineClass({
                     recyclableStatements.forEach(ion.bind(function (statement) {
                         this.disposeStatement(statement);
                     }, this));
+                    for (var _i5 = 0; _i5 < contextsToUpdateOrder.length; _i5++) {
+                        var _ref5 = contextsToUpdateOrder[_i5];
+                        var key = _ref5[0];
+                        var context = _ref5[1];
+                        var oldOrder = context.order;
+                        var newOrder = this.getOrderForKey(key);
+                        context.order = this.getOrderForKey(key);
+                    }
+                    this.context.inserter != null ? this.context.inserter.update() : void 0;
                     for (var _i6 = 0; _i6 < activateStatements.length; _i6++) {
                         var statement = activateStatements[_i6];
                         statement.activate();

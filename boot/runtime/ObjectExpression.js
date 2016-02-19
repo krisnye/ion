@@ -18,12 +18,14 @@ var ObjectExpression = ion.defineClass({
                         value = this.value;
                     }
                     if (!(this.statements != null)) {
-                        var newContext = this.context.newContext(value);
-                        this.statements = newContext.createRuntime({
+                        var context = this.context.newContext(value);
+                        context.setFastInsert(true);
+                        this.statements = context.createRuntime({
                             type: 'BlockStatement',
                             body: this.properties
                         });
                         this.statements.activate();
+                        context.setFastInsert(false);
                     }
                     this.setValue(value);
                 }, this));

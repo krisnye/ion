@@ -16,7 +16,8 @@ tests = {
   "let foo = bar(\n    1\n    2\n)\n.toString(\n    \"12\"\n)\n.split(' ')": "'use strict';\nvar foo = bar(1, 2).toString('12').split(' ');",
   "\"\"\n    foo\n    bar #baz": "'use strict';\n'foo\\nbar #baz';",
   "let object =\n    x: 10\n    property visible:\n        get: -> true\n    y: 20": "'use strict';\nvar object = Object.defineProperties({\n        x: 10,\n        y: 20\n    }, {\n        visible: {\n            get: function () {\n                return true;\n            }\n        }\n    });",
-  "return {a:b ? c}\n    d": "'use strict';\nvar ion = require('ion');\nvar _ref = { a: b != null ? b : c };\nion.add(_ref, d);\nreturn _ref;"
+  "return {a:b ? c}\n    d": "'use strict';\nvar ion = require('ion');\nvar _ref = { a: b != null ? b : c };\nion.add(_ref, d);\nreturn _ref;",
+  "template (model) ->\n    return (e) ->\n        let {listModel} = model\n": "'use strict';\nvar ion = require('ion');\nion.template(function (model) {\n    return ion.createRuntime({\n        type: 'Template',\n        id: null,\n        body: [{\n                type: 'ReturnStatement',\n                argument: {\n                    type: 'Function',\n                    context: true,\n                    value: function (_context) {\n                        return function (e) {\n                            var model = _context.get('model');\n                            var _ref = model;\n                            var listModel = _ref.listModel;\n                        };\n                    }\n                },\n                order: '0'\n            }],\n        bound: false\n    }, {\n        this: this,\n        model: model\n    }, null);\n});"
 };
 
 if (global.window != null) {

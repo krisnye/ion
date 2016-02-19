@@ -3,7 +3,6 @@ var ion = null;
 var noop = function () {
 };
 require('./es6');
-global.DEBUG = global.DEBUG != null ? global.DEBUG : true;
 var valueTypes = {
         string: true,
         number: true,
@@ -76,7 +75,7 @@ var valueTypes = {
         function (type, a) {
             return new type(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9]);
         }
-    ], nodeObserveShim = (Object.observe != null ? Object.observe.checkForChanges : void 0) ? Object : require('./es6/Object.observe').createShim(), isObjectObservable = function () {
+    ], observeShim = require('./es6/Object.observe'), isObjectObservable = function () {
         var Node = global.Node != null ? global.Node : function () {
             };
         var NodeList = global.NodeList != null ? global.NodeList : function () {
@@ -90,12 +89,52 @@ var valueTypes = {
             return true;
         };
     }();
-var runFile = exports.runFile = function (file) {
+var freeze = exports.freeze = function (object, deep) {
+        if (deep == null)
+            deep = true;
+        Object.freeze(object);
+        if (deep) {
+            for (var key in object) {
+                var value = object[key];
+                if (value != null && typeof value === 'object') {
+                    freeze(value, deep);
+                }
+            }
+        }
+        return object;
+    }, createSortFunction = exports.createSortFunction = function (sorts) {
+        return function (a, b) {
+            if (a === b) {
+                return 0;
+            }
+            if (!(a != null)) {
+                return b;
+            }
+            if (!(b != null)) {
+                return a;
+            }
+            for (var _i = 0; _i < sorts.length; _i++) {
+                var sort = sorts[_i];
+                for (var name in sort) {
+                    var ascending = sort[name];
+                    var aValue = a[name];
+                    var bValue = b[name];
+                    if (aValue > bValue) {
+                        return ascending ? +1 : -1;
+                    }
+                    if (aValue < bValue) {
+                        return ascending ? -1 : +1;
+                    }
+                }
+            }
+            return 0;
+        };
+    }, runFile = exports.runFile = function (file) {
         return require('./builder').runFile(file);
     }, patch = exports.patch = function () {
         var mergePatch = require('./mergePatch');
-        var patchFunction = function (object, patch) {
-            return mergePatch.merge(object, patch);
+        var patchFunction = function (object, patch, schema) {
+            return mergePatch.merge(object, patch, null, schema);
         };
         for (var key in mergePatch) {
             var value = mergePatch[key];
@@ -104,20 +143,39 @@ var runFile = exports.runFile = function (file) {
         return patchFunction;
     }(), create = exports.create = function (type, args) {
         return variableArgConstructs[args.length](type, args);
-    }, nextTick = exports.nextTick = function (callback) {
-        if ((global.process != null ? global.process.nextTick : void 0) != null) {
+    }, setImmediate = exports.setImmediate = function (callback) {
+        if (global.setImmediate != null) {
+            var id = global.setImmediate(callback);
+            return function () {
+                return global.clearImmediate(id);
+            };
+        } else {
+            var id = setTimeout(callback, 50);
+            return function () {
+                return clearTimeout(id);
+            };
+        }
+    }, requestAnimationFrame = exports.requestAnimationFrame = function (callback) {
+        if (global.requestAnimationFrame != null) {
+            return global.requestAnimationFrame(callback);
+        } else if ((global != null ? global.nextTick : void 0) != null) {
             global.process.nextTick(callback);
         } else {
             setImmediate(callback);
         }
-    }, setImmediate = exports.setImmediate = function () {
-        if (global.setImmediate != null) {
-            return global.setImmediate;
-        }
-        return function (fn) {
-            setTimeout(fn, 0);
+    }, throttleAnimation = exports.throttleAnimation = function (callback) {
+        var awaitingCallbackArgs = null;
+        var animationFrameCallback = function () {
+            callback.apply(null, awaitingCallbackArgs);
+            awaitingCallbackArgs = null;
         };
-    }(), template = exports.template = function (fn, template) {
+        return function () {
+            if (!(awaitingCallbackArgs != null)) {
+                requestAnimationFrame(animationFrameCallback);
+            }
+            awaitingCallbackArgs = Array.prototype.slice.call(arguments, 0);
+        };
+    }, template = exports.template = function (fn, template) {
         fn.template = template != null ? template : true;
         return fn;
     }, createRuntime = exports.createRuntime = function (ast, args, parent) {
@@ -135,8 +193,8 @@ var runFile = exports.runFile = function (file) {
             _deep = false;
         if (Array.isArray(object)) {
             var _ref = [];
-            for (var _i = 0; _i < object.length; _i++) {
-                var item = object[_i];
+            for (var _i2 = 0; _i2 < object.length; _i2++) {
+                var item = object[_i2];
                 _ref.push(_deep ? clone(item, _deep) : item);
             }
             return _ref;
@@ -161,19 +219,9 @@ var runFile = exports.runFile = function (file) {
             if (!(property != null)) {
                 return noop;
             }
-            nodeObserveShim.observe(object, observer, property);
-        } else if (object != null && observer != null && Object.observe != null && typeof object === 'object') {
-            if (DEBUG) {
-                var initial = observer;
-                observer = function (changes) {
-                    try {
-                        initial(changes);
-                    } catch (error) {
-                        console.error('Exception in Object.observe callback', error);
-                    }
-                };
-            }
-            Object.observe(object, observer);
+            observeShim.observe(object, observer, property);
+        } else if (object != null && observer != null && typeof object === 'object') {
+            observeShim.observe(object, observer);
             object.addEventListener != null ? object.addEventListener('change', observer) : void 0;
         }
         object != null ? object.onObserved != null ? object.onObserved(observer, property) : void 0 : void 0;
@@ -183,7 +231,7 @@ var runFile = exports.runFile = function (file) {
                 observe.count--;
                 removed = true;
                 if (!observable) {
-                    nodeObserveShim.unobserve(object, observer, property);
+                    observeShim.unobserve(object, observer, property);
                 } else if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
                     Object.unobserve(object, observer);
                     object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
@@ -193,12 +241,12 @@ var runFile = exports.runFile = function (file) {
                 console.warn('unobserve should not be called multiple times!');
             }
         };
-    }, checkForChanges = exports.checkForChanges = function () {
-        if (Object.observe.checkForChanges != null) {
-            Object.observe.checkForChanges();
-        } else {
-            nodeObserveShim.observe.checkForChanges();
-        }
+    }, checkForChanges = exports.checkForChanges = observeShim.checkForChanges, sync = exports.sync = observeShim.checkForChanges, changed = exports.changed = function () {
+        return function (object) {
+            observeShim.changed(object);
+        };
+    }(), nextCheck = exports.nextCheck = function (callback) {
+        observeShim.nextCheck(callback);
     }, bind = exports.bind = function (fn, thisArg) {
         var newFn = fn.bind(thisArg);
         if ((fn.name != null ? fn.name.length : void 0) > 0) {
@@ -206,6 +254,7 @@ var runFile = exports.runFile = function (file) {
         }
         return newFn;
     }, add = exports.add = function (container, item) {
+        var originalItem = item;
         var remove;
         if (typeof item === 'function' && ((item.name != null ? item.name.length : void 0) > 0 || item.id != null) && typeof container.addEventListener === 'function') {
             var name = item.id != null ? item.id : item.name;
@@ -215,11 +264,12 @@ var runFile = exports.runFile = function (file) {
                 capture = true;
                 name = name.substring(0, name.length - captureSuffix.length);
             }
-            var originalItem = item;
-            item = function () {
-                originalItem.apply(this, arguments);
-                requestAnimationFrame(checkForChanges);
-            };
+            if (item.toString().indexOf('sync') < 0) {
+                item = function () {
+                    originalItem.apply(this, arguments);
+                    sync();
+                };
+            }
             container.addEventListener(name, item, capture);
             remove = function () {
                 container.removeEventListener(name, item);
@@ -351,49 +401,40 @@ var runFile = exports.runFile = function (file) {
     }, serialize = exports.serialize = function (object) {
         return JSON.stringify(object);
     }, deserialize = exports.deserialize = function () {
-        var extractType = function (object) {
-            var typeKey = require('ion/Object').typeKey;
+        var extractType = function (object, namespace) {
+            if (!(object != null)) {
+                return null;
+            }
+            var typeKey = require('./Object').typeKey;
             var typeName = object[typeKey];
             if (!(typeName != null)) {
-                return Object;
+                return null;
             }
-            var type = require(typeName);
+            typeName = typeName.split(/\//g).pop();
+            var type = namespace[typeName];
             if (!type.serializable) {
                 throw new Error('Type is not serializable: ' + typeName);
             }
-            delete object[typeKey];
             return type;
         };
-        var convertType = function (object) {
-            var typeKey = require('ion/Object').typeKey;
-            var typeName = object[typeKey];
-            if (typeName != null) {
-                var type = require(typeName);
-                if (!type.serializable) {
-                    throw new Error('Type is not serializable: ' + typeName);
-                }
-                var typedObject = new type();
-                for (var key in object) {
-                    var value = object[key];
-                    if (key !== typeKey) {
-                        typedObject[key] = value;
-                    }
-                }
-                object = typedObject;
+        var convertType = function (object, namespace) {
+            var type = extractType(object, namespace);
+            if (type != null) {
+                object = new type(object);
             }
             for (var key in object) {
                 var value = object[key];
                 if ((value != null ? value.constructor : void 0) === Object) {
-                    object[key] = convertType(value);
+                    object[key] = convertType(value, namespace);
                 }
             }
             return object;
         };
-        var deserialize = function (object) {
+        var deserialize = function (object, namespace) {
             if (typeof object === 'string') {
                 object = JSON.parse(object);
             }
-            return convertType(object);
+            return convertType(object, namespace);
         };
         deserialize.extractType = extractType;
         deserialize.convertType = convertType;
@@ -450,8 +491,8 @@ var runFile = exports.runFile = function (file) {
             'builder',
             'browser'
         ];
-    for (var _i2 = 0; _i2 < _ref2.length; _i2++) {
-        var name = _ref2[_i2];
+    for (var _i3 = 0; _i3 < _ref2.length; _i3++) {
+        var name = _ref2[_i3];
         (function (name) {
             Object.defineProperty(exports, name, {
                 enumerable: true,
@@ -463,7 +504,7 @@ var runFile = exports.runFile = function (file) {
     }
 }
 if (global.window != null) {
-    global.window.addEventListener('resize', checkForChanges);
+    global.window.addEventListener('resize', sync);
 }
   }
   if (typeof require === 'function') {

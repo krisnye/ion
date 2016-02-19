@@ -3,9 +3,10 @@ require('./String');
 require('./Map');
 require('./Set');
 require('./Object');
-require('./Object.observe');
 require('./Function');
 require('./Array');
+require('./CustomEvent');
+require('./sugar');
   }
   if (typeof require === 'function') {
     if (require.register)

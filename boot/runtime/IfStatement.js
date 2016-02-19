@@ -15,7 +15,8 @@ var IfStatement = ion.defineClass({
                             this.alternateStatement.deactivate();
                             this.alternateStatement = null;
                         }
-                        this.consequentStatement = this.context.newContext().createRuntime(this.consequent);
+                        var context = this.context.newContext(null, this.order);
+                        this.consequentStatement = context.createRuntime(this.consequent);
                         this.consequentStatement.activate();
                     } else {
                         if (this.consequentStatement != null ? this.consequentStatement.isActive : void 0) {
@@ -23,7 +24,8 @@ var IfStatement = ion.defineClass({
                             this.consequentStatement = null;
                         }
                         if (this.alternate != null) {
-                            this.alternateStatement = this.context.newContext().createRuntime(this.alternate);
+                            var context = this.context.newContext(null, this.order);
+                            this.alternateStatement = context.createRuntime(this.alternate);
                             this.alternateStatement.activate();
                         }
                     }

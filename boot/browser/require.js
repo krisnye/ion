@@ -1,4 +1,4 @@
-void (function(){var _ion_browser_require_ = function(module,exports,require){var modules, normalize, require, resolve;
+void (function(){var _ion_browser_require_ = function(module,exports,require){var modules, normalize, require, resolve, used;
 
 if (this.global == null) {
   this.global = (function() {
@@ -9,6 +9,8 @@ if (this.global == null) {
 if (this.require != null) {
   return;
 }
+
+used = {};
 
 require = function(path) {
   var i, m, object, originalPath, steps;
@@ -46,10 +48,22 @@ require = function(path) {
     m.id = path;
     m.call(this, m, m.exports, resolve(path));
   }
+  used[path] = true;
   return m.exports;
 };
 
 modules = {};
+
+require.getUnusedIds = function() {
+  var key, results;
+  results = [];
+  for (key in modules) {
+    if (!used[key]) {
+      results.push(key);
+    }
+  }
+  return results;
+};
 
 normalize = require.normalize = function(curr, path) {
   var i, seg, segs;
@@ -111,11 +125,10 @@ require.runTests = function(callback) {
 };
 
 require.compileScripts = function() {
-  var compiledWrapper, compiler, ion, removeLastResult, result, scriptElement, template, _i, _len, _ref, _results;
+  var compiledWrapper, compiler, ion, removeLastResult, result, scriptElement, template, _i, _len, _ref;
   ion = require('ion');
   compiler = require('ion/compiler');
   _ref = document.querySelectorAll("script[type=ion]");
-  _results = [];
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     scriptElement = _ref[_i];
     compiledWrapper = eval("(function(){ " + (compiler.compile(scriptElement.innerHTML)) + " })");
@@ -124,23 +137,24 @@ require.compileScripts = function() {
       if (typeof result.template) {
         template = result.call(scriptElement);
         removeLastResult = null;
-        _results.push(template.observe(function(templateResult) {
+        template.observe(function(templateResult) {
           if (typeof removeLastResult === "function") {
             removeLastResult();
           }
           removeLastResult = null;
           if (templateResult != null) {
-            return removeLastResult = ion.add(scriptElement.parentElement, templateResult);
+            scriptElement.parentElement.appendChild(templateResult);
+            return removeLastResult = function() {
+              return scriptElement.parentElement.removeChild(templateResult);
+            };
           }
-        }));
+        });
       } else {
-        _results.push(ion.add(scriptElement.parentElement, result));
+        scriptElement.parentElement.appendChild(document.createTextNode(result));
       }
-    } else {
-      _results.push(void 0);
     }
   }
-  return _results;
+  return ion.sync();
 };
 
 if (typeof module === "undefined") {

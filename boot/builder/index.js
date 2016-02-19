@@ -217,12 +217,13 @@ module.exports = exports = {
     }
   },
   shimJavascript: shimJavascript = function(source, packageObject) {
-    var moduleId;
+    var moduleId, result;
     if (source.modified === 0) {
       return;
     }
     moduleId = typeof packageObject === 'string' ? packageObject : getModuleId(source, packageObject);
-    return addBrowserShim(source.read(), moduleId);
+    result = addBrowserShim(source.read(), moduleId);
+    return result;
   },
   addBrowserShim: addBrowserShim = function(sourceText, moduleId) {
     var safeId;

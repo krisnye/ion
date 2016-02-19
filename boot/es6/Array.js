@@ -1,6 +1,10 @@
 void (function(){var _ion_es6_Array_ = function(module,exports,require){'use strict';
 if (!(Array.prototype.add != null)) {
-    Object.defineProperty(Array.prototype, 'add', { value: Array.prototype.push });
+    Object.defineProperty(Array.prototype, 'add', {
+        value: function (item, index) {
+            this.splice(index, 0, item);
+        }
+    });
 }
 if (!(Array.prototype.remove != null)) {
     Object.defineProperty(Array.prototype, 'remove', {

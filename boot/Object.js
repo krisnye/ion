@@ -7,16 +7,14 @@ var _ref2 = {};
         visible: false,
         type: 'string',
         get: function () {
-            return this.constructor.id;
+            return this.constructor.name;
         },
         set: function () {
         }
     });
     _ref2.toJSON = function () {
         var properties = {};
-        if (this.constructor.id != null) {
-            properties[this.constructor.typeKey] = this.constructor.id;
-        }
+        properties[typeKey] = this[typeKey];
         {
             var _ref = this;
             for (var key in _ref) {
@@ -32,11 +30,14 @@ var _ref2 = {};
 var Object = ion.defineClass({
         name: 'Object',
         constructor: function Object(properties) {
-            if (properties != null) {
-                for (var key in properties) {
-                    var value = properties[key];
-                    var value = properties[key];
-                    this[key] = value;
+            for (var _i = 0; _i < arguments.length; _i++) {
+                var arg = arguments[_i];
+                if (arg != null) {
+                    for (var key in arg) {
+                        var value = arg[key];
+                        var value = arg[key];
+                        this[key] = value;
+                    }
                 }
             }
         },

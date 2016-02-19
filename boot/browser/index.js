@@ -1,5 +1,4 @@
-void (function(){var _ion_browser_index_ = function(module,exports,require){Object.defineProperty(exports, 'element', {get:function(){ return require('./element') }, enumerable: true}) 
-Object.defineProperty(exports, 'require', {get:function(){ return require('./require') }, enumerable: true}) 
+void (function(){var _ion_browser_index_ = function(module,exports,require){Object.defineProperty(exports, 'require', {get:function(){ return require('./require') }, enumerable: true}) 
 Object.defineProperty(exports, 'tester', {get:function(){ return require('./tester') }, enumerable: true}) 
   }
   if (typeof require === 'function') {
