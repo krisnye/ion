@@ -8,6 +8,7 @@
     "repository": "https://github.com/krisnye/ion.git",
     "scripts": {
         "dev": "npm install && npm link",
+        "preinstall": "npm run boot",
         "build": "ion -c",
         "watch": "ion -w",
         "boot": "node boot/builder/_command.js -c"
