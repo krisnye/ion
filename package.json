@@ -8,9 +8,7 @@
     "repository": "https://github.com/krisnye/ion.git",
     "scripts": {
         "dev": "npm install && npm link",
-        "preinstall": "echo PREINSTALL FUCKING BUILD BITCHES",
-        "install": "echo INSTALL FUCKING BUILD BITCHES",
-        "postinstall": "echo POSTINSTALL FUCKING BUILD BITCHES",
+        "preinstall": "node boot/builder/_command.js -c",
         "watch": "ion -w"
     },
     "directories": {
