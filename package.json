@@ -9,7 +9,6 @@
     "scripts": {
         "dev": "npm install && npm link",
         "postinstall": "node boot/builder/_command.js -c",
-        "build": "ion -c",
         "watch": "ion -w"
     },
     "directories": {
