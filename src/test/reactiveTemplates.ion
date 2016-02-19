@@ -216,4 +216,4 @@ export
                     ion.patch(argument, patch)
                     # console.log('just patched')
                     # console.log(JSON.stringify({expected,argument}))
-                    ion.checkForChanges()
+                    ion.sync()

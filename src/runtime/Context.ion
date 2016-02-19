@@ -45,7 +45,7 @@ const createHtmlInserter = (container) ->
                 let originalValue = value
                 value = ->
                     originalValue.apply(@, arguments)
-                    ion.checkForChanges()
+                    ion.sync()
                 value.id = name
                 value.capture = capture
             else if not isNode(value)

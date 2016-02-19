@@ -171,6 +171,7 @@ export const
                 # debugger
                 console.warn("unobserve should not be called multiple times!")
     checkForChanges = observeShim.checkForChanges
+    sync = observeShim.checkForChanges
     changed = do ->
         # let throttledCheck = throttleAnimation(checkForChanges)
         return (object) ->
@@ -197,11 +198,11 @@ export const
             if name.endsWith(captureSuffix)
                 capture = true
                 name = name.substring(0, name.length - captureSuffix.length)
-            if item.toString().indexOf('checkForChanges') < 0
-                # we wrap all event handlers and call checkForChanges after, UNLESS they call it themselves.
+            if item.toString().indexOf('sync') < 0
+                # we wrap all event handlers and call sync after, UNLESS they call it themselves.
                 item = ->
                     originalItem.apply(@, arguments)
-                    checkForChanges()
+                    sync()
             container.addEventListener(name, item, capture)
             remove = ->
                 container.removeEventListener(name, item)
@@ -309,6 +310,8 @@ export const
     serialize = (object) -> JSON.stringify(object)
     deserialize = do ->
         let extractType = (object, namespace) ->
+            if not object?
+                return null
             let typeKey = import('./Object').typeKey
             # we should strongly type our objects when created, so make a factory
             let typeName = object[typeKey]
@@ -373,4 +376,4 @@ for name in ["runtime", "compiler", "builder", "browser"]
 
 # if window, then on resize, check for changes
 if global.window?
-    global.window.addEventListener('resize', checkForChanges)
+    global.window.addEventListener('resize', sync)

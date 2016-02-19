@@ -5,6 +5,8 @@
 # require already exists.
 return if @require?
 
+used = {}
+
 # This provides the require function in the browser
 require = (path) ->
     if path is 'ion/browser/require'
@@ -31,9 +33,18 @@ require = (path) ->
         m.exports = {}
         m.id = path
         m.call this, m, m.exports, resolve(path)
+    used[path] = true # mark as used
     m.exports
 
 modules = {}
+
+require.getUnusedIds = ->
+    results = []
+    for key of modules
+        if not used[key]
+            results.push(key)
+    return results
+
 normalize = require.normalize = (curr, path) ->
     segs = curr.split("/")
     seg = undefined
@@ -90,7 +101,7 @@ require.compileScripts = ->
                         removeLastResult = -> scriptElement.parentElement.removeChild(templateResult)
             else
                 scriptElement.parentElement.appendChild(document.createTextNode(result))
-    ion.checkForChanges()
+    ion.sync()
 
 if typeof module is "undefined"
     @require = require

@@ -210,5 +210,5 @@ export const
                 # todo: delete a property in a literal?
                 delete source.children.Third
                 # temp requirement
-                ion.checkForChanges()
+                ion.sync()
                 # console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')

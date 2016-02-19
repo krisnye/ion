@@ -101,7 +101,7 @@ export class Directory
                                 delete results[path]
                             # explicit check is only because current
                             # nodejs versions don't have Object.observe yet.
-                            ion.checkForChanges()
+                            ion.sync()
                     )
                     return unwatch
             )

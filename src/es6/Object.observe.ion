@@ -95,7 +95,7 @@ export const
             changedObjects.set(object, object)
     checkForChanges = () ->
         let changes
-        let maxCycles = 10
+        let maxCycles = 20
         # we have to run multiple cycles in case callbacks cause further change propagation
         for let i = 0; i < maxCycles; i++
             # console.log('-------- check for changes ' + i + ' ' + forceAll + ' ' + changedObjects.size + ' ' + nextCheckMap.size)
