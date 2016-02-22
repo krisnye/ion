@@ -108,7 +108,7 @@ module.exports = exports =
             console.log "Compile: #{filename}"
             compiled = cs.compile input, options = {bare: true}
             # console.log 'sourceMap: ' + typeof options.sourceMap
-            compiled = addBrowserShim compiled, moduleId
+            compiled = addBrowserShim compiled, moduleId, input
             return compiled
         catch e
             showPrettyError e, filename, input
@@ -159,7 +159,7 @@ module.exports = exports =
             ionCompiler = require '../compiler'
             input = source.read()
             [source,map] = ionCompiler.compileWithSourceMap(input, {source:moduleId + ".ion" ,sourceMap:filename.split(/[\/\\]/).pop()})
-            source = addBrowserShim source, moduleId
+            source = addBrowserShim source, moduleId, input
             return [source,map]
         catch e
             console.error(String(e))
@@ -170,9 +170,12 @@ module.exports = exports =
         result = addBrowserShim source.read(), moduleId
         return result
 
-    addBrowserShim: addBrowserShim = (sourceText, moduleId) ->
+    addBrowserShim: addBrowserShim = (sourceText, moduleId, originalSource) ->
         # don't shim if the source starts with a shebang
-        if sourceText.substring(0, 2) is "#!"
+        if originalSource?.substring(0, 2) is "#!"
+            stripValue = "#!browser"
+            if sourceText.startsWith(stripValue)
+                sourceText = sourceText.substring(stripValue.length)
             return sourceText
         # make sure the javascript isn't already shimmed, so we don't shim it twice.
         if moduleId?

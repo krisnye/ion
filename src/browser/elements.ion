@@ -1,0 +1,44 @@
+#!browser
+do ->
+
+    if not global.window?
+        return
+
+    # also watch for hash changes
+    if global.window?
+        window.addEventListener(
+            'hashchange'
+            (e) ->
+                let ion = require('ion')
+                requestAnimationFrame(ion.sync)
+        )
+
+    let changeElements =
+        input: true
+        select: true
+        textarea: true
+    let elements = []
+        "div","span","input","textarea","a","br","img", "p"
+        "button","caption","fieldset","form","frame","frameset"
+        "h1","h2","h3","h4","h5","h6","hr","legend"
+        "menu","option","select","script","pre"
+        "table","tbody","td","tr","thead", "canvas"
+        "head","meta","body","script"
+        "section","header","footer","article"
+        "ul", "ol", "li", "label", "strong"
+        "svg", "path", "datalist"
+
+    for name in elements
+        let jsName = name[0].toUpperCase() + name.substring(1)
+        window[jsName] = do (name) ->
+            let ion = require('ion')
+            return (attributes) ->
+                let element = document.createElement(jsName)
+                if changeElements[name]
+                    element.addEventListener('change', ion.sync)
+                for arg in arguments
+                    if arg?
+                        for key, value of arg
+                            if value?
+                                element.setAttribute(key, value)
+                return element

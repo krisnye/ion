@@ -1,8 +1,9 @@
 {
-  "modified": 1455923694000,
+  "modified": 1456114391000,
   "files": [
     "browser/require.js",
     "Object.js",
+    "browser/elements.js",
     "browser/index.js",
     "browser/tester.js",
     "builder/Directory.js",
