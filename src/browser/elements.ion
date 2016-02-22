@@ -33,7 +33,7 @@ do ->
         window[jsName] = do (name) ->
             let ion = require('ion')
             return (attributes) ->
-                let element = document.createElement(jsName)
+                let element = document.createElement(name)
                 if changeElements[name]
                     element.addEventListener('change', ion.sync)
                 for arg in arguments
