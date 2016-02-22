@@ -1,4 +1,4 @@
-#! don't shim
+#!browser
 do ->
 
     # define global if needed.
@@ -83,12 +83,24 @@ do ->
         else
             fn()
 
+    # this may cache compiled files in session for performance.
+    getCompiledCode = (scriptElement) ->
+        source = scriptElement.innerHTML
+        # check session storage if we've already compiled this script.
+        compiledCode = sessionStorage.getItem(source)
+        if not compiledCode?
+            console.log('checking source code, didnt find it, so compiling')
+            compiler = require 'ion/compiler'
+            compiledCode = compiler.compile(source)
+            sessionStorage.setItem(source, compiledCode)
+        return compiledCode
+
     require.compileScripts = ->
         ion = require 'ion'
-        compiler = require 'ion/compiler'
         for scriptElement in document.querySelectorAll("script[type=ion]")
             # we wrap all ion scripts to avoid global variable leaks
-            compiledWrapper = eval("(function(){ #{compiler.compile(scriptElement.innerHTML)} })")
+            compiledCode = getCompiledCode(scriptElement)
+            compiledWrapper = eval("(function(){ #{compiledCode} })")
             # 'this' is the scriptElement within the scripts scope instead of the window
             result = compiledWrapper.call(scriptElement)
             if result?

@@ -31,8 +31,8 @@ do ->
     for name in elements
         let jsName = name[0].toUpperCase() + name.substring(1)
         window[jsName] = do (name) ->
-            let ion = require('ion')
             return (attributes) ->
+                let ion = require('ion')
                 let element = document.createElement(name)
                 if changeElements[name]
                     element.addEventListener('change', ion.sync)
