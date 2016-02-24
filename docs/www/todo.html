@@ -1,12 +1,7 @@
 <html>
     <head>
         <title>Ion Reactive Samples</title>
-        <script src="/bower_components/ion/lib/_debug.js"></script>
-        <script type='ion'>
-        for name in ["div","span","h1","h2","h3","h4","textarea","input","form","button"]
-            do (name) ->
-                global[name] = -> document.createElement(name)
-        </script>
+        <script src="/scripts.js"></script>
         <style>
         .description { margin: 1em; }
         .sample { background: #eeeeee; }
@@ -36,29 +31,29 @@
 
                 # now define the reactive view template
                 return template ->
-                    return div()
-                        div()
+                    return Div()
+                        Div()
                             "tasks: {{ JSON.stringify(tasks) }}"
-                        div()
+                        Div()
                             for name, complete of tasks
-                                div()
-                                    input()
+                                Div()
+                                    Input()
                                         type: 'checkbox'
                                         checked: complete
                                         change(e) ->
                                             tasks[name] = @checked
-                                    span()
+                                    Span()
                                         style:
                                             display: 'inline-block'
                                             width: '10em'
                                         name
-                                    button()
+                                    Button()
                                         "\u2212"
                                         click(e) ->
                                             delete tasks[name]
-                        div()
-                            form()
-                                let nameInput = input()
+                        Div()
+                            Form()
+                                let nameInput = Input()
                                     width: '10em'
                                 submit(e) ->
                                     e.preventDefault()
@@ -66,16 +61,16 @@
                                     if name.length > 0
                                         tasks[name] = false
                                     nameInput.select()
-                                input()
+                                Input()
                                     type: 'checkbox'
                                     style:
                                         visibility: 'hidden'
-                                span()
+                                Span()
                                     style:
                                         display: 'inline-block'
                                         width: '10em'
                                     nameInput
-                                button()
+                                Button()
                                     type: 'submit'
                                     "+"
                 </script>

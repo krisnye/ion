@@ -1,12 +1,7 @@
 <html>
     <head>
         <title>Code Samples</title>
-        <script src="/bower_components/ion/lib/_debug.js"></script>
-        <script type='ion'>
-        for name in ["div","span","h1","h2","h3","h4","textarea","input"]
-            do (name) ->
-                global[name] = -> document.createElement(name)
-        </script>
+        <script src="/scripts.js"></script>
     </head>
     <body>
         <script type='ion'>
@@ -169,29 +164,29 @@
                 return true
 
         return template ->
-            return div()
-                h2()
+            return Div()
+                H2()
                     'Samples'
                 for sample in samples
-                    div()
+                    Div()
                         style:
                             marginTop: '1em'
-                        h4()
+                        H4()
                             style:
                                 marginLeft: '0.1em'
                                 marginBottom: '0.2em'
                             sample.title
                             if sample.imperative
-                                span()
+                                Span()
                                     style:
                                         marginLeft: '1em'
                                         fontSize: 'smaller'
                                         opacity: 0.5
                                     "(imperative code only)"
                         if sample.description
-                            span()
+                            Span()
                                 sample.description
-                    textarea()
+                    Textarea()
                         keyup(e) ->
                             sample.ion = @value
                         style:
@@ -202,7 +197,7 @@
                             marginTop: '1em'
                         rows: sample.ion.split('\n').length
                         sample.ion
-                    div()
+                    Div()
                         style:
                             display: 'inline-block'
                             border: 'solid gray 1px'

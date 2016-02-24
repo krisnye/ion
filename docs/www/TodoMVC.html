@@ -1,18 +1,8 @@
 ﻿<html>
     <head>
         <title>Ion • TodoMVC</title>
-        <script src="/bower_components/ion/lib/_debug.js"></script>
+        <script src="/scripts.js"></script>
         <link rel="stylesheet" href="TodoMVC.css">
-        <script type='ion'>
-        for name in ["div","span","h1","h2","h3","h4","textarea","input","form","button","section","header","footer","ul","li","label","strong","a"]
-            do (name) ->
-                global[name] = (attributes) ->
-                    let element = document.createElement(name)
-                    if attributes?
-                        for key, value of attributes
-                            element.setAttribute(key, value)
-                    return element
-        </script>
     </head>
     <body>
         <div>
@@ -38,12 +28,12 @@
                 let state =
                     filter: 'all'
                     editing: null
-                return section({id:'todoapp'})
-                    header({id:'header'})
-                        h1()
+                return Section({id:'todoapp'})
+                    Header({id:'header'})
+                        H1()
                             'todos'
-                        form()
-                            let nameField = input({id:'new-todo', placeholder:'What needs to be done?'})
+                        Form()
+                            let nameField = Input({id:'new-todo', placeholder:'What needs to be done?'})
                             nameField
                             submit(e) ->
                                 e.preventDefault()
@@ -52,17 +42,17 @@
                                     tasks.unshift({name:value,complete:false})
                                 nameField.value = ''
                                 nameField.select()
-                    section({id:'main'})
-                        input({id:'toggle-all',type:'checkbox'})
+                    Section({id:'main'})
+                        Input({id:'toggle-all',type:'checkbox'})
                             change(e) ->
                                 for task in tasks
                                     task.complete = @checked
-                        ul({id:'todo-list'})
+                        Ul({id:'todo-list'})
                             let filter = filters[state.filter]
                             for task, index in tasks
                                 if filter(task)
                                     let {name,complete} = task
-                                    li()
+                                    Li()
                                         click(e) ->
                                             if e.detail is 2
                                                 state.editing = index
@@ -71,13 +61,13 @@
                                                 'completed'
                                         style:
                                             order: index
-                                        input({class:'toggle',type:'checkbox'})
+                                        Input({class:'toggle',type:'checkbox'})
                                             checked: complete
                                             change(e) ->
                                                 task.complete = @checked
-                                        label()
+                                        Label()
                                             if state.editing is index
-                                                let editor = input()
+                                                let editor = Input()
                                                     change(e) ->
                                                         let name = @value.trim()
                                                         if name.length > 0
@@ -88,27 +78,27 @@
                                                 void editor.select()
                                             else
                                                 name
-                                        button({class:'destroy'})
+                                        Button({class:'destroy'})
                                             click(e) ->
                                                 tasks.splice(index, 1)
-                    footer({id:'footer'})
+                    Footer({id:'footer'})
                         style:
                             display: count > 0 ? 'initial': 'none'
-                        span({id:'todo-count'})
-                            strong()
+                        Span({id:'todo-count'})
+                            Strong()
                                 remaining
                             " item{{remaining isnt 1 ? 's' : ''}} left"
-                        ul({id:'filters'})
+                        Ul({id:'filters'})
                             for name of filters
-                                li()
-                                    a()
+                                Li()
+                                    A()
                                         classList:
                                             if state.filter is name
                                                 'selected'
                                         click(e) ->
                                             state.filter = name
                                         name
-                        button({id:'clear'})
+                        Button({id:'clear'})
                             style:
                                 display: completed > 0 ? 'initial': 'none'
                             click(e) ->
@@ -120,9 +110,9 @@
             </script>
         </div>
         <footer id="info">
-            <p>Double-click to edit a todo</p>
-            <p>Created by <a href="https://github.com/krisnye/ion">The Ion Author</a></p>
-            <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+            <p>Double-click to edit A todo</p>
+            <p>Created by <A href="https://github.com/krisnye/ion">The Ion Author</A></p>
+            <p>Part of <A href="http://todomvc.com">TodoMVC</A></p>
         </footer>
     </body>
 </html>

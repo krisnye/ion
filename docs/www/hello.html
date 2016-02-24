@@ -1,12 +1,7 @@
 <html>
     <head>
         <title>Ion Reactive Samples</title>
-        <script src="/bower_components/ion/lib/_debug.js"></script>
-        <script type='ion'>
-        for name in ["div","span","h1","h2","h3","h4","textarea","input","form","button"]
-            do (name) ->
-                global[name] = -> document.createElement(name)
-        </script>
+        <script src="/scripts.js"></script>
         <style>
         .description { margin: 1em; }
         .sample { background: #eeeeee; }
@@ -22,15 +17,15 @@
                 <script type='ion'>
                 let model = {name:"World"}
                 return template ->
-                    return div()
-                        div()
+                    return Div()
+                        Div()
                             "Name: "
-                            input()
+                            Input()
                                 type: 'text'
                                 value: 'World'
                                 keyup(e) ->
                                     model.name = @value
-                        div()
+                        Div()
                             "Hello {{model.name}}"
                 </script>
             </div>
