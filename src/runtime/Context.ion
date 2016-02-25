@@ -27,7 +27,7 @@ const isNode = (value) -> typeof value?.nodeType is "number"
 const createHtmlInserter = (container) ->
     return
         isOrdered: (value) ->
-            if typeof value isnt 'function'
+            if typeof value is 'function'
                 return false
             if container.unordered
                 return false
@@ -53,6 +53,7 @@ const createHtmlInserter = (container) ->
             return value
         getLength: -> container.childNodes.length
         add: (value, index) ->
+            console.log('add', index, value)
             if typeof value is 'function'
                 container.addEventListener(value.id, value, value.capture)
             else
@@ -63,6 +64,7 @@ const createHtmlInserter = (container) ->
                         return
                 container.appendChild(value)
         remove: (index, value, moving) ->
+            console.log('remove', index, value, moving)
             if typeof value is 'function'
                 container.removeEventListener(value.id, value)
             else if not moving
