@@ -38,7 +38,6 @@ export class Property extends Statement
         setOutputValue: (key, value) ->
             # console.log('set value', @context.output, key, value)
             @context.output[key] = @lastAssignedValue = value
-            ion.changed(@context.output)
         setProperty: (key = @keyValue, value = @valueValue) ->
             # we must have a key, and the value must not be undefined UNLESS the value is explicitly undefined!
             if @hasOwnProperty('keyValue') and @hasOwnProperty('valueValue')

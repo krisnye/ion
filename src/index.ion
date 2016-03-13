@@ -172,11 +172,6 @@ export const
                 console.warn("unobserve should not be called multiple times!")
     checkForChanges = observeShim.checkForChanges
     sync = observeShim.checkForChanges
-    changed = do ->
-        # let throttledCheck = throttleAnimation(checkForChanges)
-        return (object) ->
-            observeShim.changed(object)
-            # throttledCheck()
     nextCheck = (callback) ->
         observeShim.nextCheck(callback)
     bind = (fn, thisArg) ->

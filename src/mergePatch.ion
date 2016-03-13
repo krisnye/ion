@@ -64,11 +64,15 @@ export const
     #   deleteNull: delete properties if value is null, default: true
     #   factory: function to use when constructing new objects, defaults to using plain objects {}
     merge = (target, values, options, schema) ->
+        let deleteNull = options?.deleteNull ? true
 
         if schema?.type is 'integer' and increment.test(values)
-            values = (typeof target is 'number' ? target : 0) + parseInt(values.substring(1))
+            if not deleteNull or typeof target is 'string' and increment.test(target)
+                let total = parseInt(target ? 0) + parseInt(values.substring(1))
+                values = "{{total > 0 ? '+' : '-'}}{{Math.abs(total)}}"
+            else
+                values = (typeof target is 'number' ? target : 0) + parseInt(values.substring(1))
 
-        let deleteNull = options?.deleteNull ? true
         if values?.constructor isnt Object
             return values
         if not isObject(target)
@@ -77,19 +81,17 @@ export const
             else
                 target = {}
         for key, value of values
-            if deleteNull and value is deleteValue
+            if deleteNull and value is deleteValue and not Array.isArray(target)
                 delete target[key]
-                ion.changed(target)
             else
                 let itemSchema = schema?.items ? schema?.properties?[key]
                 let newValue = merge(target[key], value, options, itemSchema)
                 if newValue isnt target[key] and canSetProperty(target, key)
                     target[key] = newValue
                     # console.log('*****patch*********')
-                    ion.changed(target)
         return target
     # combines two patches to make a single patch
-    combine = (patch1, patch2) -> merge(patch1, patch2, {deleteNull:false})
+    combine = (patch1, patch2, schema) -> merge(patch1, patch2, {deleteNull:false}, schema)
     # watches object for changes and calls the handler with patches
     watch = (object, handler) ->
         # this version delays callbacks in order to merge all simultaneous changes
@@ -127,6 +129,11 @@ export const
         for name of newValue if newValue.hasOwnProperty(name) and not oldValue.hasOwnProperty(name)
             patch ?= {}
             patch[name] = newValue[name]
+        # if they are both arrays and the new value is shorter, then shorten the length
+        if Array.isArray(oldValue) and Array.isArray(newValue) and newValue.length < oldValue.length
+            patch.length = newValue.length
+            for let i = newValue.length; i < oldValue.length; i++
+                delete patch[i]
         return patch
     isChange = (oldValue, newValue) ->
         # returns true if a newValue will change the old value
@@ -156,6 +163,13 @@ export const
                 let double = (x) -> x * 2
                 assert equal({a:double}, merge({},{a:double}))
                 assert equal({a:[]}, merge({a:[1,2]}, {a:[]}))
+
+                assert "+2" is merge("+1", "+1", null, {type:'integer'})
+
+                # assigning null on an array just sets null to that index
+                assert equal([1, null], merge([1,2], {1:null}))
+                assert equal([1, undefined], merge([1,2], {1:undefined}))
+
             isChange: ->
                 assert isChange({a:1}, null)
                 assert not isChange(null, null)
@@ -174,6 +188,9 @@ export const
                 assert equal(null, diff({a:1}, undefined))
                 assert equal(null, diff({a:1}, null))
                 assert equal(undefined, diff({a:{b:2}}, {a:{b:2}}))
+
+                # diff on arrays should result in shorter value length
+                console.log(diff([1,2,3], [3,2]))
             observe: (done) ->
                 # console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
                 let source =
