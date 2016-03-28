@@ -3,6 +3,8 @@ const ion = import '../'
 export const
     CallExpression =
         location: true
+    ExpressionStatement =
+        location: true
     MemberExpression =
         location: true
     BlockStatement =

@@ -75,11 +75,15 @@ module.exports = class CallExpression extends DynamicExpression
             if @unobserveTemplate? and @lastCalleeValue is @calleeValue and @lastThisArg is @thisArg
                 #   if only the arguments have changed, we don't need to call a template again,
                 #   we can just change the previous argument values
-                for arg, index in @argumentsValue
-                    if @lastArgumentsValue[index] isnt arg
-                        @lastArgumentsValue[index] = arg
-                # console.log('change template arguments template-------------------')
-                return
+
+                # THIS WAS CAUSING A BUG. Templates DO NOT pick up changes to root arguments.
+                console.warn("Changing a template parameter directly, this hurts performance, should be fixed in ion.")
+
+                # for arg, index in @argumentsValue
+                #     if @lastArgumentsValue[index] isnt arg
+                #         @lastArgumentsValue[index] = arg
+                # # console.log('change template arguments template-------------------')
+                # return
 
             # if @calleeValue.template
             #     console.log('reevaluate template-------------------')

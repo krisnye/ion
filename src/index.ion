@@ -162,7 +162,7 @@ export const
                     observeShim.unobserve(object, observer, property)
                     # console.log('unobserve shim ' + JSON.stringify(object))
                 else if object? and observer? and Object.unobserve? and typeof object is 'object'
-                    Object.unobserve(object, observer)
+                    observeShim.unobserve(object, observer, property)
                     # console.log('unobserve ' + JSON.stringify(object))
                     # unwatch change on dom elements
                     object.removeEventListener?('change', observer)
@@ -183,7 +183,7 @@ export const
         if fn.name?.length > 0
             newFn.id = fn.id ? fn.name
         return newFn
-    add = (container, item) ->
+    add = (container, item, sourceNode) ->
         let originalItem = item
         let remove
         if typeof item is 'function' and (item.name?.length > 0 or item.id?) and typeof container.addEventListener is 'function'

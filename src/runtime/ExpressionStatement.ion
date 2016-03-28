@@ -1,6 +1,7 @@
 const
     ion = import '../'
-    Statement = import './Statement'
+    {Factory,Statement} = import './'
+
 
 export class ExpressionStatement extends Statement
     properties:
@@ -14,11 +15,17 @@ export class ExpressionStatement extends Statement
                         @_remove?()
                         @_remove = null
                         if @context.output? and value isnt undefined
-                            @_remove = @context.insert(value, @order)
+                            try
+                                @_remove = @context.insert(value, @order, @)
+                            catch e
+                                console.warn("Error adding {{value}} to {{@context.output}}:  ({{Factory.toCode(@callee)}}) ({{@loc.start.source}}:{{@loc.start.line}}:{{@loc.start.column + 1}})")
+                                console.error(e)
+                            
             )
         deactivate: ->
             super
             @runtimeExpressionObserver?(undefined)
-            @unobserve()
+            @unobserve?()
+            @unobserve = null
             @_remove?()
             @_remove = null
