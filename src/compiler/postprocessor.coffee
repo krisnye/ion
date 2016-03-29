@@ -690,20 +690,7 @@ propertyStatements = (node, context) ->
                             computed: node.computed
                         right: node.value
         else
-            # if node.computed
-            #     throw context.error "dynamic property expression invalid here", node.key
-            # if node.value.objectType?
-            #     throw context.error "type not allowed on set expression", node.value
-            # set node output values on this
             throw context.error "Property assignment only valid within an object declaration", node
-            # statements = []
-            # setNodeOutputValues context, node.value.properties, node.key, statements
-            # if statements.length is 1
-            #     context.replace statements[0]
-            # else
-            #     context.replace
-            #         type: 'BlockStatement'
-            #         body: statements
 
 patchAssignmentExpression = (node, context) ->
     if node.type is 'AssignmentExpression' and node.operator is ':='
