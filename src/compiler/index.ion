@@ -68,6 +68,6 @@ export const
                 preprocessor.fixSourceLocation(e, sourceMapping)
             # console.log('-Preprocessed--------------------------------------------')
             # console.log(preprocessed)
-            makePrettyError(e, content, options.id)
+            makePrettyError(e, content, options.source)
             throw e
         return [header + result,sourceMap]

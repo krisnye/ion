@@ -119,7 +119,7 @@
 Program = start:start body:ProgramStatements end:end { return node("Program", {body:body}, start, end) }
 
 ProgramStatements = a:BlockStatement { return a.body } / Statement*
-Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / PropertyDefinition / AddPropertyDeclaration / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ActivateStatement / ExpressionStatement) (eol / _ ',') { return a }
+Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / PropertyDefinition / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ActivateStatement / ExpressionStatement) (eol / _ ',') { return a }
 ExportStatement = start:start export _ value:(VariableDeclaration / RightHandSideExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
 ReturnStatement = start:start return _ argument:RightHandSideExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
 ThrowStatement = start:start throw _ argument:RightHandSideExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
@@ -196,6 +196,7 @@ classExtends = extends _ baseClasses:elementList { return baseClasses }
 path = head:Identifier tail:('.' a:Identifier {return a})+ { return [head].concat(tail) }
 propertyLeft = key:(path / IdentifierName / StringOrNumberLiteral) { return {key:key} }
              / "[" _ key:InlineExpression _ "]" { return {key:key, computed: true} }
+/*
 AddPropertyDeclaration = start:start "(" _ declaration:PropertyDeclaration _ ")" properties:BlockStatement? end:end
     {
         declaration = clone(declaration)
@@ -204,6 +205,7 @@ AddPropertyDeclaration = start:start "(" _ declaration:PropertyDeclaration _ ")"
         declaration.add = true
         return declaration
     }
+*/
 
 PropertyDefinition
     //  represents a new property definition such as would be used with Object.defineProperty(..)

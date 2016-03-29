@@ -49,23 +49,6 @@ tests =
     module.exports = exports = StampFilter;
     """
     """
-    let element =
-        (body: 2)
-    """: """
-    'use strict';
-    var ion = require('ion');
-    var element = {};
-    {
-        var _body = 2;
-        element.body = _body;
-        ion.add(element, _body);
-    }
-    """
-    """
-    (foo: bar)
-        x: 1
-    """: {line:1, column:2}
-    """
     let foo = bar(
         1
         2
@@ -170,6 +153,14 @@ tests =
     # """
     # JSON.stringify(deep object)
     # """: null
+    """
+    foo:
+        a: 1
+    """: {line:1, column:1}
+    """
+    style.sheets:
+        [module.id]: ""
+    """: {line:1, column:1}
 
 if global.window?
     return

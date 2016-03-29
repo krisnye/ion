@@ -608,7 +608,7 @@ tests =
         });
     """
     """
-    input:
+    input
         # ignore this comment
         x: 10
         y: 20
@@ -622,18 +622,18 @@ tests =
     """: """
     'use strict';
     const ion = require('ion');
-    {
-        input.x = 10;
-        input.y = 20;
-        input.z = ion.patch.combine(input.z, {
+    ion.patch.combine(input, {
+        x: 10,
+        y: 20,
+        z: {
             a: 1,
             b: 2
-        });
-        input.w = ion.patch.combine(new Point(), {
+        },
+        w: ion.patch.combine(new Point(), {
             x: 0,
             y: 0
-        });
-    }
+        })
+    });
     """
     """
     let point = new Point
@@ -1160,24 +1160,18 @@ tests =
     });
     """
     """
-    output:
+    output
         for a in b
             [c]: d
     """: """
     'use strict';
+    let _ref = output;
     for (let _i = 0; _i < b.length; _i++) {
         let a = b[_i];
-        output[c] = d;
+        _ref[c] = d;
     }
+    _ref;
     """
-    """
-    output: {}
-        x: 1
-    """: {line: 1, column: 9}
-    """
-    [output]:
-        x: 1
-    """: {line: 1, column: 2}
     """
     #
     #
@@ -1244,11 +1238,12 @@ tests =
             }];
     """
     """
-    x:
+    x
         delete: true
     """: """
     'use strict';
-    x.delete = true;
+    const ion = require('ion');
+    ion.patch.combine(x, { delete: true });
     """
     """
     return
@@ -1265,59 +1260,59 @@ tests =
     }
     return _ref;
     """
-    """
-    content:
-        name: 'foo'
-        1
-        2
-    """: """
-    'use strict';
-    const ion = require('ion');
-    {
-        content.name = 'foo';
-        ion.add(content, 1);
-        ion.add(content, 2);
-    }
-    """
-    """
-    for name, file of directory
-        write(name, file)
-    else
-        delete(name)
-    """: """
-    'use strict';
-    for (let name in directory) {
-        let file = directory[name];
-        write(name, file);
-    }
-    """
     # """
-    # Point
-    #     x: 10
-    #     y: delete
-    # """: null
-    """
-    foo(
-        bar()
-        baz(
-            1
-            2
-        )
-    )
-    """: """
-    'use strict';
-    foo(bar(), baz(1, 2));
-    """
-    # the following is similar to input from a script tag.
-    "\n            console.log('ion')": """
-    'use strict';
-    console.log('ion');
-    """
+    # content:
+    #     name: 'foo'
+    #     1
+    #     2
+    # """: """
+    # 'use strict';
+    # const ion = require('ion');
+    # {
+    #     content.name = 'foo';
+    #     ion.add(content, 1);
+    #     ion.add(content, 2);
+    # }
     # """
-    # let a = template ->
-    #     let b = template -> 1
-    #     return 2
-    # """: null
+    # """
+    # for name, file of directory
+    #     write(name, file)
+    # else
+    #     delete(name)
+    # """: """
+    # 'use strict';
+    # for (let name in directory) {
+    #     let file = directory[name];
+    #     write(name, file);
+    # }
+    # """
+    # # """
+    # # Point
+    # #     x: 10
+    # #     y: delete
+    # # """: null
+    # """
+    # foo(
+    #     bar()
+    #     baz(
+    #         1
+    #         2
+    #     )
+    # )
+    # """: """
+    # 'use strict';
+    # foo(bar(), baz(1, 2));
+    # """
+    # # the following is similar to input from a script tag.
+    # "\n            console.log('ion')": """
+    # 'use strict';
+    # console.log('ion');
+    # """
+    # # """
+    # # let a = template ->
+    # #     let b = template -> 1
+    # #     return 2
+    # # """: null
 
 if global.window?
     return
