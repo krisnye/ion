@@ -54,7 +54,7 @@ module.exports = exports =
         for file in ["package.json", "README.md"]
             from = np.join source, file
             to = np.join target, file
-            if fs.existsSync from
+            if exists from
                 copy from, to
     buildCoffee: buildCoffee = (input, output, callback) ->
         spawn "coffee.cmd -c -o #{output} #{input}", callback
@@ -88,23 +88,28 @@ module.exports = exports =
         fs.utimesSync file, now, now
     getModified: getModified = (path) ->
         try
-            if fs.existsSync path
-                stats = fs.statSync path
-                if stats.mtime?
-                    date = new Date(stats.mtime)
-                    time = date.getTime()
-                    return time
-                else
-                    return 0
+            stats = getStats(path)
+            if stats?.mtime?
+                date = new Date(stats.mtime)
+                time = date.getTime()
+                return time
+            else
+                return 0
         catch e
             console.warn e
         return 0
-    isFile: isFile = (file) -> fs.statSync(file)?.isFile?() is true
-    isDirectory: isDirectory = (file) -> fs.statSync(file)?.isDirectory?() is true
+    exists: exists = (file) -> fs.existsSync(file)
+    getStats: getStats = (file) ->
+        try
+            return fs.statSync(file)
+        catch e
+            return null
+    isFile: isFile = (file) -> getStats(file)?.isFile?() is true
+    isDirectory: isDirectory = (file) -> getStats(file)?.isDirectory?() is true
     list: list = (dir, options={}, files=[]) ->
         exclude = options.exclude ? exports.defaultFileExclude
         recursive = options.recursive ? true
-        if fs.existsSync dir
+        if exists dir
             for file in fs.readdirSync(dir)
                 file = np.join dir, file
                 if not isMatch file, exclude, false
@@ -115,7 +120,7 @@ module.exports = exports =
     makeDirectories: makeDirectories = (dir) ->
         if typeof dir isnt 'string'
             throw new Error "dir is not a string: #{JSON.stringify dir}"
-        if not fs.existsSync dir
+        if not exists dir
             # make parent first
             makeDirectories np.dirname dir
             # make self
@@ -125,7 +130,7 @@ module.exports = exports =
     read: read = (file, encoding) ->
         if encoding == undefined
             encoding = 'utf8'
-        if not fs.existsSync file
+        if not exists file
             return null
         return fs.readFileSync(file, encoding)
     write: write = (file, content, encoding) ->
@@ -134,7 +139,7 @@ module.exports = exports =
             if encoding == undefined and typeof content is 'string'
                 encoding = 'utf8'
             fs.writeFileSync(file, content, encoding)
-        else if fs.existsSync file
+        else if exists file
             fs.unlinkSync(file)
     # copies files or folders
     copy: copy = (source, target, include) ->

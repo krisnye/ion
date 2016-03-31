@@ -43,7 +43,10 @@ export template (packagePatch) ->
             #     void output.write(targetPath, code + "\n//# sourceMappingURL=./" + mapName)
             #     void output.write(mapPath, map)
             # else
-            void output.write(targetPath, compiler.compile(source, packageJson))
+            if source.exists
+                void output.write(targetPath, compiler.compile(source, packageJson))
+            else
+                void output.delete(targetPath)
 
     # build a default index file for each output directory (including root)
     let potentialIndexDirectories = input.search(null, extensions.concat(packageJson.build.exclude))
@@ -70,13 +73,19 @@ export template (packagePatch) ->
 
     # build a manifest file with require.js at the top
 
-    let outputFiles = output.search(".js", [/^_/, 'node_modules'].concat(packageJson.build.exclude))
+    let rawFiles = output.search(".js", [/^_/, 'node_modules'].concat(packageJson.build.exclude))
+    let outputFiles = {}
+        for key, file of rawFiles
+            if file.exists
+                [key]: file
+            else
+                [key]: null
     let top = [key for key of outputFiles if key.endsWith('require.js')]
-    let sortedFiles = top.concat([key for key of outputFiles if not builder.isPrivate(key) and top.indexOf(key) < 0])
+    let sortedFiles = top.concat([key for key, file of outputFiles if not builder.isPrivate(key) and top.indexOf(key) < 0 and file?])
     let manifestFileName = "manifest.json"
     let manifestFile = output.getFile(manifestFileName)
     let manifest =
-        modified: Math.max.apply(null, [file.modified for path, file of outputFiles])
+        modified: Math.max.apply(null, [file.modified for path, file of outputFiles if file?])
         files: [builder.normalizePath(path) for path in sortedFiles]
     output.write(manifestFileName, JSON.stringify(manifest, null, '  ', sortedFiles))
 

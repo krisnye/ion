@@ -31,7 +31,7 @@ export class File
             @
             =>
                 let watcher
-                if fs.existsSync(@path)
+                if utility.exists(@path)
                     watcher = fs.watch(
                         @path
                         =>
@@ -48,11 +48,11 @@ export class File
         isFile:
             get: -> not @isDirectory
         isDirectory:
-            get: -> fs.statSync(@path).isDirectory()
+            get: -> utility.isDirectory(@path)
         directoryName:
             get: -> np.dirname(@path) ? ""
         exists:
-            get: -> fs.existsSync(@path)
+            get: -> utility.exists(@path)
         copyFrom: (file) ->
             file = File(file)
             let content = file.read(null)
@@ -74,7 +74,7 @@ export class File
             let _lastModified = {}
             let _content = {}
             return (encoding) ->
-                if fs.existsSync(@path)
+                if utility.exists(@path)
                     # cache file content as long as the file remains unmodified
                     let modified = utility.getModified(@path)
                     let content
