@@ -77,7 +77,7 @@ module.exports = class CallExpression extends DynamicExpression
                 #   we can just change the previous argument values
 
                 # THIS WAS CAUSING A BUG. Templates DO NOT pick up changes to root arguments.
-                console.warn("Changing a template parameter directly, this hurts performance, should be fixed in ion.")
+                console.warn("Changing a template parameter directly, this hurts performance, should be fixed in ion: " + @ast.callee.name)
 
                 # for arg, index in @argumentsValue
                 #     if @lastArgumentsValue[index] isnt arg
