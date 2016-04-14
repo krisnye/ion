@@ -74,7 +74,10 @@ export const
                 values = (typeof target is 'number' ? target : 0) + parseInt(values.substring(1))
 
         if values?.constructor isnt Object
-            return values
+            if Array.isArray(values)
+                return JSON.parse(JSON.stringify(values))
+            else
+                return values
         if not isObject(target)
             if options?.factory?
                 target = options.factory(values)

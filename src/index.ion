@@ -320,7 +320,13 @@ export const
         let convertType = (object, namespace) ->
             let type = extractType(object, namespace)
             if type?
-                object = new type(object)
+                let values = object
+                object = new type()
+                # now iterate and only set properties that DO NOT HAVE getters/setters
+                for k, v of values
+                    let property = type.properties?[k]
+                    if not property?.get? and not property?.set?
+                        object[k] = v
             # convert recursively
             for key, value of object
                 if value?.constructor is Object
