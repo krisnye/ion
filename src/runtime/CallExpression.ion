@@ -108,6 +108,9 @@ module.exports = class CallExpression extends DynamicExpression
                         # create a new with variable args
                         value = ion.create(@calleeValue, @argumentsValue)
                     else # @type is 'CallExpression'
+                        if @calleeValue is console.log
+                            let start = @loc.start
+                            console.info("{{start.source}}:{{start.line}}")
                         value = @calleeValue.apply(@thisArg, @argumentsValue)
                     @setValue(value)
             catch e
