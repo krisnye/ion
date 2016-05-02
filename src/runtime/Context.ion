@@ -54,7 +54,10 @@ const createHtmlInserter = (container) ->
         getLength: -> container.childNodes.length
         add: (value, index, sourceNode) ->
             if typeof value is 'function'
-                container.addEventListener(value.id, value, value.capture)
+                value.wrapper ?= ->
+                    value.apply(@, arguments)
+                    ion.sync()
+                container.addEventListener(value.id, value.wrapper, value.capture)
             else
                 if index?
                     let after = container.childNodes[index]
@@ -64,7 +67,7 @@ const createHtmlInserter = (container) ->
                 container.appendChild(value)
         remove: (index, value, moving) ->
             if typeof value is 'function'
-                container.removeEventListener(value.id, value)
+                container.removeEventListener(value.id, value.wrapper)
             else if not moving
                 if value.parentElement is container
                     container.removeChild(value)

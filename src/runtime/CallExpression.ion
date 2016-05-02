@@ -2,6 +2,8 @@ const
     ion = import '../'
     {DynamicExpression,ArrayExpression,Factory} = import './'
 
+let lastLogInfo = null
+
 module.exports = class CallExpression extends DynamicExpression
     properties:
         args: null
@@ -108,9 +110,12 @@ module.exports = class CallExpression extends DynamicExpression
                         # create a new with variable args
                         value = ion.create(@calleeValue, @argumentsValue)
                     else # @type is 'CallExpression'
-                        if @calleeValue is console.log
+                        if @thisArg is console
                             let start = @loc.start
-                            console.info("{{start.source}}:{{start.line}}")
+                            let logInfo = "{{start.source}}:{{start.line}}"
+                            if logInfo isnt lastLogInfo
+                                lastLogInfo = logInfo
+                                console.info(logInfo)
                         value = @calleeValue.apply(@thisArg, @argumentsValue)
                     @setValue(value)
             catch e

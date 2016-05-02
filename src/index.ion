@@ -193,11 +193,9 @@ export const
             if name.endsWith(captureSuffix)
                 capture = true
                 name = name.substring(0, name.length - captureSuffix.length)
-            if item.toString().indexOf('sync') < 0
-                # we wrap all event handlers and call sync after, UNLESS they call it themselves.
-                item = ->
-                    originalItem.apply(@, arguments)
-                    sync()
+            item = ->
+                originalItem.apply(@, arguments)
+                sync()
             container.addEventListener(name, item, capture)
             remove = ->
                 container.removeEventListener(name, item)
