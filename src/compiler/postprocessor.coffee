@@ -31,7 +31,11 @@ isPattern = (node) -> node.properties? or node.elements?
 isVariableReference = (node, parent, key) ->
     return node.type is 'Identifier' and (not parent? or not (parent.type is 'MemberExpression' and key is 'property' or parent.type is 'Property' and key is 'key'))
 
+isObjectPatch = (node) -> node? and node.type is 'ObjectExpression' and (node.objectType? or node.create?)
+
 isConstantLiteral = (node, parent, key) ->
+    if isObjectPatch(node)
+        return false
     if not node?
         return false
     if node.type is 'Literal'
@@ -39,8 +43,8 @@ isConstantLiteral = (node, parent, key) ->
     if isVariableReference(node, parent, key)
         return false
     if node.type is 'ObjectExpression'
-        for {value,computed}, index in node.properties
-            if computed or not isConstantLiteral(value, node, index)
+        for {type,value,computed}, index in node.properties
+            if computed or type isnt 'Property' or not isConstantLiteral(value, node, index)
                 return false
         return true
     else if node.type is 'ArrayExpression'
@@ -51,20 +55,13 @@ isConstantLiteral = (node, parent, key) ->
     else
         return false
 
-convertNodeToLiteralNode = (node) ->
-    if node.type is 'Literal'
-        return node
-    return {
-        type: 'Literal'
-        value: nodeToLiteral(node)
-    }
-
-
-nodeToLiteral = (object) ->
+nodeToLiteral = (object, checkForLiteral) ->
+    if checkForLiteral isnt false and isObjectPatch(object)
+        checkForLiteral = false
     node = null
     if object?.toLiteral?
         node = object?.toLiteral()
-    else if object? and (object.type is 'ArrayExpression' or object.type is 'ObjectExpression') and isConstantLiteral(object)
+    else if checkForLiteral isnt false and object? and (object.type is 'ArrayExpression' or object.type is 'ObjectExpression') and isConstantLiteral(object)
         node =
             type: 'ObjectExpression'
             properties: [
@@ -74,7 +71,7 @@ nodeToLiteral = (object) ->
     else if Array.isArray object
         node =
             type: 'ArrayExpression'
-            elements: (nodeToLiteral item for item in object)
+            elements: (nodeToLiteral(item, checkForLiteral) for item in object)
     else if object?.constructor is Object
         node =
             type: 'ObjectExpression'
@@ -85,7 +82,7 @@ nodeToLiteral = (object) ->
                     key:
                         type: 'Identifier' 
                         name: key
-                    value: nodeToLiteral value
+                    value: nodeToLiteral(value, checkForLiteral)
                     kind: 'init'
     else
         node =

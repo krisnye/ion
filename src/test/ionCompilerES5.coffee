@@ -161,33 +161,33 @@ tests =
     style.sheets:
         [module.id]: ""
     """: {line:1, column:1}
-    # """
-    # template -> {a:1,b:[2,3]}
-    # """: """
-    # 'use strict';
-    # var ion = require('ion');
-    # ion.template(function () {
-    #     return ion.createRuntime({
-    #         type: 'Template',
-    #         id: null,
-    #         body: [{
-    #                 type: 'ReturnStatement',
-    #                 argument: {
-    #                     type: 'Literal',
-    #                     value: {
-    #                         a: 1,
-    #                         b: [
-    #                             2,
-    #                             3
-    #                         ]
-    #                     }
-    #                 },
-    #                 order: '0'
-    #             }],
-    #         bound: false
-    #     }, { this: this }, null);
-    # });
-    # """
+    """
+    template -> {a:1,b:[2,3]}
+    """: """
+    'use strict';
+    var ion = require('ion');
+    ion.template(function () {
+        return ion.createRuntime({
+            type: 'Template',
+            id: null,
+            body: [{
+                    type: 'ReturnStatement',
+                    argument: {
+                        type: 'Literal',
+                        value: {
+                            a: 1,
+                            b: [
+                                2,
+                                3
+                            ]
+                        }
+                    },
+                    order: '0'
+                }],
+            bound: false
+        }, { this: this }, null);
+    });
+    """
 
 if global.window?
     return
