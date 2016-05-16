@@ -20,7 +20,7 @@ export class ArrayExpression extends DynamicExpression
                 @unobserveExpressionValues[key] = null
                 @argumentValues[key] = value
                 # console.log('----setArgumentValue ' + @observeElements + ' ' + expression.deep + ' ' + Object.keys(expression) + ' ' + JSON.stringify(value))
-                if @observeElements
+                if @observeElements and expression.mutable
                     if value?
                         @itemObserver ?= =>
                             # console.log('item observer ' + expression.deep)

@@ -15,8 +15,9 @@ module.exports = class CallExpression extends DynamicExpression
                     if @isActive and not value? and not @existential and @loc?.start.source?
                         # we need to throw an exception here with location info
                         console.warn("Function is {{value}} ({{Factory.toCode(@callee)}}) ({{@loc.start.source}}:{{@loc.start.line}}:{{@loc.start.column + 1}})")
-                    @calleeValue = value
-                    @queueEvaluate()
+                    if @calleeValue isnt value
+                        @calleeValue = value
+                        @queueEvaluate()
             )
             # get thisArg and observe for changes
             @unobserveCalleeObject = @calleeExpression.objectExpression?.observe(
@@ -25,7 +26,7 @@ module.exports = class CallExpression extends DynamicExpression
                         @unobserveThis?()
                         @unobserveThis = null
                         @thisArg = thisArg
-                        if not @calleeValue?.template # we don't need to observe the thisArg if the callee is a template
+                        if @calleeExpression.mutable and not @calleeValue?.template # we don't need to observe the thisArg if the callee is a template
                             if @calleeExpression.objectExpression.deep
                                 # console.log('deep observe man-------------------------', thisArg, @calleeValue)
                                 # deep observe
@@ -123,3 +124,14 @@ module.exports = class CallExpression extends DynamicExpression
                 console.error("Call Error at {{start.source}} (line:{{start.line}},column:{{start.column}})")
                 console.error(e)
                 throw e
+
+
+
+
+
+
+
+
+
+
+

@@ -3,6 +3,7 @@ const noop = ->
 
 export class Literal extends import './Expression'
     properties:
+        mutable: false
         observe: (observer) ->
             observer(@value)
             return noop

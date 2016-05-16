@@ -134,6 +134,7 @@ export const
         if object is global or object is console or isValueType(object)
             return noop
         let property = options?.property
+        let priority = options?.priority
         let removed = false
         # property is optional
         let observable = isObjectObservable(object)
@@ -141,21 +142,24 @@ export const
         if not observable
             if not property?
                 return noop
-            observeShim.observe(object, observer, property)
+            observeShim.observe(object, observer, property, priority)
             # console.log('observe shim ' + JSON.stringify(object))
         else if object? and observer? and typeof object is 'object'
-            observeShim.observe(object, observer)
+            observeShim.observe(object, observer, null, priority)
             # console.log('observe ' + JSON.stringify(object))
             # watch change on dom elements
             object.addEventListener?('change', observer)
         object?.onObserved?(observer, property)
         # return a function that can be used to unboserve
         observe.count = (observe.count ? 0) + 1
+        console.log(observe.count)
+
+        # console.log('removing', observe.count)
         # observers.push(original)
         return ->
             # observers.remove(original)
             if not removed
-                # console.log('removing')
+                # console.log('removing', observe.count)
                 observe.count--
                 removed = true
                 if not observable

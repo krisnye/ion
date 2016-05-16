@@ -47,7 +47,8 @@ export class ForInOfStatement extends Statement
                                 (key, value) =>
                                     @addItem(key, value)
                             )
-                            @unobserveCollection = ion.observe(@collection, (@collectionObserver ?= @applyChanges.bind(@)))
+                            if @collectionExpression.mutable
+                                @unobserveCollection = ion.observe(@collection, (@collectionObserver ?= @applyChanges.bind(@)))
             )
         deactivate: ->
             super

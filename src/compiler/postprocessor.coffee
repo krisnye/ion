@@ -28,31 +28,49 @@ thisExpression = Object.freeze
 
 isPattern = (node) -> node.properties? or node.elements?
 
-getPathExpression = (path) ->
-    steps = path.split '.'
+isVariableReference = (node, parent, key) ->
+    return node.type is 'Identifier' and (not parent? or not (parent.type is 'MemberExpression' and key is 'property' or parent.type is 'Property' and key is 'key'))
 
-    if steps[0] is 'this'
-        result =
-            type: 'ThisExpression'
+isConstantLiteral = (node, parent, key) ->
+    if not node?
+        return false
+    if node.type is 'Literal'
+        return true
+    if isVariableReference(node, parent, key)
+        return false
+    if node.type is 'ObjectExpression'
+        for {value,computed}, index in node.properties
+            if computed or not isConstantLiteral(value, node, index)
+                return false
+        return true
+    else if node.type is 'ArrayExpression'
+        for value, index in node.elements
+            if not isConstantLiteral(value, node, index)
+                return false
+        return true
     else
-        result =
-            type: 'Identifier'
-            name: steps[0]
-    for step, i in steps when i > 0
-        result =
-            type: 'MemberExpression'
-            object: result
-            property:
-                type: 'Identifier'
-                name: step
-    return result
+        return false
 
-isFunctionNode = (node) -> nodes[node?.type]?.isFunction ? false
+convertNodeToLiteralNode = (node) ->
+    if node.type is 'Literal'
+        return node
+    return {
+        type: 'Literal'
+        value: nodeToLiteral(node)
+    }
+
 
 nodeToLiteral = (object) ->
     node = null
     if object?.toLiteral?
         node = object?.toLiteral()
+    else if object? and (object.type is 'ArrayExpression' or object.type is 'ObjectExpression') and isConstantLiteral(object)
+        node =
+            type: 'ObjectExpression'
+            properties: [
+                {type:'Property',key:{type:"Identifier",name:"type"},value:{type:"Literal",value:"Literal"}}
+                {type:'Property',key:{type:"Identifier",name:"value"},value:object}
+            ]
     else if Array.isArray object
         node =
             type: 'ArrayExpression'
@@ -74,6 +92,27 @@ nodeToLiteral = (object) ->
             type: 'Literal'
             value: object
     return node
+
+getPathExpression = (path) ->
+    steps = path.split '.'
+
+    if steps[0] is 'this'
+        result =
+            type: 'ThisExpression'
+    else
+        result =
+            type: 'Identifier'
+            name: steps[0]
+    for step, i in steps when i > 0
+        result =
+            type: 'MemberExpression'
+            object: result
+            property:
+                type: 'Identifier'
+                name: step
+    return result
+
+isFunctionNode = (node) -> nodes[node?.type]?.isFunction ? false
 
 # wraps a node in a BlockStatement if it isn't already.
 block = (node) ->
@@ -752,12 +791,9 @@ checkVariableDeclarations =
             if context.reactive
                 throw context.error "cannot assign within templates", node
         # track variable usage on a scope
-        if node.type is 'Identifier'
-            key = context.key()
-            parent = context.parentNode()
-            if not (parent.type is 'MemberExpression' and key is 'property' or parent.type is 'Property' and key is 'key')
-                # then this is a variable usage, so we will track it.
-                (context.scope().usage ?= {})[node.name] = node
+        if isVariableReference(node, context.parentNode(), context.key())
+            # then this is a variable usage, so we will track it.
+            (context.scope().usage ?= {})[node.name] = node
     variable: (variable, context) ->
         scope = context.scope()
         # check that we arent redeclaring a variable

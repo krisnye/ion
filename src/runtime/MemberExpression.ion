@@ -49,7 +49,7 @@ export class MemberExpression extends DynamicExpression
             @setValue(value)
 
             # also observe the objectValue for changes
-            if @observedObject isnt @objectValue or @observedProperty isnt @propertyValue
+            if @objectExpression.mutable and (@observedObject isnt @objectValue or @observedProperty isnt @propertyValue)
                 @observedObject = @objectValue
                 @observedProperty = @propertyValue
                 # do NOT unobserve the old property until the new one has been observed.

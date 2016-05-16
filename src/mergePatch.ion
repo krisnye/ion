@@ -193,7 +193,7 @@ export const
                 assert equal(undefined, diff({a:{b:2}}, {a:{b:2}}))
 
                 # diff on arrays should result in shorter value length
-                console.log(diff([1,2,3], [3,2]))
+                assert(equal(diff([1,2,3], [3,2]), { '0': 3, length: 2 }))
             observe: (done) ->
                 # console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
                 let source =

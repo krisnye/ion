@@ -4,6 +4,9 @@ let
     observerMap = new Map()
     nextCheckMap = new Map()
     changedObjects = new Map()
+
+global.observerMap = observerMap
+
 const
     clone = (object, properties) ->
         if properties?
@@ -55,7 +58,8 @@ const
         return changes
 
 export const
-    observe = (object, callback, property) ->
+    observe = (object, callback, property, priority = -1) ->
+        callback.priority ?= priority
         # console.log('+observe', property)
         let meta = observerMap.get(object)
         if not meta?

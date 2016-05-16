@@ -169,24 +169,53 @@ const templates = []
             z:
                 b: 20
         '{"z":{"b":20}}'
+    # # This will help us fix the out of order evaluation order bug
+    # []
+    #     "expression evaluation priority"
+    #     {}
+    #     do ->
+    #         let Foo = template (object) ->
+    #             let result = {}
+    #             for key, value of object.args
+    #                 if object.type is 'Bar'
+    #                     do -> object.fail = true
+    #             return result
+    #                 t: "Foo"
+    #                 object: object
+    #         let Bar = template (object) ->
+    #             return {}
+    #                 t: "Bar"
+    #                 object: object
+    #         return template (object) ->
+    #             let subtemplate = object.type is 'Foo' ? Foo : Bar
+    #             return subtemplate(object)
+    #     {type:'Foo',args:{A:1}}
+    #     {args:{A:2},type:'Bar'}
+    #     {t:'Bar',object:{type:'Bar',args:{A:2}}}
 
 export
     test:
         let lowestBefore = Number.MAX_SAFE_INTEGER
         let totalComplete = 0
         for [name, thisArg, templateType,argument,patch,expected] in templates if expected?
-            [name]: do (thisArg, templateType, argument, patch, expected) ->
+            [name]: do (thisArg, templateType, argument, patch, expected, name) ->
                 return (done) ->
                     let beforeCount = ion.observe.count ? 0
                     let template = templateType.call(thisArg, argument)
                     const finished = ->
-                        unobserve()
                         unobserveValue?()
+                        unobserveValue = null
+                        unobserve()
                         let afterCount = ion.observe.count ? 0
-                        # console.log({beforeCount,watchCount,afterCount})
+                        # console.log({beforeCount,afterCount})
                         totalComplete++
                         lowestBefore = Math.min(beforeCount, lowestBefore)
                         if totalComplete is templates.length and afterCount > lowestBefore
+                            # observerMap.forEach(
+                            #     (value, key) ->
+                            #         console.log("!!! " + JSON.stringify(value))
+                            #         console.log(value.callbacks[0].toString())
+                            # )
                             done("ion.observe memory leak detected, beforeCount: {{lowestBefore}}, afterCount: {{afterCount}}")
                         else
                             done()
@@ -200,17 +229,16 @@ export
                             else
                                 setTimeout(finished, 0)
                     template.activate()
-                    let watchCount = ion.observe.count ? 0
                     let unobserveValue
                     let unobserve = template.observe(
                         (value) ->
-                            checkIfDone(value)
                             unobserveValue?()
                             unobserveValue = ion.observe(
                                 value
                                 (changes) ->
                                     checkIfDone(value)
                             )
+                            checkIfDone(value)
                     )
                     # console.log('==========================================================')
                     ion.patch(argument, patch)
