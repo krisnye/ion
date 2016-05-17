@@ -61,13 +61,13 @@ nodeToLiteral = (object, checkForLiteral) ->
     node = null
     if object?.toLiteral?
         node = object?.toLiteral()
-    else if checkForLiteral isnt false and object? and (object.type is 'ArrayExpression' or object.type is 'ObjectExpression') and isConstantLiteral(object)
-        node =
-            type: 'ObjectExpression'
-            properties: [
-                {type:'Property',key:{type:"Identifier",name:"type"},value:{type:"Literal",value:"Literal"}}
-                {type:'Property',key:{type:"Identifier",name:"value"},value:object}
-            ]
+    # else if checkForLiteral isnt false and object? and (object.type is 'ArrayExpression' or object.type is 'ObjectExpression') and isConstantLiteral(object)
+    #     node =
+    #         type: 'ObjectExpression'
+    #         properties: [
+    #             {type:'Property',key:{type:"Identifier",name:"type"},value:{type:"Literal",value:"Literal"}}
+    #             {type:'Property',key:{type:"Identifier",name:"value"},value:object}
+    #         ]
     else if Array.isArray object
         node =
             type: 'ArrayExpression'
