@@ -28,6 +28,8 @@ X   +Property     // compatible with ObjectExpression.properties type
         +define: true / undefined   // if true then this is a property definition
 X   ExpressionStatement
         +output: Identifier  // used while converting typed ObjectExpressions to imperative code
+X   +UndoStatement
+        callee      // function that is called when a statement is deactivated.
 X   +ExportDeclaration
         name: null / Expression
         value: Variable / Expression

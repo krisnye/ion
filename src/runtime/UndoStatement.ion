@@ -1,0 +1,13 @@
+const
+    ion = import '../'
+    {Factory,Statement} = import './'
+
+export class UndoStatement extends Statement
+    properties:
+        activate: ->
+            super
+        deactivate: ->
+            super
+
+            @calleeExpression ?= @context.createRuntime(@callee)
+            @calleeExpression.value()

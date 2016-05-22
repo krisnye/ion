@@ -119,7 +119,7 @@
 Program = start:start body:ProgramStatements end:end { return node("Program", {body:body}, start, end) }
 
 ProgramStatements = a:BlockStatement { return a.body } / Statement*
-Statement = eol? _ a:(AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / PropertyDefinition / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ActivateStatement / ExpressionStatement) (eol / _ ',') { return a }
+Statement = eol? _ a:(UndoStatement / AssertStatement / ExportStatement / VariableDeclaration / PropertyDeclaration / PropertyDefinition / IterationStatement / IfStatement / ReturnStatement / BreakStatement / ContinueStatement / ThrowStatement / TryStatement / ActivateStatement / ExpressionStatement) (eol / _ ',') { return a }
 ExportStatement = start:start export _ value:(VariableDeclaration / RightHandSideExpression) end:end { return node('ExportStatement', {value:value}, start, end) }
 ReturnStatement = start:start return _ argument:RightHandSideExpression? end:end { return node("ReturnStatement", {argument:argument}, start, end) }
 ThrowStatement = start:start throw _ argument:RightHandSideExpression end:end { return node("ThrowStatement", {argument:argument}, start, end) }
@@ -320,6 +320,11 @@ DoExpression = start:start do _ f:Expression end:end
             args = []
         return node("CallExpression", {callee:f,arguments:args}, start, end)
     }
+UndoStatement = start:start undo _ f:FunctionExpression end:end
+    {
+        return node("UndoStatement", {callee:f}, start, end)
+    }
+
 FunctionExpression = start:start template:template? _ id:Identifier? _ params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(Expression / ThrowStatement / BlockStatement)? end:end
     {
         if (params == null) params = []
@@ -454,6 +459,7 @@ throw = "throw" !identifierPart
 break = "break" !identifierPart
 continue = "continue" !identifierPart
 do = "do" !identifierPart
+undo = "undo" !identifierPart
 import = "import" !identifierPart
 export = "export" !identifierPart
 class = "class" !identifierPart

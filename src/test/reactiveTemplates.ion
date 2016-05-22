@@ -192,6 +192,24 @@ const templates = []
     #     {type:'Foo',args:{A:1}}
     #     {args:{A:2},type:'Bar'}
     #     {t:'Bar',object:{type:'Bar',args:{A:2}}}
+    []
+        "undo statement"
+        {}
+        template (object) ->
+            do -> object.total ?= 0
+            let items = object.items
+            for item in items
+                do ->
+                    object.total += item
+                undo ->
+                    object.total -= item
+            return object.total
+        {}
+            items: [1,2,3]
+        {}
+            items:
+                2: 4
+        7
 
 export
     test:

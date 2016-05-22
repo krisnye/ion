@@ -28,6 +28,8 @@ class Factory
 
 const lookup =
     type:
+        UndoStatement: new Factory
+            runtime: './UndoStatement'
         VariableDeclaration: new Factory
             runtime: './VariableDeclaration'
         ThisExpression: new Factory
