@@ -6,8 +6,11 @@ export class UndoStatement extends Statement
     properties:
         activate: ->
             super
+            @calleeExpression ?= @context.createRuntime(@callee)
+            @unobserveCallee = @calleeExpression.observe(@calleeWatcher ?= (value) => @calleeValue = value)
         deactivate: ->
             super
 
-            @calleeExpression ?= @context.createRuntime(@callee)
-            @calleeExpression.value()
+            @calleeValue?()
+
+            @unobserveCallee?()

@@ -199,9 +199,9 @@ const templates = []
             do -> object.total ?= 0
             let items = object.items
             for item in items
-                do ->
+                do =>
                     object.total += item
-                undo ->
+                undo =>
                     object.total -= item
             return object.total
         {}
