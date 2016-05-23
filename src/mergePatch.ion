@@ -8,27 +8,25 @@ const
     watchImmediate = (object, handler) ->
         if not isObject(object)
             throw new Error("Cannot watch: #{object}")
-        watch.count = (watch.count ? 0) + 1
-        # watch.objects ?= []
-        # watch.objects.push(object)
+
         let watching = true
         let propertyWatchers = {}
         let watchProperties = (changes) ->
-            let properties = changes?.map((a) -> a.name) ? Object.keys(object)
+            let properties = Object.keys(changes ? object)
             for name in properties
                 do (name) ->
                     if watching
                         propertyWatchers[name]?()
+                        delete propertyWatchers[name]
                         let value = object[name]
                         if isObject(value)
-                            propertyWatchers[name] = watch(
+                            propertyWatchers[name] = watchInternal(
                                 value
                                 (patch) ->
-                                    # console.log('WATCH PROPERTIES ' + JSON.stringify({[name]:patch}))
-                                    handler({[name]:patch})
+                                    if watching
+                                        # console.log('WATCH PROPERTIES ' + JSON.stringify({[name]:patch}))
+                                        handler({[name]:patch})
                             )
-                        else
-                            delete propertyWatchers[name]
 
         watchProperties(null)
         let unobserve = ion.observe(
@@ -36,27 +34,48 @@ const
             (changes) ->
                 if watching
                     let patch = null
+                    let changedProperties = {}
                     for {name} in changes
+                        changedProperties[name] = true
                         # we ignore names that start with underscore, they are considered private
                         if not isPrivate(name)
                             patch ?= {}
                             # we convert undefined values from delete into explicit nulls
                             patch[name] = object.hasOwnProperty(name) ? object[name] : deleteValue
-                    watchProperties(changes)
+                    watchProperties(changedProperties)
                     if patch?
                         # console.log('OBSERVE ' + JSON.stringify(patch))
                         handler(patch)
         )
         return ->
-            watch.count--
-            # watch.objects.remove(object)
             watching = false
-            unobserve()
-            unobserve = null
             for key, unwatch of propertyWatchers
                 unwatch()
-            propertyWatchers = null
+            unobserve()
+            unobserve = null
     increment = /[+-]\d+/
+
+    watchInternal = (object, handler) ->
+        global.watchInternalCount ?= 0
+        global.watchInternalCount++
+
+        # this version delays callbacks in order to merge all simultaneous changes
+        # into a single patch object before calling the main handler
+        let active = false
+        let combinedPatch = undefined
+        let finalCallback = ->
+            handler(combinedPatch)
+            active = false
+            combinedPatch = undefined
+        let delayedHandler = (patch) ->
+            combinedPatch = combine(combinedPatch, patch)
+            if not active
+                ion.nextCheck(finalCallback)
+                active = true
+        let unwatch = watchImmediate(object, delayedHandler)
+        return ->
+            unwatch()
+            global.watchInternalCount--
 
 export const
     canSetProperty = (object, key) -> not (typeof object is 'function' and key is 'name')
@@ -97,20 +116,14 @@ export const
     combine = (patch1, patch2, schema) -> merge(patch1, patch2, {deleteNull:false}, schema)
     # watches object for changes and calls the handler with patches
     watch = (object, handler) ->
-        # this version delays callbacks in order to merge all simultaneous changes
-        # into a single patch object before calling the main handler
-        let active = false
-        let combinedPatch = undefined
-        let finalCallback = ->
-            handler(combinedPatch)
-            active = false
-            combinedPatch = undefined
-        let delayedHandler = (patch) ->
-            combinedPatch = combine(combinedPatch, patch)
-            if not active
-                ion.nextCheck(finalCallback)
-                active = true
-        return watchImmediate(object, delayedHandler)
+        # console.log('+   watch', object)
+        global.watchCount ?= 0
+        global.watchCount++
+        let unwatch = watchInternal(object, handler)
+        return ->
+            unwatch()
+            # console.log('- unwatch', object)
+            global.watchCount--
     diff = (oldValue, newValue) ->
         # returns a patch which can convert from the oldValue to the newValue
         # returns undefined if there is no difference between them
@@ -195,6 +208,7 @@ export const
                 # diff on arrays should result in shorter value length
                 assert(equal(diff([1,2,3], [3,2]), { '0': 3, length: 2 }))
             observe: (done) ->
+                let before = global.watchCount ? 0
                 # console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
                 let source =
                     name: 'Kris'
@@ -204,7 +218,7 @@ export const
                             grandchildren:
                                 One: 1
                                 Two: 2
-                        Orion: {}
+                        Orion: []
                         Third: {}
                 let target = ion.clone(source, true)
                 let unwatch = watch(
@@ -214,8 +228,12 @@ export const
                         target = merge(target, patch)
                         # should be immediate assert
                         if equal(source, target)
-                            done()
                             unwatch()
+                            let after = global.watchCount
+                            if before isnt after
+                                done("Memory leak in watch: before = {{before}}, after = {{after}}")
+                            else
+                                done()
                 )
                 source
                     name: 'Fred'
@@ -227,8 +245,13 @@ export const
                         Sadera:
                             grandchildren:
                                 three: 3
+                        Fourth:
+                            Something:
+                                One: 1
+                                Two: 2
                 # todo: delete a property in a literal?
                 delete source.children.Third
                 # temp requirement
                 ion.sync()
                 # console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+

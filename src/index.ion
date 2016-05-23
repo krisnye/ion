@@ -157,15 +157,14 @@ export const
         # console.log('removing', observe.count)
         # observers.push(original)
         return ->
-            # observers.remove(original)
             if not removed
-                # console.log('removing', observe.count)
                 observe.count--
+                # console.log('removing', observe.count)
                 removed = true
                 if not observable
                     observeShim.unobserve(object, observer, property)
                     # console.log('unobserve shim ' + JSON.stringify(object))
-                else if object? and observer? and Object.unobserve? and typeof object is 'object'
+                else if object? and observer? and typeof object is 'object'
                     observeShim.unobserve(object, observer, property)
                     # console.log('unobserve ' + JSON.stringify(object))
                     # unwatch change on dom elements
