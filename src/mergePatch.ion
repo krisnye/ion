@@ -102,8 +102,10 @@ export const
                 target = options.factory(values)
             else
                 target = {}
+        let deletedValues = false
         for key, value of values
-            if deleteNull and value is deleteValue and not Array.isArray(target)
+            if deleteNull and value is deleteValue
+                deletedValues = true
                 delete target[key]
             else
                 let itemSchema = schema?.items ? schema?.properties?[key]
@@ -111,6 +113,11 @@ export const
                 if newValue isnt target[key] and canSetProperty(target, key)
                     target[key] = newValue
                     # console.log('*****patch*********')
+        if deletedValues and Array.isArray(target)
+            # shorten the length
+            for let i = target.length; i > 0; i--
+                if not target[i - 1]?
+                    target.length = i - 1
         return target
     # combines two patches to make a single patch
     combine = (patch1, patch2, schema) -> merge(patch1, patch2, {deleteNull:false}, schema)
@@ -170,7 +177,10 @@ export const
                 return true
         return false
     test = do ->
-        const equal = (a, b) -> not isChange(a, b) and not isChange(b, a)
+        const equal = (a, b) ->
+            if Array.isArray(a) and a.length isnt b?.length
+                return false
+            return not isChange(a, b) and not isChange(b, a)
         return
             merge: ->
                 assert equal({a:{b:2,c:3},d:4}, merge({a:{b:2}}, {a:{c:3},d:4}))
@@ -183,7 +193,9 @@ export const
                 assert "+2" is merge("+1", "+1", null, {type:'integer'})
 
                 # assigning null on an array just sets null to that index
-                assert equal([1, null], merge([1,2], {1:null}))
+                assert equal([1], merge([1,2], {1:null}))
+                assert merge([1,2], {1:null}).length is 1
+                assert merge({foo:[1,2]}, {foo:{1:null}}).foo.length is 1
                 assert equal([1, undefined], merge([1,2], {1:undefined}))
 
             isChange: ->
