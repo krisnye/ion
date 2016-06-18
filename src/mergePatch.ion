@@ -92,6 +92,12 @@ export const
             else
                 values = (typeof target is 'number' ? target : 0) + parseInt(values.substring(1))
 
+        # length: null when targetting an Array indicates to convert Array to Object.
+        if Array.isArray(target) and values?.length is null
+            target = {}
+            values = JSON.parse(JSON.stringify(values))
+            delete values.length
+
         if values?.constructor isnt Object
             if Array.isArray(values)
                 return JSON.parse(JSON.stringify(values))
@@ -137,8 +143,15 @@ export const
         # the patch SHOULD be treated as readonly, since it may reference pre-existing objects
         if oldValue is newValue
             return undefined
-        if not(oldValue? and newValue? and typeof newValue is 'object' and typeof oldValue is 'object')
+        if not (oldValue? and newValue? and typeof newValue is 'object' and typeof oldValue is 'object')
             return newValue ? null
+        if not Array.isArray(oldValue) and Array.isArray(newValue)
+            return newValue
+        # old is array, but new isn't, so we add a special length:null value
+        if Array.isArray(oldValue) and not Array.isArray(newValue)
+            return JSON.parse(JSON.stringify(newValue))
+                # this indicates that the array must be converted to an object.
+                length: null
         let patch = undefined
         for name of oldValue if oldValue.hasOwnProperty(name)
             if not newValue.hasOwnProperty(name)
@@ -177,10 +190,7 @@ export const
                 return true
         return false
     test = do ->
-        const equal = (a, b) ->
-            if Array.isArray(a) and a.length isnt b?.length
-                return false
-            return not isChange(a, b) and not isChange(b, a)
+        const equal = (a, b) -> JSON.stringify(a) is JSON.stringify(b)
         return
             merge: ->
                 assert equal({a:{b:2,c:3},d:4}, merge({a:{b:2}}, {a:{c:3},d:4}))
@@ -219,6 +229,16 @@ export const
 
                 # diff on arrays should result in shorter value length
                 assert(equal(diff([1,2,3], [3,2]), { '0': 3, length: 2 }))
+
+                # diff between array and object
+                assert equal(diff([], {}), {length:null})
+                assert equal(diff({}, []), [])
+
+                let start = [1,2,3]
+                let delta = diff(start, {foo:"a"})
+                let result = merge(start, delta)
+                assert equal(result, {foo:"a"})
+
             observe: (done) ->
                 let before = global.watchCount ? 0
                 # console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')

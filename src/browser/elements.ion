@@ -17,28 +17,32 @@ do ->
         input: true
         select: true
         textarea: true
-    let elements = []
-        "div","span","input","textarea","a","br","img", "p"
-        "button","caption","fieldset","form","frame","frameset"
-        "h1","h2","h3","h4","h5","h6","hr","legend"
-        "menu","option","select","script","pre"
-        "table","tbody","td","tr","thead", "canvas"
-        "head","meta","body","script"
-        "section","header","footer","article"
-        "ul", "ol", "li", "label", "strong"
-        "svg", "path", "datalist"
+    let nsElements = 
+        "http://www.w3.org/1999/xhtml": []
+            "div","span","input","textarea","a","br","img", "p"
+            "button","caption","fieldset","form","frame","frameset"
+            "h1","h2","h3","h4","h5","h6","hr","legend"
+            "menu","option","select","script","pre"
+            "table","tbody","td","tr","thead", "canvas"
+            "head","meta","body","script"
+            "section","header","footer","article"
+            "ul", "ol", "li", "label", "strong", "datalist"
+        "http://www.w3.org/2000/svg": []
+            "svg", "path", "circle", "text"
 
-    for name in elements
-        let jsName = name[0].toUpperCase() + name.substring(1)
-        window[jsName] = do (name) ->
-            return (attributes) ->
-                let ion = require('ion')
-                let element = document.createElement(name)
-                if changeElements[name]
-                    element.addEventListener('change', ion.sync)
-                for arg in arguments
-                    if arg?
-                        for key, value of arg
-                            if value?
-                                element.setAttribute(key, value)
-                return element
+    for ns, elements of nsElements
+        for name in elements
+            let jsName = name[0].toUpperCase() + name.substring(1)
+            window[jsName] = do (ns, name) ->
+                return (attributes) ->
+                    let ion = require('ion')
+                    let element = document.createElementNS(ns, name)
+
+                    if changeElements[name]
+                        element.addEventListener('change', ion.sync)
+                    for arg in arguments
+                        if arg?
+                            for key, value of arg
+                                if value?
+                                    element.setAttribute(key, value)
+                    return element
