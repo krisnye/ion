@@ -5,6 +5,48 @@ const
     Literal = import './Literal'
     noop = ->
 
+const createObjectInserter = (container) ->
+    return
+        isOrdered: (value) -> false
+        convert: (value) -> value
+        getLength: -> 0 # doesn't matter.
+        add: (value, index) ->
+            let current = container[value]
+            let insert = (current ? 0) + 1
+            container[value] = insert
+        remove: (index, value, moving) ->
+            let current = container[value]
+            if not current?
+                throw new Error("Removing value '{{value}}' that was not present in container: {{container}}")
+            let insert = current - 1
+            if insert is 0
+                delete container[value]
+            else
+                container[value] = insert
+
+const createMapInserter = (container) ->
+    let touch = ->
+        container.touch ?= 0
+        container.touch += 1
+    return
+        isOrdered: (value) -> false
+        convert: (value) -> value
+        getLength: -> container.size
+        add: (value, index) ->
+            let current = container.get(value)
+            let insert = (current ? 0) + 1
+            container.set(value, insert)
+            touch()
+        remove: (index, value, moving) ->
+            let current = container.get(value)
+            if not current?
+                throw new Error("Removing value '{{value}}' that was not present in container: {{container}}")
+            let insert = current - 1
+            if insert is 0
+                container.delete(value)
+            else
+                container.set(value, insert)
+            touch()
 const createArrayInserter = (container) ->
     # need to override sort..
     return
@@ -78,8 +120,12 @@ const createOrderManager = (container) ->
     let inserter
     if Array.isArray(container)
         inserter = createArrayInserter(container)
+    else if container?.constructor is Map
+        inserter = createMapInserter(container)
     else if isNode(container)
         inserter = createHtmlInserter(container)
+    else if container?.constructor is Object
+        inserter = createObjectInserter(container)
     else
         return
             insert: (value, order, fastInsert, sourceNode) -> ion.add(container, value, sourceNode)
