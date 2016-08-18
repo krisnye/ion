@@ -14,8 +14,8 @@ const
             compile: builder.compileCoffeeScript
         ".pegjs":
             compile: builder.compilePegjs
-        ".pegs":
-            compile: builder.compilePegs
+        # ".pegs":
+        #     compile: builder.compilePegs
         ".js":
             compile: builder.shimJavascript
         ".ion":

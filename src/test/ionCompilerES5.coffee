@@ -161,6 +161,12 @@ tests =
     style.sheets:
         [module.id]: ""
     """: {line:1, column:1}
+    # TODO: Fix this bug in the parser.
+    # """
+    # for let i = 0; i < 100; i += 10
+    #     i
+    # """: null
+
     # """
     # template -> {a:1,b:[2,3]}
     # """: """

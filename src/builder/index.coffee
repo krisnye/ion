@@ -136,7 +136,7 @@ module.exports = exports =
         moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
         filename = source.path
         try
-            peg = require('pegs').parser
+            peg = require('pegs').bootstrap
             console.log "Building: #{filename}"
             input = source.read()
             parser = peg.parse(input)
