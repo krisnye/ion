@@ -6,12 +6,13 @@ do ->
 
     # also watch for hash changes
     if global.window?
-        window.addEventListener(
-            'hashchange'
-            (e) ->
-                let ion = require('ion')
-                requestAnimationFrame(ion.sync)
-        )
+        let syncOnRefresh = (e) ->
+            let ion = require('ion')
+            requestAnimationFrame(ion.sync)
+
+        window.addEventListener('hashchange', syncOnRefresh)
+        window.addEventListener('transitionstart', syncOnRefresh)
+        window.addEventListener('transitionend', syncOnRefresh)
 
     let changeElements =
         input: true

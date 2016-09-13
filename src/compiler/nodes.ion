@@ -1,6 +1,8 @@
 const ion = import '../'
 
 export const
+    NewExpression =
+        location: true
     CallExpression =
         location: true
     ExpressionStatement =

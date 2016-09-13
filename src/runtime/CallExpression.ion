@@ -120,9 +120,10 @@ module.exports = class CallExpression extends DynamicExpression
                         value = @calleeValue.apply(@thisArg, @argumentsValue)
                     @setValue(value)
             catch e
-                let start = @loc.start
-                console.error("Call Error at {{start.source}} (line:{{start.line}},column:{{start.column}})")
-                console.error(e)
+                if @loc?
+                    let start = @loc.start
+                    console.error("Call Error at {{start.source}} (line:{{start.line}},column:{{start.column}})")
+                    console.error(e)
                 throw e
 
 
