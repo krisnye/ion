@@ -4,6 +4,7 @@ _ref = require('./');
 var DynamicExpression = _ref.DynamicExpression;
 var ArrayExpression = _ref.ArrayExpression;
 var Factory = _ref.Factory;
+var lastLogInfo = null;
 var CallExpression = ion.defineClass({
         name: 'CallExpression',
         properties: {
@@ -15,15 +16,17 @@ var CallExpression = ion.defineClass({
                     if (this.isActive && !(value != null) && !this.existential && (this.loc != null ? this.loc.start.source : void 0) != null) {
                         console.warn('Function is ' + value + ' (' + Factory.toCode(this.callee) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
                     }
-                    this.calleeValue = value;
-                    this.queueEvaluate();
+                    if (this.calleeValue !== value) {
+                        this.calleeValue = value;
+                        this.queueEvaluate();
+                    }
                 }, this));
                 this.unobserveCalleeObject = this.calleeExpression.objectExpression != null ? this.calleeExpression.objectExpression.observe(this.thisWatcher = this.thisWatcher != null ? this.thisWatcher : ion.bind(function (thisArg) {
                     if (thisArg !== this.thisArg) {
                         this.unobserveThis != null ? this.unobserveThis() : void 0;
                         this.unobserveThis = null;
                         this.thisArg = thisArg;
-                        if (!(this.calleeValue != null ? this.calleeValue.template : void 0)) {
+                        if (this.calleeExpression.mutable && !(this.calleeValue != null ? this.calleeValue.template : void 0)) {
                             if (this.calleeExpression.objectExpression.deep) {
                                 this.unobserveThis = ion.patch.watch(thisArg, this.thisObserver = this.thisObserver != null ? this.thisObserver : ion.bind(function (patch) {
                                     this.queueEvaluate();
@@ -71,17 +74,7 @@ var CallExpression = ion.defineClass({
                 this.hasEvaluated = true;
                 var value = void 0;
                 if (this.unobserveTemplate != null && this.lastCalleeValue === this.calleeValue && this.lastThisArg === this.thisArg) {
-                    {
-                        var _ref2 = this.argumentsValue;
-                        for (var _i = 0; _i < _ref2.length; _i++) {
-                            var index = _i;
-                            var arg = _ref2[_i];
-                            if (this.lastArgumentsValue[index] !== arg) {
-                                this.lastArgumentsValue[index] = arg;
-                            }
-                        }
-                    }
-                    return;
+                    console.warn('Changing a template parameter directly, this hurts performance, should be fixed in ion: ' + this.ast.callee.name);
                 }
                 this.lastCalleeValue = this.calleeValue;
                 this.lastArgumentsValue = this.argumentsValue;
@@ -96,14 +89,24 @@ var CallExpression = ion.defineClass({
                         if (this.type === 'NewExpression') {
                             value = ion.create(this.calleeValue, this.argumentsValue);
                         } else {
+                            if (this.thisArg === console) {
+                                var start = this.loc.start;
+                                var logInfo = '' + start.source + ':' + start.line;
+                                if (logInfo !== lastLogInfo) {
+                                    lastLogInfo = logInfo;
+                                    console.info(logInfo);
+                                }
+                            }
                             value = this.calleeValue.apply(this.thisArg, this.argumentsValue);
                         }
                         this.setValue(value);
                     }
                 } catch (e) {
-                    var start = this.loc.start;
-                    console.error('Call Error at ' + start.source + ' (line:' + start.line + ',column:' + start.column + ')');
-                    console.error(e);
+                    if (this.loc != null) {
+                        var start = this.loc.start;
+                        console.error('Call Error at ' + start.source + ' (line:' + start.line + ',column:' + start.column + ')');
+                        console.error(e);
+                    }
                     throw e;
                 }
             }
@@ -121,4 +124,3 @@ module.exports = CallExpression;
     _ion_runtime_CallExpression_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./CallExpression.map

@@ -52,14 +52,16 @@ var templates = [
                                     }
                                 }
                             ],
-                            kind: 'const'
+                            kind: 'const',
+                            order: '0'
                         },
                         {
                             type: 'ReturnStatement',
                             argument: {
                                 type: 'Identifier',
                                 name: 'c'
-                            }
+                            },
+                            order: '1'
                         }
                     ],
                     bound: false
@@ -163,7 +165,22 @@ var templates = [
                                                                             source: 'ion/test/immediateTemplates.ion'
                                                                         }
                                                                     }
-                                                                }
+                                                                },
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 18,
+                                                                        column: 24,
+                                                                        fixed: true,
+                                                                        source: 'ion/test/immediateTemplates.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 18,
+                                                                        column: 39,
+                                                                        fixed: true,
+                                                                        source: 'ion/test/immediateTemplates.ion'
+                                                                    }
+                                                                },
+                                                                order: '0'
                                                             }]
                                                     },
                                                     alternate: {
@@ -173,9 +190,25 @@ var templates = [
                                                                 expression: {
                                                                     type: 'Literal',
                                                                     value: '<null>'
-                                                                }
+                                                                },
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 20,
+                                                                        column: 24,
+                                                                        fixed: true,
+                                                                        source: 'ion/test/immediateTemplates.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 20,
+                                                                        column: 32,
+                                                                        fixed: true,
+                                                                        source: 'ion/test/immediateTemplates.ion'
+                                                                    }
+                                                                },
+                                                                order: '0'
                                                             }]
-                                                    }
+                                                    },
+                                                    order: '0'
                                                 }]
                                         },
                                         remove: {
@@ -211,11 +244,28 @@ var templates = [
                                                                 }
                                                             }
                                                         }
-                                                    }
+                                                    },
+                                                    loc: {
+                                                        start: {
+                                                            line: 23,
+                                                            column: 20,
+                                                            fixed: true,
+                                                            source: 'ion/test/immediateTemplates.ion'
+                                                        },
+                                                        end: {
+                                                            line: 23,
+                                                            column: 36,
+                                                            fixed: true,
+                                                            source: 'ion/test/immediateTemplates.ion'
+                                                        }
+                                                    },
+                                                    order: '0'
                                                 }]
-                                        }
+                                        },
+                                        order: '0'
                                     }]
-                            }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -263,7 +313,8 @@ var templates = [
                                             type: 'Literal',
                                             value: 1
                                         },
-                                        kind: 'init'
+                                        kind: 'init',
+                                        order: '0'
                                     },
                                     {
                                         type: 'Property',
@@ -275,10 +326,12 @@ var templates = [
                                             type: 'Literal',
                                             value: 2
                                         },
-                                        kind: 'init'
+                                        kind: 'init',
+                                        order: '1'
                                     }
                                 ]
-                            }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -313,17 +366,48 @@ var templates = [
                                         expression: {
                                             type: 'Literal',
                                             value: 1
-                                        }
+                                        },
+                                        loc: {
+                                            start: {
+                                                line: 40,
+                                                column: 16,
+                                                fixed: true,
+                                                source: 'ion/test/immediateTemplates.ion'
+                                            },
+                                            end: {
+                                                line: 40,
+                                                column: 17,
+                                                fixed: true,
+                                                source: 'ion/test/immediateTemplates.ion'
+                                            }
+                                        },
+                                        order: '0'
                                     },
                                     {
                                         type: 'ExpressionStatement',
                                         expression: {
                                             type: 'Literal',
                                             value: 2
-                                        }
+                                        },
+                                        loc: {
+                                            start: {
+                                                line: 41,
+                                                column: 16,
+                                                fixed: true,
+                                                source: 'ion/test/immediateTemplates.ion'
+                                            },
+                                            end: {
+                                                line: 41,
+                                                column: 17,
+                                                fixed: true,
+                                                source: 'ion/test/immediateTemplates.ion'
+                                            }
+                                        },
+                                        order: '1'
                                     }
                                 ]
-                            }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -358,7 +442,8 @@ var templates = [
                                         value: 1
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '0'
                         },
                         {
                             type: 'VariableDeclaration',
@@ -373,7 +458,8 @@ var templates = [
                                         value: 2
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '1'
                         },
                         {
                             type: 'ReturnStatement',
@@ -389,14 +475,44 @@ var templates = [
                                         expression: {
                                             type: 'Identifier',
                                             name: 'a'
-                                        }
+                                        },
+                                        loc: {
+                                            start: {
+                                                line: 49,
+                                                column: 16,
+                                                fixed: true,
+                                                source: 'ion/test/immediateTemplates.ion'
+                                            },
+                                            end: {
+                                                line: 49,
+                                                column: 17,
+                                                fixed: true,
+                                                source: 'ion/test/immediateTemplates.ion'
+                                            }
+                                        },
+                                        order: '0'
                                     },
                                     {
                                         type: 'ExpressionStatement',
                                         expression: {
                                             type: 'Identifier',
                                             name: 'b'
-                                        }
+                                        },
+                                        loc: {
+                                            start: {
+                                                line: 50,
+                                                column: 16,
+                                                fixed: true,
+                                                source: 'ion/test/immediateTemplates.ion'
+                                            },
+                                            end: {
+                                                line: 50,
+                                                column: 17,
+                                                fixed: true,
+                                                source: 'ion/test/immediateTemplates.ion'
+                                            }
+                                        },
+                                        order: '1'
                                     },
                                     {
                                         type: 'IfStatement',
@@ -419,7 +535,22 @@ var templates = [
                                                     expression: {
                                                         type: 'Literal',
                                                         value: 10
-                                                    }
+                                                    },
+                                                    loc: {
+                                                        start: {
+                                                            line: 52,
+                                                            column: 20,
+                                                            fixed: true,
+                                                            source: 'ion/test/immediateTemplates.ion'
+                                                        },
+                                                        end: {
+                                                            line: 52,
+                                                            column: 22,
+                                                            fixed: true,
+                                                            source: 'ion/test/immediateTemplates.ion'
+                                                        }
+                                                    },
+                                                    order: '0'
                                                 }]
                                         },
                                         alternate: {
@@ -443,14 +574,31 @@ var templates = [
                                                         expression: {
                                                             type: 'Literal',
                                                             value: 20
-                                                        }
+                                                        },
+                                                        loc: {
+                                                            start: {
+                                                                line: 54,
+                                                                column: 20,
+                                                                fixed: true,
+                                                                source: 'ion/test/immediateTemplates.ion'
+                                                            },
+                                                            end: {
+                                                                line: 54,
+                                                                column: 22,
+                                                                fixed: true,
+                                                                source: 'ion/test/immediateTemplates.ion'
+                                                            }
+                                                        },
+                                                        order: '0'
                                                     }]
                                             },
                                             alternate: null
-                                        }
+                                        },
+                                        order: '2'
                                     }
                                 ]
-                            }
+                            },
+                            order: '2'
                         }
                     ],
                     bound: false
@@ -500,7 +648,8 @@ var templates = [
                                         ]
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '0'
                         },
                         {
                             type: 'VariableDeclaration',
@@ -558,18 +707,21 @@ var templates = [
                                                             name: 'index'
                                                         }
                                                     }
-                                                }
+                                                },
+                                                order: '0'
                                             }]
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '1'
                         },
                         {
                             type: 'ReturnStatement',
                             argument: {
                                 type: 'Identifier',
                                 name: 'x'
-                            }
+                            },
+                            order: '2'
                         }
                     ],
                     bound: false
@@ -614,7 +766,8 @@ var templates = [
                                                     type: 'Literal',
                                                     value: 1
                                                 },
-                                                kind: 'init'
+                                                kind: 'init',
+                                                order: '0'
                                             },
                                             {
                                                 type: 'Property',
@@ -626,7 +779,8 @@ var templates = [
                                                     type: 'Literal',
                                                     value: 2
                                                 },
-                                                kind: 'init'
+                                                kind: 'init',
+                                                order: '1'
                                             },
                                             {
                                                 type: 'Property',
@@ -638,12 +792,14 @@ var templates = [
                                                     type: 'Literal',
                                                     value: 3
                                                 },
-                                                kind: 'init'
+                                                kind: 'init',
+                                                order: '2'
                                             }
                                         ]
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '0'
                         },
                         {
                             type: 'VariableDeclaration',
@@ -701,18 +857,21 @@ var templates = [
                                                             name: 'value'
                                                         }
                                                     }
-                                                }
+                                                },
+                                                order: '0'
                                             }]
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '1'
                         },
                         {
                             type: 'ReturnStatement',
                             argument: {
                                 type: 'Identifier',
                                 name: 'x'
-                            }
+                            },
+                            order: '2'
                         }
                     ],
                     bound: false
@@ -764,14 +923,17 @@ var templates = [
                                                                 type: 'Literal',
                                                                 value: 1
                                                             },
-                                                            kind: 'init'
+                                                            kind: 'init',
+                                                            order: '0'
                                                         }]
                                                 },
-                                                kind: 'init'
+                                                kind: 'init',
+                                                order: '0'
                                             }]
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '0'
                         },
                         {
                             type: 'ReturnStatement',
@@ -824,7 +986,8 @@ var templates = [
                                         source: 'ion/test/immediateTemplates.ion'
                                     }
                                 }
-                            }
+                            },
+                            order: '1'
                         }
                     ],
                     bound: false
@@ -859,7 +1022,8 @@ var templates = [
                                     type: 'Literal',
                                     value: 2
                                 }
-                            }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -901,7 +1065,8 @@ var templates = [
                                     type: 'Literal',
                                     value: 2
                                 }
-                            }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -933,7 +1098,8 @@ var templates = [
                                         value: null
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '0'
                         },
                         {
                             type: 'VariableDeclaration',
@@ -948,7 +1114,8 @@ var templates = [
                                         value: 2
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '1'
                         },
                         {
                             type: 'ReturnStatement',
@@ -972,7 +1139,8 @@ var templates = [
                                         }
                                     }
                                 ]
-                            }
+                            },
+                            order: '2'
                         }
                     ],
                     bound: false
@@ -1048,7 +1216,8 @@ var templates = [
                                         source: 'ion/test/immediateTemplates.ion'
                                     }
                                 }
-                            }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -1146,7 +1315,8 @@ var templates = [
                                         source: 'ion/test/immediateTemplates.ion'
                                     }
                                 }
-                            }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -1185,8 +1355,23 @@ var templates = [
                                         type: 'Literal',
                                         value: 5
                                     }
-                                ]
-                            }
+                                ],
+                                loc: {
+                                    start: {
+                                        line: 101,
+                                        column: 20,
+                                        fixed: true,
+                                        source: 'ion/test/immediateTemplates.ion'
+                                    },
+                                    end: {
+                                        line: 101,
+                                        column: 41,
+                                        fixed: true,
+                                        source: 'ion/test/immediateTemplates.ion'
+                                    }
+                                }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -1209,7 +1394,8 @@ var templates = [
                             argument: {
                                 type: 'Literal',
                                 value: /foo/
-                            }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -1242,7 +1428,8 @@ var templates = [
                                             type: 'Literal',
                                             value: 1
                                         },
-                                        kind: 'init'
+                                        kind: 'init',
+                                        order: '0'
                                     },
                                     {
                                         type: 'Property',
@@ -1254,7 +1441,8 @@ var templates = [
                                             type: 'Literal',
                                             value: 2
                                         },
-                                        kind: 'init'
+                                        kind: 'init',
+                                        order: '1'
                                     },
                                     {
                                         type: 'Property',
@@ -1295,7 +1483,8 @@ var templates = [
                                                                 ]
                                                             }
                                                         }],
-                                                    kind: 'let'
+                                                    kind: 'let',
+                                                    order: '0'
                                                 },
                                                 {
                                                     type: 'ForOfStatement',
@@ -1330,17 +1519,35 @@ var templates = [
                                                                         type: 'Literal',
                                                                         value: 2
                                                                     }
-                                                                }
+                                                                },
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 116,
+                                                                        column: 24,
+                                                                        fixed: true,
+                                                                        source: 'ion/test/immediateTemplates.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 116,
+                                                                        column: 32,
+                                                                        fixed: true,
+                                                                        source: 'ion/test/immediateTemplates.ion'
+                                                                    }
+                                                                },
+                                                                order: '0'
                                                             }]
                                                     },
-                                                    remove: null
+                                                    remove: null,
+                                                    order: '1'
                                                 }
                                             ]
                                         },
-                                        kind: 'init'
+                                        kind: 'init',
+                                        order: '2'
                                     }
                                 ]
-                            }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -1428,7 +1635,8 @@ var templates = [
                                         }
                                     }
                                 ]
-                            }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -1471,7 +1679,8 @@ var templates = [
                                         computed: false
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '0'
                         },
                         {
                             type: 'VariableDeclaration',
@@ -1494,7 +1703,8 @@ var templates = [
                                         computed: false
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '1'
                         },
                         {
                             type: 'ReturnStatement',
@@ -1509,7 +1719,8 @@ var templates = [
                                     type: 'Identifier',
                                     name: 'b'
                                 }
-                            }
+                            },
+                            order: '2'
                         }
                     ],
                     bound: false
@@ -1542,7 +1753,21 @@ var templates = [
                                         type: 'Identifier',
                                         name: 'type'
                                     },
-                                    arguments: []
+                                    arguments: [],
+                                    loc: {
+                                        start: {
+                                            line: 129,
+                                            column: 19,
+                                            fixed: true,
+                                            source: 'ion/test/immediateTemplates.ion'
+                                        },
+                                        end: {
+                                            line: 129,
+                                            column: 27,
+                                            fixed: true,
+                                            source: 'ion/test/immediateTemplates.ion'
+                                        }
+                                    }
                                 },
                                 properties: [{
                                         type: 'Property',
@@ -1562,12 +1787,15 @@ var templates = [
                                                         type: 'Literal',
                                                         value: 10
                                                     },
-                                                    kind: 'init'
+                                                    kind: 'init',
+                                                    order: '0'
                                                 }]
                                         },
-                                        kind: 'init'
+                                        kind: 'init',
+                                        order: '0'
                                     }]
-                            }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -1667,17 +1895,20 @@ var templates = [
                                                 }
                                             }
                                         },
-                                        kind: 'init'
+                                        kind: 'init',
+                                        order: '0'
                                     }]
                             },
-                            kind: 'init'
+                            kind: 'init',
+                            order: '0'
                         },
                         {
                             type: 'ReturnStatement',
                             argument: {
                                 type: 'Identifier',
                                 name: 'output'
-                            }
+                            },
+                            order: '1'
                         }
                     ],
                     bound: false
@@ -1738,7 +1969,8 @@ var templates = [
                                         source: 'ion/test/immediateTemplates.ion'
                                     }
                                 }
-                            }
+                            },
+                            order: '0'
                         }],
                     bound: false
                 }, {
@@ -1793,4 +2025,3 @@ var test = exports.test = function () {
     _ion_test_immediateTemplates_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./immediateTemplates.map

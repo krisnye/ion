@@ -18,6 +18,7 @@ Object.defineProperty(exports, 'Property', {get:function(){ return require('./Pr
 Object.defineProperty(exports, 'ReturnStatement', {get:function(){ return require('./ReturnStatement') }, enumerable: true}) 
 Object.defineProperty(exports, 'Statement', {get:function(){ return require('./Statement') }, enumerable: true}) 
 Object.defineProperty(exports, 'Template', {get:function(){ return require('./Template') }, enumerable: true}) 
+Object.defineProperty(exports, 'UndoStatement', {get:function(){ return require('./UndoStatement') }, enumerable: true}) 
 Object.defineProperty(exports, 'VariableDeclaration', {get:function(){ return require('./VariableDeclaration') }, enumerable: true}) 
   }
   if (typeof require === 'function') {

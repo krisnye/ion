@@ -5,6 +5,7 @@ var noop = function () {
 var Literal = ion.defineClass({
         name: 'Literal',
         properties: {
+            mutable: false,
             observe: function (observer) {
                 observer(this.value);
                 return noop;
@@ -23,4 +24,3 @@ module.exports = exports = Literal;
     _ion_runtime_Literal_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./Literal.map

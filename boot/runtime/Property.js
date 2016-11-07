@@ -33,7 +33,6 @@ var Property = ion.defineClass({
             },
             setOutputValue: function (key, value) {
                 this.context.output[key] = this.lastAssignedValue = value;
-                ion.changed(this.context.output);
             },
             setProperty: function (key, value) {
                 if (key == null)
@@ -76,4 +75,3 @@ module.exports = exports = Property;
     _ion_runtime_Property_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./Property.map

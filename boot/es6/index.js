@@ -6,7 +6,7 @@ require('./Object');
 require('./Function');
 require('./Array');
 require('./CustomEvent');
-require('./sugar');
+require('./sugar').extend();
   }
   if (typeof require === 'function') {
     if (require.register)
@@ -18,4 +18,3 @@ require('./sugar');
     _ion_es6_index_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./index.map

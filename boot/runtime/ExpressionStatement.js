@@ -1,5 +1,8 @@
 void (function(){var _ion_runtime_ExpressionStatement_ = function(module,exports,require){'use strict';
-var ion = require('../'), Statement = require('./Statement');
+var ion = require('../'), _ref;
+_ref = require('./');
+var Factory = _ref.Factory;
+var Statement = _ref.Statement;
 var ExpressionStatement = ion.defineClass({
         name: 'ExpressionStatement',
         properties: {
@@ -12,19 +15,23 @@ var ExpressionStatement = ion.defineClass({
                         this._remove != null ? this._remove() : void 0;
                         this._remove = null;
                         if (this.context.output != null && value !== void 0) {
-                            this._remove = this.context.insert(value, this.order);
+                            try {
+                                this._remove = this.context.insert(value, this.order, this);
+                            } catch (e) {
+                                console.warn('Error adding ' + value + ' to ' + this.context.output + ':  (' + Factory.toCode(this.callee) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
+                                console.error(e);
+                            }
                         }
-                        ion.changed(this.context.output);
                     }
                 }, this));
             },
             deactivate: function () {
                 ExpressionStatement.super.prototype.deactivate.apply(this, arguments);
                 this.runtimeExpressionObserver != null ? this.runtimeExpressionObserver(void 0) : void 0;
-                this.unobserve();
+                this.unobserve != null ? this.unobserve() : void 0;
+                this.unobserve = null;
                 this._remove != null ? this._remove() : void 0;
                 this._remove = null;
-                ion.changed(this.context.output);
             }
         }
     }, Statement);
@@ -40,4 +47,3 @@ module.exports = exports = ExpressionStatement;
     _ion_runtime_ExpressionStatement_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./ExpressionStatement.map

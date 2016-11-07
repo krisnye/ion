@@ -23,7 +23,7 @@ var ArrayExpression = ion.defineClass({
                     this.unobserveExpressionValues[key] != null ? this.unobserveExpressionValues[key]() : void 0;
                     this.unobserveExpressionValues[key] = null;
                     this.argumentValues[key] = value;
-                    if (this.observeElements) {
+                    if (this.observeElements && expression.mutable) {
                         if (value != null) {
                             this.itemObserver = this.itemObserver != null ? this.itemObserver : ion.bind(function () {
                                 this.notifyIfActive();
@@ -114,4 +114,3 @@ module.exports = exports = ArrayExpression;
     _ion_runtime_ArrayExpression_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./ArrayExpression.map

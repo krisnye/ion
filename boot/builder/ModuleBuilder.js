@@ -5,7 +5,6 @@ if (global.window) {
 var ion = require('../'), np = require('path'), File = require('./File'), Directory = require('./Directory'), builder = require('./'), utility = require('./utility'), compilers = {
         '.coffee': { compile: builder.compileCoffeeScript },
         '.pegjs': { compile: builder.compilePegjs },
-        '.pegs': { compile: builder.compilePegs },
         '.js': { compile: builder.shimJavascript },
         '.ion': {
             compile: builder.compileIon,
@@ -96,7 +95,21 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                     arguments: [{
                                                             type: 'Literal',
                                                             value: 'package.json'
-                                                        }]
+                                                        }],
+                                                    loc: {
+                                                        start: {
+                                                            line: 26,
+                                                            column: 43,
+                                                            fixed: true,
+                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 26,
+                                                            column: 67,
+                                                            fixed: true,
+                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                        }
+                                                    }
                                                 },
                                                 property: {
                                                     type: 'Identifier',
@@ -188,7 +201,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                             }
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '0'
             },
             {
                 type: 'VariableDeclaration',
@@ -314,10 +328,25 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         type: 'Literal',
                                         value: 'src'
                                     }
-                                }]
+                                }],
+                            loc: {
+                                start: {
+                                    line: 27,
+                                    column: 16,
+                                    fixed: true,
+                                    source: 'ion/builder/ModuleBuilder.ion'
+                                },
+                                end: {
+                                    line: 27,
+                                    column: 66,
+                                    fixed: true,
+                                    source: 'ion/builder/ModuleBuilder.ion'
+                                }
+                            }
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '1'
             },
             {
                 type: 'VariableDeclaration',
@@ -443,10 +472,25 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         type: 'Literal',
                                         value: 'lib'
                                     }
-                                }]
+                                }],
+                            loc: {
+                                start: {
+                                    line: 28,
+                                    column: 17,
+                                    fixed: true,
+                                    source: 'ion/builder/ModuleBuilder.ion'
+                                },
+                                end: {
+                                    line: 28,
+                                    column: 67,
+                                    fixed: true,
+                                    source: 'ion/builder/ModuleBuilder.ion'
+                                }
+                            }
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '2'
             },
             {
                 type: 'VariableDeclaration',
@@ -524,7 +568,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                             }
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '3'
             },
             {
                 type: 'VariableDeclaration',
@@ -582,7 +627,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                             }
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '4'
             },
             {
                 type: 'ForInStatement',
@@ -817,7 +863,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                     }
                                                 }
                                             }],
-                                        kind: 'let'
+                                        kind: 'let',
+                                        order: '0'
                                     },
                                     {
                                         type: 'VariableDeclaration',
@@ -881,123 +928,246 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                     }
                                                 }
                                             }],
-                                        kind: 'let'
+                                        kind: 'let',
+                                        order: '1'
                                     },
                                     {
-                                        type: 'ExpressionStatement',
-                                        expression: {
-                                            type: 'UnaryExpression',
-                                            operator: 'void',
-                                            argument: {
-                                                type: 'CallExpression',
-                                                callee: {
-                                                    type: 'MemberExpression',
-                                                    computed: false,
-                                                    object: {
-                                                        type: 'Identifier',
-                                                        name: 'output'
-                                                    },
-                                                    property: {
-                                                        type: 'Identifier',
-                                                        name: 'write'
-                                                    },
-                                                    loc: {
-                                                        start: {
-                                                            line: 46,
-                                                            column: 17,
-                                                            fixed: true,
-                                                            source: 'ion/builder/ModuleBuilder.ion'
-                                                        },
-                                                        end: {
-                                                            line: 46,
-                                                            column: 29,
-                                                            fixed: true,
-                                                            source: 'ion/builder/ModuleBuilder.ion'
-                                                        }
-                                                    }
+                                        type: 'IfStatement',
+                                        test: {
+                                            type: 'MemberExpression',
+                                            computed: false,
+                                            object: {
+                                                type: 'Identifier',
+                                                name: 'source'
+                                            },
+                                            property: {
+                                                type: 'Identifier',
+                                                name: 'exists'
+                                            },
+                                            loc: {
+                                                start: {
+                                                    line: 46,
+                                                    column: 15,
+                                                    fixed: true,
+                                                    source: 'ion/builder/ModuleBuilder.ion'
                                                 },
-                                                arguments: [
-                                                    {
-                                                        type: 'Identifier',
-                                                        name: 'targetPath'
-                                                    },
-                                                    {
-                                                        type: 'CallExpression',
-                                                        callee: {
-                                                            type: 'MemberExpression',
-                                                            computed: false,
-                                                            object: {
-                                                                type: 'Identifier',
-                                                                name: 'compiler'
+                                                end: {
+                                                    line: 46,
+                                                    column: 28,
+                                                    fixed: true,
+                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                }
+                                            }
+                                        },
+                                        consequent: {
+                                            type: 'BlockStatement',
+                                            body: [{
+                                                    type: 'ExpressionStatement',
+                                                    expression: {
+                                                        type: 'UnaryExpression',
+                                                        operator: 'void',
+                                                        argument: {
+                                                            type: 'CallExpression',
+                                                            callee: {
+                                                                type: 'MemberExpression',
+                                                                computed: false,
+                                                                object: {
+                                                                    type: 'Identifier',
+                                                                    name: 'output'
+                                                                },
+                                                                property: {
+                                                                    type: 'Identifier',
+                                                                    name: 'write'
+                                                                },
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 47,
+                                                                        column: 21,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 47,
+                                                                        column: 33,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                    }
+                                                                }
                                                             },
-                                                            property: {
-                                                                type: 'Identifier',
-                                                                name: 'compile'
-                                                            },
+                                                            arguments: [
+                                                                {
+                                                                    type: 'Identifier',
+                                                                    name: 'targetPath'
+                                                                },
+                                                                {
+                                                                    type: 'CallExpression',
+                                                                    callee: {
+                                                                        type: 'MemberExpression',
+                                                                        computed: false,
+                                                                        object: {
+                                                                            type: 'Identifier',
+                                                                            name: 'compiler'
+                                                                        },
+                                                                        property: {
+                                                                            type: 'Identifier',
+                                                                            name: 'compile'
+                                                                        },
+                                                                        loc: {
+                                                                            start: {
+                                                                                line: 47,
+                                                                                column: 46,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/ModuleBuilder.ion'
+                                                                            },
+                                                                            end: {
+                                                                                line: 47,
+                                                                                column: 62,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/ModuleBuilder.ion'
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    arguments: [
+                                                                        {
+                                                                            type: 'Identifier',
+                                                                            name: 'source'
+                                                                        },
+                                                                        {
+                                                                            type: 'Identifier',
+                                                                            name: 'packageJson'
+                                                                        }
+                                                                    ],
+                                                                    loc: {
+                                                                        start: {
+                                                                            line: 47,
+                                                                            column: 46,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                                        },
+                                                                        end: {
+                                                                            line: 47,
+                                                                            column: 83,
+                                                                            fixed: true,
+                                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ],
                                                             loc: {
                                                                 start: {
-                                                                    line: 46,
-                                                                    column: 42,
+                                                                    line: 47,
+                                                                    column: 21,
                                                                     fixed: true,
                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                 },
                                                                 end: {
-                                                                    line: 46,
-                                                                    column: 58,
+                                                                    line: 47,
+                                                                    column: 84,
                                                                     fixed: true,
                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                 }
                                                             }
+                                                        }
+                                                    },
+                                                    loc: {
+                                                        start: {
+                                                            line: 47,
+                                                            column: 16,
+                                                            fixed: true,
+                                                            source: 'ion/builder/ModuleBuilder.ion'
                                                         },
-                                                        arguments: [
-                                                            {
-                                                                type: 'Identifier',
-                                                                name: 'source'
+                                                        end: {
+                                                            line: 47,
+                                                            column: 84,
+                                                            fixed: true,
+                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                        }
+                                                    },
+                                                    order: '0'
+                                                }]
+                                        },
+                                        alternate: {
+                                            type: 'BlockStatement',
+                                            body: [{
+                                                    type: 'ExpressionStatement',
+                                                    expression: {
+                                                        type: 'UnaryExpression',
+                                                        operator: 'void',
+                                                        argument: {
+                                                            type: 'CallExpression',
+                                                            callee: {
+                                                                type: 'MemberExpression',
+                                                                computed: false,
+                                                                object: {
+                                                                    type: 'Identifier',
+                                                                    name: 'output'
+                                                                },
+                                                                property: {
+                                                                    type: 'Identifier',
+                                                                    name: 'delete'
+                                                                },
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 49,
+                                                                        column: 21,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                    },
+                                                                    end: {
+                                                                        line: 49,
+                                                                        column: 34,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                    }
+                                                                }
                                                             },
-                                                            {
-                                                                type: 'Identifier',
-                                                                name: 'packageJson'
-                                                            }
-                                                        ],
-                                                        loc: {
-                                                            start: {
-                                                                line: 46,
-                                                                column: 42,
-                                                                fixed: true,
-                                                                source: 'ion/builder/ModuleBuilder.ion'
-                                                            },
-                                                            end: {
-                                                                line: 46,
-                                                                column: 79,
-                                                                fixed: true,
-                                                                source: 'ion/builder/ModuleBuilder.ion'
+                                                            arguments: [{
+                                                                    type: 'Identifier',
+                                                                    name: 'targetPath'
+                                                                }],
+                                                            loc: {
+                                                                start: {
+                                                                    line: 49,
+                                                                    column: 21,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                },
+                                                                end: {
+                                                                    line: 49,
+                                                                    column: 46,
+                                                                    fixed: true,
+                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                }
                                                             }
                                                         }
-                                                    }
-                                                ],
-                                                loc: {
-                                                    start: {
-                                                        line: 46,
-                                                        column: 17,
-                                                        fixed: true,
-                                                        source: 'ion/builder/ModuleBuilder.ion'
                                                     },
-                                                    end: {
-                                                        line: 46,
-                                                        column: 80,
-                                                        fixed: true,
-                                                        source: 'ion/builder/ModuleBuilder.ion'
-                                                    }
-                                                }
-                                            }
-                                        }
+                                                    loc: {
+                                                        start: {
+                                                            line: 49,
+                                                            column: 16,
+                                                            fixed: true,
+                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 49,
+                                                            column: 46,
+                                                            fixed: true,
+                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                        }
+                                                    },
+                                                    order: '0'
+                                                }]
+                                        },
+                                        order: '2'
                                     }
                                 ]
                             },
-                            alternate: null
+                            alternate: null,
+                            order: '0'
                         }]
                 },
-                remove: null
+                remove: null,
+                order: '5'
             },
             {
                 type: 'VariableDeclaration',
@@ -1024,13 +1194,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     },
                                     loc: {
                                         start: {
-                                            line: 49,
+                                            line: 52,
                                             column: 36,
                                             fixed: true,
                                             source: 'ion/builder/ModuleBuilder.ion'
                                         },
                                         end: {
-                                            line: 49,
+                                            line: 52,
                                             column: 48,
                                             fixed: true,
                                             source: 'ion/builder/ModuleBuilder.ion'
@@ -1057,13 +1227,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             },
                                             loc: {
                                                 start: {
-                                                    line: 49,
+                                                    line: 52,
                                                     column: 55,
                                                     fixed: true,
                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                 },
                                                 end: {
-                                                    line: 49,
+                                                    line: 52,
                                                     column: 72,
                                                     fixed: true,
                                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -1086,13 +1256,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                     },
                                                     loc: {
                                                         start: {
-                                                            line: 49,
+                                                            line: 52,
                                                             column: 73,
                                                             fixed: true,
                                                             source: 'ion/builder/ModuleBuilder.ion'
                                                         },
                                                         end: {
-                                                            line: 49,
+                                                            line: 52,
                                                             column: 90,
                                                             fixed: true,
                                                             source: 'ion/builder/ModuleBuilder.ion'
@@ -1105,13 +1275,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 },
                                                 loc: {
                                                     start: {
-                                                        line: 49,
+                                                        line: 52,
                                                         column: 73,
                                                         fixed: true,
                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                     },
                                                     end: {
-                                                        line: 49,
+                                                        line: 52,
                                                         column: 98,
                                                         fixed: true,
                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -1120,13 +1290,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             }],
                                         loc: {
                                             start: {
-                                                line: 49,
+                                                line: 52,
                                                 column: 55,
                                                 fixed: true,
                                                 source: 'ion/builder/ModuleBuilder.ion'
                                             },
                                             end: {
-                                                line: 49,
+                                                line: 52,
                                                 column: 99,
                                                 fixed: true,
                                                 source: 'ion/builder/ModuleBuilder.ion'
@@ -1136,13 +1306,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 ],
                                 loc: {
                                     start: {
-                                        line: 49,
+                                        line: 52,
                                         column: 36,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
                                     },
                                     end: {
-                                        line: 49,
+                                        line: 52,
                                         column: 100,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -1170,13 +1340,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             },
                                             loc: {
                                                 start: {
-                                                    line: 50,
+                                                    line: 53,
                                                     column: 15,
                                                     fixed: true,
                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                 },
                                                 end: {
-                                                    line: 50,
+                                                    line: 53,
                                                     column: 28,
                                                     fixed: true,
                                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -1189,13 +1359,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             }],
                                         loc: {
                                             start: {
-                                                line: 50,
+                                                line: 53,
                                                 column: 15,
                                                 fixed: true,
                                                 source: 'ion/builder/ModuleBuilder.ion'
                                             },
                                             end: {
-                                                line: 50,
+                                                line: 53,
                                                 column: 33,
                                                 fixed: true,
                                                 source: 'ion/builder/ModuleBuilder.ion'
@@ -1203,11 +1373,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         }
                                     },
                                     kind: 'init',
-                                    computed: true
+                                    computed: true,
+                                    order: '0'
                                 }]
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '6'
             },
             {
                 type: 'ForInStatement',
@@ -1254,13 +1426,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 },
                                 loc: {
                                     start: {
-                                        line: 52,
+                                        line: 55,
                                         column: 11,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
                                     },
                                     end: {
-                                        line: 52,
+                                        line: 55,
                                         column: 27,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -1302,13 +1474,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     },
                                                                     loc: {
                                                                         start: {
-                                                                            line: 54,
+                                                                            line: 57,
                                                                             column: 30,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
                                                                         },
                                                                         end: {
-                                                                            line: 54,
+                                                                            line: 57,
                                                                             column: 43,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
@@ -1329,13 +1501,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     }],
                                                                 loc: {
                                                                     start: {
-                                                                        line: 54,
+                                                                        line: 57,
                                                                         column: 30,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                     },
                                                                     end: {
-                                                                        line: 54,
+                                                                        line: 57,
                                                                         column: 63,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -1348,13 +1520,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             },
                                                             loc: {
                                                                 start: {
-                                                                    line: 54,
+                                                                    line: 57,
                                                                     column: 30,
                                                                     fixed: true,
                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                 },
                                                                 end: {
-                                                                    line: 54,
+                                                                    line: 57,
                                                                     column: 70,
                                                                     fixed: true,
                                                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -1379,13 +1551,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     },
                                                                     loc: {
                                                                         start: {
-                                                                            line: 54,
+                                                                            line: 57,
                                                                             column: 74,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
                                                                         },
                                                                         end: {
-                                                                            line: 54,
+                                                                            line: 57,
                                                                             column: 87,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
@@ -1406,13 +1578,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     }],
                                                                 loc: {
                                                                     start: {
-                                                                        line: 54,
+                                                                        line: 57,
                                                                         column: 74,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                     },
                                                                     end: {
-                                                                        line: 54,
+                                                                        line: 57,
                                                                         column: 108,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -1425,13 +1597,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             },
                                                             loc: {
                                                                 start: {
-                                                                    line: 54,
+                                                                    line: 57,
                                                                     column: 74,
                                                                     fixed: true,
                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                 },
                                                                 end: {
-                                                                    line: 54,
+                                                                    line: 57,
                                                                     column: 115,
                                                                     fixed: true,
                                                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -1457,13 +1629,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 },
                                                                 loc: {
                                                                     start: {
-                                                                        line: 54,
+                                                                        line: 57,
                                                                         column: 119,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                     },
                                                                     end: {
-                                                                        line: 54,
+                                                                        line: 57,
                                                                         column: 132,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -1484,13 +1656,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 }],
                                                             loc: {
                                                                 start: {
-                                                                    line: 54,
+                                                                    line: 57,
                                                                     column: 119,
                                                                     fixed: true,
                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                 },
                                                                 end: {
-                                                                    line: 54,
+                                                                    line: 57,
                                                                     column: 156,
                                                                     fixed: true,
                                                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -1503,13 +1675,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                         },
                                                         loc: {
                                                             start: {
-                                                                line: 54,
+                                                                line: 57,
                                                                 column: 119,
                                                                 fixed: true,
                                                                 source: 'ion/builder/ModuleBuilder.ion'
                                                             },
                                                             end: {
-                                                                line: 54,
+                                                                line: 57,
                                                                 column: 163,
                                                                 fixed: true,
                                                                 source: 'ion/builder/ModuleBuilder.ion'
@@ -1518,7 +1690,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                     }
                                                 }
                                             }],
-                                        kind: 'let'
+                                        kind: 'let',
+                                        order: '0'
                                     },
                                     {
                                         type: 'IfStatement',
@@ -1556,13 +1729,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     },
                                                                     loc: {
                                                                         start: {
-                                                                            line: 57,
+                                                                            line: 60,
                                                                             column: 37,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
                                                                         },
                                                                         end: {
-                                                                            line: 57,
+                                                                            line: 60,
                                                                             column: 56,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
@@ -1575,13 +1748,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     }],
                                                                 loc: {
                                                                     start: {
-                                                                        line: 57,
+                                                                        line: 60,
                                                                         column: 37,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                     },
                                                                     end: {
-                                                                        line: 57,
+                                                                        line: 60,
                                                                         column: 62,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -1589,7 +1762,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 }
                                                             }
                                                         }],
-                                                    kind: 'let'
+                                                    kind: 'let',
+                                                    order: '0'
                                                 },
                                                 {
                                                     type: 'VariableDeclaration',
@@ -1604,7 +1778,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 value: 'index.js'
                                                             }
                                                         }],
-                                                    kind: 'let'
+                                                    kind: 'let',
+                                                    order: '1'
                                                 },
                                                 {
                                                     type: 'VariableDeclaration',
@@ -1629,13 +1804,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     },
                                                                     loc: {
                                                                         start: {
-                                                                            line: 59,
+                                                                            line: 62,
                                                                             column: 32,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
                                                                         },
                                                                         end: {
-                                                                            line: 59,
+                                                                            line: 62,
                                                                             column: 54,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
@@ -1648,13 +1823,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     }],
                                                                 loc: {
                                                                     start: {
-                                                                        line: 59,
+                                                                        line: 62,
                                                                         column: 32,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                     },
                                                                     end: {
-                                                                        line: 59,
+                                                                        line: 62,
                                                                         column: 65,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -1662,7 +1837,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 }
                                                             }
                                                         }],
-                                                    kind: 'let'
+                                                    kind: 'let',
+                                                    order: '2'
                                                 },
                                                 {
                                                     type: 'VariableDeclaration',
@@ -1717,13 +1893,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                 },
                                                                                 loc: {
                                                                                     start: {
-                                                                                        line: 62,
+                                                                                        line: 65,
                                                                                         column: 42,
                                                                                         fixed: true,
                                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                                     },
                                                                                     end: {
-                                                                                        line: 62,
+                                                                                        line: 65,
                                                                                         column: 63,
                                                                                         fixed: true,
                                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -1751,19 +1927,20 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                 type: 'Literal',
                                                                                                 value: false
                                                                                             },
-                                                                                            kind: 'init'
+                                                                                            kind: 'init',
+                                                                                            order: '0'
                                                                                         }]
                                                                                 }
                                                                             ],
                                                                             loc: {
                                                                                 start: {
-                                                                                    line: 62,
+                                                                                    line: 65,
                                                                                     column: 42,
                                                                                     fixed: true,
                                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                                 },
                                                                                 end: {
-                                                                                    line: 62,
+                                                                                    line: 65,
                                                                                     column: 94,
                                                                                     fixed: true,
                                                                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -1810,13 +1987,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                         },
                                                                                                         loc: {
                                                                                                             start: {
-                                                                                                                line: 63,
+                                                                                                                line: 66,
                                                                                                                 column: 51,
                                                                                                                 fixed: true,
                                                                                                                 source: 'ion/builder/ModuleBuilder.ion'
                                                                                                             },
                                                                                                             end: {
-                                                                                                                line: 63,
+                                                                                                                line: 66,
                                                                                                                 column: 65,
                                                                                                                 fixed: true,
                                                                                                                 source: 'ion/builder/ModuleBuilder.ion'
@@ -1829,13 +2006,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                     },
                                                                                                     loc: {
                                                                                                         start: {
-                                                                                                            line: 63,
+                                                                                                            line: 66,
                                                                                                             column: 51,
                                                                                                             fixed: true,
                                                                                                             source: 'ion/builder/ModuleBuilder.ion'
                                                                                                         },
                                                                                                         end: {
-                                                                                                            line: 63,
+                                                                                                            line: 66,
                                                                                                             column: 74,
                                                                                                             fixed: true,
                                                                                                             source: 'ion/builder/ModuleBuilder.ion'
@@ -1848,13 +2025,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                     }],
                                                                                                 loc: {
                                                                                                     start: {
-                                                                                                        line: 63,
+                                                                                                        line: 66,
                                                                                                         column: 51,
                                                                                                         fixed: true,
                                                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                                                     },
                                                                                                     end: {
-                                                                                                        line: 63,
+                                                                                                        line: 66,
                                                                                                         column: 81,
                                                                                                         fixed: true,
                                                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -1874,13 +2051,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                 },
                                                                                                 loc: {
                                                                                                     start: {
-                                                                                                        line: 63,
+                                                                                                        line: 66,
                                                                                                         column: 85,
                                                                                                         fixed: true,
                                                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                                                     },
                                                                                                     end: {
-                                                                                                        line: 63,
+                                                                                                        line: 66,
                                                                                                         column: 106,
                                                                                                         fixed: true,
                                                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -1915,13 +2092,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                                 },
                                                                                                                 loc: {
                                                                                                                     start: {
-                                                                                                                        line: 64,
+                                                                                                                        line: 67,
                                                                                                                         column: 39,
                                                                                                                         fixed: true,
                                                                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                                                                     },
                                                                                                                     end: {
-                                                                                                                        line: 64,
+                                                                                                                        line: 67,
                                                                                                                         column: 60,
                                                                                                                         fixed: true,
                                                                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -1947,13 +2124,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                                     },
                                                                                                                     loc: {
                                                                                                                         start: {
-                                                                                                                            line: 64,
+                                                                                                                            line: 67,
                                                                                                                             column: 69,
                                                                                                                             fixed: true,
                                                                                                                             source: 'ion/builder/ModuleBuilder.ion'
                                                                                                                         },
                                                                                                                         end: {
-                                                                                                                            line: 64,
+                                                                                                                            line: 67,
                                                                                                                             column: 82,
                                                                                                                             fixed: true,
                                                                                                                             source: 'ion/builder/ModuleBuilder.ion'
@@ -1980,13 +2157,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                                             },
                                                                                                                             loc: {
                                                                                                                                 start: {
-                                                                                                                                    line: 64,
+                                                                                                                                    line: 67,
                                                                                                                                     column: 86,
                                                                                                                                     fixed: true,
                                                                                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                                                                                 },
                                                                                                                                 end: {
-                                                                                                                                    line: 64,
+                                                                                                                                    line: 67,
                                                                                                                                     column: 101,
                                                                                                                                     fixed: true,
                                                                                                                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -1999,13 +2176,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                                             }],
                                                                                                                         loc: {
                                                                                                                             start: {
-                                                                                                                                line: 64,
+                                                                                                                                line: 67,
                                                                                                                                 column: 86,
                                                                                                                                 fixed: true,
                                                                                                                                 source: 'ion/builder/ModuleBuilder.ion'
                                                                                                                             },
                                                                                                                             end: {
-                                                                                                                                line: 64,
+                                                                                                                                line: 67,
                                                                                                                                 column: 108,
                                                                                                                                 fixed: true,
                                                                                                                                 source: 'ion/builder/ModuleBuilder.ion'
@@ -2015,13 +2192,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                                 ],
                                                                                                                 loc: {
                                                                                                                     start: {
-                                                                                                                        line: 64,
+                                                                                                                        line: 67,
                                                                                                                         column: 69,
                                                                                                                         fixed: true,
                                                                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                                                                     },
                                                                                                                     end: {
-                                                                                                                        line: 64,
+                                                                                                                        line: 67,
                                                                                                                         column: 109,
                                                                                                                         fixed: true,
                                                                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -2030,7 +2207,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                             }
                                                                                                         }
                                                                                                     }],
-                                                                                                kind: 'let'
+                                                                                                kind: 'let',
+                                                                                                order: '0'
                                                                                             },
                                                                                             {
                                                                                                 type: 'IfStatement',
@@ -2055,13 +2233,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                                 },
                                                                                                                 loc: {
                                                                                                                     start: {
-                                                                                                                        line: 65,
+                                                                                                                        line: 68,
                                                                                                                         column: 35,
                                                                                                                         fixed: true,
                                                                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                                                                     },
                                                                                                                     end: {
-                                                                                                                        line: 65,
+                                                                                                                        line: 68,
                                                                                                                         column: 50,
                                                                                                                         fixed: true,
                                                                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -2074,13 +2252,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                                 }],
                                                                                                             loc: {
                                                                                                                 start: {
-                                                                                                                    line: 65,
+                                                                                                                    line: 68,
                                                                                                                     column: 35,
                                                                                                                     fixed: true,
                                                                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                                                                 },
                                                                                                                 end: {
-                                                                                                                    line: 65,
+                                                                                                                    line: 68,
                                                                                                                     column: 55,
                                                                                                                     fixed: true,
                                                                                                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -2146,21 +2324,26 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                                 }
                                                                                                             },
                                                                                                             kind: 'init',
-                                                                                                            computed: true
+                                                                                                            computed: true,
+                                                                                                            order: '0'
                                                                                                         }]
                                                                                                 },
-                                                                                                alternate: null
+                                                                                                alternate: null,
+                                                                                                order: '1'
                                                                                             }
                                                                                         ]
                                                                                     },
-                                                                                    alternate: null
+                                                                                    alternate: null,
+                                                                                    order: '0'
                                                                                 }]
                                                                         },
-                                                                        remove: null
+                                                                        remove: null,
+                                                                        order: '0'
                                                                     }]
                                                             }
                                                         }],
-                                                    kind: 'let'
+                                                    kind: 'let',
+                                                    order: '3'
                                                 },
                                                 {
                                                     type: 'VariableDeclaration',
@@ -2190,13 +2373,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                             },
                                                                             loc: {
                                                                                 start: {
-                                                                                    line: 68,
+                                                                                    line: 71,
                                                                                     column: 36,
                                                                                     fixed: true,
                                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                                 },
                                                                                 end: {
-                                                                                    line: 68,
+                                                                                    line: 71,
                                                                                     column: 43,
                                                                                     fixed: true,
                                                                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -2219,13 +2402,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                         ],
                                                                         loc: {
                                                                             start: {
-                                                                                line: 68,
+                                                                                line: 71,
                                                                                 column: 36,
                                                                                 fixed: true,
                                                                                 source: 'ion/builder/ModuleBuilder.ion'
                                                                             },
                                                                             end: {
-                                                                                line: 68,
+                                                                                line: 71,
                                                                                 column: 70,
                                                                                 fixed: true,
                                                                                 source: 'ion/builder/ModuleBuilder.ion'
@@ -2238,13 +2421,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     },
                                                                     loc: {
                                                                         start: {
-                                                                            line: 68,
+                                                                            line: 71,
                                                                             column: 36,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
                                                                         },
                                                                         end: {
-                                                                            line: 68,
+                                                                            line: 71,
                                                                             column: 78,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
@@ -2263,13 +2446,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 ],
                                                                 loc: {
                                                                     start: {
-                                                                        line: 68,
+                                                                        line: 71,
                                                                         column: 36,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                     },
                                                                     end: {
-                                                                        line: 68,
+                                                                        line: 71,
                                                                         column: 90,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -2277,7 +2460,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 }
                                                             }
                                                         }],
-                                                    kind: 'let'
+                                                    kind: 'let',
+                                                    order: '4'
                                                 },
                                                 {
                                                     type: 'ExpressionStatement',
@@ -2299,13 +2483,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                 },
                                                                 loc: {
                                                                     start: {
-                                                                        line: 69,
+                                                                        line: 72,
                                                                         column: 21,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                     },
                                                                     end: {
-                                                                        line: 69,
+                                                                        line: 72,
                                                                         column: 41,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -2332,13 +2516,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                         },
                                                                         loc: {
                                                                             start: {
-                                                                                line: 69,
+                                                                                line: 72,
                                                                                 column: 53,
                                                                                 fixed: true,
                                                                                 source: 'ion/builder/ModuleBuilder.ion'
                                                                             },
                                                                             end: {
-                                                                                line: 69,
+                                                                                line: 72,
                                                                                 column: 75,
                                                                                 fixed: true,
                                                                                 source: 'ion/builder/ModuleBuilder.ion'
@@ -2391,7 +2575,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                                     type: 'Identifier',
                                                                                                     name: 'value'
                                                                                                 }
-                                                                                            }
+                                                                                            },
+                                                                                            order: '0'
                                                                                         }]
                                                                                 },
                                                                                 property: {
@@ -2400,13 +2585,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                 },
                                                                                 loc: {
                                                                                     start: {
-                                                                                        line: 69,
+                                                                                        line: 72,
                                                                                         column: 76,
                                                                                         fixed: true,
                                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                                     },
                                                                                     end: {
-                                                                                        line: 69,
+                                                                                        line: 72,
                                                                                         column: 112,
                                                                                         fixed: true,
                                                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -2419,13 +2604,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                                 }],
                                                                             loc: {
                                                                                 start: {
-                                                                                    line: 69,
+                                                                                    line: 72,
                                                                                     column: 76,
                                                                                     fixed: true,
                                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                                 },
                                                                                 end: {
-                                                                                    line: 69,
+                                                                                    line: 72,
                                                                                     column: 118,
                                                                                     fixed: true,
                                                                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -2439,13 +2624,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     ],
                                                                     loc: {
                                                                         start: {
-                                                                            line: 69,
+                                                                            line: 72,
                                                                             column: 53,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
                                                                         },
                                                                         end: {
-                                                                            line: 69,
+                                                                            line: 72,
                                                                             column: 134,
                                                                             fixed: true,
                                                                             source: 'ion/builder/ModuleBuilder.ion'
@@ -2455,31 +2640,49 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             ],
                                                             loc: {
                                                                 start: {
-                                                                    line: 69,
+                                                                    line: 72,
                                                                     column: 21,
                                                                     fixed: true,
                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                 },
                                                                 end: {
-                                                                    line: 69,
+                                                                    line: 72,
                                                                     column: 135,
                                                                     fixed: true,
                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                 }
                                                             }
                                                         }
-                                                    }
+                                                    },
+                                                    loc: {
+                                                        start: {
+                                                            line: 72,
+                                                            column: 16,
+                                                            fixed: true,
+                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 72,
+                                                            column: 135,
+                                                            fixed: true,
+                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                        }
+                                                    },
+                                                    order: '5'
                                                 }
                                             ]
                                         },
-                                        alternate: null
+                                        alternate: null,
+                                        order: '1'
                                     }
                                 ]
                             },
-                            alternate: null
+                            alternate: null,
+                            order: '0'
                         }]
                 },
-                remove: null
+                remove: null,
+                order: '7'
             },
             {
                 type: 'VariableDeclaration',
@@ -2487,7 +2690,7 @@ module.exports = exports = ion.template(function (packagePatch) {
                         type: 'VariableDeclarator',
                         id: {
                             type: 'Identifier',
-                            name: 'outputFiles'
+                            name: 'rawFiles'
                         },
                         init: {
                             type: 'CallExpression',
@@ -2504,14 +2707,14 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 },
                                 loc: {
                                     start: {
-                                        line: 73,
-                                        column: 22,
+                                        line: 76,
+                                        column: 19,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
                                     },
                                     end: {
-                                        line: 73,
-                                        column: 35,
+                                        line: 76,
+                                        column: 32,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
                                     }
@@ -2546,14 +2749,14 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         },
                                         loc: {
                                             start: {
-                                                line: 73,
-                                                column: 43,
+                                                line: 76,
+                                                column: 40,
                                                 fixed: true,
                                                 source: 'ion/builder/ModuleBuilder.ion'
                                             },
                                             end: {
-                                                line: 73,
-                                                column: 72,
+                                                line: 76,
+                                                column: 69,
                                                 fixed: true,
                                                 source: 'ion/builder/ModuleBuilder.ion'
                                             }
@@ -2575,14 +2778,14 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 },
                                                 loc: {
                                                     start: {
-                                                        line: 73,
-                                                        column: 73,
+                                                        line: 76,
+                                                        column: 70,
                                                         fixed: true,
                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                     },
                                                     end: {
-                                                        line: 73,
-                                                        column: 90,
+                                                        line: 76,
+                                                        column: 87,
                                                         fixed: true,
                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                     }
@@ -2594,14 +2797,14 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             },
                                             loc: {
                                                 start: {
-                                                    line: 73,
-                                                    column: 73,
+                                                    line: 76,
+                                                    column: 70,
                                                     fixed: true,
                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                 },
                                                 end: {
-                                                    line: 73,
-                                                    column: 98,
+                                                    line: 76,
+                                                    column: 95,
                                                     fixed: true,
                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                 }
@@ -2609,14 +2812,14 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         }],
                                     loc: {
                                         start: {
-                                            line: 73,
-                                            column: 43,
+                                            line: 76,
+                                            column: 40,
                                             fixed: true,
                                             source: 'ion/builder/ModuleBuilder.ion'
                                         },
                                         end: {
-                                            line: 73,
-                                            column: 99,
+                                            line: 76,
+                                            column: 96,
                                             fixed: true,
                                             source: 'ion/builder/ModuleBuilder.ion'
                                         }
@@ -2625,21 +2828,139 @@ module.exports = exports = ion.template(function (packagePatch) {
                             ],
                             loc: {
                                 start: {
-                                    line: 73,
-                                    column: 22,
+                                    line: 76,
+                                    column: 19,
                                     fixed: true,
                                     source: 'ion/builder/ModuleBuilder.ion'
                                 },
                                 end: {
-                                    line: 73,
-                                    column: 100,
+                                    line: 76,
+                                    column: 97,
                                     fixed: true,
                                     source: 'ion/builder/ModuleBuilder.ion'
                                 }
                             }
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '8'
+            },
+            {
+                type: 'VariableDeclaration',
+                declarations: [{
+                        type: 'VariableDeclarator',
+                        id: {
+                            type: 'Identifier',
+                            name: 'outputFiles'
+                        },
+                        init: {
+                            type: 'ObjectExpression',
+                            objectType: {
+                                type: 'ObjectExpression',
+                                properties: []
+                            },
+                            properties: [{
+                                    type: 'ForInStatement',
+                                    left: {
+                                        type: 'VariableDeclaration',
+                                        declarations: [
+                                            {
+                                                type: 'VariableDeclarator',
+                                                id: {
+                                                    type: 'Identifier',
+                                                    name: 'key'
+                                                },
+                                                init: null
+                                            },
+                                            {
+                                                type: 'VariableDeclarator',
+                                                id: {
+                                                    type: 'Identifier',
+                                                    name: 'file'
+                                                },
+                                                init: null
+                                            }
+                                        ],
+                                        kind: 'let'
+                                    },
+                                    right: {
+                                        type: 'Identifier',
+                                        name: 'rawFiles'
+                                    },
+                                    body: {
+                                        type: 'BlockStatement',
+                                        body: [{
+                                                type: 'IfStatement',
+                                                test: {
+                                                    type: 'MemberExpression',
+                                                    computed: false,
+                                                    object: {
+                                                        type: 'Identifier',
+                                                        name: 'file'
+                                                    },
+                                                    property: {
+                                                        type: 'Identifier',
+                                                        name: 'exists'
+                                                    },
+                                                    loc: {
+                                                        start: {
+                                                            line: 79,
+                                                            column: 15,
+                                                            fixed: true,
+                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 79,
+                                                            column: 26,
+                                                            fixed: true,
+                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                        }
+                                                    }
+                                                },
+                                                consequent: {
+                                                    type: 'BlockStatement',
+                                                    body: [{
+                                                            type: 'Property',
+                                                            key: {
+                                                                type: 'Identifier',
+                                                                name: 'key'
+                                                            },
+                                                            value: {
+                                                                type: 'Identifier',
+                                                                name: 'file'
+                                                            },
+                                                            kind: 'init',
+                                                            computed: true,
+                                                            order: '0'
+                                                        }]
+                                                },
+                                                alternate: {
+                                                    type: 'BlockStatement',
+                                                    body: [{
+                                                            type: 'Property',
+                                                            key: {
+                                                                type: 'Identifier',
+                                                                name: 'key'
+                                                            },
+                                                            value: {
+                                                                type: 'Literal',
+                                                                value: null
+                                                            },
+                                                            kind: 'init',
+                                                            computed: true,
+                                                            order: '0'
+                                                        }]
+                                                },
+                                                order: '0'
+                                            }]
+                                    },
+                                    remove: null,
+                                    order: '0'
+                                }]
+                        }
+                    }],
+                kind: 'let',
+                order: '9'
             },
             {
                 type: 'VariableDeclaration',
@@ -2692,13 +3013,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                         },
                                                         loc: {
                                                             start: {
-                                                                line: 74,
+                                                                line: 83,
                                                                 column: 45,
                                                                 fixed: true,
                                                                 source: 'ion/builder/ModuleBuilder.ion'
                                                             },
                                                             end: {
-                                                                line: 74,
+                                                                line: 83,
                                                                 column: 57,
                                                                 fixed: true,
                                                                 source: 'ion/builder/ModuleBuilder.ion'
@@ -2711,13 +3032,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                         }],
                                                     loc: {
                                                         start: {
-                                                            line: 74,
+                                                            line: 83,
                                                             column: 45,
                                                             fixed: true,
                                                             source: 'ion/builder/ModuleBuilder.ion'
                                                         },
                                                         end: {
-                                                            line: 74,
+                                                            line: 83,
                                                             column: 71,
                                                             fixed: true,
                                                             source: 'ion/builder/ModuleBuilder.ion'
@@ -2731,15 +3052,19 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             expression: {
                                                                 type: 'Identifier',
                                                                 name: 'key'
-                                                            }
+                                                            },
+                                                            order: '0'
                                                         }]
-                                                }
+                                                },
+                                                order: '0'
                                             }]
-                                    }
+                                    },
+                                    order: '0'
                                 }]
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: ':'
             },
             {
                 type: 'VariableDeclaration',
@@ -2764,13 +3089,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 },
                                 loc: {
                                     start: {
-                                        line: 75,
+                                        line: 84,
                                         column: 22,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
                                     },
                                     end: {
-                                        line: 75,
+                                        line: 84,
                                         column: 32,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -2787,14 +3112,24 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             type: 'ForInStatement',
                                             left: {
                                                 type: 'VariableDeclaration',
-                                                declarations: [{
+                                                declarations: [
+                                                    {
                                                         type: 'VariableDeclarator',
                                                         id: {
                                                             type: 'Identifier',
                                                             name: 'key'
                                                         },
                                                         init: null
-                                                    }],
+                                                    },
+                                                    {
+                                                        type: 'VariableDeclarator',
+                                                        id: {
+                                                            type: 'Identifier',
+                                                            name: 'file'
+                                                        },
+                                                        init: null
+                                                    }
+                                                ],
                                                 kind: 'let'
                                             },
                                             right: {
@@ -2809,109 +3144,121 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             type: 'BinaryExpression',
                                                             operator: '&&',
                                                             left: {
-                                                                type: 'UnaryExpression',
-                                                                operator: '!',
-                                                                argument: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'Identifier',
-                                                                            name: 'builder'
-                                                                        },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'isPrivate'
-                                                                        },
-                                                                        loc: {
-                                                                            start: {
-                                                                                line: 75,
-                                                                                column: 68,
-                                                                                fixed: true,
-                                                                                source: 'ion/builder/ModuleBuilder.ion'
-                                                                            },
-                                                                            end: {
-                                                                                line: 75,
-                                                                                column: 85,
-                                                                                fixed: true,
-                                                                                source: 'ion/builder/ModuleBuilder.ion'
-                                                                            }
-                                                                        }
-                                                                    },
-                                                                    arguments: [{
-                                                                            type: 'Identifier',
-                                                                            name: 'key'
-                                                                        }],
-                                                                    loc: {
-                                                                        start: {
-                                                                            line: 75,
-                                                                            column: 68,
-                                                                            fixed: true,
-                                                                            source: 'ion/builder/ModuleBuilder.ion'
-                                                                        },
-                                                                        end: {
-                                                                            line: 75,
-                                                                            column: 90,
-                                                                            fixed: true,
-                                                                            source: 'ion/builder/ModuleBuilder.ion'
-                                                                        }
-                                                                    }
-                                                                }
-                                                            },
-                                                            right: {
                                                                 type: 'BinaryExpression',
-                                                                operator: '<',
+                                                                operator: '&&',
                                                                 left: {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'Identifier',
-                                                                            name: 'top'
+                                                                    type: 'UnaryExpression',
+                                                                    operator: '!',
+                                                                    argument: {
+                                                                        type: 'CallExpression',
+                                                                        callee: {
+                                                                            type: 'MemberExpression',
+                                                                            computed: false,
+                                                                            object: {
+                                                                                type: 'Identifier',
+                                                                                name: 'builder'
+                                                                            },
+                                                                            property: {
+                                                                                type: 'Identifier',
+                                                                                name: 'isPrivate'
+                                                                            },
+                                                                            loc: {
+                                                                                start: {
+                                                                                    line: 84,
+                                                                                    column: 74,
+                                                                                    fixed: true,
+                                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                                },
+                                                                                end: {
+                                                                                    line: 84,
+                                                                                    column: 91,
+                                                                                    fixed: true,
+                                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                                }
+                                                                            }
                                                                         },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'indexOf'
-                                                                        },
+                                                                        arguments: [{
+                                                                                type: 'Identifier',
+                                                                                name: 'key'
+                                                                            }],
                                                                         loc: {
                                                                             start: {
-                                                                                line: 75,
-                                                                                column: 95,
+                                                                                line: 84,
+                                                                                column: 74,
                                                                                 fixed: true,
                                                                                 source: 'ion/builder/ModuleBuilder.ion'
                                                                             },
                                                                             end: {
-                                                                                line: 75,
-                                                                                column: 106,
+                                                                                line: 84,
+                                                                                column: 96,
                                                                                 fixed: true,
                                                                                 source: 'ion/builder/ModuleBuilder.ion'
                                                                             }
-                                                                        }
-                                                                    },
-                                                                    arguments: [{
-                                                                            type: 'Identifier',
-                                                                            name: 'key'
-                                                                        }],
-                                                                    loc: {
-                                                                        start: {
-                                                                            line: 75,
-                                                                            column: 95,
-                                                                            fixed: true,
-                                                                            source: 'ion/builder/ModuleBuilder.ion'
-                                                                        },
-                                                                        end: {
-                                                                            line: 75,
-                                                                            column: 111,
-                                                                            fixed: true,
-                                                                            source: 'ion/builder/ModuleBuilder.ion'
                                                                         }
                                                                     }
                                                                 },
                                                                 right: {
-                                                                    type: 'Literal',
-                                                                    value: 0
+                                                                    type: 'BinaryExpression',
+                                                                    operator: '<',
+                                                                    left: {
+                                                                        type: 'CallExpression',
+                                                                        callee: {
+                                                                            type: 'MemberExpression',
+                                                                            computed: false,
+                                                                            object: {
+                                                                                type: 'Identifier',
+                                                                                name: 'top'
+                                                                            },
+                                                                            property: {
+                                                                                type: 'Identifier',
+                                                                                name: 'indexOf'
+                                                                            },
+                                                                            loc: {
+                                                                                start: {
+                                                                                    line: 84,
+                                                                                    column: 101,
+                                                                                    fixed: true,
+                                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                                },
+                                                                                end: {
+                                                                                    line: 84,
+                                                                                    column: 112,
+                                                                                    fixed: true,
+                                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        arguments: [{
+                                                                                type: 'Identifier',
+                                                                                name: 'key'
+                                                                            }],
+                                                                        loc: {
+                                                                            start: {
+                                                                                line: 84,
+                                                                                column: 101,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/ModuleBuilder.ion'
+                                                                            },
+                                                                            end: {
+                                                                                line: 84,
+                                                                                column: 117,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/ModuleBuilder.ion'
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    right: {
+                                                                        type: 'Literal',
+                                                                        value: 0
+                                                                    }
+                                                                }
+                                                            },
+                                                            right: {
+                                                                type: 'UnaryExpression',
+                                                                operator: '?',
+                                                                argument: {
+                                                                    type: 'Identifier',
+                                                                    name: 'file'
                                                                 }
                                                             }
                                                         },
@@ -2922,30 +3269,34 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                                     expression: {
                                                                         type: 'Identifier',
                                                                         name: 'key'
-                                                                    }
+                                                                    },
+                                                                    order: '0'
                                                                 }]
-                                                        }
+                                                        },
+                                                        order: '0'
                                                     }]
-                                            }
+                                            },
+                                            order: '0'
                                         }]
                                 }],
                             loc: {
                                 start: {
-                                    line: 75,
+                                    line: 84,
                                     column: 22,
                                     fixed: true,
                                     source: 'ion/builder/ModuleBuilder.ion'
                                 },
                                 end: {
-                                    line: 75,
-                                    column: 117,
+                                    line: 84,
+                                    column: 133,
                                     fixed: true,
                                     source: 'ion/builder/ModuleBuilder.ion'
                                 }
                             }
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: ';'
             },
             {
                 type: 'VariableDeclaration',
@@ -2960,7 +3311,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                             value: 'manifest.json'
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '<'
             },
             {
                 type: 'VariableDeclaration',
@@ -2985,13 +3337,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 },
                                 loc: {
                                     start: {
-                                        line: 77,
+                                        line: 86,
                                         column: 23,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
                                     },
                                     end: {
-                                        line: 77,
+                                        line: 86,
                                         column: 37,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -3004,13 +3356,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 }],
                             loc: {
                                 start: {
-                                    line: 77,
+                                    line: 86,
                                     column: 23,
                                     fixed: true,
                                     source: 'ion/builder/ModuleBuilder.ion'
                                 },
                                 end: {
-                                    line: 77,
+                                    line: 86,
                                     column: 55,
                                     fixed: true,
                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -3018,7 +3370,8 @@ module.exports = exports = ion.template(function (packagePatch) {
                             }
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '='
             },
             {
                 type: 'VariableDeclaration',
@@ -3055,13 +3408,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                 },
                                                 loc: {
                                                     start: {
-                                                        line: 79,
+                                                        line: 88,
                                                         column: 18,
                                                         fixed: true,
                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                     },
                                                     end: {
-                                                        line: 79,
+                                                        line: 88,
                                                         column: 26,
                                                         fixed: true,
                                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -3074,13 +3427,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                             },
                                             loc: {
                                                 start: {
-                                                    line: 79,
+                                                    line: 88,
                                                     column: 18,
                                                     fixed: true,
                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                 },
                                                 end: {
-                                                    line: 79,
+                                                    line: 88,
                                                     column: 32,
                                                     fixed: true,
                                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -3127,53 +3480,74 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             name: 'outputFiles'
                                                         },
                                                         body: {
-                                                            type: 'ExpressionStatement',
-                                                            expression: {
-                                                                type: 'MemberExpression',
-                                                                computed: false,
-                                                                object: {
-                                                                    type: 'Identifier',
-                                                                    name: 'file'
-                                                                },
-                                                                property: {
-                                                                    type: 'Identifier',
-                                                                    name: 'modified'
-                                                                },
-                                                                loc: {
-                                                                    start: {
-                                                                        line: 79,
-                                                                        column: 40,
-                                                                        fixed: true,
-                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                            type: 'BlockStatement',
+                                                            body: [{
+                                                                    type: 'IfStatement',
+                                                                    test: {
+                                                                        type: 'UnaryExpression',
+                                                                        operator: '?',
+                                                                        argument: {
+                                                                            type: 'Identifier',
+                                                                            name: 'file'
+                                                                        }
                                                                     },
-                                                                    end: {
-                                                                        line: 79,
-                                                                        column: 53,
-                                                                        fixed: true,
-                                                                        source: 'ion/builder/ModuleBuilder.ion'
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
+                                                                    consequent: {
+                                                                        type: 'BlockStatement',
+                                                                        body: [{
+                                                                                type: 'ExpressionStatement',
+                                                                                expression: {
+                                                                                    type: 'MemberExpression',
+                                                                                    computed: false,
+                                                                                    object: {
+                                                                                        type: 'Identifier',
+                                                                                        name: 'file'
+                                                                                    },
+                                                                                    property: {
+                                                                                        type: 'Identifier',
+                                                                                        name: 'modified'
+                                                                                    },
+                                                                                    loc: {
+                                                                                        start: {
+                                                                                            line: 88,
+                                                                                            column: 40,
+                                                                                            fixed: true,
+                                                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                                                        },
+                                                                                        end: {
+                                                                                            line: 88,
+                                                                                            column: 53,
+                                                                                            fixed: true,
+                                                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                order: '0'
+                                                                            }]
+                                                                    },
+                                                                    order: '0'
+                                                                }]
+                                                        },
+                                                        order: '0'
                                                     }]
                                             }
                                         ],
                                         loc: {
                                             start: {
-                                                line: 79,
+                                                line: 88,
                                                 column: 18,
                                                 fixed: true,
                                                 source: 'ion/builder/ModuleBuilder.ion'
                                             },
                                             end: {
-                                                line: 79,
-                                                column: 85,
+                                                line: 88,
+                                                column: 94,
                                                 fixed: true,
                                                 source: 'ion/builder/ModuleBuilder.ion'
                                             }
                                         }
                                     },
-                                    kind: 'init'
+                                    kind: 'init',
+                                    order: '0'
                                 },
                                 {
                                     type: 'Property',
@@ -3222,13 +3596,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             },
                                                             loc: {
                                                                 start: {
-                                                                    line: 80,
+                                                                    line: 89,
                                                                     column: 16,
                                                                     fixed: true,
                                                                     source: 'ion/builder/ModuleBuilder.ion'
                                                                 },
                                                                 end: {
-                                                                    line: 80,
+                                                                    line: 89,
                                                                     column: 37,
                                                                     fixed: true,
                                                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -3241,28 +3615,31 @@ module.exports = exports = ion.template(function (packagePatch) {
                                                             }],
                                                         loc: {
                                                             start: {
-                                                                line: 80,
+                                                                line: 89,
                                                                 column: 16,
                                                                 fixed: true,
                                                                 source: 'ion/builder/ModuleBuilder.ion'
                                                             },
                                                             end: {
-                                                                line: 80,
+                                                                line: 89,
                                                                 column: 43,
                                                                 fixed: true,
                                                                 source: 'ion/builder/ModuleBuilder.ion'
                                                             }
                                                         }
                                                     }
-                                                }
+                                                },
+                                                order: '0'
                                             }]
                                     },
-                                    kind: 'init'
+                                    kind: 'init',
+                                    order: '1'
                                 }
                             ]
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '>'
             },
             {
                 type: 'ExpressionStatement',
@@ -3281,13 +3658,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                         },
                         loc: {
                             start: {
-                                line: 81,
+                                line: 90,
                                 column: 4,
                                 fixed: true,
                                 source: 'ion/builder/ModuleBuilder.ion'
                             },
                             end: {
-                                line: 81,
+                                line: 90,
                                 column: 16,
                                 fixed: true,
                                 source: 'ion/builder/ModuleBuilder.ion'
@@ -3314,13 +3691,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 },
                                 loc: {
                                     start: {
-                                        line: 81,
+                                        line: 90,
                                         column: 35,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
                                     },
                                     end: {
-                                        line: 81,
+                                        line: 90,
                                         column: 49,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
@@ -3347,13 +3724,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                             ],
                             loc: {
                                 start: {
-                                    line: 81,
+                                    line: 90,
                                     column: 35,
                                     fixed: true,
                                     source: 'ion/builder/ModuleBuilder.ion'
                                 },
                                 end: {
-                                    line: 81,
+                                    line: 90,
                                     column: 84,
                                     fixed: true,
                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -3363,19 +3740,34 @@ module.exports = exports = ion.template(function (packagePatch) {
                     ],
                     loc: {
                         start: {
-                            line: 81,
+                            line: 90,
                             column: 4,
                             fixed: true,
                             source: 'ion/builder/ModuleBuilder.ion'
                         },
                         end: {
-                            line: 81,
+                            line: 90,
                             column: 85,
                             fixed: true,
                             source: 'ion/builder/ModuleBuilder.ion'
                         }
                     }
-                }
+                },
+                loc: {
+                    start: {
+                        line: 90,
+                        column: 4,
+                        fixed: true,
+                        source: 'ion/builder/ModuleBuilder.ion'
+                    },
+                    end: {
+                        line: 90,
+                        column: 85,
+                        fixed: true,
+                        source: 'ion/builder/ModuleBuilder.ion'
+                    }
+                },
+                order: '?'
             },
             {
                 type: 'IfStatement',
@@ -3398,13 +3790,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                             },
                             loc: {
                                 start: {
-                                    line: 84,
+                                    line: 93,
                                     column: 7,
                                     fixed: true,
                                     source: 'ion/builder/ModuleBuilder.ion'
                                 },
                                 end: {
-                                    line: 84,
+                                    line: 93,
                                     column: 24,
                                     fixed: true,
                                     source: 'ion/builder/ModuleBuilder.ion'
@@ -3417,13 +3809,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                         },
                         loc: {
                             start: {
-                                line: 84,
+                                line: 93,
                                 column: 7,
                                 fixed: true,
                                 source: 'ion/builder/ModuleBuilder.ion'
                             },
                             end: {
-                                line: 84,
+                                line: 93,
                                 column: 29,
                                 fixed: true,
                                 source: 'ion/builder/ModuleBuilder.ion'
@@ -3454,13 +3846,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                     },
                                     loc: {
                                         start: {
-                                            line: 85,
+                                            line: 94,
                                             column: 8,
                                             fixed: true,
                                             source: 'ion/builder/ModuleBuilder.ion'
                                         },
                                         end: {
-                                            line: 85,
+                                            line: 94,
                                             column: 24,
                                             fixed: true,
                                             source: 'ion/builder/ModuleBuilder.ion'
@@ -3485,13 +3877,13 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         },
                                         loc: {
                                             start: {
-                                                line: 85,
+                                                line: 94,
                                                 column: 39,
                                                 fixed: true,
                                                 source: 'ion/builder/ModuleBuilder.ion'
                                             },
                                             end: {
-                                                line: 85,
+                                                line: 94,
                                                 column: 60,
                                                 fixed: true,
                                                 source: 'ion/builder/ModuleBuilder.ion'
@@ -3501,22 +3893,38 @@ module.exports = exports = ion.template(function (packagePatch) {
                                 ],
                                 loc: {
                                     start: {
-                                        line: 85,
+                                        line: 94,
                                         column: 8,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
                                     },
                                     end: {
-                                        line: 85,
+                                        line: 94,
                                         column: 61,
                                         fixed: true,
                                         source: 'ion/builder/ModuleBuilder.ion'
                                     }
                                 }
-                            }
+                            },
+                            loc: {
+                                start: {
+                                    line: 94,
+                                    column: 8,
+                                    fixed: true,
+                                    source: 'ion/builder/ModuleBuilder.ion'
+                                },
+                                end: {
+                                    line: 94,
+                                    column: 61,
+                                    fixed: true,
+                                    source: 'ion/builder/ModuleBuilder.ion'
+                                }
+                            },
+                            order: '0'
                         }]
                 },
-                alternate: null
+                alternate: null,
+                order: '@'
             }
         ],
         bound: false
@@ -3543,4 +3951,3 @@ module.exports = exports = ion.template(function (packagePatch) {
     _ion_builder_ModuleBuilder_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./ModuleBuilder.map

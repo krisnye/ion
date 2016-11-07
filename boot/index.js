@@ -213,15 +213,16 @@ var freeze = exports.freeze = function (object, deep) {
             return noop;
         }
         var property = options != null ? options.property : void 0;
+        var priority = options != null ? options.priority : void 0;
         var removed = false;
         var observable = isObjectObservable(object);
         if (!observable) {
             if (!(property != null)) {
                 return noop;
             }
-            observeShim.observe(object, observer, property);
+            observeShim.observe(object, observer, property, priority);
         } else if (object != null && observer != null && typeof object === 'object') {
-            observeShim.observe(object, observer);
+            observeShim.observe(object, observer, null, priority);
             object.addEventListener != null ? object.addEventListener('change', observer) : void 0;
         }
         object != null ? object.onObserved != null ? object.onObserved(observer, property) : void 0 : void 0;
@@ -232,8 +233,8 @@ var freeze = exports.freeze = function (object, deep) {
                 removed = true;
                 if (!observable) {
                     observeShim.unobserve(object, observer, property);
-                } else if (object != null && observer != null && Object.unobserve != null && typeof object === 'object') {
-                    Object.unobserve(object, observer);
+                } else if (object != null && observer != null && typeof object === 'object') {
+                    observeShim.unobserve(object, observer, property);
                     object.removeEventListener != null ? object.removeEventListener('change', observer) : void 0;
                 }
                 object != null ? object.unObserved != null ? object.unObserved(observer, property) : void 0 : void 0;
@@ -241,11 +242,7 @@ var freeze = exports.freeze = function (object, deep) {
                 console.warn('unobserve should not be called multiple times!');
             }
         };
-    }, checkForChanges = exports.checkForChanges = observeShim.checkForChanges, sync = exports.sync = observeShim.checkForChanges, changed = exports.changed = function () {
-        return function (object) {
-            observeShim.changed(object);
-        };
-    }(), nextCheck = exports.nextCheck = function (callback) {
+    }, checkForChanges = exports.checkForChanges = observeShim.checkForChanges, sync = exports.sync = observeShim.checkForChanges, nextCheck = exports.nextCheck = function (callback) {
         observeShim.nextCheck(callback);
     }, bind = exports.bind = function (fn, thisArg) {
         var newFn = fn.bind(thisArg);
@@ -253,7 +250,7 @@ var freeze = exports.freeze = function (object, deep) {
             newFn.id = fn.id != null ? fn.id : fn.name;
         }
         return newFn;
-    }, add = exports.add = function (container, item) {
+    }, add = exports.add = function (container, item, sourceNode) {
         var originalItem = item;
         var remove;
         if (typeof item === 'function' && ((item.name != null ? item.name.length : void 0) > 0 || item.id != null) && typeof container.addEventListener === 'function') {
@@ -264,12 +261,10 @@ var freeze = exports.freeze = function (object, deep) {
                 capture = true;
                 name = name.substring(0, name.length - captureSuffix.length);
             }
-            if (item.toString().indexOf('sync') < 0) {
-                item = function () {
-                    originalItem.apply(this, arguments);
-                    sync();
-                };
-            }
+            item = function () {
+                originalItem.apply(this, arguments);
+                sync();
+            };
             container.addEventListener(name, item, capture);
             remove = function () {
                 container.removeEventListener(name, item);
@@ -420,7 +415,15 @@ var freeze = exports.freeze = function (object, deep) {
         var convertType = function (object, namespace) {
             var type = extractType(object, namespace);
             if (type != null) {
-                object = new type(object);
+                var values = object;
+                object = new type();
+                for (var k in values) {
+                    var v = values[k];
+                    var property = type.properties != null ? type.properties[k] : void 0;
+                    if (!((property != null ? property.get : void 0) != null) && !((property != null ? property.set : void 0) != null)) {
+                        object[k] = v;
+                    }
+                }
             }
             for (var key in object) {
                 var value = object[key];
@@ -517,4 +520,3 @@ if (global.window != null) {
     _ion_index_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./index.map

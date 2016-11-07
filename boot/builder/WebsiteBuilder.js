@@ -63,7 +63,21 @@ module.exports = exports = ion.template(function () {
                                             arguments: [{
                                                     type: 'Literal',
                                                     value: 'package.json'
-                                                }]
+                                                }],
+                                            loc: {
+                                                start: {
+                                                    line: 14,
+                                                    column: 33,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                },
+                                                end: {
+                                                    line: 14,
+                                                    column: 57,
+                                                    fixed: true,
+                                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                                }
+                                            }
                                         },
                                         property: {
                                             type: 'Identifier',
@@ -238,7 +252,21 @@ module.exports = exports = ion.template(function () {
                                         type: 'Literal',
                                         value: 'src'
                                     }
-                                }]
+                                }],
+                            loc: {
+                                start: {
+                                    line: 15,
+                                    column: 16,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 15,
+                                    column: 66,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            }
                         }
                     },
                     {
@@ -363,7 +391,21 @@ module.exports = exports = ion.template(function () {
                                         type: 'Literal',
                                         value: 'debug'
                                     }
-                                }]
+                                }],
+                            loc: {
+                                start: {
+                                    line: 16,
+                                    column: 17,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 16,
+                                    column: 69,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            }
                         }
                     },
                     {
@@ -489,7 +531,8 @@ module.exports = exports = ion.template(function () {
                         }
                     }
                 ],
-                kind: 'const'
+                kind: 'const',
+                order: '0'
             },
             {
                 type: 'VariableDeclaration',
@@ -508,10 +551,25 @@ module.exports = exports = ion.template(function () {
                             arguments: [{
                                     type: 'Literal',
                                     value: '../glass-pages/dist'
-                                }]
+                                }],
+                            loc: {
+                                start: {
+                                    line: 23,
+                                    column: 21,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 23,
+                                    column: 57,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            }
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '1'
             },
             {
                 type: 'IfStatement',
@@ -600,7 +658,8 @@ module.exports = exports = ion.template(function () {
                                         }
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '0'
                         },
                         {
                             type: 'ForInStatement',
@@ -729,7 +788,8 @@ module.exports = exports = ion.template(function () {
                                                     }
                                                 }
                                             }],
-                                        kind: 'let'
+                                        kind: 'let',
+                                        order: '0'
                                     },
                                     {
                                         type: 'IfStatement',
@@ -839,18 +899,36 @@ module.exports = exports = ion.template(function () {
                                                                 source: 'ion/builder/WebsiteBuilder.ion'
                                                             }
                                                         }
-                                                    }
+                                                    },
+                                                    loc: {
+                                                        start: {
+                                                            line: 29,
+                                                            column: 16,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 29,
+                                                            column: 39,
+                                                            fixed: true,
+                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                        }
+                                                    },
+                                                    order: '0'
                                                 }]
                                         },
-                                        alternate: null
+                                        alternate: null,
+                                        order: '1'
                                     }
                                 ]
                             },
-                            remove: null
+                            remove: null,
+                            order: '1'
                         }
                     ]
                 },
-                alternate: null
+                alternate: null,
+                order: '2'
             },
             {
                 type: 'VariableDeclaration',
@@ -983,10 +1061,25 @@ module.exports = exports = ion.template(function () {
                                                                                                     source: 'ion/builder/WebsiteBuilder.ion'
                                                                                                 }
                                                                                             }
-                                                                                        }]
+                                                                                        }],
+                                                                                    loc: {
+                                                                                        start: {
+                                                                                            line: 34,
+                                                                                            column: 32,
+                                                                                            fixed: true,
+                                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                                        },
+                                                                                        end: {
+                                                                                            line: 34,
+                                                                                            column: 85,
+                                                                                            fixed: true,
+                                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                                        }
+                                                                                    }
                                                                                 }
                                                                             }],
-                                                                        kind: 'let'
+                                                                        kind: 'let',
+                                                                        order: '0'
                                                                     },
                                                                     {
                                                                         type: 'ForInStatement',
@@ -1333,7 +1426,8 @@ module.exports = exports = ion.template(function () {
                                                                                                 }
                                                                                             }
                                                                                         }],
-                                                                                    kind: 'let'
+                                                                                    kind: 'let',
+                                                                                    order: '0'
                                                                                 },
                                                                                 {
                                                                                     type: 'IfStatement',
@@ -1443,10 +1537,26 @@ module.exports = exports = ion.template(function () {
                                                                                                             source: 'ion/builder/WebsiteBuilder.ion'
                                                                                                         }
                                                                                                     }
-                                                                                                }
+                                                                                                },
+                                                                                                loc: {
+                                                                                                    start: {
+                                                                                                        line: 38,
+                                                                                                        column: 24,
+                                                                                                        fixed: true,
+                                                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                                                    },
+                                                                                                    end: {
+                                                                                                        line: 38,
+                                                                                                        column: 47,
+                                                                                                        fixed: true,
+                                                                                                        source: 'ion/builder/WebsiteBuilder.ion'
+                                                                                                    }
+                                                                                                },
+                                                                                                order: '0'
                                                                                             }]
                                                                                     },
-                                                                                    alternate: null
+                                                                                    alternate: null,
+                                                                                    order: '1'
                                                                                 }
                                                                             ]
                                                                         },
@@ -1497,16 +1607,34 @@ module.exports = exports = ion.template(function () {
                                                                                                 source: 'ion/builder/WebsiteBuilder.ion'
                                                                                             }
                                                                                         }
-                                                                                    }
+                                                                                    },
+                                                                                    loc: {
+                                                                                        start: {
+                                                                                            line: 40,
+                                                                                            column: 20,
+                                                                                            fixed: true,
+                                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                                        },
+                                                                                        end: {
+                                                                                            line: 40,
+                                                                                            column: 35,
+                                                                                            fixed: true,
+                                                                                            source: 'ion/builder/WebsiteBuilder.ion'
+                                                                                        }
+                                                                                    },
+                                                                                    order: '0'
                                                                                 }]
-                                                                        }
+                                                                        },
+                                                                        order: '1'
                                                                     }
                                                                 ]
                                                             },
-                                                            remove: null
+                                                            remove: null,
+                                                            order: '0'
                                                         }]
                                                 },
-                                                remove: null
+                                                remove: null,
+                                                order: '0'
                                             }],
                                         bound: false,
                                         name: {
@@ -1540,7 +1668,8 @@ module.exports = exports = ion.template(function () {
                             }
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '3'
             },
             {
                 type: 'ExpressionStatement',
@@ -1640,7 +1769,22 @@ module.exports = exports = ion.template(function () {
                             source: 'ion/builder/WebsiteBuilder.ion'
                         }
                     }
-                }
+                },
+                loc: {
+                    start: {
+                        line: 42,
+                        column: 4,
+                        fixed: true,
+                        source: 'ion/builder/WebsiteBuilder.ion'
+                    },
+                    end: {
+                        line: 42,
+                        column: 63,
+                        fixed: true,
+                        source: 'ion/builder/WebsiteBuilder.ion'
+                    }
+                },
+                order: '4'
             },
             {
                 type: 'ExpressionStatement',
@@ -1740,7 +1884,22 @@ module.exports = exports = ion.template(function () {
                             source: 'ion/builder/WebsiteBuilder.ion'
                         }
                     }
-                }
+                },
+                loc: {
+                    start: {
+                        line: 43,
+                        column: 4,
+                        fixed: true,
+                        source: 'ion/builder/WebsiteBuilder.ion'
+                    },
+                    end: {
+                        line: 43,
+                        column: 63,
+                        fixed: true,
+                        source: 'ion/builder/WebsiteBuilder.ion'
+                    }
+                },
+                order: '5'
             },
             {
                 type: 'ExpressionStatement',
@@ -1780,7 +1939,8 @@ module.exports = exports = ion.template(function () {
                                                         value: '/js'
                                                     }
                                                 },
-                                                kind: 'init'
+                                                kind: 'init',
+                                                order: '0'
                                             },
                                             {
                                                 type: 'Property',
@@ -1808,11 +1968,13 @@ module.exports = exports = ion.template(function () {
                                                         name: 'clientJsDir'
                                                     }
                                                 },
-                                                kind: 'init'
+                                                kind: 'init',
+                                                order: '1'
                                             }
                                         ]
                                     },
-                                    kind: 'init'
+                                    kind: 'init',
+                                    order: '0'
                                 },
                                 {
                                     type: 'Property',
@@ -1899,7 +2061,8 @@ module.exports = exports = ion.template(function () {
                                                         }
                                                     }
                                                 },
-                                                kind: 'init'
+                                                kind: 'init',
+                                                order: '0'
                                             },
                                             {
                                                 type: 'Property',
@@ -1911,11 +2074,13 @@ module.exports = exports = ion.template(function () {
                                                     type: 'Literal',
                                                     value: false
                                                 },
-                                                kind: 'init'
+                                                kind: 'init',
+                                                order: '1'
                                             }
                                         ]
                                     },
-                                    kind: 'init'
+                                    kind: 'init',
+                                    order: '1'
                                 }
                             ]
                         }],
@@ -1933,7 +2098,22 @@ module.exports = exports = ion.template(function () {
                             source: 'ion/builder/WebsiteBuilder.ion'
                         }
                     }
-                }
+                },
+                loc: {
+                    start: {
+                        line: 46,
+                        column: 4,
+                        fixed: true,
+                        source: 'ion/builder/WebsiteBuilder.ion'
+                    },
+                    end: {
+                        line: 53,
+                        column: 5,
+                        fixed: true,
+                        source: 'ion/builder/WebsiteBuilder.ion'
+                    }
+                },
+                order: '6'
             },
             {
                 type: 'ExpressionStatement',
@@ -1973,7 +2153,8 @@ module.exports = exports = ion.template(function () {
                                                         value: '/js'
                                                     }
                                                 },
-                                                kind: 'init'
+                                                kind: 'init',
+                                                order: '0'
                                             },
                                             {
                                                 type: 'Property',
@@ -2001,11 +2182,13 @@ module.exports = exports = ion.template(function () {
                                                         name: 'serverJsDir'
                                                     }
                                                 },
-                                                kind: 'init'
+                                                kind: 'init',
+                                                order: '1'
                                             }
                                         ]
                                     },
-                                    kind: 'init'
+                                    kind: 'init',
+                                    order: '0'
                                 },
                                 {
                                     type: 'Property',
@@ -2092,7 +2275,8 @@ module.exports = exports = ion.template(function () {
                                                         }
                                                     }
                                                 },
-                                                kind: 'init'
+                                                kind: 'init',
+                                                order: '0'
                                             },
                                             {
                                                 type: 'Property',
@@ -2104,11 +2288,13 @@ module.exports = exports = ion.template(function () {
                                                     type: 'Literal',
                                                     value: true
                                                 },
-                                                kind: 'init'
+                                                kind: 'init',
+                                                order: '1'
                                             }
                                         ]
                                     },
-                                    kind: 'init'
+                                    kind: 'init',
+                                    order: '1'
                                 }
                             ]
                         }],
@@ -2126,7 +2312,22 @@ module.exports = exports = ion.template(function () {
                             source: 'ion/builder/WebsiteBuilder.ion'
                         }
                     }
-                }
+                },
+                loc: {
+                    start: {
+                        line: 56,
+                        column: 4,
+                        fixed: true,
+                        source: 'ion/builder/WebsiteBuilder.ion'
+                    },
+                    end: {
+                        line: 63,
+                        column: 5,
+                        fixed: true,
+                        source: 'ion/builder/WebsiteBuilder.ion'
+                    }
+                },
+                order: '7'
             },
             {
                 type: 'ForInStatement',
@@ -2375,10 +2576,26 @@ module.exports = exports = ion.template(function () {
                                                     source: 'ion/builder/WebsiteBuilder.ion'
                                                 }
                                             }
-                                        }
+                                        },
+                                        loc: {
+                                            start: {
+                                                line: 68,
+                                                column: 12,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            },
+                                            end: {
+                                                line: 68,
+                                                column: 53,
+                                                fixed: true,
+                                                source: 'ion/builder/WebsiteBuilder.ion'
+                                            }
+                                        },
+                                        order: '0'
                                     }]
                             },
-                            alternate: null
+                            alternate: null,
+                            order: '0'
                         }]
                 },
                 remove: {
@@ -2431,9 +2648,25 @@ module.exports = exports = ion.template(function () {
                                         source: 'ion/builder/WebsiteBuilder.ion'
                                     }
                                 }
-                            }
+                            },
+                            loc: {
+                                start: {
+                                    line: 70,
+                                    column: 8,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 70,
+                                    column: 27,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            },
+                            order: '0'
                         }]
-                }
+                },
+                order: '8'
             },
             {
                 type: 'ForInStatement',
@@ -2577,7 +2810,8 @@ module.exports = exports = ion.template(function () {
                                         }
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '0'
                         },
                         {
                             type: 'ExpressionStatement',
@@ -2676,7 +2910,22 @@ module.exports = exports = ion.template(function () {
                                         source: 'ion/builder/WebsiteBuilder.ion'
                                     }
                                 }
-                            }
+                            },
+                            loc: {
+                                start: {
+                                    line: 75,
+                                    column: 8,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 75,
+                                    column: 58,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            },
+                            order: '1'
                         }
                     ]
                 },
@@ -2730,9 +2979,25 @@ module.exports = exports = ion.template(function () {
                                         source: 'ion/builder/WebsiteBuilder.ion'
                                     }
                                 }
-                            }
+                            },
+                            loc: {
+                                start: {
+                                    line: 77,
+                                    column: 8,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 77,
+                                    column: 33,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            },
+                            order: '0'
                         }]
-                }
+                },
+                order: '9'
             },
             {
                 type: 'VariableDeclaration',
@@ -2790,7 +3055,8 @@ module.exports = exports = ion.template(function () {
                             }
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: ':'
             },
             {
                 type: 'ForInStatement',
@@ -2928,7 +3194,8 @@ module.exports = exports = ion.template(function () {
                                         }
                                     }
                                 }],
-                            kind: 'let'
+                            kind: 'let',
+                            order: '0'
                         },
                         {
                             type: 'ExpressionStatement',
@@ -3108,7 +3375,22 @@ module.exports = exports = ion.template(function () {
                                         source: 'ion/builder/WebsiteBuilder.ion'
                                     }
                                 }
-                            }
+                            },
+                            loc: {
+                                start: {
+                                    line: 83,
+                                    column: 8,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 83,
+                                    column: 119,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            },
+                            order: '1'
                         }
                     ]
                 },
@@ -3162,9 +3444,25 @@ module.exports = exports = ion.template(function () {
                                         source: 'ion/builder/WebsiteBuilder.ion'
                                     }
                                 }
-                            }
+                            },
+                            loc: {
+                                start: {
+                                    line: 85,
+                                    column: 8,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                },
+                                end: {
+                                    line: 85,
+                                    column: 37,
+                                    fixed: true,
+                                    source: 'ion/builder/WebsiteBuilder.ion'
+                                }
+                            },
+                            order: '0'
                         }]
-                }
+                },
+                order: ';'
             },
             {
                 type: 'VariableDeclaration',
@@ -3301,7 +3599,8 @@ module.exports = exports = ion.template(function () {
                                                             }
                                                         }
                                                     }],
-                                                kind: 'let'
+                                                kind: 'let',
+                                                order: '0'
                                             },
                                             {
                                                 type: 'VariableDeclaration',
@@ -3399,7 +3698,8 @@ module.exports = exports = ion.template(function () {
                                                             }
                                                         }
                                                     }],
-                                                kind: 'let'
+                                                kind: 'let',
+                                                order: '1'
                                             },
                                             {
                                                 type: 'ForOfStatement',
@@ -3615,7 +3915,8 @@ module.exports = exports = ion.template(function () {
                                                                         }
                                                                     }
                                                                 }],
-                                                            kind: 'let'
+                                                            kind: 'let',
+                                                            order: '0'
                                                         },
                                                         {
                                                             type: 'Property',
@@ -3628,7 +3929,8 @@ module.exports = exports = ion.template(function () {
                                                                 value: true
                                                             },
                                                             kind: 'init',
-                                                            computed: true
+                                                            computed: true,
+                                                            order: '1'
                                                         }
                                                     ]
                                                 },
@@ -3645,17 +3947,21 @@ module.exports = exports = ion.template(function () {
                                                                 value: false
                                                             },
                                                             kind: 'init',
-                                                            computed: true
+                                                            computed: true,
+                                                            order: '0'
                                                         }]
-                                                }
+                                                },
+                                                order: '2'
                                             }
                                         ]
                                     },
-                                    remove: null
+                                    remove: null,
+                                    order: '0'
                                 }]
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '<'
             },
             {
                 type: 'VariableDeclaration',
@@ -3714,15 +4020,19 @@ module.exports = exports = ion.template(function () {
                                                             expression: {
                                                                 type: 'Identifier',
                                                                 name: 'key'
-                                                            }
+                                                            },
+                                                            order: '0'
                                                         }]
-                                                }
+                                                },
+                                                order: '0'
                                             }]
-                                    }
+                                    },
+                                    order: '0'
                                 }]
                         }
                     }],
-                kind: 'let'
+                kind: 'let',
+                order: '='
             },
             {
                 type: 'ExpressionStatement',
@@ -3837,7 +4147,22 @@ module.exports = exports = ion.template(function () {
                             source: 'ion/builder/WebsiteBuilder.ion'
                         }
                     }
-                }
+                },
+                loc: {
+                    start: {
+                        line: 98,
+                        column: 4,
+                        fixed: true,
+                        source: 'ion/builder/WebsiteBuilder.ion'
+                    },
+                    end: {
+                        line: 106,
+                        column: 5,
+                        fixed: true,
+                        source: 'ion/builder/WebsiteBuilder.ion'
+                    }
+                },
+                order: '>'
             }
         ],
         bound: false
@@ -3869,4 +4194,3 @@ module.exports = exports = ion.template(function () {
     _ion_builder_WebsiteBuilder_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./WebsiteBuilder.map

@@ -3,6 +3,7 @@ var ion = require('../');
 var Expression = ion.defineClass({
         name: 'Expression',
         properties: {
+            mutable: true,
             observe: function (callback) {
             }
         }
@@ -19,4 +20,3 @@ module.exports = exports = Expression;
     _ion_runtime_Expression_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./Expression.map

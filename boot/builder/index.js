@@ -4,7 +4,7 @@ if (global.window) {
   return;
 }
 
-_ = require('underscore');
+_ = require('lodash');
 
 utility = require('./utility');
 
@@ -140,7 +140,7 @@ module.exports = exports = {
       compiled = cs.compile(input, options = {
         bare: true
       });
-      compiled = addBrowserShim(compiled, moduleId);
+      compiled = addBrowserShim(compiled, moduleId, input);
       return compiled;
     } catch (_error) {
       e = _error;
@@ -178,7 +178,7 @@ module.exports = exports = {
     moduleId = typeof packageObject === 'string' ? packageObject : getModuleId(source, packageObject);
     filename = source.path;
     try {
-      peg = require('pegs').parser;
+      peg = require('pegs').bootstrap;
       console.log("Building: " + filename);
       input = source.read();
       parser = peg.parse(input);
@@ -209,7 +209,7 @@ module.exports = exports = {
         source: moduleId + ".ion",
         sourceMap: filename.split(/[\/\\]/).pop()
       }), source = _ref[0], map = _ref[1];
-      source = addBrowserShim(source, moduleId);
+      source = addBrowserShim(source, moduleId, input);
       return [source, map];
     } catch (_error) {
       e = _error;
@@ -225,9 +225,13 @@ module.exports = exports = {
     result = addBrowserShim(source.read(), moduleId);
     return result;
   },
-  addBrowserShim: addBrowserShim = function(sourceText, moduleId) {
-    var safeId;
-    if (sourceText.substring(0, 2) === "#!") {
+  addBrowserShim: addBrowserShim = function(sourceText, moduleId, originalSource) {
+    var safeId, stripValue;
+    if ((originalSource != null ? originalSource.substring(0, 2) : void 0) === "#!") {
+      stripValue = "#!browser";
+      if (sourceText.startsWith(stripValue)) {
+        sourceText = sourceText.substring(stripValue.length);
+      }
       return sourceText;
     }
     if (moduleId != null) {

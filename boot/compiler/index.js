@@ -66,7 +66,7 @@ var parse = exports.parse = function (content, options) {
             if (!sourceLocationsFixed) {
                 preprocessor.fixSourceLocation(e, sourceMapping);
             }
-            makePrettyError(e, content, options.id);
+            makePrettyError(e, content, options.source);
             throw e;
         }
         return [
@@ -85,4 +85,3 @@ var parse = exports.parse = function (content, options) {
     _ion_compiler_index_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./index.map

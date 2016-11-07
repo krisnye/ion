@@ -47,7 +47,7 @@ var MemberExpression = ion.defineClass({
                     console.warn('Cannot read ' + Factory.toCode(this.property) + ' property of ' + this.objectValue + ' (' + Factory.toCode(this.object) + ') (' + this.loc.start.source + ':' + this.loc.start.line + ':' + (this.loc.start.column + 1) + ')');
                 }
                 this.setValue(value);
-                if (this.observedObject !== this.objectValue || this.observedProperty !== this.propertyValue) {
+                if (this.objectExpression.mutable && (this.observedObject !== this.objectValue || this.observedProperty !== this.propertyValue)) {
                     this.observedObject = this.objectValue;
                     this.observedProperty = this.propertyValue;
                     var oldUnobserveObjectValue = this.unobserveObjectValue;
@@ -76,4 +76,3 @@ module.exports = exports = MemberExpression;
     _ion_runtime_MemberExpression_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./MemberExpression.map

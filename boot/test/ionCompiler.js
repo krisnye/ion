@@ -59,7 +59,7 @@ tests = {
   "let object = {x:1, y:2}\n    z: 3": "'use strict';\nlet object = {\n        x: 1,\n        y: 2,\n        z: 3\n    };",
   "let origin = new Point\n    x: 1\n    y: 2": "'use strict';\nconst ion = require('ion');\nlet origin = ion.patch.combine(new Point(), {\n        x: 1,\n        y: 2\n    });",
   "let origin = new Line\n    a: new Point\n        x: 0\n        y: 0\n    b: new Point\n        x: 10\n        y: 20": "'use strict';\nconst ion = require('ion');\nlet origin = ion.patch.combine(new Line(), {\n        a: ion.patch.combine(new Point(), {\n            x: 0,\n            y: 0\n        }),\n        b: ion.patch.combine(new Point(), {\n            x: 10,\n            y: 20\n        })\n    });",
-  "input:\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: new Point\n        x: 0\n        y: 0": "'use strict';\nconst ion = require('ion');\n{\n    input.x = 10;\n    input.y = 20;\n    input.z = ion.patch.combine(input.z, {\n        a: 1,\n        b: 2\n    });\n    input.w = ion.patch.combine(new Point(), {\n        x: 0,\n        y: 0\n    });\n}",
+  "input\n    # ignore this comment\n    x: 10\n    y: 20\n    z:\n        # also ignore this one\n        a: 1\n        b: 2\n    w: new Point\n        x: 0\n        y: 0": "'use strict';\nconst ion = require('ion');\nion.patch.combine(input, {\n    x: 10,\n    y: 20,\n    z: {\n        a: 1,\n        b: 2\n    },\n    w: ion.patch.combine(new Point(), {\n        x: 0,\n        y: 0\n    })\n});",
   "let point = new Point\n    [x]: 1\n    [y]: 2": "'use strict';\nlet point = new Point();\n{\n    point[x] = 1;\n    point[y] = 2;\n}",
   "let self = @\nlet x = @x\nlet y = @.y\nlet z = this.z": "'use strict';\nlet self = this;\nlet x = this.x;\nlet y = this.y;\nlet z = this.z;",
   "let x = {}\n    [key]: value": "'use strict';\nlet x = {};\nx[key] = value;",
@@ -173,26 +173,14 @@ tests = {
   },
   "let x = 0 in Array\nlet y = \"foo\" instanceof String": "'use strict';\nlet x = 0 in Array;\nlet y = 'foo' instanceof String;",
   "let output\noutput :=\n    x: 1\n    y: 2": "'use strict';\nconst ion = require('ion');\nlet output;\noutput = ion.patch.combine(output, {\n    x: 1,\n    y: 2\n});",
-  "output:\n    for a in b\n        [c]: d": "'use strict';\nfor (let _i = 0; _i < b.length; _i++) {\n    let a = b[_i];\n    output[c] = d;\n}",
-  "output: {}\n    x: 1": {
-    line: 1,
-    column: 9
-  },
-  "[output]:\n    x: 1": {
-    line: 1,
-    column: 2
-  },
+  "output\n    for a in b\n        [c]: d": "'use strict';\nlet _ref = output;\nfor (let _i = 0; _i < b.length; _i++) {\n    let a = b[_i];\n    _ref[c] = d;\n}\n_ref;",
   "#\n#\n\n#": "'use strict';",
   "[a for a in b]\n[a for a in c]": "'use strict';\nlet _ref = [];\nfor (let _i = 0; _i < b.length; _i++) {\n    let a = b[_i];\n    _ref.push(a);\n}\n_ref;\nlet _ref2 = [];\nfor (let _i2 = 0; _i2 < c.length; _i2++) {\n    let a = c[_i2];\n    _ref2.push(a);\n}\n_ref2;",
   "let array = []\n    1, 0, 0\n    0, 1, 0\n    0, 0, 1": "'use strict';\nlet array = [\n        1,\n        0,\n        0,\n        0,\n        1,\n        0,\n        0,\n        0,\n        1\n    ];",
   "import(foo).bar": "'use strict';\nrequire(foo).bar;",
   "let x = []\n    ->": "'use strict';\nlet x = [function () {\n        }];",
-  "x:\n    delete: true": "'use strict';\nx.delete = true;",
-  "return\n    style:\n        fontSize: \"0.7em\"\n    \"delete\"": "'use strict';\nconst ion = require('ion');\nlet _ref = {};\n{\n    _ref.style = ion.patch.combine(_ref.style, { fontSize: '0.7em' });\n    ion.add(_ref, 'delete');\n}\nreturn _ref;",
-  "content:\n    name: 'foo'\n    1\n    2": "'use strict';\nconst ion = require('ion');\n{\n    content.name = 'foo';\n    ion.add(content, 1);\n    ion.add(content, 2);\n}",
-  "for name, file of directory\n    write(name, file)\nelse\n    delete(name)": "'use strict';\nfor (let name in directory) {\n    let file = directory[name];\n    write(name, file);\n}",
-  "foo(\n    bar()\n    baz(\n        1\n        2\n    )\n)": "'use strict';\nfoo(bar(), baz(1, 2));",
-  "\n            console.log('ion')": "'use strict';\nconsole.log('ion');"
+  "x\n    delete: true": "'use strict';\nconst ion = require('ion');\nion.patch.combine(x, { delete: true });",
+  "return\n    style:\n        fontSize: \"0.7em\"\n    \"delete\"": "'use strict';\nconst ion = require('ion');\nlet _ref = {};\n{\n    _ref.style = ion.patch.combine(_ref.style, { fontSize: '0.7em' });\n    ion.add(_ref, 'delete');\n}\nreturn _ref;"
 };
 
 if (global.window != null) {

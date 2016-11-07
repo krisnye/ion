@@ -20,4 +20,3 @@ module.exports = exports = Node;
     _ion_runtime_Node_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./Node.map

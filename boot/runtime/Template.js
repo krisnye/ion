@@ -48,4 +48,3 @@ module.exports = exports = Template;
     _ion_runtime_Template_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./Template.map

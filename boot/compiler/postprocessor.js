@@ -1,4 +1,4 @@
-void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var activateStatements, addOrderPropertyToStatements, addPropertyDeclaration, addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, getReferenceIdentifiers, hoistVariables, ion, ionExpression, isAncestorObjectExpression, isFunctionNode, isPattern, isReferenceNode, isSimpleObjectExpression, isSuperExpression, javascriptExpressions, letAndConstToVar, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, patchAssignmentExpression, propertyDefinitions, propertyStatements, removeLocationInfo, setNodeOutputValues, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, variableDeclarationExpressions, wrapTemplateInnerFunctions, _ref;
+void (function(){var _ion_compiler_postprocessor_ = function(module,exports,require){var activateStatements, addOrderPropertyToStatements, addPropertyDeclaration, addStatement, addUseStrictAndRequireIon, arrayComprehensionsToES5, assertStatements, basicTraverse, block, callFunctionBindForFatArrows, checkVariableDeclarations, classExpressions, convertForInToForLength, createForInLoopValueVariable, createTemplateFunctionClone, createTemplateRuntime, defaultAssignmentsToDefaultOperators, defaultOperatorsToConditionals, destructuringAssignments, ensureIonVariable, existentialExpression, extractForLoopRightVariable, extractForLoopsInnerAndTest, extractReactiveForPatterns, falseExpression, forEachDestructuringAssignment, functionDeclarations, functionParameterDefaultValuesToES5, getExternalIdentifiers, getPathExpression, getReferenceIdentifiers, hoistVariables, ion, ionExpression, isAncestorObjectExpression, isConstantLiteral, isFunctionNode, isObjectPatch, isPattern, isReferenceNode, isSimpleObjectExpression, isSuperExpression, isVariableReference, javascriptExpressions, letAndConstToVar, namedFunctionsAndNewArguments, nodeToLiteral, nodejsModules, nodes, nullExpression, patchAssignmentExpression, propertyDefinitions, propertyStatements, removeLocationInfo, setNodeOutputValues, spreadExpressions, superExpressions, thisExpression, traverse, trueExpression, typedObjectExpressions, undefinedExpression, validateTemplateNodes, variableDeclarationExpressions, wrapTemplateInnerFunctions, _ref;
 
 traverse = require('./traverseAst').traverse;
 
@@ -48,6 +48,99 @@ isPattern = function(node) {
   return (node.properties != null) || (node.elements != null);
 };
 
+isVariableReference = function(node, parent, key) {
+  return node.type === 'Identifier' && ((parent == null) || !(parent.type === 'MemberExpression' && key === 'property' || parent.type === 'Property' && key === 'key'));
+};
+
+isObjectPatch = function(node) {
+  return (node != null) && node.type === 'ObjectExpression' && ((node.objectType != null) || (node.create != null));
+};
+
+isConstantLiteral = function(node, parent, key) {
+  var computed, index, type, value, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
+  if (isObjectPatch(node)) {
+    return false;
+  }
+  if (node == null) {
+    return false;
+  }
+  if (node.type === 'Literal') {
+    return true;
+  }
+  if (isVariableReference(node, parent, key)) {
+    return false;
+  }
+  if (node.type === 'ObjectExpression') {
+    _ref1 = node.properties;
+    for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
+      _ref2 = _ref1[index], type = _ref2.type, value = _ref2.value, computed = _ref2.computed;
+      if (computed || type !== 'Property' || !isConstantLiteral(value, node, index)) {
+        return false;
+      }
+    }
+    return true;
+  } else if (node.type === 'ArrayExpression') {
+    _ref3 = node.elements;
+    for (index = _j = 0, _len1 = _ref3.length; _j < _len1; index = ++_j) {
+      value = _ref3[index];
+      if (!isConstantLiteral(value, node, index)) {
+        return false;
+      }
+    }
+    return true;
+  } else {
+    return false;
+  }
+};
+
+nodeToLiteral = function(object, checkForLiteral) {
+  var item, key, node, value;
+  if (checkForLiteral !== false && isObjectPatch(object)) {
+    checkForLiteral = false;
+  }
+  node = null;
+  if ((object != null ? object.toLiteral : void 0) != null) {
+    node = object != null ? object.toLiteral() : void 0;
+  } else if (Array.isArray(object)) {
+    node = {
+      type: 'ArrayExpression',
+      elements: (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = object.length; _i < _len; _i++) {
+          item = object[_i];
+          _results.push(nodeToLiteral(item, checkForLiteral));
+        }
+        return _results;
+      })()
+    };
+  } else if ((object != null ? object.constructor : void 0) === Object) {
+    node = {
+      type: 'ObjectExpression',
+      properties: []
+    };
+    for (key in object) {
+      value = object[key];
+      if (value !== void 0) {
+        node.properties.push({
+          key: {
+            type: 'Identifier',
+            name: key
+          },
+          value: nodeToLiteral(value, checkForLiteral),
+          kind: 'init'
+        });
+      }
+    }
+  } else {
+    node = {
+      type: 'Literal',
+      value: object
+    };
+  }
+  return node;
+};
+
 getPathExpression = function(path) {
   var i, result, step, steps, _i, _len;
   steps = path.split('.');
@@ -80,51 +173,6 @@ getPathExpression = function(path) {
 isFunctionNode = function(node) {
   var _ref1, _ref2;
   return (_ref1 = (_ref2 = nodes[node != null ? node.type : void 0]) != null ? _ref2.isFunction : void 0) != null ? _ref1 : false;
-};
-
-nodeToLiteral = function(object) {
-  var item, key, node, value;
-  node = null;
-  if ((object != null ? object.toLiteral : void 0) != null) {
-    node = object != null ? object.toLiteral() : void 0;
-  } else if (Array.isArray(object)) {
-    node = {
-      type: 'ArrayExpression',
-      elements: (function() {
-        var _i, _len, _results;
-        _results = [];
-        for (_i = 0, _len = object.length; _i < _len; _i++) {
-          item = object[_i];
-          _results.push(nodeToLiteral(item));
-        }
-        return _results;
-      })()
-    };
-  } else if ((object != null ? object.constructor : void 0) === Object) {
-    node = {
-      type: 'ObjectExpression',
-      properties: []
-    };
-    for (key in object) {
-      value = object[key];
-      if (value !== void 0) {
-        node.properties.push({
-          key: {
-            type: 'Identifier',
-            name: key
-          },
-          value: nodeToLiteral(value),
-          kind: 'init'
-        });
-      }
-    }
-  } else {
-    node = {
-      type: 'Literal',
-      value: object
-    };
-  }
-  return node;
 };
 
 block = function(node) {
@@ -891,7 +939,7 @@ setNodeOutputValues = function(context, nodes, outputId, statements, isArray) {
 };
 
 propertyStatements = function(node, context) {
-  var left, parent, right, statements;
+  var left, parent, right;
   if (context.reactive) {
     return;
   }
@@ -941,22 +989,7 @@ propertyStatements = function(node, context) {
         });
       }
     } else {
-      if (node.computed) {
-        throw context.error("dynamic property expression invalid here", node.key);
-      }
-      if (node.value.objectType != null) {
-        throw context.error("type not allowed on set expression", node.value);
-      }
-      statements = [];
-      setNodeOutputValues(context, node.value.properties, node.key, statements);
-      if (statements.length === 1) {
-        return context.replace(statements[0]);
-      } else {
-        return context.replace({
-          type: 'BlockStatement',
-          body: statements
-        });
-      }
+      throw context.error("Property assignment only valid within an object declaration", node);
     }
   }
 };
@@ -1042,7 +1075,7 @@ classExpressions = function(node, context) {
 
 checkVariableDeclarations = {
   enter: function(node, context) {
-    var key, parent, variable, _base;
+    var variable, _base;
     if (node.type === 'AssignmentExpression') {
       if (node.left.type === 'Identifier') {
         variable = context.getVariableInfo(node.left.name);
@@ -1057,12 +1090,8 @@ checkVariableDeclarations = {
         throw context.error("cannot assign within templates", node);
       }
     }
-    if (node.type === 'Identifier') {
-      key = context.key();
-      parent = context.parentNode();
-      if (!(parent.type === 'MemberExpression' && key === 'property' || parent.type === 'Property' && key === 'key')) {
-        return ((_base = context.scope()).usage != null ? _base.usage : _base.usage = {})[node.name] = node;
-      }
+    if (isVariableReference(node, context.parentNode(), context.key())) {
+      return ((_base = context.scope()).usage != null ? _base.usage : _base.usage = {})[node.name] = node;
     }
   },
   variable: function(variable, context) {

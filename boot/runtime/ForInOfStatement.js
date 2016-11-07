@@ -45,7 +45,9 @@ var ForInOfStatement = ion.defineClass({
                             this.forEach(this.collection, ion.bind(function (key, value) {
                                 this.addItem(key, value);
                             }, this));
-                            this.unobserveCollection = ion.observe(this.collection, this.collectionObserver = this.collectionObserver != null ? this.collectionObserver : this.applyChanges.bind(this));
+                            if (this.collectionExpression.mutable) {
+                                this.unobserveCollection = ion.observe(this.collection, this.collectionObserver = this.collectionObserver != null ? this.collectionObserver : this.applyChanges.bind(this));
+                            }
                         }
                     }
                 }, this));
@@ -262,4 +264,3 @@ module.exports = exports = ForInOfStatement;
     _ion_runtime_ForInOfStatement_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./ForInOfStatement.map

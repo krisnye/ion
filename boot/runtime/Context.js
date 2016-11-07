@@ -1,6 +1,72 @@
 void (function(){var _ion_runtime_Context_ = function(module,exports,require){'use strict';
 var ion = require('../'), Factory = require('./Factory'), Literal = require('./Literal'), noop = function () {
     };
+var createObjectInserter = function (container) {
+    return {
+        isOrdered: function (value) {
+            return false;
+        },
+        convert: function (value) {
+            return value;
+        },
+        getLength: function () {
+            return 0;
+        },
+        add: function (value, index) {
+            var current = container[value];
+            var insert = (current != null ? current : 0) + 1;
+            container[value] = insert;
+        },
+        remove: function (index, value, moving) {
+            var current = container[value];
+            if (!(current != null)) {
+                throw new Error('Removing value \'' + value + '\' that was not present in container: ' + container);
+            }
+            var insert = current - 1;
+            if (insert === 0) {
+                delete container[value];
+            } else {
+                container[value] = insert;
+            }
+        }
+    };
+};
+var createMapInserter = function (container) {
+    var touch = function () {
+        container.touch = container.touch != null ? container.touch : 0;
+        container.touch += 1;
+    };
+    return {
+        isOrdered: function (value) {
+            return false;
+        },
+        convert: function (value) {
+            return value;
+        },
+        getLength: function () {
+            return container.size;
+        },
+        add: function (value, index) {
+            var current = container.get(value);
+            var insert = (current != null ? current : 0) + 1;
+            container.set(value, insert);
+            touch();
+        },
+        remove: function (index, value, moving) {
+            var current = container.get(value);
+            if (!(current != null)) {
+                throw new Error('Removing value \'' + value + '\' that was not present in container: ' + container);
+            }
+            var insert = current - 1;
+            if (insert === 0) {
+                container.delete(value);
+            } else {
+                container.set(value, insert);
+            }
+            touch();
+        }
+    };
+};
 var createArrayInserter = function (container) {
     return {
         isOrdered: function (value) {
@@ -31,10 +97,13 @@ var createArrayInserter = function (container) {
 var isNode = function (value) {
     return typeof (value != null ? value.nodeType : void 0) === 'number';
 };
+var isWebComponent = function (value) {
+    return (value != null ? value.nodeName != null ? value.nodeName.indexOf('-') : void 0 : void 0) > 0;
+};
 var createHtmlInserter = function (container) {
     return {
         isOrdered: function (value) {
-            if (typeof value !== 'function') {
+            if (typeof value === 'function') {
                 return false;
             }
             if (container.unordered) {
@@ -69,25 +138,48 @@ var createHtmlInserter = function (container) {
         getLength: function () {
             return container.childNodes.length;
         },
-        add: function (value, index) {
+        add: function (value, index, sourceNode) {
             if (typeof value === 'function') {
-                container.addEventListener(value.id, value, value.capture);
+                value.wrapper = value.wrapper != null ? value.wrapper : function () {
+                    value.apply(this, arguments);
+                    ion.sync();
+                };
+                container.addEventListener(value.id, value.wrapper, value.capture);
             } else {
-                if (index != null) {
-                    var after = container.childNodes[index];
-                    if (after != null) {
-                        container.insertBefore(value, after);
-                        return;
+                if (isWebComponent(container)) {
+                    var polymerContainer = Polymer.dom(container);
+                    if (index != null) {
+                        var after = polymerContainer.childNodes[index];
+                        if (after != null) {
+                            polymerContainer.insertBefore(value, after);
+                        }
                     }
+                    polymerContainer.appendChild(value);
+                } else {
+                    if (index != null) {
+                        var after = container.childNodes[index];
+                        if (after != null) {
+                            container.insertBefore(value, after);
+                        }
+                    }
+                    container.appendChild(value);
                 }
-                container.appendChild(value);
             }
         },
         remove: function (index, value, moving) {
             if (typeof value === 'function') {
-                container.removeEventListener(value.id, value);
+                container.removeEventListener(value.id, value.wrapper);
             } else if (!moving) {
-                container.removeChild(value);
+                if (isWebComponent(container)) {
+                    var polymerContainer = Polymer.dom(container);
+                    polymerContainer.removeChild(value);
+                } else {
+                    if (value.parentElement === container) {
+                        container.removeChild(value);
+                    } else {
+                        console.warn('Context is trying to remove an element from a container that it is not in.', container, value);
+                    }
+                }
             }
         }
     };
@@ -96,12 +188,16 @@ var createOrderManager = function (container) {
     var inserter;
     if (Array.isArray(container)) {
         inserter = createArrayInserter(container);
+    } else if ((container != null ? container.constructor : void 0) === Map) {
+        inserter = createMapInserter(container);
     } else if (isNode(container)) {
         inserter = createHtmlInserter(container);
+    } else if ((container != null ? container.constructor : void 0) === Object) {
+        inserter = createObjectInserter(container);
     } else {
         return {
-            insert: function (value, order, fastInsert) {
-                return ion.add(container, value);
+            insert: function (value, order, fastInsert, sourceNode) {
+                return ion.add(container, value, sourceNode);
             },
             update: function (oldOrder, newOrder) {
             }
@@ -111,7 +207,7 @@ var createOrderManager = function (container) {
     var insertionOrders = [];
     var insertionValues = {};
     var pendingOrderChanges = {};
-    var insertInternal = function (value, order, fastInsert) {
+    var insertInternal = function (value, order, fastInsert, sourceNode) {
         if (insertionValues[order] != null) {
             throw new Error('Cannot add a new item with the same order as an existing item: ' + JSON.stringify({
                 order: order,
@@ -126,11 +222,11 @@ var createOrderManager = function (container) {
             fastInsert = true;
         }
         if (fastInsert) {
-            inserter.add(value);
+            inserter.add(value, null, sourceNode);
         } else {
             insertionOrders.sort();
             var index = insertionOrders.indexOf(order);
-            inserter.add(value, baseLength + index);
+            inserter.add(value, baseLength + index, sourceNode);
         }
     };
     var removeInternal = function (value, order, moving) {
@@ -160,9 +256,9 @@ var createOrderManager = function (container) {
         }
     };
     return {
-        insert: function (value, order, fastInsert) {
+        insert: function (value, order, fastInsert, sourceNode) {
             value = inserter.convert(value);
-            insertInternal(value, order, fastInsert);
+            insertInternal(value, order, fastInsert, sourceNode);
             return function () {
                 return removeInternal(value, order);
             };
@@ -237,9 +333,9 @@ var Context = ion.defineClass({
                     }
                 }
             },
-            insert: function (value, order) {
+            insert: function (value, order, sourceNode) {
                 order = this.order + (order != null ? order : '');
-                return this.inserter.insert(value, order, this.inserter.fastInsert);
+                return this.inserter.insert(value, order, this.inserter.fastInsert, sourceNode);
             },
             get: function (name) {
                 var variable = this.getVariable(name);
@@ -262,7 +358,10 @@ var Context = ion.defineClass({
                     throw new Error('Variable not found: \'' + name + '\'');
                 }
                 var cachedGlobals = this.root.globals = this.root.globals != null ? this.root.globals : {};
-                return cachedGlobals[name] = cachedGlobals[name] != null ? cachedGlobals[name] : new Literal({ value: value });
+                return cachedGlobals[name] = cachedGlobals[name] != null ? cachedGlobals[name] : new Literal({
+                    value: value,
+                    mutable: true
+                });
             },
             setVariableFromAst: function (name, node) {
                 if (name != null) {
@@ -271,7 +370,10 @@ var Context = ion.defineClass({
             },
             setVariableLiteral: function (name, value) {
                 if (name != null) {
-                    return this.setVariableExpression(name, new Literal({ value: value }));
+                    return this.setVariableExpression(name, new Literal({
+                        value: value,
+                        mutable: true
+                    }));
                 }
             },
             setVariableExpression: function (name, expression) {
@@ -297,4 +399,3 @@ module.exports = exports = Context;
     _ion_runtime_Context_.call(this);
   }
 }).call(this)
-//# sourceMappingURL=./Context.map
