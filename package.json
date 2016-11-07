@@ -1,46 +1,58 @@
 {
-    "name": "ion",
-    "version": "0.9.14",
-    "main": "lib/index",
-    "bin": {
-        "ion": "lib/builder/_command.js"
-    },
-    "repository": "https://github.com/krisnye/ion.git",
-    "scripts": {
-        "dev": "npm install && npm link",
-        "build": "ion -c",
-        "watch": "ion -w",
-        "boot": "node boot/builder/_command.js -c"
-    },
-    "directories": {
-        "lib": "lib",
-        "src": "src"
-    },
-    "build": {
-        "package": true,
-        "merge": {
-            "../dist/ion-all.js": {
-                "exclude": ["builder"]
-            },
-            "../dist/ion-browser.js": {
-                "exclude": ["builder", "test", "compiler"]
-            },
-            "../dist/ion-min.js": {
-                "exclude": ["builder", "test", "compiler"],
-                "compress": true
-            }
-        }
-    },
-    "contributors": ["krisnye@gmail.com"],
-    "dependencies": {
-        "esprima": "1.1.x",
-        "uglify-js": "2.4.x",
-        "pegjs": "0.8.x",
-        "underscore": "1.6.x",
-        "source-map": "0.1.x",
-        "coffee-script": "1.8.x",
-        "express": "4.12.x"
-    },
-    "devDependencies": {
+  "name": "ion",
+  "version": "0.9.14",
+  "main": "lib/index",
+  "bin": {
+    "ion": "lib/builder/_command.js"
+  },
+  "repository": "https://github.com/krisnye/ion.git",
+  "scripts": {
+    "dev": "npm install && npm link",
+    "build": "ion -c",
+    "watch": "ion -w",
+    "boot": "node boot/builder/_command.js -c"
+  },
+  "directories": {
+    "lib": "lib",
+    "src": "src"
+  },
+  "build": {
+    "package": true,
+    "merge": {
+      "../dist/ion-all.js": {
+        "exclude": [
+          "builder"
+        ]
+      },
+      "../dist/ion-browser.js": {
+        "exclude": [
+          "builder",
+          "test",
+          "compiler"
+        ]
+      },
+      "../dist/ion-min.js": {
+        "exclude": [
+          "builder",
+          "test",
+          "compiler"
+        ],
+        "compress": true
+      }
     }
+  },
+  "contributors": [
+    "krisnye@gmail.com"
+  ],
+  "dependencies": {
+    "coffee-script": "1.8.x",
+    "esprima": "1.1.x",
+    "express": "4.12.x",
+    "lodash": "^4.16.6",
+    "pegjs": "0.8.x",
+    "source-map": "0.1.x",
+    "uglify-js": "2.4.x",
+    "underscore": "1.6.x"
+  },
+  "devDependencies": {}
 }
