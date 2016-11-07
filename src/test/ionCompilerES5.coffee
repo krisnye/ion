@@ -194,6 +194,11 @@ tests =
     #     }, { this: this }, null);
     # });
     # """
+    # """
+    # let input = PaperInput()
+    #     "iron-select"(e) ->
+    #         console.log('select', e)
+    # """: null    
 
 if global.window?
     return

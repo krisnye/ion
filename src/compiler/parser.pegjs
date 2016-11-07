@@ -11,6 +11,9 @@
         }
         return copy
     }
+    function isValidIdentifier(name) {
+        return /^[a-z_$][a-z_$0-9]*$/.test(name)
+    }
     function node(type, properties, start, end) {
         var node = {type:type}
         if (properties != null) {
@@ -325,7 +328,7 @@ UndoStatement = start:start undo _ f:FunctionExpression end:end
         return node("UndoStatement", {callee:f}, start, end)
     }
 
-FunctionExpression = start:start template:template? _ id:Identifier? _ params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(Expression / ThrowStatement / BlockStatement)? end:end
+FunctionExpression = start:start template:template? _ id:(Identifier / simpleString)? _ params:formalParameterList? _ bound:("->" { return false } / "=>" { return true }) _ body:(Expression / ThrowStatement / BlockStatement)? end:end
     {
         if (params == null) params = []
         paramPatterns = params.map(function(x) { return x[0] })
@@ -337,7 +340,34 @@ FunctionExpression = start:start template:template? _ id:Identifier? _ params:fo
             body = node('BlockStatement', {body:[body]})
         else if (body.type !== 'BlockStatement')
             body = node('BlockStatement', {body:[node('ReturnStatement', {argument:body})]})
-        return node('FunctionExpression', {id:id, params:paramPatterns, defaults:paramDefaults, body:body, bound:bound, template:template ? true : undefined}, start, end)
+
+        let quotedId = null
+        if (typeof id == 'string') {
+            quotedId = id
+            id = undefined
+        }
+        let expression = node('FunctionExpression', {id:id, params:paramPatterns, defaults:paramDefaults, body:body, bound:bound, template:template ? true : undefined}, start, end)
+        // if quoted name, we will call Object.assign
+        if (quotedId != null) {
+            expression = node('CallExpression', {
+                callee: node('MemberExpression', {
+                    object: node('Identifier', {name:'Object'}),
+                    property: node('Identifier', {name:'assign'})
+                }),
+                arguments: [
+                    expression,
+                    node('ObjectExpression', {
+                        properties: [
+                            node('Property', {
+                                key: node('Identifier', {name:'id'}),
+                                value: node('Literal', {value:quotedId})
+                            })
+                        ]
+                    })
+                ]
+            })
+        }
+        return expression
     }
 formalParameterList = "(" _ params:formalParameters? _ ")" { return params != null ? params : [] }
 formalParameters = head:formalParameter tail:(_ "," _ a:formalParameter { return a })* { return [head].concat(tail) }

@@ -4,20 +4,37 @@ do ->
     if not global.window?
         return
 
+    const defaultNS = "http://www.w3.org/1999/xhtml"
+    const capitalize = (x) -> x[0].toUpperCase() + x.substring(1)
+    const registerElements = (elements, ns = defaultNS) ->
+        for name in elements
+            let jsName = name.split('-').map(capitalize).join('')
+            window[jsName] = do (ns, name) ->
+                return (attributes) ->
+                    let ion = require('ion')
+                    let element = document.createElementNS(ns, name)
+                    for arg in arguments
+                        if arg?
+                            for key, value of arg
+                                if value?
+                                    element.setAttribute(key, value)
+                    return element
+
+    # we also export this function globally. This is a magic hack. Should be defined somewhere else.
+    global.registerElements = registerElements
+
     # also watch for hash changes
-    if global.window?
-        let syncOnRefresh = (e) ->
-            let ion = require('ion')
-            requestAnimationFrame(ion.sync)
+    let syncOnRefresh = (e) ->
+        let ion = require('ion')
+        requestAnimationFrame(ion.sync)
 
-        window.addEventListener('hashchange', syncOnRefresh)
-        window.addEventListener('transitionstart', syncOnRefresh)
-        window.addEventListener('transitionend', syncOnRefresh)
+    window.addEventListener('hashchange', syncOnRefresh)
+    window.addEventListener('transitionstart', syncOnRefresh)
+    window.addEventListener('transitionend', syncOnRefresh)
+    window.document.addEventListener('keypress', syncOnRefresh)
+    window.document.addEventListener('keydown', syncOnRefresh)
+    window.document.addEventListener('keyup', syncOnRefresh)
 
-    let changeElements =
-        input: true
-        select: true
-        textarea: true
     let nsElements = 
         "http://www.w3.org/1999/xhtml": []
             "div","span","input","textarea","a","br","img", "p"
@@ -32,18 +49,4 @@ do ->
             "svg", "path", "circle", "text"
 
     for ns, elements of nsElements
-        for name in elements
-            let jsName = name[0].toUpperCase() + name.substring(1)
-            window[jsName] = do (ns, name) ->
-                return (attributes) ->
-                    let ion = require('ion')
-                    let element = document.createElementNS(ns, name)
-
-                    if changeElements[name]
-                        element.addEventListener('change', ion.sync)
-                    for arg in arguments
-                        if arg?
-                            for key, value of arg
-                                if value?
-                                    element.setAttribute(key, value)
-                    return element
+        registerElements(elements, ns)
