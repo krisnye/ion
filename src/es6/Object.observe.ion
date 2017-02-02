@@ -98,6 +98,7 @@ export const
             # console.log('changed ' + JSON.stringify(object))
             changedObjects.set(object, object)
     checkForChanges = () ->
+        # console.time('sync')
         let changes
         let maxCycles = 20
         # we have to run multiple cycles in case callbacks cause further change propagation
@@ -110,7 +111,7 @@ export const
                 changes = getChanges(meta.clone, meta.object, properties)
                 if changes?
                     changeCount++
-                    # console.log('changes: ' + JSON.stringify(changes))
+                    # console.log(changes)
                     meta.clone = clone(meta.object, properties)
                     # callbacks must be deferred until after ALL changes have been found
                     for callback in meta.callbacks
@@ -129,7 +130,10 @@ export const
             currentCheckMap.clear()
 
             if changeCount is 0 and nextCheckMap.size is 0
+                # console.log('loops: ' + i)
+                # console.timeEnd('sync')
                 return
+
 
         # we have hit max cycles, indicates a circular dependency error
         throw new Error("Circular Object.observe dependency")

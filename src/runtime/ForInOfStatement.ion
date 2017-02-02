@@ -135,25 +135,7 @@ export class ForInOfStatement extends Statement
 
             # we can only use the fast recycle method IF there are no duplicate keys in the changes, and none are null
             let canRecycle = true
-            #   since we implemented result sort ordering, we can now always recycle.
-
-            # if canRecycle
-            #     let checkRecycleKeys = new Map
-            #     for {name, oldValue} in changes
-            #         let checkKey = getRecycleKey(name, oldValue)
-            #         if checkKey? and checkRecycleKeys.has(checkKey)
-            #             canRecycle = false
-            #             break
-
-            if not canRecycle
-                for {name,type,oldValue} in changes
-                    let newValue = @collection?[name]
-                    let key = @toKey(name)
-                    if oldValue isnt undefined
-                        @removeItem(key, oldValue)
-                    if newValue isnt undefined
-                        @addItem(key, newValue)
-            else
+            if canRecycle
                 let recyclableStatements = new Map
                 let activateStatements = []
                 for {name,oldValue} in changes
@@ -201,6 +183,7 @@ export class ForInOfStatement extends Statement
                 # recyclableStatements are deactivated.
                 recyclableStatements.forEach(
                     (statement) =>
+                        # console.log('disposing statement', statement)
                         @disposeStatement(statement)
                 )
 

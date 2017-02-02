@@ -116,6 +116,7 @@ const createHtmlInserter = (container) ->
                         let after = container.childNodes[index]
                         if after?
                             container.insertBefore(value, after)
+                            return
                     container.appendChild(value)
 
         remove: (index, value, moving) ->
@@ -272,7 +273,8 @@ export class Context
             if not variable?
                 throw new Error("Variable not found: '{{name}}'")
             return variable.value
-        getVariable: (name) ->
+        getVariable: (ast) ->
+            let name = typeof ast is 'string' ? ast : ast.name
             let context = @, value
             while context?
                 let variable = context.variables[name]
@@ -283,7 +285,11 @@ export class Context
             # we do however require that it be a globally defined variable, otherwise we throw an error.
             value = global[name]
             if value is undefined
-                throw new Error("Variable not found: '{{name}}'")
+                let message = "Variable not found: '{{name}}'"
+                if typeof ast is 'object'
+                    message += " at ({{ast.loc.start.source}}:{{ast.loc.start.line}}:{{ast.loc.start.column + 1}})"
+                throw new Error(message)
+
             # global values are considered to be constants.
             # we could consider caching these values within the context.
             let cachedGlobals = @root.globals ?= {}

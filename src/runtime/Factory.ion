@@ -41,15 +41,14 @@ const lookup =
             toCode: (ast) -> 'this'
         Identifier: new Factory
             createRuntime: (context, ast) ->
-                try
-                    let expression = context.getVariable(ast.name)
-                    if ast.deep
-                        expression.deep = true
-                    return expression
-                catch e
-                    debugger
-                    console.log(ast)
-                    throw e
+                # try
+                let expression = context.getVariable(ast)
+                if ast.deep
+                    expression.deep = true
+                return expression
+                # catch e
+                #     console.log(ast)
+                #     throw e
             canCache: (ast) -> true
             toCode: (ast) -> ast.name
         Function: new Factory

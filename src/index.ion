@@ -1,4 +1,4 @@
-const ion = null # shouldn't depend on itself
+const ion = module.exports # shouldn't depend on itself
 const noop = ->
 
 import './es6'
@@ -375,6 +375,25 @@ export const
 for name in ["runtime", "compiler", "builder", "browser"]
     do (name) ->
         Object.defineProperty(exports, name, {enumerable: true, get: -> require("./" + name)})
+
+# define custom callReactive function on function.
+Object.defineProperty(
+    Function.prototype
+    'reactive'
+    {}
+        get: ->
+            let fn = this
+            let state = {}
+            # todo: deep on do call...
+            let patchResult = (intermediateResult) ->
+                let diff = ion.patch.diff(state.result, intermediateResult)
+                if diff isnt undefined
+                    state.result = ion.patch(state.result, diff)
+            return template (arg) ->
+                let intermediateResult = fn(deep arg)
+                patchResult(deep intermediateResult)
+                return state.result
+)
 
 # if window, then on resize, check for changes
 if global.window?
