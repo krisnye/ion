@@ -61,17 +61,25 @@ export const
         return object
     # sort = [{name:true},{age:false}]
     createSortFunction = (sorts) ->
+        if not Array.isArray(sorts)
+            sorts = [sorts]
         return (a, b) ->
             if a is b
                 return 0
             if not a?
-                return b
+                return +1
             if not b?
-                return a
+                return -1
             for sort in sorts
                 for name, ascending of sort
-                    let aValue = a[name]
-                    let bValue = b[name]
+                    let aValue = a[name] ? null
+                    let bValue = b[name] ? null
+                    if aValue is bValue
+                        continue
+                    if aValue? and not bValue?
+                        return -1
+                    if not aValue? and bValue?
+                        return +1
                     if aValue > bValue
                         return ascending ? +1 : -1
                     if aValue < bValue
@@ -352,6 +360,13 @@ export const
                         getValue: -> @number
             )
             assert new Foo(2).getValue() is 2
+        sortFunction: ->
+            let records = [{name:'a',order:1},{name:'b',order:2},{name:'q',order:null},{name:'d',order:4},{name:'c',order:undefined}]
+            records.sort(ion.createSortFunction([{order:true}]))
+            assert records.map((x) -> x.name).join('') is 'abdqc'
+            records = [{name:'a',order:1},{name:'b',order:2},{name:'q',order:null},{name:'d',order:4},{name:'c',order:undefined}]
+            records.sort(ion.createSortFunction([{order:false}]))
+            assert records.map((x) -> x.name).join('') is 'dbaqc'
         defineProperties:
             "should allow primitive values": ->
                 const object = {}
