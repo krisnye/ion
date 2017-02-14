@@ -55,6 +55,7 @@ const
             for name of newValue
                 if not oldValue.hasOwnProperty(name)
                     checkForChange(name)
+
         return changes
 
 export const
@@ -113,8 +114,7 @@ export const
                     changeCount++
                     # console.log(changes)
                     meta.clone = clone(meta.object, properties)
-                    # callbacks must be deferred until after ALL changes have been found
-                    for callback in meta.callbacks
+                    for callback in meta.callbacks.slice(0) # SLICE IS IMPORTANT! callbacks could otherwise be modified during operation
                         callback(changes)
 
             observerMap.forEach(check)

@@ -31,7 +31,6 @@ export class ForInOfStatement extends Statement
             @collectionExpression ?= @context.createRuntime(@right)
             @unobserveExpression = @collectionExpression.observe(
                 @collectionWatcher ?= (collection) =>
-                    # console.log('collectionWatcher', collection)
                     if @collection isnt collection
                         @unobserveCollection?()
                         if @collection?
@@ -135,7 +134,15 @@ export class ForInOfStatement extends Statement
 
             # we can only use the fast recycle method IF there are no duplicate keys in the changes, and none are null
             let canRecycle = true
-            if canRecycle
+            if not canRecycle
+                for {name,type,oldValue} in changes
+                    let newValue = @collection?[name]
+                    let key = @toKey(name)
+                    if oldValue isnt undefined
+                        @removeItem(key, oldValue)
+                    if newValue isnt undefined
+                        @addItem(key, newValue)
+            else
                 let recyclableStatements = new Map
                 let activateStatements = []
                 for {name,oldValue} in changes
