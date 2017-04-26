@@ -7,4 +7,5 @@ import './Object'
 import './Function'
 import './Array'
 import './CustomEvent'
+import './Element.closest'
 (import './sugar').extend()

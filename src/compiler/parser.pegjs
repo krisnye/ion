@@ -503,7 +503,7 @@ indent 'INDENT' = eol? _ "{{{{"
 outdent 'OUTDENT' = eol? _ "}}}}"
 _ 'space' = " "*
 
-comment = _ '#' (!"\n" .)+
+comment = _ '#' (!"\n" .)*
 eol 'end of line' = _ comment? (eof / ("\r"? "\n" comment?)+)
 eol_nocomments = _ (eof / ("\r"? "\n")+)
 eof 'end of file' = !.

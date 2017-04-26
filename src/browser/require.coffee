@@ -111,7 +111,10 @@ do ->
                         removeLastResult?()
                         removeLastResult = null
                         if templateResult?
-                            scriptElement.parentElement.appendChild(templateResult)
+                            container = scriptElement.parentElement
+                            if global.Polymer
+                                container = Polymer.dom(container)
+                            container.appendChild(templateResult)
                             removeLastResult = -> scriptElement.parentElement.removeChild(templateResult)
                 else
                     scriptElement.parentElement.appendChild(document.createTextNode(result))

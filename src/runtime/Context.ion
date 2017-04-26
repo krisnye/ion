@@ -103,7 +103,7 @@ const createHtmlInserter = (container) ->
                 container.addEventListener(value.id, value.wrapper, value.capture)
             else
                 #  BEGIN POLYMER 1.X TEMPORARY HACK
-                if isWebComponent(container)
+                if global.Polymer #isWebComponent(container)
                     let polymerContainer = Polymer.dom(container)
                     if index?
                         let after = polymerContainer.childNodes[index]
@@ -124,7 +124,7 @@ const createHtmlInserter = (container) ->
                 container.removeEventListener(value.id, value.wrapper)
             else if not moving
                 #  BEGIN POLYMER 1.X TEMPORARY HACK
-                if isWebComponent(container)
+                if global.Polymer # isWebComponent(container)
                     let polymerContainer = Polymer.dom(container)
                     polymerContainer.removeChild(value)
                 #  END POLYMER 1.X TEMPORARY HACK

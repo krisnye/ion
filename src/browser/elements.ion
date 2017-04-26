@@ -12,7 +12,13 @@ do ->
             window[jsName] = do (ns, name) ->
                 return (attributes) ->
                     let ion = require('ion')
-                    let element = document.createElementNS(ns, name)
+                    let isValue = undefined
+                    for arg in arguments
+                        if arg?.is?
+                            # is value MUST be specified here or "is" attribute doesn't work.
+                            # https://www.polymer-project.org/1.0/docs/devguide/registering-elements
+                            isValue = arg.is
+                    let element = document.createElementNS(ns, name, isValue)
                     for arg in arguments
                         if arg?
                             for key, value of arg

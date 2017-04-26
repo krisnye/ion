@@ -1,5 +1,5 @@
 /*
- *  Sugar Custom 2016.08.24
+ *  Sugar Custom 2017.04.21
  *
  *  Freely distributable and licensed under the MIT-style license.
  *  Copyright (c)  Andrew Plummer
@@ -62,6 +62,7 @@
 
   function setupGlobal() {
     Sugar = globalContext[SUGAR_GLOBAL];
+    // istanbul ignore if
     if (Sugar) {
       // Reuse already defined Sugar global object.
       return;
@@ -78,6 +79,7 @@
       });
       return Sugar;
     };
+    // istanbul ignore else
     if (hasExports) {
       module.exports = Sugar;
     } else {
@@ -94,9 +96,9 @@
   }
 
   /***
-   * @method createNamespace(<name>)
-   * @returns Namespace
-   * @global
+   * @method createNamespace(name)
+   * @returns SugarNamespace
+   * @namespace Sugar
    * @short Creates a new Sugar namespace.
    * @extra This method is for plugin developers who want to define methods to be
    *        used with natives that Sugar does not handle by default. The new
@@ -109,6 +111,8 @@
    *
    *   Sugar.createNamespace('Boolean');
    *
+   * @param {string} name - The namespace name.
+   *
    ***/
   function createNamespace(name) {
 
@@ -119,14 +123,13 @@
     var sugarNamespace = getNewChainableClass(name, true);
 
     /***
-     * @method extend([options])
+     * @method extend([opts])
      * @returns Sugar
-     * @global
-     * @namespace
+     * @namespace Sugar
      * @short Extends Sugar defined methods onto natives.
      * @extra This method can be called on individual namespaces like
      *        `Sugar.Array` or on the `Sugar` global itself, in which case
-     *        [options] will be forwarded to each `extend` call. For more,
+     *        [opts] will be forwarded to each `extend` call. For more,
      *        see `extending`.
      *
      * @options
@@ -158,6 +161,22 @@
      *
      *   Sugar.Array.extend();
      *   Sugar.extend();
+     *
+     * @option {Array<string>} [methods]
+     * @option {Array<string|NativeConstructor>} [except]
+     * @option {Array<NativeConstructor>} [namespaces]
+     * @option {boolean} [enhance]
+     * @option {boolean} [enhanceString]
+     * @option {boolean} [enhanceArray]
+     * @option {boolean} [objectPrototype]
+     * @param {ExtendOptions} [opts]
+     *
+     ***
+     * @method extend([opts])
+     * @returns SugarNamespace
+     * @namespace SugarNamespace
+     * @short Extends Sugar defined methods for a specific namespace onto natives.
+     * @param {ExtendOptions} [opts]
      *
      ***/
     var extend = function (opts) {
@@ -255,7 +274,7 @@
         // methods, so add a flag here to check later.
         setProperty(sugarNamespace, 'active', true);
       }
-      return Sugar;
+      return sugarNamespace;
     };
 
     function defineWithOptionCollect(methodName, instance, args) {
@@ -267,9 +286,9 @@
     }
 
     /***
-     * @method defineStatic(...)
-     * @returns Namespace
-     * @namespace
+     * @method defineStatic(methods)
+     * @returns SugarNamespace
+     * @namespace SugarNamespace
      * @short Defines static methods on the namespace that can later be extended
      *        onto the native globals.
      * @extra Accepts either a single object mapping names to functions, or name
@@ -285,13 +304,17 @@
      *     }
      *   });
      *
+     * @signature defineStatic(methodName, methodFn)
+     * @param {Object} methods - Methods to be defined.
+     * @param {string} methodName - Name of a single method to be defined.
+     * @param {Function} methodFn - Function body of a single method to be defined.
      ***/
     defineWithOptionCollect('defineStatic', STATIC);
 
     /***
-     * @method defineInstance(...)
-     * @returns Namespace
-     * @namespace
+     * @method defineInstance(methods)
+     * @returns SugarNamespace
+     * @namespace SugarNamespace
      * @short Defines methods on the namespace that can later be extended as
      *        instance methods onto the native prototype.
      * @extra Accepts either a single object mapping names to functions, or name
@@ -315,13 +338,17 @@
      *     }
      *   });
      *
+     * @signature defineInstance(methodName, methodFn)
+     * @param {Object} methods - Methods to be defined.
+     * @param {string} methodName - Name of a single method to be defined.
+     * @param {Function} methodFn - Function body of a single method to be defined.
      ***/
     defineWithOptionCollect('defineInstance', INSTANCE);
 
     /***
-     * @method defineInstanceAndStatic(...)
-     * @returns Namespace
-     * @namespace
+     * @method defineInstanceAndStatic(methods)
+     * @returns SugarNamespace
+     * @namespace SugarNamespace
      * @short A shortcut to define both static and instance methods on the namespace.
      * @extra This method is intended for use with `Object` instance methods. Sugar
      *        will not map any methods to `Object.prototype` by default, so defining
@@ -335,14 +362,18 @@
      *     }
      *   });
      *
+     * @signature defineInstanceAndStatic(methodName, methodFn)
+     * @param {Object} methods - Methods to be defined.
+     * @param {string} methodName - Name of a single method to be defined.
+     * @param {Function} methodFn - Function body of a single method to be defined.
      ***/
     defineWithOptionCollect('defineInstanceAndStatic', INSTANCE | STATIC);
 
 
     /***
-     * @method defineStaticWithArguments(...)
-     * @returns Namespace
-     * @namespace
+     * @method defineStaticWithArguments(methods)
+     * @returns SugarNamespace
+     * @namespace SugarNamespace
      * @short Defines static methods that collect arguments.
      * @extra This method is identical to `defineStatic`, except that when defined
      *        methods are called, they will collect any arguments past `n - 1`,
@@ -361,13 +392,17 @@
      *     }
      *   });
      *
+     * @signature defineStaticWithArguments(methodName, methodFn)
+     * @param {Object} methods - Methods to be defined.
+     * @param {string} methodName - Name of a single method to be defined.
+     * @param {Function} methodFn - Function body of a single method to be defined.
      ***/
     defineWithOptionCollect('defineStaticWithArguments', STATIC, true);
 
     /***
-     * @method defineInstanceWithArguments(...)
-     * @returns Namespace
-     * @namespace
+     * @method defineInstanceWithArguments(methods)
+     * @returns SugarNamespace
+     * @namespace SugarNamespace
      * @short Defines instance methods that collect arguments.
      * @extra This method is identical to `defineInstance`, except that when
      *        defined methods are called, they will collect any arguments past
@@ -386,18 +421,24 @@
      *     }
      *   });
      *
+     * @signature defineInstanceWithArguments(methodName, methodFn)
+     * @param {Object} methods - Methods to be defined.
+     * @param {string} methodName - Name of a single method to be defined.
+     * @param {Function} methodFn - Function body of a single method to be defined.
      ***/
     defineWithOptionCollect('defineInstanceWithArguments', INSTANCE, true);
 
     /***
-     * @method defineStaticPolyfill(...)
-     * @returns Namespace
-     * @namespace
+     * @method defineStaticPolyfill(methods)
+     * @returns SugarNamespace
+     * @namespace SugarNamespace
      * @short Defines static methods that are mapped onto the native if they do
      *        not already exist.
      * @extra Intended only for use creating polyfills that follow the ECMAScript
      *        spec. Accepts either a single object mapping names to functions, or
-     *        name and function as two arguments.
+     *        name and function as two arguments. Note that polyfill methods will
+     *        be immediately mapped onto their native prototype regardless of the
+     *        use of `extend`.
      *
      * @example
      *
@@ -407,16 +448,21 @@
      *     }
      *   });
      *
+     * @signature defineStaticPolyfill(methodName, methodFn)
+     * @param {Object} methods - Methods to be defined.
+     * @param {string} methodName - Name of a single method to be defined.
+     * @param {Function} methodFn - Function body of a single method to be defined.
      ***/
     setProperty(sugarNamespace, 'defineStaticPolyfill', function(arg1, arg2, arg3) {
       var opts = collectDefineOptions(arg1, arg2, arg3);
       extendNative(globalContext[name], opts.methods, true, opts.last);
+      return sugarNamespace;
     });
 
     /***
-     * @method defineInstancePolyfill(...)
-     * @returns Namespace
-     * @namespace
+     * @method defineInstancePolyfill(methods)
+     * @returns SugarNamespace
+     * @namespace SugarNamespace
      * @short Defines instance methods that are mapped onto the native prototype
      *        if they do not already exist.
      * @extra Intended only for use creating polyfills that follow the ECMAScript
@@ -424,7 +470,8 @@
      *        name and function as two arguments. This method differs from
      *        `defineInstance` as there is no static signature (as the method
      *        is mapped as-is to the native), so it should refer to its `this`
-     *        object.
+     *        object. Note that polyfill methods will be immediately mapped onto
+     *        their native prototype regardless of the use of `extend`.
      *
      * @example
      *
@@ -434,6 +481,10 @@
      *     }
      *   });
      *
+     * @signature defineInstancePolyfill(methodName, methodFn)
+     * @param {Object} methods - Methods to be defined.
+     * @param {string} methodName - Name of a single method to be defined.
+     * @param {Function} methodFn - Function body of a single method to be defined.
      ***/
     setProperty(sugarNamespace, 'defineInstancePolyfill', function(arg1, arg2, arg3) {
       var opts = collectDefineOptions(arg1, arg2, arg3);
@@ -442,22 +493,27 @@
       forEachProperty(opts.methods, function(fn, methodName) {
         defineChainableMethod(sugarNamespace, methodName, fn);
       });
+      return sugarNamespace;
     });
 
     /***
-     * @method alias(<toName>, <fromName>)
-     * @returns Namespace
-     * @namespace
+     * @method alias(toName, from)
+     * @returns SugarNamespace
+     * @namespace SugarNamespace
      * @short Aliases one Sugar method to another.
      *
      * @example
      *
      *   Sugar.Array.alias('all', 'every');
      *
+     * @signature alias(toName, fn)
+     * @param {string} toName - Name for new method.
+     * @param {string|Function} from - Method to alias, or string shortcut.
      ***/
     setProperty(sugarNamespace, 'alias', function(name, source) {
       var method = typeof source === 'string' ? sugarNamespace[source] : source;
       setMethod(sugarNamespace, name, method);
+      return sugarNamespace;
     });
 
     // Each namespace can extend only itself through its .extend method.
@@ -707,7 +763,7 @@
 
   function disambiguateMethod(methodName) {
     var fn = function() {
-      var raw = this.raw, sugarNamespace, fn;
+      var raw = this.raw, sugarNamespace;
       if (raw != null) {
         // Find the Sugar namespace for this unknown.
         sugarNamespace = namespacesByClassString[classToString(raw)];
@@ -720,16 +776,7 @@
         sugarNamespace = Sugar.Object;
       }
 
-      fn = new sugarNamespace(raw)[methodName];
-
-      if (fn.disambiguate) {
-        // If the method about to be called on this chainable is
-        // itself a disambiguation method, then throw an error to
-        // prevent infinite recursion.
-        throw new TypeError('Cannot resolve namespace for ' + raw);
-      }
-
-      return fn.apply(this, arguments);
+      return new sugarNamespace(raw)[methodName].apply(this, arguments);
     };
     fn.disambiguate = true;
     return fn;
@@ -789,6 +836,7 @@
     }
   };
 
+  // istanbul ignore next
   function definePropertyShim(obj, prop, descriptor) {
     obj[prop] = descriptor.value;
   }
@@ -944,6 +992,7 @@
     }
 
     function buildClassCheck(className, globalObject) {
+      // istanbul ignore if
       if (globalObject && isClass(new globalObject, 'Object')) {
         return getConstructorClassCheck(globalObject);
       } else {
@@ -951,6 +1000,10 @@
       }
     }
 
+    // Map and Set may be [object Object] in certain IE environments.
+    // In this case we need to perform a check using the constructor
+    // instead of Object.prototype.toString.
+    // istanbul ignore next
     function getConstructorClassCheck(obj) {
       var ctorStr = String(obj);
       return function(obj) {
@@ -1058,11 +1111,20 @@
       return obj[name];
     }
 
-    function setOption(name, val) {
-      if (val === null) {
-        val = defaults[name];
+    function setOption(arg1, arg2) {
+      var options;
+      if (arguments.length === 1) {
+        options = arg1;
+      } else {
+        options = {};
+        options[arg1] = arg2;
       }
-      obj[name] = val;
+      forEachProperty(options, function(val, name) {
+        if (val === null) {
+          val = defaults[name];
+        }
+        obj[name] = val;
+      });
     }
 
     defineAccessor(namespace, 'getOption', getOption);
@@ -1347,6 +1409,7 @@
     if (isPrimitive(obj)) {
       obj = Object(obj);
     }
+    // istanbul ignore if
     if (NO_KEYS_IN_STRING_OBJECTS && isString(obj)) {
       forceStringCoercion(obj);
     }
@@ -1355,6 +1418,7 @@
 
   // Force strings to have their indexes set in
   // environments that don't do this automatically.
+  // istanbul ignore next
   function forceStringCoercion(obj) {
     var i = 0, chr;
     while (chr = obj.charAt(i)) {
@@ -1475,6 +1539,8 @@
     indexes.sort(function(a, b) {
       var aLoop = a > fromIndex;
       var bLoop = b > fromIndex;
+      // This block cannot be reached unless ES5 methods are being shimmed.
+      // istanbul ignore if
       if (aLoop !== bLoop) {
         return aLoop ? -1 : 1;
       }
@@ -1558,6 +1624,7 @@
     return -1;
   }
 
+  // istanbul ignore next
   var trunc = Math.trunc || function(n) {
     if (n === 0 || !isFinite(n)) return n;
     return n < 0 ? ceil(n) : floor(n);
@@ -1813,6 +1880,7 @@
       if (hasOwn(memo, key)) {
         return memo[key];
       }
+      // istanbul ignore if
       if (counter === INTERNAL_MEMOIZE_LIMIT) {
         memo = {};
         counter = 0;
@@ -1852,10 +1920,10 @@
   defineInstancePolyfill(sugarString, {
 
     /***
-     * @method includes(<search>, [pos] = 0)
+     * @method includes(search, [pos] = 0)
      * @returns Boolean
      * @polyfill ES6
-     * @short Returns true if <search> is contained within the string.
+     * @short Returns true if `search` is contained within the string.
      * @extra Search begins at [pos], which defaults to the beginning of the
      *        string. Sugar enhances this method to allow matching a regex.
      *
@@ -1875,10 +1943,10 @@
     },
 
     /***
-     * @method startsWith(<search>, [pos] = 0)
+     * @method startsWith(search, [pos] = 0)
      * @returns Boolean
      * @polyfill ES6
-     * @short Returns true if the string starts with substring <search>.
+     * @short Returns true if the string starts with substring `search`.
      * @extra Search begins at [pos], which defaults to the entire string length.
      *
      * @example
@@ -1908,10 +1976,10 @@
     },
 
     /***
-     * @method endsWith(<search>, [pos] = length)
+     * @method endsWith(search, [pos] = length)
      * @returns Boolean
      * @polyfill ES6
-     * @short Returns true if the string ends with substring <search>.
+     * @short Returns true if the string ends with substring `search`.
      * @extra Search ends at [pos], which defaults to the entire string length.
      *
      * @example
@@ -1967,7 +2035,7 @@
   defineStaticPolyfill(sugarNumber, {
 
     /***
-     * @method isNaN(<value>)
+     * @method isNaN(value)
      * @returns Boolean
      * @polyfill ES6
      * @static
@@ -1997,15 +2065,15 @@
   defineStaticPolyfill(sugarArray, {
 
     /***
-     * @method from(<a>, [map], [context])
+     * @method from(a, [mapFn], [context])
      * @returns Mixed
      * @polyfill ES6
      * @static
      * @short Creates an array from an array-like object.
-     * @extra If a function is passed for [map], it will be map each element of
-     *        the array. [context] is the `this` object if passed.
+     * @extra If [mapFn] is passed, it will be map each element of the array.
+     *        [context] is the `this` object if passed.
      *
-     * @callback map
+     * @callback mapFn
      *
      *   el   The element of the current iteration.
      *   i    The index of the current iteration.
@@ -2018,10 +2086,10 @@
      ***/
     'from': function(a) {
       // Force compiler to respect argument length.
-      var argLen = arguments.length, map = arguments[1], context = arguments[2];
+      var argLen = arguments.length, mapFn = arguments[1], context = arguments[2];
       var len, arr;
-      if (isDefined(map)) {
-        assertCallable(map);
+      if (isDefined(mapFn)) {
+        assertCallable(mapFn);
       }
       a = getCoercedObject(a);
       len = trunc(max(0, a.length || 0));
@@ -2035,7 +2103,7 @@
         arr = new Array(len);
       }
       for (var i = 0; i < len; i++) {
-        setProperty(arr, i, isDefined(map) ? map.call(context, a[i], i) : a[i], true);
+        setProperty(arr, i, isDefined(mapFn) ? mapFn.call(context, a[i], i) : a[i], true);
       }
       return arr;
     }
@@ -2088,10 +2156,10 @@
   defineInstancePolyfill(sugarArray, {
 
     /***
-     * @method includes(<search>, [fromIndex] = 0)
+     * @method includes(search, [fromIndex] = 0)
      * @returns Boolean
      * @polyfill ES7
-     * @short Returns true if <search> is contained within the array.
+     * @short Returns true if `search` is contained within the array.
      * @extra Search begins at [fromIndex], which defaults to the beginning of the
      *        array.
      *
@@ -2654,25 +2722,21 @@
   ];
 
   /***
-   * @method getOption(<name>)
+   * @method getOption(name)
    * @returns Mixed
    * @accessor
-   * @short Gets an option used interally by Date.
-   * @options
-   *
-   *   newDateInternal   Sugar's internal date constructor. By default this
-   *                     function simply returns a `new Date()`, however it can be
-   *                     overridden if needed.
-   *
+   * @short Gets an option used internally by Date.
    * @example
    *
    *   Sugar.Date.getOption('newDateInternal');
    *
+   * @param {string} name
+   *
    ***
-   * @method setOption(<name>, <value>)
+   * @method setOption(name, value)
    * @accessor
-   * @short Sets an option used interally by Date.
-   * @extra If <value> is `null`, the default value will be restored.
+   * @short Sets an option used internally by Date.
+   * @extra If `value` is `null`, the default value will be restored.
    * @options
    *
    *   newDateInternal   Sugar's internal date constructor. Date methods often
@@ -2691,6 +2755,12 @@
    *     d.setTime(d.getTime() + offset);
    *     return d;
    *   });
+   *
+   * @signature setOption(options)
+   * @param {DateOptions} options
+   * @param {string} name
+   * @param {any} value
+   * @option {Function} newDateInternal
    *
    ***/
   var _dateOptions = defineOptionsAccessor(sugarDate, DATE_OPTIONS);
@@ -4574,7 +4644,7 @@
   }
 
   /***
-   * @method [units]Since([d], [options])
+   * @method [units]Since(d, [options])
    * @returns Number
    * @short Returns the time since [d].
    * @extra [d] will accept a date object, timestamp, or string. If not specified,
@@ -4599,6 +4669,9 @@
    *   new Date().daysSince('1 week ago')         -> 7
    *   new Date().yearsSince('15 years ago')      -> 15
    *   lastYear.yearsAgo()                 -> 1
+   *
+   * @param {string|number|Date} d
+   * @param {DateCreateOptions} options
    *
    ***
    * @method [units]Ago()
@@ -4649,6 +4722,9 @@
    *   new Date().yearsUntil('15 years from now')      -> 15
    *   nextYear.yearsFromNow()                  -> 1
    *
+   * @param {string|number|Date} d
+   * @param {DateCreateOptions} options
+   *
    ***
    * @method [units]FromNow()
    * @returns Number
@@ -4671,9 +4747,9 @@
    *   nextYear.yearsFromNow()        -> 15
    *
    ***
-   * @method add[Units](<n>, [reset] = false)
+   * @method add[Units](n, [reset] = false)
    * @returns Date
-   * @short Adds <n> units to the date. If [reset] is true, all lower units will
+   * @short Adds `n` units to the date. If [reset] is true, all lower units will
    *        be reset.
    * @extra This method modifies the date! Note that in the case of `addMonths`,
    *        the date may fall on a date that doesn't exist (i.e. February 30). In
@@ -4696,8 +4772,11 @@
    *   new Date().addDays(5)         -> current time + 5 days
    *   new Date().addDays(5, true)   -> current time + 5 days (time reset)
    *
+   * @param {number} n
+   * @param {boolean} [reset]
+   *
    ***
-   * @method isLast[Unit]([locale])
+   * @method isLast[Unit]([localeCode])
    * @returns Boolean
    * @short Returns true if the date is last week, month, or year.
    * @extra This method takes an optional locale code for `isLastWeek`, which is
@@ -4716,8 +4795,10 @@
    *   yesterday.isLastMonth() -> probably not...
    *   yesterday.isLastYear()  -> even less likely...
    *
+   * @param {string} [localeCode]
+   *
    ***
-   * @method isThis[Unit]([locale])
+   * @method isThis[Unit]([localeCode])
    * @returns Boolean
    * @short Returns true if the date is this week, month, or year.
    * @extra This method takes an optional locale code for `isThisWeek`, which is
@@ -4736,8 +4817,10 @@
    *   tomorrow.isThisMonth() -> probably...
    *   tomorrow.isThisYear()  -> signs point to yes...
    *
+   * @param {string} [localeCode]
+   *
    ***
-   * @method isNext[Unit]([locale])
+   * @method isNext[Unit]([localeCode])
    * @returns Boolean
    * @short Returns true if the date is next week, month, or year.
    * @extra This method takes an optional locale code for `isNextWeek`, which is
@@ -4756,8 +4839,10 @@
    *   tomorrow.isNextMonth() -> probably not...
    *   tomorrow.isNextYear()  -> even less likely...
    *
+   * @param {string} [localeCode]
+   *
    ***
-   * @method beginningOf[Unit]([locale])
+   * @method beginningOf[Unit]([localeCode])
    * @returns Date
    * @short Sets the date to the beginning of the appropriate unit.
    * @extra This method modifies the date! A locale code can be passed for
@@ -4777,8 +4862,10 @@
    *   new Date().beginningOfMonth() -> the beginning of the month
    *   new Date().beginningOfYear()  -> the beginning of the year
    *
+   * @param {string} [localeCode]
+   *
    ***
-   * @method endOf[Unit]([locale])
+   * @method endOf[Unit]([localeCode])
    * @returns Date
    * @short Sets the date to the end of the appropriate unit.
    * @extra This method modifies the date! A locale code can be passed for
@@ -4797,6 +4884,8 @@
    *   new Date().endOfWeek()  -> the end of the week
    *   new Date().endOfMonth() -> the end of the month
    *   new Date().endOfYear()  -> the end of the year
+   *
+   * @param {string} [localeCode]
    *
    ***/
   function buildDateUnitMethods() {
@@ -4900,7 +4989,7 @@
   defineStatic(sugarDate, {
 
     /***
-     * @method create(<d>, [options])
+     * @method create(d, [options])
      * @returns Date
      * @static
      * @short Alternate date constructor which accepts text formats, a timestamp,
@@ -4938,11 +5027,11 @@
      *              different from `fromUTC`, which parses a string as UTC, but
      *              does not set this flag.
      *
+     *   clone      If `true` and `d` is a date, it will be cloned.
+     *
      *   params     An optional object that is populated with properties that are
      *              parsed from string input. This option is useful when parsed
      *              properties need to be retained.
-     *
-     *   clone      Clones <d> if it is a date.
      *
      * @example
      *
@@ -4958,13 +5047,24 @@
      *   Date.create('August', {future: true})    -> August of this or next year
      *   Date.create('Thursday', {fromUTC: true}) -> Thursday at 12:00am UTC time
      *
+     * @param {string|number|Date} d
+     * @param {DateCreateOptions} [options]
+     *
+     * @option {string} [locale]
+     * @option {boolean} [past]
+     * @option {boolean} [future]
+     * @option {boolean} [fromUTC]
+     * @option {boolean} [setUTC]
+     * @option {boolean} [clone]
+     * @option {Object} [params]
+     *
      ***/
     'create': function(d, options) {
       return createDate(d, options);
     },
 
     /***
-     * @method getLocale([code] = current)
+     * @method getLocale([localeCode] = current)
      * @returns Locale
      * @static
      * @short Gets the locale object for the given code, or the current locale.
@@ -4978,6 +5078,8 @@
      *   Date.getLocale()     -> Returns the current locale
      *   Date.getLocale('en') -> Returns the EN locale
      *
+     * @param {string} [localeCode]
+     *
      ***/
     'getLocale': function(code) {
       return localeManager.get(code, !code);
@@ -4985,7 +5087,7 @@
 
     /***
      * @method getAllLocales()
-     * @returns Object
+     * @returns Array<Locale>
      * @static
      * @short Returns all available locales as an object.
      * @extra For more, see `date locales`.
@@ -5000,7 +5102,7 @@
 
     /***
      * @method getAllLocaleCodes()
-     * @returns Array
+     * @returns string[]
      * @static
      * @short Returns all available locale codes as an array of strings.
      * @extra For more, see `date locales`.
@@ -5014,7 +5116,7 @@
     },
 
     /***
-     * @method setLocale(<code>)
+     * @method setLocale(localeCode)
      * @returns Locale
      * @static
      * @short Sets the current locale to be used with dates.
@@ -5024,13 +5126,15 @@
      *
      *   Date.setLocale('en')
      *
+     * @param {string} localeCode
+     *
      ***/
     'setLocale': function(code) {
       return localeManager.set(code);
     },
 
     /***
-     * @method addLocale(<code>, <def>)
+     * @method addLocale(localeCode, def)
      * @returns Locale
      * @static
      * @short Adds a locale definition to the locales understood by Sugar.
@@ -5040,20 +5144,25 @@
      *
      *   Date.addLocale('eo', {})
      *
+     * @param {string} localeCode
+     * @param {Object} def
+     *
      ***/
     'addLocale': function(code, set) {
       return localeManager.add(code, set);
     },
 
     /***
-     * @method removeLocale(<code>)
+     * @method removeLocale(localeCode)
      * @returns Locale
      * @static
-     * @short Deletes the the locale by <code> from Sugar's known locales.
+     * @short Deletes the the locale by `localeCode` from Sugar's known locales.
      * @extra For more, see `date locales`.
      * @example
      *
      *   Date.removeLocale('foo')
+     *
+     * @param {string} localeCode
      *
      ***/
     'removeLocale': function(code) {
@@ -5065,7 +5174,7 @@
   defineInstanceWithArguments(sugarDate, {
 
     /***
-     * @method set(<set>, [reset] = false)
+     * @method set(set, [reset] = false)
      * @returns Date
      * @short Sets the date object.
      * @extra This method accepts multiple formats including a single number as
@@ -5079,6 +5188,18 @@
      *   new Date().set(86400000)                    -> 1 day after Jan 1, 1970
      *   new Date().set({year:2004,month:6}, true)   -> June 1, 2004, 00:00:00.000
      *
+     * @signature set(milliseconds)
+     * @signature set(year, month, [day], [hour], [minute], [second], [millliseconds])
+     * @param {Object} set
+     * @param {boolean} [reset]
+     * @param {number} year
+     * @param {number} month
+     * @param {number} [day]
+     * @param {number} [hour]
+     * @param {number} [minute]
+     * @param {number} [second]
+     * @param {number} [milliseconds]
+     *
      ***/
     'set': function(d, args) {
       args = collectDateArguments(args);
@@ -5086,10 +5207,10 @@
     },
 
     /***
-     * @method advance(<set>, [reset] = false)
+     * @method advance(set, [reset] = false)
      * @returns Date
      * @short Shifts the date forward.
-     * @extra <set> accepts multiple formats including an object, a string in the
+     * @extra `set` accepts multiple formats including an object, a string in the
      *        format "3 days", a single number as milliseconds, or enumerated
      *        parameters (as with the Date constructor). If [reset] is `true`, any
      *        units more specific than those passed will be reset. This method
@@ -5102,13 +5223,25 @@
      *   new Date().advance(0, 2, 3)     -> 2 months 3 days in the future
      *   new Date().advance(86400000)    -> 1 day in the future
      *
+     * @signature advance(milliseconds)
+     * @signature advance(year, month, [day], [hour], [minute], [second], [millliseconds])
+     * @param {string|Object} set
+     * @param {boolean} [reset]
+     * @param {number} year
+     * @param {number} month
+     * @param {number} [day]
+     * @param {number} [hour]
+     * @param {number} [minute]
+     * @param {number} [second]
+     * @param {number} [milliseconds]
+     *
      ***/
     'advance': function(d, args) {
       return advanceDateWithArgs(d, args, 1);
     },
 
     /***
-     * @method rewind(<set>, [reset] = false)
+     * @method rewind(set, [reset] = false)
      * @returns Date
      * @short Shifts the date backward.
      * @extra [set] accepts multiple formats including an object, a string in the
@@ -5124,6 +5257,18 @@
      *   new Date().rewind(0, 2, 3)     -> 2 months 3 days in the past
      *   new Date().rewind(86400000)    -> 1 day in the past
      *
+     * @signature advance(milliseconds)
+     * @signature advance(year, month, [day], [hour], [minute], [second], [millliseconds])
+     * @param {string|Object} set
+     * @param {boolean} [reset]
+     * @param {number} year
+     * @param {number} month
+     * @param {number} [day]
+     * @param {number} [hour]
+     * @param {number} [minute]
+     * @param {number} [second]
+     * @param {number} [milliseconds]
+     *
      ***/
     'rewind': function(d, args) {
       return advanceDateWithArgs(d, args, -1);
@@ -5134,7 +5279,7 @@
   defineInstance(sugarDate, {
 
     /***
-     * @method get(<d>, [options])
+     * @method get(d, [options])
      * @returns Date
      * @short Gets a new date using the current one as a starting point.
      * @extra This method is identical to `Date.create`, except that relative
@@ -5147,13 +5292,16 @@
      *   nextYear.get('monday') -> monday of the week exactly 1 year from now
      *   millenium.get('2 years before') -> 2 years before Jan 1, 2000.
      *
+     * @param {string|number|Date} d
+     * @param {DateCreateOptions} options
+     *
      ***/
     'get': function(date, d, options) {
       return createDateWithContext(date, d, options);
     },
 
     /***
-     * @method setWeekday(<dow>)
+     * @method setWeekday(dow)
      * @short Sets the weekday of the date, starting with Sunday at `0`.
      * @extra This method modifies the date!
      *
@@ -5162,13 +5310,15 @@
      *   d = new Date(); d.setWeekday(1); d; -> Monday of this week
      *   d = new Date(); d.setWeekday(6); d; -> Saturday of this week
      *
+     * @param {number} dow
+     *
      ***/
     'setWeekday': function(date, dow) {
       return setWeekday(date, dow);
     },
 
     /***
-     * @method setISOWeek(<num>)
+     * @method setISOWeek(num)
      * @short Sets the week (of the year) as defined by the ISO8601 standard.
      * @extra Note that this standard places Sunday at the end of the week (day 7).
      *        This method modifies the date!
@@ -5176,6 +5326,8 @@
      * @example
      *
      *   d = new Date(); d.setISOWeek(15); d; -> 15th week of the year
+     *
+     * @param {number} num
      *
      ***/
     'setISOWeek': function(date, num) {
@@ -5241,7 +5393,7 @@
     },
 
     /***
-     * @method getUTCOffset([iso])
+     * @method getUTCOffset([iso] = false)
      * @returns String
      * @short Returns a string representation of the offset from UTC time. If [iso]
      *        is true the offset will be in ISO8601 format.
@@ -5250,6 +5402,8 @@
      *
      *   new Date().getUTCOffset()     -> "+0900"
      *   new Date().getUTCOffset(true) -> "+09:00"
+     *
+     * @param {boolean} iso
      *
      ***/
     'getUTCOffset': function(date, iso) {
@@ -5270,6 +5424,8 @@
      *
      *   new Date().setUTC(true).long()  -> formatted with UTC methods
      *   new Date().setUTC(false).long() -> formatted without UTC methods
+     *
+     * @param {boolean} on
      *
      ***/
     'setUTC': function(date, on) {
@@ -5311,11 +5467,11 @@
     },
 
     /***
-     * @method isAfter(<d>, [margin] = 0)
+     * @method isAfter(d, [margin] = 0)
      * @returns Boolean
-     * @short Returns true if the date is after <d>.
-     * @extra [margin] is to allow extra margin of error in ms. <d> will accept
-     *        a date object, timestamp, or string. If not specified, <d> is
+     * @short Returns true if the date is after `d`.
+     * @extra [margin] is to allow extra margin of error in ms. `d` will accept
+     *        a date object, timestamp, or string. If not specified, `d` is
      *        assumed to be now. See `create` for formats.
      *
      * @example
@@ -5323,17 +5479,20 @@
      *   today.isAfter('tomorrow')  -> false
      *   today.isAfter('yesterday') -> true
      *
+     * @param {string|number|Date} d
+     * @param {number} [margin]
+     *
      ***/
     'isAfter': function(date, d, margin) {
       return date.getTime() > createDate(d).getTime() - (margin || 0);
     },
 
     /***
-     * @method isBefore(<d>, [margin] = 0)
+     * @method isBefore(d, [margin] = 0)
      * @returns Boolean
-     * @short Returns true if the date is before <d>.
-     * @extra [margin] is to allow extra margin of error in ms. <d> will accept
-     *        a date object, timestamp, or text format. If not specified, <d> is
+     * @short Returns true if the date is before `d`.
+     * @extra [margin] is to allow extra margin of error in ms. `d` will accept
+     *        a date object, timestamp, or text format. If not specified, `d` is
      *        assumed to be now. See `create` for formats.
      *
      * @example
@@ -5341,17 +5500,20 @@
      *   today.isBefore('tomorrow')  -> true
      *   today.isBefore('yesterday') -> false
      *
+     * @param {string|number|Date} d
+     * @param {number} [margin]
+     *
      ***/
     'isBefore': function(date, d, margin) {
       return date.getTime() < createDate(d).getTime() + (margin || 0);
     },
 
     /***
-     * @method isBetween(<d1>, <d2>, [margin] = 0)
+     * @method isBetween(d1, d2, [margin] = 0)
      * @returns Boolean
-     * @short Returns true if the date is later or equal to <d1> and before or
-     *        equal to <d2>.
-     * @extra [margin] is to allow extra margin of error in ms. <d1> and <d2> will
+     * @short Returns true if the date is later or equal to `d1` and before or
+     *        equal to `d2`.
+     * @extra [margin] is to allow extra margin of error in ms. `d1` and `d2` will
      *        accept a date object, timestamp, or text format. If not specified,
      *        they are assumed to be now.  See `create` for formats.
      *
@@ -5359,6 +5521,10 @@
      *
      *   new Date().isBetween('yesterday', 'tomorrow')    -> true
      *   new Date().isBetween('last year', '2 years ago') -> false
+     *
+     * @param {string|number|Date} d1
+     * @param {string|number|Date} d2
+     * @param {number} [margin]
      *
      ***/
     'isBetween': function(date, d1, d2, margin) {
@@ -5402,12 +5568,12 @@
     },
 
     /***
-     * @method format([f], [locale] = currentLocale)
+     * @method format([f], [localeCode] = currentLocaleCode)
      * @returns String
-     * @short Returns the date as a string using the format <f>.
-     * @extra <f> is a string that contains tokens in either LDML format using
-     *        curly braces, or "strftime" format using a percent sign. If <f> is
-     *        not specified, the locale specific `{long}` format is used. [locale]
+     * @short Returns the date as a string using the format `f`.
+     * @extra `f` is a string that contains tokens in either LDML format using
+     *        curly braces, or "strftime" format using a percent sign. If `f` is
+     *        not specified, the locale specific `{long}` format is used. [localeCode]
      *        is a locale code to use (if not specified the current locale is
      *        used). For more, see `date formatting`.
      *
@@ -5421,49 +5587,60 @@
      *   new Date().format('ISO8601')               -> ex. 2011-07-05 12:24:55.528Z
      *   new Date().format('{Weekday}', 'ja')       -> ex. 先週
      *
+     * @param {string} f
+     * @param {string} [localeCode]
+     *
      ***
-     * @method short([locale] = currentLocale)
+     * @method short([localeCode] = currentLocaleCode)
      * @returns String
      * @short Outputs the date in the short format for the current locale.
-     * @extra [locale] overrides the current locale if passed.
+     * @extra [localeCode] overrides the current locale code if passed.
      *
      * @example
      *
      *   new Date().short()     -> ex. 02/13/2016
      *   new Date().short('fi') -> ex. 13.2.2016
      *
+     * @param {string} [localeCode]
+     *
      ***
-     * @method medium([locale] = currentLocale)
+     * @method medium([localeCode] = currentLocaleCode)
      * @returns String
      * @short Outputs the date in the medium format for the current locale.
-     * @extra [locale] overrides the current locale if passed.
+     * @extra [localeCode] overrides the current locale code if passed.
      *
      * @example
      *
      *   new Date().medium()     -> ex. February 13, 2016
      *   new Date().medium('ja') -> ex. 2016年2月13日
      *
+     * @param {string} [localeCode]
+     *
      ***
-     * @method long([locale] = currentLocale)
+     * @method long([localeCode] = currentLocaleCode)
      * @returns String
      * @short Outputs the date in the long format for the current locale.
-     * @extra [locale] overrides the current locale if passed.
+     * @extra [localeCode] overrides the current locale code if passed.
      *
      * @example
      *
      *   new Date().long()     -> ex. February 13, 2016 6:22 PM
      *   new Date().long('es') -> ex. 13 de febrero de 2016 18:22
      *
+     * @param {string} [localeCode]
+     *
      ***
-     * @method full([locale] = currentLocale)
+     * @method full([localeCode] = currentLocaleCode)
      * @returns String
      * @short Outputs the date in the full format for the current locale.
-     * @extra [locale] overrides the current locale if passed.
+     * @extra [localeCode] overrides the current locale code if passed.
      *
      * @example
      *
      *   new Date().full()     -> ex. Saturday, February 13, 2016 6:23 PM
      *   new Date().full('ru') -> ex. суббота, 13 февраля 2016 г., 18:23
+     *
+     * @param {string} [localeCode]
      *
      ***/
     'format': function(date, f, localeCode) {
@@ -5471,17 +5648,17 @@
     },
 
     /***
-     * @method relative([locale] = currentLocale, [fn])
+     * @method relative([localeCode] = currentLocaleCode, [relativeFn])
      * @returns String
      * @short Returns the date in a text format relative to the current time,
      *        such as "5 minutes ago".
-     * @extra [fn] is a function that can be passed to provide more granular
+     * @extra [relativeFn] is a function that can be passed to provide more granular
      *        control over the resulting string. Its return value will be passed
      *        to `format`. If nothing is returned, the relative format will be
-     *        used. [fn] may be passed as the first argument in place of [locale].
-     *        For more about formats, see `date formatting`.
+     *        used. [relativeFn] can be passed as the first argument in place of
+     *        [locale]. For more about formats, see `date formatting`.
      *
-     * @callback fn
+     * @callback relativeFn
      *
      *   num   The offset number in `unit`.
      *   unit  A numeric representation of the unit that `num` is in, starting at
@@ -5501,23 +5678,36 @@
      *     }
      *   }); -> ex. 5 months ago
      *
+     * @signature relative([relativeFn])
+     * @param {string} [localeCode]
+     * @param {relativeFn} [relativeFn]
+     * @callbackParam {number} num
+     * @callbackParam {number} unit
+     * @callbackParam {number} ms
+     * @callbackParam {Locale} loc
+     * @callbackReturns {string} relativeFn
+     *
      ***/
-    'relative': function(date, localeCode, fn) {
-      return dateRelative(date, null, localeCode, fn);
+    'relative': function(date, localeCode, relativeFn) {
+      return dateRelative(date, null, localeCode, relativeFn);
     },
 
     /***
-     * @method relativeTo(<d>, [locale] = currentLocale)
+     * @method relativeTo(d, [localeCode] = currentLocaleCode)
      * @returns String
-     * @short Returns the date in a text format relative to <d>, such as
+     * @short Returns the date in a text format relative to `d`, such as
      *        "5 minutes".
-     * @extra <d> will accept a date object, timestamp, or string. [localeCode]
-     *        applies to the method output, not <d>.
+     * @extra `d` will accept a date object, timestamp, or string. [localeCode]
+     *        applies to the method output, not `d`.
      *
      * @example
      *
      *   jan.relativeTo(jul)                 -> 5 months
      *   yesterday.relativeTo('today', 'ja') -> 一日
+     *
+     * @param {string|number|Date} d
+     * @param {string} localeCode
+     *
      *
      ***/
     'relativeTo': function(date, d, localeCode) {
@@ -5525,13 +5715,13 @@
     },
 
     /***
-     * @method is(<f>, [margin] = 0)
+     * @method is(d, [margin] = 0)
      * @returns Boolean
-     * @short Returns true if the date matches <f>.
-     * @extra <f> will accept a date object, timestamp, or text format. In the
+     * @short Returns true if the date matches `d`.
+     * @extra `d` will accept a date object, timestamp, or text format. In the
      *        case of objects and text formats, `is` will additionally compare
      *        based on the precision implied in the input. In the case of text
-     *        formats <f> will use the currently set locale. [margin] allows an
+     *        formats `d` will use the currently set locale. [margin] allows an
      *        extra margin of error in milliseconds. See `create` for formats.
      *
      * @example
@@ -5544,13 +5734,16 @@
      *   new Date().is(-6106093200000)       -> false
      *   new Date().is(new Date(1776, 6, 4)) -> false
      *
+     * @param {string|number|Date} d
+     * @param {number} [margin]
+     *
      ***/
     'is': function(date, d, margin) {
       return fullCompareDate(date, d, margin);
     },
 
     /***
-     * @method reset([unit] = 'day', [localeCode])
+     * @method reset([unit] = 'day', [localeCode] = currentLocaleCode)
      * @returns Date
      * @short Resets the date to the beginning of [unit].
      * @extra This method effectively resets all smaller units, pushing the date
@@ -5562,6 +5755,9 @@
      *
      *   new Date().reset('day')   -> Beginning of the day
      *   new Date().reset('month') -> Beginning of the month
+     *
+     * @param {string} [unit]
+     * @param {string} [localeCode]
      *
      ***/
     'reset': function(date, unit, localeCode) {
@@ -6214,11 +6410,11 @@
   defineInstance(sugarString, {
 
     /***
-     * @method at(<index>, [loop] = false)
+     * @method at(index, [loop] = false)
      * @returns Mixed
      * @short Gets the character(s) at a given index.
      * @extra When [loop] is true, overshooting the end of the string will begin
-     *        counting from the other end. <index> may be negative. If <index> is
+     *        counting from the other end. `index` may be negative. If `index` is
      *        an array, multiple elements will be returned.
      * @example
      *
@@ -6228,6 +6424,9 @@
      *   'jumpy'.at(5, true)       -> 'j'
      *   'jumpy'.at(-1)            -> 'y'
      *   'lucky charms'.at([2, 4]) -> ['u','k']
+     *
+     * @param {number|Array<number>} index
+     * @param {boolean} [loop]
      *
      ***/
     'at': function(str, index, loop) {
@@ -6246,6 +6445,8 @@
      *   'a, b, and c'.escapeURL() -> 'a,%20b,%20and%20c'
      *   'http://foo.com/'.escapeURL(true) -> 'http%3A%2F%2Ffoo.com%2F'
      *
+     * @param {boolean} [param]
+     *
      ***/
     'escapeURL': function(str, param) {
       return param ? encodeURIComponent(str) : encodeURI(str);
@@ -6262,6 +6463,8 @@
      *
      *   'http%3A%2F%2Ffoo.com%2F'.unescapeURL()     -> 'http://foo.com/'
      *   'http%3A%2F%2Ffoo.com%2F'.unescapeURL(true) -> 'http%3A%2F%2Ffoo.com%2F'
+     *
+     * @param {boolean} [partial]
      *
      ***/
     'unescapeURL': function(str, param) {
@@ -6306,11 +6509,11 @@
      * @short Strips HTML tags from the string.
      * @extra [tag] may be an array of tags or 'all', in which case all tags will
      *        be stripped. [replace] will replace what was stripped, and may be a
-     *        string or a function to handle replacements. If this function returns
-     *        a string, then it will be used for the replacement. If it returns
-     *        `undefined`, the tags will be stripped normally.
+     *        string or a function of type `replaceFn` to handle replacements. If
+     *        this function returns a string, then it will be used for the
+     *        replacement. If it returns `undefined`, the tags will be stripped normally.
      *
-     * @callback replace
+     * @callback replaceFn
      *
      *   tag     The tag name.
      *   inner   The tag content.
@@ -6325,6 +6528,14 @@
      *     return '|';
      *   }); -> '|hi!|'
      *
+     * @param {string} tag
+     * @param {string|replaceFn} replace
+     * @callbackParam {string} tag
+     * @callbackParam {string} inner
+     * @callbackParam {string} attr
+     * @callbackParam {string} outer
+     * @callbackReturns {string} replaceFn
+     *
      ***/
     'stripTags': function(str, tag, replace) {
       return replaceTags(str, tag, replace, true);
@@ -6336,11 +6547,11 @@
      * @short Removes HTML tags and their contents from the string.
      * @extra [tag] may be an array of tags or 'all', in which case all tags will
      *        be removed. [replace] will replace what was removed, and may be a
-     *        string or a function to handle replacements. If this function returns
-     *        a string, then it will be used for the replacement. If it returns
-     *        `undefined`, the tags will be removed normally.
+     *        string or a function of type `replaceFn` to handle replacements. If
+     *        this function returns a string, then it will be used for the
+     *        replacement. If it returns `undefined`, the tags will be removed normally.
      *
-     * @callback replace
+     * @callback replaceFn
      *
      *   tag     The tag name.
      *   inner   The tag content.
@@ -6354,6 +6565,14 @@
      *   '<p>hi!</p>'.removeTags('p', function(all, content) {
      *     return 'bye!';
      *   }); -> 'bye!'
+     *
+     * @param {string} tag
+     * @param {string|replaceFn} replace
+     * @callbackParam {string} tag
+     * @callbackParam {string} inner
+     * @callbackParam {string} attr
+     * @callbackParam {string} outer
+     * @callbackReturns {string} replaceFn
      *
      ***/
     'removeTags': function(str, tag, replace) {
@@ -6397,15 +6616,15 @@
     },
 
     /***
-     * @method forEach([search], [fn])
+     * @method forEach([search], [eachFn])
      * @returns Array
-     * @short Runs callback [fn] against every character in the string, or every
-     *        every occurence of [search] if it is provided.
+     * @short Runs callback [eachFn] against every character in the string, or
+     *        every every occurence of [search] if it is provided.
      * @extra Returns an array of matches. [search] may be either a string or
-     *        regex, and defaults to every character in the string. If [fn]
+     *        regex, and defaults to every character in the string. If [eachFn]
      *        returns false at any time it will break out of the loop.
      *
-     * @callback fn
+     * @callback eachFn
      *
      *   match  The current match.
      *   i      The current index.
@@ -6420,19 +6639,26 @@
      *     // Called twice: "u", "y"
      *   });
      *
+     * @signature forEach(eachFn)
+     * @param {string|RegExp} [search]
+     * @param {eachFn} [eachFn]
+     * @callbackParam {string} match
+     * @callbackParam {number} i
+     * @callbackParam {Array<string>} arr
+     *
      ***/
-    'forEach': function(str, search, fn) {
-      return stringEach(str, search, fn);
+    'forEach': function(str, search, eachFn) {
+      return stringEach(str, search, eachFn);
     },
 
     /***
-     * @method chars([fn])
+     * @method chars([eachCharFn])
      * @returns Array
-     * @short Runs [fn] against each character in the string, and returns an array.
+     * @short Runs [eachCharFn] against each character in the string, and returns an array.
      *
-     * @callback fn
+     * @callback eachCharFn
      *
-     *   code  The current character.
+     *   char  The current character.
      *   i     The current index.
      *   arr   An array of all characters.
      *
@@ -6443,18 +6669,23 @@
      *     // Called 5 times: "j","u","m","p","y"
      *   });
      *
+     * @param {eachCharFn} [eachCharFn]
+     * @callbackParam {string} char
+     * @callbackParam {number} i
+     * @callbackParam {Array<string>} arr
+     *
      ***/
-    'chars': function(str, search, fn) {
-      return stringEach(str, search, fn);
+    'chars': function(str, search, eachCharFn) {
+      return stringEach(str, search, eachCharFn);
     },
 
     /***
-     * @method words([fn])
+     * @method words([eachWordFn])
      * @returns Array
-     * @short Runs [fn] against each word in the string, and returns an array.
+     * @short Runs [eachWordFn] against each word in the string, and returns an array.
      * @extra A "word" is defined as any sequence of non-whitespace characters.
      *
-     * @callback fn
+     * @callback eachWordFn
      *
      *   word  The current word.
      *   i     The current index.
@@ -6467,17 +6698,22 @@
      *     // Called twice: "broken", "wear"
      *   });
      *
+     * @param {eachWordFn} [eachWordFn]
+     * @callbackParam {string} word
+     * @callbackParam {number} i
+     * @callbackParam {Array<string>} arr
+     *
      ***/
-    'words': function(str, fn) {
-      return stringEach(trim(str), /\S+/g, fn);
+    'words': function(str, eachWordFn) {
+      return stringEach(trim(str), /\S+/g, eachWordFn);
     },
 
     /***
-     * @method lines([fn])
+     * @method lines([eachLineFn])
      * @returns Array
-     * @short Runs [fn] against each line in the string, and returns an array.
+     * @short Runs [eachLineFn] against each line in the string, and returns an array.
      *
-     * @callback fn
+     * @callback eachLineFn
      *
      *   line  The current line.
      *   i     The current index.
@@ -6490,18 +6726,23 @@
      *     // Called once per line
      *   });
      *
+     * @param {eachLineFn} [eachLineFn]
+     * @callbackParam {string} line
+     * @callbackParam {number} i
+     * @callbackParam {Array<string>} arr
+     *
      ***/
-    'lines': function(str, fn) {
-      return stringEach(trim(str), /^.*$/gm, fn);
+    'lines': function(str, eachLineFn) {
+      return stringEach(trim(str), /^.*$/gm, eachLineFn);
     },
 
     /***
-     * @method codes([fn])
+     * @method codes([eachCodeFn])
      * @returns Array
-     * @short Runs callback [fn] against each character code in the string.
+     * @short Runs callback [eachCodeFn] against each character code in the string.
      *        Returns an array of character codes.
      *
-     * @callback fn
+     * @callback eachCodeFn
      *
      *   code  The current character code.
      *   i     The current index.
@@ -6514,20 +6755,27 @@
      *     // Called 5 times: 106, 117, 109, 112, 121
      *   });
      *
+     * @param {eachCodeFn} [eachCodeFn]
+     * @callbackParam {number} code
+     * @callbackParam {number} i
+     * @callbackParam {string} str
+     *
      ***/
-    'codes': function(str, fn) {
-      return stringCodes(str, fn);
+    'codes': function(str, eachCodeFn) {
+      return stringCodes(str, eachCodeFn);
     },
 
     /***
-     * @method shift(<n>)
+     * @method shift(n)
      * @returns Array
-     * @short Shifts each character in the string <n> places in the character map.
+     * @short Shifts each character in the string `n` places in the character map.
      *
      * @example
      *
      *   'a'.shift(1)  -> 'b'
      *   'ク'.shift(1) -> 'グ'
+     *
+     * @param {number} n
      *
      ***/
     'shift': function(str, n) {
@@ -6572,14 +6820,17 @@
     },
 
     /***
-     * @method insert(<str>, [index] = length)
+     * @method insert(str, [index] = length)
      * @returns String
-     * @short Adds <str> at [index]. Allows negative values.
+     * @short Adds `str` at [index]. Allows negative values.
      *
      * @example
      *
      *   'dopamine'.insert('e', 3)       -> dopeamine
      *   'spelling eror'.insert('r', -3) -> spelling error
+     *
+     * @param {string} str
+     * @param {number} [index]
      *
      ***/
     'insert': function(str, substr, index) {
@@ -6588,10 +6839,10 @@
     },
 
     /***
-     * @method remove(<f>)
+     * @method remove(f)
      * @returns String
-     * @short Removes the first occurrence of <f> in the string.
-     * @extra <f> can be a either case-sensitive string or a regex. In either case
+     * @short Removes the first occurrence of `f` in the string.
+     * @extra `f` can be a either case-sensitive string or a regex. In either case
      *        only the first match will be removed. To remove multiple occurrences,
      *        use `removeAll`.
      *
@@ -6600,16 +6851,18 @@
      *   'schfifty five'.remove('f')      -> 'schifty five'
      *   'schfifty five'.remove(/[a-f]/g) -> 'shfifty five'
      *
+     * @param {string|RegExp} f
+     *
      ***/
     'remove': function(str, f) {
       return str.replace(f, '');
     },
 
     /***
-     * @method removeAll(<f>)
+     * @method removeAll(f)
      * @returns String
-     * @short Removes any occurences of <f> in the string.
-     * @extra <f> can be either a case-sensitive string or a regex. In either case
+     * @short Removes any occurences of `f` in the string.
+     * @extra `f` can be either a case-sensitive string or a regex. In either case
      *        all matches will be removed. To remove only a single occurence, use
      *        `remove`.
      *
@@ -6617,6 +6870,8 @@
      *
      *   'schfifty five'.removeAll('f')     -> 'schity ive'
      *   'schfifty five'.removeAll(/[a-f]/) -> 'shity iv'
+     *
+     * @param {string|RegExp} f
      *
      ***/
     'removeAll': function(str, f) {
@@ -6665,6 +6920,8 @@
      *   'lucky charms'.from()   -> 'lucky charms'
      *   'lucky charms'.from(7)  -> 'harms'
      *
+     * @param {number} [index]
+     *
      ***/
     'from': function(str, from) {
       return str.slice(numberOrIndex(str, from, true));
@@ -6679,6 +6936,8 @@
      *
      *   'lucky charms'.to()   -> 'lucky charms'
      *   'lucky charms'.to(7)  -> 'lucky ch'
+     *
+     * @param {number} [index]
      *
      ***/
     'to': function(str, to) {
@@ -6730,6 +6989,8 @@
      *   'moz-border-radius'.camelize()      -> 'MozBorderRadius'
      *   'moz-border-radius'.camelize(false) -> 'mozBorderRadius'
      *   'http-method'.camelize()            -> 'HTTPMethod'
+     *
+     * @param {boolean} [upper]
      *
      ***/
     'camelize': function(str, upper) {
@@ -6788,11 +7049,11 @@
     },
 
     /***
-     * @method truncate(<length>, [from] = 'right', [ellipsis] = '...')
+     * @method truncate(length, [from] = 'right', [ellipsis] = '...')
      * @returns String
      * @short Truncates a string.
      * @extra [from] can be `'right'`, `'left'`, or `'middle'`. If the string is
-     *        shorter than <length>, [ellipsis] will not be added.
+     *        shorter than `length`, [ellipsis] will not be added.
      *
      * @example
      *
@@ -6800,17 +7061,21 @@
      *   'sittin on the dock'.truncate(10, 'left')   -> '...n the dock'
      *   'sittin on the dock'.truncate(10, 'middle') -> 'sitti... dock'
      *
+     * @param {number} length
+     * @param {string} [from]
+     * @param {string} [ellipsis]
+     *
      ***/
     'truncate': function(str, length, from, ellipsis) {
       return truncateString(str, length, from, ellipsis);
     },
 
     /***
-     * @method truncateOnWord(<length>, [from] = 'right', [ellipsis] = '...')
+     * @method truncateOnWord(length, [from] = 'right', [ellipsis] = '...')
      * @returns String
      * @short Truncates a string without splitting up words.
      * @extra [from] can be `'right'`, `'left'`, or `'middle'`. If the string is
-     *        shorter than <length>, [ellipsis] will not be added. A "word" is
+     *        shorter than `length`, [ellipsis] will not be added. A "word" is
      *        defined as any sequence of non-whitespace characters.
      *
      * @example
@@ -6818,20 +7083,27 @@
      *   'here we go'.truncateOnWord(5)         -> 'here...'
      *   'here we go'.truncateOnWord(5, 'left') -> '...we go'
      *
+     * @param {number} length
+     * @param {string} [from]
+     * @param {string} [ellipsis]
+     *
      ***/
     'truncateOnWord': function(str, length, from, ellipsis) {
       return truncateString(str, length, from, ellipsis, true);
     },
 
     /***
-     * @method pad(<num> = null, [padding] = ' ')
+     * @method pad(num, [padding] = ' ')
      * @returns String
-     * @short Pads the string out with [padding] to be exactly <num> characters.
+     * @short Pads the string out with [padding] to be exactly `num` characters.
      *
      * @example
      *
      *   'wasabi'.pad(8)      -> ' wasabi '
      *   'wasabi'.pad(8, '-') -> '-wasabi-'
+     *
+     * @param {number} num
+     * @param {string} [padding]
      *
      ***/
     'pad': function(str, num, padding) {
@@ -6844,15 +7116,18 @@
     },
 
     /***
-     * @method padLeft(<num> = null, [padding] = ' ')
+     * @method padLeft(num, [padding] = ' ')
      * @returns String
      * @short Pads the string out from the left with [padding] to be exactly
-     *        <num> characters.
+     *        `num` characters.
      *
      * @example
      *
      *   'wasabi'.padLeft(8)      -> '  wasabi'
      *   'wasabi'.padLeft(8, '-') -> '--wasabi'
+     *
+     * @param {number} num
+     * @param {string} [padding]
      *
      ***/
     'padLeft': function(str, num, padding) {
@@ -6861,15 +7136,18 @@
     },
 
     /***
-     * @method padRight(<num> = null, [padding] = ' ')
+     * @method padRight(num, [padding] = ' ')
      * @returns String
      * @short Pads the string out from the right with [padding] to be exactly
-     *        <num> characters.
+     *        `num` characters.
      *
      * @example
      *
      *   'wasabi'.padRight(8)      -> 'wasabi  '
      *   'wasabi'.padRight(8, '-') -> 'wasabi--'
+     *
+     * @param {number} num
+     * @param {string} [padding]
      *
      ***/
     'padRight': function(str, num, padding) {
@@ -6887,6 +7165,8 @@
      *   'lucky charms'.first()  -> 'l'
      *   'lucky charms'.first(3) -> 'luc'
      *
+     * @param {number} [n]
+     *
      ***/
     'first': function(str, num) {
       if (isUndefined(num)) num = 1;
@@ -6902,6 +7182,8 @@
      *
      *   'lucky charms'.last()  -> 's'
      *   'lucky charms'.last(3) -> 'rms'
+     *
+     * @param {number} [n]
      *
      ***/
     'last': function(str, num) {
@@ -6924,6 +7206,8 @@
      *   '10px'.toNumber()   -> 10
      *   'ff'.toNumber(16)   -> 255
      *
+     * @param {number} [base]
+     *
      ***/
     'toNumber': function(str, base) {
       return stringToNumber(str, base);
@@ -6942,6 +7226,9 @@
      *   'HELLO'.capitalize(true)       -> 'Hello'
      *   'hello kitty'.capitalize()     -> 'Hello kitty'
      *   'hEllO kItTy'.capitalize(true, true) -> 'Hello Kitty'
+     *
+     * @param {boolean} [lower]
+     * @param {boolean} [all]
      *
      ***/
     'capitalize': function(str, lower, all) {
@@ -6987,12 +7274,12 @@
   defineInstanceWithArguments(sugarString, {
 
     /***
-     * @method replaceAll(<f>, [str1], [str2], ...)
+     * @method replaceAll(f, [str1], [str2], ...)
      * @returns String
-     * @short Replaces all occurences of <f> with arguments passed.
+     * @short Replaces all occurences of `f` with arguments passed.
      * @extra This method is intended to be a quick way to perform multiple string
      *        replacements quickly when the replacement token differs depending on
-     *        position. <f> can be either a case-sensitive string or a regex.
+     *        position. `f` can be either a case-sensitive string or a regex.
      *        In either case all matches will be replaced.
      *
      * @example
@@ -7000,13 +7287,17 @@
      *   '-x -y -z'.replaceAll('-', 1, 2, 3)               -> '1x 2y 3z'
      *   'one and two'.replaceAll(/one|two/, '1st', '2nd') -> '1st and 2nd'
      *
+     * @param {string|RegExp} f
+     * @param {string} [str1]
+     * @param {string} [str2]
+     *
      ***/
     'replaceAll': function(str, f, args) {
       return stringReplaceAll(str, f, args);
     },
 
     /***
-     * @method format(<obj1>, <obj2>, ...)
+     * @method format(obj1, [obj2], ...)
      * @returns String
      * @short Replaces `{}` tokens in the string with arguments or properties.
      * @extra Tokens support `deep properties`. If a single object is passed, its
@@ -7022,6 +7313,9 @@
      *   '{0.name} and {1.name}'.format(users)       -> logs first two users' names
      *   '${currencies.usd.balance}'.format(Harry)   -> "$500"
      *   '{{Hello}}'.format('Hello')                 -> "{Hello}"
+     *
+     * @param {any} [obj1]
+     * @param {any} [obj2]
      *
      ***/
     'format': function(str, args) {
@@ -7184,6 +7478,10 @@
      *   var fn = logHello.lazy(250, false, 5);
      *   runTenTimes(fn); -> Logs 5 times each time 250ms later
      *
+     * @param {number} [ms]
+     * @param {number} [limit]
+     * @param {boolean} [immediate]
+     *
      ***/
     'lazy': function(fn, ms, immediate, limit) {
       return createLazyFunction(fn, ms, immediate, limit);
@@ -7193,7 +7491,7 @@
      * @method throttle([ms] = 1)
      * @returns Function
      * @short Creates a "throttled" version of the function that will only be
-     *        executed once per <ms> milliseconds.
+     *        executed once per `ms` milliseconds.
      * @extra This is functionally equivalent to calling `lazy` with a [limit] of
      *        `1` and [immediate] as `true`. `throttle` is appropriate when you
      *        want to make sure a function is only executed at most once for a
@@ -7204,6 +7502,8 @@
      *   var fn = logHello.throttle(50);
      *   runTenTimes(fn);
      *
+     * @param {number} [ms]
+     *
      ***/
     'throttle': function(fn, ms) {
       return createLazyFunction(fn, ms, true, 1);
@@ -7213,7 +7513,7 @@
      * @method debounce([ms] = 1)
      * @returns Function
      * @short Creates a "debounced" function that postpones its execution until
-     *        after <ms> milliseconds have passed.
+     *        after `ms` milliseconds have passed.
      * @extra This method is useful to execute a function after things have
      *        "settled down". A good example of this is when a user tabs quickly
      *        through form fields, execution of a heavy operation should happen
@@ -7223,6 +7523,8 @@
      *
      *   var fn = logHello.debounce(250)
      *   runTenTimes(fn); -> called once 250ms later
+     *
+     * @param {number} [ms]
      *
      ***/
     'debounce': function(fn, ms) {
@@ -7251,14 +7553,14 @@
     },
 
     /***
-     * @method after(<n>)
+     * @method after(n)
      * @returns Function
-     * @short Creates a function that will execute after <n> calls.
+     * @short Creates a function that will execute after `n` calls.
      * @extra `after` is useful for running a final callback after a specific
      *        number of operations, often when the order in which the operations
      *        will complete is unknown. The created function will be passed an
-     *        array of the arguments that it has collected from each after <n>.
-     *        Note that the function will execute on every call after <n>.
+     *        array of the arguments that it has collected from each after `n`.
+     *        Note that the function will execute on every call after `n`.
      *        Use `once` in conjunction with this method to prevent being
      *        triggered by subsequent calls.
      *
@@ -7269,6 +7571,8 @@
      *
      *   var fn = logHello.once().after(5)
      *   runTenTimes(fn); -> logs once
+     *
+     * @param {number} [n]
      *
      ***/
     'after': function(fn, num) {
@@ -7337,6 +7641,9 @@
      *   var fn = calculateUserBalance.memoize('id');
      *   fn(Harry); fn(Mark); fn(Mark); -> logs twice, memoizing once
      *
+     * @param {string|Function} [hashFn]
+     * @param {number} [limit]
+     *
      ***/
     'memoize': function(fn, arg1, arg2) {
       var hashFn, limit, prop;
@@ -7369,6 +7676,8 @@
      *
      *   logArgs.lock(2)(1,2,3)      -> logs 1,2
      *
+     * @param {number} [n]
+     *
      ***/
     'lock': function(fn, n) {
       var lockedFn;
@@ -7389,7 +7698,7 @@
   defineInstanceWithArguments(sugarFunction, {
 
     /***
-     * @method partial(<arg1>, <arg2>, ...)
+     * @method partial([arg1], [arg2], ...)
      * @returns Function
      * @short Returns a new version of the function which has part of its arguments
      *        pre-emptively filled in, also known as "currying".
@@ -7401,6 +7710,9 @@
      * @example
      *
      *   logArgs.partial(undefined, 'b')('a') -> logs a, b
+     *
+     * @param {any} [arg1]
+     * @param {any} [arg2]
      *
      ***/
     'partial': function(fn, curriedArgs) {
@@ -7442,18 +7754,22 @@
     },
 
     /***
-     * @method delay([ms] = 1, [arg1], ...)
+     * @method delay([ms] = 1, [arg1], [arg2], ...)
      * @returns Function
-     * @short Executes the function after <ms> milliseconds.
+     * @short Executes the function after `ms` milliseconds.
      * @extra Returns a reference to itself. `delay` is also a way to execute non-
      *        blocking operations that will wait until the CPU is free. Delayed
      *        functions can be canceled using the `cancel` method. Can also curry
-     *        arguments passed in after <ms>.
+     *        arguments passed in after `ms`.
      *
      * @example
      *
      *   logHello.delay(500)     -> logs after 500ms
      *   logArgs.delay(500, 'a') -> logs "a" after 500ms
+     *
+     * @param {number} [ms]
+     * @param {any} [arg1]
+     * @param {any} [arg2]
      *
      ***/
     'delay': function(fn, ms, args) {
@@ -7462,9 +7778,9 @@
     },
 
     /***
-     * @method every([ms] = 1, [arg1], ...)
+     * @method every([ms] = 1, [arg1], [arg2], ...)
      * @returns Function
-     * @short Executes the function every <ms> milliseconds.
+     * @short Executes the function every `ms` milliseconds.
      * @extra Returns a reference to itself. `every` uses `setTimeout`, which
      *        means that you are guaranteed a period of idle time equal to [ms]
      *        after execution has finished. Compare this to `setInterval` which
@@ -7480,6 +7796,10 @@
      *
      *   logHello.every(1000)        -> logs every second
      *   logArgs.every(1000, 'Hola') -> logs 'hola' every second
+     *
+     * @param {number} [ms]
+     * @param {any} [arg1]
+     * @param {any} [arg2]
      *
      ***/
     'every': function(fn, ms, args) {
@@ -7582,6 +7902,9 @@
      *   String.range('a', 'z')
      *   String.range('t', 'm')
      *
+     * @param {string} [start]
+     * @param {string} [end]
+     *
      ***/
     'range': PrimitiveRangeConstructor
 
@@ -7592,7 +7915,7 @@
   // Duration text formats
   var RANGE_REG_FROM_TO        = /(?:from)?\s*(.+)\s+(?:to|until)\s+(.+)$/i,
       RANGE_REG_REAR_DURATION  = RegExp('(.+)\\s*for\\s*' + FULL_CAPTURED_DURATION, 'i'),
-      RANGE_REG_FRONT_DURATION = RegExp('(?:for)?\\s*'+ FULL_CAPTURED_DURATION +'\\s*(?:starting)?\\s*at\\s*(.+)', 'i');
+      RANGE_REG_FRONT_DURATION = RegExp('(?:for)?\\s*'+ FULL_CAPTURED_DURATION +'\\s*(?:starting)?\\s(?:at\\s)?(.+)', 'i');
 
   var DateRangeConstructor = function(start, end) {
     if (arguments.length === 1 && isString(start)) {
@@ -7642,6 +7965,7 @@
     /***
      * @method range([start], [end])
      * @returns Range
+     * @namespace Date
      * @static
      * @short Creates a new date range between [start] and [end].
      * @extra Arguments may be either dates or strings which will be forwarded to
@@ -7660,6 +7984,9 @@
      *   Date.range('Monday to Friday')
      *   Date.range('tomorrow from 3pm to 5pm')
      *   Date.range('1 hour starting at 5pm Tuesday')
+     *
+     * @param {string|Date} [start]
+     * @param {string|Date} [end]
      *
      ***/
     'range': DateRangeConstructor
@@ -8652,4 +8979,4 @@
   });
 
 
-}).call(this)
+}).call(this);
