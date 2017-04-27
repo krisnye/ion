@@ -20,7 +20,8 @@ runTest = (name, test, callback) ->
     return expectedCallbacks
 
 exports.spawnTests = spawnTests = (manifestFile) ->
-    command = "node#{if process.platform is 'win32' then '.cmd' else ''} #{__filename} #{manifestFile}"
+    # command = "node#{if process.platform is 'win32' then '.cmd' else ''} #{__filename} #{manifestFile}"
+    command = "node #{__filename} #{manifestFile}" # The windows user ought to have node in their path. Using node.cmd is yucky.
     require('../builder/utility').spawn command
     return
 
