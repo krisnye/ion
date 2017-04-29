@@ -3,4 +3,5 @@ const ion = import '../'
 export class Expression extends import './Node'
     properties:
         mutable: true
+        # immediately responds with a function() that can be called to unobserve.
         observe: (callback) ->
