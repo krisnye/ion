@@ -126,7 +126,10 @@ const createHtmlInserter = (container) ->
                 #  BEGIN POLYMER 1.X TEMPORARY HACK
                 if global.Polymer # isWebComponent(container)
                     let polymerContainer = Polymer.dom(container)
-                    polymerContainer.removeChild(value)
+                    try
+                        polymerContainer.removeChild(value)
+                    catch e
+                        console.warn('Polymer error: Cannot remove child. It may not exist anymore/yet.') # -Kody
                 #  END POLYMER 1.X TEMPORARY HACK
                 else
                     if value.parentElement is container
