@@ -334,7 +334,7 @@ export const
                 # now iterate and only set properties that DO NOT HAVE getters/setters
                 for k, v of values
                     let property = type.properties?[k]
-                    if not property?.get? and not property?.set?
+                    if not property?.get?
                         object[k] = v
             # convert recursively
             for key, value of object
