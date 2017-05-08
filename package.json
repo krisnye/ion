@@ -12,7 +12,7 @@
         "build": "ion -c",
         "watch": "ion -w",
         "boot": "node boot/builder/_command.js -c",
-        "postinstall": "yarn build"
+        "postinstall": "ion -c"
     },
     "directories": {
         "lib": "lib",
