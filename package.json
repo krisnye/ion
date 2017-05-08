@@ -12,7 +12,7 @@
         "build": "node lib/builder/_command -c",
         "watch": "node lib/builder/_command -w",
         "boot": "node boot/builder/_command.js -c",
-        "postinstall": "yarn boot"
+        "install": "yarn boot"
     },
     "directories": {
         "lib": "lib",
