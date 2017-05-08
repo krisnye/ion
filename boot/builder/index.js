@@ -136,7 +136,6 @@ module.exports = exports = {
     filename = source.path;
     cs = require('coffee-script');
     try {
-      console.log("Compile: " + filename);
       compiled = cs.compile(input, options = {
         bare: true
       });
@@ -156,7 +155,6 @@ module.exports = exports = {
     filename = source.path;
     try {
       peg = require('pegjs');
-      console.log("Building: " + filename);
       input = source.read();
       parser = peg.buildParser(input, {
         cache: true,
@@ -179,7 +177,6 @@ module.exports = exports = {
     filename = source.path;
     try {
       peg = require('pegs').bootstrap;
-      console.log("Building: " + filename);
       input = source.read();
       parser = peg.parse(input);
       source = parser;
@@ -202,7 +199,6 @@ module.exports = exports = {
     moduleId = typeof packageObject === 'string' ? packageObject : getModuleId(source, packageObject);
     filename = source.path;
     try {
-      console.log("Compile: " + filename);
       ionCompiler = require('../compiler');
       input = source.read();
       _ref = ionCompiler.compileWithSourceMap(input, {
