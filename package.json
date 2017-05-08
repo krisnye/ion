@@ -11,7 +11,8 @@
         "clean": "rm -rf node_modules && yarn unlink",
         "build": "ion -c",
         "watch": "ion -w",
-        "boot": "node boot/builder/_command.js -c"
+        "boot": "node boot/builder/_command.js -c",
+        "postinstall": "yarn build"
     },
     "directories": {
         "lib": "lib",
