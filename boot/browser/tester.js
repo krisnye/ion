@@ -31,7 +31,7 @@ runTest = function(name, test, callback) {
 
 exports.spawnTests = spawnTests = function(manifestFile) {
   var command;
-  command = "node" + (process.platform === 'win32' ? '.cmd' : '') + " " + __filename + " " + manifestFile;
+  command = "node " + __filename + " " + manifestFile;
   require('../builder/utility').spawn(command);
 };
 
@@ -158,8 +158,12 @@ exports.createCallback = function(options, html) {
       if (error != null) {
         fails++;
       }
-      color = error != null ? red : result != null ? blue : plain;
-      return log(color + name + ": " + ((_ref8 = (_ref9 = (_ref10 = error != null ? error.stack : void 0) != null ? _ref10 : error) != null ? _ref9 : result) != null ? _ref8 : "") + endColor + endLine);
+      color = error != null ? red : result != null ? blue : null;
+      if (color != null) {
+        return log(color + name + ": " + ((_ref8 = (_ref9 = (_ref10 = error != null ? error.stack : void 0) != null ? _ref10 : error) != null ? _ref9 : result) != null ? _ref8 : "") + endColor + endLine);
+      } else {
+        return process.stdout.write('.');
+      }
     } else {
       finish = new Date().getTime();
       time = finish - start;
@@ -233,7 +237,6 @@ if (require.main === module) {
     moduleId = np.join(process.cwd(), np.dirname(manifestFile), file);
     modules[file] = moduleId;
   }
-  console.log("------------------------------------------------------");
   runTests(modules);
 }
 

@@ -105,7 +105,7 @@ module.exports = exports =
 
         cs = require 'coffee-script'
         try
-            console.log "Compile: #{filename}"
+            # console.log "Compile: #{filename}"
             compiled = cs.compile input, options = {bare: true}
             # console.log 'sourceMap: ' + typeof options.sourceMap
             compiled = addBrowserShim compiled, moduleId, input
@@ -121,7 +121,7 @@ module.exports = exports =
         filename = source.path
         try
             peg = require 'pegjs'
-            console.log "Building: #{filename}"
+            # console.log "Building: #{filename}"
             input = source.read()
             parser = peg.buildParser input, {cache:true,output:"source"}
             source = "module.exports = " + parser
@@ -137,7 +137,7 @@ module.exports = exports =
         filename = source.path
         try
             peg = require('pegs').bootstrap
-            console.log "Building: #{filename}"
+            # console.log "Building: #{filename}"
             input = source.read()
             parser = peg.parse(input)
             source = parser
@@ -155,7 +155,7 @@ module.exports = exports =
         moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
         filename = source.path
         try
-            console.log "Compile: #{filename}"
+            # console.log "Compile: #{filename}"
             ionCompiler = require '../compiler'
             input = source.read()
             [source,map] = ionCompiler.compileWithSourceMap(input, {source:moduleId + ".ion" ,sourceMap:filename.split(/[\/\\]/).pop()})

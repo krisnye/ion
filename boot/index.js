@@ -1,5 +1,5 @@
 void (function(){var _ion_index_ = function(module,exports,require){'use strict';
-var ion = null;
+var ion = module.exports;
 var noop = function () {
 };
 require('./es6');
@@ -103,22 +103,34 @@ var freeze = exports.freeze = function (object, deep) {
         }
         return object;
     }, createSortFunction = exports.createSortFunction = function (sorts) {
+        if (!Array.isArray(sorts)) {
+            sorts = [sorts];
+        }
         return function (a, b) {
             if (a === b) {
                 return 0;
             }
             if (!(a != null)) {
-                return b;
+                return +1;
             }
             if (!(b != null)) {
-                return a;
+                return -1;
             }
             for (var _i = 0; _i < sorts.length; _i++) {
                 var sort = sorts[_i];
                 for (var name in sort) {
                     var ascending = sort[name];
-                    var aValue = a[name];
-                    var bValue = b[name];
+                    var aValue = a[name] != null ? a[name] : null;
+                    var bValue = b[name] != null ? b[name] : null;
+                    if (aValue === bValue) {
+                        continue;
+                    }
+                    if (aValue != null && !(bValue != null)) {
+                        return -1;
+                    }
+                    if (!(aValue != null) && bValue != null) {
+                        return +1;
+                    }
                     if (aValue > bValue) {
                         return ascending ? +1 : -1;
                     }
@@ -420,7 +432,7 @@ var freeze = exports.freeze = function (object, deep) {
                 for (var k in values) {
                     var v = values[k];
                     var property = type.properties != null ? type.properties[k] : void 0;
-                    if (!((property != null ? property.get : void 0) != null) && !((property != null ? property.set : void 0) != null)) {
+                    if (!((property != null ? property.get : void 0) != null)) {
                         object[k] = v;
                     }
                 }
@@ -457,6 +469,62 @@ var freeze = exports.freeze = function (object, deep) {
                 });
             if (!(new Foo(2).getValue() === 2))
                 throw new Error('Assertion Failed: (new Foo(2).getValue() is 2)');
+        },
+        sortFunction: function () {
+            var records = [
+                    {
+                        name: 'a',
+                        order: 1
+                    },
+                    {
+                        name: 'b',
+                        order: 2
+                    },
+                    {
+                        name: 'q',
+                        order: null
+                    },
+                    {
+                        name: 'd',
+                        order: 4
+                    },
+                    {
+                        name: 'c',
+                        order: void 0
+                    }
+                ];
+            records.sort(ion.createSortFunction([{ order: true }]));
+            if (!(records.map(function (x) {
+                    return x.name;
+                }).join('') === 'abdqc'))
+                throw new Error('Assertion Failed: (records.map((x) -> x.name).join(\'\') is \'abdqc\')');
+            records = [
+                {
+                    name: 'a',
+                    order: 1
+                },
+                {
+                    name: 'b',
+                    order: 2
+                },
+                {
+                    name: 'q',
+                    order: null
+                },
+                {
+                    name: 'd',
+                    order: 4
+                },
+                {
+                    name: 'c',
+                    order: void 0
+                }
+            ];
+            records.sort(ion.createSortFunction([{ order: false }]));
+            if (!(records.map(function (x) {
+                    return x.name;
+                }).join('') === 'dbaqc'))
+                throw new Error('Assertion Failed: (records.map((x) -> x.name).join(\'\') is \'dbaqc\')');
         },
         defineProperties: {
             'should allow primitive values': function () {
@@ -506,6 +574,180 @@ var freeze = exports.freeze = function (object, deep) {
         }(name));
     }
 }
+Object.defineProperty(Function.prototype, 'reactive', {
+    get: function () {
+        var fn = this;
+        var state = {};
+        var patchResult = function (intermediateResult) {
+            var diff = ion.patch.diff(state.result, intermediateResult);
+            if (diff !== void 0) {
+                state.result = ion.patch(state.result, diff);
+            }
+        };
+        return ion.template(function (arg) {
+            return ion.createRuntime({
+                type: 'Template',
+                id: null,
+                body: [
+                    {
+                        type: 'VariableDeclaration',
+                        declarations: [{
+                                type: 'VariableDeclarator',
+                                id: {
+                                    type: 'Identifier',
+                                    name: 'intermediateResult'
+                                },
+                                init: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'Identifier',
+                                        name: 'fn'
+                                    },
+                                    arguments: [{
+                                            type: 'Identifier',
+                                            name: 'arg',
+                                            deep: true
+                                        }],
+                                    loc: {
+                                        start: {
+                                            line: 408,
+                                            column: 41,
+                                            fixed: true,
+                                            source: 'ion/index.ion'
+                                        },
+                                        end: {
+                                            line: 408,
+                                            column: 53,
+                                            fixed: true,
+                                            source: 'ion/index.ion'
+                                        }
+                                    }
+                                }
+                            }],
+                        kind: 'let',
+                        order: '0'
+                    },
+                    {
+                        type: 'ExpressionStatement',
+                        expression: {
+                            type: 'CallExpression',
+                            callee: {
+                                type: 'Identifier',
+                                name: 'patchResult'
+                            },
+                            arguments: [{
+                                    type: 'Identifier',
+                                    name: 'intermediateResult',
+                                    deep: true
+                                }],
+                            loc: {
+                                start: {
+                                    line: 409,
+                                    column: 16,
+                                    fixed: true,
+                                    source: 'ion/index.ion'
+                                },
+                                end: {
+                                    line: 409,
+                                    column: 52,
+                                    fixed: true,
+                                    source: 'ion/index.ion'
+                                }
+                            }
+                        },
+                        loc: {
+                            start: {
+                                line: 409,
+                                column: 16,
+                                fixed: true,
+                                source: 'ion/index.ion'
+                            },
+                            end: {
+                                line: 409,
+                                column: 52,
+                                fixed: true,
+                                source: 'ion/index.ion'
+                            }
+                        },
+                        order: '1'
+                    },
+                    {
+                        type: 'ReturnStatement',
+                        argument: {
+                            type: 'MemberExpression',
+                            computed: false,
+                            object: {
+                                type: 'Identifier',
+                                name: 'state'
+                            },
+                            property: {
+                                type: 'Identifier',
+                                name: 'result'
+                            },
+                            loc: {
+                                start: {
+                                    line: 410,
+                                    column: 23,
+                                    fixed: true,
+                                    source: 'ion/index.ion'
+                                },
+                                end: {
+                                    line: 410,
+                                    column: 35,
+                                    fixed: true,
+                                    source: 'ion/index.ion'
+                                }
+                            }
+                        },
+                        order: '2'
+                    }
+                ],
+                bound: false
+            }, {
+                this: this,
+                arg: arg,
+                fn: fn,
+                state: state,
+                patchResult: patchResult,
+                ion: ion,
+                noop: noop,
+                valueTypes: valueTypes,
+                isValueType: isValueType,
+                primitive: primitive,
+                isPrimitive: isPrimitive,
+                normalizeProperty: normalizeProperty,
+                normalizeProperties: normalizeProperties,
+                variableArgConstructs: variableArgConstructs,
+                observeShim: observeShim,
+                isObjectObservable: isObjectObservable,
+                freeze: freeze,
+                createSortFunction: createSortFunction,
+                runFile: runFile,
+                patch: patch,
+                create: create,
+                setImmediate: setImmediate,
+                requestAnimationFrame: requestAnimationFrame,
+                throttleAnimation: throttleAnimation,
+                template: template,
+                createRuntime: createRuntime,
+                clone: clone,
+                observe: observe,
+                checkForChanges: checkForChanges,
+                sync: sync,
+                nextCheck: nextCheck,
+                bind: bind,
+                add: add,
+                defineProperties: defineProperties,
+                defineClass: defineClass,
+                is: is,
+                makeReactive: makeReactive,
+                serialize: serialize,
+                deserialize: deserialize,
+                test: test
+            }, null);
+        });
+    }
+});
 if (global.window != null) {
     global.window.addEventListener('resize', sync);
 }

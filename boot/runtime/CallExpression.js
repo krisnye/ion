@@ -105,7 +105,6 @@ var CallExpression = ion.defineClass({
                     if (this.loc != null) {
                         var start = this.loc.start;
                         console.error('Call Error at ' + start.source + ' (line:' + start.line + ',column:' + start.column + ')');
-                        console.error(e);
                     }
                     throw e;
                 }

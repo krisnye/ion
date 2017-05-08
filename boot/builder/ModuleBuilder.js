@@ -932,233 +932,372 @@ module.exports = exports = ion.template(function (packagePatch) {
                                         order: '1'
                                     },
                                     {
+                                        type: 'VariableDeclaration',
+                                        declarations: [{
+                                                type: 'VariableDeclarator',
+                                                id: {
+                                                    type: 'Identifier',
+                                                    name: 'outputFile'
+                                                },
+                                                init: {
+                                                    type: 'CallExpression',
+                                                    callee: {
+                                                        type: 'MemberExpression',
+                                                        computed: false,
+                                                        object: {
+                                                            type: 'Identifier',
+                                                            name: 'output'
+                                                        },
+                                                        property: {
+                                                            type: 'Identifier',
+                                                            name: 'getFile'
+                                                        },
+                                                        loc: {
+                                                            start: {
+                                                                line: 37,
+                                                                column: 29,
+                                                                fixed: true,
+                                                                source: 'ion/builder/ModuleBuilder.ion'
+                                                            },
+                                                            end: {
+                                                                line: 37,
+                                                                column: 43,
+                                                                fixed: true,
+                                                                source: 'ion/builder/ModuleBuilder.ion'
+                                                            }
+                                                        }
+                                                    },
+                                                    arguments: [{
+                                                            type: 'Identifier',
+                                                            name: 'targetPath'
+                                                        }],
+                                                    loc: {
+                                                        start: {
+                                                            line: 37,
+                                                            column: 29,
+                                                            fixed: true,
+                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                        },
+                                                        end: {
+                                                            line: 37,
+                                                            column: 55,
+                                                            fixed: true,
+                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                        }
+                                                    }
+                                                }
+                                            }],
+                                        kind: 'let',
+                                        order: '2'
+                                    },
+                                    {
                                         type: 'IfStatement',
                                         test: {
-                                            type: 'MemberExpression',
-                                            computed: false,
-                                            object: {
-                                                type: 'Identifier',
-                                                name: 'source'
-                                            },
-                                            property: {
-                                                type: 'Identifier',
-                                                name: 'exists'
-                                            },
-                                            loc: {
-                                                start: {
-                                                    line: 46,
-                                                    column: 15,
-                                                    fixed: true,
-                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                            type: 'BinaryExpression',
+                                            operator: '>',
+                                            left: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'source'
                                                 },
-                                                end: {
-                                                    line: 46,
-                                                    column: 28,
-                                                    fixed: true,
-                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'modified'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 38,
+                                                        column: 15,
+                                                        fixed: true,
+                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 38,
+                                                        column: 30,
+                                                        fixed: true,
+                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                    }
+                                                }
+                                            },
+                                            right: {
+                                                type: 'MemberExpression',
+                                                computed: false,
+                                                object: {
+                                                    type: 'Identifier',
+                                                    name: 'outputFile'
+                                                },
+                                                property: {
+                                                    type: 'Identifier',
+                                                    name: 'modified'
+                                                },
+                                                loc: {
+                                                    start: {
+                                                        line: 38,
+                                                        column: 33,
+                                                        fixed: true,
+                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                    },
+                                                    end: {
+                                                        line: 38,
+                                                        column: 52,
+                                                        fixed: true,
+                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                    }
                                                 }
                                             }
                                         },
                                         consequent: {
                                             type: 'BlockStatement',
                                             body: [{
-                                                    type: 'ExpressionStatement',
-                                                    expression: {
-                                                        type: 'UnaryExpression',
-                                                        operator: 'void',
-                                                        argument: {
-                                                            type: 'CallExpression',
-                                                            callee: {
-                                                                type: 'MemberExpression',
-                                                                computed: false,
-                                                                object: {
-                                                                    type: 'Identifier',
-                                                                    name: 'output'
-                                                                },
-                                                                property: {
-                                                                    type: 'Identifier',
-                                                                    name: 'write'
-                                                                },
-                                                                loc: {
-                                                                    start: {
-                                                                        line: 47,
-                                                                        column: 21,
-                                                                        fixed: true,
-                                                                        source: 'ion/builder/ModuleBuilder.ion'
-                                                                    },
-                                                                    end: {
-                                                                        line: 47,
-                                                                        column: 33,
-                                                                        fixed: true,
-                                                                        source: 'ion/builder/ModuleBuilder.ion'
-                                                                    }
-                                                                }
+                                                    type: 'IfStatement',
+                                                    test: {
+                                                        type: 'MemberExpression',
+                                                        computed: false,
+                                                        object: {
+                                                            type: 'Identifier',
+                                                            name: 'source'
+                                                        },
+                                                        property: {
+                                                            type: 'Identifier',
+                                                            name: 'exists'
+                                                        },
+                                                        loc: {
+                                                            start: {
+                                                                line: 46,
+                                                                column: 19,
+                                                                fixed: true,
+                                                                source: 'ion/builder/ModuleBuilder.ion'
                                                             },
-                                                            arguments: [
-                                                                {
-                                                                    type: 'Identifier',
-                                                                    name: 'targetPath'
-                                                                },
-                                                                {
-                                                                    type: 'CallExpression',
-                                                                    callee: {
-                                                                        type: 'MemberExpression',
-                                                                        computed: false,
-                                                                        object: {
-                                                                            type: 'Identifier',
-                                                                            name: 'compiler'
+                                                            end: {
+                                                                line: 46,
+                                                                column: 32,
+                                                                fixed: true,
+                                                                source: 'ion/builder/ModuleBuilder.ion'
+                                                            }
+                                                        }
+                                                    },
+                                                    consequent: {
+                                                        type: 'BlockStatement',
+                                                        body: [{
+                                                                type: 'ExpressionStatement',
+                                                                expression: {
+                                                                    type: 'UnaryExpression',
+                                                                    operator: 'void',
+                                                                    argument: {
+                                                                        type: 'CallExpression',
+                                                                        callee: {
+                                                                            type: 'MemberExpression',
+                                                                            computed: false,
+                                                                            object: {
+                                                                                type: 'Identifier',
+                                                                                name: 'output'
+                                                                            },
+                                                                            property: {
+                                                                                type: 'Identifier',
+                                                                                name: 'write'
+                                                                            },
+                                                                            loc: {
+                                                                                start: {
+                                                                                    line: 47,
+                                                                                    column: 25,
+                                                                                    fixed: true,
+                                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                                },
+                                                                                end: {
+                                                                                    line: 47,
+                                                                                    column: 37,
+                                                                                    fixed: true,
+                                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                                }
+                                                                            }
                                                                         },
-                                                                        property: {
-                                                                            type: 'Identifier',
-                                                                            name: 'compile'
-                                                                        },
+                                                                        arguments: [
+                                                                            {
+                                                                                type: 'Identifier',
+                                                                                name: 'targetPath'
+                                                                            },
+                                                                            {
+                                                                                type: 'CallExpression',
+                                                                                callee: {
+                                                                                    type: 'MemberExpression',
+                                                                                    computed: false,
+                                                                                    object: {
+                                                                                        type: 'Identifier',
+                                                                                        name: 'compiler'
+                                                                                    },
+                                                                                    property: {
+                                                                                        type: 'Identifier',
+                                                                                        name: 'compile'
+                                                                                    },
+                                                                                    loc: {
+                                                                                        start: {
+                                                                                            line: 47,
+                                                                                            column: 50,
+                                                                                            fixed: true,
+                                                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                                                        },
+                                                                                        end: {
+                                                                                            line: 47,
+                                                                                            column: 66,
+                                                                                            fixed: true,
+                                                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                arguments: [
+                                                                                    {
+                                                                                        type: 'Identifier',
+                                                                                        name: 'source'
+                                                                                    },
+                                                                                    {
+                                                                                        type: 'Identifier',
+                                                                                        name: 'packageJson'
+                                                                                    }
+                                                                                ],
+                                                                                loc: {
+                                                                                    start: {
+                                                                                        line: 47,
+                                                                                        column: 50,
+                                                                                        fixed: true,
+                                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                                    },
+                                                                                    end: {
+                                                                                        line: 47,
+                                                                                        column: 87,
+                                                                                        fixed: true,
+                                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            {
+                                                                                type: 'ObjectExpression',
+                                                                                properties: [{
+                                                                                        type: 'Property',
+                                                                                        key: {
+                                                                                            type: 'Identifier',
+                                                                                            name: 'force'
+                                                                                        },
+                                                                                        value: {
+                                                                                            type: 'Literal',
+                                                                                            value: true
+                                                                                        },
+                                                                                        kind: 'init',
+                                                                                        order: '0'
+                                                                                    }]
+                                                                            }
+                                                                        ],
                                                                         loc: {
                                                                             start: {
                                                                                 line: 47,
-                                                                                column: 46,
+                                                                                column: 25,
                                                                                 fixed: true,
                                                                                 source: 'ion/builder/ModuleBuilder.ion'
                                                                             },
                                                                             end: {
                                                                                 line: 47,
-                                                                                column: 62,
+                                                                                column: 102,
                                                                                 fixed: true,
                                                                                 source: 'ion/builder/ModuleBuilder.ion'
                                                                             }
                                                                         }
+                                                                    }
+                                                                },
+                                                                loc: {
+                                                                    start: {
+                                                                        line: 47,
+                                                                        column: 20,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/ModuleBuilder.ion'
                                                                     },
-                                                                    arguments: [
-                                                                        {
-                                                                            type: 'Identifier',
-                                                                            name: 'source'
+                                                                    end: {
+                                                                        line: 47,
+                                                                        column: 102,
+                                                                        fixed: true,
+                                                                        source: 'ion/builder/ModuleBuilder.ion'
+                                                                    }
+                                                                },
+                                                                order: '0'
+                                                            }]
+                                                    },
+                                                    alternate: {
+                                                        type: 'BlockStatement',
+                                                        body: [{
+                                                                type: 'ExpressionStatement',
+                                                                expression: {
+                                                                    type: 'UnaryExpression',
+                                                                    operator: 'void',
+                                                                    argument: {
+                                                                        type: 'CallExpression',
+                                                                        callee: {
+                                                                            type: 'MemberExpression',
+                                                                            computed: false,
+                                                                            object: {
+                                                                                type: 'Identifier',
+                                                                                name: 'output'
+                                                                            },
+                                                                            property: {
+                                                                                type: 'Identifier',
+                                                                                name: 'delete'
+                                                                            },
+                                                                            loc: {
+                                                                                start: {
+                                                                                    line: 49,
+                                                                                    column: 25,
+                                                                                    fixed: true,
+                                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                                },
+                                                                                end: {
+                                                                                    line: 49,
+                                                                                    column: 38,
+                                                                                    fixed: true,
+                                                                                    source: 'ion/builder/ModuleBuilder.ion'
+                                                                                }
+                                                                            }
                                                                         },
-                                                                        {
-                                                                            type: 'Identifier',
-                                                                            name: 'packageJson'
-                                                                        }
-                                                                    ],
-                                                                    loc: {
-                                                                        start: {
-                                                                            line: 47,
-                                                                            column: 46,
-                                                                            fixed: true,
-                                                                            source: 'ion/builder/ModuleBuilder.ion'
-                                                                        },
-                                                                        end: {
-                                                                            line: 47,
-                                                                            column: 83,
-                                                                            fixed: true,
-                                                                            source: 'ion/builder/ModuleBuilder.ion'
+                                                                        arguments: [{
+                                                                                type: 'Identifier',
+                                                                                name: 'targetPath'
+                                                                            }],
+                                                                        loc: {
+                                                                            start: {
+                                                                                line: 49,
+                                                                                column: 25,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/ModuleBuilder.ion'
+                                                                            },
+                                                                            end: {
+                                                                                line: 49,
+                                                                                column: 50,
+                                                                                fixed: true,
+                                                                                source: 'ion/builder/ModuleBuilder.ion'
+                                                                            }
                                                                         }
                                                                     }
-                                                                }
-                                                            ],
-                                                            loc: {
-                                                                start: {
-                                                                    line: 47,
-                                                                    column: 21,
-                                                                    fixed: true,
-                                                                    source: 'ion/builder/ModuleBuilder.ion'
-                                                                },
-                                                                end: {
-                                                                    line: 47,
-                                                                    column: 84,
-                                                                    fixed: true,
-                                                                    source: 'ion/builder/ModuleBuilder.ion'
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                    loc: {
-                                                        start: {
-                                                            line: 47,
-                                                            column: 16,
-                                                            fixed: true,
-                                                            source: 'ion/builder/ModuleBuilder.ion'
-                                                        },
-                                                        end: {
-                                                            line: 47,
-                                                            column: 84,
-                                                            fixed: true,
-                                                            source: 'ion/builder/ModuleBuilder.ion'
-                                                        }
-                                                    },
-                                                    order: '0'
-                                                }]
-                                        },
-                                        alternate: {
-                                            type: 'BlockStatement',
-                                            body: [{
-                                                    type: 'ExpressionStatement',
-                                                    expression: {
-                                                        type: 'UnaryExpression',
-                                                        operator: 'void',
-                                                        argument: {
-                                                            type: 'CallExpression',
-                                                            callee: {
-                                                                type: 'MemberExpression',
-                                                                computed: false,
-                                                                object: {
-                                                                    type: 'Identifier',
-                                                                    name: 'output'
-                                                                },
-                                                                property: {
-                                                                    type: 'Identifier',
-                                                                    name: 'delete'
                                                                 },
                                                                 loc: {
                                                                     start: {
                                                                         line: 49,
-                                                                        column: 21,
+                                                                        column: 20,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                     },
                                                                     end: {
                                                                         line: 49,
-                                                                        column: 34,
+                                                                        column: 50,
                                                                         fixed: true,
                                                                         source: 'ion/builder/ModuleBuilder.ion'
                                                                     }
-                                                                }
-                                                            },
-                                                            arguments: [{
-                                                                    type: 'Identifier',
-                                                                    name: 'targetPath'
-                                                                }],
-                                                            loc: {
-                                                                start: {
-                                                                    line: 49,
-                                                                    column: 21,
-                                                                    fixed: true,
-                                                                    source: 'ion/builder/ModuleBuilder.ion'
                                                                 },
-                                                                end: {
-                                                                    line: 49,
-                                                                    column: 46,
-                                                                    fixed: true,
-                                                                    source: 'ion/builder/ModuleBuilder.ion'
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                    loc: {
-                                                        start: {
-                                                            line: 49,
-                                                            column: 16,
-                                                            fixed: true,
-                                                            source: 'ion/builder/ModuleBuilder.ion'
-                                                        },
-                                                        end: {
-                                                            line: 49,
-                                                            column: 46,
-                                                            fixed: true,
-                                                            source: 'ion/builder/ModuleBuilder.ion'
-                                                        }
+                                                                order: '0'
+                                                            }]
                                                     },
                                                     order: '0'
                                                 }]
                                         },
-                                        order: '2'
+                                        alternate: null,
+                                        order: '3'
                                     }
                                 ]
                             },

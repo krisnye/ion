@@ -6,6 +6,7 @@ require('./Object');
 require('./Function');
 require('./Array');
 require('./CustomEvent');
+require('./Element.closest');
 require('./sugar').extend();
   }
   if (typeof require === 'function') {

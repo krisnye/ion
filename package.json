@@ -8,11 +8,11 @@
     "repository": "https://github.com/krisnye/ion.git",
     "scripts": {
         "dev": "yarn install && yarn run boot && yarn link",
-        "clean": "rm -rf node_modules && yarn unlink",
-        "build": "ion -c",
-        "watch": "ion -w",
+        "clean": "rm -rf node_modules && rm -rf lib && yarn unlink",
+        "build": "node lib/builder/_command -c",
+        "watch": "node lib/builder/_command -w",
         "boot": "node boot/builder/_command.js -c",
-        "postinstall": "ion -c"
+        "postinstall": "yarn boot"
     },
     "directories": {
         "lib": "lib",

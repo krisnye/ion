@@ -99,10 +99,10 @@ var File = ion.defineClass({
                 var index = this.path.lastIndexOf('.');
                 return index < 0 ? '' : this.path.substring(index);
             },
-            write: function (content, encoding) {
-                if (content != null && content !== this.read(encoding)) {
-                    utility.write(this.path, content, encoding);
-                }
+            write: function (content, encoding, forceWrite) {
+                if (forceWrite == null)
+                    forceWrite = false;
+                utility.write(this.path, content, encoding);
             },
             delete: function () {
                 return utility.write(this.path, null);

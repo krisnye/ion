@@ -138,12 +138,17 @@
           template = result.call(scriptElement);
           removeLastResult = null;
           template.observe(function(templateResult) {
+            var container;
             if (typeof removeLastResult === "function") {
               removeLastResult();
             }
             removeLastResult = null;
             if (templateResult != null) {
-              scriptElement.parentElement.appendChild(templateResult);
+              container = scriptElement.parentElement;
+              if (global.Polymer) {
+                container = Polymer.dom(container);
+              }
+              container.appendChild(templateResult);
               return removeLastResult = function() {
                 return scriptElement.parentElement.removeChild(templateResult);
               };

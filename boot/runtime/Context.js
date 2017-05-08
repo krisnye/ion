@@ -146,12 +146,13 @@ var createHtmlInserter = function (container) {
                 };
                 container.addEventListener(value.id, value.wrapper, value.capture);
             } else {
-                if (isWebComponent(container)) {
+                if (global.Polymer) {
                     var polymerContainer = Polymer.dom(container);
                     if (index != null) {
                         var after = polymerContainer.childNodes[index];
                         if (after != null) {
                             polymerContainer.insertBefore(value, after);
+                            return;
                         }
                     }
                     polymerContainer.appendChild(value);
@@ -160,6 +161,7 @@ var createHtmlInserter = function (container) {
                         var after = container.childNodes[index];
                         if (after != null) {
                             container.insertBefore(value, after);
+                            return;
                         }
                     }
                     container.appendChild(value);
@@ -170,20 +172,28 @@ var createHtmlInserter = function (container) {
             if (typeof value === 'function') {
                 container.removeEventListener(value.id, value.wrapper);
             } else if (!moving) {
-                if (isWebComponent(container)) {
+                if (global.Polymer) {
                     var polymerContainer = Polymer.dom(container);
-                    polymerContainer.removeChild(value);
+                    if (value.parentElement === container) {
+                        polymerContainer.removeChild(value);
+                    } else {
+                        if (!warnedOfRemovalBug) {
+                            warnedOfRemovalBug = true;
+                            console.log('TODO: FIX!!! Polymer error: Cannot remove child. It may not exist anymore/yet.');
+                        }
+                    }
                 } else {
                     if (value.parentElement === container) {
                         container.removeChild(value);
                     } else {
-                        console.warn('Context is trying to remove an element from a container that it is not in.', container, value);
+                        console.log('Context is trying to remove an element from a container that it is not in.');
                     }
                 }
             }
         }
     };
 };
+var warnedOfRemovalBug = false;
 var createOrderManager = function (container) {
     var inserter;
     if (Array.isArray(container)) {
@@ -344,7 +354,8 @@ var Context = ion.defineClass({
                 }
                 return variable.value;
             },
-            getVariable: function (name) {
+            getVariable: function (ast) {
+                var name = typeof ast === 'string' ? ast : ast.name;
                 var context = this, value;
                 while (context != null) {
                     var variable = context.variables[name];
@@ -355,7 +366,11 @@ var Context = ion.defineClass({
                 }
                 value = global[name];
                 if (value === void 0) {
-                    throw new Error('Variable not found: \'' + name + '\'');
+                    var message = 'Variable not found: \'' + name + '\'';
+                    if (typeof ast === 'object') {
+                        message += ' at (' + ast.loc.start.source + ':' + ast.loc.start.line + ':' + (ast.loc.start.column + 1) + ')';
+                    }
+                    throw new Error(message);
                 }
                 var cachedGlobals = this.root.globals = this.root.globals != null ? this.root.globals : {};
                 return cachedGlobals[name] = cachedGlobals[name] != null ? cachedGlobals[name] : new Literal({

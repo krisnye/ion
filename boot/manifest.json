@@ -1,5 +1,5 @@
 {
-  "modified": 1478542149000,
+  "modified": 1494282693000,
   "files": [
     "browser/require.js",
     "Object.js",
@@ -29,6 +29,7 @@
     "compiler/traverseAst.js",
     "es6/Array.js",
     "es6/CustomEvent.js",
+    "es6/Element.closest.js",
     "es6/Function.js",
     "es6/Map.js",
     "es6/Object.js",
