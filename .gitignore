@@ -1,6 +1,5 @@
 .DS_Store
-src/test/input
-src/test/output
+lib
 node_modules
 npm-debug.log
 bootold*
