@@ -111,8 +111,11 @@ exports.createCallback = (options, html = global.window?) ->
                 else if result?
                     blue
                 else
-                    plain
-            log color + name + ": " + (error?.stack ? error ? result ? "") + endColor + endLine
+                    null
+            if color?
+                log color + name + ": " + (error?.stack ? error ? result ? "") + endColor + endLine
+            else
+                process.stdout.write('.')
         else
             finish = new Date().getTime()
             time = finish - start
@@ -163,6 +166,5 @@ if require.main is module
     for file in manifest.files
         moduleId = np.join process.cwd(), np.dirname(manifestFile), file
         modules[file] = moduleId
-    console.log "------------------------------------------------------"
     runTests modules
 
