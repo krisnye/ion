@@ -4,7 +4,7 @@ if (global.window) {
   return;
 }
 
-_ = require('lodash');
+_ = require('./nodash');
 
 utility = require('./utility');
 

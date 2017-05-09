@@ -1,5 +1,5 @@
 {
-  "modified": 1494284675000,
+  "modified": 1494319814000,
   "files": [
     "browser/require.js",
     "Object.js",
@@ -11,6 +11,7 @@
     "builder/ModuleBuilder.js",
     "builder/WebsiteBuilder.js",
     "builder/index.js",
+    "builder/nodash.js",
     "builder/utility.js",
     "builder/watcher.js",
     "compiler/astFunctions.js",

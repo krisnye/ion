@@ -1,6 +1,6 @@
 return if global.window
 
-_ = require 'lodash' # imported for debounce/throttle methods
+_ = require './nodash' # imported for debounce/throttle methods
 utility = require './utility'
 fs = require 'fs'
 np = require 'path'
