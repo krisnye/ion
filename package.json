@@ -11,7 +11,7 @@
         "clean": "rm -rf node_modules && rm -rf lib && yarn unlink",
         "build": "node bin/ion -c",
         "watch": "node bin/ion -w",
-        "install": "node boot/builder/_command.js -c"
+        "postinstall": "node boot/builder/_command.js -c"
     },
     "directories": {
         "lib": "lib",
@@ -34,14 +34,13 @@
     },
     "contributors": ["krisnye@gmail.com"],
     "dependencies": {
-    },
-    "devDependencies": {
-        "esprima": "1.1.x",
-        "uglify-js": "2.4.x",
-        "pegjs": "0.8.x",
-        "lodash": "4.16.x",
         "source-map": "0.1.x",
         "coffee-script": "1.8.x",
+        "esprima": "1.1.x",
+        "uglify-js": "2.4.x",
+        "pegjs": "0.8.x"
+    },
+    "devDependencies": {
         "express": "4.12.x"
     }
 }
