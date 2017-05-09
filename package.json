@@ -3,15 +3,15 @@
     "version": "0.9.14",
     "main": "lib/index",
     "bin": {
-        "ion": "lib/builder/_command.js"
+        "ion": "bin/ion.js"
     },
     "repository": "https://github.com/krisnye/ion.git",
     "scripts": {
-        "dev": "yarn install && yarn run boot && yarn link",
+        "dev": "yarn install && yarn link",
         "clean": "rm -rf node_modules && rm -rf lib && yarn unlink",
-        "build": "node lib/builder/_command -c",
-        "watch": "node lib/builder/_command -w",
-        "boot": "node boot/builder/_command.js -c"
+        "build": "node bin/ion -c",
+        "watch": "node bin/ion -w",
+        "postinstall": "node boot/builder/_command.js -c"
     },
     "directories": {
         "lib": "lib",
