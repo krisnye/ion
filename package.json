@@ -9,9 +9,9 @@
     "scripts": {
         "dev": "yarn install && yarn link",
         "clean": "rm -rf node_modules && rm -rf lib && yarn unlink",
-        "build": "node bin/ion -c",
-        "watch": "node bin/ion -w",
-        "postinstall": "node boot/builder/_command.js -c"
+        "build": "node ./bin/ion -c",
+        "watch": "node ./bin/ion -w",
+        "postinstall": "node ./boot/builder/_command.js -c"
     },
     "directories": {
         "lib": "lib",
