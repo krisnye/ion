@@ -32,16 +32,22 @@ const
         let unobserve = ion.observe(
             object
             (changes) ->
+                # console.log('changes', JSON.stringify(changes))
                 if watching
                     let patch = null
                     let changedProperties = {}
-                    for {name} in changes
+                    for {name,oldValue} in changes
                         changedProperties[name] = true
                         # we ignore names that start with underscore, they are considered private
                         if not isPrivate(name)
                             patch ?= {}
                             # we convert undefined values from delete into explicit nulls
-                            patch[name] = object.hasOwnProperty(name) ? object[name] : deleteValue
+                            let newValue = object[name]
+                            # let newPatch = object.hasOwnProperty(name) ? newValue : deleteValue
+                            let newDiff = diff(oldValue, newValue)
+                            if newDiff isnt undefined
+                                patch[name] = newDiff
+                            # console.log('newPatchValue ', newPatch, 'diff', newDiff)
                     watchProperties(changedProperties)
                     if patch?
                         # console.log('OBSERVE ' + JSON.stringify(patch))
@@ -252,11 +258,11 @@ export const
                                 Two: 2
                         Orion: []
                         Third: {}
+                        Fifth: {alpha:1}
                 let target = ion.clone(source, true)
                 let unwatch = watch(
                     source
                     (patch) ->
-                        # console.log("........... " + JSON.stringify(patch))
                         target = merge(target, patch)
                         # should be immediate assert
                         if equal(source, target)
@@ -281,6 +287,8 @@ export const
                             Something:
                                 One: 1
                                 Two: 2
+                source.children.Fifth = {beta:2} # this should REMOVE alpha
+
                 # todo: delete a property in a literal?
                 delete source.children.Third
                 # temp requirement

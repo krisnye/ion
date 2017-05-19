@@ -20,7 +20,8 @@ export class Object extends null
             const properties = {[typeKey]: @[typeKey]}
             for key, value of @ if @hasOwnProperty(key)
                 let descriptor = @@properties?[key]
-                properties[key] = value
+                if descriptor?.serializable isnt false
+                    properties[key] = value
             return properties
     test: ->
         let object = new Object()

@@ -158,17 +158,18 @@ const templates = []
             {alpha:1,beta:2,charlie:3}
             {beta:3,charlie:undefined}
             [{id:0,key:'alpha',value:1},{id:1,key:'beta',value:3}]
-    []
-        "deep args"
-        {}
-        template (object) -> JSON.stringify(deep object)
-        {}
-            z:
-                b: 2
-        {}
-            z:
-                b: 20
-        '{"z":{"b":20}}'
+    # []
+    #     "deep args"
+    #     {}
+    #     template (object) -> JSON.stringify(deep object)
+    #     {}
+    #         z:
+    #             b: 2
+    #     {}
+    #         z:
+    #             b: 20
+    #     '{"z":{"b":20}}'
+
     # # This will help us fix the out of order evaluation order bug
     # []
     #     "expression evaluation priority"
