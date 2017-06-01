@@ -391,7 +391,7 @@ for name in ["runtime", "compiler", "builder", "browser"]
     do (name) ->
         Object.defineProperty(exports, name, {enumerable: true, get: -> require("./" + name)})
 
-# define custom callReactive function on function.
+# define custom reactive function on function.
 Object.defineProperty(
     Function.prototype
     'reactive'
