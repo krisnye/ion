@@ -133,7 +133,7 @@ export const
         let copy = Array.isArray(object) ? [] : {}
         if _deep
             for k, v of object
-                copy[k] = clone(v)
+                copy[k] = clone(v, true)
         else
             for k, v of object
                 copy[k] = v

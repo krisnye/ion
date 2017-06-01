@@ -101,12 +101,14 @@ export const
         # length: null when targetting an Array indicates to convert Array to Object.
         if Array.isArray(target) and values?.length is null
             target = {}
-            values = ion.clone(values)
+            values = ion.clone(values, true)
+            # values = JSON.parse(JSON.stringify(values))
             delete values.length
 
         if values?.constructor isnt Object
             if Array.isArray(values)
                 return ion.clone(values, true)
+                # return JSON.parse(JSON.stringify(values))
             else
                 return values
         if not isObject(target)
