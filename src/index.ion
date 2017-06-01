@@ -128,14 +128,24 @@ export const
                 context.setVariableLiteral(name, value)
         return context.createRuntime(ast)
     clone = (object, _deep = false) ->
-        if Array.isArray(object)
-            return [_deep ? clone(item, _deep) : item for item in object]
-        else if object?.constructor is Object
-            return {}
-                for key, value of object
-                    [key]: _deep ? clone(value, _deep) : value
-        else
+        if object is null or typeof object isnt 'object'
             return object
+        let copy = Array.isArray(object) ? [] : {}
+        if _deep
+            for k, v of object
+                copy[k] = clone(v, true)
+        else
+            for k, v of object
+                copy[k] = v
+        return copy
+        # if Array.isArray(object)
+        #     return [_deep ? clone(item, _deep) : item for item in object]
+        # else if object?.constructor is Object
+        #     return {}
+        #         for key, value of object
+        #             [key]: _deep ? clone(value, _deep) : value
+        # else
+        #     return object
     # observers = []
     observe = (object, observer, options) ->
         # let original = observer
