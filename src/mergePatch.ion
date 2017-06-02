@@ -88,7 +88,9 @@ export const
     # options:
     #   deleteNull: delete properties if value is null, default: true
     #   factory: function to use when constructing new objects, defaults to using plain objects {}
-    merge = (target, values, options, schema) ->
+    merge = (_target, _values, options, schema) ->
+        let values = _values # Assigning to arguments causes v8 optimization to bail out.
+        let target = _target
         let deleteNull = options?.deleteNull ? true
 
         if schema?.type is 'integer' and increment.test(values)
@@ -102,13 +104,11 @@ export const
         if Array.isArray(target) and values?.length is null
             target = {}
             values = ion.clone(values, true)
-            # values = JSON.parse(JSON.stringify(values))
             delete values.length
 
         if values?.constructor isnt Object
             if Array.isArray(values)
                 return ion.clone(values, true)
-                # return JSON.parse(JSON.stringify(values))
             else
                 return values
         if not isObject(target)
