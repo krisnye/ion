@@ -121,34 +121,58 @@ const createHtmlInserter = (container) ->
                     container.appendChild(value)
 
         remove: (index, value, moving) ->
+            # let debug = (value.className?) ? value.className.indexOf('debug') > -1 : false
+            # # let debug = false
+            # if debug
+            #     console.log(inShadow(value) ? "shadow" : "normal")
+            #     console.log('Removing:', value)
+            #     console.log('From:', container)
+            #     console.log('\n')
+                
             if typeof value is 'function'
                 container.removeEventListener(value.id, value.wrapper)
             else if not moving
                 #  BEGIN POLYMER 1.X TEMPORARY HACK
                 if global.Polymer # isWebComponent(container)
                     let polymerContainer = Polymer.dom(container)
-                    if isDomAncestor(container, value) #value.parentElement is container
+
+                    value
+                        style:
+                            'background-color': 'red'
+
+                    try
                         polymerContainer.removeChild(value)
-                    else
+                    catch e
                         if not warnedOfRemovalBug
                             warnedOfRemovalBug = true
                             console.log('TODO: FIX!!! Polymer error: Cannot remove child. It may not exist anymore/yet.') # -Kody
+                    
+                    # This is the 'correct' way to do this. After MVP we should investigate this more thoroughly. 
+                    # Eventually we should replace the try/catch with this.
+                    # This still doesn't catch every case because of wierd webcomponent behaviour. -Kody
+                    ################################################################################################################
+                    # if isDomAncestor(container, value) #value.parentElement is container
+                    #     polymerContainer.removeChild(value)
+                    # else
+                    #     if not warnedOfRemovalBug
+                    #         warnedOfRemovalBug = true
+                    #         console.log('TODO: FIX!!! Polymer error: Cannot remove child. It may not exist anymore/yet.') # -Kody
+                    ################################################################################################################
+
                 #  END POLYMER 1.X TEMPORARY HACK
                 else
                     if value.parentElement is container
                         container.removeChild(value)
                     else
                         console.log("Context is trying to remove an element from a container that it is not in.")
-
-const isDomAncestor(ancestor, child) ->
+let warnedOfRemovalBug = false
+const isDomAncestor(ancestor, child, debug) ->
     let realAncestor = child
     while realAncestor.parentElement?
         realAncestor = realAncestor.parentElement
         if realAncestor is ancestor
             return true
     return false
-
-let warnedOfRemovalBug = false
 
 const createOrderManager = (container) ->
     let inserter
