@@ -136,9 +136,9 @@ const createHtmlInserter = (container) ->
                 if global.Polymer # isWebComponent(container)
                     let polymerContainer = Polymer.dom(container)
 
-                    value
-                        style:
-                            'background-color': 'red'
+                    # value # Useful when debugging. Color codes elements that SHOULD be removed.
+                    #     style:
+                    #         'background-color': 'red'
 
                     try
                         polymerContainer.removeChild(value)
