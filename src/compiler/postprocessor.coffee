@@ -1291,6 +1291,18 @@ exports.postprocess = (program, options) ->
     if (options?.target is 'es5')
         steps.push [letAndConstToVar]
     previousContext = null
+
+    fs = require('fs')
+    log = []
+    logstep = (step) ->
+        if not options?.showsteps
+            return
+        if JSON.stringify(program) is JSON.stringify(log[log.length - 1]?.result)
+            console.log('No change!')
+        else
+            console.log('Changes!')
+            log.push({step: step, result: JSON.parse(JSON.stringify(program))})
+
     for traversal in steps
         enter = (node, context) ->
             previousContext = context
@@ -1300,17 +1312,23 @@ exports.postprocess = (program, options) ->
                 if handler?
                     handler node, context
                     node = context.current()
+                    logstep(handler.name)
         exit = (node, context) ->
             for step in traversal by -1 when node?
                 handler = step.exit ? null
                 if handler?
                     handler node, context
                     node = context.current()
+                    logstep(handler.name)
         variable = (node, context, kind, name) ->
             for step in traversal when node?
                 handler = step.variable ? null
                 if handler?
                     handler node, context, kind, name
                     node = context.current()
+                    logstep(handler.name)
         traverse program, enter, exit, variable, previousContext
+    
+    if options?.showsteps
+        fs.writeFileSync('steps.log', JSON.stringify(log))
     program
