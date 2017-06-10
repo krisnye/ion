@@ -155,9 +155,19 @@ extractForLoopRightVariable = (node, context) ->
 
 createForInLoopValueVariable = (node, context) ->
     return if context.reactive
-
     if node.type is 'ForInStatement' and node.left.declarations.length > 1
         valueDeclarator = node.left.declarations[1]
+
+        # TODO: Come up with a better fix for this. 
+        # Find out why it's being visited more than once. 
+        # It's probably because of all the tree manipulation.
+        # I imagine an insertion may be shifting the elements 
+        # ahead to be retraversed while traversing an array.
+        # -Kody
+        if node.visited_createForInLoopValueVariable
+            return
+        node.visited_createForInLoopValueVariable = true
+
         context.addVariable
             id: valueDeclarator.id
             init:
@@ -1272,6 +1282,7 @@ addOrderPropertyToStatements = (node, context) ->
             statement.order = order
             # console.log("---------> " + order)
 
+globalOptions = {}
 exports.postprocess = (program, options) ->
     steps = [
         [namedFunctionsAndNewArguments, superExpressions, activateStatements, addPropertyDeclaration, propertyDefinitions]
@@ -1291,6 +1302,7 @@ exports.postprocess = (program, options) ->
     if (options?.target is 'es5')
         steps.push [letAndConstToVar]
     previousContext = null
+
     for traversal in steps
         enter = (node, context) ->
             previousContext = context
@@ -1300,17 +1312,20 @@ exports.postprocess = (program, options) ->
                 if handler?
                     handler node, context
                     node = context.current()
+
         exit = (node, context) ->
             for step in traversal by -1 when node?
                 handler = step.exit ? null
                 if handler?
                     handler node, context
                     node = context.current()
+
         variable = (node, context, kind, name) ->
             for step in traversal when node?
                 handler = step.variable ? null
                 if handler?
                     handler node, context, kind, name
                     node = context.current()
+                    
         traverse program, enter, exit, variable, previousContext
     program

@@ -1,0 +1,24 @@
+# const
+#     index = import '../compiler'
+
+#     # This currently works.
+#     source0 = ""
+#         const a = 1
+
+#     # This doesn't.
+#     source1 = ""
+#         activate template ->
+#             let foo = 1
+#         const b = 1
+
+# export const
+#     test = () ->
+#         let options = {target:'es6'}
+
+#         # let js0 = index.compile(source0, options)
+#         # console.log(js0)
+#         # eval(js0)
+
+#         let js1 = index.compile(source1, options)
+#         console.log(js1)
+#         eval(js1)

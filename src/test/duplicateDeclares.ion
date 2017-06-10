@@ -1,0 +1,20 @@
+# ---- Debug ----
+# const
+#     index = import '../compiler'
+
+#     source = ""
+#         let a, b
+#         let foo = []
+#             []
+#                 if a
+#                     b
+#             () ->
+#                 for k, v of obj
+#                     let baz = k + v
+
+# export const
+#     test = () ->
+#         console.log('')
+
+#         let options = {target:'es6', showsteps: true}
+#         console.log(index.compile(source, options))
