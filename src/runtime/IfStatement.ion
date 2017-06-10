@@ -37,7 +37,7 @@ export class IfStatement extends Statement
             )
         deactivate: ->
             super
-            @unobserve()
+            @unobserve?()
             if @alternateStatement?.isActive
                 @alternateStatement?.deactivate()
                 @alternateStatement = null
