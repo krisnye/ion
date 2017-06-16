@@ -333,6 +333,8 @@ export const
                 return null
             typeName = typeName.split(/\//g).pop() # legacy/name/correction, only use last step
             let type = namespace[typeName]
+            if not type?
+                throw new Error("Type not found: {{ typeName }}")
             if not type.serializable
                 throw new Error("Type is not serializable: {{ typeName }}")
             return type
