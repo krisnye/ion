@@ -343,10 +343,10 @@ export const
             if type?
                 let values = object
                 object = new type()
-                # now iterate and only set properties that DO NOT HAVE getters/setters
+                # now iterate and only set properties that HAVE setters or are plain fields
                 for k, v of values
                     let property = type.properties?[k]
-                    if not property?.get?
+                    if not property?.get? or property?.set?
                         object[k] = v
             # convert recursively
             for key, value of object
