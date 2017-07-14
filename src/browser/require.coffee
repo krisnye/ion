@@ -1,4 +1,5 @@
 #!browser
+
 do ->
 
     # define global if needed.
@@ -127,6 +128,10 @@ do ->
 
     # since this is the only code guaranteed to run on loading, we also try to compile script tags here.
     if global.window?
-        window.addEventListener 'load', (e) ->
-            require.compileScripts()
-
+        loaded = false
+        ensureLoaded = ->
+            if not loaded
+                loaded = true
+                require.compileScripts()
+        window.addEventListener 'load', ensureLoaded
+        window.addEventListener 'WebComponentsReady', ensureLoaded
