@@ -79,8 +79,8 @@ Declaration
     / VariableDeclaration
 
 ArgumentStatement
-    = arguments:ArgumentList
-    { return node("ArgumentStatement", {arguments}) }
+    = args:ArgumentList
+    { return node("ArgumentStatement", {arguments:args}) }
 
 TypeDeclaration
     = TypeToken _ id:Id _ "=" _ value:Type EOL
@@ -177,8 +177,8 @@ TypeArguments
     { return [head, ...tail] }
 
 GenericType
-    = id:Id _ arguments:TypeArguments?
-    { return node("GenericType", {id, arguments:arguments}) }
+    = id:Id _ args:TypeArguments?
+    { return node("GenericType", {id, arguments:args}) }
     / "[" _ type:Type '*' _ "]"
     { return node("GenericType", {id:node("Identifier", {name:"Array"}), arguments:[type]}) }
     / "[" _ head:Type tail:(_ "," _ @Type)+ _ "]"
