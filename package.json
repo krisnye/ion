@@ -23,12 +23,13 @@
     },
     "homepage": "https://github.com/krisnye/ion",
     "dependencies": {
+        "text-diff": "^1.0.1"
     },
     "devDependencies": {
         "@types/escodegen": "^0.0.6",
         "@types/node": "^7.0.22",
         "escodegen": "^1.8.1",
-        "text-diff": "^1.0.1",
+        "jsondiffpatch": "^0.2.4",
         "pegs": "*"
     }
 }

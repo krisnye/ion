@@ -9,13 +9,24 @@ export function removeLocations(ast:object) {
     )
 }
 
-export function convertBinaryOperationsToCalls(ast:object) {
+export function opsToCalls(ast:object) {
     return traverse(
         ast,
+        null,
         (node) => {
-            node.foo = "bar"
+            if (node.type === 'BinaryExpression') {
+                let {location, left, right, operator} = node
+                return {
+                    type:'Call',
+                    location,
+                    callee: {type:'Identifier', name:operator},
+                    arguments: [left, right]
+                }
+            }
         }
     )
 }
 
-export default [removeLocations, convertBinaryOperationsToCalls]
+export function identity(ast:object) { return ast }
+
+export default [removeLocations, opsToCalls, identity]

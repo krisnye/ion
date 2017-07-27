@@ -1,12 +1,11 @@
 import * as common from "./common"
-const Diff: any = require("text-diff")
-const diff: any = new Diff()
+const jsondiffpatch: any = require('jsondiffpatch').create({})
 
 export function create(outputPath: string) {
-    let passes: [string,string][] = []
+    let passes: [string,object][] = []
     return function(name: string, ast: object) {
         if (name != null) {
-            passes.push([name, JSON.stringify(ast, null, 2)])
+            passes.push([name, JSON.parse(JSON.stringify(ast))])
         } else {
             // convert to HTML
             let previous: string | null = null
@@ -15,21 +14,19 @@ export function create(outputPath: string) {
 <html>
     <head>
         <meta http-equiv="refresh" content="1">
+        <link rel="stylesheet" href="../../../node_modules/jsondiffpatch/public/formatters-styles/html.css" type="text/css" />
         <style>
         :root {
             --border: solid 1px gray;
         }
-
         body {
             display: flex;
             flex-direction: row;
-            font-size: 16px;
+            font-size: 12px;
+            font-family: Monaco;
         }
         article {
             border: var(--border);
-            color: rgb(207,145,118);
-            color: rgb(83,155,216);
-            background: rgb(30,30,30);
         }
         article {
             border: var(--border);
@@ -62,17 +59,14 @@ export function create(outputPath: string) {
     </head>
     <body>
 `,
-...passes.map(([name, text]: any) => {
-    let save = text
-    if (previous != null) {
-        var textDiff = diff.main(previous, text)
-        text = diff.prettyHtml(textDiff)
-    }
-    previous = save
+...passes.map(([name, ast]: any) => {
+    let delta = previous != null ? jsondiffpatch.diff(previous, ast) : null
+    let html = require('jsondiffpatch/src/formatters/html').format(delta || {}, previous || ast)
+    previous = ast
     return `
         <article>
             <header>${name}</header>
-            <p>${text}</p>
+            <p>${html}</p>
         </article>
     `
 }),
