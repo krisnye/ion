@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "outDir": "lib/compiler",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "alwaysStrict": true,
+        "strictNullChecks": true,
+        "experimentalDecorators": true,
+        "target": "es2017",
+        "typeRoots": [ "node_modules/@types" ]
+    },
+    "include": [
+        "compiler/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+    ]
+}

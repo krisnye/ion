@@ -1,46 +1,34 @@
 {
     "name": "ion",
-    "version": "0.9.14",
+    "version": "1.9.0",
     "main": "lib/index",
-    "bin": {
-        "ion": "bin/ion.js"
-    },
     "repository": "https://github.com/krisnye/ion.git",
     "scripts": {
-        "dev": "yarn install && yarn link",
-        "clean": "rm -rf node_modules && rm -rf lib && yarn unlink",
-        "build": "node bin/ion -c",
-        "watch": "node bin/ion -w",
-        "postinstall": "node boot/builder/_command.js -c"
+        "dev": "npm link pegs && yarn install && mkdir -p lib/compiler",
+        "build": "pegs compiler/parser.pegs lib/compiler/parser.js && tsc -p .",
+        "watch": "nodemon -w compiler/parser.pegs -x pegs compiler/parser.pegs lib/compiler/parser.js & tsc -p . --watch & yarn watchTest",
+        "watchTest": "nodemon -w lib/compiler -w compiler/test/*.ion lib/compiler/test"
     },
-    "directories": {
-        "lib": "lib",
-        "src": "src"
+    "author": {
+        "name": "Kris Nye",
+        "email": "krisnye@gmail.com"
     },
-    "build": {
-        "package": true,
-        "merge": {
-            "../dist/ion-all.js": {
-                "exclude": ["builder"]
-            },
-            "../dist/ion-browser.js": {
-                "exclude": ["builder", "test", "compiler"]
-            },
-            "../dist/ion-min.js": {
-                "exclude": ["builder", "test", "compiler"],
-                "compress": true
-            }
+    "contributors": [
+        {
+            "name": "Kody King"
         }
+    ],
+    "bugs": {
+        "url": "https://github.com/krisnye/ionic/issues"
     },
-    "contributors": ["krisnye@gmail.com"],
+    "homepage": "https://github.com/krisnye/ion",
     "dependencies": {
-        "source-map": "0.1.x",
-        "coffee-script": "1.8.x",
-        "esprima": "1.1.x",
-        "uglify-js": "2.4.x",
-        "pegjs": "0.8.x"
     },
     "devDependencies": {
-        "express": "4.12.x"
+        "@types/escodegen": "^0.0.6",
+        "@types/node": "^7.0.22",
+        "escodegen": "^1.8.1",
+        "text-diff": "^1.0.1",
+        "pegs": "*"
     }
 }
