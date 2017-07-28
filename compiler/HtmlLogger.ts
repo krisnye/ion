@@ -2,10 +2,10 @@ import * as common from "./common"
 const jsondiffpatch: any = require('jsondiffpatch').create({})
 
 export function create(outputPath: string) {
-    let passes: [string,object][] = []
-    return function(name: string, ast: object) {
-        if (name != null) {
-            passes.push([name, JSON.parse(JSON.stringify(ast))])
+    let passes: [string[],object][] = []
+    return function(names: string[], ast: object) {
+        if (names != null) {
+            passes.push([names, JSON.parse(JSON.stringify(ast))])
         } else {
             // convert to HTML
             let previous: string | null = null
@@ -43,6 +43,10 @@ export function create(outputPath: string) {
             margin: 0px;
             border-bottom: var(--border);
         }
+        article header:hover {
+            display: flex;
+            flex-direction: column;
+        }
         article p {
             padding: 0px 8px;
             white-space: pre;
@@ -59,13 +63,13 @@ export function create(outputPath: string) {
     </head>
     <body>
 `,
-...passes.map(([name, ast]: any) => {
+...passes.map(([names, ast]: any) => {
     let delta = previous != null ? jsondiffpatch.diff(previous, ast) : null
     let html = require('jsondiffpatch/src/formatters/html').format(delta || {}, previous || ast)
     previous = ast
     return `
         <article>
-            <header>${name}</header>
+            <header><span>${names.join(', </span><span>')}</span></header>
             <p>${html}</p>
         </article>
     `

@@ -1,29 +1,30 @@
 import * as common from "./common"
 import * as np from "path"
 import {traverse} from "./Traversal"
-import defaultPasses from "./Passes"
-const defaultLogger = (name?: string, ast?: object) => {
+import {createPass} from "./PassBuilder"
+import {defaultPasses} from "./Filters"
+
+const defaultLogger = (names?: string[], ast?: object) => {
     console.log('==================================================================')
-    if (name != null) {
-        console.log('// ', name)
+    if (names != null) {
+        console.log('// ', names)
         console.log(JSON.stringify(ast, null, 2))
     }
 }
 
 export default class Compiler {
-
     input: string
     output: string
     namespace: string
-    passes: ((ast:object) => object)[]
-    logger: (name?: string, ast?: object) => void
+    passes: any[][]
+    logger: (names?: string[], ast?: object) => void
 
     constructor(options:{
         input: string,
         output: string,
         namespace: string,
-        passes?: ((ast:object) => object)[]
-        logger?: (name: string, ast: object) => void
+        passes?: any[][]
+        logger?: (names?: string[], ast?: object) => void
     }){
         this.input = options.input
         this.output = options.output
@@ -34,11 +35,13 @@ export default class Compiler {
 
     compile() {
         let assembly = this.parseFiles()
-        this.logger("parser", assembly)
+        this.logger(["input"], assembly)
         for (let pass of this.passes) {
-            assembly = pass(assembly)
-            this.logger(pass.name, assembly)
+            let visitor = createPass(pass)
+            assembly = traverse(assembly, visitor)
+            this.logger(visitor.names, assembly)
         }
+        this.logger(["output"], assembly)
         this.logger()
     }
 

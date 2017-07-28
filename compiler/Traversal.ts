@@ -16,40 +16,47 @@ function isObjectNode(object:any) {
     return object != null && typeof object.type === 'string'
 }
 
-export function traverseWithPath(
-    root:any,
-    enter:null | ((node:any, path: any[]) => any),
-    leave:null | ((node:any, path: any[]) => any) = null
-) {
-    let path: any[] = []
-    traverse(
-        root,
-        function(node:any) {
-            let result
-            path.push(node)
-            if (enter != null)
-                result = enter(node, path)
-            return result
-        },
-        function(node:any) {
-            let result
-            if (leave != null)
-                result = leave(node, path)
-            path.pop()
-            return result
-        }
-    )
+// export function traverseWithPath(
+//     root:any,
 
-}
+//     enter:null | ((node:any, path: any[]) => any),
+//     leave:null | ((node:any, path: any[]) => any) = null
+// ) {
+//     let path: any[] = []
+//     traverse(
+//         root,
+//         function(node:any) {
+//             let result
+//             path.push(node)
+//             if (enter != null)
+//                 result = enter(node, path)
+//             return result
+//         },
+//         function(node:any) {
+//             let result
+//             if (leave != null)
+//                 result = leave(node, path)
+//             path.pop()
+//             return result
+//         }
+//     )
+
+// }
 
 export const skip = Symbol("Traversal.skip")
 export const remove = Object.freeze([])
 
+export type Visitor = {
+    enter?: (node:object) => Symbol | void,
+    leave?: (node:object) => object | object[] | void
+}
+
 export function traverse(
     node:any,
-    enter:null | ((node:any) => any),
-    leave:null | ((node:any) => any) = null
+    visitor: Visitor
 ): any {
+    let {enter, leave} = visitor
+
     let isArray = Array.isArray(node)
     let isNode = isObjectNode(node)
     let hasArrays = false
@@ -61,7 +68,7 @@ export function traverse(
             if (name[0] !== '_') {
                 let child = node[name]
                 if (isArray || isNode) {
-                    let childResult = traverse(child, enter, leave)
+                    let childResult = traverse(child, visitor)
                     if (childResult !== child && childResult !== undefined) {
                         if (Array.isArray(childResult))
                             hasArrays = true
