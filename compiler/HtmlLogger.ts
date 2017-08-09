@@ -1,11 +1,12 @@
 import * as common from "./common"
 const jsondiffpatch: any = require('jsondiffpatch').create({})
+const remove__prefixedProperties = (key, value) => key.startsWith("__") ? undefined : value
 
 export function create(outputPath: string) {
     let passes: [string[],object][] = []
     return function(names: string[], ast: object) {
         if (names != null) {
-            passes.push([names, JSON.parse(JSON.stringify(ast))])
+            passes.push([names, JSON.parse(JSON.stringify(ast, remove__prefixedProperties))])
         } else {
             // convert to HTML
             let previous: string | null = null
@@ -13,7 +14,6 @@ export function create(outputPath: string) {
 `
 <html>
     <head>
-        <meta http-equiv="refresh" content="1">
         <link rel="stylesheet" href="../../../node_modules/jsondiffpatch/public/formatters-styles/html.css" type="text/css" />
         <style>
         :root {
@@ -61,7 +61,7 @@ export function create(outputPath: string) {
         }
         </style>
     </head>
-    <body>
+    <body onclick="location.reload(true)">
 `,
 ...passes.map(([names, ast]: any) => {
     let delta = previous != null ? jsondiffpatch.diff(previous, ast) : null

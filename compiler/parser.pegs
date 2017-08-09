@@ -1,7 +1,7 @@
 {
 
     function node(type, ...values) {
-        return Object.assign({type,_location:location()}, ...values.reverse())
+        return Object.assign({type,__location:location()}, ...values.reverse())
     }
 
     function buildBinaryExpression(head, tail) {

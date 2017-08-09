@@ -1,7 +1,13 @@
 import {traverse,remove,Visitor} from "./Traversal"
 
-const Node_identity = (node:any) => {}
-const Node_deleteLocation = (node:any) => { delete node._location }
+function fail(node:any, message: string) {
+    let error = new Error(message)
+    let location = node.__location || node
+    error.location = location
+    console.log(location)
+    throw error
+}
+
 const BinaryExpression_ToCall = {
     name: 'BinaryExpression_ToCall',
     target: ['BinaryExpression'],
@@ -16,9 +22,15 @@ const BinaryExpression_ToCall = {
         }
     }
 }
-const VariableDeclaration_AddPath = (node:any, ancestors:object[], path:string[]) => {
-    // path may change so we have to take a copy of it.
-    node.path = path.slice(0)
+const Assembly_NamesInit = (node:any) => {
+    let names: {[name:string]:string = {}
+    for (let modulePath in node.modules) {
+        let name = modulePath.split('.').pop()
+        if (names[name])
+            fail(node.modules[modulePath], "CompilerError: " + modulePath + " short name cannot be the same as " + names[name])
+        names[name] = modulePath
+    }
+    node._names = names
 }
 
 //  how to find an external identifier for implicit imports.
@@ -26,6 +38,5 @@ const VariableDeclaration_AddPath = (node:any, ancestors:object[], path:string[]
 
 //  need an actual filter to do... how about adding implicit module references
 export const defaultPasses = [
-    [Node_deleteLocation, BinaryExpression_ToCall],
-    [VariableDeclaration_AddPath]
+    [Assembly_NamesInit, BinaryExpression_ToCall]
 ]
