@@ -15,20 +15,17 @@ const defaultLogger = (names?: string[], ast?: object) => {
 export default class Compiler {
     input: string
     output: string
-    namespace: string
     passes: any[][]
     logger: (names?: string[], ast?: object) => void
 
     constructor(options:{
         input: string,
         output: string,
-        namespace: string,
         passes?: any[][]
         logger?: (names?: string[], ast?: object) => void
-    }){
+     }){
         this.input = options.input
         this.output = options.output
-        this.namespace = options.namespace
         this.passes = options.passes || defaultPasses
         this.logger = options.logger || defaultLogger
     }
@@ -48,16 +45,16 @@ export default class Compiler {
     parseFiles(): object {
         let parser = require("./parser")()
         let filenames = common.getFilesRecursive(this.input)
-        let modules = []
+        let modules: any = {}
         for (let file of filenames) {
             if (file.endsWith(".ion") && file.indexOf('ast') < 0) {
-                let filename = np.join(this.namespace, file.substring(this.input.length))
-                let path = filename.substring(0, filename.length - ".ion".length).replace(/\//g, '.')
+                let filename = file.substring(this.input.length)
+                let path = filename.substring(1, filename.length - ".ion".length).replace(/\//g, '.')
                 let module = parser.parse(common.read(file), filename)
-                modules.push(module)
+                modules[path] = module
             }
         }
-        return {type:'Assembly', namespace:this.namespace, modules}
+        return {type:'Assembly', modules}
     }
 
 }

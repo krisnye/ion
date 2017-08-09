@@ -7,7 +7,7 @@
         "dev": "npm link pegs && yarn install && mkdir -p lib/compiler",
         "build": "pegs compiler/parser.pegs lib/compiler/parser.js && tsc -p .",
         "watch": "nodemon -w compiler/parser.pegs -x pegs compiler/parser.pegs lib/compiler/parser.js & tsc -p . --watch & yarn watchTest",
-        "watchTest": "nodemon -w lib/compiler -w compiler/test/*.ion lib/compiler/test"
+        "watchTest": "nodemon -w lib/compiler -w compiler/test -e js,ion lib/compiler/test"
     },
     "author": {
         "name": "Kris Nye",

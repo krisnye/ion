@@ -1,14 +1,7 @@
 {
 
     function node(type, ...values) {
-        let node = {type:type}
-        node.location = location()
-        for (let i = 0; i < values.length; i++) {
-            let value = values[i]
-            if (value != null)
-                Object.assign(node, value)
-        }
-        return node
+        return Object.assign({type,_location:location()}, ...values.reverse())
     }
 
     function buildBinaryExpression(head, tail) {

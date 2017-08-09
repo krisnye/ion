@@ -1,9 +1,9 @@
-import {Visitor,skip} from "./Traversal"
+import {Visitor} from "./Traversal"
 
 export type Filter = Visitor & {name:string,target:string[],mutate:boolean}
 export type Pass = Visitor & {names:string[]}
 
-function createFilter(filter: Filter | ((node:any) => any)): Filter {
+function createFilter(filter: Filter | ((node:any, ancestors?: object[], path?: string[]) => any)): Filter {
     if (typeof filter === 'function') {
         let name = filter.name
         //  allows you to provide target in name of function
@@ -11,7 +11,7 @@ function createFilter(filter: Filter | ((node:any) => any)): Filter {
         if (split.length <= 1)
             throw new Error("Name must have target prefix: " + name)
         let target = split.slice(0, -1)
-        return {name, target, mutate:false, leave:filter}
+        return {name, target, mutate:false, enter:filter}
     }
     else {
         if (!Array.isArray(filter.target))
@@ -78,33 +78,28 @@ export function createPass(filters: Filter[]): Pass {
 
     return {
         names: filters.map(f => f.name),
-        enter: (node:any) => {
+        enter: (node:any, ancestors: object[], path: string[]) => {
             let handler = getHandler(node.type)
             if (handler) {
                 let {enters} = handler
                 for (let enter of enters) {
-                    enter(node)
+                    enter(node, ancestors, path)
                 }
             }
         },
-        leave: (node:any) => {
+        leave: (node:any, ancestors: object[], path: string[]) => {
             let handler = getHandler(node.type)
             if (handler) {
                 let {leaves} = handler
-                let finalResult = undefined
                 for (let leave of leaves) {
-                    let result = leave(node)
+                    let result = leave(node, ancestors, path)
                     if (result !== undefined) {
                         if (leave.filter.mutate !== true)
                             throw new Error("Filter mutated without setting mutate true: " + leave.filter.name)
-                        if (finalResult !== undefined) {
-                            debugger
-                            throw new Error("This shouldn't be possible")
-                        }
-                        finalResult = result
+                        //  we know there cannot be any other applicable Mutation filters at this point
+                        return result
                     }
                 }
-                return finalResult
             }
         }
     }
