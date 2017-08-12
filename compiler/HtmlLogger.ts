@@ -1,6 +1,6 @@
 import * as common from "./common"
 const jsondiffpatch: any = require('jsondiffpatch').create({})
-const remove__prefixedProperties = (key, value) => key.startsWith("__") ? undefined : value
+const remove__prefixedProperties = (key: string, value:any) => key.startsWith("__") ? undefined : value
 
 export function create(outputPath: string) {
     let passes: [string[],object][] = []

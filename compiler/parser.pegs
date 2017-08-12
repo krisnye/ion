@@ -31,14 +31,14 @@ Module
 ////////////////////////////////////////////////////////////////////////////////
 
 ModulePath
-    = head:IdName tail:("." @IdName)*
+    = head:Id tail:("." @Id)*
     { return [head, ...tail] }
 
 SubImports
     = Indent @(Dent @ImportDeclaration)+ Outdent
 
 ImportDeclaration
-    = path:ModulePath as:(_ AsToken _ @Id)? children:(".*" EOL { return true } / EOL @SubImports?)
+    = path:ModulePath as:(_ AsToken _ @IdDeclaration)? children:(".*" EOL { return true } / EOL @SubImports?)
     { return node("ImportDeclaration", {path,children,id: as || path[path.length-1] }) }
 
 ImportDeclarations
@@ -76,11 +76,11 @@ ArgumentStatement
     { return node("ArgumentStatement", {arguments:args}) }
 
 TypeDeclaration
-    = TypeToken _ id:Id _ "=" _ value:Type EOL
+    = TypeToken _ id:IdDeclaration _ "=" _ value:Type EOL
     { return node('TypeDeclaration', {id, value}) }
 
 VariableDeclarationHead
-    = kind:(VarToken / LetToken) _ id:Id _ valueType:(":" _ @Type)?
+    = kind:(VarToken / LetToken) _ id:IdDeclaration _ valueType:(":" _ @Type)?
     { return {kind, id, valueType} }
 
 InlineVariableDeclaration
@@ -124,14 +124,14 @@ ReturnStatement
 ////////////////////////////////////////////////////////////////////////////////
 
 Pattern
-    = Id
+    = IdDeclaration
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Class
 ////////////////////////////////////////////////////////////////////////////////
 
 ClassDeclaration
-    = kind:(ClassToken / StructToken) _ id:Id typeParameters:TypeParameters? _ baseClasses:Extends? EOL
+    = kind:(ClassToken / StructToken) _ id:IdDeclaration typeParameters:TypeParameters? _ baseClasses:Extends? EOL
         Indent variables:(Dent @VariableDeclaration)* Outdent
         { return node("ClassDeclaration", {kind, id, typeParameters, baseClasses:baseClasses || [], variables}) }
 
@@ -170,15 +170,15 @@ TypeArguments
     { return [head, ...tail] }
 
 GenericType
-    = id:Id _ args:TypeArguments?
+    = id:IdReference _ args:TypeArguments?
     { return node("GenericType", {id, arguments:args}) }
     / "[" _ type:Type '*' _ "]"
-    { return node("GenericType", {id:node("Identifier", {name:"Array"}), arguments:[type]}) }
+    { return node("GenericType", {id:node("IdReference", {name:"Array"}), arguments:[type]}) }
     / "[" _ head:Type tail:(_ "," _ @Type)+ _ "]"
     {
         //  no actual pattern yet, just types
         let types = [head, ...tail]
-        return node("GenericType", {id:node("Identifier", {name:"Array"}), arguments:[node("UnionType", {types})], pattern:types})
+        return node("GenericType", {id:node("IdReference", {name:"Array"}), arguments:[node("UnionType", {types})], pattern:types})
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -271,7 +271,7 @@ ConditionalExpression
 ////////////////////////////////////////////////////////////////////////////////
 
 Parameter
-    = id:(&("this" !IdPart) @IdName / @Id) _ valueType:(":" + _ @Type)?
+    = id:IdDeclaration _ valueType:(":" + _ @Type)?
     { return node("Parameter", {id, valueType})}
 
 FunctionParameters
@@ -305,7 +305,7 @@ InlineExpression
     / ConditionalExpression
 
 PrimaryExpression
-    = Id
+    = IdReference
     / Literal
     / ThisExpression
     / GroupExpression
@@ -332,7 +332,7 @@ MemberExpression =
     head: PrimaryExpression
     tail: (
         "[" _ property:InlineExpression _ "]" { return {property, computed:false} }
-        / "." property:IdName { return {property, computed:false} }
+        / "." property:Id { return {property, computed:false} }
         / InlineArguments
     )*
     {
@@ -408,10 +408,16 @@ IdPart
     = IdStart / [0-9]
 
 IdName
-    = IdStart IdPart* { return node('Identifier', {name:text()}) }
+    = $(!ReservedWord IdStart IdPart*)
 
 Id "Id"
-    = !ReservedWord @IdName
+    = name:IdName { return node('Id', {name})}
+
+IdDeclaration
+    = name:IdName { return node('IdDeclaration', {name})}
+
+IdReference
+    = name:IdName { return node('IdReference', {name})}
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Tokens and Keywords

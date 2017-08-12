@@ -3,6 +3,7 @@ import * as np from "path"
 import {traverse} from "./Traversal"
 import {createPass} from "./PassBuilder"
 import {defaultPasses} from "./Filters"
+const parser = require("./parser")()
 
 const defaultLogger = (names?: string[], ast?: object) => {
     console.log('==================================================================')
@@ -17,6 +18,7 @@ export default class Compiler {
     output: string
     passes: any[][]
     logger: (names?: string[], ast?: object) => void
+    filenamesToSource: {[filename:string]:string}
 
     constructor(options:{
         input: string,
@@ -28,29 +30,42 @@ export default class Compiler {
         this.output = options.output
         this.passes = options.passes || defaultPasses
         this.logger = options.logger || defaultLogger
+        this.filenamesToSource = {}
     }
 
     compile() {
         let assembly = this.parseFiles()
         this.logger(["input"], assembly)
-        for (let pass of this.passes) {
-            let visitor = createPass(pass)
-            assembly = traverse(assembly, visitor)
-            this.logger(visitor.names, assembly)
+        try {
+            for (let pass of this.passes) {
+                let visitor = createPass(pass)
+                assembly = traverse(assembly, visitor)
+                this.logger(visitor.names, assembly)
+            }
+        } catch (e) {
+            let location = e.location
+            if (location == null)
+                throw e
+            let {filename} = location
+            let source = this.filenamesToSource[filename]
+            let error = parser.getError(e.message, location, source, location, filename)
+            console.log(error.message)
+        } finally {
+            this.logger(["output"], assembly)
+            this.logger()
         }
-        this.logger(["output"], assembly)
-        this.logger()
     }
 
     parseFiles(): object {
-        let parser = require("./parser")()
         let filenames = common.getFilesRecursive(this.input)
         let modules: any = {}
         for (let file of filenames) {
             if (file.endsWith(".ion") && file.indexOf('ast') < 0) {
-                let filename = file.substring(this.input.length)
-                let path = filename.substring(1, filename.length - ".ion".length).replace(/\//g, '.')
-                let module = parser.parse(common.read(file), filename)
+                let filename = file.substring(this.input.length + 1)
+                let path = filename.substring(0, filename.length - ".ion".length).replace(/\//g, '.')
+                let source = common.read(file)
+                this.filenamesToSource[filename] = source
+                let module = parser.parse(source, filename)
                 modules[path] = module
             }
         }
