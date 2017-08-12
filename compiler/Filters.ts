@@ -51,25 +51,42 @@ const IdReference_ModuleDependenciesInit = (node:any, ancestors:any[]) => {
     let [assembly, , module] = ancestors
     let modulePath = assembly._names[name]
     if (modulePath) {
-        module._dependencies[modulePath] = true
+        module._dependencies[modulePath] = node.__location
     }
 }
 
 const Assembly_ModuleOrderInit = (node:any) => {
-    let edges: [any,any][] = []
-    let tail = "00root"
+    let edges: [any,any,any][] = [] // third item is location of dependency IdReference
+    let tail = {}
     // get all the module dependencies as edges
     for (let modulePath in node.modules) {
         let module = node.modules[modulePath]
         let dependencies = module._dependencies
-        edges.push([modulePath, tail])
+        edges.push([modulePath, tail, null])
         for (let dep in dependencies) {
-            edges.push([dep, modulePath])
+            edges.push([dep, modulePath, dependencies[dep]])
         }
     }
+    let lastRemovedEdge = null
+    while (true) {
+        let order
+        try {
+            order = toposort(edges).slice(0, -1) // slice to remove tail
+        }
+        catch (e) {
+            lastRemovedEdge = edges.pop()
+            continue
+        }
+        if (lastRemovedEdge != null) {
+            //  this means we have failed with a cyclic dependency
+            //  the last removed one must be the problem since it works now
+            let location = lastRemovedEdge[2]
+            fail(location, "Cyclic module dependencies are not supported")
+        }
+        node._moduleOrder = order
+        return
+    }
 
-    let order = toposort(edges).slice(0, -1) // slice to remove tail
-    node._moduleOrder = order
 }
 
 //  how to find an external identifier for implicit imports.
