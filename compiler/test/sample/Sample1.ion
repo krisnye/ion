@@ -2,4 +2,4 @@
 # let Sample2 = 12
 
 export
-    let a = Sample2.b
+    let a = 1

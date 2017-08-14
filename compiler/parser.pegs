@@ -18,8 +18,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 Module
-    = EOL? imports:ImportDeclarations? statements:Statement* exports:ExportStatement EOL EOF
-    { return node("Module", {imports:imports || [], statements, exports}) }
+    = EOL? imports:ImportDeclarations? declarations:Declaration* exports:ExportStatement EOL EOF
+    { return node("Module", {imports:imports || [], declarations, exports}) }
 
 //  type Whole = Integer{ value > 0 and value < 10 }
 //  this = special keyword for class instance

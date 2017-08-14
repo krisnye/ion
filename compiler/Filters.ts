@@ -8,20 +8,34 @@ function fail(node:any, message: string) {
     throw error
 }
 
-const BinaryExpression_ToCall = {
-    name: 'BinaryExpression_ToCall',
-    target: ['BinaryExpression'],
-    mutate: true,
-    leave: (node:any) => {
-        let {location, left, right, operator} = node
-        return {
-            type:'Call',
-            location,
-            callee: {type:'IdReference', name:operator},
-            arguments: [left, right]
+const Module_NoVars = (node:any) => {
+    function failIfVar(declaration:any) {
+        if (Array.isArray(declaration)) {
+            for (let d of declaration) {
+                failIfVar(d)
+            }
+        }
+        else if (declaration.type === 'VariableDeclaration' && declaration.kind === 'var') {
+            fail(declaration, "Cannot export mutable variables")
         }
     }
+    failIfVar(node.declarations)
+    failIfVar(node.exports)
 }
+// const BinaryExpression_ToCall = {
+//     name: 'BinaryExpression_ToCall',
+//     target: ['BinaryExpression'],
+//     mutate: true,
+//     leave: (node:any) => {
+//         let {location, left, right, operator} = node
+//         return {
+//             type:'Call',
+//             location,
+//             callee: {type:'IdReference', name:operator},
+//             arguments: [left, right]
+//         }
+//     }
+// }
 const Assembly_NamesInitAndModuleNameInit = (node:any) => {
     let names: any = {}
     for (let modulePath in node.modules) {
@@ -34,27 +48,23 @@ const Assembly_NamesInitAndModuleNameInit = (node:any) => {
     }
     node._names = names
 }
-
 const IdDeclaration_CheckNoHideModuleNames = (node:any, ancestors:any[]) => {
     let {name} = node
     let root = ancestors[0]
     if (root._names[name])
         fail(node, "Cannot declare identifier with same name as local module: " + name)
 }
-
 const Module_DependenciesCreate = (node:any, ancestors:any[]) => {
     node._dependencies = {}
 }
-
 const IdReference_ModuleDependenciesInit = (node:any, ancestors:any[]) => {
     let {name} = node
     let [assembly, , module] = ancestors
     let modulePath = assembly._names[name]
     if (modulePath) {
-        module._dependencies[modulePath] = node.__location
+        module._dependencies[modulePath] = {__location:node.__location}
     }
 }
-
 const Assembly_ModuleOrderInit = (node:any) => {
     let edges: [any,any,any][] = [] // third item is location of dependency IdReference
     let tail = {}
@@ -80,7 +90,7 @@ const Assembly_ModuleOrderInit = (node:any) => {
         if (lastRemovedEdge != null) {
             //  this means we have failed with a cyclic dependency
             //  the last removed one must be the problem since it works now
-            let location = lastRemovedEdge[2]
+            let location = lastRemovedEdge[2].__location
             fail(location, "Cyclic module dependencies are not supported")
         }
         node._moduleOrder = order
@@ -89,12 +99,32 @@ const Assembly_ModuleOrderInit = (node:any) => {
 
 }
 
-//  how to find an external identifier for implicit imports.
-//  do we even need to do that, or can we
+//  export to javascript filters
+const VariableDeclaration_ToJavascript = {
+    name: "VariableDeclaration_ToJavascript",
+    target: ["VariableDeclaration"],
+    mutate: true,
+    leave: (node:any) => {
+        return {
+            type: 'VariableDeclaration',
+            kind: node.kind === 'let' ? 'const' : 'var',
+            declarations: [
+                {
+                    type: 'VariableDeclarator',
+                    id: node.id,
+                    init: node.value
+                }
+            ]
+        }
+    }
+}
+const IdDeclaration_IdReference_Id_ToJavascript = (node:any) => {
+    node.type = "Identifier"
+}
 
-//  need an actual filter to do... how about adding implicit module references
 export const defaultPasses = [
-    [Assembly_NamesInitAndModuleNameInit, IdDeclaration_CheckNoHideModuleNames, BinaryExpression_ToCall],
+    [Module_NoVars, Assembly_NamesInitAndModuleNameInit, IdDeclaration_CheckNoHideModuleNames],
     [Module_DependenciesCreate, IdReference_ModuleDependenciesInit],
-    [Assembly_ModuleOrderInit]
+    [Assembly_ModuleOrderInit],
+    [VariableDeclaration_ToJavascript, IdDeclaration_IdReference_Id_ToJavascript]
 ]

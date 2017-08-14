@@ -16,19 +16,17 @@ const defaultLogger = (names?: string[], ast?: object) => {
 export default class Compiler {
     input: string
     output: string
-    passes: any[][]
+    passes: any[][] = defaultPasses
     logger: (names?: string[], ast?: object) => void
     filenamesToSource: {[filename:string]:string}
 
     constructor(options:{
         input: string,
         output: string,
-        passes?: any[][]
         logger?: (names?: string[], ast?: object) => void
      }){
         this.input = options.input
         this.output = options.output
-        this.passes = options.passes || defaultPasses
         this.logger = options.logger || defaultLogger
         this.filenamesToSource = {}
     }
