@@ -70,7 +70,7 @@ export function create(outputPath: string) {
     return `
         <article>
             <header><span>${names.join(', </span><span>')}</span></header>
-            <p>${html}</p>
+            <p>${html.replace(/\\n/g, '<br>')}</p>
         </article>
     `
 }),

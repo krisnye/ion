@@ -67,7 +67,7 @@ export default class Compiler {
                 modules[path] = module
             }
         }
-        return {type:'Assembly', modules}
+        return {type:'Assembly', options:{input:this.input, output:this.output}, modules}
     }
 
 }

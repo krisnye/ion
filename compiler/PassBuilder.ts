@@ -6,12 +6,26 @@ export type Pass = Visitor & {names:string[]}
 function createFilter(filter: Filter | ((node:any, ancestors?: object[], path?: string[]) => any)): Filter {
     if (typeof filter === 'function') {
         let name = filter.name
+        let enter: any = filter
+        let leave: any = null
+        let mutate = false
+        //  _ prefix means filter on leave instead of enter
+        if (name.startsWith('_')) {
+            leave = filter
+            enter = null
+            name = name.substring(1)
+            //  another _ prefix means we are mutating on leave
+            if (name.startsWith('_')) {
+                mutate = true
+                name = name.substring(1)
+            }
+        }
         //  allows you to provide target in name of function
-        let split = filter.name.split('_')
+        let split = name.split('_')
         if (split.length <= 1)
             throw new Error("Name must have target prefix: " + name)
         let target = split.slice(0, -1)
-        return {name, target, mutate:false, enter:filter}
+        return {name, target, mutate, enter, leave}
     }
     else {
         if (!Array.isArray(filter.target))
