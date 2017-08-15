@@ -2,8 +2,14 @@ import * as common from "./common"
 import * as np from "path"
 import {traverse} from "./Traversal"
 import {createPass} from "./PassBuilder"
-import {defaultPasses} from "./Filters"
+
 const parser = require("./parser")()
+
+import * as input from "./phases/input" 
+import * as javascript from "./phases/javascript" 
+import * as output from "./phases/output" 
+const defaultPhases = [input, javascript, output]
+const defaultPasses = [].concat(...defaultPhases.map((x:any) => x.passes))
 
 const defaultLogger = (names?: string[], ast?: object) => {
     console.log('==================================================================')
