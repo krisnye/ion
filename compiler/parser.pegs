@@ -171,7 +171,7 @@ TypeArguments
 
 GenericType
     = id:IdReference _ args:TypeArguments?
-    { return node("GenericType", {id, arguments:args}) }
+    { return args ? node("GenericType", {id, arguments:args}) : node("Type", {id}) }
     / "[" _ type:Type '*' _ "]"
     { return node("GenericType", {id:node("IdReference", {name:"Array"}), arguments:[type]}) }
     / "[" _ head:Type tail:(_ "," _ @Type)+ _ "]"
