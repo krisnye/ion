@@ -66,7 +66,7 @@ export default class Compiler {
         for (let file of filenames) {
             if (file.endsWith(".ion") && file.indexOf('ast') < 0) {
                 let filename = file.substring(this.input.length + 1)
-                let path = filename.substring(0, filename.length - ".ion".length).replace(/\//g, '.')
+                let path = filename.substring(0, filename.length - ".ion".length).replace(/[\/\\]/g, '.')
                 let source = common.read(file)
                 this.filenamesToSource[filename] = source
                 let module = parser.parse(source, filename)
