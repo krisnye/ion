@@ -125,7 +125,6 @@ const Assembly_NestModules = (node:any) => {
         parentModule.modules[name] = module
     }
     //  now replace root modules with this new modules
-    console.log('Object.keys', Object.keys(rootModules.modules))
     node.modules = rootModules.modules
 }
 
