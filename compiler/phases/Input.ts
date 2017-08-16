@@ -51,10 +51,11 @@ const Assembly_NamesInitAndModuleNameInit = (node:any) => {
     }
     node._names = names
 }
-const IdDeclaration_CheckNoHideModuleNames = (node:any, ancestors:any[]) => {
+const IdDeclaration_CheckNoHideModuleNames = (node:any, ancestors:any[], path:string[]) => {
     let {name} = node
     let root = ancestors[0]
-    if (root._names[name])
+    let moduleName = path[1]
+    if (root._names[name] && name !== moduleName)
         fail(node, "Cannot declare identifier with same name as local module: " + name)
 }
 const Module_DependenciesCreate = (node:any, ancestors:any[]) => {
@@ -105,7 +106,9 @@ const Assembly_ModuleOrderInit = (node:any) => {
 const Assembly_NestModules = (node:any) => {
     let rootModules: any = {modules:{}}
     function getModule(steps:string[]): any {
-        let parentModule = steps.length > 1 ? getModule(steps.slice(0, -1)) : rootModules
+        if (steps.length == 0)
+            return rootModules
+        let parentModule = getModule(steps.slice(0, -1))
         let name = steps[steps.length - 1]
         let module = parentModule.modules[name]
         if (module == null)
@@ -116,10 +119,13 @@ const Assembly_NestModules = (node:any) => {
     for (let path in node.modules) {
         let module = node.modules[path]
         let steps = path.split('.')
-        let parentModule = getModule(steps.slice(0, -1))
-        getModule(steps.slice(0, -1)).modules[steps[steps.length-1]] = module
+        let parentPath = steps.slice(0, -1)
+        let parentModule = getModule(parentPath)
+        let name = steps[steps.length - 1]
+        parentModule.modules[name] = module
     }
     //  now replace root modules with this new modules
+    console.log('Object.keys', Object.keys(rootModules.modules))
     node.modules = rootModules.modules
 }
 
@@ -148,5 +154,6 @@ export const passes = [
     [Module_NoVars, Assembly_NamesInitAndModuleNameInit, IdDeclaration_CheckNoHideModuleNames],
     [Module_DependenciesCreate, IdReference_ModuleDependenciesInit],
     [Assembly_ModuleOrderInit],
-    [Assembly_NestModules, Module_ModulesToExports]
+    [Assembly_NestModules],
+    [Module_ModulesToExports]
 ]
