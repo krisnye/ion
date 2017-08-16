@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "outDir": "lib/compiler",
+        "outDir": "lib",
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
@@ -13,7 +13,7 @@
         "typeRoots": [ "node_modules/@types" ]
     },
     "include": [
-        "compiler/**/*"
+        "src/**/*"
     ],
     "exclude": [
         "node_modules",

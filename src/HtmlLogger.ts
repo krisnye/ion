@@ -1,8 +1,11 @@
+import * as np from "path"
 import * as common from "./common"
+
 const jsondiffpatch: any = require('jsondiffpatch').create({})
 const remove__prefixedProperties = (key: string, value:any) => key.startsWith("__") ? undefined : value
 
 export function create(outputPath: string) {
+    let outputToStyle = np.relative(np.dirname(outputPath), "node_modules/jsondiffpatch/public/formatters-styles/html.css")
     let passes: [string[],object][] = []
     return function(names: string[], ast: object) {
         if (names != null) {
@@ -14,7 +17,7 @@ export function create(outputPath: string) {
 `
 <html>
     <head>
-        <link rel="stylesheet" href="../../../node_modules/jsondiffpatch/public/formatters-styles/html.css" type="text/css" />
+        <link rel="stylesheet" href="${outputToStyle}" />
         <style>
         :root {
             --border: solid 1px gray;

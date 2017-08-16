@@ -1,14 +1,15 @@
 {
-    "name": "ion",
+    "name": "ion2",
     "version": "1.9.0",
     "main": "lib/index",
     "repository": "https://github.com/krisnye/ion.git",
+    "bin": "lib/command.js",
     "scripts": {
-        "dev": "npm link pegs && yarn install && mkdir -p lib/compiler",
-        "build": "pegs compiler/parser.pegs lib/compiler/parser.js && tsc -p .",
-        "watch": "nodemon -w compiler/parser.pegs -x pegs compiler/parser.pegs lib/compiler/parser.js & tsc -p . --watch & yarn watchTest",
-        "watchTest": "nodemon -w lib/compiler -w compiler/test -e js,ion lib/compiler/test",
-        "watchWin": "start yarn watchTest & start nodemon -w compiler/parser.pegs -x pegs compiler/parser.pegs lib/compiler/parser.js & start tsc -p . --watch"
+        "dev": "npm link pegs && yarn install && mkdir -p lib && yarn build && yarn link",
+        "build": "pegs src/parser.pegs lib/parser.js && tsc -p .",
+        "watch": "nodemon -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch & yarn watchTest",
+        "watchTest": "nodemon -w lib -w test -e js,ion -x ion2 test",
+        "watchWin": "start yarn watchTest & start nodemon -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & start tsc -p . --watch"
 
     },
     "author": {
