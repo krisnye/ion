@@ -103,6 +103,19 @@ const Assembly_ModuleOrderInit = (node:any) => {
 
 }
 
+const Literal_AddType = (node:any) => {
+    let {value} = node
+    if (typeof value === 'number') {
+        node.etype = {type: "Type", id:{type:"Id", name:"Number"}}
+    }
+    if (typeof value === 'boolean') {
+        node.etype = {type: "Type", id:{type:"Id", name:"Boolean"}}
+    }
+    if (typeof value === 'string') {
+        node.etype = {type: "Type", id:{type:"Id", name:"String"}}
+    }
+}
+
 const Assembly_NestModules = (node:any) => {
     let rootModules: any = {modules:{}}
     function getModule(steps:string[]): any {
@@ -152,7 +165,7 @@ const File_Write = (node:any) => {
 export const passes = [
     [Module_NoVars, Assembly_NamesInitAndModuleNameInit, IdDeclaration_CheckNoHideModuleNames],
     [Module_DependenciesCreate, IdReference_ModuleDependenciesInit],
-    [Assembly_ModuleOrderInit],
-    [Assembly_NestModules],
+    [Literal_AddType],
+    [Assembly_ModuleOrderInit, Assembly_NestModules],
     [Module_ModulesToExports]
 ]
