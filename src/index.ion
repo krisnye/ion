@@ -216,7 +216,7 @@ export const
                 name = name.substring(0, name.length - captureSuffix.length)
             item = ->
                 originalItem.apply(@, arguments)
-                sync()
+                sync(name)
             container.addEventListener(name, item, capture)
             remove = ->
                 container.removeEventListener(name, item)

@@ -98,8 +98,9 @@ export const
         for object in arguments
             # console.log('changed ' + JSON.stringify(object))
             changedObjects.set(object, object)
-    checkForChanges = () ->
+    checkForChanges = (source) ->
         # console.time('sync')
+        # console.trace('sync ' + source)
         let changes
         let maxCycles = 100
         # we have to run multiple cycles in case callbacks cause further change propagation

@@ -85,10 +85,6 @@ const createHtmlInserter = (container) ->
                 if name.endsWith(captureSuffix)
                     capture = true
                     name = name.substring(0, name.length - captureSuffix.length)
-                let originalValue = value
-                value = ->
-                    originalValue.apply(@, arguments)
-                    ion.sync()
                 value.id = name
                 value.capture = capture
             else if not isNode(value)
@@ -97,10 +93,11 @@ const createHtmlInserter = (container) ->
         getLength: -> container.childNodes.length
         add: (value, index, sourceNode) ->
             if typeof value is 'function'
-                value.wrapper ?= ->
-                    value.apply(@, arguments)
-                    ion.sync()
-                container.addEventListener(value.id, value.wrapper, value.capture)
+                if value.toString().indexOf('ion.sync') < 0
+                    value.wrapper ?= ->
+                        value.apply(@, arguments)
+                        ion.sync(value.id ? value.name)
+                container.addEventListener(value.id, value.wrapper ? value, value.capture)
             else
                 #  BEGIN POLYMER 1.X TEMPORARY HACK
                 if global.Polymer #isWebComponent(container)
@@ -130,7 +127,7 @@ const createHtmlInserter = (container) ->
             #     console.log('\n')
                 
             if typeof value is 'function'
-                container.removeEventListener(value.id, value.wrapper)
+                container.removeEventListener(value.id, value.wrapper ? value)
             else if not moving
                 #  BEGIN POLYMER 1.X TEMPORARY HACK
                 if global.Polymer # isWebComponent(container)
