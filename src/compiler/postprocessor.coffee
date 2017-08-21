@@ -1217,6 +1217,14 @@ hoistVariables = (node, context) ->
     #             return bValue - aValue
     #     )
 
+# hoistES6Variables = (node, context) ->
+#     if node.type is 'BlockStatement'
+#         es6Vars = []
+#         for child in node.body
+#             if child.type is 'VariableDeclaration' and child.kind isnt 'var'
+#                 es6Vars.push child
+#         console.dir es6Vars, {depth: null}
+
 variableDeclarationExpressions = (node, context) ->
     if node.type is 'VariableDeclarationExpression'
         # extract the variable declaration statement
@@ -1301,6 +1309,8 @@ exports.postprocess = (program, options) ->
     ]
     if (options?.target is 'es5')
         steps.push [letAndConstToVar]
+    # else
+    #     steps.push [hoistES6Variables]
     previousContext = null
 
     for traversal in steps
