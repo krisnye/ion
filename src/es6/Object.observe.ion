@@ -121,6 +121,7 @@ export const
             observerMap.forEach(check)
 
             #   then call all nextChecks.
+            let pendingChecks = nextCheckMap.size # this and it's use before quitting fixes where we were missing some pending changes
             let currentCheckMap = nextCheckMap
             nextCheckMap = new Map()
 
@@ -130,7 +131,7 @@ export const
             )
             currentCheckMap.clear()
 
-            if changeCount is 0 and nextCheckMap.size is 0
+            if changeCount is 0 and pendingChecks is 0
                 # console.log('loops: ' + i)
                 # console.timeEnd('sync')
                 return
