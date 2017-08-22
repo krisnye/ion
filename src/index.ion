@@ -52,14 +52,11 @@ const
                 return false
             return true
 
-const frozenSet = new Set()
-
 export const
     freeze = (object, deep = true) ->
-        if deep and frozenSet.has(object)
+        if Object.isFrozen(object)
             return object
-        else if deep
-            frozenSet.add(object)
+
         Object.freeze(object)
         if deep
             for key, value of object if value? and typeof value is 'object'
