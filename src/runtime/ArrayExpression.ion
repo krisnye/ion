@@ -25,7 +25,7 @@ export class ArrayExpression extends DynamicExpression
                         @itemObserver ?= =>
                             # console.log('item observer ' + expression.deep)
                             @notifyIfActive()
-                        @unobserveExpressionValues[key] = expression.deep ? ion.patch.watch(value, @itemObserver) : ion.observe(value, @itemObserver)
+                        @unobserveExpressionValues[key] = expression.deep ? ion.patch.watch(value, @itemObserver) : ion.observe(value, @itemObserver, null, [expression, this])
                 @notifyIfActive()
         activate: ->
             @expressions = [@context.createRuntime(item) for item in @elements]
@@ -33,7 +33,7 @@ export class ArrayExpression extends DynamicExpression
             @unobserveExpressionValues = []
             @unobserveExpressions = []
             for expression, key in @expressions
-                @unobserveExpressions.push(expression.observe(@setArgumentValue.bind(@, key, expression)))
+                @unobserveExpressions.push(expression.observe(@setArgumentValue.bind(@, key, expression), this))
             super
             @setValue(@argumentValues)
         deactivate: ->

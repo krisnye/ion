@@ -101,12 +101,12 @@ module.exports = class CallExpression extends DynamicExpression
 
             @unobserveTemplate?()
             @unobserveTemplate = null
-            try
-                if @calleeValue.template
-                    # always use new on templates
-                    @template = @calleeValue.apply(@thisArg, @argumentsValue)
-                    @unobserveTemplate = @template.observe(@templateWatcher ?= @setValue.bind(@))
-                else
+            if @calleeValue.template
+                # always use new on templates
+                @template = @calleeValue.apply(@thisArg, @argumentsValue)
+                @unobserveTemplate = @template.observe(@templateWatcher ?= @setValue.bind(@))
+            else
+                try
                     if @type is 'NewExpression'
                         # create a new with variable args
                         value = ion.create(@calleeValue, @argumentsValue)
@@ -119,11 +119,11 @@ module.exports = class CallExpression extends DynamicExpression
                                 console.info(logInfo)
                         value = @calleeValue.apply(@thisArg, @argumentsValue)
                     @setValue(value)
-            catch e
-                if @loc?
-                    let start = @loc.start
-                    console.error("Call Error at {{start.source}} (line:{{start.line}},column:{{start.column}})")
-                throw e
+                catch e
+                    if @loc?
+                        let start = @loc.start
+                        console.error("Call Error at {{start.source}} (line:{{start.line}},column:{{start.column}})")
+                    throw e
 
 
 

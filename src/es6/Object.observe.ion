@@ -59,8 +59,8 @@ const
         return changes
 
 export const
-    observe = (object, callback, property, priority = -1) ->
-        callback.priority ?= priority
+    # edge is of type [object,object] and if present is used for topologically sorting
+    observe = (object, callback, property, edge) ->
         # console.log('+observe', property)
         let meta = observerMap.get(object)
         if not meta?

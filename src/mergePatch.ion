@@ -5,7 +5,7 @@ const
         return a? and type is 'object' or type is 'function'
     deleteValue = null
     isPrivate = (name) -> name[0] is '_'
-    watchImmediate = (object, handler) ->
+    watchImmediate = (object, handler, edge) ->
         if not isObject(object)
             throw new Error("Cannot watch: #{object}")
 
@@ -26,6 +26,7 @@ const
                                     if watching
                                         # console.log('WATCH PROPERTIES ' + JSON.stringify({[name]:patch}))
                                         handler({[name]:patch})
+                                edge
                             )
 
         watchProperties(null)
@@ -52,6 +53,8 @@ const
                     if patch?
                         # console.log('OBSERVE ' + JSON.stringify(patch))
                         handler(patch)
+            null
+            edge
         )
         return ->
             watching = false
@@ -61,7 +64,7 @@ const
             unobserve = null
     increment = /[+-]\d+/
 
-    watchInternal = (object, handler) ->
+    watchInternal = (object, handler, edge) ->
         global.watchInternalCount ?= 0
         global.watchInternalCount++
 
@@ -78,7 +81,7 @@ const
             if not active
                 ion.nextCheck(finalCallback)
                 active = true
-        let unwatch = watchImmediate(object, delayedHandler)
+        let unwatch = watchImmediate(object, delayedHandler, edge)
         return ->
             unwatch()
             global.watchInternalCount--
@@ -136,11 +139,11 @@ export const
     # combines two patches to make a single patch
     combine = (patch1, patch2, schema) -> merge(patch1, patch2, {deleteNull:false}, schema)
     # watches object for changes and calls the handler with patches
-    watch = (object, handler) ->
+    watch = (object, handler, edge) ->
         # console.log('+   watch', object)
         global.watchCount ?= 0
         global.watchCount++
-        let unwatch = watchInternal(object, handler)
+        let unwatch = watchInternal(object, handler, edge)
         return ->
             unwatch()
             # console.log('- unwatch', object)
