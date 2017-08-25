@@ -9,6 +9,20 @@ module.exports = class CallExpression extends DynamicExpression
         args: null
         activate: ->
             super
+
+            # quick exit code...
+            if this.callee.type is 'Function' and this.arguments.length is 0 and not this.callee.objectExpression?
+                let callee = this.callee.value
+                let value
+                if this.callee.context
+                    callee = callee(this.context)
+                if @type is 'NewExpression'
+                    value = new callee()
+                else
+                    value = callee()
+                this.setValue(value)
+                return
+
             @calleeExpression ?= @context.createRuntime(@callee)
             @unobserveCallee = @calleeExpression.observe(
                 @calleeWatcher ?= (value) =>
@@ -45,17 +59,22 @@ module.exports = class CallExpression extends DynamicExpression
                                 )
                         @queueEvaluate()
             )
-            @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:not @calleeValue?.template})
-            @unobserveArguments = @argumentExpressions.observe(
-                @argumentWatcher ?= (value) =>
-                    @argumentsValue = value
-                    @queueEvaluate()
-            )
+
+            if @arguments.length is 0
+                @argumentsValue = []
+                @queueEvaluate()
+            else
+                @argumentExpressions ?= @context.createRuntime({type:'ArrayExpression',elements:@arguments, observeElements:not @calleeValue?.template})
+                @unobserveArguments = @argumentExpressions.observe(
+                    @argumentWatcher ?= (value) =>
+                        @argumentsValue = value
+                        @queueEvaluate()
+                )
         deactivate: ->
             super
             @cancelQueuedEvaluate?()
-            @unobserveCallee()
-            @unobserveArguments()
+            @unobserveCallee?()
+            @unobserveArguments?()
             @unobserveCalleeObject?()
             @unobserveThis?()
             @unobserveTemplate?()
