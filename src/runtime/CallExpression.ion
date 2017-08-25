@@ -49,6 +49,7 @@ module.exports = class CallExpression extends DynamicExpression
                                     @thisObserver ?= (patch) =>
                                         # console.log('deep change', patch)
                                         @queueEvaluate()
+                                    [@calleeExpression, this]
                                 )
                             else
                                 # shallow observe
@@ -56,6 +57,7 @@ module.exports = class CallExpression extends DynamicExpression
                                     thisArg
                                     @thisObserver ?= =>
                                         @queueEvaluate()
+                                    {edge:[@calleeExpression, this]}
                                 )
                         @queueEvaluate()
             )
