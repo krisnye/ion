@@ -47,7 +47,7 @@ export class ForInOfStatement extends Statement
                                     @addItem(key, value)
                             )
                             if @collectionExpression.mutable
-                                @unobserveCollection = ion.observe(@collection, (@collectionObserver ?= @applyChanges.bind(@)))
+                                @unobserveCollection = ion.observe(@collection, (@collectionObserver ?= @applyChanges.bind(@)), {edge: [@collectionExpression, this]})
             )
         deactivate: ->
             super
