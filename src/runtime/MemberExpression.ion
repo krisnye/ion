@@ -61,9 +61,7 @@ export class MemberExpression extends DynamicExpression
                         @objectValue
                         (changes) =>
                             @queueUpdate("objectValueChanged")
-                        {}
-                            property:@propertyValue
-                            edge: [@objectExpression, this]
+                        {property:@propertyValue}
                     )
                 # now we can release any previous observation.
                 oldUnobserveObjectValue?()
