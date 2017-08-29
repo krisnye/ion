@@ -155,7 +155,7 @@ export const
         if object is global or object is console or isValueType(object)
             return noop
         let property = options?.property
-        # let priority = options?.priority
+        let priority = options?.priority
         let removed = false
         # property is optional
         let observable = isObjectObservable(object)
@@ -163,10 +163,10 @@ export const
         if not observable
             if not property?
                 return noop
-            observeShim.observe(object, observer, options)
+            observeShim.observe(object, observer, property, priority)
             # console.log('observe shim ' + JSON.stringify(object))
         else if object? and observer? and typeof object is 'object'
-            observeShim.observe(object, observer, options)
+            observeShim.observe(object, observer, null, priority)
             # console.log('observe ' + JSON.stringify(object))
             # watch change on dom elements
             object.addEventListener?('change', observer)
@@ -183,10 +183,10 @@ export const
                 # console.log('removing', observe.count)
                 removed = true
                 if not observable
-                    observeShim.unobserve(object, observer, options)
+                    observeShim.unobserve(object, observer, property)
                     # console.log('unobserve shim ' + JSON.stringify(object))
                 else if object? and observer? and typeof object is 'object'
-                    observeShim.unobserve(object, observer, options)
+                    observeShim.unobserve(object, observer, property)
                     # console.log('unobserve ' + JSON.stringify(object))
                     # unwatch change on dom elements
                     object.removeEventListener?('change', observer)
