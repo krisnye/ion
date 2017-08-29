@@ -118,7 +118,10 @@ export const
                     for callback in meta.callbacks.slice(0) # SLICE IS IMPORTANT! callbacks could otherwise be modified during operation
                         callback(changes)
 
-            observerMap.forEach(check)
+            # observerMap.forEach(check)
+            let metas = Array.from(observerMap.values())
+            metas.reverse()
+            metas.forEach(check)
 
             #   then call all nextChecks.
             let pendingChecks = nextCheckMap.size # this and it's use before quitting fixes where we were missing some pending changes
