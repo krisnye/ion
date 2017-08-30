@@ -1,7 +1,11 @@
 {
 
     function node(type, ...values) {
-        return Object.assign({type,__location:location()}, ...values.reverse())
+        let result = Object.assign({type, __location:location()}, ...values.reverse())
+        //  we set the type both before (show it shows first in enumeration)
+        //  and last so it overwrites any previous type in args
+        result.type = type
+        return result
     }
 
     function buildBinaryExpression(head, tail) {
@@ -79,8 +83,11 @@ TypeDeclaration
     = TypeToken _ id:IdDeclaration _ "=" _ value:Type EOL
     { return node('TypeDeclaration', {id, value}) }
 
+VariableKind
+    = VarToken / LetToken / MutToken
+
 VariableDeclarationHead
-    = kind:(VarToken / LetToken) _ id:IdDeclaration _ valueType:(":" _ @Type)?
+    = kind:VariableKind _ id:IdDeclaration _ valueType:(":" _ @Type)?
     { return {kind, id, valueType} }
 
 InlineVariableDeclaration
@@ -88,12 +95,33 @@ InlineVariableDeclaration
     { return node("VariableDeclaration", head, {value})}
 
 OutlineVariableDeclaration
-    = head:VariableDeclarationHead _ value:("=" _ @OutlineExpression / EOL { return null } )
+    = kind:VariableKind _ id:IdDeclaration _ EOL
+        Indent
+            meta:(Dent @OutlineProperty)+
+            valueType:(Dent ":" _ @Type EOL)?
+            value:(Dent "=" _ @OutlineExpression)?
+        Outdent
+    { return node("VariableDeclaration", {kind, id, meta, valueType, value} ) }
+    / head:VariableDeclarationHead _ value:("=" _ @OutlineExpression / EOL { return null } )
     { return node("VariableDeclaration", head, {value})}
+    / @InlineVariableDeclaration EOL
+
+ClassVariableModifiers
+    = private:PrivateToken? _ static:StaticToken? { return {private,static} }
+
+ClassVariableDeclaration
+    = modifiers:ClassVariableModifiers _ declaration:OutlineVariableDeclaration
+    { return Object.assign(modifiers, declaration) }
 
 VariableDeclaration
-    = OutlineVariableDeclaration
-    / @InlineVariableDeclaration EOL
+    = &VariableKind @ClassVariableDeclaration
+
+VariableMetaProperties
+    = EOL Indent @OutlineProperty+ Outdent
+
+OutlineProperty
+    = key:Id _ ":" _ value:OutlineExpression
+    { return node("Property", {key,value}) }
 
 AssignmentOperator
     = "="
@@ -132,14 +160,14 @@ Pattern
 
 ClassDeclaration
     = kind:(ClassToken / StructToken) _ id:IdDeclaration typeParameters:TypeParameters? _ baseClasses:Extends? EOL
-        Indent variables:(Dent @VariableDeclaration)* Outdent
+        Indent variables:(Dent @ClassVariableDeclaration)* Outdent
         { return node("ClassDeclaration", {kind, id, typeParameters, baseClasses:baseClasses || [], variables}) }
 
 TypeParameters
     = "<" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ">" { return [head, ...tail] }
 
 Extends
-    = ExtendsToken _ head:GenericType tail:(_ "," _ @GenericType)*
+    = ExtendsToken _ head:TypeReference tail:(_ "," _ @TypeReference)*
     { return [head, ...tail] }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -152,14 +180,17 @@ Type
 
 UnionType
     = baseType:ConstrainedType _ !"|" optional:"?"?
-    { return optional ? node("UnionType", {types:[baseType,node('Literal',{value:null})]}) : baseType }
+    { return optional ? node("UnionType", {types:[baseType,node('LiteralType',{value:null})]}) : baseType }
     / head:ConstrainedType tail:(_ "|" _ @ConstrainedType)*
     { return tail.length == 0 ? head : node('UnionType', {types:[head, ...tail]}) }
 
 ConstrainedType
-    = baseType:GenericType constraint:(_ WhereToken _ @InlineExpression)?
+    = baseType:TypeReference constraint:(_ WhereToken _ @InlineExpression)?
     { return constraint ? node('ConstrainedType', {baseType,constraint}) : baseType }
-    / Literal
+    / LiteralType
+
+LiteralType
+    = value:Literal { return node('LiteralType', value) }
 
 FunctionType
     = params:FunctionParameters _ "->" _ returnType:Type
@@ -169,16 +200,16 @@ TypeArguments
     = "<" _ head:Type tail:(_ "," _ @Type)*  _ ">"
     { return [head, ...tail] }
 
-GenericType
+TypeReference
     = id:IdReference _ args:TypeArguments?
-    { return args ? node("GenericType", {id, arguments:args}) : node("Type", {id}) }
+    { return node("TypeReference", id, {arguments:args}) }
     / "[" _ type:Type '*' _ "]"
-    { return node("GenericType", {id:node("IdReference", {name:"Array"}), arguments:[type]}) }
+    { return node("TypeReference", {name:"Array", arguments:[type]}) }
     / "[" _ head:Type tail:(_ "," _ @Type)+ _ "]"
     {
         //  no actual pattern yet, just types
         let types = [head, ...tail]
-        return node("GenericType", {id:node("IdReference", {name:"Array"}), arguments:[node("UnionType", {types})], pattern:types})
+        return node("TypeReference", {name:"Array", arguments:[node("UnionType", {types})], pattern:types})
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -440,6 +471,7 @@ StructToken     = @"struct"     !IdPart
 ConstToken      = @"const"      !IdPart
 VarToken        = @"var"        !IdPart
 LetToken        = @"let"        !IdPart
+MutToken        = @"mut"        !IdPart
 ExtendsToken    = @"extends"    !IdPart
 ForToken        = @"for"        !IdPart
 WhileToken      = @"while"      !IdPart
@@ -450,6 +482,8 @@ ElseToken       = @"else"       !IdPart
 ReturnToken     = @"return"     !IdPart
 BreakToken      = @"break"      !IdPart
 ContinueToken   = @"continue"   !IdPart
+PrivateToken    = @"private"    !IdPart
+StaticToken     = @"static"     !IdPart
 
 Keyword
     = ThisToken
@@ -466,6 +500,7 @@ Keyword
     / ConstToken
     / VarToken
     / LetToken
+    / MutToken
     / ForToken
     / WhileToken
     / IfToken
@@ -475,6 +510,8 @@ Keyword
     / ContinueToken
     / ExportToken
     / ImportToken
+    / PrivateToken
+    / StaticToken
 
 ReservedWord
     = Keyword

@@ -103,16 +103,23 @@ const Assembly_ModuleOrderInit = (node:any) => {
 
 }
 
-const Literal_AddType = (node:any) => {
+const _Literal_AddType = (node:any) => {
     let {value} = node
     if (typeof value === 'number') {
-        node.etype = {type: "Type", id:{type:"Id", name:"Number"}}
+        node.valueType = {type: "TypeReference", name:"Number", absolute:true}
     }
     if (typeof value === 'boolean') {
-        node.etype = {type: "Type", id:{type:"Id", name:"Boolean"}}
+        node.valueType = {type: "TypeReference", name:"Boolean", absolute:true}
     }
     if (typeof value === 'string') {
-        node.etype = {type: "Type", id:{type:"Id", name:"String"}}
+        node.valueType = {type: "TypeReference", name:"String", absolute:true}
+    }
+}
+
+const _VariableDeclaration_ValueTypeInferFromValue = (node:any) => {
+    if (node.valueType == null && node.value != null && node.value.valueType != null) {
+        //  shared copy reference?? is this desirable?
+        node.valueType = node.value.valueType
     }
 }
 
@@ -165,7 +172,7 @@ const File_Write = (node:any) => {
 export const passes = [
     [Module_NoVars, Assembly_NamesInitAndModuleNameInit, IdDeclaration_CheckNoHideModuleNames],
     [Module_DependenciesCreate, IdReference_ModuleDependenciesInit],
-    [Literal_AddType],
+    [_Literal_AddType,_VariableDeclaration_ValueTypeInferFromValue],
     [Assembly_ModuleOrderInit, Assembly_NestModules],
     [Module_ModulesToExports]
 ]

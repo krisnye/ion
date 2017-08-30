@@ -1,3 +1,14 @@
 
-export struct Number
-    var precision: 0 | 1 | 2 = 0
+export struct Number<precision: 0 | 1 | 2>
+    let operator_multiply
+        toJavascript: "{0} * {1}"
+        : (right: Number<precision>) -> Number<precision>
+    let operator_divide
+        toJavascript: "{0} / {1}"
+        : (right: Number<precision>) -> Number<precision>
+    let operator_add
+        toJavascript: "{0} + {1}"
+        : (right: Number<precision>) -> Number<precision>
+    let operator_subtract
+        toJavascript: "{0} - {1}"
+        : (right: Number<precision>) -> Number<precision>
