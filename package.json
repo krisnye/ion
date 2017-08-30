@@ -5,11 +5,11 @@
     "repository": "https://github.com/krisnye/ion.git",
     "bin": "lib/command.js",
     "scripts": {
-        "dev": "npm link pegs && yarn install && mkdir -p lib && yarn build && yarn link",
+        "dev": "npm link pegs && yarn install && mkdir -p lib",
         "build": "pegs src/parser.pegs lib/parser.js && tsc -p .",
         "watch": "nodemon -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch & yarn watchTest",
         "watchTest": "nodemon -w lib -w test -e js,ion lib/command.js test",
-        "watchWin": "start yarn watchTest & start nodemon -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & start tsc -p . --watch"
+        "watchWin": "node watchWin.js"
     },
     "author": {
         "name": "Kris Nye",
