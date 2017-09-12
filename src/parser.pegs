@@ -177,12 +177,15 @@ Extends
 Type
     = FunctionType
     / UnionType
+    / "(" _ @Type _ ")"
 
 UnionType
-    = baseType:ConstrainedType _ !"|" optional:"?"?
-    { return optional ? node("UnionType", {types:[baseType,node('LiteralType',{value:null})]}) : baseType }
-    / head:ConstrainedType tail:(_ "|" _ @ConstrainedType)*
+    = head:IntersectionType tail:(_ "|" _ @IntersectionType)*
     { return tail.length == 0 ? head : node('UnionType', {types:[head, ...tail]}) }
+
+IntersectionType
+    = head:ConstrainedType tail:(_ "&" _ @ConstrainedType)*
+    { return tail.length == 0 ? head : node('IntersectionType', {types:[head, ...tail]}) }
 
 ConstrainedType
     = baseType:TypeReference constraint:(_ WhereToken _ @InlineExpression)?
