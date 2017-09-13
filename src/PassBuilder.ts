@@ -36,7 +36,8 @@ function createFilter(filter: Filter | ((node:any, ancestors?: object[], path?: 
 
 const AllNodeTargetType = "Node"
 
-export function createPass(filters: Filter[]): Pass {
+export function createPass(filters: Filter[], options:{debug?:boolean} = {}): Pass {
+    let debug = options.debug !== false
     //  ensure all filters are visitors
     filters = filters.map(f => createFilter(f))
     //  get mutate filters
@@ -93,11 +94,16 @@ export function createPass(filters: Filter[]): Pass {
     return {
         names: filters.map(f => f.name),
         enter: (node:any, ancestors: object[], path: string[]) => {
+            let type = node.type
             let handler = getHandler(node.type)
             if (handler) {
                 let {enters} = handler
                 for (let enter of enters) {
                     enter(node, ancestors, path)
+                    if (debug) {
+                        if (node.type !== type)
+                            throw new Error("Enter filter cannot modify node type: " + enter.name)
+                    }
                 }
             }
         },

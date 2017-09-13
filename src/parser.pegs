@@ -443,15 +443,16 @@ IdPart
 
 IdName
     = $(!ReservedWord IdStart IdPart*)
+    / "`" @($((!"`" .)*)) "`"
 
 Id "Id"
-    = name:IdName { return node('Id', {name})}
+    = name:IdName { return node('Id', {name}) }
 
 IdDeclaration
-    = name:IdName { return node('IdDeclaration', {name})}
+    = name:IdName { return node('IdDeclaration', {name}) }
 
 IdReference
-    = name:IdName { return node('IdReference', {name})}
+    = name:IdName { return node('IdReference', {name}) }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Tokens and Keywords

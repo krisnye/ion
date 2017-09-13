@@ -19,7 +19,7 @@ const __VariableDeclaration_ToJavascript = (node:any) => {
         ]
     }
 }
-const IdDeclaration_IdReference_Id_ToJavascript = (node:any) => {
+const __IdDeclaration_IdReference_Id_ToIdentifier = (node:any) => {
     node.type = jst.Identifier
 }
 
@@ -134,9 +134,29 @@ const File_CompileJavascript = (node:any) => {
     }
 }
 
+const idChars = new Set("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+const validId = /^[_a-zA-Z][_a-zA-Z0-9]*$/
+const encodeLiteralIdentifier = (name: string) => {
+    let result = ['__id_']
+    for (let c of name) {
+        if (idChars.has(c)) {
+            result.push(c)
+        } else {
+            result.push('_', c.charCodeAt(0).toString())
+        }
+    }
+    result.push('_')
+    return result.join('')
+}
+const Identifier_ensureValidName = (node:any) => {
+    if (!validId.test(node.name)) {
+        node.name = encodeLiteralIdentifier(node.name)
+    }
+}
+
 export const passes = [
-    [__Module_ToJavascript],
-    [__VariableDeclaration_ToJavascript, IdDeclaration_IdReference_Id_ToJavascript],
-    [Assembly_ModulesToJavascriptFiles],
-    [File_CompileJavascript]
+    [__Module_ToJavascript]
+    ,[__VariableDeclaration_ToJavascript, __IdDeclaration_IdReference_Id_ToIdentifier]
+    ,[Identifier_ensureValidName, Assembly_ModulesToJavascriptFiles]
+//    ,[File_CompileJavascript]
 ]

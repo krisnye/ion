@@ -25,18 +25,13 @@ const Module_NoVars = (node:any) => {
     failIfVar(node.declarations)
     failIfVar(node.exports)
 }
-// const BinaryExpression_ToCall = {
-//     name: 'BinaryExpression_ToCall',
-//     target: ['BinaryExpression'],
-//     mutate: true,
-//     leave: (node:any) => {
-//         let {location, left, right, operator} = node
-//         return {
-//             type:'Call',
-//             location,
-//             callee: {type:'IdReference', name:operator},
-//             arguments: [left, right]
-//         }
+// const __BinaryExpression_ToCall = (node:any) => {
+//     let {location, left, right, operator} = node
+//     return {
+//         type:'Call',
+//         location,
+//         callee: {type:'IdReference', name:operator},
+//         arguments: [left, right]
 //     }
 // }
 const Assembly_NamesInitAndModuleNameInit = (node:any) => {
