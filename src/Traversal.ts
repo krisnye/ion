@@ -33,10 +33,17 @@ function traverseChildren(container: any, visitor: Visitor, isArray: boolean, an
             let child = container[name]
             let childResult = traverse(child, visitor, ancestors, path)
             if (childResult !== child && childResult !== undefined) {
-                if (Array.isArray(childResult)) {
-                    if (!isArray)
-                        throw new Error("Cannot return array unless container is array")
-                    hasArrays = true
+                let isChildArray = Array.isArray(childResult)
+                if (isChildArray) {
+                    if (!isArray) {
+                        if (childResult.length > 0)
+                            throw new Error("Cannot return array with length > 0 unless container is array")
+                        else
+                            childResult = undefined
+                    }
+                    else {
+                        hasArrays = true
+                    }
                 }
                 container[name] = childResult
             }

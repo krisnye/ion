@@ -7,8 +7,9 @@ const parser = require("./parser")()
 
 import * as input from "./phases/input" 
 import * as javascript from "./phases/javascript" 
-import * as output from "./phases/output" 
-const defaultPhases = [input, javascript]//, output]
+import * as output from "./phases/output"
+import * as cleanup from "./phases/cleanup"
+const defaultPhases = [input, cleanup, javascript]//, output]
 const defaultPasses = [].concat(...defaultPhases.map((x:any) => x.passes))
 
 const defaultLogger = (names?: string[], ast?: object) => {

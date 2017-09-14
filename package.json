@@ -9,6 +9,7 @@
         "build": "pegs src/parser.pegs lib/parser.js && tsc -p .",
         "watch": "nodemon -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch & yarn watchTest",
         "watchTest": "nodemon -w lib -w test -e js,ion lib/command.js test",
+        "debug": "yarn build && node --inspect-brk lib/command.js test",
         "watchWin": "node watchWin.js"
     },
     "author": {
