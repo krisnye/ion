@@ -144,8 +144,7 @@ const File_CompileJavascript = (node:any) => {
 }
 
 export const passes = [
-    [__Module_ToJavascript]
-    ,[ClassDeclaration_ToJavascript]
+    [ClassDeclaration_ToJavascript, __Module_ToJavascript]
     ,[__VariableDeclaration_ToJavascript, __IdDeclaration_IdReference_Id_ToIdentifier]
     ,[Assembly_ModulesToJavascriptFiles]
     ,[File_CompileJavascript]

@@ -17,17 +17,17 @@ const encodeLiteralIdentifier = (name: string) => {
     result.push('_')
     return result.join('')
 }
-const Identifier_ensureValidName = (node:any) => {
+const Identifier_EnsureValidName = (node:any) => {
     if (!validId.test(node.name)) {
         node.name = encodeLiteralIdentifier(node.name)
     }
 }
 
-const __UnionType_IntersectionType_ConstrainedType_LiteralType_FunctionType_remove = (node:any) => {
+const __UnionType_IntersectionType_ConstrainedType_LiteralType_FunctionType_Remove = (node:any) => {
     return remove
 }
 
 export const passes = [
-    [Identifier_ensureValidName]
-    ,[__UnionType_IntersectionType_ConstrainedType_LiteralType_FunctionType_remove]
+    [Identifier_EnsureValidName]
+    ,[__UnionType_IntersectionType_ConstrainedType_LiteralType_FunctionType_Remove]
 ]
