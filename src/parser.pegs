@@ -90,31 +90,34 @@ VariableDeclarationHead
     = kind:VariableKind _ id:IdDeclaration _ valueType:(":" _ @Type)?
     { return {kind, id, valueType} }
 
+InlineVariableDeclarator
+    = id:IdDeclaration _ valueType:(":" _ @Type)? _ init:("=" _ @InlineExpression)?
+    { return node("VariableDeclarator", {id, valueType, init}) }
+
 InlineVariableDeclaration
-    = head:VariableDeclarationHead _ value:("=" _ @InlineExpression)?
-    { return node("VariableDeclaration", head, {value})}
+    = kind:VariableKind _ declarator:InlineVariableDeclarator
+    { return node("VariableDeclaration", {kind, declarations:[declarator] }) }
+
+OutlineVariableDeclarator
+    = id:IdDeclaration EOL
+        Indent
+            meta:(Dent @OutlineProperty)*
+            valueType:(Dent ":" _ @Type EOL)?
+            init:(Dent "=" _ @OutlineExpression)?
+        Outdent
+    { return node('VariableDeclarator', {id, meta, valueType, init}) }
+    / @InlineVariableDeclarator EOL
 
 OutlineVariableDeclaration
-    = kind:VariableKind _ id:IdDeclaration _ EOL
-        Indent
-            meta:(Dent @OutlineProperty)+
-            valueType:(Dent ":" _ @Type EOL)?
-            value:(Dent "=" _ @OutlineExpression)?
-        Outdent
-    { return node("VariableDeclaration", {kind, id, meta, valueType, value} ) }
-    / head:VariableDeclarationHead _ value:("=" _ @OutlineExpression / EOL { return null } )
-    { return node("VariableDeclaration", head, {value})}
+    = kind:VariableKind EOL Indent declarations:(Dent @OutlineVariableDeclarator)+ Outdent
+    { return node("VariableDeclaration", {kind, declarations} ) }
     / @InlineVariableDeclaration EOL
 
-ClassVariableModifiers
-    = private:PrivateToken? _ static:StaticToken? { return {private,static} }
-
 ClassVariableDeclaration
-    = modifiers:ClassVariableModifiers _ declaration:OutlineVariableDeclaration
-    { return Object.assign(modifiers, declaration) }
+    = OutlineVariableDeclaration
 
 VariableDeclaration
-    = &VariableKind @ClassVariableDeclaration
+    = OutlineVariableDeclaration
 
 VariableMetaProperties
     = EOL Indent @OutlineProperty+ Outdent

@@ -1,0 +1,17 @@
+
+export struct Number<precision: 0 | 1 | 2>
+    toJavascript: null
+
+    let
+        `*`
+            toJavascript: "{0} * {1}"
+            : (right: Number<precision>) -> Number<precision>
+        `/`
+            toJavascript: "{0} / {1}"
+            : (right: Number<precision>) -> Number<precision>
+        `+`
+            toJavascript: "{0} + {1}"
+            : (right: Number<precision>) -> Number<precision>
+        `-`
+            toJavascript: "{0} - {1}"
+            : (right: Number<precision>) -> Number<precision>

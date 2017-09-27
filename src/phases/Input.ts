@@ -18,7 +18,7 @@ const Module_NoVars = (node:any) => {
                 failIfVar(d)
             }
         }
-        else if (declaration.type === iot.VariableDeclaration && declaration.kind === 'var') {
+        else if (declaration.type === iot.VariableDeclaration && declaration.kind !== 'let') {
             fail(declaration, "Cannot export mutable variables")
         }
     }
@@ -50,7 +50,7 @@ const IdDeclaration_CheckNoHideModuleNames = (node:any, ancestors:any[], path:st
     let {name} = node
     let root = ancestors[0]
     let moduleName = path[1]
-    if (root._names[name] && name !== moduleName)
+    if (root._names[name] && !moduleName.endsWith(name))
         fail(node, "Cannot declare identifier with same name as local module: " + name)
 }
 const Module_DependenciesCreate = (node:any, ancestors:any[]) => {
@@ -111,7 +111,7 @@ const _Literal_AddType = (node:any) => {
     }
 }
 
-const _VariableDeclaration_ValueTypeInferFromValue = (node:any) => {
+const _VariableDeclarator_ValueTypeInferFromValue = (node:any) => {
     if (node.valueType == null && node.value != null && node.value.valueType != null) {
         //  shared copy reference?? is this desirable?
         node.valueType = node.value.valueType
@@ -150,8 +150,13 @@ const Module_ModulesToExports = (node: any) => {
             {
                 type: iot.VariableDeclaration,
                 kind: 'let',
-                id: {type:'Id', name},
-                value: module
+                declarations: [
+                    {
+                        type: iot.VariableDeclarator,
+                        id: {type:'Id', name},
+                        init: module
+                    }
+                ]
             }
         )
     }
@@ -167,7 +172,7 @@ const File_Write = (node:any) => {
 export const passes = [
     [Module_NoVars, Assembly_NamesInitAndModuleNameInit, IdDeclaration_CheckNoHideModuleNames],
     [Module_DependenciesCreate, IdReference_ModuleDependenciesInit],
-    [_Literal_AddType,_VariableDeclaration_ValueTypeInferFromValue],
+    [_Literal_AddType,_VariableDeclarator_ValueTypeInferFromValue],
     [Assembly_ModuleOrderInit, Assembly_NestModules],
     [Module_ModulesToExports]
 ]

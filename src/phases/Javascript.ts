@@ -10,13 +10,7 @@ const __VariableDeclaration_ToJavascript = (node:any) => {
     return {
         type: jst.VariableDeclaration,
         kind: node.kind === 'let' ? 'const' : 'var',
-        declarations: [
-            {
-                type: jst.VariableDeclarator,
-                id: node.id,
-                init: node.value
-            }
-        ]
+        declarations: node.declarations
     }
 }
 const __IdDeclaration_IdReference_Id_ToIdentifier = (node:any) => {
@@ -85,7 +79,6 @@ const __Module_ToJavascript = (node: any, ancestors: object[], path: string[]) =
         type: jst.CallExpression,
         callee: {
             type: jst.FunctionExpression,
-            id: {type:jst.Identifier,name},
             params: [],
             body: {
                 type: jst.BlockStatement,
@@ -102,13 +95,20 @@ const __Module_ToJavascript = (node: any, ancestors: object[], path: string[]) =
                                 type: jst.ObjectExpression,
                                 properties: node.exports.map(
                                     (declaration:any) => {
-                                        return {
-                                            type: jst.Property,
-                                            kind: "init",
-                                            key: declaration.id,
-                                            value: declaration.id
-                                        }
+                                        return declaration.declarations.map(
+                                            (declarator:any) => {
+                                                return {
+                                                    type: jst.Property,
+                                                    kind: "init",
+                                                    shorthand: true,
+                                                    key: declarator.id,
+                                                    value: declarator.id
+                                                }
+                                            }
+                                        )
                                     }
+                                ).reduce(
+                                    ((a:any, b:any) => a.concat(b)), []
                                 )
                             }
                         })
@@ -124,16 +124,85 @@ const __Module_ToJavascript = (node: any, ancestors: object[], path: string[]) =
                 }())
             }
         },
-        arguments: [],
+        arguments: []
     }
 }
 
-const ClassDeclaration_ToJavascript = (node:any) => {
-    //  TODO: actually implement this.
-    node.superClass = null
-    node.body = {
-        type: 'ClassBody',
-        body: []
+const __ClassDeclaration_ToJavascript = (node:any) => {
+    return {
+        type: 'FunctionDeclaration',
+        id: node.id,
+        params: node.variables.map(
+            (declaration:any) => {
+                if (declaration.kind === 'let')
+                    return []
+                return declaration.declarations.map(
+                    (declarator:any) => {
+                        if (declarator.init != null) {
+                            return {
+                                type: 'AssignmentPattern',
+                                left: declarator.id,
+                                right: declarator.init
+                            }
+                        }
+                        else {
+                            return declarator.id
+                        }
+                    }
+                )
+            }
+        ).reduce(
+            ((a:any, b:any) => a.concat(b)), []
+        ),
+        body: {
+            type: 'BlockStatement',
+            body: node.variables.map(
+                (declaration:any) => {
+                    if (declaration.kind !== 'let') {
+                        return declaration.declarations.map(
+                            (declarator:any) => {
+                                return {
+                                    type: 'ExpressionStatement',
+                                    expression: {
+                                        type: 'AssignmentExpression'
+                                        left: {
+                                            type: 'MemberExpression',
+                                            object: {type:'ThisExpression'},
+                                            property: declarator.id
+                                        },
+                                        operator: '=',
+                                        right: declarator.id
+                                    }
+                                }
+                            }
+                        )
+                    }
+
+                    return {
+                        type: declaration.type,
+                        kind: declaration.kind,
+                        declarations: declaration.declarations.map(
+                            (declarator:any) => {
+                                declarator.init = {
+                                    type: 'AssignmentExpression',
+                                    left: {
+                                        type: 'MemberExpression',
+                                        object: {type:'ThisExpression'},
+                                        property: declarator.id
+                                    },
+                                    operator: '=',
+                                    right: declarator.init
+                                }
+
+                                return declarator
+                            }
+                        )
+                    }
+                }
+            ).reduce(
+                ((a:any, b:any) => a.concat(b)), []
+            ),
+        }
     }
 }
 
@@ -144,7 +213,8 @@ const File_CompileJavascript = (node:any) => {
 }
 
 export const passes = [
-    [ClassDeclaration_ToJavascript, __Module_ToJavascript]
+    [__ClassDeclaration_ToJavascript]
+    ,[__Module_ToJavascript]
     ,[__VariableDeclaration_ToJavascript, __IdDeclaration_IdReference_Id_ToIdentifier]
     ,[Assembly_ModulesToJavascriptFiles]
     ,[File_CompileJavascript]
