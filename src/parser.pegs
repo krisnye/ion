@@ -65,7 +65,7 @@ ExportStatement
 Statement
     = Declaration
     / AssignmentStatement
-    / ArgumentStatement
+    / ExpressionStatement
     / IfStatement
     / ForInStatement
     / ReturnStatement
@@ -75,9 +75,9 @@ Declaration
     / ClassDeclaration
     / VariableDeclaration
 
-ArgumentStatement
-    = args:ArgumentList
-    { return node("ArgumentStatement", {arguments:args}) }
+ExpressionStatement
+    = expression:OutlineExpression
+    { return node("ExpressionStatement", {expression}) }
 
 TypeDeclaration
     = TypeToken _ id:IdDeclaration _ "=" _ value:Type EOL
@@ -86,12 +86,8 @@ TypeDeclaration
 VariableKind
     = VarToken / LetToken / MutToken
 
-VariableDeclarationHead
-    = kind:VariableKind _ id:IdDeclaration _ valueType:(":" _ @Type)?
-    { return {kind, id, valueType} }
-
 InlineVariableDeclarator
-    = id:IdDeclaration _ valueType:(":" _ @Type)? _ init:("=" _ @InlineExpression)?
+    = id:Pattern _ valueType:(":" _ @Type)? _ init:("=" _ @InlineExpression)?
     { return node("VariableDeclarator", {id, valueType, init}) }
 
 InlineVariableDeclaration
@@ -99,18 +95,19 @@ InlineVariableDeclaration
     { return node("VariableDeclaration", {kind, declarations:[declarator] }) }
 
 OutlineVariableDeclarator
-    = id:IdDeclaration EOL
+    = id:Pattern EOL
         Indent
-            meta:(Dent @OutlineProperty)*
             valueType:(Dent ":" _ @Type EOL)?
             init:(Dent "=" _ @OutlineExpression)?
         Outdent
-    { return node('VariableDeclarator', {id, meta, valueType, init}) }
+    { return node('VariableDeclarator', {id, valueType, init}) }
     / @InlineVariableDeclarator EOL
 
 OutlineVariableDeclaration
     = kind:VariableKind EOL Indent declarations:(Dent @OutlineVariableDeclarator)+ Outdent
     { return node("VariableDeclaration", {kind, declarations} ) }
+    / kind:VariableKind _ id:Pattern _ valueType:(":" _ @Type)? _ "=" _ init:OutlineExpression
+    { return node("VariableDeclaration", {kind, declarations:[node('VariableDeclarator', {id, valueType, init})]}) }
     / @InlineVariableDeclaration EOL
 
 ClassVariableDeclaration
@@ -138,12 +135,12 @@ BlockStatement
     { return node("BlockStatement", {body}) }
 
 ForInStatement
-    = ForToken _ left:Parameter index:(_ "," _ @Parameter)? _ InToken _ right:InlineExpression body:BlockStatement
+    = ForToken _ left:Pattern index:(_ "," _ @Pattern)? _ InToken _ right:InlineExpression body:BlockStatement
     { return node("ForInStatement", {left, index, right, body} ) }
 
 IfStatement
     = IfToken _ test:InlineExpression consequent:BlockStatement
-        alternate:(ElseToken _ @(BlockStatement / IfStatement))?
+        alternate:(Dent ElseToken _ @(BlockStatement / IfStatement))?
     { return node("IfStatement", {test, consequent, alternate}) }
 
 ReturnStatement
@@ -156,6 +153,31 @@ ReturnStatement
 
 Pattern
     = IdDeclaration
+    / ArrayPattern
+    / ObjectPattern
+
+ArrayPattern
+    = "[" _ element:RestElement _ "]"
+    { return node("ArrayPattern", {elements:[element]}) }
+    / "[" _ head:Pattern? tail:(_ "," _ !"." @Pattern?)* _ rest:("," _ @RestElement)? _ "]"
+    {
+        let elements = [head || null, ...tail.map((x) => x || null)]
+        if (rest)
+            elements.push(rest)
+        return node("ArrayPattern", {elements})
+    }
+
+RestElement
+    = "..." argument:Pattern
+    { return node("RestElement", {argument}) }
+
+ObjectPattern
+    = "{" _ head:AssignmentProperty tail:(_ "," @AssignmentProperty)* _ "}"
+    { return node("ObjectPattern", {properties:[head, ...tail]}) }
+
+AssignmentProperty
+    = key:Id value:(_ ":" _ @Pattern)?
+    { return node("Property", {key, value:value || node("IdDeclaration", key), kind:"init", shorthand:value == null} ) }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Class
@@ -322,11 +344,11 @@ FunctionHead
 
 InlineFunction
     = head:FunctionHead _ body:InlineExpression
-    { return node("Function", head, {body}) }
+    { return node("FunctionExpression", head, {body}) }
 
 OutlineFunction
     = head:FunctionHead _ body:BlockStatement
-    { return node("Function", head, {body}) }
+    { return node("FunctionExpression", head, {body}) }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Expressions

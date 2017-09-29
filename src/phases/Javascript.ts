@@ -164,7 +164,7 @@ const __ClassDeclaration_ToJavascript = (node:any) => {
                                 return {
                                     type: 'ExpressionStatement',
                                     expression: {
-                                        type: 'AssignmentExpression'
+                                        type: 'AssignmentExpression',
                                         left: {
                                             type: 'MemberExpression',
                                             object: {type:'ThisExpression'},
@@ -206,6 +206,11 @@ const __ClassDeclaration_ToJavascript = (node:any) => {
     }
 }
 
+const _ForInStatement_ToJavascript = (node:any) => {
+    // ion for "in" is a javascript for "of"
+    node.type = "ForOfStatement"
+}
+
 const File_CompileJavascript = (node:any) => {
     if (node.language == "javascript") {
         node.content = escodegen.generate(node.content)
@@ -213,7 +218,8 @@ const File_CompileJavascript = (node:any) => {
 }
 
 export const passes = [
-    [__ClassDeclaration_ToJavascript]
+    [_ForInStatement_ToJavascript]
+    ,[__ClassDeclaration_ToJavascript]
     ,[__Module_ToJavascript]
     ,[__VariableDeclaration_ToJavascript, __IdDeclaration_IdReference_Id_ToIdentifier]
     ,[Assembly_ModulesToJavascriptFiles]

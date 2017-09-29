@@ -1,5 +1,4 @@
 
-export class Point
-    var x: Number = 0
-    var y: Number = 0
-    let z = x + y
+let {foo,bar} = baz
+
+export let x = 12
