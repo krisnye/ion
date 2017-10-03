@@ -217,8 +217,44 @@ const File_CompileJavascript = (node:any) => {
     }
 }
 
+const __AssignmentStatement_ToJavascript = (node:any) => {
+    return {
+        type: 'ExpressionStatement',
+        location: node.location,
+        expression: {
+            type: 'AssignmentExpression',
+            left: node.left,
+            operator: '=',
+            right: node.right
+        }
+    }
+}
+
+const operatorMap = {
+    and: "&&",
+    or: "||",
+    not: "!",
+    xor: "^"
+}
+const BinaryExpression_UnaryExpression_ToJavascript = (node:any) => {
+    node.operator = operatorMap[node.operator] || node.operator
+}
+
+//  if a call starts with uppercase then it's automatically assumed to be a Type
+//  and so the call is converted to a NewExpression
+const __CallExpression_ToNewExpression = (node:any) => {
+    let name = node.callee.name
+    if (name != null && name[0] === name[0].toUpperCase()) {
+        node.type = 'NewExpression'
+    }
+    return node
+}
+
 export const passes = [
-    [_ForInStatement_ToJavascript]
+    [__CallExpression_ToNewExpression]
+    ,[_ForInStatement_ToJavascript]
+    ,[__AssignmentStatement_ToJavascript]
+    ,[BinaryExpression_UnaryExpression_ToJavascript]
     ,[__ClassDeclaration_ToJavascript]
     ,[__Module_ToJavascript]
     ,[__VariableDeclaration_ToJavascript, __IdDeclaration_IdReference_Id_ToIdentifier]

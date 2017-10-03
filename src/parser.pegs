@@ -69,6 +69,7 @@ Statement
     / IfStatement
     / ForInStatement
     / ReturnStatement
+    / WhileStatement
 
 Declaration
     = TypeDeclaration
@@ -137,6 +138,10 @@ BlockStatement
 ForInStatement
     = ForToken _ left:Pattern index:(_ "," _ @Pattern)? _ InToken _ right:InlineExpression body:BlockStatement
     { return node("ForInStatement", {left, index, right, body} ) }
+
+WhileStatement
+    = WhileToken _ test:InlineExpression body:BlockStatement
+    { return node("WhileStatement", {test,body}) }
 
 IfStatement
     = IfToken _ test:InlineExpression consequent:BlockStatement
@@ -356,8 +361,16 @@ OutlineFunction
 
 OutlineExpression
     = OutlineFunction
+    / OutlineCallExpression
     / @InlineExpression EOL
     //  TODO: Allow Optional BlockStatement After to imply function call.
+
+OutlineArguments
+    = EOL Indent @(Dent @OutlineExpression)+ Outdent
+
+OutlineCallExpression
+    = callee:InlineExpression arguments:OutlineArguments
+    { return node("CallExpression", {callee, arguments}) }
 
 InlineExpression
     = InlineFunction
