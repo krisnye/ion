@@ -27,7 +27,6 @@ Module
 
 //  type Whole = Integer{ value > 0 and value < 10 }
 //  this = special keyword for class instance
-//  self = special keyword for type declaration instance
 //  value < 10 and value > 100
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,6 +67,7 @@ Statement
     / ExpressionStatement
     / IfStatement
     / ForInStatement
+    / ForOfStatement
     / ReturnStatement
     / WhileStatement
 
@@ -138,6 +138,10 @@ BlockStatement
 ForInStatement
     = ForToken _ left:Pattern index:(_ "," _ @Pattern)? _ InToken _ right:InlineExpression body:BlockStatement
     { return node("ForInStatement", {left, index, right, body} ) }
+
+ForOfStatement
+    = ForToken _ left:Pattern value:(_ "," _ @Pattern)? _ OfToken _ right:InlineExpression body:BlockStatement
+    { return node("ForOfStatement", {left, value, right, body} ) }
 
 WhileStatement
     = WhileToken _ test:InlineExpression body:BlockStatement
