@@ -56,8 +56,13 @@ module.exports = exports =
         if packageObject?
             srcDirectory = packageObject.directories.src
             if Array.isArray(srcDirectory)
-                srcDirectory = srcDirectory[0]
-            return normalizePath removeExtension np.join packageObject.name, np.relative srcDirectory, source.path
+                for dir in srcDirectory
+                    if source.path.startsWith(dir)
+                        srcDirectory = dir
+                        break
+                if Array.isArray(srcDirectory)
+                    throw new Error("Couldn't find correct source directory for " + source)
+            return normalizePath removeExtension np.join packageObject.name, np.relative(srcDirectory, source.path)
         else
             return null
 
@@ -169,7 +174,7 @@ module.exports = exports =
 
     shimJavascript: shimJavascript = (source, packageObject) ->
         return if source.modified is 0
-        moduleId = if typeof  packageObject is 'string' then packageObject else getModuleId source, packageObject
+        moduleId = if typeof packageObject is 'string' then packageObject else getModuleId source, packageObject
         result = addBrowserShim source.read(), moduleId
         return result
 

@@ -60,7 +60,7 @@ export template (packagePatch) ->
     for path, file of potentialIndexDirectories
         if file.isDirectory
             # see if there is an input.js or input.ion file
-            let isInputFile = input.getFile(path + "/index.js").exists or input.getFile(path + "/index.ion").exists or input.getFile(path + "/index.coffee").exists
+            let isInputFile = input.getFile(path + "/index.js").exists or input.getFile(path + "/index.ion").exists or input.getFile(path + "/index.coffee").exists or input.getFile(path + "/index.ts").exists
             if not isInputFile
                 # then create an output file
                 let indexDirectory = output.getDirectory(path)
@@ -73,6 +73,7 @@ export template (packagePatch) ->
                             let name = childFile.isDirectory ? key : key.substring(0, key.lastIndexOf('.js'))
                             if not name.startsWith('_') and name isnt ''
                                 [key]: "Object.defineProperty(exports, '{{name}}', {get:function(){ return require('./{{name}}') }, enumerable: true}) "
+                    "freeze exports": "Object.freeze(exports)"
 
                 let indexModuleId = np.join(moduleName, path, "index").replace(/\\/g, '/')
                 void indexDirectory.write(indexName, builder.addBrowserShim([value for key, value of lines].join('\n'), indexModuleId))

@@ -61,6 +61,9 @@ const
 export const
     # edge is of type [object,object] and if present is used for topologically sorting
     observe = (object, callback, property, edge) ->
+        # do not observe frozen objects... they never change
+        if Object.isFrozen(object)
+            return
         # console.log('+observe', property)
         let meta = observerMap.get(object)
         if not meta?
