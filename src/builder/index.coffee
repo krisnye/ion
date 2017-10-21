@@ -54,7 +54,10 @@ module.exports = exports =
             return normalizePath removeExtension np.join root, path
         # old getModuleId behavior
         if packageObject?
-            return normalizePath removeExtension np.join packageObject.name, np.relative packageObject.directories.src, source.path
+            srcDirectory = packageObject.directories.src
+            if Array.isArray(srcDirectory)
+                srcDirectory = srcDirectory[0]
+            return normalizePath removeExtension np.join packageObject.name, np.relative srcDirectory, source.path
         else
             return null
 
