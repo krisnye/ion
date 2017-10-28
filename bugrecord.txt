@@ -1,0 +1,4 @@
+2017-10-27 4:00 Typescript
+    bug caused by invalid state writing. would not happen with strong constraints.
+    bugs are easiest to find at the time invalid state is written
+
