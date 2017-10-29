@@ -95,6 +95,7 @@ export const
         let values = _values # Assigning to arguments causes v8 optimization to bail out.
         let target = _target
         let deleteNull = options?.deleteNull ? true
+        let _delete = options?.delete ? true
 
         if schema?.type is 'integer' and increment.test(values)
             if not deleteNull or typeof target is 'string' and increment.test(target)
@@ -123,7 +124,10 @@ export const
         for key, value of values
             if deleteNull and value is deleteValue
                 deletedValues = true
-                delete target[key]
+                if _delete
+                    delete target[key]
+                else
+                    target[key] = undefined
             else
                 let itemSchema = schema?.items ? schema?.properties?[key]
                 let newValue = merge(target[key], value, options, itemSchema)
@@ -136,6 +140,7 @@ export const
                 if not target[i - 1]?
                     target.length = i - 1
         return target
+    patchNoDelete = (object, patch) -> merge(object, patch, {delete:false})
     # combines two patches to make a single patch
     combine = (patch1, patch2, schema) -> merge(patch1, patch2, {deleteNull:false}, schema)
     # watches object for changes and calls the handler with patches
