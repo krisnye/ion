@@ -73,10 +73,12 @@ export template (packagePatch) ->
                             let name = childFile.isDirectory ? key : key.substring(0, key.lastIndexOf('.js'))
                             if not name.startsWith('_') and name isnt ''
                                 [key]: "Object.defineProperty(exports, '{{name}}', {get:function(){ return require('./{{name}}') }, enumerable: true}) "
-                    "freeze exports": "Object.freeze(exports)"
+                
+                let linesString = [value for key, value of lines].concat(["Object.freeze(exports)"]).join('\n')
+                # console.log(linesString)
 
                 let indexModuleId = np.join(moduleName, path, "index").replace(/\\/g, '/')
-                void indexDirectory.write(indexName, builder.addBrowserShim([value for key, value of lines].join('\n'), indexModuleId))
+                void indexDirectory.write(indexName, builder.addBrowserShim(linesString, indexModuleId))
 
     # build a manifest file with require.js at the top
 
