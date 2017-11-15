@@ -1,5 +1,6 @@
 
-# let Sample2 = 12
+type Integer = Number { Math.floor(value) == value }
 
 export
     let a = 1
+    let b = "foo" is Integer

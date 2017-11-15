@@ -222,7 +222,7 @@ IntersectionType
     { return tail.length == 0 ? head : node('IntersectionType', {types:[head, ...tail]}) }
 
 ConstrainedType
-    = baseType:TypeReference constraint:(_ WhereToken _ @InlineExpression)?
+    = baseType:TypeReference constraint:(_ '{' _ @InlineExpression _ '}')?
     { return constraint ? node('ConstrainedType', {baseType,constraint}) : baseType }
     / LiteralType
 

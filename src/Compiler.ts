@@ -9,7 +9,7 @@ import * as input from "./phases/input"
 import * as javascript from "./phases/javascript" 
 import * as output from "./phases/output"
 import * as cleanup from "./phases/cleanup"
-const defaultPhases = [input, cleanup, javascript]//, output]
+const defaultPhases = [input]//, cleanup, javascript]//, output]
 const defaultPasses = [].concat(...defaultPhases.map((x:any) => x.passes))
 
 const defaultLogger = (names?: string[], ast?: object) => {
@@ -65,7 +65,7 @@ export default class Compiler {
         let filenames = common.getFilesRecursive(this.input)
         let modules: any = {}
         for (let file of filenames) {
-            if (file.endsWith(".ion") && file.indexOf('ast') < 0) {
+            if (file.endsWith(".ion") && file.indexOf('Sample1') >= 0) {
                 let filename = file.substring(this.input.length + 1)
                 let path = filename.substring(0, filename.length - ".ion".length).replace(/[\/\\]/g, '.')
                 let source = common.read(file)

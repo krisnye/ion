@@ -32,7 +32,7 @@ function traverseChildren(container: any, visitor: Visitor, isArray: boolean, an
             path.push(name)
             let child = container[name]
             let childResult = traverse(child, visitor, ancestors, path)
-            if (childResult !== child && childResult !== undefined) {
+            if (childResult !== child && childResult !== undefined && childResult !== remove) {
                 let isChildArray = Array.isArray(childResult)
                 if (isChildArray) {
                     if (!isArray) {

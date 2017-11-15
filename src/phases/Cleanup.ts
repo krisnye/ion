@@ -23,11 +23,15 @@ const Identifier_EnsureValidName = (node:any) => {
     }
 }
 
+const __TypeDeclaration_TypeReference_Remove = (node: any) => {
+    return remove
+}
+
 const __UnionType_IntersectionType_ConstrainedType_LiteralType_FunctionType_Remove = (node:any) => {
     return remove
 }
 
 export const passes = [
     [Identifier_EnsureValidName]
-    ,[__UnionType_IntersectionType_ConstrainedType_LiteralType_FunctionType_Remove]
+    , [__TypeDeclaration_TypeReference_Remove, __UnionType_IntersectionType_ConstrainedType_LiteralType_FunctionType_Remove]
 ]

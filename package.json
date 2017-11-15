@@ -7,10 +7,11 @@
     "scripts": {
         "dev": "npm link pegs && yarn install && mkdir -p lib",
         "build": "pegs src/parser.pegs lib/parser.js && tsc -p .",
-        "watch": "nodemon -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch & yarn watchTest",
+        "watchBuild": "nodemon -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch",
         "watchTest": "nodemon -w lib -w test -e js,ion lib/command.js test",
-        "debug": "yarn build && node --inspect-brk lib/command.js test",
-        "watchWin": "node watchWin.js"
+        "watchDebug": "nodemon -w lib -w test -e js,ion --inspect-brk lib/command.js test",
+        "watch": "yarn watchBuild & yarn watchTest",
+        "debug": "yarn watchBuild & yarn watchDebug"
     },
     "author": {
         "name": "Kris Nye",

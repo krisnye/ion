@@ -83,6 +83,7 @@ const __Module_ToJavascript = (node: any, ancestors: object[], path: string[]) =
             body: {
                 type: jst.BlockStatement,
                 body: (function(){
+                    debugger
                     //  imports? not yet
                     let statements: any[] = [...node.declarations]
                     if (Array.isArray(node.exports)) {
@@ -120,6 +121,8 @@ const __Module_ToJavascript = (node: any, ancestors: object[], path: string[]) =
                             argument: exportDeclaration.id
                         })
                     }
+                    if (statements[0].length == 0)
+                        debugger
                     return statements
                 }())
             }
@@ -155,7 +158,7 @@ const __ClassDeclaration_ToJavascript = (node:any) => {
             ((a:any, b:any) => a.concat(b)), []
         ),
         body: {
-            type: 'BlockStatement',
+            type: jst.BlockStatement,
             body: node.variables.map(
                 (declaration:any) => {
                     if (declaration.kind !== 'let') {
@@ -230,7 +233,7 @@ const __AssignmentStatement_ToJavascript = (node:any) => {
     }
 }
 
-const operatorMap = {
+const operatorMap: {[name: string]:string} = {
     and: "&&",
     or: "||",
     not: "!",
