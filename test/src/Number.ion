@@ -1,0 +1,6 @@
+
+export struct Number<precision: 0 | 1 | 2>
+    # let `*` : (right: Number<precision>) -> Number<precision>
+    # let `/` : (right: Number<precision>) -> Number<precision>
+    # let `+` : (right: Number<precision>) -> Number<precision>
+    # let `-` : (right: Number<precision>) -> Number<precision>
