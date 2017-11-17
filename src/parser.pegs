@@ -1,7 +1,16 @@
 {
 
+
+    const ast = require('./IonAst')
+
     function node(type, ...values) {
-        let result = Object.assign({type, __location:location()}, ...values.reverse())
+        let result = Object.assign({__location:location()}, ...values.reverse())
+        //  construct directly into our IonAst nodes
+        let ctor = ast[type]
+        if (ctor != null)
+            return new ctor(result)
+        else
+            console.warn('Type not found: ' + type)
         //  we set the type both before (show it shows first in enumeration)
         //  and last so it overwrites any previous type in args
         result.type = type
@@ -10,7 +19,7 @@
 
     function buildBinaryExpression(head, tail) {
         return tail.reduce(
-            (left, [,operator,,right]) => node("BinaryExpression", {operator, left, right})
+            (left, [,operator,,right]) => node("CallExpression", {callee:operator, arguments:[left, right]})
             ,head
         )
     }
@@ -64,10 +73,9 @@ ExportStatement
 Statement
     = Declaration
     / AssignmentStatement
-    / ExpressionStatement
+    / OutlineExpression
     / IfStatement
     / ForInStatement
-    / ForOfStatement
     / ReturnStatement
     / WhileStatement
 
@@ -76,49 +84,21 @@ Declaration
     / ClassDeclaration
     / VariableDeclaration
 
-ExpressionStatement
-    = expression:OutlineExpression
-    { return node("ExpressionStatement", {expression}) }
-
 TypeDeclaration
     = TypeToken _ id:IdDeclaration _ "=" _ value:Type EOL
     { return node('TypeDeclaration', {id, value}) }
 
-VariableKind
-    = VarToken / LetToken / MutToken
-
-InlineVariableDeclarator
-    = id:Pattern _ valueType:(":" _ @Type)? _ init:("=" _ @InlineExpression)?
-    { return node("VariableDeclarator", {id, valueType, init}) }
-
-InlineVariableDeclaration
-    = kind:VariableKind _ declarator:InlineVariableDeclarator
-    { return node("VariableDeclaration", {kind, declarations:[declarator] }) }
-
-OutlineVariableDeclarator
-    = id:Pattern EOL
-        Indent
-            valueType:(Dent ":" _ @Type EOL)?
-            init:(Dent "=" _ @OutlineExpression)?
-        Outdent
-    { return node('VariableDeclarator', {id, valueType, init}) }
-    / @InlineVariableDeclarator EOL
-
-OutlineVariableDeclaration
-    = kind:VariableKind EOL Indent declarations:(Dent @OutlineVariableDeclarator)+ Outdent
-    { return node("VariableDeclaration", {kind, declarations} ) }
-    / kind:VariableKind _ id:Pattern _ valueType:(":" _ @Type)? _ "=" _ init:OutlineExpression
-    { return node("VariableDeclaration", {kind, declarations:[node('VariableDeclarator', {id, valueType, init})]}) }
-    / @InlineVariableDeclaration EOL
-
-ClassVariableDeclaration
-    = OutlineVariableDeclaration
+VariableInit
+    = '=' _ @InlineExpression EOL
+    / '=' EOL Indent Dent @OutlineExpression Outdent
+    / EOL { return null }
 
 VariableDeclaration
-    = OutlineVariableDeclaration
+    = kind:(VarToken / LetToken) _ id:Pattern _ valueType:(":" _ @Type)? _ init:VariableInit?
+    { return node("VariableDeclaration", {kind, id, valueType, init }) }
 
-VariableMetaProperties
-    = EOL Indent @OutlineProperty+ Outdent
+// VariableMetaProperties
+//     = EOL Indent @OutlineProperty+ Outdent
 
 OutlineProperty
     = key:Id _ ":" _ value:OutlineExpression
@@ -131,25 +111,20 @@ AssignmentStatement
     = left:Pattern _ AssignmentOperator _ right:OutlineExpression
     { return node("AssignmentStatement", {left, right}) }
 
-BlockStatement
-    = EOL Indent body:(Dent @Statement)+ Outdent
-    { return node("BlockStatement", {body}) }
+IndentedStatements
+    = EOL Indent @(Dent @Statement)+ Outdent
 
 ForInStatement
-    = ForToken _ left:Pattern index:(_ "," _ @Pattern)? _ InToken _ right:InlineExpression body:BlockStatement
-    { return node("ForInStatement", {left, index, right, body} ) }
-
-ForOfStatement
-    = ForToken _ left:Pattern value:(_ "," _ @Pattern)? _ OfToken _ right:InlineExpression body:BlockStatement
-    { return node("ForOfStatement", {left, value, right, body} ) }
+    = ForToken _ left:Pattern _ InToken _ right:InlineExpression body:IndentedStatements
+    { return node("ForInStatement", {left, right, body} ) }
 
 WhileStatement
-    = WhileToken _ test:InlineExpression body:BlockStatement
+    = WhileToken _ test:InlineExpression body:IndentedStatements
     { return node("WhileStatement", {test,body}) }
 
 IfStatement
-    = IfToken _ test:InlineExpression consequent:BlockStatement
-        alternate:(Dent ElseToken _ @(BlockStatement / IfStatement))?
+    = IfToken _ test:InlineExpression consequent:IndentedStatements
+        alternate:(Dent ElseToken _ @(IndentedStatements / IfStatement))?
     { return node("IfStatement", {test, consequent, alternate}) }
 
 ReturnStatement
@@ -194,7 +169,7 @@ AssignmentProperty
 
 ClassDeclaration
     = kind:(ClassToken / StructToken) _ id:IdDeclaration typeParameters:TypeParameters? _ baseClasses:Extends? EOL
-        Indent variables:(Dent @ClassVariableDeclaration)* Outdent
+        Indent variables:(Dent @VariableDeclaration)* Outdent
         { return node("ClassDeclaration", {kind, id, typeParameters, baseClasses:baseClasses || [], variables}) }
 
 TypeParameters
@@ -254,76 +229,63 @@ TypeReference
 ////////////////////////////////////////////////////////////////////////////////
 
 UnaryOperator
-    = "+"
-    / "-"
-    / @"not" " " _
+    = name:("+" / "-" / @"not" " " _) { return node("Id", {name}) }
 
 UnaryExpression
     = MemberExpression
-    / operator:UnaryOperator argument:MemberExpression { return node("UnaryExpression", {operator,argument})}
+    / operator:UnaryOperator argument:MemberExpression { return node("CallExpression", {callee:operator,arguments:[argument]})}
 
 ExponentiationOperator "operator"
-    = "^"
-    / "<<"
-    / ">>"
+    = name:("^" / "<<" / ">>") { return node("Id", {name}) }
 
 ExponentiationExpression
     = left:UnaryExpression right:(_ operator:ExponentiationOperator _ right:ExponentiationExpression {return {operator,right}})?
-    { return right ? node("BinaryExpression", {left}, right) : left }
+    { return right ? node("CallExpression", {callee:right.operator, arguments:[left, right.right]}) : left }
 
-MultiplicativeOperator "operator"
-    = "*"
-    / "/"
-    / "%"
+MultiplicativeOperator
+    = name:("*" / "/" / "%") { return node("Id", {name}) }
 
 MultiplicativeExpression
     = head:ExponentiationExpression tail:(_ MultiplicativeOperator _ ExponentiationExpression)*
     { return buildBinaryExpression(head, tail) }
 
-AdditiveOperator "operator"
-    = "+"
-    / "-"
+AdditiveOperator
+    = name:("+" / "-") { return node("Id", {name}) }
 
 AdditiveExpression
     = head:MultiplicativeExpression tail:(_ AdditiveOperator _ MultiplicativeExpression)*
     { return buildBinaryExpression(head, tail) }
 
-RelationalOperator "operator"
-    = "<="
-    / ">="
-    / "<"
-    / ">"
-    / "is"
+RelationalOperator
+    = name:("<=" / ">=" / "<" / ">" / "is") { return node("Id", {name}) }
 
 RelationalExpression
     = head:AdditiveExpression tail:(_ RelationalOperator _ AdditiveExpression)*
         { return buildBinaryExpression(head, tail) }
 
-EqualityOperator "operator"
-    = "=="
-    / "!="
+EqualityOperator
+    = name:("==" / "!=") { return node("Id", {name}) }
 
 EqualityExpression
     = head:RelationalExpression tail:(_ EqualityOperator _ RelationalExpression)*
     { return buildBinaryExpression(head, tail) }
 
-LogicalAndOperator "operator"
-    = AndToken
+LogicalAndOperator
+    = name:(AndToken) { return node("Id", {name}) }
 
 LogicalAndExpression
     = head:EqualityExpression tail:(_ LogicalAndOperator _ EqualityExpression)*
     { return buildBinaryExpression(head, tail) }
 
-LogicalOrOperator "operator"
-    = OrToken
-    / XorToken
+LogicalOrOperator
+    = name:(OrToken / XorToken) { return node("Id", {name}) }
 
 LogicalOrExpression
     = head:LogicalAndExpression tail:(_ LogicalOrOperator _ LogicalAndExpression)*
     { return buildBinaryExpression(head, tail) }
 
-ConditionalOperator "operator"
-    = "?"
+ConditionalOperator
+    = name:("?") { return node("Id", {name}) }
 
 ConditionalExpression
     = test:LogicalOrExpression
@@ -356,7 +318,7 @@ InlineFunction
     { return node("FunctionExpression", head, {body}) }
 
 OutlineFunction
-    = head:FunctionHead _ body:BlockStatement
+    = head:FunctionHead _ body:IndentedStatements
     { return node("FunctionExpression", head, {body}) }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -367,7 +329,7 @@ OutlineExpression
     = OutlineFunction
     / OutlineCallExpression
     / @InlineExpression EOL
-    //  TODO: Allow Optional BlockStatement After to imply function call.
+    //  TODO: Allow Optional IndentedStatements After to imply function call.
 
 OutlineArguments
     = EOL Indent @(Dent @OutlineExpression)+ Outdent

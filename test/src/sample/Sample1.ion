@@ -1,6 +1,8 @@
 
-type Integer = Number { Math.floor(value) == value }
+class Point
+    var x: Number = 0
+    var y: Number = 0
+    let length = (x * x + y * y) ^ 0.5
 
 export
     let a = 1
-    let b = "foo" is Integer

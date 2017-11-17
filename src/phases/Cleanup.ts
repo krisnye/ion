@@ -1,5 +1,4 @@
 import * as escodegen from "escodegen"
-import * as iot from "../IonAstTypes"
 import {fail} from "./Input"
 import {remove} from "../Traversal"
 

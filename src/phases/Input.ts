@@ -1,7 +1,6 @@
 import {traverse,remove,Visitor} from "../Traversal"
 import toposort from "../toposort"
 import * as escodegen from "escodegen"
-import * as iot from "../IonAstTypes"
 import * as common from "../common"
 
 export function fail(node:any, message: string) {
@@ -18,7 +17,7 @@ const Module_NoVars = (node:any) => {
                 failIfVar(d)
             }
         }
-        else if (declaration.type === iot.VariableDeclaration && declaration.kind !== 'let') {
+        else if (declaration.type === 'VariableDeclaration' && declaration.kind !== 'let') {
             fail(declaration, "Cannot export mutable variables")
         }
     }
@@ -148,11 +147,11 @@ const Module_ModulesToExports = (node: any) => {
         let module = node.modules[name]
         node.exports.push(
             {
-                type: iot.VariableDeclaration,
+                type: 'VariableDeclaration',
                 kind: 'let',
                 declarations: [
                     {
-                        type: iot.VariableDeclarator,
+                        type: 'VariableDeclarator',
                         id: {type:'Id', name},
                         init: module
                     }
@@ -170,9 +169,9 @@ const File_Write = (node:any) => {
 }
 
 export const passes = [
-    [Module_NoVars, Assembly_NamesInitAndModuleNameInit, IdDeclaration_CheckNoHideModuleNames],
-    [Module_DependenciesCreate, IdReference_ModuleDependenciesInit],
-    [_Literal_AddType,_VariableDeclarator_ValueTypeInferFromValue],
-    [Assembly_ModuleOrderInit, Assembly_NestModules],
-    [Module_ModulesToExports]
+    // [Module_NoVars, Assembly_NamesInitAndModuleNameInit, IdDeclaration_CheckNoHideModuleNames],
+    // [Module_DependenciesCreate, IdReference_ModuleDependenciesInit],
+    // [_Literal_AddType,_VariableDeclarator_ValueTypeInferFromValue],
+    // [Assembly_ModuleOrderInit, Assembly_NestModules],
+    // [Module_ModulesToExports]
 ]

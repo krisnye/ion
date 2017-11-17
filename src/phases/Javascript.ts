@@ -1,6 +1,5 @@
 import * as escodegen from "escodegen"
 import * as jst from "../JsAstTypes"
-import * as iot from "../IonAstTypes"
 import {fail} from "./Input"
 
 ////////////////////////////////////////////////////////////////////////////////////
