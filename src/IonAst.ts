@@ -1,26 +1,24 @@
 
 export class Position {
-    line: Number
-    column: Number
-    constructor(line: Number, column: Number) {
+    line: number
+    column: number
+    constructor(line: number, column: number) {
         this.line = line        // >= 1
         this.column = column    // >= 0
     }
 }
-
 export class SourceLocation {
     start: Position
     end: Position
-    source: String | null
-    constructor(start: Position, end: Position, source: String) {
+    source: string | null
+    constructor(start: Position, end: Position, source: string) {
         this.start = start
         this.end = end
         this.source = source
     }
 }
-
 export class Node {
-    type: String
+    type: string
     location: SourceLocation | null = null
     constructor(properties?: any) {
         this.type = this.constructor.name
@@ -31,21 +29,20 @@ export class Node {
         }
     }
 }
-
 export interface Pattern extends Node {}
 export interface Expression extends Node {}
 export interface Statement extends Node {}
 export interface Declaration extends Node {}
 export class Id extends Node {
-    name: String
+    name: string
 }
 export class IdDeclaration extends Id implements Pattern {}
 export class IdReference extends Id {}
 export class Literal extends Node implements Pattern {
-    value: String | Number | Boolean | null
+    value: string | number | boolean | null
 }
 export class VariableDeclaration extends Node implements Declaration {
-    kind: "let" | "var"
+    assignable: boolean
     id: IdDeclaration
     valueType: Type | null
     init: Expression | null
@@ -55,30 +52,26 @@ export class CallExpression extends Node implements Expression {
     arguments: Expression[]
 }
 export class ClassDeclaration extends Node implements Declaration {
-    kind: "class" | "struct"
+    valueType: boolean
     id: IdDeclaration
     typeParameters: Parameter[]
     baseClasses: IdReference[]
     variables: VariableDeclaration[]
 }
-
 export class Module extends Node {
     imports: ImportDeclarations | null
     declarations: Declaration[]
     exports: Declaration | Declaration[]
 }
-
 export class Parameter extends Node {
     pattern: Pattern
     valueType: Type
 }
-
 export class ImportDeclarations extends Node {
     declarations: ImportSubDeclaration[]
 }
-
 export class ImportSubDeclaration extends Node {
-    relative: Number
+    relative: number
     path: (Id | Literal)[]
     children: ImportSubDeclaration[] | null
     as: IdDeclaration | null

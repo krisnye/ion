@@ -94,8 +94,9 @@ VariableInit
     / EOL { return null }
 
 VariableDeclaration
-    = kind:(VarToken / LetToken) _ id:Pattern _ valueType:(":" _ @Type)? _ init:VariableInit?
-    { return node("VariableDeclaration", {kind, id, valueType, init }) }
+    = assignable:(VarToken { return true} / LetToken { return false} )
+        _ id:Pattern _ valueType:(":" _ @Type)? _ init:VariableInit?
+    { return node("VariableDeclaration", {assignable, id, valueType, init }) }
 
 // VariableMetaProperties
 //     = EOL Indent @OutlineProperty+ Outdent
@@ -168,9 +169,10 @@ AssignmentProperty
 ////////////////////////////////////////////////////////////////////////////////
 
 ClassDeclaration
-    = kind:(ClassToken / StructToken) _ id:IdDeclaration typeParameters:TypeParameters? _ baseClasses:Extends? EOL
+    = valueType:(ClassToken { return false } / StructToken {return true})
+        _ id:IdDeclaration typeParameters:TypeParameters? _ baseClasses:Extends? EOL
         Indent variables:(Dent @VariableDeclaration)* Outdent
-        { return node("ClassDeclaration", {kind, id, typeParameters, baseClasses:baseClasses || [], variables}) }
+        { return node("ClassDeclaration", {valueType, id, typeParameters, baseClasses:baseClasses || [], variables}) }
 
 TypeParameters
     = "<" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ">" { return [head, ...tail] }
