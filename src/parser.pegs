@@ -112,20 +112,21 @@ AssignmentStatement
     = left:Pattern _ AssignmentOperator _ right:OutlineExpression
     { return node("AssignmentStatement", {left, right}) }
 
-IndentedStatements
-    = EOL Indent @(Dent @Statement)+ Outdent
+BlockStatement
+    = EOL Indent body:(Dent @Statement)+ Outdent
+    { return node("BlockStatement", body) }
 
 ForInStatement
-    = ForToken _ left:Pattern _ InToken _ right:InlineExpression body:IndentedStatements
+    = ForToken _ left:Pattern _ InToken _ right:InlineExpression body:BlockStatement
     { return node("ForInStatement", {left, right, body} ) }
 
 WhileStatement
-    = WhileToken _ test:InlineExpression body:IndentedStatements
+    = WhileToken _ test:InlineExpression body:BlockStatement
     { return node("WhileStatement", {test,body}) }
 
 IfStatement
-    = IfToken _ test:InlineExpression consequent:IndentedStatements
-        alternate:(Dent ElseToken _ @(IndentedStatements / IfStatement))?
+    = IfToken _ test:InlineExpression consequent:BlockStatement
+        alternate:(Dent ElseToken _ @(BlockStatement / IfStatement))?
     { return node("IfStatement", {test, consequent, alternate}) }
 
 ReturnStatement
@@ -171,8 +172,8 @@ AssignmentProperty
 ClassDeclaration
     = valueType:(ClassToken { return false } / StructToken {return true})
         _ id:IdDeclaration typeParameters:TypeParameters? _ baseClasses:Extends? EOL
-        Indent variables:(Dent @VariableDeclaration)* Outdent
-        { return node("ClassDeclaration", {valueType, id, typeParameters, baseClasses:baseClasses || [], variables}) }
+        Indent properties:(Dent @VariableDeclaration)* Outdent
+        { return node("ClassDeclaration", {valueType, id, typeParameters, baseClasses:baseClasses || [], properties}) }
 
 TypeParameters
     = "<" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ">" { return [head, ...tail] }
@@ -320,7 +321,7 @@ InlineFunction
     { return node("FunctionExpression", head, {body}) }
 
 OutlineFunction
-    = head:FunctionHead _ body:IndentedStatements
+    = head:FunctionHead _ body:BlockStatement
     { return node("FunctionExpression", head, {body}) }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -331,7 +332,7 @@ OutlineExpression
     = OutlineFunction
     / OutlineCallExpression
     / @InlineExpression EOL
-    //  TODO: Allow Optional IndentedStatements After to imply function call.
+    //  TODO: Allow Optional BlockStatement After to imply function call.
 
 OutlineArguments
     = EOL Indent @(Dent @OutlineExpression)+ Outdent

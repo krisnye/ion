@@ -17,7 +17,7 @@ export class SourceLocation {
         this.source = source
     }
 }
-export class Node {
+export abstract class Node {
     type: string
     location: SourceLocation | null = null
     constructor(properties?: any) {
@@ -29,6 +29,32 @@ export class Node {
         }
     }
 }
+export abstract class Scope extends Node {
+    //  from local variable name to a canonical type name
+    //  the canonical types will be stored at the root level
+    variables: {[name: string]: string}
+}
+export class Module extends Scope {
+    imports: ImportDeclarations | null
+    declarations: Declaration[]
+    exports: Declaration | Declaration[]
+}
+export class ClassDeclaration extends Scope implements Declaration {
+    valueType: boolean
+    id: IdDeclaration
+    typeParameters: Parameter[]
+    baseClasses: IdReference[]
+    properties: VariableDeclaration[]
+}
+export class BlockStatement extends Scope implements Statement {
+    body: Statement[]
+}
+export class ForInStatement extends Scope implements Statement {
+    left: Pattern
+    right: Expression
+    body: BlockStatement
+}
+
 export interface Pattern extends Node {}
 export interface Expression extends Node {}
 export interface Statement extends Node {}
@@ -50,18 +76,6 @@ export class VariableDeclaration extends Node implements Declaration {
 export class CallExpression extends Node implements Expression {
     callee: Expression
     arguments: Expression[]
-}
-export class ClassDeclaration extends Node implements Declaration {
-    valueType: boolean
-    id: IdDeclaration
-    typeParameters: Parameter[]
-    baseClasses: IdReference[]
-    variables: VariableDeclaration[]
-}
-export class Module extends Node {
-    imports: ImportDeclarations | null
-    declarations: Declaration[]
-    exports: Declaration | Declaration[]
 }
 export class Parameter extends Node {
     pattern: Pattern
