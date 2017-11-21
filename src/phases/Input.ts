@@ -4,7 +4,7 @@ import {traverse,remove,Visitor} from "../Traversal"
 import * as common from "../common"
 import * as ast from "../IonAst"
 
-const getScope = (self:Node, ancestors: object[]) => {
+const getScope = (self:ast.Node, ancestors: object[]) => {
     if (self instanceof ast.Scope)
         return self
     for (let i = ancestors.length - 1; i >= 0; i--) {
@@ -29,25 +29,33 @@ const addVariableBinding = (scope:ast.Scope, binding:ast.VariableBinding) => {
     scope.variables[name] = binding
 }
 
-const VariableDeclaration_Parameter_ForInStatement_TypeDeclaration_AddVariableBindingsToContainingScope = (node:ast.Node, ancestors:object[]) => {
-    let scope = getScope(node, ancestors)
+const ClassDeclaration_VariableDeclaration_Parameter_ForInStatement_TypeDeclaration_AddVariableBindingsToContainingScope = (node:ast.Node, ancestors:object[]) => {
     if (node instanceof ast.VariableDeclaration) {
-        addVariableBinding(scope, new ast.VariableBinding({ id: node.id, assignable: node.assignable, location: node.location }))
+        let scope = getScope(node, ancestors)
+        addVariableBinding(scope, new ast.VariableBinding({ id: node.id, assignable: node.assignable}))
     }
     if (node instanceof ast.Parameter) {
+        let scope = getScope(node, ancestors)
         if (!(node.pattern instanceof ast.Id)) {
             fail(node, "Patterns not supported yet")
         }
-        addVariableBinding(scope, new ast.VariableBinding({assignable:false,id:<ast.Id>node.pattern,typeVariable:false,location:node.location}))
+        addVariableBinding(scope, new ast.VariableBinding({id:<ast.Id>node.pattern}))
     }
     if (node instanceof ast.ForInStatement) {
+        let scope = getScope(node, ancestors)
         if (!(node.left instanceof ast.Id)) {
             fail(node, "Patterns not supported yet")
         }
-        addVariableBinding(scope, new ast.VariableBinding({assignable:false,id:<ast.Id>node.left,location:node.location}))
+        addVariableBinding(scope, new ast.VariableBinding({id:<ast.Id>node.left}))
     }
     if (node instanceof ast.TypeDeclaration) {
-        addVariableBinding(scope, new ast.VariableBinding({assignable:false,id:node.id,typeVariable:true,location:node.location}))
+        let scope = getScope(node, ancestors)
+        addVariableBinding(scope, new ast.VariableBinding({id:node.id,typeVariable:true}))
+    }
+    if (node instanceof ast.ClassDeclaration) {
+        // place class name into parent scope as type variable
+        let scope = getScope(null, ancestors)
+        addVariableBinding(scope, new ast.VariableBinding({id:node.id,typeVariable:true}))
     }
 }
 
@@ -200,7 +208,7 @@ const VariableDeclaration_Parameter_ForInStatement_TypeDeclaration_AddVariableBi
 // }
 
 export const passes = [
-    [VariableDeclaration_Parameter_ForInStatement_TypeDeclaration_AddVariableBindingsToContainingScope]
+    [ClassDeclaration_VariableDeclaration_Parameter_ForInStatement_TypeDeclaration_AddVariableBindingsToContainingScope]
     // [Module_NoVars, Assembly_NamesInitAndModuleNameInit, IdDeclaration_CheckNoHideModuleNames],
     // [Module_DependenciesCreate, IdReference_ModuleDependenciesInit],
     // [_Literal_AddType,_VariableDeclarator_ValueTypeInferFromValue],

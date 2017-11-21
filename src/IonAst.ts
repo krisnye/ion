@@ -45,8 +45,14 @@ export class VariableDeclaration extends Variable implements Declaration {
 export class VariableBinding extends Variable {
     typeVariable: boolean
     canonicalTypeString: string | null
-    constructor(properties:{assignable:boolean,id:Id,typeVariable?:boolean,valueType?:Type|null,location?:SourceLocation|null}) {
+    constructor(properties:{assignable?:boolean,id:Id,typeVariable?:boolean,valueType?:Type|null,location?:SourceLocation|null}) {
         super(properties)
+        if (this.assignable == null)
+            this.assignable = false
+        if (this.typeVariable == null)
+            this.typeVariable = false
+        if (this.canonicalTypeString == null)
+            this.canonicalTypeString = null
     }
 }
 export abstract class Scope extends Node {
