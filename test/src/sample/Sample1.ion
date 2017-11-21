@@ -4,5 +4,12 @@ class Point
     var y: Number = 0
     let length = (x * x + y * y) ^ 0.5
 
+let sum = (array:Array<Number>) ->
+    let total = 0
+    for value in array
+        total += value
+    return total
+
 export
     let a = 1
+

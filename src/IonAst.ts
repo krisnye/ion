@@ -19,7 +19,7 @@ export class SourceLocation {
 }
 export abstract class Node {
     type: string
-    location: SourceLocation | null = null
+    location: SourceLocation | null
     constructor(properties?: any) {
         this.type = this.constructor.name
         if (properties != null) {
@@ -29,10 +29,30 @@ export abstract class Node {
         }
     }
 }
+
+export class TypeDeclaration extends Node implements Declaration {
+    id: Id
+    value: Type
+}
+export class Variable extends Node {
+    id: Id
+    assignable: boolean
+    valueType: Type | null
+}
+export class VariableDeclaration extends Variable implements Declaration {
+    init: Expression | null
+}
+export class VariableBinding extends Variable {
+    typeVariable: boolean
+    canonicalTypeString: string | null
+    constructor(properties:{assignable:boolean,id:Id,typeVariable?:boolean,valueType?:Type|null,location?:SourceLocation|null}) {
+        super(properties)
+    }
+}
 export abstract class Scope extends Node {
     //  from local variable name to a canonical type name
     //  the canonical types will be stored at the root level
-    variables: {[name: string]: string}
+    variables: {[name: string]: VariableBinding} = {}
 }
 export class Module extends Scope {
     imports: ImportDeclarations | null
@@ -41,9 +61,9 @@ export class Module extends Scope {
 }
 export class ClassDeclaration extends Scope implements Declaration {
     valueType: boolean
-    id: IdDeclaration
+    id: Id
     typeParameters: Parameter[]
-    baseClasses: IdReference[]
+    baseClasses: Id[]
     properties: VariableDeclaration[]
 }
 export class BlockStatement extends Scope implements Statement {
@@ -62,16 +82,8 @@ export interface Declaration extends Node {}
 export class Id extends Node {
     name: string
 }
-export class IdDeclaration extends Id implements Pattern {}
-export class IdReference extends Id {}
 export class Literal extends Node implements Pattern {
     value: string | number | boolean | null
-}
-export class VariableDeclaration extends Node implements Declaration {
-    assignable: boolean
-    id: IdDeclaration
-    valueType: Type | null
-    init: Expression | null
 }
 export class CallExpression extends Node implements Expression {
     callee: Expression
@@ -88,7 +100,31 @@ export class ImportSubDeclaration extends Node {
     relative: number
     path: (Id | Literal)[]
     children: ImportSubDeclaration[] | null
-    as: IdDeclaration | null
+    as: Id | null
+}
+
+export class DotExpression extends Node implements Expression {
+}
+export class MemberExpression extends Node implements Expression {
+    object: Expression
+    property: Expression
+    computed: boolean
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//  Functions
+////////////////////////////////////////////////////////////////////////////////
+export class FunctionExpression extends Scope implements Expression {
+    id: Id | null
+    params: Parameter[]
+    body: BlockStatement
+}
+export class ReturnStatement extends Node implements Statement {
+    argument: Expression
+}
+export class AssignmentStatement extends Node implements Statement {
+    left: Pattern
+    right: Expression
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,6 +132,10 @@ export class ImportSubDeclaration extends Node {
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface Type extends Node {}
-export class TypeReference extends Node {
-    id: IdReference
+export class TypeReference extends Node implements Type {
+    id: Id
+}
+export class ConstrainedType extends Scope implements Type {
+    baseType: Id
+    constraint: Expression
 }
