@@ -1,6 +1,5 @@
 {
 
-
     const ast = require('./IonAst')
 
     function node(type, ...values) {
@@ -17,9 +16,13 @@
         return result
     }
 
+    function operation(left, operator, right) {
+            return node("CallExpression", {callee:node("MemberExpression", {object:left,property:operator}), arguments: right != null ? [right] : []})
+    }
+
     function buildBinaryExpression(head, tail) {
         return tail.reduce(
-            (left, [,operator,,right]) => node("CallExpression", {callee:operator, arguments:[left, right]})
+            (left, [,operator,,right]) => operation(left, operator, right)
             ,head
         )
     }
@@ -34,10 +37,6 @@ Module
     = EOL? imports:ImportDeclarations? declarations:Declaration* exports:ExportStatement EOL EOF
     { return node("Module", {imports:imports || [], declarations, exports}) }
 
-//  type Whole = Integer{ value > 0 and value < 10 }
-//  this = special keyword for class instance
-//  value < 10 and value > 100
-
 ////////////////////////////////////////////////////////////////////////////////
 //  ImportDeclaration
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,8 +49,14 @@ SubImports
     = Indent @(Dent @ImportDeclaration)+ Outdent
 
 ImportDeclaration
-    = path:ModulePath as:(_ AsToken _ @Id)? children:(".*" EOL { return true } / EOL @SubImports?)
-    { return node("ImportDeclaration", {path,children,id: as || path[path.length-1] }) }
+    = relative:'.'* path:ModulePath as:(_ AsToken _ @Id)? children:(".*" EOL { return true } / EOL @SubImports?)
+    {
+        if (children === undefined)
+            children = null
+        if (as == null && children == null)
+            as = path[path.length-1]
+        return node("ImportDeclaration", {relative:relative.length,path,children,as})
+    }
 
 ImportDeclarations
     = ImportToken EOL @SubImports
@@ -61,10 +66,11 @@ ImportDeclarations
 ////////////////////////////////////////////////////////////////////////////////
 
 ExportStatement
-    = ExportToken _ declaration:Declaration
-    { return declaration }
-    / ExportToken EOL Indent declarations:(Dent @Declaration)+ Outdent
-    { return declarations }
+    = ExportToken _ @(ClassDeclaration / Library)
+
+Library
+    = EOL Indent declarations:(Dent @Declaration)+ Outdent
+    { return node('Library', {declarations}) }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Statements
@@ -90,7 +96,7 @@ TypeDeclaration
 
 VariableDeclaration
     = assignable:(VarToken { return true} / LetToken { return false} )
-        _ id:Pattern _ valueType:(":" _ @Type)? _ init:('=' _ @OutlineExpression)?
+        _ id:Pattern _ valueType:(":" _ @Type)? _ init:('=' _ @OutlineExpression / EOL {return null})?
     { return node("VariableDeclaration", {assignable, id, valueType, init }) }
 
 // VariableMetaProperties
@@ -111,7 +117,7 @@ AssignmentStatement
     = left:Pattern _ op:AssignmentOperator _ right:OutlineExpression
     {
         if (op.length > 1) {
-            right = node("CallExpression", {callee:node("Id",{name:op.slice(0,-1)}),arguments:[left,right]})
+            right = operation(left, node("Id",{name:op.slice(0,-1)}), right)
         }
         return node("AssignmentStatement", {left, right})
     }
@@ -223,12 +229,12 @@ TypeReference
     = id:Id _ args:TypeArguments?
     { return node("TypeReference", {id,arguments:args}) }
     / "[" _ type:Type '*' _ "]"
-    { return node("TypeReference", {name:"Array", arguments:[type]}) }
+    { return node("TypeReference", {id:node('Id',{name:"Array"}), arguments:[type]}) }
     / "[" _ head:Type tail:(_ "," _ @Type)+ _ "]"
     {
         //  no actual pattern yet, just types
         let types = [head, ...tail]
-        return node("TypeReference", {name:"Array", arguments:[node("UnionType", {types})], pattern:types})
+        return node("TypeReference", {name:node('Id',{name:"Array"}), arguments:[node("UnionType", {types})], pattern:types})
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -240,7 +246,7 @@ UnaryOperator
 
 UnaryExpression
     = MemberExpression
-    / operator:UnaryOperator argument:MemberExpression { return node("CallExpression", {callee:operator,arguments:[argument]})}
+    / operator:UnaryOperator argument:MemberExpression { return operation(argument, operator) }
 
 ExponentiationOperator "operator"
     = name:("^" / "<<" / ">>") { return node("Id", {name}) }
@@ -350,7 +356,7 @@ InlineExpression
     / ConditionalExpression
 
 PrimaryExpression
-    = Id
+    = IdReference
     / Literal
     / ThisExpression
     / DotExpression
@@ -467,6 +473,9 @@ IdName
 
 Id
     = name:IdName { return node('Id', {name}) }
+
+IdReference
+    = name:IdName { return node('IdReference', {name}) }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Tokens and Keywords

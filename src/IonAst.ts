@@ -20,14 +20,22 @@ export class SourceLocation {
 export abstract class Node {
     type: string
     location: SourceLocation | null
-    constructor(properties?: any) {
+    constructor(...args: any[]) {
         this.type = this.constructor.name
-        if (properties != null) {
-            for (const key in properties) {
-                (this as any)[key] = properties[key]
+        for (let properties of args) {
+            if (properties != null) {
+                for (const key in properties) {
+                    (this as any)[key] = properties[key]
+                }
             }
         }
     }
+}
+
+export class Assembly extends Node {
+    name: string
+    options: {input:string,output:string}
+    modules: {[path:string]:Module}
 }
 
 export class TypeDeclaration extends Node implements Declaration {
@@ -43,9 +51,9 @@ export class VariableDeclaration extends Variable implements Declaration {
     init: Expression | null
 }
 export class VariableBinding extends Variable {
-    typeVariable: boolean
+    typeVariable: boolean | null // null means we don't know yet.
     canonicalTypeString: string | null
-    constructor(properties:{assignable?:boolean,id:Id,typeVariable?:boolean,valueType?:Type|null,location?:SourceLocation|null}) {
+    constructor(properties:{assignable?:boolean,id:Id,typeVariable?:boolean|null,valueType?:Type|null,location?:SourceLocation|null}) {
         super(properties)
         if (this.assignable == null)
             this.assignable = false
@@ -61,11 +69,18 @@ export abstract class Scope extends Node {
     variables: {[name: string]: VariableBinding} = {}
 }
 export class Module extends Scope {
-    imports: ImportDeclarations | null
+    path: string[]
+    get name() { return this.path[this.path.length-1]}
+    imports: ImportDeclaration[]
     declarations: Declaration[]
-    exports: Declaration | Declaration[]
+    exports: ClassDeclaration | Library
+    // calculated temporarily as part of identifier resolution
+    unresolvedReferences: {[name: string]: Reference} = {}
 }
-export class ClassDeclaration extends Scope implements Declaration {
+export class Library extends Scope {
+    declarations: Declaration[]
+}
+export class ClassDeclaration extends Scope implements Declaration, Type {
     valueType: boolean
     id: Id
     typeParameters: Parameter[]
@@ -88,6 +103,12 @@ export interface Declaration extends Node {}
 export class Id extends Node {
     name: string
 }
+export interface Reference extends Node {
+    id: Id
+}
+export class IdReference extends Id implements Reference {
+    get id() { return this }
+}
 export class Literal extends Node implements Pattern {
     value: string | number | boolean | null
 }
@@ -99,14 +120,13 @@ export class Parameter extends Node {
     pattern: Pattern
     valueType: Type
 }
-export class ImportDeclarations extends Node {
-    declarations: ImportSubDeclaration[]
-}
-export class ImportSubDeclaration extends Node {
+export class ImportDeclaration extends Node {
+    path: Id[]
+    as: Id
+    children: ImportDeclaration[] | true | null
     relative: number
-    path: (Id | Literal)[]
-    children: ImportSubDeclaration[] | null
-    as: Id | null
+    implicit: boolean
+    get pathString() { return this.path.map(step => step.name).join('.') }
 }
 
 export class DotExpression extends Node implements Expression {
@@ -138,10 +158,23 @@ export class AssignmentStatement extends Node implements Statement {
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface Type extends Node {}
-export class TypeReference extends Node implements Type {
+export class TypeReference extends Node implements Type, Reference {
     id: Id
 }
 export class ConstrainedType extends Scope implements Type {
     baseType: Id
     constraint: Expression
+}
+export class FunctionType extends Scope implements Type {
+    params: Parameter[]
+    returnType: Type
+}
+export class LiteralType extends Node implements Type {
+    value: Literal
+}
+export class UnionType extends Node implements Type {
+    types: Type[]
+}
+export class IntersectionType extends Node implements Type {
+    types: Type[]
 }

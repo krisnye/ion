@@ -65,7 +65,7 @@ export default class Compiler {
         let filenames = common.getFilesRecursive(this.input)
         let modules: any = {}
         for (let file of filenames) {
-            if (file.endsWith(".ion") && file.indexOf('Sample1') >= 0) {
+            if (file.endsWith(".ion")/* && file.indexOf('Sample1') >= 0 */) {
                 let filename = file.substring(this.input.length + 1)
                 let path = filename.substring(0, filename.length - ".ion".length).replace(/[\/\\]/g, '.')
                 let source = common.read(file)

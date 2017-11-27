@@ -1,34 +1,7 @@
+import
+    ion.*
 
 export class Point
     var x: Number = 0
     var y: Number = 0
-    let z = x + y
-    let translate = ->
-        if x
-            return 0
-        else if y
-            return 1
-        else
-            return -1
-
-        let temp
-        for {foo,bar} in map
-            temp = foo
-            log(x)
-
-        while true
-            console.log
-                "hello"
-                "world"
-                "ion"
-                "rocks"
-
-        let foo = Foo
-            1
-            2
-
-        let bar = baz
-            3
-            4
-
-        a and b or c xor d or not e
+    let length = (x * x + y * y) ^ 0.5
