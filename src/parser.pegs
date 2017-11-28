@@ -66,7 +66,7 @@ ImportDeclarations
 ////////////////////////////////////////////////////////////////////////////////
 
 ExportStatement
-    = ExportToken _ @(ClassDeclaration / Library)
+    = ExportToken _ @(ClassDeclaration / TypeDeclaration / Library)
 
 Library
     = EOL Indent declarations:(Dent @Declaration)+ Outdent
@@ -182,8 +182,8 @@ AssignmentProperty
 ClassDeclaration
     = valueType:(ClassToken { return false } / StructToken {return true})
         _ id:Id typeParameters:TypeParameters? _ baseClasses:Extends? EOL
-        Indent properties:(Dent @VariableDeclaration)* Outdent
-        { return node("ClassDeclaration", {valueType, id, typeParameters, baseClasses:baseClasses || [], properties}) }
+        Indent declarations:(Dent @Declaration)* Outdent
+        { return node("ClassDeclaration", {valueType, id, typeParameters, baseClasses:baseClasses || [], declarations}) }
 
 TypeParameters
     = "<" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ">" { return [head, ...tail] }
@@ -314,8 +314,8 @@ ConditionalExpression
 ////////////////////////////////////////////////////////////////////////////////
 
 Parameter
-    = pattern:Pattern _ valueType:(":" + _ @Type)?
-    { return node("Parameter", {pattern, valueType})}
+    = pattern:Pattern _ valueType:(":" _ @Type)? _ defaultValue:("=" _ @InlineExpression)?
+    { return node("Parameter", {pattern, valueType, defaultValue})}
 
 FunctionParameters
     = "(" _ ")" { return [] }

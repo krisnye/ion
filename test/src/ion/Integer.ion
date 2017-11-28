@@ -1,0 +1,4 @@
+import
+    .Number
+
+export type Integer = Number<0>

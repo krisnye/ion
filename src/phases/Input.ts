@@ -99,14 +99,13 @@ const IdReference_TypeReference_CheckIfUnresolvedAndAddToModule = (node: ast.Ref
     }
 }
 
-const Module_resolveReferences = (node: ast.Module, ancestors: object[]) => {
+const Module_UnresolvedReferencesResolve = (node: ast.Module, ancestors: object[]) => {
     for (let name in node.unresolvedReferences) {
         let reference = node.unresolvedReferences[name]
         let foundModules: ast.Module[] = []
         for (let rootImport of node.imports) {
             let assembly = <ast.Assembly>ancestors[0]
             if (rootImport.children === true) {
-                // get pathString() { return this.path.map(step => step.name).join('.') }
                 let checkPath = rootImport.pathString + "." + name
                 let referencedModule = assembly.modules[checkPath]
                 if (referencedModule != null) {
@@ -121,7 +120,7 @@ const Module_resolveReferences = (node: ast.Module, ancestors: object[]) => {
         } else {
             let foundModule = foundModules[0]
             //  add new specific import declaration
-            let newImport = new ast.ImportDeclaration({ path:foundModule.path, children: null, as: reference.id, relative: 0 })
+            let newImport = new ast.ImportDeclaration({ path:foundModule.path.map(name => new ast.Id({name})), children: null, as: reference.id, relative: 0 })
             node.imports.push(newImport)
             //  declare new binding
             ImportDeclaration_AddVariableBindings(newImport, ancestors.concat([node]))
@@ -174,6 +173,29 @@ const Module_FlattenImportDeclarations = (node:ast.Module) => {
         addSubImport([], child)
     }
     node.imports = rootImports
+}
+
+const Module_ImportsRelativeToAbsolute = (node:ast.Module, ancestors: object[]) => {
+    for (let rootImport of node.imports) {
+        //  convert relative import to absolute
+        if (rootImport.relative > 0) {
+            rootImport.path = node.path.slice(0, - rootImport.relative).map(name => new ast.Id({name})).concat(rootImport.path)
+            rootImport.relative = 0
+        }
+    }
+}
+
+const Module_ImportsResolveToModules = (node: ast.Module, ancestors: object[]) => {
+    let assembly = <ast.Assembly>ancestors[0]
+    for (let rootImport of node.imports) {
+        //  convert relative import to absolute
+        let path = rootImport.pathString
+        let referencedModule = assembly.modules[path]
+        if (referencedModule == null)
+            fail(rootImport, `'${path}' module not found`)
+        if (referencedModule == node)
+            fail(rootImport, `cannot import self`)
+    }
 }
 
 // const Module_NoVars = (node:any) => {
@@ -313,13 +335,15 @@ const Module_FlattenImportDeclarations = (node:ast.Module) => {
 // }
 
 export const passes = [
-    [Assembly_ModulePathInit],
-    [Module_FlattenImportDeclarations],
-    [ImportDeclaration_AddVariableBindings,ClassDeclaration_AddVariableBindings,VariableDeclaration_AddVariableBindings,Parameter_AddVariableBindings,ForInStatement_AddVariableBindings,TypeDeclaration_AddVariableBindings],
-    [IdReference_TypeReference_CheckIfUnresolvedAndAddToModule],
-    [Module_resolveReferences],
-    // this should happen AFTER checking references are all valid
+    //  Phase 0: initialization and adding variable bindings
+    [Assembly_ModulePathInit, Module_FlattenImportDeclarations, ImportDeclaration_AddVariableBindings,ClassDeclaration_AddVariableBindings,VariableDeclaration_AddVariableBindings,Parameter_AddVariableBindings,ForInStatement_AddVariableBindings,TypeDeclaration_AddVariableBindings],
+    //  Phase 1: check for unresolved references
+    [Module_ImportsRelativeToAbsolute, IdReference_TypeReference_CheckIfUnresolvedAndAddToModule],
+    //  Phase 2: attempt to resolve references
+    [Module_UnresolvedReferencesResolve, Module_ImportsResolveToModules],
+    //  Phase 3: check semantic validity
     [AssignmentStatement_CheckAssignable],
+
     // [Module_NoVars, Assembly_NamesInitAndModuleNameInit, IdDeclaration_CheckNoHideModuleNames],
     // [Module_DependenciesCreate, IdReference_ModuleDependenciesInit],
     // [_Literal_AddType,_VariableDeclarator_ValueTypeInferFromValue],

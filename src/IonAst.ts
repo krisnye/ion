@@ -85,7 +85,7 @@ export class ClassDeclaration extends Scope implements Declaration, Type {
     id: Id
     typeParameters: Parameter[]
     baseClasses: Id[]
-    properties: VariableDeclaration[]
+    declarations: Declaration[]
 }
 export class BlockStatement extends Scope implements Statement {
     body: Statement[]
@@ -119,6 +119,7 @@ export class CallExpression extends Node implements Expression {
 export class Parameter extends Node {
     pattern: Pattern
     valueType: Type
+    defaultValue: Expression
 }
 export class ImportDeclaration extends Node {
     path: Id[]
