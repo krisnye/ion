@@ -446,7 +446,7 @@ DecimalIntegerLiteral
     = DecimalInteger { return node('Literal', {value:parseInt(text()), base:10}) }
 
 DecimalInteger
-    = '0' / [1-9] [0-9]* !IdPart
+    = '0' / [+-]? [1-9] [0-9]* !IdPart
 
 StringLiteral
     = '"' DoubleStringChar* '"' { return node('Literal', {value:eval(text())}); }
