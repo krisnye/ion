@@ -91,7 +91,7 @@ Declaration
     / VariableDeclaration
 
 TypeDeclaration
-    = TypeToken _ id:Id _ "=" _ value:Type EOL
+    = TypeToken _ id:UpperCaseId _ "=" _ value:Type EOL
     { return node('TypeDeclaration', {id, value}) }
 
 VariableDeclaration
@@ -181,11 +181,11 @@ AssignmentProperty
 
 ClassDeclaration
     = valueType:(ClassToken { return false } / StructToken {return true})
-        _ id:Id typeParameters:TypeParameters? _ baseClasses:Extends? EOL
+        _ id:UpperCaseId templateParameters:TemplateParameters? _ baseClasses:Extends? EOL
         Indent declarations:(Dent @Declaration)* Outdent
-        { return node("ClassDeclaration", {valueType, id, typeParameters, baseClasses:baseClasses || [], declarations}) }
+        { return node("ClassDeclaration", {valueType, id, templateParameters, baseClasses:baseClasses || [], declarations}) }
 
-TypeParameters
+TemplateParameters
     = "<" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ">" { return [head, ...tail] }
 
 Extends
@@ -215,18 +215,22 @@ ConstrainedType
     / LiteralType
 
 LiteralType
-    = value:Literal { return node('LiteralType', value) }
+    = literal:Literal { return node('LiteralType', {literal}) }
 
 FunctionType
     = params:FunctionParameters _ "->" _ returnType:Type
     { return node("FunctionType", {params, returnType}) }
 
-TypeArguments
-    = "<" _ head:Type tail:(_ "," _ @Type)*  _ ">"
+TemplateArgument
+    = Type
+    / InlineExpression
+
+TemplateArguments
+    = "<" _ head:TemplateArgument tail:(_ "," _ @TemplateArgument)*  _ ">"
     { return [head, ...tail] }
 
 TypeReference
-    = id:Id _ args:TypeArguments?
+    = id:UpperCaseId _ args:TemplateArguments?
     { return node("TypeReference", {id,arguments:args}) }
     / "[" _ type:Type '*' _ "]"
     { return node("TypeReference", {id:node('Id',{name:"Array"}), arguments:[type]}) }
@@ -234,7 +238,7 @@ TypeReference
     {
         //  no actual pattern yet, just types
         let types = [head, ...tail]
-        return node("TypeReference", {name:node('Id',{name:"Array"}), arguments:[node("UnionType", {types})], pattern:types})
+        return node("TypeReference", {id:node('Id',{name:"Array"}), arguments:[node("UnionType", {types})], pattern:types})
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -428,7 +432,6 @@ NullLiteral
 
 ExponentPart
     = 'e' [+-]? [0-9]+ !IdPart
-    / 'E' { expected('"e" (Use Lowercase e for Exponent)') }
 
 DecimalLiteral
     = (DecimalInteger? '.' [0-9]+ ExponentPart? / DecimalInteger ExponentPart) !IdPart
@@ -439,8 +442,6 @@ HexDigit
 
 HexIntegerLiteral
     = '0x' HexDigit+ !IdPart { return node('Literal', {value:parseInt(text(), 16), base:16}) }
-    / '0x' ([0-9A-F] / [a-f] { expected('"' + text().toUpperCase() + '" (Use Uppercase for Hexadecimal)')} ) !IdPart
-    / '0X' { expected('"0x" (Use Lowercase x for Hexadecimal Prefix)') }
 
 DecimalIntegerLiteral
     = DecimalInteger { return node('Literal', {value:parseInt(text()), base:10}) }
@@ -473,6 +474,12 @@ IdName
 
 Id
     = name:IdName { return node('Id', {name}) }
+
+LowerCaseId
+    = &[_a-z] @Id
+
+UpperCaseId
+    = &[A-Z] @Id
 
 IdReference
     = name:IdName { return node('IdReference', {name}) }

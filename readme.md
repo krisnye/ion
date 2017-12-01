@@ -14,3 +14,7 @@ limitations on 'let' variables:
     CONSTRAINTS
     Number < 10 and > 20
     Vector .x > 0 and .y < 10
+
+TODO:
+    ElementType to handle determining the type of element traversed by for..in loop.
+    VariableBindings must reference source element Type

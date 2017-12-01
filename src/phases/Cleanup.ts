@@ -1,6 +1,6 @@
 import * as escodegen from "escodegen"
-import {fail} from "./Input"
 import {remove} from "../Traversal"
+import * as c from "../common"
 
 const idChars = new Set("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 const validId = /^[_a-zA-Z][_a-zA-Z0-9]*$/

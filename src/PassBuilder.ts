@@ -1,6 +1,6 @@
 import {Visitor} from "./Traversal"
 
-export type Filter = Visitor & {name:string,target:string[],mutate:boolean}
+export type Filter = Visitor & {name:string,target:string[],mutate?:boolean}
 export type Pass = Visitor & {names:string[]}
 
 function createFilter(filter: Filter | ((node:any, ancestors?: object[], path?: string[]) => any)): Filter {
@@ -94,21 +94,20 @@ export function createPass(filters: Filter[], options:{debug?:boolean} = {}): Pa
     return {
         names: filters.map(f => f.name),
         enter: (node:any, ancestors: object[], path: string[]) => {
-            let type = node.type
-            let handler = getHandler(node.type)
+            let type = node.className
+            let handler = getHandler(node.className)
             if (handler) {
                 let {enters} = handler
+                let result = undefined
                 for (let enter of enters) {
-                    enter(node, ancestors, path)
-                    if (debug) {
-                        if (node.type !== type)
-                            throw new Error("Enter filter cannot modify node type: " + enter.name)
-                    }
+                    //  only the last enter value will matter
+                    result = enter(node, ancestors, path)
                 }
+                return result
             }
         },
         leave: (node:any, ancestors: object[], path: string[]) => {
-            let handler = getHandler(node.type)
+            let handler = getHandler(node.className)
             if (handler) {
                 let {leaves} = handler
                 for (let leave of leaves) {

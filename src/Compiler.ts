@@ -2,6 +2,7 @@ import * as common from "./common"
 import * as np from "path"
 import {traverse} from "./Traversal"
 import {createPass} from "./PassBuilder"
+import * as ast from "./IonAst"
 
 const parser = require("./parser")()
 
@@ -74,7 +75,7 @@ export default class Compiler {
                 modules[path] = module
             }
         }
-        return {type:'Assembly', options:{input:this.input, output:this.output}, modules}
+        return new ast.Assembly({options:{input:this.input, output:this.output}, modules})
     }
 
 }

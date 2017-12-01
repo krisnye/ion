@@ -13,10 +13,11 @@ function flatten(array: any[]) {
 }
 
 function isObjectNode(object:any) {
-    return object != null && typeof object.type === 'string'
+    return object != null && object.className != null
 }
 
 export const remove = Object.freeze([])
+export const skip = Object.freeze({skip:"Skip"})
 
 export type Visitor = {
     enter?: (node:object, ancestors: object[], string: string[]) => Symbol | void,
@@ -69,9 +70,10 @@ export function traverse(
     let isObject = typeof node === 'object' // && node != null // implied
     let isNode = isObjectNode(node)
     let isArray = Array.isArray(node)
+    let enterResult: any = null
     if (isNode && enter != null)
-        enter(node, ancestors, path)
-    if (isNode || isArray || isObject)
+        enterResult = enter(node, ancestors, path)
+    if (enterResult !== skip && (isNode || isArray || isObject))
         traverseChildren(node, visitor, isArray, ancestors, path)
     //  then call leave on node unless it's an array.
     let result = undefined
