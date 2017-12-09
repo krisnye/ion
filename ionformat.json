@@ -1,0 +1,7 @@
+{
+    "Object": {"":"path.to.Class", "name": "Kris", "age": 40},
+    "Array": [10,20,30],
+    "Map": {"":"ion.Map","elements":[[5,"Five"],{"":"object.Key"},{"":"object.Value"}]},
+    "Set": {"":"ion.Set","elements":[20,12,5,10,13]},
+    "Reference": {"":"ion.Reference","path":"path.to.Type.or.instance"}
+}

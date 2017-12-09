@@ -5,44 +5,44 @@ import * as c from "../common"
 import * as ast from "../IonAst"
 
 const VariableDeclaration_AddVariableBindings = (node: ast.VariableDeclaration, ancestors: object[]) => {
-    let scope = c.getScope(node, ancestors)
-    c.addVariableBinding(scope, node.id)
+    let scope = ast.getScope(node, ancestors)
+    scope.addVariable(node.id)
 }
 const Parameter_AddVariableBindings = (node: ast.Parameter, ancestors: object[]) => {
-    let scope = c.getScope(node, ancestors)
+    let scope = ast.getScope(node, ancestors)
     if (!(node.pattern instanceof ast.Id)) {
-        return c.fail(node, "Patterns not supported yet")
+        node.throwSemanticError("Patterns not supported yet")
     }
-    c.addVariableBinding(scope, <ast.Id>node.pattern)
+    scope.addVariable(<ast.Id>node.pattern)
 }
 const ForInStatement_AddVariableBindings = (node: ast.ForInStatement, ancestors: object[]) => {
-    let scope = c.getScope(node, ancestors)
+    let scope = ast.getScope(node, ancestors)
     if (!(node.left instanceof ast.Id)) {
-        return c.fail(node, "Patterns not supported yet")
+        node.throwSemanticError("Patterns not supported yet")
     }
-    c.addVariableBinding(scope, <ast.Id>node.left)
+    scope.addVariable(<ast.Id>node.left)
 }
 const TypeDeclaration_AddVariableBindings = (node: ast.TypeDeclaration, ancestors: object[]) => {
-    let scope = c.getScope(node, ancestors)
-    c.addVariableBinding(scope, node.id)
+    let scope = ast.getScope(node, ancestors)
+    scope.addVariable(node.id)
 }
 const ClassDeclaration_AddVariableBindings = (node: ast.ClassDeclaration, ancestors: object[]) => {
     // place class name into parent scope as type variable
-    let scope = c.getScope(null, ancestors)
-    c.addVariableBinding(scope, node.id)
+    let scope = ast.getScope(null, ancestors)
+    scope.addVariable(node.id)
 }
 const ImportDeclaration_AddVariableBindings = (node: ast.ImportDeclaration, ancestors: object[]) => {
     if (node.as != null) {
-        let scope = c.getScope(null, ancestors)
-        c.addVariableBinding(scope, node.as)
+        let scope = ast.getScope(null, ancestors)
+        scope.addVariable(node.as)
     }
 }
 
-const IdReference_TypeReference_CheckIfUnresolvedAndAddToModule = (node: ast.Reference, ancestors: object[]) => {
+const Reference_CheckIfUnresolvedAndAddToModule = (node: ast.Reference, ancestors: object[]) => {
     let name = node.id.name
-    let variable = c.getScopedId(node, ancestors, name)
+    let variable = node.getVariable(ancestors, name)
     if (variable == null) {
-        let module = c.getModule(ancestors)
+        let module = ast.getModule(ancestors)
         if (module.unresolvedReferences[name] == null) {
             module.unresolvedReferences[name] = node
         }
@@ -64,9 +64,9 @@ const Module_UnresolvedReferencesResolve = (node: ast.Module, ancestors: object[
             }
         }
         if (foundModules.length == 0) {
-            c.fail(reference, `'${name}' could not be resolved`)
+            reference.throwSemanticError(`'${name}' could not be resolved`)
         } else if (foundModules.length > 1) {
-            c.fail(reference, `'${name}' resolves ambiguously to ${foundModules.map(x => x.name).join(', ')}`)
+            reference.throwSemanticError(`'${name}' resolves ambiguously to ${foundModules.map(x => x.name).join(', ')}`)
         } else {
             let foundModule = foundModules[0]
             //  add new specific import declaration
@@ -139,28 +139,20 @@ const Module_ImportsRelativeToAbsolute = (node:ast.Module, ancestors: object[]) 
 const Module_ImportsResolveToModules = (node: ast.Module, ancestors: object[]) => {
     let assembly = <ast.Assembly>ancestors[0]
     for (let rootImport of node.imports) {
-        //  convert relative import to absolute
         let path = rootImport.pathString
         let referencedModule = assembly.modules[path]
         if (referencedModule == null)
-            c.fail(rootImport, `'${path}' module not found`)
+            rootImport.throwSemanticError(`'${path}' module not found`)
         if (referencedModule == node)
-            c.fail(rootImport, `cannot import self`)
+            rootImport.throwSemanticError(`cannot import self`)
     }
 }
 
-const Type_AddDependenciesToAssembly = {
-    name: 'Type_AddDependenciesToAssembly',
-    target: ast.TypeClassNames,
-    enter: (node: ast.Type, ancestors:object[]) => {
-        let assembly = <ast.Assembly>ancestors[0]
-        //  we have dependencies... to our own child node types...
-        //  that makes no sense.
-        //  all types must ultimately come from
-        //  export type
-        //  export variable type
-        //  
-        console.log('Type: ' + node)
+const Node_AddDependenciesToAssembly = (node: any, ancestors:object[], path: string[]) => {
+    let assembly = <ast.Assembly>ancestors[0]
+    if (node.getDependencies != null) {
+        let deps = node.getDependencies(ancestors, path)
+        console.log('Expression: ' + node)
     }
 }
 
@@ -172,11 +164,11 @@ export const passes = [
     //  Phase 0: initialization and adding variable bindings
     [Assembly_ModulePathInit, Module_FlattenImportDeclarations, ImportDeclaration_AddVariableBindings,ClassDeclaration_AddVariableBindings,VariableDeclaration_AddVariableBindings,Parameter_AddVariableBindings,ForInStatement_AddVariableBindings,TypeDeclaration_AddVariableBindings],
     //  Phase 1: check for unresolved references
-    [Module_ImportsRelativeToAbsolute, IdReference_TypeReference_CheckIfUnresolvedAndAddToModule],
+    [Module_ImportsRelativeToAbsolute, Reference_CheckIfUnresolvedAndAddToModule],
     //  Phase 2: attempt to resolve references
     [Module_UnresolvedReferencesResolve, Module_ImportsResolveToModules],
     //  Phase 3: Type calculation
-    [Type_AddDependenciesToAssembly, _Assembly_ToposortTypes],
-    // //  Phase 4: check semantic validity
-    // [AssignmentStatement_CheckAssignable]
+    [Node_AddDependenciesToAssembly, _Assembly_ToposortTypes],
+    // // //  Phase 4: check semantic validity
+    // // [AssignmentStatement_CheckAssignable]
 ]

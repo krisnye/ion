@@ -7,7 +7,7 @@ import * as ast from "./IonAst"
 const parser = require("./parser")()
 
 import * as input from "./phases/input" 
-import * as javascript from "./phases/javascript" 
+// import * as javascript from "./phases/javascript" 
 import * as output from "./phases/output"
 import * as cleanup from "./phases/cleanup"
 const defaultPhases = [input]//, cleanup, javascript]//, output]

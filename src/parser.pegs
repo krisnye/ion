@@ -9,10 +9,7 @@
         if (ctor != null)
             return new ctor(result)
         else
-            console.warn('Type not found: ' + type)
-        //  we set the type both before (show it shows first in enumeration)
-        //  and last so it overwrites any previous type in args
-        result.type = type
+            throw new Error('Type not found: ' + type)
         return result
     }
 
@@ -49,7 +46,11 @@ SubImports
     = Indent @(Dent @ImportDeclaration)+ Outdent
 
 ImportDeclaration
-    = relative:'.'* path:ModulePath as:(_ AsToken _ @Id)? children:(".*" EOL { return true } / EOL @SubImports?)
+    = relative:'.'+ "*" EOL
+    {
+        return node("ImportDeclaration", {relative:relative.length,path:[],children:true,as:null})
+    }
+    / relative:'.'* path:ModulePath as:(_ AsToken _ @Id)? children:(".*" EOL { return true } / EOL @SubImports?)
     {
         if (children === undefined)
             children = null
@@ -96,8 +97,8 @@ TypeDeclaration
 
 VariableDeclaration
     = assignable:(VarToken { return true} / LetToken { return false} )
-        _ id:Pattern _ valueType:(":" _ @Type)? _ init:('=' _ @OutlineExpression / EOL {return null})?
-    { return node("VariableDeclaration", {assignable, id, valueType, init }) }
+        _ id:Pattern _ type:(":" _ @Type)? _ init:('=' _ @OutlineExpression / EOL {return null})?
+    { return node("VariableDeclaration", {assignable, id, type, init }) }
 
 // VariableMetaProperties
 //     = EOL Indent @OutlineProperty+ Outdent
@@ -180,16 +181,16 @@ AssignmentProperty
 ////////////////////////////////////////////////////////////////////////////////
 
 ClassDeclaration
-    = valueType:(ClassToken { return false } / StructToken {return true})
+    = isStructure:(ClassToken { return false } / StructToken {return true})
         _ id:UpperCaseId templateParameters:TemplateParameters? _ baseClasses:Extends? EOL
         Indent declarations:(Dent @Declaration)* Outdent
-        { return node("ClassDeclaration", {valueType, id, templateParameters, baseClasses:baseClasses || [], declarations}) }
+        { return node("ClassDeclaration", {isStructure, id, templateParameters, baseClasses:baseClasses || [], declarations}) }
 
 TemplateParameters
     = "<" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ">" { return [head, ...tail] }
 
 Extends
-    = ExtendsToken _ head:TypeReference tail:(_ "," _ @TypeReference)*
+    = ExtendsToken _ head:TemplateReference tail:(_ "," _ @TemplateReference)*
     { return [head, ...tail] }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -210,9 +211,9 @@ IntersectionType
     { return tail.length == 0 ? head : node('IntersectionType', {types:[head, ...tail]}) }
 
 ConstrainedType
-    = baseType:TypeReference constraint:(_ @InlineExpression)?
+    = baseType:TemplateReference constraint:(_ @InlineExpression)?
     { return constraint ? node('ConstrainedType', {baseType,constraint}) : baseType }
-    / LiteralType
+    / Literal
 
 LiteralType
     = literal:Literal { return node('LiteralType', {literal}) }
@@ -229,17 +230,17 @@ TemplateArguments
     = "<" _ head:TemplateArgument tail:(_ "," _ @TemplateArgument)*  _ ">"
     { return [head, ...tail] }
 
-TypeReference
-    = id:UpperCaseId _ args:TemplateArguments?
-    { return node("TypeReference", {id,arguments:args}) }
-    / "[" _ type:Type '*' _ "]"
-    { return node("TypeReference", {id:node('Id',{name:"Array"}), arguments:[type]}) }
-    / "[" _ head:Type tail:(_ "," _ @Type)+ _ "]"
-    {
-        //  no actual pattern yet, just types
-        let types = [head, ...tail]
-        return node("TypeReference", {id:node('Id',{name:"Array"}), arguments:[node("UnionType", {types})], pattern:types})
-    }
+TemplateReference
+    = reference:Reference _ args:TemplateArguments?
+    { return args ? node("TemplateReference", {reference,arguments:args}) : reference }
+    // / "[" _ type:Type '*' _ "]"
+    // { return node("TemplateReference", {id:node('Id',{name:"Array"}), arguments:[type]}) }
+    // / "[" _ head:Type tail:(_ "," _ @Type)+ _ "]"
+    // {
+    //     //  no actual pattern yet, just types
+    //     let types = [head, ...tail]
+    //     return node("TemplateReference", {id:node('Id',{name:"Array"}), arguments:[node("UnionType", {types})], pattern:types})
+    // }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Operations
@@ -318,8 +319,8 @@ ConditionalExpression
 ////////////////////////////////////////////////////////////////////////////////
 
 Parameter
-    = pattern:Pattern _ valueType:(":" _ @Type)? _ defaultValue:("=" _ @InlineExpression)?
-    { return node("Parameter", {pattern, valueType, defaultValue})}
+    = pattern:Pattern _ type:(":" _ @Type)? _ _default:("=" _ @InlineExpression)?
+    { return node("Parameter", {pattern, type, default:_default})}
 
 FunctionParameters
     = "(" _ ")" { return [] }
@@ -360,7 +361,7 @@ InlineExpression
     / ConditionalExpression
 
 PrimaryExpression
-    = IdReference
+    = Reference
     / Literal
     / ThisExpression
     / DotExpression
@@ -481,8 +482,8 @@ LowerCaseId
 UpperCaseId
     = &[A-Z] @Id
 
-IdReference
-    = name:IdName { return node('IdReference', {name}) }
+Reference
+    = id:Id { return node('Reference', {id}) }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Tokens and Keywords
