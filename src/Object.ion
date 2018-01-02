@@ -1,7 +1,8 @@
 const
     ion = import './'
 
-const typeKey = '$'
+const typeKey = ion.typeKey
+
 export class Object extends null
     constructor: (properties) ->
         for arg in arguments

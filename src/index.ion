@@ -130,13 +130,18 @@ export const
             for name, value of args
                 context.setVariableLiteral(name, value)
         return context.createRuntime(ast)
-    clone = (object, _deep = false) ->
+    clone = (object, _deep = false, depth = 0) ->
         if object is null or typeof object isnt 'object'
             return object
+
+        if depth >= 50
+            console.log('this is too deep, debug it')
+            debugger
+        
         let copy = Array.isArray(object) ? [] : {}
         if _deep
             for k, v of object
-                copy[k] = clone(v, true)
+                copy[k] = clone(v, true, depth + 1)
         else
             for k, v of object
                 copy[k] = v
@@ -325,11 +330,11 @@ export const
                             deactivate?()
         )
     serialize = (object) -> JSON.stringify(object)
+    typeKey = '$'
     deserialize = do ->
         let extractType = (object, namespace) ->
             if not object?
                 return null
-            let typeKey = import('./Object').typeKey
             # we should strongly type our objects when created, so make a factory
             let typeName = object[typeKey]
             if not typeName?

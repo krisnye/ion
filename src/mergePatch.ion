@@ -107,12 +107,13 @@ export const
         # length: null when targetting an Array indicates to convert Array to Object.
         if Array.isArray(target) and values?.length is null
             target = {}
-            values = ion.clone(values, true)
+            values = ion.clone(values, false) # changed to shallow clone because of infinite recursion
             delete values.length
 
         if values?.constructor isnt Object
             if Array.isArray(values)
-                return ion.clone(values, true)
+                return values.slice(0) # changed to slice to avoid infinite recursion.
+                # return ion.clone(values, true)
             else
                 return values
         if not isObject(target)
