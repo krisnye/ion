@@ -14,7 +14,7 @@
     }
 
     function operation(left, operator, right) {
-            return node("CallExpression", {callee:node("MemberExpression", {object:left,property:operator}), arguments: right != null ? [right] : []})
+            return node("BinaryExpression", {left,operator,right})
     }
 
     function buildBinaryExpression(head, tail) {
@@ -31,8 +31,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 Module
-    = EOL? imports:ImportDeclarations? declarations:Declaration* exports:ExportStatement EOL EOF
+    = EOL? imports:ImportDeclarations? declarations:Declaration* ExportToken _ exports:Export EOL EOF
     { return node("Module", {imports:imports || [], declarations, exports}) }
+
+Export
+    = @Declaration
+    / EOL Indent @(Dent @Declaration)+ Outdent
 
 ////////////////////////////////////////////////////////////////////////////////
 //  ImportDeclaration
@@ -63,17 +67,6 @@ ImportDeclarations
     = ImportToken EOL @SubImports
 
 ////////////////////////////////////////////////////////////////////////////////
-//  Export
-////////////////////////////////////////////////////////////////////////////////
-
-ExportStatement
-    = ExportToken _ @(ClassDeclaration / TypeDeclaration / Library)
-
-Library
-    = EOL Indent declarations:(Dent @Declaration)+ Outdent
-    { return node('Library', {declarations}) }
-
-////////////////////////////////////////////////////////////////////////////////
 //  Statements
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -87,18 +80,15 @@ Statement
     / WhileStatement
 
 Declaration
-    = TypeDeclaration
-    / ClassDeclaration
+    = ClassDeclaration
     / VariableDeclaration
 
-TypeDeclaration
-    = TypeToken _ id:UpperCaseId _ "=" _ value:Type EOL
-    { return node('TypeDeclaration', {id, value}) }
-
 VariableDeclaration
-    = assignable:(VarToken { return true} / LetToken { return false} )
-        _ id:Pattern _ type:(":" _ @Type)? _ init:('=' _ @OutlineExpression / EOL {return null})?
-    { return node("VariableDeclaration", {assignable, id, type, init }) }
+    = LetToken _ id:UpperCaseId _ "=" _ value:Type EOL
+    { return node('VariableDeclaration', {assignable:false, id, value}) }
+    / assignable:(VarToken { return true} / LetToken { return false} )
+        _ id:Pattern _ type:(":" _ @Type)? _ value:('=' _ @OutlineExpression / EOL {return null})?
+    { return node("VariableDeclaration", {assignable, id, type, value }) }
 
 // VariableMetaProperties
 //     = EOL Indent @OutlineProperty+ Outdent
@@ -174,7 +164,7 @@ ObjectPattern
 
 AssignmentProperty
     = key:Id value:(_ ":" _ @Pattern)?
-    { return node("Property", {key, value:value || node("Id", key), kind:"init", shorthand:value == null} ) }
+    { return node("Property", {key, value:value || node("Id", key), shorthand:value == null} ) }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Class
@@ -211,16 +201,16 @@ IntersectionType
     { return tail.length == 0 ? head : node('IntersectionType', {types:[head, ...tail]}) }
 
 ConstrainedType
-    = baseType:TemplateReference constraint:(_ @InlineExpression)?
+    = baseType:TemplateReference constraint:(' ' WhereToken ' ' _ @InlineExpression)?
     { return constraint ? node('ConstrainedType', {baseType,constraint}) : baseType }
-    / Literal
+    / LiteralType
 
 LiteralType
     = literal:Literal { return node('LiteralType', {literal}) }
 
 FunctionType
-    = params:FunctionParameters _ "->" _ returnType:Type
-    { return node("FunctionType", {params, returnType}) }
+    = parameters:FunctionParameters _ "->" _ returnType:Type
+    { return node("FunctionType", {parameters, returnType}) }
 
 TemplateArgument
     = Type
@@ -231,7 +221,7 @@ TemplateArguments
     { return [head, ...tail] }
 
 TemplateReference
-    = reference:Reference _ args:TemplateArguments?
+    = reference:Reference args:(_ @TemplateArguments)?
     { return args ? node("TemplateReference", {reference,arguments:args}) : reference }
     // / "[" _ type:Type '*' _ "]"
     // { return node("TemplateReference", {id:node('Id',{name:"Array"}), arguments:[type]}) }
@@ -247,63 +237,65 @@ TemplateReference
 ////////////////////////////////////////////////////////////////////////////////
 
 UnaryOperator
-    = name:("+" / "-" / @"not" " " _) { return node("Id", {name}) }
+    = "+" / "-" / @"not" " " _
 
 UnaryExpression
     = MemberExpression
     / operator:UnaryOperator argument:MemberExpression { return operation(argument, operator) }
 
 ExponentiationOperator "operator"
-    = name:("^" / "<<" / ">>") { return node("Id", {name}) }
+    = "^" / "<<" / ">>"
 
 ExponentiationExpression
     = left:UnaryExpression right:(_ operator:ExponentiationOperator _ right:ExponentiationExpression {return {operator,right}})?
     { return right ? node("CallExpression", {callee:right.operator, arguments:[left, right.right]}) : left }
 
 MultiplicativeOperator
-    = name:("*" / "/" / "%") { return node("Id", {name}) }
+    = "*" / "/" / "%"
 
 MultiplicativeExpression
     = head:ExponentiationExpression tail:(_ MultiplicativeOperator _ ExponentiationExpression)*
     { return buildBinaryExpression(head, tail) }
 
 AdditiveOperator
-    = name:("+" / "-") { return node("Id", {name}) }
+    = "+" / "-"
 
 AdditiveExpression
     = head:MultiplicativeExpression tail:(_ AdditiveOperator _ MultiplicativeExpression)*
     { return buildBinaryExpression(head, tail) }
 
 RelationalOperator
-    = name:("<=" / ">=" / "<" / ">" / "is") { return node("Id", {name}) }
+    = "<=" / ">=" / "<" / ">" / "is"
 
 RelationalExpression
     = head:AdditiveExpression tail:(_ RelationalOperator _ AdditiveExpression)*
         { return buildBinaryExpression(head, tail) }
+    / tail:(_ RelationalOperator _ AdditiveExpression)
+        { return buildBinaryExpression(node('DotExpression') , [tail]) }
 
 EqualityOperator
-    = name:("==" / "!=") { return node("Id", {name}) }
+    = "==" / "!="
 
 EqualityExpression
     = head:RelationalExpression tail:(_ EqualityOperator _ RelationalExpression)*
     { return buildBinaryExpression(head, tail) }
 
 LogicalAndOperator
-    = name:(AndToken) { return node("Id", {name}) }
+    = AndToken
 
 LogicalAndExpression
     = head:EqualityExpression tail:(_ LogicalAndOperator _ EqualityExpression)*
     { return buildBinaryExpression(head, tail) }
 
 LogicalOrOperator
-    = name:(OrToken / XorToken) { return node("Id", {name}) }
+    = OrToken / XorToken
 
 LogicalOrExpression
     = head:LogicalAndExpression tail:(_ LogicalOrOperator _ LogicalAndExpression)*
     { return buildBinaryExpression(head, tail) }
 
 ConditionalOperator
-    = name:("?") { return node("Id", {name}) }
+    = "?"
 
 ConditionalExpression
     = test:LogicalOrExpression
@@ -328,8 +320,8 @@ FunctionParameters
     / "(" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ")" { return [head, ...tail] }
 
 FunctionHead
-    = id:(@Id _ &"(")? params:FunctionParameters? _ "->"
-    { return {id, params: params || []} }
+    = id:(@Id _ &"(")? parameters:FunctionParameters? _ "->"
+    { return {id, parameters: parameters || []} }
 
 InlineFunction
     = head:FunctionHead _ value:InlineExpression
@@ -383,7 +375,7 @@ DotExpression
 
 Argument
     = key:(@Id _ ":")? _ value:InlineExpression
-    { return key ? node("Property", {key,value,kind:'init'}) : value }
+    { return key ? node("Property", {key,value}) : value }
 
 ArgumentList
     = head:Argument tail:(_ "," _ @Argument)* { return [head, ...tail] }
@@ -391,7 +383,7 @@ ArgumentList
 InlineArguments
     = "()" { return [] }
     / "(" _ @ArgumentList _ ")"
-    / " " _ @ArgumentList
+    // / " " _ @ArgumentList
 
 MemberExpression =
     head: PrimaryExpression
@@ -436,16 +428,16 @@ ExponentPart
 
 DecimalLiteral
     = (DecimalInteger? '.' [0-9]+ ExponentPart? / DecimalInteger ExponentPart) !IdPart
-    { return node('Literal', {value:parseFloat(text()), precision:2})}
+    { return node('Literal', {value:parseFloat(text())})}
 
 HexDigit
     = [0-9A-F]
 
 HexIntegerLiteral
-    = '0x' HexDigit+ !IdPart { return node('Literal', {value:parseInt(text(), 16), base:16}) }
+    = '0x' HexDigit+ !IdPart { return node('Literal', {value:parseInt(text(), 16)}) }
 
 DecimalIntegerLiteral
-    = DecimalInteger { return node('Literal', {value:parseInt(text()), base:10}) }
+    = DecimalInteger { return node('Literal', {value:parseInt(text())}) }
 
 DecimalInteger
     = '0' / [+-]? [1-9] [0-9]* !IdPart
@@ -503,10 +495,8 @@ ImportToken     = @"import"     !IdPart
 ExportToken     = @"export"     !IdPart
 ClassToken      = @"class"      !IdPart
 StructToken     = @"struct"     !IdPart
-ConstToken      = @"const"      !IdPart
 VarToken        = @"var"        !IdPart
 LetToken        = @"let"        !IdPart
-MutToken        = @"mut"        !IdPart
 ExtendsToken    = @"extends"    !IdPart
 ForToken        = @"for"        !IdPart
 WhileToken      = @"while"      !IdPart
@@ -517,8 +507,6 @@ ElseToken       = @"else"       !IdPart
 ReturnToken     = @"return"     !IdPart
 BreakToken      = @"break"      !IdPart
 ContinueToken   = @"continue"   !IdPart
-PrivateToken    = @"private"    !IdPart
-StaticToken     = @"static"     !IdPart
 
 Keyword
     = ThisToken
@@ -532,10 +520,8 @@ Keyword
     / WhereToken
     / ClassToken
     / StructToken
-    / ConstToken
     / VarToken
     / LetToken
-    / MutToken
     / ForToken
     / WhileToken
     / IfToken
@@ -545,8 +531,6 @@ Keyword
     / ContinueToken
     / ExportToken
     / ImportToken
-    / PrivateToken
-    / StaticToken
 
 ReservedWord
     = Keyword

@@ -2,7 +2,7 @@ import
     .*
 
 export class Array<T>
-    type Index = Integer . >= 0 and . < length
-    var length: Integer . >= 0
-    let indexOf: (element: T, fromIndex: Index = 0) -> Index | -1
-    # let lastIndexOf: (element: T, fromIndex: Index = length - 1) -> Index | -1
+    # let Index = Integer where . >= 0 and . < length
+    # var length: Integer where . >= 0
+    # let indexOf: (element: T, from: Index = 0) -> Index | -1
+    # let lastIndexOf: (element: T, from: Index = length - 1) -> Index | -1

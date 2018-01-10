@@ -63,19 +63,26 @@ export default class Compiler {
     }
 
     parseFiles(): object {
+        const compileFiles: { [path: string]: boolean } = {
+            "ion.Number": true,
+            "ion.Integer": true
+        }
+
         let filenames = common.getFilesRecursive(this.input)
-        let modules: any = {}
+        let namespaces: any = {}
         for (let file of filenames) {
-            if (file.endsWith(".ion")/* && file.indexOf('Sample1') >= 0 */) {
+            if (file.endsWith(".ion")) {
                 let filename = file.substring(this.input.length + 1)
                 let path = filename.substring(0, filename.length - ".ion".length).replace(/[\/\\]/g, '.')
-                let source = common.read(file)
-                this.filenamesToSource[filename] = source
-                let module = parser.parse(source, filename)
-                modules[path] = module
+                if (compileFiles[path]) {
+                    let source = common.read(file)
+                    this.filenamesToSource[filename] = source
+                    let module = parser.parse(source, filename)
+                    namespaces[path] = module
+                }
             }
         }
-        return new ast.Assembly({options:{input:this.input, output:this.output}, modules})
+        return new ast.Assembly({options:{input:this.input, output:this.output}, namespaces})
     }
 
 }

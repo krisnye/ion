@@ -17,4 +17,5 @@ limitations on 'let' variables:
 
 TODO:
     ElementType to handle determining the type of element traversed by for..in loop.
-    VariableBindings must reference source element Type
+    VariableBindings must reference source Expression
+    Id is NOT an Expression

@@ -40,21 +40,23 @@ export function createPass(filters: Filter[], options:{debug?:boolean} = {}): Pa
     let debug = options.debug !== false
     //  ensure all filters are visitors
     filters = filters.map(f => createFilter(f))
-    //  get mutate filters
-    let mutators = filters.filter(f => f.mutate === true)
-    //  check that none operate on same types
-    let mutationTypes: any = {}
-    for (let filter of mutators) {
-        for (let target of filter.target) {
-            if (target === AllNodeTargetType)
-                throw new Error("Mutation filters cannot target all nodes: " + filter.name)
-            if (mutationTypes[target] != null)
-                throw new Error("Mutation filters operate on same type: " + mutationTypes[target] + " and " + filter.name)
-            mutationTypes[target] = filter.name
+    if (true) {
+        //  get mutate filters
+        let mutators = filters.filter(f => f.mutate === true)
+        //  check that none operate on same types
+        let mutationTypes: any = {}
+        for (let filter of mutators) {
+            for (let target of filter.target) {
+                if (target === AllNodeTargetType)
+                    throw new Error("Mutation filters cannot target all nodes: " + filter.name)
+                if (mutationTypes[target] != null)
+                    throw new Error("Mutation filters operate on same type: " + mutationTypes[target] + " and " + filter.name)
+                mutationTypes[target] = filter.name
+            }
         }
+        //  sort mutate filters to end
+        filters = filters.filter(f => f.mutate !== true).concat(mutators)
     }
-    //  sort mutate filters to end
-    filters = filters.filter(f => f.mutate !== true).concat(mutators)
 
     //  create type map
     let targetTypeMap: any = {}
@@ -79,7 +81,7 @@ export function createPass(filters: Filter[], options:{debug?:boolean} = {}): Pa
     let allHandler = targetTypeMap[AllNodeTargetType]
     if (allHandler != null) {
         for (let type in targetTypeMap) {
-            if (type !== allHandler) {
+            if (type !== AllNodeTargetType) {
                 let handler = targetTypeMap[type]
                 handler.enters = handler.enters.concat(allHandler.enters)
                 handler.leaves = handler.leaves.concat(allHandler.leaves)

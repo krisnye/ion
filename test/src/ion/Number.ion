@@ -1,13 +1,16 @@
 
-export struct Number<precision: 0 | 1 | 2>
-    let `*` : (right: Number<precision>) -> Number<precision>
-    # let `/` : (right: Number<precision>) -> Number<precision>
-    # let `+` : (right: Number<precision>) -> Number<precision>
-    # let `-` : (right: Number<precision>) -> Number<precision>
-    # let `^` : (right: Number<precision>) -> Number<precision>
-    # let `<` : (right: Number<precision>) -> Number<precision>
-    # let `>` : (right: Number<precision>) -> Number<precision>
-    # let `<=` : (right: Number<precision>) -> Number<precision>
-    # let `>=` : (right: Number<precision>) -> Number<precision>
-    # let `==` : (right: Number<precision>) -> Number<precision>
-    # let `!=` : (right: Number<precision>) -> Number<precision>
+export struct Number
+    # let `*` : (right: Number) -> Number
+    # let sign: -1 | 0 | +1
+    # let integer: Integer
+    let fraction: Number where < 1 and >= 0
+    # let `/` : (right: Number) -> Number
+    # let `+` : (right: Number) -> Number
+    # let `-` : (right: Number) -> Number
+    # let `^` : (right: Number) -> Number
+    # let `<` : (right: Number) -> Number
+    # let `>` : (right: Number) -> Number
+    # let `<=` : (right: Number) -> Number
+    # let `>=` : (right: Number) -> Number
+    # let `==` : (right: Number) -> Number
+    # let `!=` : (right: Number) -> Number

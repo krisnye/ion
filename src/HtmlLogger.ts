@@ -3,13 +3,33 @@ import * as common from "./common"
 
 const jsondiffpatch: any = require('jsondiffpatch').create({})
 const remove__prefixedProperties = (key: string, value:any) => key.startsWith("__") ? undefined : value
+const uniqueId = Symbol('uniqueId')
+let nextId = 0
+function cloneWithJsonReferences(object: any, map: Map<object,string[]> = new Map(), path: string[] = []) {
+    let type = typeof object
+    if (object == null || type == 'string' || type == 'number' || type == 'boolean')
+        return object
+    // check the map
+    let previousPath = map.get(object)
+    if (previousPath != null) {
+        return {"$ref":previousPath.join('.')}
+    }
+    map.set(object, path.slice(0))
+    let clone: any = Array.isArray(object) ? [] : {}
+    for (let property in object) {
+        path.push(property)
+        clone[property] = cloneWithJsonReferences(object[property], map, path)
+        path.pop()
+    }
+    return clone
+}
 
 export function create(outputPath: string) {
     let outputToStyle = np.relative(np.dirname(outputPath), "node_modules/jsondiffpatch/public/formatters-styles/html.css")
     let passes: [string[],object][] = []
     return function(names: string[], ast: object) {
         if (names != null) {
-            passes.push([names, JSON.parse(JSON.stringify(ast, remove__prefixedProperties))])
+            passes.push([names, JSON.parse(JSON.stringify(cloneWithJsonReferences(ast), remove__prefixedProperties))])
         } else {
             // convert to HTML
             let previous: string | null = null
@@ -67,6 +87,7 @@ export function create(outputPath: string) {
     <body onclick="location.reload(true)">
 `,
 ...passes.map(([names, ast]: any) => {
+    // convert to show refs
     let delta = previous != null ? jsondiffpatch.diff(previous, ast) : null
     let html = require('jsondiffpatch/src/formatters/html').format(delta || {}, previous || ast)
     previous = ast

@@ -23,6 +23,7 @@ export class SourceLocation {
 }
 export abstract class Node {
     __location: SourceLocation | null
+    // __path: string[]        //  set by Input#Node_SetPathAndAncestors
     className: string
     constructor(...args: any[]) {
         this.className = this.constructor.name
@@ -39,59 +40,95 @@ export abstract class Node {
         error.location = this.__location
         throw error
     }
-    getVariable(ancestors: object[], name: string): Expression | null {
+    getVariable(ancestors: object[], name: string): VariableBinding | null {
         for (let scope of getScopes(this, ancestors)) {
-            let id = scope._variables[name]
-            if (id != null)
-                return id
+            let variable = scope._variables[name]
+            if (variable != null)
+                return variable
         }
         return null
     }
+    toString() {
+        return `${this.className}()`
+    }
+    toDebugString() {
+        return `${this.className}(${this})`
+    }
 }
+//  we have to define these here as non-enumerable to prevent JSON.stringify
+//  creating a circular reference.
+// Object.defineProperties(Node.prototype, {
+//     __path: {value:null,writable:true,enumerable:false},
+//     __ancestors: { value: null, writable: true, enumerable: false }
+// })
 
-export class Assembly extends Node {
-    name: string
-    options: {input:string,output:string}
-    modules: {[path:string]:Module}
-    _typeDependencies: [TypeExpression,TypeExpression][] = []
-}
-
-export class TypeDeclaration extends Node implements Declaration {
-    id: Id
-    value: TypeExpression
-}
-// export class Variable extends Node {
-// }
-export class VariableDeclaration extends Node implements Declaration {
+export class VariableDeclaration extends Node implements Declaration, Expression {
     id: Id
     assignable: boolean
-    type: TypeExpression | null
-    init: Expression | null
+    type?: TypeExpression
+    value: Expression | null
+    getDependencies() {
+        if (this.value)
+            return [this.value]
+        else
+            return []
+    }
+    toString() {
+        return `${this.assignable ? 'var' : 'let'} ${this.id.name}: ${this.type}`
+    }
+}
+export class VariableBinding {
+    id: Id
+    value: Expression
+    assignable: boolean
+    constructor(id: Id, value:Expression, assignable: boolean = false) {
+        this.id = id
+        this.value = value
+        this.assignable = assignable
+    }
 }
 export abstract class Scope extends Node {
     //  from local variable name to a canonical type name
     //  the canonical types will be stored at the root level
-    _variables: {[name: string]: Id} = {}
-    addVariable(id: Id) {
-        let { name } = id
+    _variables: { [name: string]: VariableBinding } = {}
+    addVariable(variable: VariableBinding) {
+        let { name } = variable.id
         if (this._variables[name] != null)
-            id.throwSemanticError(`Cannot redeclare '${name}'`)
-        this._variables[name] = id
+            variable.id.throwSemanticError(`Cannot redeclare '${name}'`)
+        this._variables[name] = variable
     }
 }
-export class Module extends Scope {
+
+export class Namespace extends Scope {
     path: string[]
-    get name() { return this.path[this.path.length-1]}
+    get name() { return this.path[this.path.length - 1] }
+    // should have actual name property.
+
+    namespaces: { [path: string]: Namespace }
+}
+
+export class Assembly extends Namespace {
+    options: { input: string, output: string }
+    _expressionDependencies: [Expression, Expression][] = Object.assign([], {
+        toJSON() {
+            // for debugging
+            return this.map(([a, b]: [Expression, Expression]) => {
+                return (a != null ? a.toDebugString() : "null") + " -> " + (b != null ? b.toDebugString() : "null")
+            })
+        }
+    })
+}
+
+export class Module extends Namespace {
+    id: Id
     imports: ImportDeclaration[]
     declarations: Declaration[]
-    exports: ClassDeclaration | Library
+    exports: Declaration | Declaration[]
     // calculated temporarily as part of identifier resolution
     unresolvedReferences: {[name: string]: Reference} = {}
 }
-export class Library extends Scope {
-    declarations: Declaration[]
-}
 export class ClassDeclaration extends Scope implements Declaration, TypeExpression {
+    type = new CanonicalReference("ion.Type")
     isStructure: boolean
     id: Id
     templateParameters: Parameter[]
@@ -99,6 +136,9 @@ export class ClassDeclaration extends Scope implements Declaration, TypeExpressi
     declarations: Declaration[]
     getDependencies(ancestors: object[]) {
         return this.baseClasses
+    }
+    resolve(ancestors: object[], path: string[]) {
+        console.log('class resolve: ' + path.join('.'))
     }
     toString() {
         return `class ${this.id.name}`
@@ -116,18 +156,43 @@ export class ForInStatement extends Scope implements Statement {
     body: BlockStatement
 }
 
-export interface Pattern extends Node {}
+export interface Pattern extends Node {
+    getIds(): Id[]
+}
 export interface Expression extends Node {
-    value?: any
     type?: TypeExpression
     getDependencies(ancestors: object[]) : Expression[]
+    resolve?: (ancestors: object[], path: string[]) => Expression | void
+}
+export function isExpression(node:any): node is Expression {
+    return node != null && node.getDependencies != null
+}
+export type BinaryOperator = "+" | "-" | "*" | "/" | "%" |  "<" | ">" | "<=" | ">=" | "==" | "!=" | "is" | "and" | "or" | "xor"
+export class BinaryExpression extends Node implements Expression {
+    left: Expression
+    operator: string
+    right: Expression
+    getDependencies(ancestors: object[]): Expression[] {
+        return [this.left, this.right]
+    }
+}
+export type UnaryOperator = "+" | "-" | "not"
+export class UnaryExpression extends Node implements Expression {
+    operator: string
+    argument: Expression
+    getDependencies(ancestors: object[]): Expression[] {
+        return [this.argument]
+    }
 }
 export interface Statement extends Node {}
-export interface Declaration extends Node {}
-export class Id extends Node implements Expression {
+export interface Declaration extends Node, Expression {}
+export class Id extends Node implements Expression, Pattern {
     name: string
     getDependencies(ancestors: object[]): Expression[] {
         return []
+    }
+    getIds() {
+        return [this]
     }
     toString() {
         let op = this.name[0].toUpperCase() == this.name[0].toLowerCase()
@@ -143,7 +208,7 @@ export class Reference extends Node implements Expression {
             return []
         }
         else {
-            return [variable]
+            return [variable.value]
         }
     }
     toString() {
@@ -154,16 +219,19 @@ export class CallExpression extends Node implements Expression {
     callee: Expression
     arguments: Expression[]
     getDependencies(ancestors: object[]) {
-        return [this.callee, ...arguments]
+        return [this.callee, ...this.arguments]
     }
     toString() {
         return `${this.callee}(${this.arguments.join(',')})`
     }
 }
-export class Parameter extends Node {
+export class Parameter extends Node implements Expression {
     pattern: Pattern
-    type: TypeExpression | null
+    type?: TypeExpression
     default: Expression | null
+    getDependencies(ancestors: object[]) {
+        return []
+    }
     toString() {
         let b = this.pattern.toString()
         if (this.type != null)
@@ -212,14 +280,14 @@ export class MemberExpression extends Node implements Expression {
 ////////////////////////////////////////////////////////////////////////////////
 export class FunctionExpression extends Scope implements Expression {
     id: Id | null
-    params: Parameter[]
+    parameters: Parameter[]
     body: BlockStatement
     getDependencies(ancestors: object[]): Expression[] {
-        console.log('FunctionExpression dependencies not implemented')
-        return []
+        //  make ancestors correct for our patterns by including this
+        return (<Expression[]>[]).concat(...this.parameters.map(p => p.pattern.getIds()))
     }
     toString() {
-        return `${this.id || ''}(${this.params.join(',')}) => ${this.body}`
+        return `${this.id || ''}(${this.parameters.join(',')}) => ${this.body}`
     }
 }
 export class ReturnStatement extends Node implements Statement {
@@ -235,14 +303,7 @@ export class AssignmentStatement extends Node implements Statement {
         return this.left + " = " + this.right
     }
 }
-
-////////////////////////////////////////////////////////////////////////////////
-//  Types
-////////////////////////////////////////////////////////////////////////////////
-
-export interface TypeExpression extends Expression {
-}
-export class Literal extends Node implements Pattern, TypeExpression {
+export class Literal extends Node implements Expression {
     value: string | number | boolean | null
     getDependencies(ancestors: object[]): Expression[] {
         return []
@@ -251,7 +312,44 @@ export class Literal extends Node implements Pattern, TypeExpression {
         return JSON.stringify(this.value)
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Types
+////////////////////////////////////////////////////////////////////////////////
+
+export interface TypeExpression extends Expression {
+    type?: CanonicalReference
+}
+export class CanonicalReference extends Node implements TypeExpression {
+    path: string[]
+    constructor(path: string | string[]) {
+        super()
+        if (typeof path == 'string')
+            path = path.split('.')
+        this.path = path
+    }
+    getDependencies(ancestors: object[]): Expression[] {
+        return []
+    }
+    toString() {
+        return this.path.join('.')
+    }
+    toJSON() {
+        return this.toString()
+    }
+}
+export class LiteralType extends Node implements TypeExpression {
+    literal: Literal
+    type = new CanonicalReference("ion.Type")
+    getDependencies(ancestors: object[]): Expression[] {
+        return []
+    }
+    toString() {
+        return `type ${this.literal}`
+    }
+}
 export class TemplateReference extends Node implements TypeExpression {
+    type = new CanonicalReference("ion.Type")
     reference: Reference
     arguments: Expression[]
     getDependencies(ancestors: object[]) {
@@ -265,26 +363,29 @@ export class TemplateReference extends Node implements TypeExpression {
     }
 }
 export class ConstrainedType extends Scope implements TypeExpression {
+    type = new CanonicalReference("ion.Type")
     baseType: Reference
     constraint: Expression
     getDependencies(ancestors: object[]) {
-        return [this.baseType]
+        return [this.baseType, this.constraint]
     }
     toString() {
         return `${this.baseType} ${this.constraint}`
     }
 }
 export class FunctionType extends Scope implements TypeExpression {
-    params: Parameter[]
+    type = new CanonicalReference("ion.Type")
+    parameters: Parameter[]
     returnType: TypeExpression
     getDependencies(ancestors: object[]) {
-        return [this.returnType]
+        return [...this.parameters, this.returnType]
     }
     toString() {
-        return `(${this.params.join(',')}) => ${this.returnType}`
+        return `(${this.parameters.join(',')}) => ${this.returnType}`
     }
 }
 export class UnionType extends Node implements TypeExpression {
+    type = new CanonicalReference("ion.Type")
     types: TypeExpression[]
     getDependencies(ancestors: object[]) {
         return this.types
@@ -294,6 +395,7 @@ export class UnionType extends Node implements TypeExpression {
     }
 }
 export class IntersectionType extends Node implements TypeExpression {
+    type = new CanonicalReference("ion.Type")
     types: TypeExpression[]
     getDependencies(ancestors: object[]) {
         return this.types
@@ -302,8 +404,6 @@ export class IntersectionType extends Node implements TypeExpression {
         return this.types.join('&')
     }
 }
-//  obsolete, all references are to be resolved now
-// export const TypeClassNames = ['ClassDeclaration', 'Reference','TemplateReference','ConstrainedType','FunctionType','Literal','UnionType','IntersectionType']
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Variables, Scope, Binding
