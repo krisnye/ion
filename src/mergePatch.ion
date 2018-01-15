@@ -132,7 +132,9 @@ export const
             else
                 let itemSchema = schema?.items ? schema?.properties?[key]
                 let newValue = merge(target[key], value, options, itemSchema)
-                if newValue isnt target[key] and canSetProperty(target, key)
+                # OLD CODE BAD! It would make some new values NOT be set if they weren't changed due to being default property value 
+                # if newValue isnt target[key] and canSetProperty(target, key)
+                if canSetProperty(target, key)
                     target[key] = newValue
                     # console.log('*****patch*********')
         if deletedValues and Array.isArray(target)
@@ -256,6 +258,15 @@ export const
                 let result = merge(start, delta)
                 assert equal(result, {foo:"a"})
 
+            mergeActuallySetsValuesEvenWhenValueIsntChanged: ->
+                let Point = class Point
+                    properties:
+                        x: 0
+                        y: 0
+                let a = new Point({})
+                assert not a.hasOwnProperty('x')
+                merge(a, {x:0})
+                assert a.hasOwnProperty('x')
             observe: (done) ->
                 let before = global.watchCount ? 0
                 # console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')

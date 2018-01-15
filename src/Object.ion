@@ -19,7 +19,8 @@ export class Object extends null
             set: ->
         toJSON: ->
             const properties = {[typeKey]: @[typeKey]}
-            for key, value of @ if @hasOwnProperty(key)
+            # change to serialize all properties whether present or not.
+            for key, value of @ #if @hasOwnProperty(key)
                 let descriptor = @@properties?[key]
                 if descriptor?.serializable isnt false
                     properties[key] = value
