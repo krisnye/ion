@@ -13,11 +13,13 @@ import * as cleanup from "./phases/cleanup"
 const defaultPhases = [input]//, cleanup, javascript]//, output]
 const defaultPasses = [].concat(...defaultPhases.map((x:any) => x.passes))
 
-const defaultLogger = (names?: string[], ast?: object) => {
-    console.log('==================================================================')
-    if (names != null) {
-        console.log('// ', names)
-        console.log(JSON.stringify(ast, null, 2))
+function defaultLoggerFactory(path: string, filename: string) {
+    return (names?: string[], ast?: object) => {
+        console.log('==================================================================')
+        if (names != null) {
+            console.log('// ', names)
+            console.log(JSON.stringify(ast, null, 2))
+        }
     }
 }
 
@@ -25,64 +27,68 @@ export default class Compiler {
     input: string
     output: string
     passes: any[][] = defaultPasses
-    logger: (names?: string[], ast?: object) => void
-    filenamesToSource: {[filename:string]:string}
+    loggerFactory: (path: string, filename: string) => (names?: string[], ast?: object) => void
 
     constructor(options:{
         input: string,
         output: string,
-        logger?: (names?: string[], ast?: object) => void
+        loggerFactory?: (path: string, filename: string) => (names?: string[], ast?: object) => void
      }){
         this.input = options.input
         this.output = options.output
-        this.logger = options.logger || defaultLogger
-        this.filenamesToSource = {}
+        this.loggerFactory = options.loggerFactory || defaultLoggerFactory
+    }
+
+    getPathFromFilename(filename: string) {
+        filename = filename.substring(this.input.length + 1)
+        return filename.substring(0, filename.length - '.ion'.length).replace(/[\/\\]/g, '.')
+    }
+
+    getFilenameFromPath(path: string) {
+        return this.input + '/' + path.replace(/\./g, '/') + '.ion'
     }
 
     compile() {
-        let assembly = this.parseFiles()
-        this.logger(["input"], assembly)
+        const debugFilter: { [path: string]: boolean } = {
+            // "ion.Number": true,
+            // "ion.Integer": true,
+            "ion.constants": true
+        }
+        let paths = common.getFilesRecursive(this.input)
+            .filter(filename => filename.endsWith('.ion'))
+            .map(filename => this.getPathFromFilename(filename))
+            .filter(path => debugFilter[path]);
+ 
+        for (let path of paths) {
+            this.compileModule(path)
+        }
+    }
+
+    compileModule(path: string) {
+        let filename = this.getFilenameFromPath(path)
+        let source = common.read(filename)
+        let module = parser.parse(source, filename)
+        let logger = this.loggerFactory(path, filename)
+
+        logger([path + " input"], module)
         try {
             for (let pass of this.passes) {
                 let visitor = createPass(pass)
-                assembly = traverse(assembly, visitor)
-                this.logger(visitor.names, assembly)
+                module = traverse(module, visitor)
+                logger(visitor.names, module)
             }
         } catch (e) {
             let location = e.location
             if (location == null)
                 throw e
             let {filename} = location
-            let source = this.filenamesToSource[filename]
+            let source = common.read(filename)
             let error = parser.getError(e.message, location, source, location, filename)
             console.log(error.message)
         } finally {
-            this.logger(["output"], assembly)
-            this.logger()
+            logger([path + " output"], module)
+            logger()
         }
-    }
-
-    parseFiles(): object {
-        const compileFiles: { [path: string]: boolean } = {
-            "ion.Number": true,
-            "ion.Integer": true
-        }
-
-        let filenames = common.getFilesRecursive(this.input)
-        let namespaces: any = {}
-        for (let file of filenames) {
-            if (file.endsWith(".ion")) {
-                let filename = file.substring(this.input.length + 1)
-                let path = filename.substring(0, filename.length - ".ion".length).replace(/[\/\\]/g, '.')
-                if (compileFiles[path]) {
-                    let source = common.read(file)
-                    this.filenamesToSource[filename] = source
-                    let module = parser.parse(source, filename)
-                    namespaces[path] = module
-                }
-            }
-        }
-        return new ast.Assembly({options:{input:this.input, output:this.output}, namespaces})
     }
 
 }

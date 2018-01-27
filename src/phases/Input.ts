@@ -41,18 +41,44 @@ const Assembly_NoOp = (node: ast.Module) => {
     return skip
 }
 
+const Module_AddPublicPathToExports = (node: ast.Module, ancestors: object[]) => {
+    if (node._variables) {
+        let path = ancestors.filter(a => a instanceof ast.Namespace && a.name != null).map((n: ast.Namespace) => n.name).join('.')
+        //  if we have multiple exports then add our module id
+        if (Array.isArray(node.exports))
+            path += "." + node.id
+        //  now add public path to variable bindings
+        for (let name in node._variables) {
+            let binding = node._variables[name]
+            binding.id = path + "." + name
+        }
+    }
+}
+
+const Module_DebugValues = (node: ast.Module, ancestors: object[]) => {
+    for (let name in node._variables) {
+        let variable = node._variables[name]
+        console.log(variable.id)
+    }
+}
+
 const VariableDeclaration_AddVariableBindings = (node: ast.VariableDeclaration, ancestors: object[]) => {
     let scope = ast.getScope(node, ancestors)
-    scope.addVariable(new ast.VariableBinding(node.id, node))
+    scope.addVariable(node.id, node)
 }
 const Parameter_AddVariableBindings = (node: ast.Parameter, ancestors: object[]) => {
     let scope = ast.getScope(node, ancestors)
     if (node.pattern instanceof ast.Id) {
-        scope.addVariable(new ast.VariableBinding(node.pattern, node))
+        scope.addVariable(node.pattern, node)
     }
     else {
         node.pattern.throwSemanticError("Patterns not supported yet")
     }
+}
+const Namespace_AddVariableBindings = (node: ast.Namespace, ancestors: object[]) => {
+    // place class name into parent scope as type variable
+    let scope = ast.getScope(null, ancestors)
+    scope.addVariable(new ast.Id({name:node.name}), node)
 }
 const ForInStatement_AddVariableBindings = (node: ast.ForInStatement, ancestors: object[]) => {
     console.log('For..in..variables not done')
@@ -62,7 +88,7 @@ const ForInStatement_AddVariableBindings = (node: ast.ForInStatement, ancestors:
 const ClassDeclaration_AddVariableBindings = (node: ast.ClassDeclaration, ancestors: object[]) => {
     // place class name into parent scope as type variable
     let scope = ast.getScope(null, ancestors)
-    scope.addVariable(new ast.VariableBinding(node.id, node))
+    scope.addVariable(node.id, node)
 }
 const ImportDeclaration_AddVariableBindings = (node: ast.ImportDeclaration, ancestors: object[]) => {
     // if (node.as != null) {
@@ -74,9 +100,10 @@ const Module_AddVariableBindingsAndInitModuleId = (node: ast.Module, ancestors: 
     node.id = new ast.Id({name:node.name})
     let scope = ast.getScope(null, ancestors)
     if (ast.isExpression(node.exports)) {
-        scope.addVariable(new ast.VariableBinding(node.id, node.exports))
+        scope.addVariable(node.id, node.exports)
     } else {
-        console.log('export library or something?')
+        // library values will already be added to 'this' node's scope
+        // console.log('export library or something?')
     }
 }
 
@@ -94,31 +121,40 @@ const Reference_CheckIfUnresolvedAndAddToModule = (node: ast.Reference, ancestor
 const Module_UnresolvedReferencesResolve = (node: ast.Module, ancestors: object[]) => {
     for (let name in node.unresolvedReferences) {
         let reference = node.unresolvedReferences[name]
-        let foundModules: ast.Namespace[] = []
+        let foundModules: ast.Expression[] = []
         for (let rootImport of node.imports) {
             let assembly = <ast.Assembly>ancestors[0]
             if (rootImport.children === true) {
-                let checkPath = rootImport.pathString + "." + name
-                let referencedModule = assembly.namespaces[checkPath]
-                if (referencedModule != null) {
-                    foundModules.push(referencedModule)
-                }
+                // let referencedNamespace = rootImport.getReferencedNamespace(node, assembly)
+                // if (referencedNamespace) {
+                //     let variable = referencedNamespace._variables[name]
+                //     if (variable) {
+                //         foundModules.push(variable.value)
+                //     }
+                // }
+
+                // let checkPath = rootImport.pathString + "." + name
+                // let referencedModule = assembly.namespaces[checkPath]
+                // if (referencedModule != null) {
+                //     foundModules.push(referencedModule)
+                // }
             }
         }
-        if (foundModules.length == 0) {
-            reference.throwSemanticError(`'${name}' could not be resolved`)
-        } else if (foundModules.length > 1) {
-            reference.throwSemanticError(`'${name}' resolves ambiguously to ${foundModules.map(x => x.name).join(', ')}`)
-        } else {
-            let foundModule = foundModules[0]
-            //  add new specific import declaration
-            let newImport = new ast.ImportDeclaration({ path: foundModule.path.map(name => new ast.Id({ name })), children: null, as: reference.id, relative: 0 })
-            node.imports.push(newImport)
-            //  declare new binding
-            ImportDeclaration_AddVariableBindings(newImport, ancestors.concat([node]))
-            //  remove reference from unresolved
-            delete node.unresolvedReferences[name]
-        }
+
+        // if (foundModules.length == 0) {
+        //     reference.throwSemanticError(`'${name}' could not be resolved`)
+        // } else if (foundModules.length > 1) {
+        //     reference.throwSemanticError(`'${name}' resolves ambiguously to ${foundModules.map(x => x.name).join(', ')}`)
+        // } else {
+        //     let foundModule = foundModules[0]
+        //     //  add new specific import declaration
+        //     let newImport = new ast.ImportDeclaration({ path: foundModule.path.map(name => new ast.Id({ name })), children: null, as: reference.id, relative: 0 })
+        //     node.imports.push(newImport)
+        //     //  declare new binding
+        //     ImportDeclaration_AddVariableBindings(newImport, ancestors.concat([node]))
+        //     //  remove reference from unresolved
+        //     delete node.unresolvedReferences[name]
+        // }
     }
     //  finally, remove all wildcard imports
     for (let i = node.imports.length - 1; i >= 0; i--) {
@@ -214,25 +250,28 @@ const _Assembly_ToposortTypes = (node: ast.Assembly) => {
         console.log((expression.resolve != null ? 1 : 0) + " Resolve: " + expression.toDebugString())
         if (expression.resolve != null) {
             let ancestors = expressionAncestors.get(expression)
-            // expression.resolve(ancestors, expression.__path)
+            expression.resolve(ancestors)
         }
     }
 }
 
 export const passes = [
-    //  Phase 0: initialization and adding variable bindings
-    [Assembly_NestModulesInNamespaces /*, Node_SetPath */],
-    [Module_FlattenImportDeclarations],
-    [ImportDeclaration_AddVariableBindings],
-    [ClassDeclaration_AddVariableBindings]//, VariableDeclaration_AddVariableBindings, Parameter_AddVariableBindings, ForInStatement_AddVariableBindings],
+    // //  Phase 0: initialization and adding variable bindings
+    // [Assembly_NestModulesInNamespaces /*, Node_SetPath */],
+    // [Module_FlattenImportDeclarations],
+    // [ImportDeclaration_AddVariableBindings, ClassDeclaration_AddVariableBindings, VariableDeclaration_AddVariableBindings, Parameter_AddVariableBindings, ForInStatement_AddVariableBindings, Namespace_AddVariableBindings],
     // [Module_AddVariableBindingsAndInitModuleId],
     // //  Phase 1: check for unresolved references
     // [Module_ImportsRelativeToAbsolute, Reference_CheckIfUnresolvedAndAddToModule],
     // //  Phase 2: attempt to resolve references
     // [Module_UnresolvedReferencesResolve, Module_ImportsResolveToModules],
-    // //  Phase 3: Type calculation
-    // [Node_AddDependenciesToAssembly, _Assembly_ToposortTypes],
 
-    // //  Phase 4: check semantic validity
-    // [AssignmentStatement_CheckAssignable]
+    // //  Prepare for converstion to IRT
+    // [Module_AddPublicPathToExports],
+    // [Module_DebugValues]
+    // // //  Phase 3: Type calculation
+    // // [Node_AddDependenciesToAssembly, _Assembly_ToposortTypes],
+
+    // // //  Phase 4: check semantic validity
+    // // [AssignmentStatement_CheckAssignable]
 ]

@@ -1,3 +1,6 @@
+////////////////////////////////////////////////////////////////////////////////
+//  Contains the Ion language Abstract Syntax Tree Nodes
+////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Node definitions
@@ -78,11 +81,11 @@ export class VariableDeclaration extends Node implements Declaration, Expression
     }
 }
 export class VariableBinding {
-    id: Id
     value: Expression
     assignable: boolean
-    constructor(id: Id, value:Expression, assignable: boolean = false) {
-        this.id = id
+    id: string  //  the canonical path to this variables value such as ion.Map or my.math.Vector or my.math.pi
+    constructor(value:Expression, assignable: boolean = false) {
+        // this.id = id
         this.value = value
         this.assignable = assignable
     }
@@ -91,20 +94,31 @@ export abstract class Scope extends Node {
     //  from local variable name to a canonical type name
     //  the canonical types will be stored at the root level
     _variables: { [name: string]: VariableBinding } = {}
-    addVariable(variable: VariableBinding) {
-        let { name } = variable.id
+    addVariable(id: Id, value:Expression, assignable: boolean = false) {
+        let { name } = id
         if (this._variables[name] != null)
-            variable.id.throwSemanticError(`Cannot redeclare '${name}'`)
-        this._variables[name] = variable
+            id.throwSemanticError(`Cannot redeclare '${name}'`)
+        this._variables[name] = new VariableBinding(value, assignable)
     }
 }
 
-export class Namespace extends Scope {
+export class Namespace extends Scope implements Expression {
     path: string[]
-    get name() { return this.path[this.path.length - 1] }
+    get name() { return this.path ? this.path[this.path.length - 1] : null }
     // should have actual name property.
 
     namespaces: { [path: string]: Namespace }
+    getDependencies(ancestors: object[]) {
+        return []
+    }
+    getNamespace(path: string[], index = 0): Namespace | null {
+        if (index >= path.length)
+            return this
+        let childNamespace = this.namespaces[path[index]]
+        if (childNamespace != null)
+            return childNamespace.getNamespace(path, index + 1)
+        return null
+    }
 }
 
 export class Assembly extends Namespace {
@@ -137,8 +151,8 @@ export class ClassDeclaration extends Scope implements Declaration, TypeExpressi
     getDependencies(ancestors: object[]) {
         return this.baseClasses
     }
-    resolve(ancestors: object[], path: string[]) {
-        console.log('class resolve: ' + path.join('.'))
+    resolve(ancestors: object[]) {
+        console.log('class resolve: ')
     }
     toString() {
         return `class ${this.id.name}`
@@ -162,7 +176,7 @@ export interface Pattern extends Node {
 export interface Expression extends Node {
     type?: TypeExpression
     getDependencies(ancestors: object[]) : Expression[]
-    resolve?: (ancestors: object[], path: string[]) => Expression | void
+    resolve?: (ancestors: object[]) => Expression | void
 }
 export function isExpression(node:any): node is Expression {
     return node != null && node.getDependencies != null
@@ -247,6 +261,17 @@ export class ImportDeclaration extends Node {
     children: ImportDeclaration[] | true | null
     relative: number
     implicit: boolean
+    getReferencedNamespace(from: Module, root: Assembly): Namespace | null {
+        // traverses the AST to find the closest referenced assembly.
+        let basePath = this.relative ? from.path.slice(0, -this.relative) : []
+        for (;basePath.length > 0; basePath.pop()) {
+            let checkPath = basePath.concat(this.path.map(x => x.name))
+            let namespace = root.getNamespace(checkPath)
+            if (namespace)
+                return namespace
+        }
+        return null
+    }
     get pathString() { return this.path.map(step => step.name).join('.') }
 }
 
@@ -321,21 +346,19 @@ export interface TypeExpression extends Expression {
     type?: CanonicalReference
 }
 export class CanonicalReference extends Node implements TypeExpression {
-    path: string[]
-    constructor(path: string | string[]) {
+    id: string
+    constructor(id: string) {
         super()
-        if (typeof path == 'string')
-            path = path.split('.')
-        this.path = path
+        this.id = id
     }
     getDependencies(ancestors: object[]): Expression[] {
         return []
     }
     toString() {
-        return this.path.join('.')
+        return this.id
     }
     toJSON() {
-        return this.toString()
+        return this.id
     }
 }
 export class LiteralType extends Node implements TypeExpression {

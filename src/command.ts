@@ -10,6 +10,8 @@ let path = args[0]
 
 let input = np.join(process.cwd(), path, "src")
 let output = np.join(process.cwd(), path, "lib")
-let logger = HtmlLogger.create(np.join(process.cwd(), path, "lib/passes.html"))
-let compiler = new Compiler({input, output, logger})
+function loggerFactory(path: string, filename: string) {
+    return HtmlLogger.create(np.join(output, path + ".html"))
+}
+let compiler = new Compiler({input, output, loggerFactory})
 compiler.compile()

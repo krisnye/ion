@@ -1,0 +1,6 @@
+
+let privateZero = 0
+
+export
+    let zero = privateZero + privateZero
+
