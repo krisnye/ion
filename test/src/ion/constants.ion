@@ -1,6 +1,11 @@
 
 let privateZero = 0
 
+let privateReference = privateZero
+
+let privateCopy = privateReference + privateReference
+
 export
-    let zero = privateZero + privateZero
+    let zero = privateCopy * privateCopy
+
 

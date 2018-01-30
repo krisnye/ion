@@ -68,7 +68,7 @@ export abstract class Node {
 export class VariableDeclaration extends Node implements Declaration, Expression {
     id: Id
     assignable: boolean
-    type?: TypeExpression
+    type: TypeExpression
     value: Expression | null
     getDependencies() {
         if (this.value)
@@ -81,10 +81,11 @@ export class VariableDeclaration extends Node implements Declaration, Expression
     }
 }
 export class VariableBinding {
-    value: Expression
+    value: Expression | null
+    type: TypeExpression | null
     assignable: boolean
     id: string  //  the canonical path to this variables value such as ion.Map or my.math.Vector or my.math.pi
-    constructor(value:Expression, assignable: boolean = false) {
+    constructor(value:Expression|null,type:TypeExpression|null, assignable: boolean = false) {
         // this.id = id
         this.value = value
         this.assignable = assignable
@@ -94,11 +95,11 @@ export abstract class Scope extends Node {
     //  from local variable name to a canonical type name
     //  the canonical types will be stored at the root level
     _variables: { [name: string]: VariableBinding } = {}
-    addVariable(id: Id, value:Expression, assignable: boolean = false) {
+    addVariable(id: Id, value:Expression|null, type:TypeExpression|null = null, assignable: boolean = false) {
         let { name } = id
         if (this._variables[name] != null)
             id.throwSemanticError(`Cannot redeclare '${name}'`)
-        this._variables[name] = new VariableBinding(value, assignable)
+        this._variables[name] = new VariableBinding(value, type, assignable)
     }
 }
 
@@ -140,6 +141,15 @@ export class Module extends Namespace {
     exports: Declaration | Declaration[]
     // calculated temporarily as part of identifier resolution
     unresolvedReferences: {[name: string]: Reference} = {}
+    //  temporary expression dependencies map
+    _expressionDependencies: [Expression, Expression][] = Object.assign([], {
+        toJSON() {
+            // for debugging
+            return this.map(([a, b]: [Expression, Expression]) => {
+                return (a != null ? a.toDebugString() : "null") + " -> " + (b != null ? b.toDebugString() : "null")
+            })
+        }
+    })
 }
 export class ClassDeclaration extends Scope implements Declaration, TypeExpression {
     type = new CanonicalReference("ion.Type")
@@ -150,9 +160,6 @@ export class ClassDeclaration extends Scope implements Declaration, TypeExpressi
     declarations: Declaration[]
     getDependencies(ancestors: object[]) {
         return this.baseClasses
-    }
-    resolve(ancestors: object[]) {
-        console.log('class resolve: ')
     }
     toString() {
         return `class ${this.id.name}`
@@ -173,21 +180,46 @@ export class ForInStatement extends Scope implements Statement {
 export interface Pattern extends Node {
     getIds(): Id[]
 }
+type ExpressionFilter = (expr: Expression) => Expression
 export interface Expression extends Node {
     type?: TypeExpression
     getDependencies(ancestors: object[]) : Expression[]
-    resolve?: (ancestors: object[]) => Expression | void
+    simplify?: (ancestors: object[], filter: ExpressionFilter) => Expression | void
+
 }
 export function isExpression(node:any): node is Expression {
     return node != null && node.getDependencies != null
 }
 export type BinaryOperator = "+" | "-" | "*" | "/" | "%" |  "<" | ">" | "<=" | ">=" | "==" | "!=" | "is" | "and" | "or" | "xor"
+const jsOperatorMap: {[op:string]:string|null} = {
+    is: null, // null means no direct mapping
+    "==": "===",
+    "!=": "!==",
+    and: "&&",
+    or: "||",
+    xor: "^",
+    not: "!"
+}
 export class BinaryExpression extends Node implements Expression {
     left: Expression
     operator: string
     right: Expression
     getDependencies(ancestors: object[]): Expression[] {
         return [this.left, this.right]
+    }
+    simplify(ancestors: object[], filter: ExpressionFilter) {
+        let left = filter(this.left)
+        let right = filter(this.right)
+        // console.log('simplify', {left,right})
+        if (left instanceof Literal && right instanceof Literal) {
+            let jsOp = jsOperatorMap[this.operator]
+            if (jsOp !== null) {
+                if (jsOp == undefined)
+                    jsOp = this.operator
+                let value = eval(left.value + jsOp + right.value)
+                return new Literal({value})
+            }
+        }
     }
 }
 export type UnaryOperator = "+" | "-" | "not"
@@ -221,8 +253,19 @@ export class Reference extends Node implements Expression {
             this.throwSemanticError(`Variable is unresolved: ${this.id.name}`)
             return []
         }
-        else {
+        else if (variable.value) {
             return [variable.value]
+        }
+        else {
+            return []
+        }
+    }
+    simplify(ancestors: object[], filter: ExpressionFilter) {
+        if (ancestors == null)
+            throw new Error("ancestors is missing")
+        let variable = this.getVariable(ancestors, this.id.name)
+        if (variable && variable.value) {
+            return filter(variable.value)
         }
     }
     toString() {

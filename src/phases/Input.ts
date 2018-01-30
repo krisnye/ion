@@ -1,41 +1,7 @@
 import { traverse, remove, skip, Visitor } from "../Traversal"
 import toposort from "../toposort"
-// import * as escodegen from "escodegen"
 import * as c from "../common"
 import * as ast from "../IonAst"
-
-// const Node_SetPath = (node: ast.Node, ancestors: object[], path:string[]) => {
-//     node.__path = path.slice(0)
-// }
-
-const Assembly_NestModulesInNamespaces = (node: ast.Assembly) => {
-    // replace current node.namespaces
-    let namespaces = node.namespaces
-    node.namespaces = {}
-
-    function getNamespace(path: string[]): ast.Namespace {
-        if (path.length == 0)
-            return node
-
-        let parentNamespace = getNamespace(path.slice(0, -1))
-        let name = path[path.length-1]
-        let namespace = parentNamespace.namespaces[name]
-        if (namespace == null)
-            namespace = parentNamespace.namespaces[name] = new ast.Namespace({ path: path.slice(0), namespaces: {} })
-        return namespace
-    }
-
-    for (let pathString in namespaces) {
-        let module = namespaces[pathString]
-        let path = pathString.split('.')
-        let name = path[path.length - 1]
-        module.path = path.slice(0)
-        let namespace = getNamespace(path.slice(0, -1))
-        namespace.namespaces[name] = module
-    }
-
-    return skip
-}
 
 const Assembly_NoOp = (node: ast.Module) => {
     return skip
@@ -64,12 +30,12 @@ const Module_DebugValues = (node: ast.Module, ancestors: object[]) => {
 
 const VariableDeclaration_AddVariableBindings = (node: ast.VariableDeclaration, ancestors: object[]) => {
     let scope = ast.getScope(node, ancestors)
-    scope.addVariable(node.id, node)
+    scope.addVariable(node.id, node.value, node.type)
 }
 const Parameter_AddVariableBindings = (node: ast.Parameter, ancestors: object[]) => {
     let scope = ast.getScope(node, ancestors)
     if (node.pattern instanceof ast.Id) {
-        scope.addVariable(node.pattern, node)
+        scope.addVariable(node.pattern, node, node.type)
     }
     else {
         node.pattern.throwSemanticError("Patterns not supported yet")
@@ -95,16 +61,6 @@ const ImportDeclaration_AddVariableBindings = (node: ast.ImportDeclaration, ance
     //     let scope = ast.getScope(null, ancestors)
     //     scope.addVariable(node.as)
     // }
-}
-const Module_AddVariableBindingsAndInitModuleId = (node: ast.Module, ancestors: object[]) => {
-    node.id = new ast.Id({name:node.name})
-    let scope = ast.getScope(null, ancestors)
-    if (ast.isExpression(node.exports)) {
-        scope.addVariable(node.id, node.exports)
-    } else {
-        // library values will already be added to 'this' node's scope
-        // console.log('export library or something?')
-    }
 }
 
 const Reference_CheckIfUnresolvedAndAddToModule = (node: ast.Reference, ancestors: object[]) => {
@@ -226,52 +182,77 @@ const Module_ImportsResolveToModules = (node: ast.Module, ancestors: object[]) =
     }
 }
 
-const expressionAncestors: Map<ast.Expression,Object[]> = new Map()
-const Node_AddDependenciesToAssembly = (node: any, ancestors: object[], path: string[]) => {
-    let assembly = <ast.Assembly>ancestors[0]
+// const Node_SetAncestors = (node: ast.Node, ancestors: object[], path: string[]) => {
+//     node.__ancestors = ancestors.slice(0)
+// }
+let ancestorMap = new Map<ast.Expression,object[]>()
+const Node_AddDependenciesToModule = (node: any, ancestors: object[], path: string[]) => {
+    let module = <ast.Module>ancestors[0]
     if (node.getDependencies != null) {
-        expressionAncestors.set(node, ancestors.slice(0))
         let enode = <ast.Expression>node
+        // we only need to store ancestors IF the node has a simplify method
+        if (enode.simplify)
+            ancestorMap.set(node, ancestors.slice(0))
         let deps = enode.getDependencies(ancestors)
         for (let dep of deps) {
             if (dep == null) {
                 console.warn("Missing dep: " + enode)
             } else {
-                assembly._expressionDependencies.push([dep, enode])
+                module._expressionDependencies.push([dep, enode])
             }
         }
     }
 }
-const _Assembly_ToposortTypes = (node: ast.Assembly) => {
+function filterAllNodes(node: any, filter: (object:any) => any) {
+    if (node != null && typeof node == 'object') {
+        let filtered = filter(node)
+        if (filtered !== node)
+            return filtered
+        for (let name in node) {
+            let value = filterAllNodes(node[name], filter)
+            if (node[name] !== value)
+                node[name] = value
+        }
+    }
+    return node
+}
+const _Module_ToposortTypes = (node: ast.Module) => {
     let deps = node._expressionDependencies
     let sortedDeps = toposort(deps)
     // now we must simplify all references
+    let simplifiedMap = new Map<ast.Expression,ast.Expression>()
+    let filter = (expression: ast.Expression) => simplifiedMap.get(expression) || expression
     for (let expression of sortedDeps) {
-        console.log((expression.resolve != null ? 1 : 0) + " Resolve: " + expression.toDebugString())
-        if (expression.resolve != null) {
-            let ancestors = expressionAncestors.get(expression)
-            expression.resolve(ancestors)
+        console.log("Resolve: " + expression.toDebugString())
+        if (expression.simplify != null) {
+            let simplified = expression.simplify(ancestorMap.get(expression), filter)
+            if (simplified != null) {
+                console.log('SIMPLIFIED!', simplified)
+                simplifiedMap.set(expression, simplified)
+            }
         }
     }
+    // now replace all old expressions with new simplified values
+    filterAllNodes(node, filter)
+
+    delete node._expressionDependencies
 }
 
 export const passes = [
-    // //  Phase 0: initialization and adding variable bindings
-    // [Assembly_NestModulesInNamespaces /*, Node_SetPath */],
-    // [Module_FlattenImportDeclarations],
-    // [ImportDeclaration_AddVariableBindings, ClassDeclaration_AddVariableBindings, VariableDeclaration_AddVariableBindings, Parameter_AddVariableBindings, ForInStatement_AddVariableBindings, Namespace_AddVariableBindings],
-    // [Module_AddVariableBindingsAndInitModuleId],
-    // //  Phase 1: check for unresolved references
-    // [Module_ImportsRelativeToAbsolute, Reference_CheckIfUnresolvedAndAddToModule],
-    // //  Phase 2: attempt to resolve references
+    //  Phase 0: initialization and adding variable bindings
+    [Module_FlattenImportDeclarations],
+    [ImportDeclaration_AddVariableBindings, ClassDeclaration_AddVariableBindings, VariableDeclaration_AddVariableBindings, Parameter_AddVariableBindings, ForInStatement_AddVariableBindings, Namespace_AddVariableBindings],
+    //  Phase 1: check for unresolved references
+    [Module_ImportsRelativeToAbsolute, Reference_CheckIfUnresolvedAndAddToModule],
+    //  Phase 2: attempt to simplify references
     // [Module_UnresolvedReferencesResolve, Module_ImportsResolveToModules],
 
-    // //  Prepare for converstion to IRT
+    //  Prepare for converstion to IRT
     // [Module_AddPublicPathToExports],
     // [Module_DebugValues]
-    // // //  Phase 3: Type calculation
-    // // [Node_AddDependenciesToAssembly, _Assembly_ToposortTypes],
+    //  Phase 3: Type calculation
+    [Node_AddDependenciesToModule, _Module_ToposortTypes],
 
-    // // //  Phase 4: check semantic validity
-    // // [AssignmentStatement_CheckAssignable]
+    //  Phase 4: check semantic validity
+    // [AssignmentStatement_CheckAssignable]
 ]
