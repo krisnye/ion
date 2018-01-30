@@ -258,7 +258,8 @@ MultilineChainExpression = eol? &"." e:(tailCall / tailMember)* { return e }
 MultilineExpression = ClassExpression / MultilineStringTemplate / MultilineStringLiteral / VoidTypedObjectExpression / TypedObjectExpression / MultilineCallExpression
 VoidTypedObjectExpression = start:start "void" _ e:TypedObjectExpression end:end
     { return node('UnaryExpression', {operator:"void", argument:e}, start, end) }
-multilineArguments
+multilineArguments = multilineArgumentsNested / multilineArgumentsIndented
+multilineArgumentsNested
     =   "(" indent eol
         args:(
         (_ arg:Expression eol { return arg })+
@@ -266,6 +267,15 @@ multilineArguments
             { return [node("ObjectExpression", {properties:properties}, start, end)] }
         )
         outdent eol _ ")"
+    { return args}
+multilineArgumentsIndented
+    =   "(...)" indent eol
+        args:(
+        (_ arg:Expression eol { return arg })+
+        / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end
+            { return [node("ObjectExpression", {properties:properties}, start, end)] }
+        )
+        outdent
     { return args}
 MultilineCallExpression = start:start callee:InlineExpression args:multilineArguments end:end
     {
