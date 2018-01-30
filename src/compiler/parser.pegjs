@@ -172,9 +172,15 @@ ForInOfStatement = start:start head:ForInOfHead body:BlockOrSingleStatement remo
         return node(head.type, head, start, end)
     }
 
-ForStatement = start:start for _ init:(VariableDeclaration / InlineExpression)? _ ";" _ test:InlineExpression? _ ";" _ update:InlineExpression? body:BlockOrSingleStatement end:end
-    { return node("ForStatement", {init:init, test:test, update:update, body:body}, start, end) }
-ArrayComprehension = start:start "[" _ value:InlineExpression _ comprehension:ForInOfHead _ "]" end:end
+ForHead = for _ init:(VariableDeclaration / InlineExpression)? _ ";" _ test:InlineExpression? _ ";" _ update:InlineExpression?
+    {return {type:"ForStatement", init, test, update}}
+ForStatement = start:start head:ForHead body:BlockOrSingleStatement end:end
+    {
+        head = clone(head)
+        head.body = body
+        return node("ForStatement", head, start, end)
+    }
+ArrayComprehension = start:start "[" _ value:InlineExpression _ comprehension:(ForInOfHead / ForHead) _ "]" end:end
     {
         // value must be defined AFTER comprehension so that it reflects the actual order of usage.
         // This is important for the checkVariableDeclarations processor.
@@ -260,23 +266,13 @@ VoidTypedObjectExpression = start:start "void" _ e:TypedObjectExpression end:end
     { return node('UnaryExpression', {operator:"void", argument:e}, start, end) }
 multilineArguments = multilineArgumentsNested / multilineArgumentsIndented
 multilineArgumentsNested
-    =   "(" indent eol
-        args:(
-        (_ arg:Expression eol { return arg })+
-        / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end
-            { return [node("ObjectExpression", {properties:properties}, start, end)] }
-        )
-        outdent eol _ ")"
-    { return args}
+    =   "(" indent eol args: multilineArgumentsBlock outdent eol _ ")" { return args}
 multilineArgumentsIndented
-    =   "(...)" indent eol
-        args:(
-        (_ arg:Expression eol { return arg })+
-        / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end
-            { return [node("ObjectExpression", {properties:properties}, start, end)] }
-        )
-        outdent
-    { return args}
+    =   "(...)" indent eol args:multilineArgumentsBlock outdent { return args}
+multilineArgumentsBlock
+    = (_ arg:Expression eol { return arg })+
+    / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end
+        { return [node("ObjectExpression", {properties:properties}, start, end)] }
 MultilineCallExpression = start:start callee:InlineExpression args:multilineArguments end:end
     {
         if (callee.type === 'NewExpression' && callee.arguments == null)
