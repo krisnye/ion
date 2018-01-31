@@ -2,5 +2,6 @@
 export
     let one = 1
     let zero = one - one
+    let three = false ? 0 : 3
 
 

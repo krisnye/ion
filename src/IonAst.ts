@@ -232,6 +232,23 @@ export class UnaryExpression extends Node implements Expression {
         return [this.argument]
     }
 }
+export class ConditionalExpression extends Node implements Expression {
+    test: Expression
+    consequent: Expression
+    alternate: Expression
+    getDependencies(ancestors: object[]): Expression[] {
+        return [this.test, this.consequent, this.alternate]
+    }
+    simplify(ancestors: object[], filter: ExpressionFilter) {
+        let test = filter(this.test)
+        let consequent = filter(this.consequent)
+        let alternate = filter(this.alternate)
+        if (test instanceof Literal) {
+            let testValue = eval(toJS(test))
+            return testValue ? consequent : alternate
+        }
+    }
+}
 export interface Statement extends Node {}
 export interface Declaration extends Node, Expression {}
 export class Id extends Node implements Expression, Pattern {
@@ -488,9 +505,8 @@ function* getScopes(self: Node | null, ancestors: object[]) {
 }
 
 export const getScope = (self: Node | null, ancestors: object[]) => {
-    for (let scope of getScopes(self, ancestors)) {
+    for (let scope of getScopes(self, ancestors))
         return scope
-    }
     throw new Error("Scope not found")
 }
 

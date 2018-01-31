@@ -411,6 +411,7 @@ MemberExpression =
 
 Literal
     = NumericLiteral
+    / BooleanLiteral
     / StringLiteral
     / CharLiteral
     / NullLiteral
@@ -422,6 +423,9 @@ NumericLiteral
 
 NullLiteral
     = NullToken { return node('Literal', {value:null}) }
+
+BooleanLiteral
+    = value: (TrueToken / FalseToken) { return node('Literal', {value: JSON.parse(value)}) }
 
 ExponentPart
     = 'e' [+-]? [0-9]+ !IdPart
@@ -483,6 +487,8 @@ Reference
 
 ThisToken       = @"this"       !IdPart
 NullToken       = @"null"       !IdPart
+TrueToken       = @"false"      !IdPart
+FalseToken      = @"true"       !IdPart
 TypeToken       = @"type"       !IdPart
 IsToken         = @"is"         !IdPart
 AsToken         = @"as"         !IdPart
@@ -511,6 +517,8 @@ ContinueToken   = @"continue"   !IdPart
 Keyword
     = ThisToken
     / NullToken
+    / TrueToken
+    / FalseToken
     / AndToken
     / IsToken
     / AsToken
