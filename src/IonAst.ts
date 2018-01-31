@@ -200,6 +200,9 @@ const jsOperatorMap: {[op:string]:string|null} = {
     xor: "^",
     not: "!"
 }
+function toJS(literal: Literal) {
+    return JSON.stringify(literal.value)
+}
 export class BinaryExpression extends Node implements Expression {
     left: Expression
     operator: string
@@ -210,13 +213,12 @@ export class BinaryExpression extends Node implements Expression {
     simplify(ancestors: object[], filter: ExpressionFilter) {
         let left = filter(this.left)
         let right = filter(this.right)
-        // console.log('simplify', {left,right})
         if (left instanceof Literal && right instanceof Literal) {
             let jsOp = jsOperatorMap[this.operator]
             if (jsOp !== null) {
                 if (jsOp == undefined)
                     jsOp = this.operator
-                let value = eval(left.value + jsOp + right.value)
+                let value = eval(toJS(left) + jsOp + toJS(right))
                 return new Literal({value})
             }
         }
