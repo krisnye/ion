@@ -182,28 +182,7 @@ const Module_ImportsResolveToModules = (node: ast.Module, ancestors: object[]) =
     }
 }
 
-// const Node_SetAncestors = (node: ast.Node, ancestors: object[], path: string[]) => {
-//     node.__ancestors = ancestors.slice(0)
-// }
-let ancestorMap = new Map<ast.Expression,object[]>()
-const Node_AddDependenciesToModule = (node: any, ancestors: object[], path: string[]) => {
-    let module = <ast.Module>ancestors[0]
-    if (node.getDependencies != null) {
-        let enode = <ast.Expression>node
-        // we only need to store ancestors IF the node has a simplify method
-        if (enode.simplify)
-            ancestorMap.set(node, ancestors.slice(0))
-        let deps = enode.getDependencies(ancestors)
-        for (let dep of deps) {
-            if (dep == null) {
-                console.warn("Missing dep: " + enode)
-            } else {
-                module._expressionDependencies.push([dep, enode])
-            }
-        }
-    }
-}
-function filterAllNodes(node: any, filter: (object:any) => any) {
+function filterAllNodes(node: any, filter: (object: any) => any) {
     if (node != null && typeof node == 'object') {
         let filtered = filter(node)
         if (filtered !== node)
@@ -216,6 +195,23 @@ function filterAllNodes(node: any, filter: (object:any) => any) {
     }
     return node
 }
+let ancestorMap = new Map<ast.Expression,object[]>()
+const Node_AddDependenciesToModule = (node: any, ancestors: object[], path: string[]) => {
+    let module = <ast.Module>ancestors[0]
+    if (ast.isExpression(node)) {
+        // we only need to store ancestors IF the node has a simplify method
+        if (node.simplify)
+            ancestorMap.set(node, ancestors.slice(0))
+        let deps = node.getDependencies(ancestors)
+        for (let dep of deps) {
+            if (dep == null) {
+                console.warn("Missing dep: " + node)
+            } else {
+                module._expressionDependencies.push([dep, node])
+            }
+        }
+    }
+}
 const _Module_ToposortTypes = (node: ast.Module) => {
     let deps = node._expressionDependencies
     let sortedDeps = toposort(deps)
@@ -227,7 +223,6 @@ const _Module_ToposortTypes = (node: ast.Module) => {
         if (expression.simplify != null) {
             let simplified = expression.simplify(ancestorMap.get(expression), filter)
             if (simplified != null) {
-                console.log('SIMPLIFIED!', simplified)
                 simplifiedMap.set(expression, simplified)
             }
         }
