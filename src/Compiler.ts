@@ -6,10 +6,10 @@ import * as ast from "./IonAst"
 
 const parser = require("./parser")()
 
-import * as input from "./phases/input" 
-// import * as javascript from "./phases/javascript" 
-import * as output from "./phases/output"
-import * as cleanup from "./phases/cleanup"
+import * as input from "./phases/Input"
+// import * as javascript from "./phases/javascript"
+import * as output from "./phases/Output"
+import * as cleanup from "./phases/Cleanup"
 const defaultPhases = [input]//, cleanup, javascript]//, output]
 const defaultPasses = [].concat(...defaultPhases.map((x:any) => x.passes))
 
@@ -58,7 +58,7 @@ export default class Compiler {
             .filter(filename => filename.endsWith('.ion'))
             .map(filename => this.getPathFromFilename(filename))
             .filter(path => debugFilter[path]);
- 
+
         for (let path of paths) {
             this.compileModule(path)
         }
