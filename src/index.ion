@@ -146,14 +146,6 @@ export const
             for k, v of object
                 copy[k] = v
         return copy
-        # if Array.isArray(object)
-        #     return [_deep ? clone(item, _deep) : item for item in object]
-        # else if object?.constructor is Object
-        #     return {}
-        #         for key, value of object
-        #             [key]: _deep ? clone(value, _deep) : value
-        # else
-        #     return object
     # observers = []
     observe = (object, observer, options) ->
         # let original = observer
@@ -294,7 +286,7 @@ export const
                 for key, value of definition if key isnt 'test' or i is 0
                     if canSetClassProperty(key)
                         classFunction[key] = patch(classFunction[key], value)
-                        
+
         classFunction.types = types
 
         if classFunction.properties?
