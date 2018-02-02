@@ -268,7 +268,7 @@ multilineArguments = multilineArgumentsNested / multilineArgumentsIndented
 multilineArgumentsNested
     =   "(" indent eol args: multilineArgumentsBlock outdent eol _ ")" { return args}
 multilineArgumentsIndented
-    =   "(...)" indent eol args:multilineArgumentsBlock outdent { return args}
+    =   "(..)" indent eol args:multilineArgumentsBlock outdent { return args}
 multilineArgumentsBlock
     = (_ arg:Expression eol { return arg })+
     / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end

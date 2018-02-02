@@ -1,0 +1,7 @@
+export const
+    test = ->
+        let range = (n) -> [i for let i = 0; i < n; i++]
+        let max = Math.max.apply(..)
+            null
+            [i *i for i in range(10)]
+        assert max is 81
