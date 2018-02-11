@@ -19,6 +19,7 @@ Regex                       ['A'+,'B'?,'C'*,'D']                    [0:'A',lengt
 Bidirectional Map           [Integer:String,String:Integer]                                                     Map<number|string,number|string>
 Class Instance              [NameSymbol:String,AgeSymbol:Integer]                                               {[NameSymbol]:string,[AgeSymbol]:number}
 Fixed Length Array          [Number 8]                              [Integer:Vector,SizeSymbol:8]               number[]
+Family Modelled as Array    [Mother, Father, Child*]                [0:Mother,1:Father,2..:Child]               (Mother|Father|Child)[]
 
 Type System Semantics
 
