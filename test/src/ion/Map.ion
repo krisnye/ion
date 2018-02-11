@@ -1,0 +1,6 @@
+
+export class Map<Key,Value>
+    let has: (key:Key) => Boolean
+    let get: (key:Key) => Value | null
+    let keys: Key[]
+    let values: Value[]

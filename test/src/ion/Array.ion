@@ -1,8 +1,10 @@
-import
-    .*
 
-export class Array<T>
-    # let Index = Integer where . >= 0 and . < length
-    # var length: Integer where . >= 0
-    # let indexOf: (element: T, from: Index = 0) -> Index | -1
-    # let lastIndexOf: (element: T, from: Index = length - 1) -> Index | -1
+export class Array<T> extends Map<(Integer >= 0), T>
+    var length: Integer >= 0
+    let Index = Integer >= 0 and < length
+    let indexOf: (element: T, from: Index = 0) -> Index | -1
+    let new get: (index: Index) => Value # new version of Map.get that cannot return null, because you know the index is valid
+    let contains: (element: T) => Boolean
+    let count: (element: T) => Integer >= 0 and <= length
+    let counts: Map<T,(Integer >= 0 and <= length)>
+    let reverse: Array<T> .length == length

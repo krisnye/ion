@@ -1,0 +1,54 @@
+
+Type System Grammar
+
+    Range = Integer ('..' Integer?)? / '..' Integer 
+    Quantifier = '*' / '+' / '?' / Range
+    KeyType = Type
+    ValueType = Type
+    KeyValue = (KeyType ':')? ValueType Quantifier?
+    Map = '[' (KeyValue (',' KeyValue)*)? ']'
+
+Type System Examples
+
+                            Ion 2                                   Canonical                                   TypeScript
+Array                       [Vector*]                               [Integer:Vector]                            Vector[]
+Tuple                       [Vector,Integer,String]                 [0:Vector,1:Integer,2:String]               [Vector,Integer,String]
+Map                         [Vector:Number]                                                                     Map<Vector,Number>
+Named Tuple                 ['x':Integer,'y':Integer]                                                           {x: Integer, y: Integer}
+Regex                       ['A'+,'B'?,'C'*,'D']                    [0:'A',length-1:'D',Integer>0:'A'|'B'|'C']  /^A+B?C*D$/
+Bidirectional Map           [Integer:String,String:Integer]                                                     Map<Integer|String,Integer|String>
+Class Instance              [NameSymbol:String,AgeSymbol:Integer]                                               {[NameSymbol]:String,[AgeSymbol]:Integer}
+
+
+Type System Semantics
+
+    Everything can be modelled as a Map.
+    A Map contains zero or more ordered key value type pairs.
+    To check if a Map contains a member with type T:
+        for each key value pair [K, V]
+            if T is a subtype of type K
+                then that member exists with type V
+                return
+        for each key value pair [K, V]
+            if K is a subtype of type T
+                then that member is a union of this type and any others found in this loop
+        that member is not a valid member of the type
+
+    Example
+
+    Tuple from above is represented as
+        Map
+            0: Vector
+            1: Integer
+            2: String
+    
+    let tuple: [Vector,Integer,String] = [Vector(12,20), 45, "Foo"]
+    let tuple0 = tuple[0] # Vector
+    let tuple1 = tuple[1] # Integer
+    let tuple2 = tuple[2] # String
+    let tuple3 = tuple[3] # TYPE ERROR
+    let someRandomNumber: 0..1
+    let tuple0or1 = tuple[someRandomNumber] # Vector | Integer
+
+    
+

@@ -358,6 +358,7 @@ PrimaryExpression
     / ThisExpression
     / DotExpression
     / GroupExpression
+    / ArrayExpression
 
 GroupExpression
     = "(" _ @InlineExpression _ ")"
@@ -403,6 +404,23 @@ MemberExpression =
             }
             ,head
         )
+    }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Literals
+////////////////////////////////////////////////////////////////////////////////
+
+ArrayExpression
+    = InlineArrayExpression
+
+Elements
+    = head:InlineExpression tail:(_ "," _ @InlineExpression)*
+    { return [head, ...tail] }
+
+InlineArrayExpression
+    = "[" _ elements:Elements? _ "]"
+    {
+        return node("ArrayExpression", {elements:elements || []})
     }
 
 ////////////////////////////////////////////////////////////////////////////////

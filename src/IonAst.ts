@@ -2,6 +2,17 @@
 //  Contains the Ion language Abstract Syntax Tree Nodes
 ////////////////////////////////////////////////////////////////////////////////
 
+//                              elements    map
+//  Object? {x:1, y: 2}                     x
+//  Array?  [1, 2, 3, 4]                    x
+//  Tuple   (x, y, z)                       x
+//  Set     {a, b, c, d}        x
+//  Map     {}                              x
+//  CollectionLiteral
+//      type: CanonicalReference('ion.Map') | CanonicalReference('ion.Array') | CanonicalReference('ion.Object')
+//      elements: []
+//          Literal | Tuple
+
 ////////////////////////////////////////////////////////////////////////////////
 //  Node definitions
 ////////////////////////////////////////////////////////////////////////////////
@@ -399,6 +410,29 @@ export class Literal extends Node implements Expression {
         return JSON.stringify(this.value)
     }
 }
+
+// {[foo]: bar}
+
+export class ObjectExpression extends Node implements Expression {
+    getDependencies(ancestors: object[]): Expression[] {
+        return []
+    }
+}
+
+export class ArrayExpression extends Node implements Expression {
+    elements: Expression[]
+    getDependencies(ancestors: object[]): Expression[] {
+        return this.elements
+    }
+}
+
+export class ArrayPattern extends ArrayExpression {
+}
+
+//  Type Theory
+//  for my purposes... a Type
+//      can check if a value is an instance at runtime
+//      can get a child property type at compile time
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Types
