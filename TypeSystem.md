@@ -12,13 +12,13 @@ Type System Examples
 
                             Ion 2                                   Canonical                                   TypeScript
 Array                       [Vector*]                               [Integer:Vector]                            Vector[]
-Tuple                       [Vector,Integer,String]                 [0:Vector,1:Integer,2:String]               [Vector,Integer,String]
-Map                         [Vector:Number]                                                                     Map<Vector,Number>
-Named Tuple                 ['x':Integer,'y':Integer]                                                           {x: Integer, y: Integer}
+Tuple                       [Vector,Integer,String]                 [0:Vector,1:Integer,2:String]               [Vector,number,string]
+Map                         [Vector:Number]                                                                     Map<Vector,number>
+Named Tuple                 ['x':Integer,'y':Integer]                                                           {x: number, y: number}
 Regex                       ['A'+,'B'?,'C'*,'D']                    [0:'A',length-1:'D',Integer>0:'A'|'B'|'C']  /^A+B?C*D$/
-Bidirectional Map           [Integer:String,String:Integer]                                                     Map<Integer|String,Integer|String>
-Class Instance              [NameSymbol:String,AgeSymbol:Integer]                                               {[NameSymbol]:String,[AgeSymbol]:Integer}
-
+Bidirectional Map           [Integer:String,String:Integer]                                                     Map<number|string,number|string>
+Class Instance              [NameSymbol:String,AgeSymbol:Integer]                                               {[NameSymbol]:string,[AgeSymbol]:number}
+Fixed Length Array          [Number 8]                              [Integer:Vector,SizeSymbol:8]               number[]
 
 Type System Semantics
 
