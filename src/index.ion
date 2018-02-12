@@ -408,6 +408,7 @@ Object.defineProperty(
     Function.prototype
     'reactive'
     {}
+        configurable: true
         get: ->
             let fn = this
             let state = {}

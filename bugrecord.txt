@@ -19,3 +19,7 @@
     an object was frozen defensively and attempts were made to modify it,
     debugging was made difficult by the complexity added to the stack by the reactive runtime
     the reason the object was being frozen was unclear because Object.freeze is not declarative and can be called on anything from anywhere
+
+2017-02-02 3:00 Ion 1 Kris
+    mutation of object
+    duplicate code assigning to field where I didn't expect.
