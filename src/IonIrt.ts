@@ -5,5 +5,5 @@
 import * as ast from "./IonAst"
 
 export class Assembly extends ast.Node {
-    values: {[name: string]: ast.Expression} = {}
+    values: {[name: string]: ast.Expression}
 }

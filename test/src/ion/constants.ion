@@ -1,7 +1,0 @@
-
-export
-    let one = 1
-    let zero = one - one
-    let two = one + one
-    let three = zero ? zero : one + one + one
-    let array = [zero, one, two, three]

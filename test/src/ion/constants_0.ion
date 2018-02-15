@@ -1,0 +1,4 @@
+let _one = 1
+export
+    let one = _one
+    let zero = one - one

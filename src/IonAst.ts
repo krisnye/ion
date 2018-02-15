@@ -94,6 +94,7 @@ export class VariableDeclaration extends Node implements Declaration, Expression
 export class VariableBinding {
     value: Expression | null
     type: TypeExpression | null
+    canonicalId: string | null
     assignable: boolean
     id: string  //  the canonical path to this variables value such as ion.Map or my.math.Vector or my.math.pi
     constructor(value:Expression|null,type:TypeExpression|null, assignable: boolean = false) {
@@ -122,14 +123,6 @@ export class Namespace extends Scope implements Expression {
     namespaces: { [path: string]: Namespace }
     getDependencies(ancestors: object[]) {
         return []
-    }
-    getNamespace(path: string[], index = 0): Namespace | null {
-        if (index >= path.length)
-            return this
-        let childNamespace = this.namespaces[path[index]]
-        if (childNamespace != null)
-            return childNamespace.getNamespace(path, index + 1)
-        return null
     }
 }
 
@@ -169,6 +162,9 @@ export class ClassDeclaration extends Scope implements Declaration, TypeExpressi
     templateParameters: Parameter[]
     baseClasses: TypeExpression[]
     declarations: Declaration[]
+    get value() {
+        return this
+    }
     getDependencies(ancestors: object[]) {
         return this.baseClasses
     }
@@ -261,7 +257,10 @@ export class ConditionalExpression extends Node implements Expression {
     }
 }
 export interface Statement extends Node {}
-export interface Declaration extends Node, Expression {}
+export interface Declaration extends Node, Expression {
+    id: Id
+    value: Expression | null
+}
 export class Id extends Node implements Expression, Pattern {
     name: string
     getDependencies(ancestors: object[]): Expression[] {
@@ -334,17 +333,6 @@ export class ImportDeclaration extends Node {
     children: ImportDeclaration[] | true | null
     relative: number
     implicit: boolean
-    getReferencedNamespace(from: Module, root: Assembly): Namespace | null {
-        // traverses the AST to find the closest referenced assembly.
-        let basePath = this.relative ? from.path.slice(0, -this.relative) : []
-        for (;basePath.length > 0; basePath.pop()) {
-            let checkPath = basePath.concat(this.path.map(x => x.name))
-            let namespace = root.getNamespace(checkPath)
-            if (namespace)
-                return namespace
-        }
-        return null
-    }
     get pathString() { return this.path.map(step => step.name).join('.') }
 }
 
@@ -441,6 +429,16 @@ export class ArrayPattern extends ArrayExpression {
 export interface TypeExpression extends Expression {
     type?: CanonicalReference
 }
+
+export class CollectionType extends Node implements TypeExpression {
+    keys: TypeExpression[] = []
+    values: TypeExpression[] = []
+    getDependencies(ancestors: object[]): Expression[] {
+        return []
+    }
+}
+
+
 export class CanonicalReference extends Node implements TypeExpression {
     id: string
     constructor(id: string) {

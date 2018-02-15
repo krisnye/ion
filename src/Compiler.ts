@@ -13,7 +13,7 @@ import * as cleanup from "./phases/Cleanup"
 const defaultPhases = [input]//, cleanup, javascript]//, output]
 const defaultPasses = [].concat(...defaultPhases.map((x:any) => x.passes))
 
-function defaultLoggerFactory(path: string, filename: string) {
+function defaultLoggerFactory() {
     return (names?: string[], ast?: object) => {
         console.log('==================================================================')
         if (names != null) {
@@ -27,12 +27,12 @@ export default class Compiler {
     input: string
     output: string
     passes: any[][] = defaultPasses
-    loggerFactory: (path: string, filename: string) => (names?: string[], ast?: object) => void
+    loggerFactory: () => (names?: string[], ast?: object) => void
 
     constructor(options:{
         input: string,
         output: string,
-        loggerFactory?: (path: string, filename: string) => (names?: string[], ast?: object) => void
+        loggerFactory?: () => (names?: string[], ast?: object) => void
      }){
         this.input = options.input
         this.output = options.output
@@ -49,33 +49,42 @@ export default class Compiler {
     }
 
     compile() {
+        let assembly = this.parseAssembly()
+        assembly = this.compileAssembly(assembly)
+    }
+    
+    parseAssembly() {
         const debugFilter: { [path: string]: boolean } = {
-            // "ion.Number": true,
+            "ion.Number": true,
             // "ion.Integer": true,
-            "ion.constants": true
+            "ion.constants_0": true,
+            "ion.constants_1": true
         }
         let paths = common.getFilesRecursive(this.input)
             .filter(filename => filename.endsWith('.ion'))
             .map(filename => this.getPathFromFilename(filename))
             .filter(path => debugFilter[path]);
 
+        let assembly = new ast.Assembly({ namespaces: {} })
         for (let path of paths) {
-            this.compileModule(path)
+            let filename = this.getFilenameFromPath(path)
+            let source = common.read(filename)
+            let module = parser.parse(source, filename)
+            assembly.namespaces[path] = module
         }
+
+        return assembly
     }
 
-    compileModule(path: string) {
-        let filename = this.getFilenameFromPath(path)
-        let source = common.read(filename)
-        let module = parser.parse(source, filename)
-        let logger = this.loggerFactory(path, filename)
+    compileAssembly(assembly: ast.Assembly) {
+        let logger = this.loggerFactory()
 
-        logger([path + " input"], module)
+        logger(["input"], assembly)
         try {
             for (let pass of this.passes) {
                 let visitor = createPass(pass)
-                module = traverse(module, visitor)
-                logger(visitor.names, module)
+                assembly = traverse(assembly, visitor)
+                logger(visitor.names, assembly)
             }
         } catch (e) {
             let location = e.location
@@ -86,9 +95,11 @@ export default class Compiler {
             let error = parser.getError(e.message, location, source, location, filename)
             console.log(error.message)
         } finally {
-            logger([path + " output"], module)
+            logger(["output"], assembly)
             logger()
         }
+
+        return assembly
     }
 
 }

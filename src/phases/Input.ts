@@ -2,6 +2,7 @@ import { traverse, remove, skip, Visitor } from "../Traversal"
 import toposort from "../toposort"
 import * as c from "../common"
 import * as ast from "../IonAst"
+import * as irt from "../IonIrt"
 
 const Assembly_NoOp = (node: ast.Module) => {
     return skip
@@ -57,10 +58,10 @@ const ClassDeclaration_AddVariableBindings = (node: ast.ClassDeclaration, ancest
     scope.addVariable(node.id, node)
 }
 const ImportDeclaration_AddVariableBindings = (node: ast.ImportDeclaration, ancestors: object[]) => {
-    // if (node.as != null) {
-    //     let scope = ast.getScope(null, ancestors)
-    //     scope.addVariable(node.as)
-    // }
+    if (node.as != null) {
+        let scope = ast.getScope(null, ancestors)
+        scope.addVariable(node.as, null)
+    }
 }
 
 const Reference_CheckIfUnresolvedAndAddToModule = (node: ast.Reference, ancestors: object[]) => {
@@ -75,42 +76,44 @@ const Reference_CheckIfUnresolvedAndAddToModule = (node: ast.Reference, ancestor
 }
 
 const Module_UnresolvedReferencesResolve = (node: ast.Module, ancestors: object[]) => {
+    let assembly: ast.Assembly = <any>ancestors[0]
     for (let name in node.unresolvedReferences) {
         let reference = node.unresolvedReferences[name]
-        let foundModules: ast.Expression[] = []
+        let foundModules: ast.Module[] = []
         for (let rootImport of node.imports) {
             let assembly = <ast.Assembly>ancestors[0]
             if (rootImport.children === true) {
-                // let referencedNamespace = rootImport.getReferencedNamespace(node, assembly)
-                // if (referencedNamespace) {
-                //     let variable = referencedNamespace._variables[name]
-                //     if (variable) {
-                //         foundModules.push(variable.value)
-                //     }
-                // }
+                let referencedModule = <ast.Module>assembly.namespaces[rootImport.path.map(x => x.name).join('.')]
+                if (referencedModule) {
+                    let variable = referencedModule._variables[name]
+                    if (variable && variable.value) {
+                        foundModules.push(referencedModule)
+                    }
+                }
 
                 // let checkPath = rootImport.pathString + "." + name
                 // let referencedModule = assembly.namespaces[checkPath]
                 // if (referencedModule != null) {
                 //     foundModules.push(referencedModule)
                 // }
+
             }
         }
 
-        // if (foundModules.length == 0) {
-        //     reference.throwSemanticError(`'${name}' could not be resolved`)
-        // } else if (foundModules.length > 1) {
-        //     reference.throwSemanticError(`'${name}' resolves ambiguously to ${foundModules.map(x => x.name).join(', ')}`)
-        // } else {
-        //     let foundModule = foundModules[0]
-        //     //  add new specific import declaration
-        //     let newImport = new ast.ImportDeclaration({ path: foundModule.path.map(name => new ast.Id({ name })), children: null, as: reference.id, relative: 0 })
-        //     node.imports.push(newImport)
-        //     //  declare new binding
-        //     ImportDeclaration_AddVariableBindings(newImport, ancestors.concat([node]))
-        //     //  remove reference from unresolved
-        //     delete node.unresolvedReferences[name]
-        // }
+        if (foundModules.length == 0) {
+            reference.throwSemanticError(`'${name}' could not be resolved`)
+        } else if (foundModules.length > 1) {
+            reference.throwSemanticError(`'${name}' resolves ambiguously to ${foundModules.map(x => x.name).join(', ')}`)
+        } else {
+            let foundModule = foundModules[0]
+            //  add new specific import declaration
+            let newImport = new ast.ImportDeclaration({ path: foundModule.path.map(name => new ast.Id({ name })).concat(reference.id), children: null, as: reference.id, relative: 0 })
+            node.imports.push(newImport)
+            //  declare new binding
+            ImportDeclaration_AddVariableBindings(newImport, ancestors.concat([node]))
+            //  remove reference from unresolved
+            delete node.unresolvedReferences[name]
+        }
     }
     //  finally, remove all wildcard imports
     for (let i = node.imports.length - 1; i >= 0; i--) {
@@ -129,12 +132,12 @@ const Module_UnresolvedReferencesResolve = (node: ast.Module, ancestors: object[
 //     }
 // }
 
-// const Assembly_ModulePathInit = (node:ast.Assembly) => {
-//     for (let modulePath in node.namespaces) {
-//         let module = node.namespaces[modulePath]
-//         module.path = modulePath.split('.')
-//     }
-// }
+const Assembly_ModulePathInit = (node:ast.Assembly) => {
+    for (let modulePath in node.namespaces) {
+        let module = node.namespaces[modulePath]
+        module.path = modulePath.split('.')
+    }
+}
 
 const Module_FlattenImportDeclarations = (node: ast.Module) => {
     let rootImports: ast.ImportDeclaration[] = []
@@ -196,8 +199,8 @@ function filterAllNodes(node: any, filter: (object: any) => any) {
     return node
 }
 let ancestorMap = new Map<ast.Expression,object[]>()
-const Node_AddDependenciesToModule = (node: any, ancestors: object[], path: string[]) => {
-    let module = <ast.Module>ancestors[0]
+const Node_AddDependenciesToAssembly = (node: any, ancestors: object[], path: string[]) => {
+    let module = <ast.Assembly>ancestors[0]
     if (ast.isExpression(node)) {
         // we only need to store ancestors IF the node has a simplify method
         if (node.simplify)
@@ -212,7 +215,7 @@ const Node_AddDependenciesToModule = (node: any, ancestors: object[], path: stri
         }
     }
 }
-const _Module_ToposortTypes = (node: ast.Module) => {
+const _Assembly_ToposortTypes = (node: ast.Assembly) => {
     let deps = node._expressionDependencies
     let sortedDeps = toposort(deps)
     // now we must simplify all references
@@ -230,23 +233,96 @@ const _Module_ToposortTypes = (node: ast.Module) => {
     // now replace all old expressions with new simplified values
     filterAllNodes(node, filter)
 
+    ancestorMap.clear()
+
     delete node._expressionDependencies
+}
+
+const Module_ConvertImportsToCanonicalReferences = (node: ast.Module, ancestors: object[]) => {
+    for (let importDeclaration of node.imports) {
+        let path = importDeclaration.path.map(x => x.name).join('.')
+        let as = importDeclaration.as
+        if (as == null)
+            importDeclaration.throwSemanticError("As should be defined by now")
+        node.declarations.unshift(new ast.VariableDeclaration({id:as,value:new ast.CanonicalReference(path)}))
+    }
+    // now remove all imports
+    node.imports = []
+}
+
+const Module_AddCanonicalReferences = (node: ast.Module, ancestors: object[]) => {
+    function addCanonicalReference(declaration: ast.Declaration, addName: boolean = true) {
+        let variableBinding = node.getVariable(ancestors, declaration.id.name)
+        if (variableBinding == null) {
+            return node.throwSemanticError("Variable for declaration: " + declaration.id.name + " not found")
+        }
+        let path = node.path.join('.')
+        if (addName)
+            path += '.' + declaration.id.name
+        variableBinding.canonicalId = path
+    }
+    for (let declaration of node.declarations) {
+        addCanonicalReference(declaration)
+    }
+    if (Array.isArray(node.exports)) {
+        for (let declaration of node.exports) {
+            addCanonicalReference(declaration)
+        }
+    } else {
+        addCanonicalReference(node.exports, false)
+    }
+}
+
+const __Reference_ConvertToCanonicalReference = (node: ast.Reference, ancestors: object[]) => {
+    let variableBinding = node.getVariable(ancestors, node.id.name)
+    if (variableBinding && variableBinding.canonicalId) {
+        return new ast.CanonicalReference(variableBinding.canonicalId)
+    }
+    return node
+}
+
+let extractValues: { [name: string]: ast.Expression } = {}
+const VariableDeclaration_ClassDeclaration_ExtractValues = (node: ast.Declaration, ancestors: object[]) => {
+    let variable = node.getVariable(ancestors, node.id.name)
+    if (variable && variable.canonicalId) {
+        console.log('VariableDeclaration_ClassDeclaration_ExtractValues', variable.canonicalId)
+
+        if (node.value == null) {
+            node.throwSemanticError("missing value")
+            return
+        }
+        extractValues[variable.canonicalId] = node.value
+    }
+}
+
+const __Assembly_ConvertToIrt = (node: ast.Assembly) => {
+    let irtAssembly = new irt.Assembly({values:extractValues})
+    extractValues = {}
+    return irtAssembly
 }
 
 export const passes = [
     //  Phase 0: initialization and adding variable bindings
     [Module_FlattenImportDeclarations],
     [ImportDeclaration_AddVariableBindings, ClassDeclaration_AddVariableBindings, VariableDeclaration_AddVariableBindings, Parameter_AddVariableBindings, ForInStatement_AddVariableBindings, Namespace_AddVariableBindings],
+    [Assembly_ModulePathInit],
     //  Phase 1: check for unresolved references
     [Module_ImportsRelativeToAbsolute, Reference_CheckIfUnresolvedAndAddToModule],
     //  Phase 2: attempt to simplify references
-    // [Module_UnresolvedReferencesResolve, Module_ImportsResolveToModules],
+    [Module_UnresolvedReferencesResolve],
+    // [Module_ImportsResolveToModules],
+    [Module_ConvertImportsToCanonicalReferences],
+    [Module_AddCanonicalReferences],
+    [__Reference_ConvertToCanonicalReference],
+
+    //  Convert to Intermediate Representation
+    [VariableDeclaration_ClassDeclaration_ExtractValues, __Assembly_ConvertToIrt]
 
     //  Prepare for converstion to IRT
     // [Module_AddPublicPathToExports],
     // [Module_DebugValues]
     //  Phase 3: Type calculation
-    [Node_AddDependenciesToModule, _Module_ToposortTypes],
+    // [Node_AddDependenciesToAssembly, _Assembly_ToposortTypes],
 
     //  Phase 4: check semantic validity
     // [AssignmentStatement_CheckAssignable]
