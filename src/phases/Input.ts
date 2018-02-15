@@ -285,8 +285,6 @@ let extractValues: { [name: string]: ast.Expression } = {}
 const VariableDeclaration_ClassDeclaration_ExtractValues = (node: ast.Declaration, ancestors: object[]) => {
     let variable = node.getVariable(ancestors, node.id.name)
     if (variable && variable.canonicalId) {
-        console.log('VariableDeclaration_ClassDeclaration_ExtractValues', variable.canonicalId)
-
         if (node.value == null) {
             node.throwSemanticError("missing value")
             return
