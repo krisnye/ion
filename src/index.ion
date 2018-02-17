@@ -361,6 +361,17 @@ export const
         deserialize.extractType = extractType
         deserialize.convertType = convertType
         return deserialize
+    reactive = (fn) ->
+        let state = {}
+        # todo: deep on do call...
+        let patchResult = (intermediateResult) ->
+            let diff = ion.patch.diff(state.result, intermediateResult)
+            if diff isnt undefined
+                state.result = ion.patch(state.result, diff)
+        return template (arg) ->
+            let intermediateResult = fn(deep arg)
+            patchResult(deep intermediateResult)
+            return state.result
     test =
         defineClass: ->
             const Foo = defineClass(
@@ -403,25 +414,15 @@ for name in ["runtime", "compiler", "builder", "browser"]
     do (name) ->
         Object.defineProperty(exports, name, {enumerable: true, get: -> require("./" + name)})
 
-# define custom reactive function on function.
-Object.defineProperty(
-    Function.prototype
-    'reactive'
-    {}
-        configurable: true
-        get: ->
-            let fn = this
-            let state = {}
-            # todo: deep on do call...
-            let patchResult = (intermediateResult) ->
-                let diff = ion.patch.diff(state.result, intermediateResult)
-                if diff isnt undefined
-                    state.result = ion.patch(state.result, diff)
-            return template (arg) ->
-                let intermediateResult = fn(deep arg)
-                patchResult(deep intermediateResult)
-                return state.result
-)
+# # define custom reactive function on function.
+# Object.defineProperty(
+#     Function.prototype
+#     'reactive'
+#     {}
+#         configurable: true
+#         get: ->
+
+# )
 
 # if window, then on resize, check for changes
 if global.window?
