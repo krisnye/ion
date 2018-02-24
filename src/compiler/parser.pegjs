@@ -270,8 +270,8 @@ multilineArgumentsNested
 multilineArgumentsIndented
     =   "(..)" indent eol args:multilineArgumentsBlock outdent { return args}
 multilineArgumentsBlock
-    = (_ arg:Expression eol { return arg })+
-    / start:start properties:(_ property:PropertyDeclaration eol { return property })+ end:end
+    = (_ arg:Expression (eol / ",") { return arg })+
+    / start:start properties:(_ property:PropertyDeclaration (eol / ",") { return property })+ end:end
         { return [node("ObjectExpression", {properties:properties}, start, end)] }
 MultilineCallExpression = start:start callee:InlineExpression args:multilineArguments end:end
     {
