@@ -312,7 +312,9 @@ tailCall   = _ existential:("?" {return true})? args:arguments end:end { return 
 tailMember = _ existential:("?" {return true})? "[" _ property:InlineExpression _ "]" end:end { return ["object", node("MemberExpression", {computed:true, object:null, property:property, existential:existential || undefined}), end] }
            / _ existential:("?" {return true})? "." _ property:IdentifierName end:end { return ["object", node("MemberExpression", {computed:false, object:null, property:property, existential:existential || undefined}), end] }
 arguments = inlineArguments / multilineArguments
-inlineArguments = "(" a:argumentList? ")" { return a ? a : [] }
+inlineArguments = inlineArgmentsList / inlineArgumentsObject
+inlineArgmentsList = "(" a:argumentList? ")" { return a ? a : [] }
+inlineArgumentsObject = "(" start:start a:propertyAssignmentList end:end ")"  { return [node("ObjectExpression", {properties:a || []}, start, end)] }
 argumentList = a:Expression b:(_ "," _ c:Expression {return c})* { return [a].concat(b) }
 
 MemberExpression = start:start head:(DoExpression / ImportExpression / FunctionExpression / NewExpression / PrimaryExpression) tail:(tailMember)* { return leftAssociateCallsOrMembers(start, head, tail) }

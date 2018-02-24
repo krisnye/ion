@@ -5,3 +5,5 @@
 #             null
 #             [i *i for i in range(10)]
 #         assert max is 81
+
+#         console.log(a:10,b:20)
