@@ -1,19 +1,19 @@
 # export const
 #     test = ->
-#         let max = Math.max.apply(..)
+#         assert 81 is Math.max.apply(..)
 #             null
 #             [i * i for let i = 0; i < 10; i++]
-#         assert max is 81
 
-#         let min = Math.min(..)
+#         assert 1 is Math.min(..)
 #             9, 8, 7
 #             6, 5, 4
 #             3, 2, 1
-#         assert min is 1
 
-#         let foo = (x) ->
-#             assert JSON.stringify(x) is JSON.stringify(a:10, b:20)
-#         foo(..)
+#         assert JSON.stringify(a:10, b:20) is JSON.stringify(..)
 #             a: 10, b: 20
 
 #         assert JSON.stringify(a: 10, b: 20) is JSON.stringify({a: 10, b: 20})
+
+#         let foo = ""
+#             {{1}}
+#         assert foo[0] is '1'

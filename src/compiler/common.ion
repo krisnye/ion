@@ -21,8 +21,13 @@ export const
         return joinLines(lines)
     getMinIndent = (lines, regex) ->
         let minIndent = Number.MAX_VALUE
-        for line in lines
-            if typeof line is 'string' and not isEmpty(line)
+        for let i = 0; i < lines.length; i++
+            let line = lines[i]
+            let next = lines[i + 1]
+            # If a string is followed by an object, it should be considered part of that string and it shouldn't be considered empty.
+            # This was causing issues when all lines in a string template began with a string interpolation.
+            # Returning Number.MAX_VALUE caused the parser to create a VERY large string to search for and replace when unindenting.
+            if typeof line is 'string' and (not isEmpty(line) or typeof next is 'object')
                 minIndent = Math.min(minIndent, getIndent(line, regex))
         return minIndent
     unindentLines = (lines) ->
