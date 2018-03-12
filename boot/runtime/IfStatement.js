@@ -45,7 +45,7 @@ var IfStatement = ion.defineClass({
             },
             deactivate: function () {
                 IfStatement.super.prototype.deactivate.apply(this, arguments);
-                this.unobserve();
+                this.unobserve != null ? this.unobserve() : void 0;
                 if (this.alternateStatement != null ? this.alternateStatement.isActive : void 0) {
                     this.alternateStatement != null ? this.alternateStatement.deactivate() : void 0;
                     this.alternateStatement = null;

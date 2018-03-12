@@ -47,7 +47,6 @@
         requestAnimationFrame(ion.sync);
     };
     window.addEventListener('hashchange', syncOnRefresh);
-    window.addEventListener('transitionstart', syncOnRefresh);
     window.addEventListener('transitionend', syncOnRefresh);
     window.document.addEventListener('keypress', syncOnRefresh);
     window.document.addEventListener('keydown', syncOnRefresh);

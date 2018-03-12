@@ -111,7 +111,7 @@ module.exports = exports =
         input = source.read()
         filename = source.path
 
-        cs = require 'coffee-script'
+        cs = require 'coffeescript'
         try
             # console.log "Compile: #{filename}"
             compiled = cs.compile input, options = {bare: true}

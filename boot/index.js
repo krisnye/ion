@@ -92,6 +92,9 @@ var valueTypes = {
 var freeze = exports.freeze = function (object, deep) {
         if (deep == null)
             deep = true;
+        if (Object.isFrozen(object)) {
+            return object;
+        }
         Object.freeze(object);
         if (deep) {
             for (var key in object) {
@@ -200,26 +203,31 @@ var freeze = exports.freeze = function (object, deep) {
             }
         }
         return context.createRuntime(ast);
-    }, clone = exports.clone = function (object, _deep) {
+    }, clone = exports.clone = function (object, _deep, depth) {
         if (_deep == null)
             _deep = false;
-        if (Array.isArray(object)) {
-            var _ref = [];
-            for (var _i2 = 0; _i2 < object.length; _i2++) {
-                var item = object[_i2];
-                _ref.push(_deep ? clone(item, _deep) : item);
-            }
-            return _ref;
-        } else if ((object != null ? object.constructor : void 0) === Object) {
-            var _ref3 = {};
-            for (var key in object) {
-                var value = object[key];
-                _ref3[key] = _deep ? clone(value, _deep) : value;
-            }
-            return _ref3;
-        } else {
+        if (depth == null)
+            depth = 0;
+        if (object === null || typeof object !== 'object') {
             return object;
         }
+        if (depth >= 50) {
+            console.log('this is too deep, debug it');
+            debugger;
+        }
+        var copy = Array.isArray(object) ? [] : {};
+        if (_deep) {
+            for (var k in object) {
+                var v = object[k];
+                copy[k] = clone(v, true, depth + 1);
+            }
+        } else {
+            for (var k in object) {
+                var v = object[k];
+                copy[k] = v;
+            }
+        }
+        return copy;
     }, observe = exports.observe = function (object, observer, options) {
         if (object === global || object === console || isValueType(object)) {
             return noop;
@@ -275,7 +283,7 @@ var freeze = exports.freeze = function (object, deep) {
             }
             item = function () {
                 originalItem.apply(this, arguments);
-                sync();
+                sync(name);
             };
             container.addEventListener(name, item, capture);
             remove = function () {
@@ -407,18 +415,20 @@ var freeze = exports.freeze = function (object, deep) {
         });
     }, serialize = exports.serialize = function (object) {
         return JSON.stringify(object);
-    }, deserialize = exports.deserialize = function () {
+    }, typeKey = exports.typeKey = '$', deserialize = exports.deserialize = function () {
         var extractType = function (object, namespace) {
             if (!(object != null)) {
                 return null;
             }
-            var typeKey = require('./Object').typeKey;
             var typeName = object[typeKey];
             if (!(typeName != null)) {
                 return null;
             }
             typeName = typeName.split(/\//g).pop();
             var type = namespace[typeName];
+            if (!(type != null)) {
+                throw new Error('Type not found: ' + typeName);
+            }
             if (!type.serializable) {
                 throw new Error('Type is not serializable: ' + typeName);
             }
@@ -432,7 +442,7 @@ var freeze = exports.freeze = function (object, deep) {
                 for (var k in values) {
                     var v = values[k];
                     var property = type.properties != null ? type.properties[k] : void 0;
-                    if (!((property != null ? property.get : void 0) != null)) {
+                    if (!((property != null ? property.get : void 0) != null) || (property != null ? property.set : void 0) != null) {
                         object[k] = v;
                     }
                 }
@@ -454,7 +464,277 @@ var freeze = exports.freeze = function (object, deep) {
         deserialize.extractType = extractType;
         deserialize.convertType = convertType;
         return deserialize;
-    }(), test = exports.test = {
+    }(), reactive = exports.reactive = function (fn) {
+        var state = {};
+        var patchResult = function (intermediateResult) {
+            var diff = ion.patch.diff(state.result, intermediateResult);
+            if (diff !== void 0) {
+                state.result = ion.patch(state.result, diff);
+            }
+        };
+        return ion.template(function (arg) {
+            return ion.createRuntime({
+                type: 'Template',
+                id: null,
+                body: [
+                    {
+                        type: 'VariableDeclaration',
+                        declarations: [{
+                                type: 'VariableDeclarator',
+                                id: {
+                                    type: 'Identifier',
+                                    name: 'intermediateResult',
+                                    loc: {
+                                        start: {
+                                            line: 372,
+                                            column: 16,
+                                            fixed: true,
+                                            source: 'ion/index.ion'
+                                        },
+                                        end: {
+                                            line: 372,
+                                            column: 34,
+                                            fixed: true,
+                                            source: 'ion/index.ion'
+                                        }
+                                    }
+                                },
+                                init: {
+                                    type: 'CallExpression',
+                                    callee: {
+                                        type: 'Identifier',
+                                        name: 'fn',
+                                        loc: {
+                                            start: {
+                                                line: 372,
+                                                column: 37,
+                                                fixed: true,
+                                                source: 'ion/index.ion'
+                                            },
+                                            end: {
+                                                line: 372,
+                                                column: 39,
+                                                fixed: true,
+                                                source: 'ion/index.ion'
+                                            }
+                                        }
+                                    },
+                                    arguments: [{
+                                            type: 'Identifier',
+                                            name: 'arg',
+                                            loc: {
+                                                start: {
+                                                    line: 372,
+                                                    column: 45,
+                                                    fixed: true,
+                                                    source: 'ion/index.ion'
+                                                },
+                                                end: {
+                                                    line: 372,
+                                                    column: 48,
+                                                    fixed: true,
+                                                    source: 'ion/index.ion'
+                                                }
+                                            },
+                                            deep: true
+                                        }],
+                                    loc: {
+                                        start: {
+                                            line: 372,
+                                            column: 37,
+                                            fixed: true,
+                                            source: 'ion/index.ion'
+                                        },
+                                        end: {
+                                            line: 372,
+                                            column: 49,
+                                            fixed: true,
+                                            source: 'ion/index.ion'
+                                        }
+                                    }
+                                }
+                            }],
+                        kind: 'let',
+                        order: '0'
+                    },
+                    {
+                        type: 'ExpressionStatement',
+                        expression: {
+                            type: 'CallExpression',
+                            callee: {
+                                type: 'Identifier',
+                                name: 'patchResult',
+                                loc: {
+                                    start: {
+                                        line: 373,
+                                        column: 12,
+                                        fixed: true,
+                                        source: 'ion/index.ion'
+                                    },
+                                    end: {
+                                        line: 373,
+                                        column: 23,
+                                        fixed: true,
+                                        source: 'ion/index.ion'
+                                    }
+                                }
+                            },
+                            arguments: [{
+                                    type: 'Identifier',
+                                    name: 'intermediateResult',
+                                    loc: {
+                                        start: {
+                                            line: 373,
+                                            column: 29,
+                                            fixed: true,
+                                            source: 'ion/index.ion'
+                                        },
+                                        end: {
+                                            line: 373,
+                                            column: 47,
+                                            fixed: true,
+                                            source: 'ion/index.ion'
+                                        }
+                                    },
+                                    deep: true
+                                }],
+                            loc: {
+                                start: {
+                                    line: 373,
+                                    column: 12,
+                                    fixed: true,
+                                    source: 'ion/index.ion'
+                                },
+                                end: {
+                                    line: 373,
+                                    column: 48,
+                                    fixed: true,
+                                    source: 'ion/index.ion'
+                                }
+                            }
+                        },
+                        loc: {
+                            start: {
+                                line: 373,
+                                column: 12,
+                                fixed: true,
+                                source: 'ion/index.ion'
+                            },
+                            end: {
+                                line: 373,
+                                column: 48,
+                                fixed: true,
+                                source: 'ion/index.ion'
+                            }
+                        },
+                        order: '1'
+                    },
+                    {
+                        type: 'ReturnStatement',
+                        argument: {
+                            type: 'MemberExpression',
+                            computed: false,
+                            object: {
+                                type: 'Identifier',
+                                name: 'state',
+                                loc: {
+                                    start: {
+                                        line: 374,
+                                        column: 19,
+                                        fixed: true,
+                                        source: 'ion/index.ion'
+                                    },
+                                    end: {
+                                        line: 374,
+                                        column: 24,
+                                        fixed: true,
+                                        source: 'ion/index.ion'
+                                    }
+                                }
+                            },
+                            property: {
+                                type: 'Identifier',
+                                name: 'result',
+                                loc: {
+                                    start: {
+                                        line: 374,
+                                        column: 25,
+                                        fixed: true,
+                                        source: 'ion/index.ion'
+                                    },
+                                    end: {
+                                        line: 374,
+                                        column: 31,
+                                        fixed: true,
+                                        source: 'ion/index.ion'
+                                    }
+                                }
+                            },
+                            loc: {
+                                start: {
+                                    line: 374,
+                                    column: 19,
+                                    fixed: true,
+                                    source: 'ion/index.ion'
+                                },
+                                end: {
+                                    line: 374,
+                                    column: 31,
+                                    fixed: true,
+                                    source: 'ion/index.ion'
+                                }
+                            }
+                        },
+                        order: '2'
+                    }
+                ],
+                bound: false
+            }, {
+                this: this,
+                arg: arg,
+                state: state,
+                patchResult: patchResult,
+                fn: fn,
+                ion: ion,
+                noop: noop,
+                valueTypes: valueTypes,
+                isValueType: isValueType,
+                primitive: primitive,
+                isPrimitive: isPrimitive,
+                normalizeProperty: normalizeProperty,
+                normalizeProperties: normalizeProperties,
+                variableArgConstructs: variableArgConstructs,
+                observeShim: observeShim,
+                isObjectObservable: isObjectObservable,
+                freeze: freeze,
+                createSortFunction: createSortFunction,
+                runFile: runFile,
+                patch: patch,
+                create: create,
+                setImmediate: setImmediate,
+                requestAnimationFrame: requestAnimationFrame,
+                throttleAnimation: throttleAnimation,
+                template: template,
+                createRuntime: createRuntime,
+                clone: clone,
+                observe: observe,
+                checkForChanges: checkForChanges,
+                sync: sync,
+                nextCheck: nextCheck,
+                bind: bind,
+                add: add,
+                defineProperties: defineProperties,
+                defineClass: defineClass,
+                is: is,
+                makeReactive: makeReactive,
+                serialize: serialize,
+                typeKey: typeKey,
+                deserialize: deserialize,
+                reactive: reactive,
+                test: test
+            }, null);
+        });
+    }, test = exports.test = {
         defineClass: function () {
             var Foo = defineClass({
                     id: 'Foo',
@@ -556,14 +836,14 @@ var freeze = exports.freeze = function (object, deep) {
         }
     };
 {
-    var _ref2 = [
+    var _ref = [
             'runtime',
             'compiler',
             'builder',
             'browser'
         ];
-    for (var _i3 = 0; _i3 < _ref2.length; _i3++) {
-        var name = _ref2[_i3];
+    for (var _i2 = 0; _i2 < _ref.length; _i2++) {
+        var name = _ref[_i2];
         (function (name) {
             Object.defineProperty(exports, name, {
                 enumerable: true,
@@ -574,278 +854,6 @@ var freeze = exports.freeze = function (object, deep) {
         }(name));
     }
 }
-Object.defineProperty(Function.prototype, 'reactive', {
-    get: function () {
-        var fn = this;
-        var state = {};
-        var patchResult = function (intermediateResult) {
-            var diff = ion.patch.diff(state.result, intermediateResult);
-            if (diff !== void 0) {
-                state.result = ion.patch(state.result, diff);
-            }
-        };
-        return ion.template(function (arg) {
-            return ion.createRuntime({
-                type: 'Template',
-                id: null,
-                body: [
-                    {
-                        type: 'VariableDeclaration',
-                        declarations: [{
-                                type: 'VariableDeclarator',
-                                id: {
-                                    type: 'Identifier',
-                                    name: 'intermediateResult',
-                                    loc: {
-                                        start: {
-                                            line: 408,
-                                            column: 20,
-                                            fixed: true,
-                                            source: 'ion/index.ion'
-                                        },
-                                        end: {
-                                            line: 408,
-                                            column: 38,
-                                            fixed: true,
-                                            source: 'ion/index.ion'
-                                        }
-                                    }
-                                },
-                                init: {
-                                    type: 'CallExpression',
-                                    callee: {
-                                        type: 'Identifier',
-                                        name: 'fn',
-                                        loc: {
-                                            start: {
-                                                line: 408,
-                                                column: 41,
-                                                fixed: true,
-                                                source: 'ion/index.ion'
-                                            },
-                                            end: {
-                                                line: 408,
-                                                column: 43,
-                                                fixed: true,
-                                                source: 'ion/index.ion'
-                                            }
-                                        }
-                                    },
-                                    arguments: [{
-                                            type: 'Identifier',
-                                            name: 'arg',
-                                            loc: {
-                                                start: {
-                                                    line: 408,
-                                                    column: 49,
-                                                    fixed: true,
-                                                    source: 'ion/index.ion'
-                                                },
-                                                end: {
-                                                    line: 408,
-                                                    column: 52,
-                                                    fixed: true,
-                                                    source: 'ion/index.ion'
-                                                }
-                                            },
-                                            deep: true
-                                        }],
-                                    loc: {
-                                        start: {
-                                            line: 408,
-                                            column: 41,
-                                            fixed: true,
-                                            source: 'ion/index.ion'
-                                        },
-                                        end: {
-                                            line: 408,
-                                            column: 53,
-                                            fixed: true,
-                                            source: 'ion/index.ion'
-                                        }
-                                    }
-                                }
-                            }],
-                        kind: 'let',
-                        order: '0'
-                    },
-                    {
-                        type: 'ExpressionStatement',
-                        expression: {
-                            type: 'CallExpression',
-                            callee: {
-                                type: 'Identifier',
-                                name: 'patchResult',
-                                loc: {
-                                    start: {
-                                        line: 409,
-                                        column: 16,
-                                        fixed: true,
-                                        source: 'ion/index.ion'
-                                    },
-                                    end: {
-                                        line: 409,
-                                        column: 27,
-                                        fixed: true,
-                                        source: 'ion/index.ion'
-                                    }
-                                }
-                            },
-                            arguments: [{
-                                    type: 'Identifier',
-                                    name: 'intermediateResult',
-                                    loc: {
-                                        start: {
-                                            line: 409,
-                                            column: 33,
-                                            fixed: true,
-                                            source: 'ion/index.ion'
-                                        },
-                                        end: {
-                                            line: 409,
-                                            column: 51,
-                                            fixed: true,
-                                            source: 'ion/index.ion'
-                                        }
-                                    },
-                                    deep: true
-                                }],
-                            loc: {
-                                start: {
-                                    line: 409,
-                                    column: 16,
-                                    fixed: true,
-                                    source: 'ion/index.ion'
-                                },
-                                end: {
-                                    line: 409,
-                                    column: 52,
-                                    fixed: true,
-                                    source: 'ion/index.ion'
-                                }
-                            }
-                        },
-                        loc: {
-                            start: {
-                                line: 409,
-                                column: 16,
-                                fixed: true,
-                                source: 'ion/index.ion'
-                            },
-                            end: {
-                                line: 409,
-                                column: 52,
-                                fixed: true,
-                                source: 'ion/index.ion'
-                            }
-                        },
-                        order: '1'
-                    },
-                    {
-                        type: 'ReturnStatement',
-                        argument: {
-                            type: 'MemberExpression',
-                            computed: false,
-                            object: {
-                                type: 'Identifier',
-                                name: 'state',
-                                loc: {
-                                    start: {
-                                        line: 410,
-                                        column: 23,
-                                        fixed: true,
-                                        source: 'ion/index.ion'
-                                    },
-                                    end: {
-                                        line: 410,
-                                        column: 28,
-                                        fixed: true,
-                                        source: 'ion/index.ion'
-                                    }
-                                }
-                            },
-                            property: {
-                                type: 'Identifier',
-                                name: 'result',
-                                loc: {
-                                    start: {
-                                        line: 410,
-                                        column: 29,
-                                        fixed: true,
-                                        source: 'ion/index.ion'
-                                    },
-                                    end: {
-                                        line: 410,
-                                        column: 35,
-                                        fixed: true,
-                                        source: 'ion/index.ion'
-                                    }
-                                }
-                            },
-                            loc: {
-                                start: {
-                                    line: 410,
-                                    column: 23,
-                                    fixed: true,
-                                    source: 'ion/index.ion'
-                                },
-                                end: {
-                                    line: 410,
-                                    column: 35,
-                                    fixed: true,
-                                    source: 'ion/index.ion'
-                                }
-                            }
-                        },
-                        order: '2'
-                    }
-                ],
-                bound: false
-            }, {
-                this: this,
-                arg: arg,
-                fn: fn,
-                state: state,
-                patchResult: patchResult,
-                ion: ion,
-                noop: noop,
-                valueTypes: valueTypes,
-                isValueType: isValueType,
-                primitive: primitive,
-                isPrimitive: isPrimitive,
-                normalizeProperty: normalizeProperty,
-                normalizeProperties: normalizeProperties,
-                variableArgConstructs: variableArgConstructs,
-                observeShim: observeShim,
-                isObjectObservable: isObjectObservable,
-                freeze: freeze,
-                createSortFunction: createSortFunction,
-                runFile: runFile,
-                patch: patch,
-                create: create,
-                setImmediate: setImmediate,
-                requestAnimationFrame: requestAnimationFrame,
-                throttleAnimation: throttleAnimation,
-                template: template,
-                createRuntime: createRuntime,
-                clone: clone,
-                observe: observe,
-                checkForChanges: checkForChanges,
-                sync: sync,
-                nextCheck: nextCheck,
-                bind: bind,
-                add: add,
-                defineProperties: defineProperties,
-                defineClass: defineClass,
-                is: is,
-                makeReactive: makeReactive,
-                serialize: serialize,
-                deserialize: deserialize,
-                test: test
-            }, null);
-        });
-    }
-});
 if (global.window != null) {
     global.window.addEventListener('resize', sync);
 }

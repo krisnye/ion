@@ -1,14 +1,18 @@
+//!browser
 (function() {
-  var getCompiledCode, modules, normalize, require, resolve, used;
+  var ensureLoaded, getCompiledCode, loaded, modules, normalize, require, resolve, used;
+  // define global if needed.
   if (this.global == null) {
     this.global = (function() {
       return this;
     })();
   }
+  // require already exists.
   if (this.require != null) {
     return;
   }
   used = {};
+  // This provides the require function in the browser
   require = function(path) {
     var i, m, object, originalPath, steps;
     if (path === 'ion/browser/require') {
@@ -45,7 +49,7 @@
       m.id = path;
       m.call(this, m, m.exports, resolve(path));
     }
-    used[path] = true;
+    used[path] = true; // mark as used
     return m.exports;
   };
   modules = {};
@@ -91,12 +95,12 @@
     return modules[path] = fn;
   };
   require.loadAll = function() {
-    var id, _results;
-    _results = [];
+    var id, results1;
+    results1 = [];
     for (id in modules) {
-      _results.push(require(id));
+      results1.push(require(id));
     }
-    return _results;
+    return results1;
   };
   require.getModuleIds = function() {
     return Object.keys(modules);
@@ -112,9 +116,11 @@
       return fn();
     }
   };
+  // this may cache compiled files in session for performance.
   getCompiledCode = function(scriptElement) {
     var compiledCode, compiler, source;
     source = scriptElement.innerHTML;
+    // check session storage if we've already compiled this script.
     compiledCode = sessionStorage.getItem(source);
     if (compiledCode == null) {
       console.log('checking source code, didnt find it, so compiling');
@@ -125,13 +131,15 @@
     return compiledCode;
   };
   require.compileScripts = function() {
-    var compiledCode, compiledWrapper, ion, removeLastResult, result, scriptElement, template, _i, _len, _ref;
+    var compiledCode, compiledWrapper, ion, j, len, ref, removeLastResult, result, scriptElement, template;
     ion = require('ion');
-    _ref = document.querySelectorAll("script[type=ion]");
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      scriptElement = _ref[_i];
+    ref = document.querySelectorAll("script[type=ion]");
+    for (j = 0, len = ref.length; j < len; j++) {
+      scriptElement = ref[j];
+      // we wrap all ion scripts to avoid global variable leaks
       compiledCode = getCompiledCode(scriptElement);
-      compiledWrapper = eval("(function(){ " + compiledCode + " })");
+      compiledWrapper = eval(`(function(){ ${compiledCode} })`);
+      // 'this' is the scriptElement within the scripts scope instead of the window
       result = compiledWrapper.call(scriptElement);
       if (result != null) {
         if (typeof result.template) {
@@ -166,9 +174,16 @@
   } else {
     module.exports = require;
   }
+  // since this is the only code guaranteed to run on loading, we also try to compile script tags here.
   if (global.window != null) {
-    return window.addEventListener('load', function(e) {
-      return require.compileScripts();
-    });
+    loaded = false;
+    ensureLoaded = function() {
+      if (!loaded) {
+        loaded = true;
+        return require.compileScripts();
+      }
+    };
+    window.addEventListener('load', ensureLoaded);
+    return window.addEventListener('WebComponentsReady', ensureLoaded);
   }
 })();

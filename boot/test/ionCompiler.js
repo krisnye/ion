@@ -50,8 +50,11 @@ tests = {
   "console.log([key for key of object if key is cool])": "'use strict';\nlet _ref = [];\nfor (let key in object) {\n    if (key === cool) {\n        _ref.push(key);\n    }\n}\nconsole.log(_ref);",
   "console.log(\n    1\n    2\n    {}\n        x: 1\n        y: 2\n)": "'use strict';\nconsole.log(1, 2, {\n    x: 1,\n    y: 2\n});",
   "let x = ->\n    try\n        foo()\n        bar()\n    catch e\n        baz()": "'use strict';\nlet x = function () {\n    try {\n        foo();\n        bar();\n    } catch (e) {\n        baz();\n    }\n};",
+  // empty comment block statement
   "if foo\n    # bar": "'use strict';\nif (foo) {\n}",
+  // function parameter default values
   "let trim = (a = \"\") -> a.trim()": "'use strict';\nlet trim = function (a) {\n    if (a == null)\n        a = '';\n    return a.trim();\n};",
+  // function call with single property names
   "foo(\n    1\n    2\n)": "'use strict';\nfoo(1, 2);",
   "compile(\n    foo: 1\n    bar: 2\n    baz:\n        a: 1\n        b: 2\n)": "'use strict';\ncompile({\n    foo: 1,\n    bar: 2,\n    baz: {\n        a: 1,\n        b: 2\n    }\n});",
   "let array = [1,2,3]\n    4\n    5\n    6": "'use strict';\nlet array = [\n        1,\n        2,\n        3,\n        4,\n        5,\n        6\n    ];",
@@ -64,6 +67,7 @@ tests = {
   "let self = @\nlet x = @x\nlet y = @.y\nlet z = this.z": "'use strict';\nlet self = this;\nlet x = this.x;\nlet y = this.y;\nlet z = this.z;",
   "let x = {}\n    [key]: value": "'use strict';\nlet x = {};\nx[key] = value;",
   "if foo\n    return {}\n        for key, value of object\n            [key]: value": "'use strict';\nif (foo) {\n    let _ref = {};\n    for (let key in object) {\n        let value = object[key];\n        _ref[key] = value;\n    }\n    return _ref;\n}",
+  // test for syntax errors
   "for x, y, z of foo\n    log(foo)": {
     line: 1,
     column: 11
@@ -93,16 +97,19 @@ tests = {
     line: 2,
     column: 5
   },
+  // make sure we allow variable shadowing
   "let x = 1\nconst double = (x) ->\n    return x": "'use strict';\nlet x = 1;\nconst double = function (x) {\n    return x;\n};",
   "console.log(x)\nif a\n    let x = 1": {
     line: 1,
     column: 13
   },
   "if typeof a is 'string' and void a and delete a.b\n    log(a)": "'use strict';\nif (typeof a === 'string' && void a && delete a.b) {\n    log(a);\n}",
+  // testing error correct location with comments and indents
   "if 1\n    # 1\n    # 2\n    x = 12": {
     line: 4,
     column: 5
   },
+  // testing parsing error correct location
   "export const\n    BlockStatement =\n        isBlock: true\n        newScope: tr ue": {
     line: 4,
     column: 22
@@ -116,6 +123,7 @@ tests = {
   "let object =\n    const double(a) -> a * 2\n    if a\n        [key]: value\n    else\n        foo: double(2)": "'use strict';\nlet object = {};\n{\n    function double(a) {\n        return a * 2;\n    }\n    if (a) {\n        object[key] = value;\n    } else {\n        object.foo = double(2);\n    }\n}",
   "let items = []\n    for key, value of window\n        value": "'use strict';\nlet items = [];\nfor (let key in window) {\n    let value = window[key];\n    items.push(value);\n}",
   "let foo = div()\n    span()\n        'Hello'": "'use strict';\nconst ion = require('ion');\nlet foo = div();\nlet _ref = span();\nion.add(_ref, 'Hello');\nion.add(foo, _ref);",
+  // we don't auto import ion if the user already declares an ion variable
   "const ion = import './'\nlet foo = div()\n    span()\n        'Hello'": "'use strict';\nconst ion = require('./');\nlet foo = div();\nlet _ref = span();\nion.add(_ref, 'Hello');\nion.add(foo, _ref);",
   "const translate({x,y}) ->\n    x++\n    y++\n    return {x,y}": "'use strict';\nfunction translate(_ref) {\n    let x = _ref.x;\n    let y = _ref.y;\n    x++;\n    y++;\n    return {\n        x: x,\n        y: y\n    };\n}",
   "let x = foo(\n    ''\n        multiline string literal\n    \"\"\n        multiline string template\n)": "'use strict';\nlet x = foo('multiline string literal', 'multiline string template');",
@@ -143,6 +151,10 @@ tests = {
     line: 3,
     column: 5
   },
+  // """
+  // # cannot use => syntax in templates
+  // export template => 0
+  // """: {line: 2, column: 8}
   "export template ->\n    const x = 12\n    # cannot assign to const variables, make sure enforced within template\n    x = 10\n    return x": {
     line: 4,
     column: 5
@@ -176,6 +188,12 @@ tests = {
   "output\n    for a in b\n        [c]: d": "'use strict';\nlet _ref = output;\nfor (let _i = 0; _i < b.length; _i++) {\n    let a = b[_i];\n    _ref[c] = d;\n}\n_ref;",
   "#\n#\n\n#": "'use strict';",
   "[a for a in b]\n[a for a in c]": "'use strict';\nlet _ref = [];\nfor (let _i = 0; _i < b.length; _i++) {\n    let a = b[_i];\n    _ref.push(a);\n}\n_ref;\nlet _ref2 = [];\nfor (let _i2 = 0; _i2 < c.length; _i2++) {\n    let a = c[_i2];\n    _ref2.push(a);\n}\n_ref2;",
+  // """
+  // let text = ""
+  //     foo
+  //     // #bar
+  //     #baz
+  // """: null
   "let array = []\n    1, 0, 0\n    0, 1, 0\n    0, 0, 1": "'use strict';\nlet array = [\n        1,\n        0,\n        0,\n        0,\n        1,\n        0,\n        0,\n        0,\n        1\n    ];",
   "import(foo).bar": "'use strict';\nrequire(foo).bar;",
   "let x = []\n    ->": "'use strict';\nlet x = [function () {\n        }];",
@@ -183,6 +201,59 @@ tests = {
   "return\n    style:\n        fontSize: \"0.7em\"\n    \"delete\"": "'use strict';\nconst ion = require('ion');\nlet _ref = {};\n{\n    _ref.style = ion.patch.combine(_ref.style, { fontSize: '0.7em' });\n    ion.add(_ref, 'delete');\n}\nreturn _ref;"
 };
 
+// """
+// content:
+//     name: 'foo'
+//     1
+//     2
+// """: """
+// 'use strict';
+// const ion = require('ion');
+// {
+//     content.name = 'foo';
+//     ion.add(content, 1);
+//     ion.add(content, 2);
+// }
+// """
+// """
+// for name, file of directory
+//     write(name, file)
+// else
+//     delete(name)
+// """: """
+// 'use strict';
+// for (let name in directory) {
+//     let file = directory[name];
+//     write(name, file);
+// }
+// """
+// # """
+// # Point
+// #     x: 10
+// #     y: delete
+// # """: null
+// """
+// foo(
+//     bar()
+//     baz(
+//         1
+//         2
+//     )
+// )
+// """: """
+// 'use strict';
+// foo(bar(), baz(1, 2));
+// """
+// # the following is similar to input from a script tag.
+// "\n            console.log('ion')": """
+// 'use strict';
+// console.log('ion');
+// """
+// # """
+// # let a = template ->
+// #     let b = template -> 1
+// #     return 2
+// # """: null
 if (global.window != null) {
   return;
 }
@@ -211,28 +282,30 @@ exports.test = function() {
         loc: loc
       }, options)));
     } else if (typeof expected === 'object') {
+      // expected to throw an error
       error = null;
       try {
         index.compile(input, options);
-      } catch (_error) {
-        e = _error;
+      } catch (error1) {
+        e = error1;
         error = e;
+// check equivalent fields
         for (key in expected) {
           value = expected[key];
           if (value !== e[key]) {
-            throw new Error("\n" + (JSON.stringify(e)) + "\n!=\n" + (JSON.stringify(expected)));
+            throw new Error(`\n${JSON.stringify(e)}\n!=\n${JSON.stringify(expected)}`);
           }
         }
       }
       if (error == null) {
-        throw new Error("Expected an error: " + (JSON.stringify(expected)));
+        throw new Error(`Expected an error: ${JSON.stringify(expected)}`);
       }
     } else {
       output = index.compile(input, options);
       if (output.trim() !== expected.trim()) {
         console.log('-Output---------------------------------------------');
         console.log(output);
-        throw new Error("\n" + output + "\n!=\n" + expected);
+        throw new Error(`\n${output}\n!=\n${expected}`);
       }
     }
   }

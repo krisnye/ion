@@ -4,7 +4,7 @@ var Expression = ion.defineClass({
         name: 'Expression',
         properties: {
             mutable: true,
-            observe: function (callback) {
+            observe: function (callback, dependentExpression) {
             }
         }
     }, require('./Node'));

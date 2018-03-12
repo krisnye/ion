@@ -12,6 +12,10 @@ np = require('path');
 
 util = require('./utility');
 
+// watches a directory recursively for file changes
+// will call the listener once for each matching file
+// immediately and then whenever
+// files are changed, deleted or created
 exports.watchDirectory = function(dirname, options, listener) {
   var filter, fsListener, initial, notifyListener, unwatchFile, watchFile, watchedFiles;
   if (listener == null) {
@@ -27,6 +31,7 @@ exports.watchDirectory = function(dirname, options, listener) {
   if (options.recursive == null) {
     options.recursive = true;
   }
+  // change message for initial pass. Use false for no initial pass.
   if (options.initial == null) {
     options.initial = 'initial';
   }
@@ -40,11 +45,8 @@ exports.watchDirectory = function(dirname, options, listener) {
       return util.isMatch(name, options.include, true);
     }
   };
-  watchedFiles = {};
-  notifyListener = function(filename, curr, prev, change, async) {
-    if (async == null) {
-      async = false;
-    }
+  watchedFiles = {}; // filename => bound listener
+  notifyListener = function(filename, curr, prev, change, async = false) {
     if (filter(filename)) {
       if (async) {
         return ion.setImmediate(function() {
@@ -59,6 +61,7 @@ exports.watchDirectory = function(dirname, options, listener) {
     var change;
     change = curr.nlink === 0 ? 'deleted' : prev.nlink === 0 ? 'created' : 'modified';
     notifyListener(filename, curr, prev, change);
+    // we call watchFile again in case children were added
     if (change !== 'deleted') {
       return watchFile(filename, depth, curr);
     } else {
@@ -70,22 +73,21 @@ exports.watchDirectory = function(dirname, options, listener) {
     delete watchedFiles[filename];
     return allWatchers[filename]--;
   };
-  watchFile = function(filename, depth, stats) {
-    var boundListener, child, _i, _len, _ref;
-    if (depth == null) {
-      depth = 0;
-    }
+  watchFile = function(filename, depth = 0, stats) {
+    var boundListener, child, i, len, ref;
     if (fs.existsSync(filename)) {
       if (stats == null) {
         stats = fs.statSync(filename);
       }
       if (stats.nlink > 0) {
         if (stats.isDirectory()) {
+          // also watch all children
+          // exclude directories in exclude list
           if (!util.isMatch(filename, options.exclude, false)) {
             if (depth === 0 || options.recursive) {
-              _ref = fs.readdirSync(filename);
-              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                child = _ref[_i];
+              ref = fs.readdirSync(filename);
+              for (i = 0, len = ref.length; i < len; i++) {
+                child = ref[i];
                 child = np.join(filename, child);
                 watchFile(child, depth + 1);
               }
@@ -110,13 +112,18 @@ exports.watchDirectory = function(dirname, options, listener) {
   initial = options.initial;
   watchFile(dirname);
   initial = 'created';
-  return function() {
-    var key, _results;
-    _results = [];
+  return function() {    // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+    // console.log(JSON.stringify(allWatchers, null, '  '))
+    // console.log("================" + fs.setMaxListeners)
+    // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+
+    // return a function that will unwatch all watched files
+    var key, results;
+    results = [];
     for (key in watchedFiles) {
-      _results.push(unwatchFile(key));
+      results.push(unwatchFile(key));
     }
-    return _results;
+    return results;
   };
 };
 

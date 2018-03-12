@@ -123,11 +123,6 @@ var createHtmlInserter = function (container) {
                     capture = true;
                     name = name.substring(0, name.length - captureSuffix.length);
                 }
-                var originalValue = value;
-                value = function () {
-                    originalValue.apply(this, arguments);
-                    ion.sync();
-                };
                 value.id = name;
                 value.capture = capture;
             } else if (!isNode(value)) {
@@ -140,11 +135,13 @@ var createHtmlInserter = function (container) {
         },
         add: function (value, index, sourceNode) {
             if (typeof value === 'function') {
-                value.wrapper = value.wrapper != null ? value.wrapper : function () {
-                    value.apply(this, arguments);
-                    ion.sync();
-                };
-                container.addEventListener(value.id, value.wrapper, value.capture);
+                if (value.toString().indexOf('ion.sync') < 0) {
+                    value.wrapper = value.wrapper != null ? value.wrapper : function () {
+                        value.apply(this, arguments);
+                        ion.sync(value.id != null ? value.id : value.name);
+                    };
+                }
+                container.addEventListener(value.id, value.wrapper != null ? value.wrapper : value, value.capture);
             } else {
                 if (global.Polymer) {
                     var polymerContainer = Polymer.dom(container);
@@ -170,13 +167,13 @@ var createHtmlInserter = function (container) {
         },
         remove: function (index, value, moving) {
             if (typeof value === 'function') {
-                container.removeEventListener(value.id, value.wrapper);
+                container.removeEventListener(value.id, value.wrapper != null ? value.wrapper : value);
             } else if (!moving) {
                 if (global.Polymer) {
                     var polymerContainer = Polymer.dom(container);
-                    if (value.parentElement === container) {
+                    try {
                         polymerContainer.removeChild(value);
-                    } else {
+                    } catch (e) {
                         if (!warnedOfRemovalBug) {
                             warnedOfRemovalBug = true;
                             console.log('TODO: FIX!!! Polymer error: Cannot remove child. It may not exist anymore/yet.');
@@ -194,6 +191,16 @@ var createHtmlInserter = function (container) {
     };
 };
 var warnedOfRemovalBug = false;
+function isDomAncestor(ancestor, child, debug) {
+    var realAncestor = child;
+    while (realAncestor.parentElement != null) {
+        realAncestor = realAncestor.parentElement;
+        if (realAncestor === ancestor) {
+            return true;
+        }
+    }
+    return false;
+}
 var createOrderManager = function (container) {
     var inserter;
     if (Array.isArray(container)) {

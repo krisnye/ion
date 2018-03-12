@@ -1,6 +1,6 @@
 void (function(){var _ion_Object_ = function(module,exports,require){'use strict';
 var ion = require('./');
-var typeKey = '$';
+var typeKey = ion.typeKey;
 var _ref2 = {};
 {
     _ref2[typeKey] = ion.patch.combine(_ref2[typeKey], {
@@ -19,8 +19,8 @@ var _ref2 = {};
             var _ref = this;
             for (var key in _ref) {
                 var value = _ref[key];
-                if (this.hasOwnProperty(key)) {
-                    var descriptor = this.constructor.properties != null ? this.constructor.properties[key] : void 0;
+                var descriptor = this.constructor.properties != null ? this.constructor.properties[key] : void 0;
+                if ((descriptor != null ? descriptor.serializable : void 0) !== false) {
                     properties[key] = value;
                 }
             }

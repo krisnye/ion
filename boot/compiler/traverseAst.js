@@ -4,13 +4,10 @@ basicTraverse = require('./traverse');
 
 nodes = require('./nodes');
 
-addStatement = require("./astFunctions").addStatement;
+({addStatement} = require("./astFunctions"));
 
-trackVariableDeclaration = function(context, node, kind, name) {
+trackVariableDeclaration = function(context, node, kind, name = node.name) {
   var scope, variable;
-  if (name == null) {
-    name = node.name;
-  }
   scope = context.scope();
   if (scope == null) {
     return;
@@ -31,18 +28,15 @@ trackVariableDeclaration = function(context, node, kind, name) {
   return scope.variables[name] = variable;
 };
 
-trackVariableDeclarations = function(context, node, kind) {
-  var declarator, item, _i, _j, _len, _len1, _ref, _results, _results1;
-  if (kind == null) {
-    kind = 'let';
-  }
+trackVariableDeclarations = function(context, node, kind = 'let') {
+  var declarator, i, item, j, len, len1, ref, results, results1;
   if (Array.isArray(node)) {
-    _results = [];
-    for (_i = 0, _len = node.length; _i < _len; _i++) {
-      item = node[_i];
-      _results.push(trackVariableDeclarations(context, item, kind));
+    results = [];
+    for (i = 0, len = node.length; i < len; i++) {
+      item = node[i];
+      results.push(trackVariableDeclarations(context, item, kind));
     }
-    return _results;
+    return results;
   } else {
     if (node.type === 'FunctionDeclaration') {
       kind = 'const';
@@ -51,20 +45,20 @@ trackVariableDeclarations = function(context, node, kind) {
       }
     } else if (node.type === 'VariableDeclaration') {
       kind = node.kind;
-      _ref = node.declarations;
-      _results1 = [];
-      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-        declarator = _ref[_j];
-        _results1.push(trackVariableDeclarations(context, declarator.id, kind));
+      ref = node.declarations;
+      results1 = [];
+      for (j = 0, len1 = ref.length; j < len1; j++) {
+        declarator = ref[j];
+        results1.push(trackVariableDeclarations(context, declarator.id, kind));
       }
-      return _results1;
+      return results1;
     } else if (node.type === "Identifier") {
       return trackVariableDeclaration(context, node, kind);
     } else if (node.type === "ObjectPattern") {
       return basicTraverse.traverse(node, function(child, newContext) {
-        var name, _ref1;
+        var name, ref1;
         if ((child.key != null) && (child.value != null)) {
-          name = (_ref1 = child.key.value) != null ? _ref1 : child.key.name;
+          name = (ref1 = child.key.value) != null ? ref1 : child.key.name;
           trackVariableDeclaration(context, child, kind, name);
           return newContext.skip();
         }
@@ -83,7 +77,7 @@ trackVariableDeclarations = function(context, node, kind) {
 exports.traverse = function(program, enterCallback, exitCallback, variableCallback, previousContext) {
   var ourEnter, ourExit;
   ourEnter = function(node, context) {
-    var nodeInfo, _ref, _ref1, _ref2;
+    var nodeInfo, ref, ref1, ref2;
     if (context.variableCallback == null) {
       context.variableCallback = variableCallback;
     }
@@ -100,10 +94,10 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     }
     if (context.getAncestor == null) {
       context.getAncestor = function(predicate) {
-        var ancestor, _i, _ref;
-        _ref = this.ancestorNodes;
-        for (_i = _ref.length - 1; _i >= 0; _i += -1) {
-          ancestor = _ref[_i];
+        var ancestor, i, ref;
+        ref = this.ancestorNodes;
+        for (i = ref.length - 1; i >= 0; i += -1) {
+          ancestor = ref[i];
           if (predicate(ancestor)) {
             return ancestor;
           }
@@ -133,8 +127,8 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     }
     if (context.isParentBlock == null) {
       context.isParentBlock = function() {
-        var _ref, _ref1, _ref2;
-        return (_ref = (_ref1 = nodes[(_ref2 = this.parentNode()) != null ? _ref2.type : void 0]) != null ? _ref1.isBlock : void 0) != null ? _ref : false;
+        var ref, ref1, ref2;
+        return (ref = (ref1 = nodes[(ref2 = this.parentNode()) != null ? ref2.type : void 0]) != null ? ref1.isBlock : void 0) != null ? ref : false;
       };
     }
     if (context.getVariableInfo == null) {
@@ -143,14 +137,11 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
       };
     }
     if (context._variableCounts == null) {
-      context._variableCounts = (_ref = previousContext != null ? previousContext._variableCounts : void 0) != null ? _ref : {};
+      context._variableCounts = (ref = previousContext != null ? previousContext._variableCounts : void 0) != null ? ref : {};
     }
     if (context.getNewInternalIdentifier == null) {
-      context.getNewInternalIdentifier = function(prefix) {
+      context.getNewInternalIdentifier = function(prefix = '_ref') {
         var count, counts, name;
-        if (prefix == null) {
-          prefix = '_ref';
-        }
         counts = this._variableCounts;
         count = counts[prefix] != null ? counts[prefix] : counts[prefix] = 1;
         counts[prefix]++;
@@ -163,10 +154,10 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     }
     if (context.getAncestorChildOf == null) {
       context.getAncestorChildOf = function(ancestor) {
-        var index, _ref1;
+        var index, ref1;
         index = this.ancestorNodes.indexOf(ancestor);
         if (index >= 0) {
-          return (_ref1 = this.ancestorNodes[index + 1]) != null ? _ref1 : this.current();
+          return (ref1 = this.ancestorNodes[index + 1]) != null ? ref1 : this.current();
         } else {
           return void 0;
         }
@@ -174,8 +165,8 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     }
     if (context.getSharedVariableId == null) {
       context.getSharedVariableId = function(name) {
-        var _ref1, _ref2;
-        return (_ref1 = (_ref2 = this.getVariableInfo(name)) != null ? _ref2.id : void 0) != null ? _ref1 : this.addVariable({
+        var ref1, ref2;
+        return (ref1 = (ref2 = this.getVariableInfo(name)) != null ? ref2.id : void 0) != null ? ref1 : this.addVariable({
           id: name,
           offset: Number.MIN_VALUE
         });
@@ -183,9 +174,8 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
     }
     if (context.addStatement == null) {
       context.addStatement = function(statement, offset, addToNode) {
-        var _ref1;
         if (typeof statement === 'number') {
-          _ref1 = [offset, statement], statement = _ref1[0], offset = _ref1[1];
+          [statement, offset] = [offset, statement];
         }
         if (addToNode == null) {
           addToNode = this.scope().node;
@@ -220,6 +210,7 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
         if (options.kind == null) {
           options.kind = 'let';
         }
+        // handle patterns.
         variable = {
           type: "VariableDeclaration",
           declarations: [
@@ -235,15 +226,16 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
       };
     }
     context.error = function(message, node) {
-      var e, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+      var e, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8;
       if (node == null) {
         node = this.current();
       }
+      // make sure node has line/column numbers or else search up stack
       e = new Error(message);
-      e.line = (_ref1 = node.loc) != null ? (_ref2 = _ref1.start) != null ? _ref2.line : void 0 : void 0;
-      e.column = ((_ref3 = node.loc) != null ? (_ref4 = _ref3.start) != null ? _ref4.column : void 0 : void 0) + 1;
-      e.lineEnd = (_ref5 = node.loc) != null ? (_ref6 = _ref5.end) != null ? _ref6.line : void 0 : void 0;
-      e.columnEnd = ((_ref7 = node.loc) != null ? (_ref8 = _ref7.end) != null ? _ref8.column : void 0 : void 0) + 1;
+      e.line = (ref1 = node.loc) != null ? (ref2 = ref1.start) != null ? ref2.line : void 0 : void 0;
+      e.column = ((ref3 = node.loc) != null ? (ref4 = ref3.start) != null ? ref4.column : void 0 : void 0) + 1;
+      e.lineEnd = (ref5 = node.loc) != null ? (ref6 = ref5.end) != null ? ref6.line : void 0 : void 0;
+      e.columnEnd = ((ref7 = node.loc) != null ? (ref8 = ref7.end) != null ? ref8.column : void 0 : void 0) + 1;
       return e;
     };
     if (node.type != null) {
@@ -254,7 +246,7 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
       }
       if (nodeInfo != null ? nodeInfo.newScope : void 0) {
         context.scopeStack.push({
-          variables: Object.create((_ref1 = (_ref2 = context.scope()) != null ? _ref2.variables : void 0) != null ? _ref1 : {}),
+          variables: Object.create((ref1 = (ref2 = context.scope()) != null ? ref2.variables : void 0) != null ? ref1 : {}),
           node: node
         });
       }
@@ -292,6 +284,38 @@ exports.traverse = function(program, enterCallback, exitCallback, variableCallba
   };
   return basicTraverse.traverse(program, ourEnter, ourExit);
 };
+
+// exports.test = ->
+//     index = require './index'
+//     ast = index.parse """
+//         var double = ->
+//             var foo = -> 2
+//             var a = 1
+//             var b = 2
+//             var {e,f} = bar, [g,[h]] = baz
+//             if a is b
+//                 var c = 3
+//                 if c
+//                     log(c)
+//             else
+//                 var c = 5
+//                 var d = 4
+//                 log(d)
+//         """
+//     expected = ["enter",1,["double"],"Program","enter",2,["double"],"FunctionExpression","enter",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["foo","a","b","e","f","g","h","double"],"FunctionExpression","enter",5,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",5,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["foo","a","b","e","f","g","h","double"],"FunctionExpression","enter",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","foo","a","b","e","f","g","h","double"],"BlockStatement","enter",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",4,["c","d","foo","a","b","e","f","g","h","double"],"BlockStatement","exit",3,["foo","a","b","e","f","g","h","double"],"BlockStatement","exit",2,["double"],"FunctionExpression","exit",1,["double"],"Program"]
+//     actual = []
+//     enter = (node, context) ->
+//         keys = (key for key of context.scope().variables)
+//         if nodes[node.type]?.newScope
+//             actual.push "enter", context.scopeStack.length, keys, node.type
+//     exit = (node, context) ->
+//         keys = (key for key of context.scope().variables)
+//         if nodes[node.type]?.newScope
+//             actual.push "exit", context.scopeStack.length, keys, node.type
+//     exports.traverse ast, enter, exit
+//     if JSON.stringify(actual) isnt JSON.stringify(expected)
+//         throw new Error "#{actual} isnt #{expected}"
+//     return
 
   }
   if (typeof require === 'function') {

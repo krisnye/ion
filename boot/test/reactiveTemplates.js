@@ -2673,121 +2673,6 @@ var templates = [
             ];
         }(),
         [
-            'deep args',
-            {},
-            ion.template(function (object) {
-                return ion.createRuntime({
-                    type: 'Template',
-                    id: null,
-                    body: [{
-                            type: 'ReturnStatement',
-                            argument: {
-                                type: 'CallExpression',
-                                callee: {
-                                    type: 'MemberExpression',
-                                    computed: false,
-                                    object: {
-                                        type: 'Identifier',
-                                        name: 'JSON',
-                                        loc: {
-                                            start: {
-                                                line: 164,
-                                                column: 29,
-                                                fixed: true,
-                                                source: 'ion/test/reactiveTemplates.ion'
-                                            },
-                                            end: {
-                                                line: 164,
-                                                column: 33,
-                                                fixed: true,
-                                                source: 'ion/test/reactiveTemplates.ion'
-                                            }
-                                        }
-                                    },
-                                    property: {
-                                        type: 'Identifier',
-                                        name: 'stringify',
-                                        loc: {
-                                            start: {
-                                                line: 164,
-                                                column: 34,
-                                                fixed: true,
-                                                source: 'ion/test/reactiveTemplates.ion'
-                                            },
-                                            end: {
-                                                line: 164,
-                                                column: 43,
-                                                fixed: true,
-                                                source: 'ion/test/reactiveTemplates.ion'
-                                            }
-                                        }
-                                    },
-                                    loc: {
-                                        start: {
-                                            line: 164,
-                                            column: 29,
-                                            fixed: true,
-                                            source: 'ion/test/reactiveTemplates.ion'
-                                        },
-                                        end: {
-                                            line: 164,
-                                            column: 43,
-                                            fixed: true,
-                                            source: 'ion/test/reactiveTemplates.ion'
-                                        }
-                                    }
-                                },
-                                arguments: [{
-                                        type: 'Identifier',
-                                        name: 'object',
-                                        loc: {
-                                            start: {
-                                                line: 164,
-                                                column: 49,
-                                                fixed: true,
-                                                source: 'ion/test/reactiveTemplates.ion'
-                                            },
-                                            end: {
-                                                line: 164,
-                                                column: 55,
-                                                fixed: true,
-                                                source: 'ion/test/reactiveTemplates.ion'
-                                            }
-                                        },
-                                        deep: true
-                                    }],
-                                loc: {
-                                    start: {
-                                        line: 164,
-                                        column: 29,
-                                        fixed: true,
-                                        source: 'ion/test/reactiveTemplates.ion'
-                                    },
-                                    end: {
-                                        line: 164,
-                                        column: 56,
-                                        fixed: true,
-                                        source: 'ion/test/reactiveTemplates.ion'
-                                    }
-                                }
-                            },
-                            order: '0'
-                        }],
-                    bound: false
-                }, {
-                    this: this,
-                    object: object,
-                    ion: ion,
-                    _ref4: _ref4,
-                    templates: templates,
-                    _ref5: _ref5
-                }, null);
-            }),
-            { z: { b: 2 } },
-            { z: { b: 20 } },
-            '{"z":{"b":20}}'
-        ],
-        [
             'undo statement',
             {},
             ion.template(function (object) {
@@ -2812,13 +2697,13 @@ var templates = [
                                 arguments: [],
                                 loc: {
                                     start: {
-                                        line: 199,
+                                        line: 200,
                                         column: 12,
                                         fixed: true,
                                         source: 'ion/test/reactiveTemplates.ion'
                                     },
                                     end: {
-                                        line: 199,
+                                        line: 200,
                                         column: 35,
                                         fixed: true,
                                         source: 'ion/test/reactiveTemplates.ion'
@@ -2827,13 +2712,13 @@ var templates = [
                             },
                             loc: {
                                 start: {
-                                    line: 199,
+                                    line: 200,
                                     column: 12,
                                     fixed: true,
                                     source: 'ion/test/reactiveTemplates.ion'
                                 },
                                 end: {
-                                    line: 199,
+                                    line: 200,
                                     column: 35,
                                     fixed: true,
                                     source: 'ion/test/reactiveTemplates.ion'
@@ -2850,13 +2735,13 @@ var templates = [
                                         name: 'items',
                                         loc: {
                                             start: {
-                                                line: 200,
+                                                line: 201,
                                                 column: 16,
                                                 fixed: true,
                                                 source: 'ion/test/reactiveTemplates.ion'
                                             },
                                             end: {
-                                                line: 200,
+                                                line: 201,
                                                 column: 21,
                                                 fixed: true,
                                                 source: 'ion/test/reactiveTemplates.ion'
@@ -2871,13 +2756,13 @@ var templates = [
                                             name: 'object',
                                             loc: {
                                                 start: {
-                                                    line: 200,
+                                                    line: 201,
                                                     column: 24,
                                                     fixed: true,
                                                     source: 'ion/test/reactiveTemplates.ion'
                                                 },
                                                 end: {
-                                                    line: 200,
+                                                    line: 201,
                                                     column: 30,
                                                     fixed: true,
                                                     source: 'ion/test/reactiveTemplates.ion'
@@ -2889,13 +2774,13 @@ var templates = [
                                             name: 'items',
                                             loc: {
                                                 start: {
-                                                    line: 200,
+                                                    line: 201,
                                                     column: 31,
                                                     fixed: true,
                                                     source: 'ion/test/reactiveTemplates.ion'
                                                 },
                                                 end: {
-                                                    line: 200,
+                                                    line: 201,
                                                     column: 36,
                                                     fixed: true,
                                                     source: 'ion/test/reactiveTemplates.ion'
@@ -2904,13 +2789,13 @@ var templates = [
                                         },
                                         loc: {
                                             start: {
-                                                line: 200,
+                                                line: 201,
                                                 column: 24,
                                                 fixed: true,
                                                 source: 'ion/test/reactiveTemplates.ion'
                                             },
                                             end: {
-                                                line: 200,
+                                                line: 201,
                                                 column: 36,
                                                 fixed: true,
                                                 source: 'ion/test/reactiveTemplates.ion'
@@ -2932,13 +2817,13 @@ var templates = [
                                             name: 'item',
                                             loc: {
                                                 start: {
-                                                    line: 201,
+                                                    line: 202,
                                                     column: 16,
                                                     fixed: true,
                                                     source: 'ion/test/reactiveTemplates.ion'
                                                 },
                                                 end: {
-                                                    line: 201,
+                                                    line: 202,
                                                     column: 20,
                                                     fixed: true,
                                                     source: 'ion/test/reactiveTemplates.ion'
@@ -2954,13 +2839,13 @@ var templates = [
                                 name: 'items',
                                 loc: {
                                     start: {
-                                        line: 201,
+                                        line: 202,
                                         column: 24,
                                         fixed: true,
                                         source: 'ion/test/reactiveTemplates.ion'
                                     },
                                     end: {
-                                        line: 201,
+                                        line: 202,
                                         column: 29,
                                         fixed: true,
                                         source: 'ion/test/reactiveTemplates.ion'
@@ -3004,13 +2889,13 @@ var templates = [
                                             arguments: [],
                                             loc: {
                                                 start: {
-                                                    line: 202,
+                                                    line: 203,
                                                     column: 16,
                                                     fixed: true,
                                                     source: 'ion/test/reactiveTemplates.ion'
                                                 },
                                                 end: {
-                                                    line: 204,
+                                                    line: 205,
                                                     column: 20,
                                                     fixed: true,
                                                     source: 'ion/test/reactiveTemplates.ion'
@@ -3019,13 +2904,13 @@ var templates = [
                                         },
                                         loc: {
                                             start: {
-                                                line: 202,
+                                                line: 203,
                                                 column: 16,
                                                 fixed: true,
                                                 source: 'ion/test/reactiveTemplates.ion'
                                             },
                                             end: {
-                                                line: 204,
+                                                line: 205,
                                                 column: 20,
                                                 fixed: true,
                                                 source: 'ion/test/reactiveTemplates.ion'
@@ -3079,13 +2964,13 @@ var templates = [
                                     name: 'object',
                                     loc: {
                                         start: {
-                                            line: 206,
+                                            line: 207,
                                             column: 19,
                                             fixed: true,
                                             source: 'ion/test/reactiveTemplates.ion'
                                         },
                                         end: {
-                                            line: 206,
+                                            line: 207,
                                             column: 25,
                                             fixed: true,
                                             source: 'ion/test/reactiveTemplates.ion'
@@ -3097,13 +2982,13 @@ var templates = [
                                     name: 'total',
                                     loc: {
                                         start: {
-                                            line: 206,
+                                            line: 207,
                                             column: 26,
                                             fixed: true,
                                             source: 'ion/test/reactiveTemplates.ion'
                                         },
                                         end: {
-                                            line: 206,
+                                            line: 207,
                                             column: 31,
                                             fixed: true,
                                             source: 'ion/test/reactiveTemplates.ion'
@@ -3112,13 +2997,13 @@ var templates = [
                                 },
                                 loc: {
                                     start: {
-                                        line: 206,
+                                        line: 207,
                                         column: 19,
                                         fixed: true,
                                         source: 'ion/test/reactiveTemplates.ion'
                                     },
                                     end: {
-                                        line: 206,
+                                        line: 207,
                                         column: 31,
                                         fixed: true,
                                         source: 'ion/test/reactiveTemplates.ion'

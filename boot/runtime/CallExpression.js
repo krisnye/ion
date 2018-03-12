@@ -11,6 +11,20 @@ var CallExpression = ion.defineClass({
             args: null,
             activate: function () {
                 CallExpression.super.prototype.activate.apply(this, arguments);
+                if (this.callee.type === 'Function' && this.arguments.length === 0 && !(this.callee.objectExpression != null)) {
+                    var callee = this.callee.value;
+                    var value;
+                    if (this.callee.context) {
+                        callee = callee(this.context);
+                    }
+                    if (this.type === 'NewExpression') {
+                        value = new callee();
+                    } else {
+                        value = callee();
+                    }
+                    this.setValue(value);
+                    return;
+                }
                 this.calleeExpression = this.calleeExpression != null ? this.calleeExpression : this.context.createRuntime(this.callee);
                 this.unobserveCallee = this.calleeExpression.observe(this.calleeWatcher = this.calleeWatcher != null ? this.calleeWatcher : ion.bind(function (value) {
                     if (this.isActive && !(value != null) && !this.existential && (this.loc != null ? this.loc.start.source : void 0) != null) {
@@ -40,21 +54,26 @@ var CallExpression = ion.defineClass({
                         this.queueEvaluate();
                     }
                 }, this)) : void 0;
-                this.argumentExpressions = this.argumentExpressions != null ? this.argumentExpressions : this.context.createRuntime({
-                    type: 'ArrayExpression',
-                    elements: this.arguments,
-                    observeElements: !(this.calleeValue != null ? this.calleeValue.template : void 0)
-                });
-                this.unobserveArguments = this.argumentExpressions.observe(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
-                    this.argumentsValue = value;
+                if (this.arguments.length === 0) {
+                    this.argumentsValue = [];
                     this.queueEvaluate();
-                }, this));
+                } else {
+                    this.argumentExpressions = this.argumentExpressions != null ? this.argumentExpressions : this.context.createRuntime({
+                        type: 'ArrayExpression',
+                        elements: this.arguments,
+                        observeElements: !(this.calleeValue != null ? this.calleeValue.template : void 0)
+                    });
+                    this.unobserveArguments = this.argumentExpressions.observe(this.argumentWatcher = this.argumentWatcher != null ? this.argumentWatcher : ion.bind(function (value) {
+                        this.argumentsValue = value;
+                        this.queueEvaluate();
+                    }, this));
+                }
             },
             deactivate: function () {
                 CallExpression.super.prototype.deactivate.apply(this, arguments);
                 this.cancelQueuedEvaluate != null ? this.cancelQueuedEvaluate() : void 0;
-                this.unobserveCallee();
-                this.unobserveArguments();
+                this.unobserveCallee != null ? this.unobserveCallee() : void 0;
+                this.unobserveArguments != null ? this.unobserveArguments() : void 0;
                 this.unobserveCalleeObject != null ? this.unobserveCalleeObject() : void 0;
                 this.unobserveThis != null ? this.unobserveThis() : void 0;
                 this.unobserveTemplate != null ? this.unobserveTemplate() : void 0;
@@ -81,11 +100,11 @@ var CallExpression = ion.defineClass({
                 this.lastThisArg = this.thisArg;
                 this.unobserveTemplate != null ? this.unobserveTemplate() : void 0;
                 this.unobserveTemplate = null;
-                try {
-                    if (this.calleeValue.template) {
-                        this.template = this.calleeValue.apply(this.thisArg, this.argumentsValue);
-                        this.unobserveTemplate = this.template.observe(this.templateWatcher = this.templateWatcher != null ? this.templateWatcher : this.setValue.bind(this));
-                    } else {
+                if (this.calleeValue.template) {
+                    this.template = this.calleeValue.apply(this.thisArg, this.argumentsValue);
+                    this.unobserveTemplate = this.template.observe(this.templateWatcher = this.templateWatcher != null ? this.templateWatcher : this.setValue.bind(this));
+                } else {
+                    try {
                         if (this.type === 'NewExpression') {
                             value = ion.create(this.calleeValue, this.argumentsValue);
                         } else {
@@ -100,13 +119,13 @@ var CallExpression = ion.defineClass({
                             value = this.calleeValue.apply(this.thisArg, this.argumentsValue);
                         }
                         this.setValue(value);
+                    } catch (e) {
+                        if (this.loc != null) {
+                            var start = this.loc.start;
+                            console.error('Call Error at ' + start.source + ' (line:' + start.line + ',column:' + start.column + ')');
+                        }
+                        throw e;
                     }
-                } catch (e) {
-                    if (this.loc != null) {
-                        var start = this.loc.start;
-                        console.error('Call Error at ' + start.source + ' (line:' + start.line + ',column:' + start.column + ')');
-                    }
-                    throw e;
                 }
             }
         }

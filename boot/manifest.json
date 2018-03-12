@@ -1,5 +1,5 @@
 {
-  "modified": 1494319814000,
+  "modified": 1520829352000,
   "files": [
     "browser/require.js",
     "Object.js",
@@ -64,11 +64,14 @@
     "runtime/UndoStatement.js",
     "runtime/VariableDeclaration.js",
     "runtime/index.js",
+    "test/duplicateDeclares.js",
+    "test/es6Scoping.js",
     "test/immediateTemplates.js",
     "test/index.js",
     "test/ionCompiler.js",
     "test/ionCompilerES5.js",
     "test/reactiveTemplates.js",
-    "test/sourceSize.js"
+    "test/sourceSize.js",
+    "test/syntax.js"
   ]
 }

@@ -68,10 +68,10 @@ var clone = function (object, properties) {
         }
         return changes;
     };
-var observe = exports.observe = function (object, callback, property, priority) {
-        if (priority == null)
-            priority = -1;
-        callback.priority = callback.priority != null ? callback.priority : priority;
+var observe = exports.observe = function (object, callback, property, edge) {
+        if (Object.isFrozen(object)) {
+            return;
+        }
         var meta = observerMap.get(object);
         if (!(meta != null)) {
             var _ref4 = {};
@@ -115,7 +115,7 @@ var observe = exports.observe = function (object, callback, property, priority) 
             var object = arguments[_i];
             changedObjects.set(object, object);
         }
-    }, checkForChanges = exports.checkForChanges = function () {
+    }, checkForChanges = exports.checkForChanges = function (source) {
         var changes;
         var maxCycles = 100;
         for (var i = 0; i < maxCycles; i++) {
@@ -135,14 +135,17 @@ var observe = exports.observe = function (object, callback, property, priority) 
                     }
                 }
             };
-            observerMap.forEach(check);
+            var metas = Array.from(observerMap.values());
+            metas.reverse();
+            metas.forEach(check);
+            var pendingChecks = nextCheckMap.size;
             var currentCheckMap = nextCheckMap;
             nextCheckMap = new Map();
             currentCheckMap.forEach(function (callback) {
                 callback();
             });
             currentCheckMap.clear();
-            if (changeCount === 0 && nextCheckMap.size === 0) {
+            if (changeCount === 0 && pendingChecks === 0) {
                 return;
             }
         }

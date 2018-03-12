@@ -1,4 +1,4 @@
-void (function(){var _ion_browser_tester_ = function(module,exports,require){var args, file, manifest, manifestFile, moduleId, modules, np, runTest, runTests, spawnTests, utility, _i, _len, _ref;
+void (function(){var _ion_browser_tester_ = function(module,exports,require){var args, file, i, len, manifest, manifestFile, moduleId, modules, np, ref, runTest, runTests, spawnTests, utility;
 
 runTest = function(name, test, callback) {
   var e, expectedCallbacks, key, result, value;
@@ -9,10 +9,12 @@ runTest = function(name, test, callback) {
       expectedCallbacks = expectedCallbacks.concat(runTest(name + ' ' + key, value, callback));
     }
   } else if (typeof test === 'function') {
+    // make sure this is a valid test function
     if (/^\s*function\s*[a-zA-Z_0-9]*\s*\(\s*(done)?\s*\)/.test(test.toString())) {
       expectedCallbacks.push(name);
       try {
         if (test.length === 1) {
+          // asynchronous callback
           test(function(error, warning) {
             return callback(name, error, warning);
           });
@@ -20,8 +22,8 @@ runTest = function(name, test, callback) {
           result = test();
           callback(name, null, result);
         }
-      } catch (_error) {
-        e = _error;
+      } catch (error1) {
+        e = error1;
         callback(name, e, null);
       }
     }
@@ -31,24 +33,27 @@ runTest = function(name, test, callback) {
 
 exports.spawnTests = spawnTests = function(manifestFile) {
   var command;
-  command = "node " + __filename + " " + manifestFile;
+  // command = "node#{if process.platform is 'win32' then '.cmd' else ''} #{__filename} #{manifestFile}"
+  command = `node ${__filename} ${manifestFile // The windows user ought to have node in their path. Using node.cmd is yucky.
+}`;
   require('../builder/utility').spawn(command);
 };
 
 exports.runTests = runTests = function(moduleIds, callback) {
-  var array, duration, e, error, expectedCallbacks, getIncompleteCallbacks, handler, inc, key, module, moduleId, name, timeout, waitingForFinishTimeout, warning, _i, _len;
+  var array, duration, e, error, expectedCallbacks, getIncompleteCallbacks, handler, i, inc, key, len, module, moduleId, name, timeout, waitingForFinishTimeout, warning;
   if (!moduleIds) {
     throw new Error("moduleIds is required");
   }
   if (callback == null) {
     callback = exports.createCallback();
   }
-  expectedCallbacks = {};
+  expectedCallbacks = {}; // name = false or true if called back
   waitingForFinishTimeout = null;
   handler = function(name, error, warning) {
     var inc;
     expectedCallbacks[name] = true;
     callback(name, error, warning);
+    // maybe we are waiting for this final callback
     if (waitingForFinishTimeout != null) {
       inc = getIncompleteCallbacks();
       if (inc.length === 0) {
@@ -63,49 +68,51 @@ exports.runTests = runTests = function(moduleIds, callback) {
       module = require(moduleId);
       name = Array.isArray(moduleIds) ? moduleId : key;
       array = runTest(name, module.test, handler);
-      for (_i = 0, _len = array.length; _i < _len; _i++) {
-        name = array[_i];
+      for (i = 0, len = array.length; i < len; i++) {
+        name = array[i];
         if (expectedCallbacks[name] == null) {
           expectedCallbacks[name] = false;
         }
       }
-    } catch (_error) {
-      e = _error;
+    } catch (error1) {
+      e = error1;
       handler(moduleId, e, null);
     }
   }
   getIncompleteCallbacks = function() {
     var value;
     return (function() {
-      var _results;
-      _results = [];
+      var results;
+      results = [];
       for (name in expectedCallbacks) {
         value = expectedCallbacks[name];
         if (!value) {
-          _results.push(name);
+          results.push(name);
         }
       }
-      return _results;
+      return results;
     })();
   };
   inc = getIncompleteCallbacks();
   if (inc.length === 0) {
+    // we're done
     return callback();
   } else {
+    // we have to wait for completion, but not too long
+    // say... 1 second
     duration = 1000;
-    error = "Timed out after " + duration + " ms";
+    error = `Timed out after ${duration} ms`;
     warning = void 0;
-    timeout = (function(_this) {
-      return function() {
-        var _j, _len1;
-        inc = getIncompleteCallbacks();
-        for (_j = 0, _len1 = inc.length; _j < _len1; _j++) {
-          name = inc[_j];
-          callback(name, error, warning);
-        }
-        return callback();
-      };
-    })(this);
+    timeout = () => {
+      var j, len1;
+      inc = getIncompleteCallbacks();
+// send a timeout error for each incomplete
+      for (j = 0, len1 = inc.length; j < len1; j++) {
+        name = inc[j];
+        callback(name, error, warning);
+      }
+      return callback();
+    };
     if (global.setTimeout != null) {
       return waitingForFinishTimeout = setTimeout(timeout, duration);
     } else {
@@ -116,11 +123,8 @@ exports.runTests = runTests = function(moduleIds, callback) {
   }
 };
 
-exports.createCallback = function(options, html) {
-  var beep, blue, endColor, endLine, fails, green, log, plain, red, start, tests, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
-  if (html == null) {
-    html = global.window != null;
-  }
+exports.createCallback = function(options, html = global.window != null) {
+  var beep, blue, endColor, endLine, fails, green, log, plain, red, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, start, tests;
   if (options == null) {
     options = html ? {
       red: '<span style="color:red;white-space:pre">',
@@ -135,21 +139,21 @@ exports.createCallback = function(options, html) {
       endLine: '<br>'
     } : {};
   }
-  red = (_ref = options.red) != null ? _ref : '\u001b[31m';
-  green = (_ref1 = options.green) != null ? _ref1 : '\u001b[32m';
-  blue = (_ref2 = options.blue) != null ? _ref2 : '\u001b[36m';
-  endColor = (_ref3 = options.endColor) != null ? _ref3 : '\u001b[0m';
-  plain = (_ref4 = options.plain) != null ? _ref4 : '';
-  beep = (_ref5 = options.beep) != null ? _ref5 : '\u0007';
-  log = (_ref6 = options.log) != null ? _ref6 : function(x) {
+  red = (ref = options.red) != null ? ref : '\u001b[31m';
+  green = (ref1 = options.green) != null ? ref1 : '\u001b[32m';
+  blue = (ref2 = options.blue) != null ? ref2 : '\u001b[36m';
+  endColor = (ref3 = options.endColor) != null ? ref3 : '\u001b[0m';
+  plain = (ref4 = options.plain) != null ? ref4 : '';
+  beep = (ref5 = options.beep) != null ? ref5 : '\u0007';
+  log = (ref6 = options.log) != null ? ref6 : function(x) {
     return console.log(x);
   };
-  endLine = (_ref7 = options.endLine) != null ? _ref7 : '';
+  endLine = (ref7 = options.endLine) != null ? ref7 : '';
   tests = 0;
   fails = 0;
   start = null;
   return function(name, error, result) {
-    var color, finish, passed, time, title, _ref10, _ref8, _ref9;
+    var color, finish, passed, ref10, ref8, ref9, time, title;
     if (start == null) {
       start = new Date().getTime();
     }
@@ -160,7 +164,7 @@ exports.createCallback = function(options, html) {
       }
       color = error != null ? red : result != null ? blue : null;
       if (color != null) {
-        return log(color + name + ": " + ((_ref8 = (_ref9 = (_ref10 = error != null ? error.stack : void 0) != null ? _ref10 : error) != null ? _ref9 : result) != null ? _ref8 : "") + endColor + endLine);
+        return log(color + name + ": " + ((ref8 = (ref9 = (ref10 = error != null ? error.stack : void 0) != null ? ref10 : error) != null ? ref9 : result) != null ? ref8 : "") + endColor + endLine);
       } else {
         return process.stdout.write('.');
       }
@@ -170,7 +174,7 @@ exports.createCallback = function(options, html) {
       passed = tests - fails;
       log(endLine);
       color = passed === tests ? green : red + beep;
-      log(color + (title = "" + passed + "/" + tests + " Passed (" + time + " ms).") + endColor + endLine);
+      log(color + (title = `${passed}/${tests} Passed (${time} ms).`) + endColor + endLine);
       if (global.document) {
         document.title = title;
       }
@@ -179,12 +183,13 @@ exports.createCallback = function(options, html) {
   };
 };
 
+// unit test ourselves!
 exports.test = function() {
   var assert, tests;
   assert = {
     equal: function(a, b) {
       if (!a == b) {
-        throw new Error("" + a + " != " + b);
+        throw new Error(`${a} != ${b}`);
       }
     }
   };
@@ -192,7 +197,7 @@ exports.test = function() {
     alpha: function() {
       throw "Failure";
     },
-    beta: function() {},
+    beta: function() {}, // no value, passes
     charlie: function() {
       return "Return value";
     }
@@ -230,10 +235,11 @@ if (require.main === module) {
   manifestFile = args[0];
   utility = require('../builder/utility');
   manifest = JSON.parse(utility.read(manifestFile));
+  // create a moduleid to name object
   modules = {};
-  _ref = manifest.files;
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    file = _ref[_i];
+  ref = manifest.files;
+  for (i = 0, len = ref.length; i < len; i++) {
+    file = ref[i];
     moduleId = np.join(process.cwd(), np.dirname(manifestFile), file);
     modules[file] = moduleId;
   }

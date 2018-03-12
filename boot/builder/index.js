@@ -1,10 +1,10 @@
-void (function(){var _ion_builder_index_ = function(module,exports,require){var addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compileIonWithSourceMap, compilePegjs, compilePegs, exports, fs, getModuleId, ion, isPrivate, name, normalizePath, np, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility, _, _fn, _i, _len, _ref;
+void (function(){var _ion_builder_index_ = function(module,exports,require){var _, addBrowserShim, changeExtension, compileCoffeeScript, compileIon, compileIonWithSourceMap, compilePegjs, compilePegs, exports, fs, getModuleId, i, ion, isPrivate, len, name, normalizePath, np, ref, removeExtension, shimJavascript, showPrettyError, syntaxErrorToString, utility;
 
 if (global.window) {
   return;
 }
 
-_ = require('./nodash');
+_ = require('./nodash'); // imported for debounce/throttle methods
 
 utility = require('./utility');
 
@@ -14,9 +14,10 @@ np = require('path');
 
 ion = require('../');
 
+// this doesn't seem to work with Object.observe callbacks
 process.on('uncaughtException', function(e) {
-  var _ref;
-  return console.error((_ref = e.stack) != null ? _ref : e);
+  var ref;
+  return console.error((ref = e.stack) != null ? ref : e);
 });
 
 module.exports = exports = {
@@ -33,19 +34,21 @@ module.exports = exports = {
     return result;
   },
   link: function(object) {
-    var existingPath, isDirectory, key, value, _results;
-    _results = [];
+    var existingPath, isDirectory, key, results, value;
+// EXISTING_FILE : SYMBOLIC_LINK
+    results = [];
     for (key in object) {
       value = object[key];
       if (!fs.existsSync(key)) {
-        console.error("link source not found: " + key);
+        console.error(`link source not found: ${key}`);
         continue;
       }
       isDirectory = utility.isDirectory(key);
+      // existing file path needs to be relative to the link path
       existingPath = np.relative(value, key);
-      _results.push(console.log("link EXISTING: " + existing + "  LINK: " + value));
+      results.push(console.log(`link EXISTING: ${existing}  LINK: ${value}`));
     }
-    return _results;
+    return results;
   },
   runFile: function(file) {
     var code, js;
@@ -60,27 +63,40 @@ module.exports = exports = {
   runTests: (function() {
     var fn;
     fn = function(manifestFile) {
+      // convert the files to a name, moduleId map
       return require('../browser/tester').spawnTests(manifestFile);
     };
     return _.debounce(_.throttle(fn, 100), 2000);
   })(),
-  buildScriptIncludeFile: function(files, base) {
-    if (base == null) {
-      base = '';
-    }
+  buildScriptIncludeFile: function(files, base = '') {
     return files.map(function(x) {
-      return "document.writeln(\"<script type='text/javascript' src='" + base + (normalizePath(x)) + "'></script>\");";
+      return `document.writeln("<script type='text/javascript' src='${base}${normalizePath(x)}'></script>");`;
     }).join('\n');
   },
   getModuleId: getModuleId = function(source, packageObject) {
-    var path, root;
+    var dir, i, len, path, root, srcDirectory;
+    // new getModuleId behavior
     if (typeof source === 'string') {
       root = source;
       path = packageObject;
       return normalizePath(removeExtension(np.join(root, path)));
     }
+    // old getModuleId behavior
     if (packageObject != null) {
-      return normalizePath(removeExtension(np.join(packageObject.name, np.relative(packageObject.directories.src, source.path))));
+      srcDirectory = packageObject.directories.src;
+      if (Array.isArray(srcDirectory)) {
+        for (i = 0, len = srcDirectory.length; i < len; i++) {
+          dir = srcDirectory[i];
+          if (source.path.startsWith(dir)) {
+            srcDirectory = dir;
+            break;
+          }
+        }
+        if (Array.isArray(srcDirectory)) {
+          throw new Error("Couldn't find correct source directory for " + source);
+        }
+      }
+      return normalizePath(removeExtension(np.join(packageObject.name, np.relative(srcDirectory, source.path))));
     } else {
       return null;
     }
@@ -92,12 +108,14 @@ module.exports = exports = {
     return console.error(message + beep);
   },
   syntaxErrorToString: syntaxErrorToString = function(e, filename, code) {
-    var codeLine, colorize, end, first_column, first_line, last_column, last_line, marker, repeat, start, _ref, _ref1;
+    var codeLine, colorize, end, first_column, first_line, last_column, last_line, marker, ref, repeat, start;
     if (e.location == null) {
       return e.toString();
     }
+    // lifted from https://github.com/jashkenas/coffee-script/blob/master/src/helpers.coffee
     repeat = function(str, n) {
       var res;
+      // Use clever algorithm to have O(log(n)) string concatenation operations.
       res = '';
       while (n > 0) {
         if (n & 1) {
@@ -108,7 +126,7 @@ module.exports = exports = {
       }
       return res;
     };
-    _ref = e.location, first_line = _ref.first_line, first_column = _ref.first_column, last_line = _ref.last_line, last_column = _ref.last_column;
+    ({first_line, first_column, last_line, last_column} = e.location);
     if (last_line == null) {
       last_line = first_line;
     }
@@ -120,12 +138,13 @@ module.exports = exports = {
     end = first_line === last_line ? last_column + 1 : codeLine.length;
     marker = repeat(' ', start) + repeat('^', end - start);
     colorize = function(str) {
-      return "\x1B[1;31m" + str + "\x1B[0m";
+      return `\x1B[1;31m${str}\x1B[0m`;
     };
     codeLine = codeLine.slice(0, start) + colorize(codeLine.slice(start, end)) + codeLine.slice(end);
     marker = colorize(marker);
-    return "" + filename + ":" + (first_line + 1) + ":" + (first_column + 1) + ": error: " + ((_ref1 = e.originalMessage) != null ? _ref1 : e.message) + "\n\n" + codeLine + "\n" + marker;
+    return `${filename}:${first_line + 1}:${first_column + 1}: error: ${(ref = e.originalMessage) != null ? ref : e.message}\n\n${codeLine}\n${marker}`;
   },
+  // this compiles coffeescript if needed, but does not actually write the result.
   compileCoffeeScript: compileCoffeeScript = function(source, packageObject) {
     var compiled, cs, e, filename, input, moduleId, options;
     if (source.modified === 0) {
@@ -134,18 +153,21 @@ module.exports = exports = {
     moduleId = typeof packageObject === 'string' ? packageObject : getModuleId(source, packageObject);
     input = source.read();
     filename = source.path;
-    cs = require('coffee-script');
+    cs = require('coffeescript');
     try {
+      // console.log "Compile: #{filename}"
       compiled = cs.compile(input, options = {
         bare: true
       });
+      // console.log 'sourceMap: ' + typeof options.sourceMap
       compiled = addBrowserShim(compiled, moduleId, input);
       return compiled;
-    } catch (_error) {
-      e = _error;
+    } catch (error) {
+      e = error;
       showPrettyError(e, filename, input);
     }
   },
+  // this compiles a pegjs parser and returns the result.  Does not write to the target file.
   compilePegjs: compilePegjs = function(source, packageObject) {
     var e, filename, input, moduleId, parser, peg;
     if (source.modified === 0) {
@@ -155,6 +177,7 @@ module.exports = exports = {
     filename = source.path;
     try {
       peg = require('pegjs');
+      // console.log "Building: #{filename}"
       input = source.read();
       parser = peg.buildParser(input, {
         cache: true,
@@ -163,11 +186,12 @@ module.exports = exports = {
       source = "module.exports = " + parser;
       source = addBrowserShim(source, moduleId);
       return source;
-    } catch (_error) {
-      e = _error;
+    } catch (error) {
+      e = error;
       return console.error(e);
     }
   },
+  // this compiles a pegs parser and returns the result.  Does not write to the target file.
   compilePegs: compilePegs = function(source, packageObject) {
     var e, filename, input, moduleId, parser, peg;
     if (source.modified === 0) {
@@ -177,38 +201,41 @@ module.exports = exports = {
     filename = source.path;
     try {
       peg = require('pegs').bootstrap;
+      // console.log "Building: #{filename}"
       input = source.read();
       parser = peg.parse(input);
       source = parser;
       source = addBrowserShim(source, moduleId);
       return source;
-    } catch (_error) {
-      e = _error;
+    } catch (error) {
+      e = error;
       return console.error(e);
     }
   },
   compileIon: compileIon = function(source, packageObject) {
-    var _ref;
-    return (_ref = compileIonWithSourceMap(source, packageObject)) != null ? _ref[0] : void 0;
+    var ref;
+    return (ref = compileIonWithSourceMap(source, packageObject)) != null ? ref[0] : void 0;
   },
+  // this compiles ion and returns the result.  Does not write to the target file.
   compileIonWithSourceMap: compileIonWithSourceMap = function(source, packageObject) {
-    var e, filename, input, ionCompiler, map, moduleId, _ref;
+    var e, filename, input, ionCompiler, map, moduleId;
     if (source.modified === 0) {
       return;
     }
     moduleId = typeof packageObject === 'string' ? packageObject : getModuleId(source, packageObject);
     filename = source.path;
     try {
+      // console.log "Compile: #{filename}"
       ionCompiler = require('../compiler');
       input = source.read();
-      _ref = ionCompiler.compileWithSourceMap(input, {
+      [source, map] = ionCompiler.compileWithSourceMap(input, {
         source: moduleId + ".ion",
         sourceMap: filename.split(/[\/\\]/).pop()
-      }), source = _ref[0], map = _ref[1];
+      });
       source = addBrowserShim(source, moduleId, input);
       return [source, map];
-    } catch (_error) {
-      e = _error;
+    } catch (error) {
+      e = error;
       return console.error(String(e));
     }
   },
@@ -223,6 +250,7 @@ module.exports = exports = {
   },
   addBrowserShim: addBrowserShim = function(sourceText, moduleId, originalSource) {
     var safeId, stripValue;
+    // don't shim if the source starts with a shebang
     if ((originalSource != null ? originalSource.substring(0, 2) : void 0) === "#!") {
       stripValue = "#!browser";
       if (sourceText.startsWith(stripValue)) {
@@ -230,26 +258,26 @@ module.exports = exports = {
       }
       return sourceText;
     }
+    // make sure the javascript isn't already shimmed, so we don't shim it twice.
     if (moduleId != null) {
       safeId = "_" + moduleId.replace(/[^a-zA-Z0-9]/g, '_') + "_";
-      sourceText = "void (function(){var " + safeId + " = function(module,exports,require){" + sourceText + "\n  }\n  if (typeof require === 'function') {\n    if (require.register)\n      require.register('" + moduleId + "'," + safeId + ");\n    else\n      " + safeId + ".call(this, module, exports, require);\n  }\n  else {\n    " + safeId + ".call(this);\n  }\n}).call(this)";
+      sourceText = `void (function(){var ${safeId} = function(module,exports,require){${sourceText}\n  }\n  if (typeof require === 'function') {\n    if (require.register)\n      require.register('${moduleId}',${safeId});\n    else\n      ${safeId}.call(this, module, exports, require);\n  }\n  else {\n    ${safeId}.call(this);\n  }\n}).call(this)`;
     }
     return sourceText;
   }
 };
 
-_ref = ["ModuleBuilder", "WebsiteBuilder", "File", "Directory", "utility"];
-_fn = function(name) {
-  return Object.defineProperty(exports, name, {
-    enumerable: true,
-    get: function() {
-      return require("./" + name);
-    }
-  });
-};
-for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-  name = _ref[_i];
-  _fn(name);
+ref = ["ModuleBuilder", "WebsiteBuilder", "File", "Directory", "utility"];
+for (i = 0, len = ref.length; i < len; i++) {
+  name = ref[i];
+  (function(name) {
+    return Object.defineProperty(exports, name, {
+      enumerable: true,
+      get: function() {
+        return require("./" + name);
+      }
+    });
+  })(name);
 }
 
   }

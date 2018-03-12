@@ -4,7 +4,7 @@ var ion = require('./'), isObject = function (a) {
         return a != null && type === 'object' || type === 'function';
     }, deleteValue = null, isPrivate = function (name) {
         return name[0] === '_';
-    }, watchImmediate = function (object, handler) {
+    }, watchImmediate = function (object, handler, edge) {
         if (!isObject(object)) {
             throw new Error('Cannot watch: #{object}');
         }
@@ -26,7 +26,7 @@ var ion = require('./'), isObject = function (a) {
                                     _ref[name] = patch;
                                     handler(_ref);
                                 }
-                            });
+                            }, edge);
                         }
                     }
                 }(name));
@@ -40,10 +40,15 @@ var ion = require('./'), isObject = function (a) {
                     for (var _i2 = 0; _i2 < changes.length; _i2++) {
                         var _ref2 = changes[_i2];
                         var name = _ref2.name;
+                        var oldValue = _ref2.oldValue;
                         changedProperties[name] = true;
                         if (!isPrivate(name)) {
                             patch = patch != null ? patch : {};
-                            patch[name] = object.hasOwnProperty(name) ? object[name] : deleteValue;
+                            var newValue = object[name];
+                            var newDiff = diff(oldValue, newValue);
+                            if (newDiff !== void 0) {
+                                patch[name] = newDiff;
+                            }
                         }
                     }
                     watchProperties(changedProperties);
@@ -51,7 +56,7 @@ var ion = require('./'), isObject = function (a) {
                         handler(patch);
                     }
                 }
-            });
+            }, null, edge);
         return function () {
             watching = false;
             for (var key in propertyWatchers) {
@@ -61,7 +66,7 @@ var ion = require('./'), isObject = function (a) {
             unobserve();
             unobserve = null;
         };
-    }, increment = /[+-]\d+/, watchInternal = function (object, handler) {
+    }, increment = /[+-]\d+/, watchInternal = function (object, handler, edge) {
         global.watchInternalCount = global.watchInternalCount != null ? global.watchInternalCount : 0;
         global.watchInternalCount++;
         var active = false;
@@ -78,7 +83,7 @@ var ion = require('./'), isObject = function (a) {
                 active = true;
             }
         };
-        var unwatch = watchImmediate(object, delayedHandler);
+        var unwatch = watchImmediate(object, delayedHandler, edge);
         return function () {
             unwatch();
             global.watchInternalCount--;
@@ -86,8 +91,11 @@ var ion = require('./'), isObject = function (a) {
     };
 var canSetProperty = exports.canSetProperty = function (object, key) {
         return !(typeof object === 'function' && key === 'name');
-    }, merge = exports.merge = function (target, values, options, schema) {
+    }, merge = exports.merge = function (_target, _values, options, schema) {
+        var values = _values;
+        var target = _target;
         var deleteNull = (options != null ? options.deleteNull : void 0) != null ? options.deleteNull : true;
+        var _delete = (options != null ? options.delete : void 0) != null ? options.delete : true;
         if ((schema != null ? schema.type : void 0) === 'integer' && increment.test(values)) {
             if (!deleteNull || typeof target === 'string' && increment.test(target)) {
                 var total = parseInt(target != null ? target : 0) + parseInt(values.substring(1));
@@ -98,12 +106,12 @@ var canSetProperty = exports.canSetProperty = function (object, key) {
         }
         if (Array.isArray(target) && (values != null ? values.length : void 0) === null) {
             target = {};
-            values = JSON.parse(JSON.stringify(values));
+            values = ion.clone(values, false);
             delete values.length;
         }
         if ((values != null ? values.constructor : void 0) !== Object) {
             if (Array.isArray(values)) {
-                return JSON.parse(JSON.stringify(values));
+                return values.slice(0);
             } else {
                 return values;
             }
@@ -120,11 +128,15 @@ var canSetProperty = exports.canSetProperty = function (object, key) {
             var value = values[key];
             if (deleteNull && value === deleteValue) {
                 deletedValues = true;
-                delete target[key];
+                if (_delete) {
+                    delete target[key];
+                } else {
+                    target[key] = void 0;
+                }
             } else {
                 var itemSchema = (schema != null ? schema.items : void 0) != null ? schema.items : schema != null ? schema.properties != null ? schema.properties[key] : void 0 : void 0;
                 var newValue = merge(target[key], value, options, itemSchema);
-                if (newValue !== target[key] && canSetProperty(target, key)) {
+                if (canSetProperty(target, key)) {
                     target[key] = newValue;
                 }
             }
@@ -137,12 +149,14 @@ var canSetProperty = exports.canSetProperty = function (object, key) {
             }
         }
         return target;
+    }, patchNoDelete = exports.patchNoDelete = function (object, patch) {
+        return merge(object, patch, { delete: false });
     }, combine = exports.combine = function (patch1, patch2, schema) {
         return merge(patch1, patch2, { deleteNull: false }, schema);
-    }, watch = exports.watch = function (object, handler) {
+    }, watch = exports.watch = function (object, handler, edge) {
         global.watchCount = global.watchCount != null ? global.watchCount : 0;
         global.watchCount++;
-        var unwatch = watchInternal(object, handler);
+        var unwatch = watchInternal(object, handler, edge);
         return function () {
             unwatch();
             global.watchCount--;
@@ -381,6 +395,22 @@ var canSetProperty = exports.canSetProperty = function (object, key) {
                 if (!equal(result, { foo: 'a' }))
                     throw new Error('Assertion Failed: (equal(result, {foo:"a"}))');
             },
+            mergeActuallySetsValuesEvenWhenValueIsntChanged: function () {
+                var Point = ion.defineClass({
+                        name: 'Point',
+                        properties: {
+                            x: 0,
+                            y: 0
+                        }
+                    });
+                var Point = Point;
+                var a = new Point({});
+                if (!!a.hasOwnProperty('x'))
+                    throw new Error('Assertion Failed: (not a.hasOwnProperty(\'x\'))');
+                merge(a, { x: 0 });
+                if (!a.hasOwnProperty('x'))
+                    throw new Error('Assertion Failed: (a.hasOwnProperty(\'x\'))');
+            },
             observe: function (done) {
                 var before = global.watchCount != null ? global.watchCount : 0;
                 var source = {
@@ -394,7 +424,8 @@ var canSetProperty = exports.canSetProperty = function (object, key) {
                                 }
                             },
                             Orion: [],
-                            Third: {}
+                            Third: {},
+                            Fifth: { alpha: 1 }
                         }
                     };
                 var target = ion.clone(source, true);
@@ -427,6 +458,7 @@ var canSetProperty = exports.canSetProperty = function (object, key) {
                         }
                     }
                 });
+                source.children.Fifth = { beta: 2 };
                 delete source.children.Third;
                 ion.sync();
             }

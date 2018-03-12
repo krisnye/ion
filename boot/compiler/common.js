@@ -20,18 +20,19 @@ var indentToken = exports.indentToken = '{{{{', outdentToken = exports.outdentTo
         return joinLines(lines);
     }, getMinIndent = exports.getMinIndent = function (lines, regex) {
         var minIndent = Number.MAX_VALUE;
-        for (var _i = 0; _i < lines.length; _i++) {
-            var line = lines[_i];
-            if (typeof line === 'string' && !isEmpty(line)) {
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            var next = lines[i + 1];
+            if (typeof line === 'string' && (!isEmpty(line) || typeof next === 'object')) {
                 minIndent = Math.min(minIndent, getIndent(line, regex));
             }
         }
         return minIndent;
     }, unindentLines = exports.unindentLines = function (lines) {
         var minIndent = getMinIndent(lines);
-        for (var _i2 = 0; _i2 < lines.length; _i2++) {
-            var i = _i2;
-            var line = lines[_i2];
+        for (var _i = 0; _i < lines.length; _i++) {
+            var i = _i;
+            var line = lines[_i];
             if (typeof line === 'string') {
                 lines[i] = isEmpty(line) ? '' : line.substring(minIndent);
             }

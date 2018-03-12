@@ -3,9 +3,9 @@ void (function(){var _ion_compiler_preprocessor_ = function(module,exports,requi
 common = require('./common');
 
 getSpace = function(size) {
-  var i, result, _i;
+  var i, j, ref, result;
   result = [];
-  for (i = _i = 0; 0 <= size ? _i < size : _i > size; i = 0 <= size ? ++_i : --_i) {
+  for (i = j = 0, ref = size; (0 <= ref ? j < ref : j > ref); i = 0 <= ref ? ++j : --j) {
     result.push(" ");
   }
   return result.join("");
@@ -16,22 +16,22 @@ exports.isMarkdownCommented = function(source) {
 };
 
 exports.fixSourceLocation = fixSourceLocation = function(location, sourceMapping, source) {
-  var _ref;
+  var ref;
   if (!location.fixed) {
     location.fixed = true;
     location.line = sourceMapping[location.line - 1] + 1;
-    location.column += (_ref = sourceMapping.columnOffset) != null ? _ref : 0;
+    location.column += (ref = sourceMapping.columnOffset) != null ? ref : 0;
     return location.source != null ? location.source : location.source = source;
   }
 };
 
 exports.fixSourceLocations = fixSourceLocations = function(program, sourceMapping, source) {
   require('./traverseAst').traverse(program, function(node) {
-    var _ref, _ref1;
-    if (((_ref = node.loc) != null ? _ref.start : void 0) != null) {
+    var ref, ref1;
+    if (((ref = node.loc) != null ? ref.start : void 0) != null) {
       fixSourceLocation(node.loc.start, sourceMapping, source);
     }
-    if (((_ref1 = node.loc) != null ? _ref1.end : void 0) != null) {
+    if (((ref1 = node.loc) != null ? ref1.end : void 0) != null) {
       return fixSourceLocation(node.loc.end, sourceMapping, source);
     }
   });
@@ -39,8 +39,8 @@ exports.fixSourceLocations = fixSourceLocations = function(program, sourceMappin
 };
 
 exports.preprocess = preprocess = function(source, sourceMapping) {
-  var baseIndent, comment, indent, indentStack, index, isEmpty, isMarkdownCommented, line, lines, nonCommentCount, outdent, output, totalIndent, writeLine, _i, _len;
-  isMarkdownCommented = false;
+  var baseIndent, comment, indent, indentStack, index, isEmpty, isMarkdownCommented, j, len, line, lines, nonCommentCount, outdent, output, totalIndent, writeLine;
+  isMarkdownCommented = false; // exports.isMarkdownCommented source
   baseIndent = isMarkdownCommented ? 1 : 0;
   totalIndent = 0;
   indentStack = [];
@@ -60,15 +60,15 @@ exports.preprocess = preprocess = function(source, sourceMapping) {
     return output.push(line);
   };
   outdent = function(inputIndex) {
-    var _ref;
+    var ref;
     indentStack.pop();
-    totalIndent = (_ref = indentStack[indentStack.length - 1]) != null ? _ref : 0;
+    totalIndent = (ref = indentStack[indentStack.length - 1]) != null ? ref : 0;
     if (totalIndent >= baseIndent) {
       return writeLine(getSpace(totalIndent) + common.outdentToken, inputIndex);
     }
   };
   output = [];
-  for (index = _i = 0, _len = lines.length; _i < _len; index = ++_i) {
+  for (index = j = 0, len = lines.length; j < len; index = ++j) {
     line = lines[index];
     indent = common.getIndent(line);
     isEmpty = line.trim().length === 0;
@@ -90,6 +90,7 @@ exports.preprocess = preprocess = function(source, sourceMapping) {
       writeLine(line, index);
     }
   }
+  // push any remaining outdents
   while (indentStack.length > 0) {
     outdent(lines.length);
   }
@@ -99,6 +100,72 @@ exports.preprocess = preprocess = function(source, sourceMapping) {
     return common.unindentString(common.joinLines(output), sourceMapping);
   }
 };
+
+// sample = """
+
+// This is a comment.
+// Anything left justified is a comment.
+
+//     Person
+//         name: "Alpha"
+//         age: 40
+//         children:
+//             Person
+//                 name: "Beta"
+//                 age: 1
+//             Person
+
+//                 name: "Charlie"
+
+//                 age: 2
+//                 description: ""
+//                         This is just a
+//                     sample indented multiline
+//                     string literal.
+// """
+// expectedResult = """
+
+// Person
+// {{{{
+//     name: "Alpha"
+//     age: 40
+//     children:
+//     {{{{
+//         Person
+//         {{{{
+//             name: "Beta"
+//             age: 1
+//         }}}}
+//         Person
+
+//         {{{{
+//             name: "Charlie"
+
+//             age: 2
+//             description: ""
+//             {{{{
+//                     This is just a
+//             }}}}
+//                 sample indented multiline
+//             {{{{
+//                 string literal.
+//             }}}}
+//         }}}}
+//     }}}}
+// }}}}
+// """
+// exports.test = ->
+//     sourceMapping = {}
+//     # first try with the markdown commented sample.
+//     result = preprocess sample, sourceMapping
+//     if result != expectedResult
+//         console.log 'result---------------------------------'
+//         console.log result
+//         console.log 'expected-------------------------------'
+//         console.log expectedResult
+//         throw new Error "Preprocessor result not expected result."
+//     if JSON.stringify(sourceMapping) != '{"0":0,"1":3,"2":4,"3":5,"4":5,"5":6,"6":7,"7":8,"8":8,"9":9,"10":9,"11":10,"12":11,"13":11,"14":12,"15":13,"16":13,"17":14,"18":15,"19":16,"20":17,"21":17,"22":18,"23":18,"24":19,"25":19,"26":20,"27":20,"28":20,"29":20,"columnOffset":4}'
+//         throw new Error "Unexpected line mapping: " + JSON.stringify sourceMapping
 
   }
   if (typeof require === 'function') {

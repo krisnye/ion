@@ -28,7 +28,10 @@ var ArrayExpression = ion.defineClass({
                             this.itemObserver = this.itemObserver != null ? this.itemObserver : ion.bind(function () {
                                 this.notifyIfActive();
                             }, this);
-                            this.unobserveExpressionValues[key] = expression.deep ? ion.patch.watch(value, this.itemObserver) : ion.observe(value, this.itemObserver);
+                            this.unobserveExpressionValues[key] = expression.deep ? ion.patch.watch(value, this.itemObserver) : ion.observe(value, this.itemObserver, null, [
+                                expression,
+                                this
+                            ]);
                         }
                     }
                     this.notifyIfActive();
@@ -52,7 +55,7 @@ var ArrayExpression = ion.defineClass({
                     for (var _i2 = 0; _i2 < _ref3.length; _i2++) {
                         var key = _i2;
                         var expression = _ref3[_i2];
-                        this.unobserveExpressions.push(expression.observe(this.setArgumentValue.bind(this, key, expression)));
+                        this.unobserveExpressions.push(expression.observe(this.setArgumentValue.bind(this, key, expression), this));
                     }
                 }
                 ArrayExpression.super.prototype.activate.apply(this, arguments);

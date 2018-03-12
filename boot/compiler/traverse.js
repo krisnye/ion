@@ -6,6 +6,7 @@ void (function(){var _ion_compiler_traverse_ = function(module,exports,require){
   context = {
     path: [],
     ancestors: [],
+    // skip traversing children of current node?
     skip: function() {
       return skip = true;
     },
@@ -50,12 +51,12 @@ void (function(){var _ion_compiler_traverse_ = function(module,exports,require){
       }
     },
     previous: function() {
-      var _ref;
-      return (_ref = this.parent()) != null ? _ref[this.key() - 1] : void 0;
+      var ref;
+      return (ref = this.parent()) != null ? ref[this.key() - 1] : void 0;
     },
     next: function() {
-      var _ref;
-      return (_ref = this.parent()) != null ? _ref[this.key() + 1] : void 0;
+      var ref;
+      return (ref = this.parent()) != null ? ref[this.key() + 1] : void 0;
     },
     current: function() {
       var parent;
@@ -76,6 +77,7 @@ void (function(){var _ion_compiler_traverse_ = function(module,exports,require){
       if (skip) {
         skip = false;
       } else {
+        // node may have been changed, in which case we have to get the new value
         while (node !== (newNode = context.current())) {
           if (typeof exitCallback === "function") {
             exitCallback(node, context);
@@ -140,14 +142,36 @@ exports.test = function() {
     }
   };
   if (graph !== exports.traverse(graph, function() {})) {
+    // test basic call returns root graph
     throw new Error("traverse should have returned graph");
   }
   if (2 !== exports.traverse(graph, function(node, context) {
     return context.replace(2);
   })) {
+    // test that replacing root node returns new value
     throw new Error("traverse should have returned 2");
   }
 };
+
+// # test that traversal and replacement and skip works
+// result = []
+// exports.traverse graph, (node, context) ->
+//     result.push node.id
+//     result.push context.key()
+//     result.push context.parent()?.id
+//     if node.id is 'beta'
+//         context.replace
+//             id: 'foo'
+//             bar:
+//                 id: 'baz'
+//                 skipMe:
+//                     value: 1
+//     else if node.id is 'baz'
+//         context.skip()
+
+// expected = ["root", undefined, undefined, "beta", "beta", "root", "baz", "bar", "foo", "echo", "echo", "root"]
+// throw new Error "#{result} != #{expected}" unless JSON.stringify(result) is JSON.stringify(expected)
+// return
 
   }
   if (typeof require === 'function') {

@@ -4,6 +4,7 @@ if (global.window) {
   return;
 }
 
+// require '../runtime/sugar'
 fs = require('fs');
 
 np = require('path');
@@ -45,11 +46,11 @@ module.exports = exports = {
         child.on('exit', callback);
       }
       child.on('error', function(error) {
-        console.log("Error running " + originalCommand + "\n" + error);
+        console.log(`Error running ${originalCommand}\n${error}`);
         return typeof callback === "function" ? callback() : void 0;
       });
-    } catch (_error) {
-      e = _error;
+    } catch (error1) {
+      e = error1;
       console.log(originalCommand);
       throw e;
     }
@@ -82,39 +83,36 @@ module.exports = exports = {
         }
         return typeof callback === "function" ? callback() : void 0;
       });
-    } catch (_error) {
-      e = _error;
+    } catch (error1) {
+      e = error1;
       console.log(originalCommand);
       throw e;
     }
   },
   copyMetadata: copyMetadata = function(source, target) {
-    var file, from, to, _i, _len, _ref, _results;
-    _ref = ["package.json", "README.md"];
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      file = _ref[_i];
+    var file, from, i, len, ref, results1, to;
+    ref = ["package.json", "README.md"];
+    results1 = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      file = ref[i];
       from = np.join(source, file);
       to = np.join(target, file);
       if (exists(from)) {
-        _results.push(copy(from, to));
+        results1.push(copy(from, to));
       } else {
-        _results.push(void 0);
+        results1.push(void 0);
       }
     }
-    return _results;
+    return results1;
   },
   buildCoffee: buildCoffee = function(input, output, callback) {
-    return spawn("coffee.cmd -c -o " + output + " " + input, callback);
+    return spawn(`coffee.cmd -c -o ${output} ${input}`, callback);
   },
   watchCoffee: watchCoffee = function(input, output) {
-    return spawn("coffee.cmd -w -c -o " + output + " " + input);
+    return spawn(`coffee.cmd -w -c -o ${output} ${input}`);
   },
-  isMatch: isMatch = function(value, match, defaultValue) {
-    var item, _i, _len;
-    if (defaultValue == null) {
-      defaultValue = false;
-    }
+  isMatch: isMatch = function(value, match, defaultValue = false) {
+    var i, item, len;
     if (match == null) {
       return defaultValue;
     }
@@ -122,8 +120,9 @@ module.exports = exports = {
       return match(value);
     }
     if (Array.isArray(match)) {
-      for (_i = 0, _len = match.length; _i < _len; _i++) {
-        item = match[_i];
+// see if it matches any subitem in the array
+      for (i = 0, len = match.length; i < len; i++) {
+        item = match[i];
         if (isMatch(value, item)) {
           return true;
         }
@@ -134,6 +133,7 @@ module.exports = exports = {
     if (typeof match === 'string') {
       return value.startsWith(match) || value.endsWith(match);
     }
+    // return value.substring(value.length-match.length) is match
     value = value.split(/[\/\\]/g).pop();
     return typeof match.test === "function" ? match.test(value) : void 0;
   },
@@ -166,8 +166,8 @@ module.exports = exports = {
       } else {
         return 0;
       }
-    } catch (_error) {
-      e = _error;
+    } catch (error1) {
+      e = error1;
       console.warn(e);
     }
     return 0;
@@ -179,33 +179,27 @@ module.exports = exports = {
     var e;
     try {
       return fs.statSync(file);
-    } catch (_error) {
-      e = _error;
+    } catch (error1) {
+      e = error1;
       return null;
     }
   },
   isFile: isFile = function(file) {
-    var _ref;
-    return ((_ref = getStats(file)) != null ? typeof _ref.isFile === "function" ? _ref.isFile() : void 0 : void 0) === true;
+    var ref;
+    return ((ref = getStats(file)) != null ? typeof ref.isFile === "function" ? ref.isFile() : void 0 : void 0) === true;
   },
   isDirectory: isDirectory = function(file) {
-    var _ref;
-    return ((_ref = getStats(file)) != null ? typeof _ref.isDirectory === "function" ? _ref.isDirectory() : void 0 : void 0) === true;
+    var ref;
+    return ((ref = getStats(file)) != null ? typeof ref.isDirectory === "function" ? ref.isDirectory() : void 0 : void 0) === true;
   },
-  list: list = function(dir, options, files) {
-    var exclude, file, recursive, _i, _len, _ref, _ref1, _ref2;
-    if (options == null) {
-      options = {};
-    }
-    if (files == null) {
-      files = [];
-    }
-    exclude = (_ref = options.exclude) != null ? _ref : exports.defaultFileExclude;
-    recursive = (_ref1 = options.recursive) != null ? _ref1 : true;
+  list: list = function(dir, options = {}, files = []) {
+    var exclude, file, i, len, recursive, ref, ref1, ref2;
+    exclude = (ref = options.exclude) != null ? ref : exports.defaultFileExclude;
+    recursive = (ref1 = options.recursive) != null ? ref1 : true;
     if (exists(dir)) {
-      _ref2 = fs.readdirSync(dir);
-      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-        file = _ref2[_i];
+      ref2 = fs.readdirSync(dir);
+      for (i = 0, len = ref2.length; i < len; i++) {
+        file = ref2[i];
         file = np.join(dir, file);
         if (!isMatch(file, exclude, false)) {
           if (isMatch(file, options.include, true)) {
@@ -221,10 +215,12 @@ module.exports = exports = {
   },
   makeDirectories: makeDirectories = function(dir) {
     if (typeof dir !== 'string') {
-      throw new Error("dir is not a string: " + (JSON.stringify(dir)));
+      throw new Error(`dir is not a string: ${JSON.stringify(dir)}`);
     }
     if (!exists(dir)) {
+      // make parent first
       makeDirectories(np.dirname(dir));
+      // make self
       return fs.mkdirSync(dir);
     }
   },
@@ -251,23 +247,24 @@ module.exports = exports = {
       return fs.unlinkSync(file);
     }
   },
+  // copies files or folders
   copy: copy = function(source, target, include) {
-    var content, file, files, _i, _len, _results;
+    var content, file, files, i, len, results1;
     target = np.normalize(target);
     if (isFile(source)) {
       if (isMatch(source, include, true)) {
         content = read(source);
         write(target, content);
-        return console.log("Copied: " + (np.normalize(target)));
+        return console.log(`Copied: ${np.normalize(target)}`);
       }
     } else if (isDirectory(source)) {
       files = fs.readdirSync(source);
-      _results = [];
-      for (_i = 0, _len = files.length; _i < _len; _i++) {
-        file = files[_i];
-        _results.push(copy(np.join(source, file), np.join(target, file), include));
+      results1 = [];
+      for (i = 0, len = files.length; i < len; i++) {
+        file = files[i];
+        results1.push(copy(np.join(source, file), np.join(target, file), include));
       }
-      return _results;
+      return results1;
     }
   },
   normalizePath: normalizePath = function(path) {
@@ -296,6 +293,20 @@ module.exports = exports = {
     return results;
   }
 };
+
+// if typeof describe is 'function'
+//     assert = require 'assert'
+//     describe 'glass.build.utility', ->
+//         describe 'isMatch', ->
+//             it "should work", ->
+//                 assert isMatch "foo.js", ".js"
+//                 assert isMatch "foo.js", ["foo.bar","foo.js"]
+//                 assert isMatch "foo.js", /\.js$/
+//                 assert isMatch "foo.js", (x) -> x is "foo.js"
+//                 assert not isMatch "foo.jsp", ".js"
+//                 assert not isMatch "foo.jsp", ["foo.bar","foo.js"]
+//                 assert not isMatch "foo.jsp", /\.js$/
+//                 assert not isMatch "foo.jsp", (x) -> x is "foo.js"
 
   }
   if (typeof require === 'function') {
