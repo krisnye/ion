@@ -12,7 +12,8 @@
         "build": "node bin/ion -c",
         "watch": "node bin/ion -w",
         "inspect": "node --inspect bin/ion -w",
-        "postinstall": "node boot/builder/_command.js -c"
+        "postinstall": "node boot/builder/_command.js -c",
+        "docserver": "http-server docs/www -p 9000"
     },
     "directories": {
         "lib": "lib",
@@ -22,26 +23,39 @@
         "package": true,
         "merge": {
             "../dist/ion-all.js": {
-                "exclude": ["builder"]
+                "exclude": [
+                    "builder"
+                ]
             },
             "../dist/ion-browser.js": {
-                "exclude": ["builder", "test", "compiler"]
+                "exclude": [
+                    "builder",
+                    "test",
+                    "compiler"
+                ]
             },
             "../dist/ion-min.js": {
-                "exclude": ["builder", "test", "compiler"],
+                "exclude": [
+                    "builder",
+                    "test",
+                    "compiler"
+                ],
                 "compress": true
             }
         }
     },
-    "contributors": ["krisnye@gmail.com"],
+    "contributors": [
+        "krisnye@gmail.com"
+    ],
     "dependencies": {
-        "source-map": "0.1.x",
-        "coffee-script": "1.8.x",
-        "esprima": "1.1.x",
-        "uglify-js": "2.4.x",
-        "pegjs": "0.8.x"
     },
     "devDependencies": {
+        "coffee-script": "1.8.x",
+        "esprima": "1.1.x",
+        "http-server": "^0.11.1",
+        "pegjs": "0.8.x",
+        "source-map": "0.1.x",
+        "uglify-js": "2.4.x",
         "express": "4.12.x"
     }
 }
