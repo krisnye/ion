@@ -1,11 +1,11 @@
 import
     .constants_0.*
-    .constants_1 as zero
+    .Integer
 
 export class Number
     # let `*` : (right: Number) -> Number
     # let sign: -1 | 0 | +1
-    # let integer: Integer
+    let integer: Integer
     let fraction: Number where < one and >= zero
     # let `/` : (right: Number) -> Number
     # let `+` : (right: Number) -> Number

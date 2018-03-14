@@ -7,10 +7,10 @@ import * as ast from "./IonAst"
 const parser = require("./parser")()
 
 import * as input from "./phases/Input"
-// import * as javascript from "./phases/javascript"
+import * as javascript from "./phases/javascript"
 import * as output from "./phases/Output"
 import * as cleanup from "./phases/Cleanup"
-const defaultPhases = [input]//, cleanup, javascript]//, output]
+const defaultPhases = [input, javascript]//, cleanup]//, output]
 const defaultPasses = [].concat(...defaultPhases.map((x:any) => x.passes))
 
 function defaultLoggerFactory() {
@@ -55,8 +55,9 @@ export default class Compiler {
     
     parseAssembly() {
         const debugFilter: { [path: string]: boolean } = {
+            "ion.Type": true,
             "ion.Number": true,
-            // "ion.Integer": true,
+            "ion.Integer": true,
             "ion.constants_0": true,
             "ion.constants_1": true
         }

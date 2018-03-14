@@ -2,25 +2,24 @@ import { traverse, remove, skip, Visitor } from "../Traversal"
 import toposort from "../toposort"
 import * as c from "../common"
 import * as ast from "../IonAst"
-import * as irt from "../IonIrt"
 
 const Assembly_NoOp = (node: ast.Module) => {
     return skip
 }
 
-const Module_AddPublicPathToExports = (node: ast.Module, ancestors: object[]) => {
-    if (node._variables) {
-        let path = ancestors.filter(a => a instanceof ast.Namespace && a.name != null).map((n: ast.Namespace) => n.name).join('.')
-        //  if we have multiple exports then add our module id
-        if (Array.isArray(node.exports))
-            path += "." + node.id
-        //  now add public path to variable bindings
-        for (let name in node._variables) {
-            let binding = node._variables[name]
-            binding.id = path + "." + name
-        }
-    }
-}
+// const Module_AddPublicPathToExports = (node: ast.Module, ancestors: object[]) => {
+//     if (node._variables) {
+//         let path = ancestors.filter(a => a instanceof ast.Namespace && a.name != null).map((n: ast.Namespace) => n.name).join('.')
+//         //  if we have multiple exports then add our module id
+//         if (Array.isArray(node.exports))
+//             path += "." + node.id
+//         //  now add public path to variable bindings
+//         for (let name in node._variables) {
+//             let binding = node._variables[name]
+//             binding.id = path + "." + name
+//         }
+//     }
+// }
 
 const Module_DebugValues = (node: ast.Module, ancestors: object[]) => {
     for (let name in node._variables) {
@@ -199,8 +198,8 @@ function filterAllNodes(node: any, filter: (object: any) => any) {
     return node
 }
 let ancestorMap = new Map<ast.Expression,object[]>()
-const Node_AddDependenciesToAssembly = (node: any, ancestors: object[], path: string[]) => {
-    let module = <ast.Assembly>ancestors[0]
+const Node_AddDependenciesToIrtRoot = (node: any, ancestors: object[], path: string[]) => {
+    let module = <ast.IrtRoot>ancestors[0]
     if (ast.isExpression(node)) {
         // we only need to store ancestors IF the node has a simplify method
         if (node.simplify)
@@ -215,16 +214,38 @@ const Node_AddDependenciesToAssembly = (node: any, ancestors: object[], path: st
         }
     }
 }
-const _Assembly_ToposortTypes = (node: ast.Assembly) => {
+const _IrtRoot_ToposortTypes = (node: ast.IrtRoot) => {
     let deps = node._expressionDependencies
-    let sortedDeps = toposort(deps)
+    let sortedDeps: ast.Expression[] = toposort(deps)
+    // we need to know the relative order of each of our root declarations
+    {
+        let sortedNames: string[] = []
+        let expressionToIndex: Map<ast.Expression,number> = new Map()
+        for (let i = 0; i < sortedDeps.length; i++) {
+            expressionToIndex.set(sortedDeps[i], i)
+        }
+        let indexNamePairs: [number, string][] = []
+        for (let name in node.values) {
+            let expression = node.values[name]
+            let index = <number>expressionToIndex.get(expression)
+            indexNamePairs.push([index, name])
+        }
+        indexNamePairs.sort((a, b) => a[0] - b[0])
+        for (let [index, name] of indexNamePairs) {
+            sortedNames.push(name)
+        }
+        //  now let's redefine the values in the correct dependency order
+        node.sorted = sortedNames
+    }
+
     // now we must simplify all references
     let simplifiedMap = new Map<ast.Expression,ast.Expression>()
     let filter = (expression: ast.Expression) => simplifiedMap.get(expression) || expression
+    // 
     for (let expression of sortedDeps) {
         console.log("Resolve: " + expression.toDebugString())
         if (expression.simplify != null) {
-            let simplified = expression.simplify(ancestorMap.get(expression), filter)
+            let simplified = expression.simplify(<object[]>ancestorMap.get(expression), filter)
             if (simplified != null) {
                 simplifiedMap.set(expression, simplified)
             }
@@ -251,18 +272,18 @@ const Module_ConvertImportsToCanonicalReferences = (node: ast.Module, ancestors:
 }
 
 const Module_AddCanonicalReferences = (node: ast.Module, ancestors: object[]) => {
-    function addCanonicalReference(declaration: ast.Declaration, addName: boolean = true) {
+    function addCanonicalReference(declaration: ast.Declaration, addName: boolean = true, privat: boolean = false) {
         let variableBinding = node.getVariable(ancestors, declaration.id.name)
         if (variableBinding == null) {
             return node.throwSemanticError("Variable for declaration: " + declaration.id.name + " not found")
         }
         let path = node.path.join('.')
         if (addName)
-            path += '.' + declaration.id.name
+            path += '.' + (privat ? '$' : '') + declaration.id.name
         variableBinding.canonicalId = path
     }
     for (let declaration of node.declarations) {
-        addCanonicalReference(declaration)
+        addCanonicalReference(declaration, true, true)
     }
     if (Array.isArray(node.exports)) {
         for (let declaration of node.exports) {
@@ -274,9 +295,9 @@ const Module_AddCanonicalReferences = (node: ast.Module, ancestors: object[]) =>
 }
 
 const __Reference_ConvertToCanonicalReference = (node: ast.Reference, ancestors: object[]) => {
-    let variableBinding = node.getVariable(ancestors, node.id.name)
-    if (variableBinding && variableBinding.canonicalId) {
-        return new ast.CanonicalReference(variableBinding.canonicalId)
+    let variable = node.getVariable(ancestors, node.id.name)
+    if (variable && variable.canonicalId) {
+        return new ast.CanonicalReference(variable.canonicalId)
     }
     return node
 }
@@ -294,33 +315,28 @@ const VariableDeclaration_ClassDeclaration_ExtractValues = (node: ast.Declaratio
 }
 
 const __Assembly_ConvertToIrt = (node: ast.Assembly) => {
-    let irtAssembly = new irt.Assembly({values:extractValues})
+    let irtAssembly = new ast.IrtRoot({values:extractValues})
     extractValues = {}
     return irtAssembly
 }
 
 export const passes = [
-    //  Phase 0: initialization and adding variable bindings
-    [Module_FlattenImportDeclarations],
+    //  initialization and adding variable bindings
+    [Assembly_ModulePathInit, Module_FlattenImportDeclarations],
     [ImportDeclaration_AddVariableBindings, ClassDeclaration_AddVariableBindings, VariableDeclaration_AddVariableBindings, Parameter_AddVariableBindings, ForInStatement_AddVariableBindings, Namespace_AddVariableBindings],
-    [Assembly_ModulePathInit],
-    //  Phase 1: check for unresolved references
+    //  check for unresolved references
     [Module_ImportsRelativeToAbsolute, Reference_CheckIfUnresolvedAndAddToModule],
-    //  Phase 2: attempt to simplify references
+    //  attempt to resolve missing references using import.*
     [Module_UnresolvedReferencesResolve],
     // [Module_ImportsResolveToModules],
-    [Module_ConvertImportsToCanonicalReferences],
-    [Module_AddCanonicalReferences],
-    [__Reference_ConvertToCanonicalReference],
-
+    [Module_ConvertImportsToCanonicalReferences, Module_AddCanonicalReferences, __Reference_ConvertToCanonicalReference],
     //  Convert to Intermediate Representation
-    [VariableDeclaration_ClassDeclaration_ExtractValues, __Assembly_ConvertToIrt]
+    [VariableDeclaration_ClassDeclaration_ExtractValues, __Assembly_ConvertToIrt],
 
-    //  Prepare for converstion to IRT
     // [Module_AddPublicPathToExports],
     // [Module_DebugValues]
     //  Phase 3: Type calculation
-    // [Node_AddDependenciesToAssembly, _Assembly_ToposortTypes],
+    [Node_AddDependenciesToIrtRoot, _IrtRoot_ToposortTypes],
 
     //  Phase 4: check semantic validity
     // [AssignmentStatement_CheckAssignable]

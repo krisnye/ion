@@ -1,2 +1,4 @@
+import
+    .Number
 
 export let Integer = Number where .fraction == 0

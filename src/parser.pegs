@@ -232,6 +232,27 @@ TemplateReference
     //     return node("TemplateReference", {id:node('Id',{name:"Array"}), arguments:[node("UnionType", {types})], pattern:types})
     // }
 
+Quantifier
+    = "?" { return [0,1] }
+    / "*" { return [0, null] }
+    / "+" { return [1, null] }
+    / Range
+
+Range
+    = from:DecimalInteger _ ".." _ to:DecimalInteger? { return [from, to || null] }
+    / ".." _ to:DecimalInteger { return [null, to] }
+    / value:DecimalInteger { return [value, value] }
+
+KeyValue
+    = key:Type value:(_ ':' _ @Type)? _ quantifier:Quantifier?
+        { return node('KeyValue', {key, value, quantifier} ) }
+
+CollectionType
+    = '[' _ ']'
+        { return node('CollectionType', {elements:[]}) }
+    / '[' _ head:KeyValue tail:(_ ',' _ @KeyValue)* _ ']'
+        { return node('CollectionType', {elements:[head, ...tail]}) }
+
 ////////////////////////////////////////////////////////////////////////////////
 //  Operations
 ////////////////////////////////////////////////////////////////////////////////
@@ -462,7 +483,7 @@ DecimalIntegerLiteral
     = DecimalInteger { return node('Literal', {value:parseInt(text())}) }
 
 DecimalInteger
-    = '0' / [+-]? [1-9] [0-9]* !IdPart
+    = '0' / [+-]? [1-9] [0-9]* !IdPart { return parseInt(text()) }
 
 StringLiteral
     = '"' DoubleStringChar* '"' { return node('Literal', {value:eval(text())}); }

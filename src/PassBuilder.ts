@@ -3,6 +3,10 @@ import {Visitor} from "./Traversal"
 export type Filter = Visitor & {name:string,target:string[],mutate?:boolean}
 export type Pass = Visitor & {names:string[]}
 
+function getType(node: any) {
+    return node.className || node.type
+}
+
 function createFilter(filter: Filter | ((node:any, ancestors?: object[], path?: string[]) => any)): Filter {
     if (typeof filter === 'function') {
         let name = filter.name
@@ -96,8 +100,8 @@ export function createPass(filters: Filter[], options:{debug?:boolean} = {}): Pa
     return {
         names: filters.map(f => f.name),
         enter: (node:any, ancestors: object[], path: string[]) => {
-            let type = node.className
-            let handler = getHandler(node.className)
+            let type = getType(node)
+            let handler = getHandler(type)
             if (handler) {
                 let {enters} = handler
                 let result = undefined
@@ -109,7 +113,8 @@ export function createPass(filters: Filter[], options:{debug?:boolean} = {}): Pa
             }
         },
         leave: (node:any, ancestors: object[], path: string[]) => {
-            let handler = getHandler(node.className)
+            let type = getType(node)
+            let handler = getHandler(type)
             if (handler) {
                 let {leaves} = handler
                 for (let leave of leaves) {

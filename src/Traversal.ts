@@ -13,7 +13,7 @@ function flatten(array: any[]) {
 }
 
 function isObjectNode(object:any) {
-    return object != null && object.className != null
+    return object != null && (object.className != null || object.type != null)
 }
 
 export const remove = Object.freeze([])

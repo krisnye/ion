@@ -126,8 +126,9 @@ export class Namespace extends Scope implements Expression {
     }
 }
 
-export class Assembly extends Namespace {
-    options: { input: string, output: string }
+export class IrtRoot extends Node {
+    values: { [name: string]: Expression }
+    sorted: string[] = []
     _expressionDependencies: [Expression, Expression][] = Object.assign([], {
         toJSON() {
             // for debugging
@@ -136,6 +137,10 @@ export class Assembly extends Namespace {
             })
         }
     })
+}
+
+export class Assembly extends Namespace {
+    options: { input: string, output: string }
 }
 
 export class Module extends Namespace {
@@ -438,15 +443,26 @@ export class CollectionType extends Node implements TypeExpression {
     }
 }
 
-
 export class CanonicalReference extends Node implements TypeExpression {
     id: string
     constructor(id: string) {
         super()
         this.id = id
     }
+    getReferencedExpression(ancestors: object[]) {
+        let root = <IrtRoot>ancestors[0]
+        return <Expression>root.values[this.id]
+    }
     getDependencies(ancestors: object[]): Expression[] {
-        return []
+        return [this.getReferencedExpression(ancestors)]
+    }
+    simplify(ancestors: object[], filter: ExpressionFilter): Expression | void
+    {
+        // only simplify Literal values
+        let expression = filter(this.getReferencedExpression(ancestors))
+        if (expression instanceof Literal) {
+            return expression
+        }
     }
     toString() {
         return this.id

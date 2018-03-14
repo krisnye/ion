@@ -48,8 +48,5 @@ Type System Semantics
     let tuple1 = tuple[1] # Integer
     let tuple2 = tuple[2] # String
     let tuple3 = tuple[3] # TYPE ERROR
-    let someRandomNumber: 0..1
+    let someRandomNumber: 0...1
     let tuple0or1 = tuple[someRandomNumber] # Vector | Integer
-
-    
-
