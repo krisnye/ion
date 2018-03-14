@@ -8,7 +8,7 @@ const parser = require("./parser")()
 
 import * as input from "./phases/Input"
 import * as optimizer from "./phases/Optimizer"
-import * as javascript from "./phases/javascript"
+import * as javascript from "./phases/Javascript"
 import * as output from "./phases/Output"
 import * as cleanup from "./phases/Cleanup"
 const defaultPhases = [input, optimizer, javascript]//, cleanup]//, output]
@@ -53,7 +53,7 @@ export default class Compiler {
         let assembly = this.parseAssembly()
         assembly = this.compileAssembly(assembly)
     }
-    
+
     parseAssembly() {
         const debugFilter: { [path: string]: boolean } = {
             "ion.Type": true,
