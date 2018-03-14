@@ -247,7 +247,7 @@ const _IrtRoot_ToposortTypes = (node: ast.IrtRoot) => {
     let filter = (expression: ast.Expression) => simplifiedMap.get(expression) || expression
     // 
     for (let expression of sortedDeps) {
-        console.log("Resolve: " + expression.toDebugString())
+        // console.log("Resolve: " + expression.toDebugString())
         if (expression.simplify != null) {
             let simplified = expression.simplify(<object[]>ancestorMap.get(expression), filter)
             if (simplified != null) {

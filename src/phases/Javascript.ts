@@ -158,10 +158,28 @@ const Node_findClassNamesThatNeedConversion = (n: any) => {
     }
 }
 
+const __CallExpression_SimplifyTypeIsCalls = (n: any) => {
+    if (
+        n.callee.type == jst.MemberExpression &&
+        n.callee.object.type == jst.ObjectExpression &&
+        n.callee.object.properties.length == 1 &&
+        n.callee.object.properties[0].value.type == jst.ArrowFunctionExpression &&
+        n.callee.object.properties[0].value.params[0].name == n.arguments[0].name
+    ) {
+        return n.callee.object.properties[0].value.body
+    }
+
+    // before
+    // $ => ({ is: $ => $ === 0 }.is($) || { is: $ => $ === 1 }.is($))
+    // after
+    // $ => $ === 0 || $ === 1
+}
+
 export const passes = [
     [__CanonicalReference_ToJavascriptIdentifier, __Literal_ToJavascriptLiteral,__Id_ToJavascriptIdentifier],
     [__ConstrainedType_ToRuntimePredicate, __LiteralType_ToRuntimePredicate, __UnionType_ToRuntimePredicate],
     [__DotExpression_ToJavascriptIdentifier, __BinaryExpression_ToJavascript, __MemberExpression_ToJavascript],
+    [__CallExpression_SimplifyTypeIsCalls],
     [__ClassDeclaration_ToJavascriptClass],
     [Node_NoOp, __IrtRoot_ToJavascriptModule],
     [Node_findClassNamesThatNeedConversion],
