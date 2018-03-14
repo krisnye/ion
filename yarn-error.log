@@ -1,17 +1,17 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js link
+  /usr/local/Cellar/node/9.8.0/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js clean
 
 PATH: 
-  C:\code\VPath\ion\node_modules\.bin;C:\Users\Kody\AppData\Local\Yarn\config\link\node_modules\.bin;C:\code\VPath\ion\node_modules\.bin;C:\Users\Kody\AppData\Local\Yarn\config\link\node_modules\.bin;C:\Program Files\lib\node_modules\npm\bin\node-gyp-bin;C:\Program Files\nodejs\node_modules\npm\bin\node-gyp-bin;C:\Users\Kody\AppData\Roaming\npm;C:\Program Files\Python35\Scripts\;C:\Program Files\Python35\;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\libnvvp;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\libnvvp;C:\Program Files (x86)\Common Files\Microsoft Shared\Windows Live;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Users\Kody\.dnx\bin;C:\Program Files\Microsoft DNX\Dnvm\;C:\Program Files (x86)\GtkSharp\2.12\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files (x86)\Skype\Phone\;C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin;C:\Program Files\Git\cmd;C:\python27;C:\python27\scripts;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files (x86)\Microsoft SDKs\TypeScript\1.5\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\nodejs\;C:\cygwin64\bin;C:\Windows\System32;C:\utils;C:\Program Files (x86)\Yarn\bin;C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin;C:\Program Files (x86)\Microsoft VS Code\bin;C:\Users\Kody\AppData\Roaming\npm;C:\Users\Kody\AppData\Local\Yarn\bin
+  /Library/Frameworks/Python.framework/Versions/2.7/bin:/Users/krisnye/Downloads/google-cloud-sdk/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Frameworks/Mono.framework/Versions/Current/Commands
 
 Yarn version: 
-  0.27.5
+  1.5.1
 
 Node version: 
-  6.10.0
+  9.8.0
 
 Platform: 
-  win32 x64
+  darwin x64
 
 npm manifest: 
   {
@@ -19,14 +19,15 @@ npm manifest:
       "version": "1.9.0",
       "main": "lib/index",
       "repository": "https://github.com/krisnye/ion.git",
-      "bin": "lib/compiler/bin/index.js",
+      "bin": "lib/command.js",
       "scripts": {
-          "dev": "npm link pegs && yarn install && yarn build && yarn link",
-          "build": "pegs compiler/parser.pegs lib/compiler/parser.js && tsc -p .",
-          "watch": "nodemon -w compiler/parser.pegs -x pegs compiler/parser.pegs lib/compiler/parser.js & tsc -p . --watch & yarn watchTest",
-          "watchTest": "nodemon -w lib/compiler -w compiler/test -e js,ion lib/compiler/test",
-          "watchWin": "start yarn watchTest & start nodemon -w compiler/parser.pegs -x pegs compiler/parser.pegs lib/compiler/parser.js & start tsc -p . --watch"
-  
+          "dev": "npm link pegs && yarn install && mkdir -p lib",
+          "build": "pegs src/parser.pegs lib/parser.js && tsc -p .",
+          "watchBuild": "nodemon -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch",
+          "watchTest": "nodemon -w lib -w test -e js,ion lib/command.js test",
+          "watchDebug": "nodemon -w lib -w test -e js,ion --inspect-brk lib/command.js test",
+          "watch": "yarn watchBuild & yarn watchTest",
+          "debug": "yarn watchBuild & yarn watchDebug"
       },
       "author": {
           "name": "Kris Nye",
@@ -81,6 +82,17 @@ Lockfile:
     version "1.1.0"
     resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-1.1.0.tgz#eaecbf66cd706882760b2f4691582b8f55d7a7de"
   
+  balanced-match@^1.0.0:
+    version "1.0.0"
+    resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
+  
+  brace-expansion@^1.1.7:
+    version "1.1.8"
+    resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.8.tgz#c07b211c7c952ec1f8efd51a77ef0d1d3990a292"
+    dependencies:
+      balanced-match "^1.0.0"
+      concat-map "0.0.1"
+  
   chalk@^0.5.1:
     version "0.5.1"
     resolved "https://registry.yarnpkg.com/chalk/-/chalk-0.5.1.tgz#663b3a648b68b55d04690d49167aa837858f2174"
@@ -91,9 +103,17 @@ Lockfile:
       strip-ansi "^0.3.0"
       supports-color "^0.2.0"
   
+  concat-map@0.0.1:
+    version "0.0.1"
+    resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
+  
   deep-is@~0.1.3:
     version "0.1.3"
     resolved "https://registry.yarnpkg.com/deep-is/-/deep-is-0.1.3.tgz#b369d6fb5dbc13eecf524f91b070feedc357cf34"
+  
+  es6-object-assign@^1.0.3:
+    version "1.1.0"
+    resolved "https://registry.yarnpkg.com/es6-object-assign/-/es6-object-assign-1.1.0.tgz#c2c3582656247c39ea107cb1e6652b6f9f24523c"
   
   escape-string-regexp@^1.0.0:
     version "1.0.5"
@@ -126,11 +146,41 @@ Lockfile:
     version "2.0.6"
     resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   
+  fs.realpath@^1.0.0:
+    version "1.0.0"
+    resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
+  
+  glob@^7.0.0:
+    version "7.1.2"
+    resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.2.tgz#c19c9df9a028702d678612384a6552404c636d15"
+    dependencies:
+      fs.realpath "^1.0.0"
+      inflight "^1.0.4"
+      inherits "2"
+      minimatch "^3.0.4"
+      once "^1.3.0"
+      path-is-absolute "^1.0.0"
+  
   has-ansi@^0.1.0:
     version "0.1.0"
     resolved "https://registry.yarnpkg.com/has-ansi/-/has-ansi-0.1.0.tgz#84f265aae8c0e6a88a12d7022894b7568894c62e"
     dependencies:
       ansi-regex "^0.2.0"
+  
+  inflight@^1.0.4:
+    version "1.0.6"
+    resolved "https://registry.yarnpkg.com/inflight/-/inflight-1.0.6.tgz#49bd6331d7d02d0c09bc910a1075ba8165b56df9"
+    dependencies:
+      once "^1.3.0"
+      wrappy "1"
+  
+  inherits@2:
+    version "2.0.3"
+    resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"
+  
+  interpret@^1.0.0:
+    version "1.0.3"
+    resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.0.3.tgz#cbc35c62eeee73f19ab7b10a801511401afc0f90"
   
   jsondiffpatch@^0.2.4:
     version "0.2.4"
@@ -145,6 +195,22 @@ Lockfile:
       prelude-ls "~1.1.2"
       type-check "~0.3.2"
   
+  minimatch@^3.0.4:
+    version "3.0.4"
+    resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.4.tgz#5166e286457f03306064be5497e8dbb0c3d32083"
+    dependencies:
+      brace-expansion "^1.1.7"
+  
+  minimist@^1.2.0:
+    version "1.2.0"
+    resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
+  
+  once@^1.3.0:
+    version "1.4.0"
+    resolved "https://registry.yarnpkg.com/once/-/once-1.4.0.tgz#583b1aa775961d4b113ac17d9c50baef9dd76bd1"
+    dependencies:
+      wrappy "1"
+  
   optionator@^0.8.1:
     version "0.8.2"
     resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.8.2.tgz#364c5e409d3f4d6301d6c0b4c05bba50180aeb64"
@@ -156,6 +222,14 @@ Lockfile:
       type-check "~0.3.2"
       wordwrap "~1.0.0"
   
+  path-is-absolute@^1.0.0:
+    version "1.0.1"
+    resolved "https://registry.yarnpkg.com/path-is-absolute/-/path-is-absolute-1.0.1.tgz#174b9268735534ffbc7ace6bf53a5a9e1b5c5f5f"
+  
+  path-parse@^1.0.5:
+    version "1.0.5"
+    resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.5.tgz#3c1adf871ea9cd6c9431b6ea2bd74a0ff055c4c1"
+  
   pegs@*:
     version "0.1.0"
     resolved "https://registry.yarnpkg.com/pegs/-/pegs-0.1.0.tgz#b2cf4d7f0967ca740714d5938d3002dfc7b74f8a"
@@ -163,6 +237,34 @@ Lockfile:
   prelude-ls@~1.1.2:
     version "1.1.2"
     resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
+  
+  rechoir@^0.6.2:
+    version "0.6.2"
+    resolved "https://registry.yarnpkg.com/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
+    dependencies:
+      resolve "^1.1.6"
+  
+  resolve@^1.1.6:
+    version "1.4.0"
+    resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.4.0.tgz#a75be01c53da25d934a98ebd0e4c4a7312f92a86"
+    dependencies:
+      path-parse "^1.0.5"
+  
+  shelljs@^0.7.3, shelljs@^0.7.8:
+    version "0.7.8"
+    resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.7.8.tgz#decbcf874b0d1e5fb72e14b164a9683048e9acb3"
+    dependencies:
+      glob "^7.0.0"
+      interpret "^1.0.0"
+      rechoir "^0.6.2"
+  
+  shx@^0.2.2:
+    version "0.2.2"
+    resolved "https://registry.yarnpkg.com/shx/-/shx-0.2.2.tgz#0a304d020b0edf1306ad81570e80f0346df58a39"
+    dependencies:
+      es6-object-assign "^1.0.3"
+      minimist "^1.2.0"
+      shelljs "^0.7.3"
   
   source-map@~0.2.0:
     version "0.2.0"
@@ -193,7 +295,20 @@ Lockfile:
   wordwrap@~1.0.0:
     version "1.0.0"
     resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-1.0.0.tgz#27584810891456a4171c8d0226441ade90cbcaeb"
+  
+  wrappy@1:
+    version "1.0.2"
+    resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
 
 Trace: 
-  Error: ENOENT: no such file or directory, symlink 'C:\Users\Kody\AppData\Local\Yarn\config\link\ion2\lib\compiler\bin\index.js' -> 'C:\Users\Kody\AppData\Local\Yarn\bin\ion2'
-      at Error (native)
+  Error: Command "clean" not found.
+      at new MessageError (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:186:110)
+      at /usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:87307:17
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:98:30)
+      at /usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:116:14
+      at new Promise (<anonymous>)
+      at new F (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:23451:28)
+      at /usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:95:12
+      at runCommand (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:87312:22)
+      at Object.<anonymous> (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:87412:14)
