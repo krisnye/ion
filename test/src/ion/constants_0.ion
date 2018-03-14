@@ -1,4 +1,7 @@
 let _one = 1
+let Foo = 0 | 1
+let Bar = 2 | 3
 export
     let one = _one
     let zero = one - one
+    let Baz = Foo | Bar

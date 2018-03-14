@@ -235,7 +235,11 @@ const _IrtRoot_ToposortTypes = (node: ast.IrtRoot) => {
             sortedNames.push(name)
         }
         //  now let's redefine the values in the correct dependency order
-        node.sorted = sortedNames
+        let sortedValues: {[name: string]: ast.Expression} = {}
+        for (let name of sortedNames) {
+            sortedValues[name] = node.values[name]
+        }
+        node.values = sortedValues
     }
 
     // now we must simplify all references

@@ -128,7 +128,6 @@ export class Namespace extends Scope implements Expression {
 
 export class IrtRoot extends Node {
     values: { [name: string]: Expression }
-    sorted: string[] = []
     _expressionDependencies: [Expression, Expression][] = Object.assign([], {
         toJSON() {
             // for debugging
@@ -519,22 +518,24 @@ export class FunctionType extends Scope implements TypeExpression {
 }
 export class UnionType extends Node implements TypeExpression {
     type = new CanonicalReference("ion.Type")
-    types: TypeExpression[]
+    left: TypeExpression
+    right: TypeExpression
     getDependencies(ancestors: object[]) {
-        return this.types
+        return [this.left, this.right]
     }
     toString() {
-        return this.types.join('|')
+        return this.left + '|' + this.right
     }
 }
 export class IntersectionType extends Node implements TypeExpression {
     type = new CanonicalReference("ion.Type")
-    types: TypeExpression[]
+    left: TypeExpression
+    right: TypeExpression
     getDependencies(ancestors: object[]) {
-        return this.types
+        return [this.left, this.right]
     }
     toString() {
-        return this.types.join('&')
+        return this.left + '&' + this.right
     }
 }
 

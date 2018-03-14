@@ -46,7 +46,7 @@ const __MemberExpression_ToJavascript = (n:ast.MemberExpression) => {
     return {type:jst.MemberExpression, object: n.object, property: n.property, computed: false}
 }
 
-const __ConstrainedType_ToRuntimePredicate = (node:ast.ConstrainedType) => {
+function createPredicate(expression: any) {
     return {
         type: jst.ObjectExpression,
         properties: [
@@ -59,21 +59,54 @@ const __ConstrainedType_ToRuntimePredicate = (node:ast.ConstrainedType) => {
                     id: null,
                     params: [Id('$')],
                     expression: true,
-                    body: {
-                        type: jst.BinaryExpression,
-                        left: {
-                            type: jst.BinaryExpression,
-                            left: Id('$'),
-                            operator: 'is',
-                            right: node.baseType
-                        },
-                        operator: 'and',
-                        right: node.constraint
-                    }
+                    body: expression
                 }
             }
         ]
     }
+}
+
+const __LiteralType_ToRuntimePredicate = (node: ast.LiteralType) => {
+    return createPredicate({
+        type: jst.BinaryExpression,
+        left: Id('$'),
+        operator: '==',
+        right: node.literal
+    })
+}
+
+const __UnionType_ToRuntimePredicate = (node: ast.UnionType) => {
+    return createPredicate({
+        type: jst.BinaryExpression,
+        left: {
+            type: jst.BinaryExpression,
+            left: Id('$'),
+            operator: 'is',
+            right: node.left
+        },
+        operator: 'or',
+        right: {
+            type: jst.BinaryExpression,
+            left: Id('$'),
+            operator: 'is',
+            right: node.right
+        }
+    })
+}
+
+const __ConstrainedType_ToRuntimePredicate = (node:ast.ConstrainedType) => {
+    return createPredicate({
+        type: jst.BinaryExpression,
+        left: {
+            type: jst.BinaryExpression,
+            left: Id('$'),
+            operator: 'is',
+            right: node.baseType
+        },
+        operator: 'and',
+        right: node.constraint
+    })
+
 }
 
 const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration) => {
@@ -92,7 +125,7 @@ const __IrtRoot_ToJavascriptModule = (node:ast.IrtRoot) => {
     return {
         type: jst.Program,
         sourceType: "module",
-        body: node.sorted.map(
+        body: Object.keys(node.values).map(
             (name) => {
                 let value = node.values[name]
                 return {
@@ -127,7 +160,7 @@ const Node_findClassNamesThatNeedConversion = (n: any) => {
 
 export const passes = [
     [__CanonicalReference_ToJavascriptIdentifier, __Literal_ToJavascriptLiteral,__Id_ToJavascriptIdentifier],
-    [__ConstrainedType_ToRuntimePredicate /* must be before BinaryExpression */],
+    [__ConstrainedType_ToRuntimePredicate, __LiteralType_ToRuntimePredicate, __UnionType_ToRuntimePredicate],
     [__DotExpression_ToJavascriptIdentifier, __BinaryExpression_ToJavascript, __MemberExpression_ToJavascript],
     [__ClassDeclaration_ToJavascriptClass],
     [Node_NoOp, __IrtRoot_ToJavascriptModule],

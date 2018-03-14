@@ -193,12 +193,12 @@ Type
     / "(" _ @Type _ ")"
 
 UnionType
-    = head:IntersectionType tail:(_ "|" _ @IntersectionType)*
-    { return tail.length == 0 ? head : node('UnionType', {types:[head, ...tail]}) }
+    = left:IntersectionType right:(_ "|" _ @UnionType)?
+    { return right ? node('UnionType', {left, right}) : left }
 
 IntersectionType
-    = head:ConstrainedType tail:(_ "&" _ @ConstrainedType)*
-    { return tail.length == 0 ? head : node('IntersectionType', {types:[head, ...tail]}) }
+    = left:ConstrainedType right:(_ "&" _ @IntersectionType)?
+    { return right ? node('IntersectionType', {left, right}) : left }
 
 ConstrainedType
     = baseType:TemplateReference constraint:(' ' WhereToken ' ' _ @InlineExpression)?
