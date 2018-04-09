@@ -1,5 +1,8 @@
+# let classDeclators = import './classDeclarators'
 # export const
 #     test = ->
+#         assert Object.keys(classDeclators).length is 3
+
 #         assert 81 is Math.max.apply(..)
 #             null
 #             [i * i for let i = 0; i < 10; i++]

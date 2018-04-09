@@ -231,7 +231,8 @@ variableDeclaratorList = multilineVariableDeclaratorList / inlineVariableDeclara
 inlineVariableDeclaratorList = head:VariableDeclarator tail:(_ "," _ a:VariableDeclarator {return a})* { return [head].concat(tail) }
 multilineVariableDeclaratorList = indent eol declarations:(_ a:VariableDeclarator eol? { return a })+ outdent { return declarations }
 VariableDeclarator
-    = start:start &Identifier func:FunctionExpression end:end { return node("VariableDeclarator", {id:func.id,init:func}, start, end) }
+    = start:start clazz:ClassExpression end:end { return node("VariableDeclarator", {id:clazz.name,init:clazz}, start, end) }
+    / start:start &Identifier func:FunctionExpression end:end { return node("VariableDeclarator", {id:func.id,init:func}, start, end) }
     / start:start pattern:Pattern _ init:variableInitializer? end:end { return node("VariableDeclarator", {id:pattern,init:init}, start, end) }
 variableInitializer = "=" _ a:RightHandSideExpression { return a }
 
