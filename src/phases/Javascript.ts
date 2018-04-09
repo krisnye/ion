@@ -16,6 +16,15 @@ function Literal(value: any) {
     return {type:jst.Literal, value}
 }
 
+function getMetaValue(meta: ast.Property[], name: string) {
+    for (let property of meta) {
+        let key = property.key
+        if (property.key && (<any>property.key).name == name) {
+            return property.value
+        }
+    }
+}
+
 const __CanonicalReference_ToJavascriptIdentifier = (n:ast.CanonicalReference) => Id(n.id)
 const __Literal_ToJavascriptLiteral = (n:ast.Literal) => Literal(n.value)
 const __Id_ToJavascriptIdentifier = (n:ast.Id) => Id(n.name)
@@ -110,6 +119,12 @@ const __ConstrainedType_ToRuntimePredicate = (node:ast.ConstrainedType) => {
 }
 
 const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration) => {
+    let meta = getMetaValue(node.meta, 'ion_Native_JavaScript')
+    if (meta != null) {
+        let value = (<ast.Literal>meta).value
+        return { type: jst.Literal, value, verbatim: value }
+    }
+
     return {
         type: jst.ClassExpression,
         id: node.id,
@@ -144,7 +159,7 @@ const __IrtRoot_ToJavascriptModule = (node:ast.IrtRoot) => {
 
 const __Program_CompileJavascript = (node:any) => {
     return {
-        source: escodegen.generate(node)
+        source: escodegen.generate(node, {verbatim:'verbatim'})
     } 
 }
 
@@ -159,6 +174,10 @@ const Node_findClassNamesThatNeedConversion = (n: any) => {
 }
 
 const __CallExpression_SimplifyTypeIsCalls = (n: any) => {
+    // before
+    // $ => ({ is: $ => $ === 0 }.is($) || { is: $ => $ === 1 }.is($))
+    // after
+    // $ => $ === 0 || $ === 1
     if (
         n.callee.type == jst.MemberExpression &&
         n.callee.object.type == jst.ObjectExpression &&
@@ -168,11 +187,6 @@ const __CallExpression_SimplifyTypeIsCalls = (n: any) => {
     ) {
         return n.callee.object.properties[0].value.body
     }
-
-    // before
-    // $ => ({ is: $ => $ === 0 }.is($) || { is: $ => $ === 1 }.is($))
-    // after
-    // $ => $ === 0 || $ === 1
 }
 
 export const passes = [

@@ -31,12 +31,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 Module
-    = EOL? imports:ImportDeclarations? declarations:Declaration* ExportToken _ exports:Export EOL EOF
+    = EOL? imports:ImportDeclarations? declarations:Declaration* exports:Export EOL EOF
     { return node("Module", {imports:imports || [], declarations, exports}) }
 
 Export
-    = @Declaration
-    / EOL Indent @(Dent @Declaration)+ Outdent
+    //  Allow Declaration meta properties to be specified before the export declaration
+    = meta:MetaProperties ExportToken _ value:Declaration { return node(value.constructor.name, {meta}, value) }
+    / ExportToken EOL Indent @(Dent @Declaration)+ Outdent
 
 ////////////////////////////////////////////////////////////////////////////////
 //  ImportDeclaration
@@ -83,19 +84,27 @@ Declaration
     = ClassDeclaration
     / VariableDeclaration
 
+VariableDeclarationType
+    = VarToken { return {assignable:true, property:false} }
+    / LetToken { return {assignable:false, property:false} }
+    / PropertyToken { return {assignable:false, property:true} }
+
 VariableDeclaration
-    = LetToken _ id:UpperCaseId _ "=" _ value:Type EOL
+    = TypeToken _ id:UpperCaseId _ "=" _ value:Type EOL
     { return node('VariableDeclaration', {assignable:false, id, value}) }
-    / assignable:(VarToken { return true} / LetToken { return false} )
+    / meta:MetaProperties declarationType: VariableDeclarationType
         _ id:Pattern _ type:(":" _ @Type)? _ value:('=' _ @OutlineExpression / EOL {return null})?
-    { return node("VariableDeclaration", {assignable, id, type, value }) }
+    { return node("VariableDeclaration", declarationType, {id, type, value, meta }) }
+
+MetaProperties
+ = (@DynamicOutlineProperty Dent)*
+
+DynamicOutlineProperty
+    = '[' _ key:InlineExpression _ ']' value:(_ ":" _ @OutlineExpression / EOL { return null })
+    { return node("Property", {key, value, computed:true} ) }
 
 // VariableMetaProperties
 //     = EOL Indent @OutlineProperty+ Outdent
-
-OutlineProperty
-    = key:Id _ ":" _ value:OutlineExpression
-    { return node("Property", {key,value}) }
 
 AssignmentOperator
     = "="
@@ -171,10 +180,10 @@ AssignmentProperty
 ////////////////////////////////////////////////////////////////////////////////
 
 ClassDeclaration
-    = isStructure:(ClassToken { return false } / StructToken {return true})
+    = meta:MetaProperties isStructure:(ClassToken { return false } / StructToken {return true})
         _ id:UpperCaseId templateParameters:TemplateParameters? _ baseClasses:Extends? EOL
         Indent declarations:(Dent @Declaration)* Outdent
-        { return node("ClassDeclaration", {isStructure, id, templateParameters, baseClasses:baseClasses || [], declarations}) }
+        { return node("ClassDeclaration", {isStructure, id, templateParameters, meta, baseClasses:baseClasses || [], declarations}) }
 
 TemplateParameters
     = "<" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ">" { return [head, ...tail] }
@@ -359,6 +368,7 @@ OutlineFunction
 OutlineExpression
     = OutlineFunction
     / OutlineCallExpression
+    / OutlineStringLiteral
     / @InlineExpression EOL
     //  TODO: Allow Optional BlockStatement After to imply function call.
 
@@ -444,6 +454,7 @@ InlineArrayExpression
         return node("ArrayExpression", {elements:elements || []})
     }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 //  Literals
 ////////////////////////////////////////////////////////////////////////////////
@@ -494,6 +505,14 @@ DoubleStringChar
 CharLiteral
     = "'" DoubleStringChar* "'" { return node('CharLiteral', {value:eval(text())}); }
 
+OutlineStringLiteralLine
+    = _ LineTerminatorSequence { return '' }
+    / Dent line:[^\r\n]* LineTerminatorSequence { return line.join('') }
+
+OutlineStringLiteral
+    = '""' EOL Indent lines:OutlineStringLiteralLine* Outdent
+    { return node('Literal', {value:lines.join('\n')}) }
+
 ////////////////////////////////////////////////////////////////////////////////
 //  Identifiers
 ////////////////////////////////////////////////////////////////////////////////
@@ -542,6 +561,7 @@ ClassToken      = @"class"      !IdPart
 StructToken     = @"struct"     !IdPart
 VarToken        = @"var"        !IdPart
 LetToken        = @"let"        !IdPart
+PropertyToken   = @"property"   !IdPart
 ExtendsToken    = @"extends"    !IdPart
 ForToken        = @"for"        !IdPart
 WhileToken      = @"while"      !IdPart

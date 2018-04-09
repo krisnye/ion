@@ -79,16 +79,18 @@ export abstract class Node {
 export class VariableDeclaration extends Node implements Declaration, Expression {
     id: Id
     assignable: boolean
+    property: boolean
     type: TypeExpression
     value: Expression | null
+    meta: Property[]
     getDependencies() {
         if (this.value)
-            return [this.value]
+            return [this.type, this.value, ...this.meta]
         else
-            return []
+            return [this.type, ...this.meta]
     }
     toString() {
-        return `${this.assignable ? 'var' : 'let'} ${this.id.name}: ${this.type}`
+        return `${this.property ? 'property' : this.assignable ? 'var' : 'let'} ${this.id.name}: ${this.type}`
     }
 }
 export class VariableBinding {
@@ -166,6 +168,7 @@ export class ClassDeclaration extends Scope implements Declaration, TypeExpressi
     templateParameters: Parameter[]
     baseClasses: TypeExpression[]
     declarations: Declaration[]
+    meta: Property[]
     get value() {
         return this
     }
@@ -405,6 +408,15 @@ export class Literal extends Node implements Expression {
 
 // {[foo]: bar}
 
+export class Property extends Node {
+    key: Expression
+    value: Expression | null
+    computed: boolean
+    getDependencies(ancestors: object[]): Expression[] {
+        return []
+    }
+}
+
 export class ObjectExpression extends Node implements Expression {
     getDependencies(ancestors: object[]): Expression[] {
         return []
@@ -453,7 +465,8 @@ export class CanonicalReference extends Node implements TypeExpression {
         return <Expression>root.values[this.id]
     }
     getDependencies(ancestors: object[]): Expression[] {
-        return [this.getReferencedExpression(ancestors)]
+        let expression = this.getReferencedExpression(ancestors)
+        return expression ? [expression] : []
     }
     simplify(ancestors: object[], filter: ExpressionFilter): Expression | void
     {

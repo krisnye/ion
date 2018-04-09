@@ -60,7 +60,9 @@ export default class Compiler {
             "ion.Number": true,
             "ion.Integer": true,
             "ion.constants_0": true,
-            "ion.constants_1": true
+            "ion.constants_1": true,
+            "ion.Native": true,
+            "ion.String": true
         }
         let paths = common.getFilesRecursive(this.input)
             .filter(filename => filename.endsWith('.ion'))

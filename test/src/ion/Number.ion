@@ -1,19 +1,37 @@
 import
     .constants_0.*
     .Integer
+    .Native
 
+[Native.JavaScript]: ""
+    {
+        is(value) {
+            return typeof value === 'number'
+        },
+        integer(value) {
+            return value - value % 1
+        },
+        fraction(value) {
+            return value % 1
+        }
+    }
 export class Number
+
     # let `*` : (right: Number) -> Number
     # let sign: -1 | 0 | +1
+    [Native.JavaScript]: "$ => $ - $ % 1"
     let integer: Integer
-    let fraction: Number where < one and >= zero
+
+    [Native.JavaScript]: "$ => $ % 1"
+    let fraction : Number where < one and >= zero
+
     # let `/` : (right: Number) -> Number
     # let `+` : (right: Number) -> Number
     # let `-` : (right: Number) -> Number
     # let `^` : (right: Number) -> Number
-    # let `<` : (right: Number) -> Number
-    # let `>` : (right: Number) -> Number
-    # let `<=` : (right: Number) -> Number
-    # let `>=` : (right: Number) -> Number
-    # let `==` : (right: Number) -> Number
-    # let `!=` : (right: Number) -> Number
+    # let `<` : (right: Number) -> Boolean
+    # let `>` : (right: Number) -> Boolean
+    # let `<=` : (right: Number) -> Boolean
+    # let `>=` : (right: Number) -> Boolean
+    # let `==` : (right: Number) -> Boolean
+    # let `!=` : (right: Number) -> Boolean

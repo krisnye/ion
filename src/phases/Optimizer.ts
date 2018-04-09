@@ -2,6 +2,9 @@ import { traverse, remove, skip, Visitor } from "../Traversal"
 import toposort from "../toposort"
 import * as c from "../common"
 import * as ast from "../IonAst"
+import { CanonicalReference } from "../IonAst";
+import { ClassBody } from "../JsAstTypes";
+import { fail } from "assert";
 
 const Node_NoOp = () => skip
 
@@ -49,8 +52,26 @@ const IrtRoot_RemoveDeadDeclarations = (n: ast.IrtRoot) => {
     }
 }
 
+const __MemberExpression_simplifyCanonicalReferences = (n: ast.MemberExpression, ancestors: object[], path: string[]) => {
+    if (n.object instanceof CanonicalReference && n.property instanceof ast.Id) {
+        return new ast.CanonicalReference(n.object.id + '.' + n.property)
+    }
+}
+
+const ClassDeclaration_VariableDeclaration_checkMetaReferences = (n: ast.ClassDeclaration) => {
+    for (let property of n.meta) {
+        if (property.key instanceof CanonicalReference) {
+            // let id = property.key
+        }
+        else {
+            property.throwSemanticError('Meta properties must be canonical references')
+        }
+    }
+}
+
 export const passes = [
     [CanonicalReference_RemoveIndirection],
-    [CanonicalReference_AddDependencies],
-    [IrtRoot_RemoveDeadDeclarations]
+    [__MemberExpression_simplifyCanonicalReferences],
+    [CanonicalReference_AddDependencies, IrtRoot_RemoveDeadDeclarations],
+    [ClassDeclaration_VariableDeclaration_checkMetaReferences]
 ]

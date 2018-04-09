@@ -207,8 +207,9 @@ const Node_AddDependenciesToIrtRoot = (node: any, ancestors: object[], path: str
         let deps = node.getDependencies(ancestors)
         for (let dep of deps) {
             if (dep == null) {
-                console.warn("Missing dep: " + node)
-            } else {
+                console.warn("Missing dep: ", node, deps)
+            }
+            else {
                 module._expressionDependencies.push([dep, node])
             }
         }
@@ -311,10 +312,12 @@ const VariableDeclaration_ClassDeclaration_ExtractValues = (node: ast.Declaratio
     let variable = node.getVariable(ancestors, node.id.name)
     if (variable && variable.canonicalId) {
         if (node.value == null) {
-            node.throwSemanticError("missing value")
-            return
+            // node.throwSemanticError("missing value")
+            // return
         }
-        extractValues[variable.canonicalId] = node.value
+        else {
+            extractValues[variable.canonicalId] = node.value
+        }
     }
 }
 
