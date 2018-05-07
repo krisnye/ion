@@ -11,7 +11,7 @@ import * as optimizer from "./phases/Optimizer"
 import * as javascript from "./phases/Javascript"
 import * as output from "./phases/Output"
 import * as cleanup from "./phases/Cleanup"
-const defaultPhases = [input, optimizer, javascript]//, cleanup]//, output]
+const defaultPhases = [input, optimizer, javascript, output]
 const defaultPasses = [].concat(...defaultPhases.map((x:any) => x.passes))
 
 function defaultLoggerFactory() {
@@ -70,7 +70,7 @@ export default class Compiler {
             .map(filename => this.getPathFromFilename(filename))
             .filter(path => debugFilter[path]);
 
-        let assembly = new ast.Assembly({ namespaces: {} })
+        let assembly = new ast.Assembly({ options:{input:this.input, output:this.output}, namespaces: {} })
         for (let path of paths) {
             let filename = this.getFilenameFromPath(path)
             let source = common.read(filename)

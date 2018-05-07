@@ -203,6 +203,7 @@ const __IrtRoot_ToJavascriptModule = (node:ast.IrtRoot) => {
     // console.log(JSON.stringify(exportObject, null, 2))
     return {
         type: jst.Program,
+        options: node.options,
         sourceType: "module",
         body: (<any>Object.keys(node.values)).map(
             (name: any) => {
@@ -224,9 +225,11 @@ const __IrtRoot_ToJavascriptModule = (node:ast.IrtRoot) => {
 }
 
 const __Program_CompileJavascript = (node:any) => {
-    return {
-        source: escodegen.generate(node, {verbatim:'verbatim'})
-    } 
+    let options: {input:string, output:string} = node.options
+    return new ast.File({
+        path: options.output + "/assembly.js",
+        content: escodegen.generate(node, {verbatim:'verbatim'})
+    })
 }
 
 const classNamesFound: any = {}

@@ -76,6 +76,12 @@ export abstract class Node {
 //     __ancestors: { value: null, writable: true, enumerable: false }
 // })
 
+export class File extends Node {
+    path: string
+    content: string
+    encoding?: string
+}
+
 export class VariableDeclaration extends Node implements Declaration, Expression {
     id: Id
     assignable: boolean
@@ -129,6 +135,7 @@ export class Namespace extends Scope implements Expression {
 }
 
 export class IrtRoot extends Node {
+    options: { input: string, output: string }
     values: { [name: string]: Expression }
     _expressionDependencies: [Expression, Expression][] = Object.assign([], {
         toJSON() {

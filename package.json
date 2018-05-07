@@ -8,9 +8,9 @@
         "dev": "npm link pegs && yarn install && mkdir -p lib",
         "build": "pegs src/parser.pegs lib/parser.js && tsc -p .",
         "clean": "rm -rf node_modules && rm -rf lib",
-        "watchBuild": "nodemon -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch",
-        "watchTest": "nodemon -w lib -w test -e js,ion lib/command.js test",
-        "watchDebug": "nodemon -w lib -w test -e js,ion --inspect-brk lib/command.js test",
+        "watchBuild": "nodemon --ignore test/lib -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch",
+        "watchTest": "nodemon --ignore test/lib -w lib -w test -e js,ion lib/command.js test",
+        "watchDebug": "nodemon --ignore test/lib -w lib -w test -e js,ion --inspect-brk lib/command.js test",
         "watch": "yarn watchBuild & yarn watchTest",
         "debug": "yarn watchBuild & yarn watchDebug"
     },

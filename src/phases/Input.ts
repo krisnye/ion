@@ -322,7 +322,7 @@ const VariableDeclaration_ClassDeclaration_ExtractValues = (node: ast.Declaratio
 }
 
 const __Assembly_ConvertToIrt = (node: ast.Assembly) => {
-    let irtAssembly = new ast.IrtRoot({values:extractValues})
+    let irtAssembly = new ast.IrtRoot({options:node.options, values:extractValues})
     extractValues = {}
     return irtAssembly
 }
