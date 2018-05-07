@@ -9,8 +9,26 @@ const Node_NoOp = (node: any) => {
     return skip
 }
 
-function Id(name: string) {
-    return {type:jst.Identifier, name:name.replace(/\./g, '_')}
+function Freeze(value: any) {
+    // freeze things later, for now... for debugging let's leave output simpler
+    return value
+    // if (value.type == 'Literal')
+    //     return value
+    // return {
+    //     type: jst.CallExpression,
+    //     callee: { type: jst.MemberExpression, object: Id('Object'), property: Id('freeze') },
+    //     arguments: [value]
+    // }
+}
+
+function Id(name: string, properties?: any) {
+    let node: any = {type:jst.Identifier, name:name.replace(/\./g, '_')}
+    if (properties) {
+        for (let name in properties) {
+            node[name] = properties[name]
+        }
+    }
+    return node
 }
 function Literal(value: any) {
     return {type:jst.Literal, value}
@@ -38,8 +56,11 @@ const operatorMap: {[op: string]: string} = {
     "not": "!",
     "xor": "^" // this needs to be handle boolean values
 }
+const __CallExpression_ToJavascript = (n: ast.CallExpression) => {
+    return { type: jst.CallExpression, callee:n.callee, arguments:n.arguments }
+}
 const __BinaryExpression_ToJavascript = (n:ast.BinaryExpression) => {
-    let operator = n.operator
+    let operator: any = n.operator
     operator = operatorMap[operator] || operator
     // if operator = is then we need to do a type check
     if (operator == 'is') {
@@ -51,9 +72,32 @@ const __BinaryExpression_ToJavascript = (n:ast.BinaryExpression) => {
     }
     return {type:jst.BinaryExpression, left:n.left, operator, right:n.right}
 }
-const __MemberExpression_ToJavascript = (n:ast.MemberExpression) => {
+const __MemberExpression_ToJavascript = (n:ast.MemberExpression, ancestors: object[]) => {
     return {type:jst.MemberExpression, object: n.object, property: n.property, computed: false}
 }
+
+const __MemberExpression_ToFunctionCallIfComputed = (n: ast.MemberExpression, ancestors: object[]) => {
+    // this should probably be done BEFORE native output
+    let propertyName = (<any>n).property.name
+    let typeName = (<any>n).object.type.id
+    let root: ast.IrtRoot = <ast.IrtRoot>ancestors[0]
+    let classDeclaration = <ast.ClassDeclaration>root.values[typeName]
+    let propertyDeclaration = classDeclaration.getDeclaration(propertyName)
+    // check and see if the property exists
+    if (propertyDeclaration == null)
+        return n.property.throwSemanticError("Property '" + propertyName + "' not found on " + typeName)
+    // if there is NO value defined, then we assume it's native computed
+    let computed = propertyDeclaration.value == null
+    if (computed) {
+        // turn this into a function call
+        return new ast.CallExpression({
+            callee: new ast.MemberExpression({ object: new ast.CanonicalReference(typeName), property: new ast.Id({ name: propertyName }), computed: false }),
+            arguments:[n.object]
+        })
+    }
+    return n
+}
+
 
 function createPredicate(expression: any) {
     return {
@@ -137,11 +181,31 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration) => {
 }
 
 const __IrtRoot_ToJavascriptModule = (node:ast.IrtRoot) => {
+    // let's create the export object first
+    let exportNames = Object.keys(node.values).filter(name => name.indexOf('$') < 0)
+    function getExportValue(prefix: string = ""): any {
+        let value = node.values[prefix]
+        if (value != null)
+            return Id(prefix)
+        return Freeze({ type: jst.ObjectExpression, properties: getExportProperties(prefix) })
+    }
+    function getExportProperties(prefix: string = ""): any {
+        if (prefix.length > 0)
+            prefix = prefix + '.'
+        let names = exportNames.filter(name => name.startsWith(prefix)).map(name => name.substring(prefix.length).split(/\./)[0])
+        let uniqueNames = Array.from(new Set(names))
+        return uniqueNames.map(name => {
+            // console.log('unique: ', {prefix,name,exists:node.values[prefix+name] != null})
+            return { type: jst.Property, key:Id(name), value:getExportValue(prefix + name)}
+        })
+    }
+    let exportObject = getExportValue()
+    // console.log(JSON.stringify(exportObject, null, 2))
     return {
         type: jst.Program,
         sourceType: "module",
-        body: Object.keys(node.values).map(
-            (name) => {
+        body: (<any>Object.keys(node.values)).map(
+            (name: any) => {
                 let value = node.values[name]
                 return {
                     type: jst.VariableDeclaration,
@@ -149,11 +213,13 @@ const __IrtRoot_ToJavascriptModule = (node:ast.IrtRoot) => {
                     declarations: [{
                         type: jst.VariableDeclarator,
                         id: Id(name),
-                        init: value
+                        init: Freeze(value)
                     }]
                 }
             }
-        )
+        ).concat([
+            { type: jst.ExportDefaultDeclaration, declaration: exportObject}
+        ])
     }
 }
 
@@ -190,9 +256,11 @@ const __CallExpression_SimplifyTypeIsCalls = (n: any) => {
 }
 
 export const passes = [
+    [__MemberExpression_ToFunctionCallIfComputed],
     [__CanonicalReference_ToJavascriptIdentifier, __Literal_ToJavascriptLiteral,__Id_ToJavascriptIdentifier],
     [__ConstrainedType_ToRuntimePredicate, __LiteralType_ToRuntimePredicate, __UnionType_ToRuntimePredicate],
-    [__DotExpression_ToJavascriptIdentifier, __BinaryExpression_ToJavascript, __MemberExpression_ToJavascript],
+    [__CallExpression_ToJavascript,__BinaryExpression_ToJavascript, __MemberExpression_ToJavascript],
+    [__DotExpression_ToJavascriptIdentifier],
     [__CallExpression_SimplifyTypeIsCalls],
     [__ClassDeclaration_ToJavascriptClass],
     [Node_NoOp, __IrtRoot_ToJavascriptModule],

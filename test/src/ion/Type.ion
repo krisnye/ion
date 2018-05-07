@@ -1,3 +1,10 @@
+import
+    .Native
 
-
+[Native.JavaScript]: ""
+    {
+        is(value) {
+            return value != null && typeof value.is === 'function'
+        }
+    }
 export class Type

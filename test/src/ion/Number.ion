@@ -19,10 +19,8 @@ export class Number
 
     # let `*` : (right: Number) -> Number
     # let sign: -1 | 0 | +1
-    [Native.JavaScript]: "$ => $ - $ % 1"
-    let integer: Integer
 
-    [Native.JavaScript]: "$ => $ % 1"
+    let integer: Integer
     let fraction : Number where < one and >= zero
 
     # let `/` : (right: Number) -> Number

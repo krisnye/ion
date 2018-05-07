@@ -215,7 +215,7 @@ ConstrainedType
     / LiteralType
 
 LiteralType
-    = literal:Literal { return node('LiteralType', {literal}) }
+   = literal:Literal { return node('LiteralType', {literal}) }
 
 FunctionType
     = parameters:FunctionParameters _ "->" _ returnType:Type
@@ -475,7 +475,7 @@ NullLiteral
     = NullToken { return node('Literal', {value:null}) }
 
 BooleanLiteral
-    = value: (TrueToken / FalseToken) { return node('Literal', {value: JSON.parse(value)}) }
+    = value: (TrueToken / FalseToken) { return node('Literal', {value: JSON.parse(value) ? 1 : 0}) }
 
 ExponentPart
     = 'e' [+-]? [0-9]+ !IdPart

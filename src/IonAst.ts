@@ -162,7 +162,7 @@ export class Module extends Namespace {
     })
 }
 export class ClassDeclaration extends Scope implements Declaration, TypeExpression {
-    type = new CanonicalReference("ion.Type")
+    // type = new CanonicalReference("ion.Type")
     isStructure: boolean
     id: Id
     templateParameters: Parameter[]
@@ -171,6 +171,14 @@ export class ClassDeclaration extends Scope implements Declaration, TypeExpressi
     meta: Property[]
     get value() {
         return this
+    }
+    getDeclaration(name: string) {
+        for (let declaration of this.declarations) {
+            if (name === declaration.id.name) {
+                return declaration
+            }
+        }
+        return null
     }
     getDependencies(ancestors: object[]) {
         return this.baseClasses
@@ -199,12 +207,18 @@ export interface Expression extends Node {
     type?: TypeExpression
     getDependencies(ancestors: object[]) : Expression[]
     simplify?: (ancestors: object[], filter: ExpressionFilter) => Expression | void
-
 }
 export function isExpression(node:any): node is Expression {
     return node != null && node.getDependencies != null
 }
-export type BinaryOperator = "+" | "-" | "*" | "/" | "%" |  "<" | ">" | "<=" | ">=" | "==" | "!=" | "is" | "and" | "or" | "xor"
+export type BooleanOperator = "<" | ">" | "<=" | ">=" | "==" | "!=" | "is" | "and" | "or" | "xor"
+export type NumberOperator = "+" | "-" | "*" | "/" | "%"
+export type BinaryOperator = BooleanOperator | NumberOperator
+const operatorResultTypes = {
+    "<": "ion.Boolean", "<=": "ion.Boolean", ">": "ion.Boolean", ">=": "ion.Boolean", "==": "ion.Boolean",
+    "!=": "ion.Boolean", "is": "ion.Boolean", "and": "ion.Boolean", "or": "ion.Boolean", "xor": "ion.Boolean",
+    "+": "ion.Number", "-": "ion.Number", "*": "ion.Number", "/": "ion.Number", "%": "ion.Number"
+}
 const jsOperatorMap: {[op:string]:string|null} = {
     is: null, // null means no direct mapping
     "==": "===",
@@ -219,8 +233,9 @@ function toJS(literal: Literal) {
 }
 export class BinaryExpression extends Node implements Expression {
     left: Expression
-    operator: string
+    operator: BinaryOperator
     right: Expression
+    type?: CanonicalReference
     getDependencies(ancestors: object[]): Expression[] {
         return [this.left, this.right]
     }
@@ -233,8 +248,10 @@ export class BinaryExpression extends Node implements Expression {
                 if (jsOp == undefined)
                     jsOp = this.operator
                 let value = eval(toJS(left) + jsOp + toJS(right))
-                return new Literal({value})
+                return new Literal({value}).simplify(ancestors, filter)
             }
+        } else {
+            this.type = new CanonicalReference(operatorResultTypes[this.operator])
         }
     }
 }
@@ -344,8 +361,29 @@ export class ImportDeclaration extends Node {
 }
 
 export class DotExpression extends Node implements Expression {
+    type?: CanonicalReference
+    getAncestorConstrainedType(ancestors: object[]) {
+        // a dot expression is dependent on it's containing baseType
+        for (let i = ancestors.length - 1; i >= 0; i--) {
+            let ancestor = ancestors[i]
+            if (ancestor instanceof ConstrainedType)
+                return ancestor
+        }
+        throw new Error("ConstrainedType ancestor not found")
+    }
     getDependencies(ancestors: object[]): Expression[] {
-        return []
+        return [this.getAncestorConstrainedType(ancestors).baseType]
+    }
+    simplify(ancestors: object[], filter: ExpressionFilter) {
+        // infer type as base type
+        let constrainedType = this.getAncestorConstrainedType(ancestors)
+        let baseType = filter(constrainedType.baseType)
+        if (baseType instanceof CanonicalReference) {
+            this.type = new CanonicalReference(baseType.id)
+        } else {
+            throw new Error("BaseType is not a CanonicalReference: " + baseType)
+        }
+        return this
     }
     toString() {
         return "."
@@ -397,9 +435,15 @@ export class AssignmentStatement extends Node implements Statement {
     }
 }
 export class Literal extends Node implements Expression {
+    type?: CanonicalReference
     value: string | number | boolean | null
     getDependencies(ancestors: object[]): Expression[] {
         return []
+    }
+    simplify(ancestors: object[], filter: ExpressionFilter) {
+        // infer type
+        this.type = new CanonicalReference(typeof this.value === 'number' ? 'ion.Number' : 'ion.String')
+        return this
     }
     toString() {
         return JSON.stringify(this.value)
@@ -470,10 +514,13 @@ export class CanonicalReference extends Node implements TypeExpression {
     }
     simplify(ancestors: object[], filter: ExpressionFilter): Expression | void
     {
-        // only simplify Literal values
+        //  only simplify Literal values and other CanonicalReferences
         let expression = filter(this.getReferencedExpression(ancestors))
         if (expression instanceof Literal) {
             return expression
+        }
+        if (expression instanceof CanonicalReference) {
+            return new CanonicalReference(expression.id)
         }
     }
     toString() {
@@ -485,7 +532,7 @@ export class CanonicalReference extends Node implements TypeExpression {
 }
 export class LiteralType extends Node implements TypeExpression {
     literal: Literal
-    type = new CanonicalReference("ion.Type")
+    // type = new CanonicalReference("ion.Type")
     getDependencies(ancestors: object[]): Expression[] {
         return []
     }
@@ -494,7 +541,7 @@ export class LiteralType extends Node implements TypeExpression {
     }
 }
 export class TemplateReference extends Node implements TypeExpression {
-    type = new CanonicalReference("ion.Type")
+    // type = new CanonicalReference("ion.Type")
     reference: Reference
     arguments: Expression[]
     getDependencies(ancestors: object[]) {
@@ -508,7 +555,7 @@ export class TemplateReference extends Node implements TypeExpression {
     }
 }
 export class ConstrainedType extends Scope implements TypeExpression {
-    type = new CanonicalReference("ion.Type")
+    // type = new CanonicalReference("ion.Type")
     baseType: Reference
     constraint: Expression
     getDependencies(ancestors: object[]) {
@@ -519,7 +566,7 @@ export class ConstrainedType extends Scope implements TypeExpression {
     }
 }
 export class FunctionType extends Scope implements TypeExpression {
-    type = new CanonicalReference("ion.Type")
+    // type = new CanonicalReference("ion.Type")
     parameters: Parameter[]
     returnType: TypeExpression
     getDependencies(ancestors: object[]) {
@@ -530,7 +577,7 @@ export class FunctionType extends Scope implements TypeExpression {
     }
 }
 export class UnionType extends Node implements TypeExpression {
-    type = new CanonicalReference("ion.Type")
+    // type = new CanonicalReference("ion.Type")
     left: TypeExpression
     right: TypeExpression
     getDependencies(ancestors: object[]) {
@@ -541,7 +588,7 @@ export class UnionType extends Node implements TypeExpression {
     }
 }
 export class IntersectionType extends Node implements TypeExpression {
-    type = new CanonicalReference("ion.Type")
+    // type = new CanonicalReference("ion.Type")
     left: TypeExpression
     right: TypeExpression
     getDependencies(ancestors: object[]) {

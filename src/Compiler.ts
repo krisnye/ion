@@ -60,7 +60,8 @@ export default class Compiler {
             "ion.Number": true,
             "ion.Integer": true,
             "ion.constants_0": true,
-            "ion.constants_1": true,
+            // "ion.constants_1": true,
+            "ion.true": true,
             "ion.Native": true,
             "ion.String": true
         }

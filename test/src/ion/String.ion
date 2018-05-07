@@ -1,2 +1,10 @@
+import
+    .Native
 
+[Native.JavaScript]: ""
+    {
+        is(value) {
+            return typeof value === 'string'
+        }
+    }
 export class String

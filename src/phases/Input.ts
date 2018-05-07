@@ -21,12 +21,12 @@ const Assembly_NoOp = (node: ast.Module) => {
 //     }
 // }
 
-const Module_DebugValues = (node: ast.Module, ancestors: object[]) => {
-    for (let name in node._variables) {
-        let variable = node._variables[name]
-        console.log(variable.id)
-    }
-}
+// const Module_DebugValues = (node: ast.Module, ancestors: object[]) => {
+//     for (let name in node._variables) {
+//         let variable = node._variables[name]
+//         console.log(variable.id)
+//     }
+// }
 
 const VariableDeclaration_AddVariableBindings = (node: ast.VariableDeclaration, ancestors: object[]) => {
     let scope = ast.getScope(node, ancestors)
@@ -326,6 +326,20 @@ const __Assembly_ConvertToIrt = (node: ast.Assembly) => {
     extractValues = {}
     return irtAssembly
 }
+
+function inferType(value: any) {
+    if (typeof value === 'number') {
+        return new ast.CanonicalReference('ion.Number')
+    } else if (typeof value === 'string') {
+        return new ast.CanonicalReference('ion.String')
+    } else {
+        throw new Error("Unrecognized Literal Type: " + JSON.stringify(value))
+    }
+}
+
+// const Literal_InferType = (node: ast.Literal) => {
+//     node.type = inferType(node.value)
+// }
 
 export const passes = [
     //  initialization and adding variable bindings

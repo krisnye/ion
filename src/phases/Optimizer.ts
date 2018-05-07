@@ -31,11 +31,13 @@ const CanonicalReference_AddDependencies = (n: ast.CanonicalReference, ancestors
         dependencies[thisId][baseId] = true
     }
 }
-const IrtRoot_RemoveDeadDeclarations = (n: ast.IrtRoot) => {
+const _IrtRoot_RemoveDeadDeclarations = (n: ast.IrtRoot) => {
     function hasPublicDependent(id:string) {
+        // let debug = id.indexOf('Foo') >= 0 ? (...args: any[]) => console.log(...args) : (...args: any[]) => { return }
         if (isPublicId(id))
             return true
         let dependents = dependencies[id]
+        // debug(id, dependents)
         if (dependents != null) {
             for (let depId in dependents) {
                 if (hasPublicDependent(depId))
@@ -72,6 +74,6 @@ const ClassDeclaration_VariableDeclaration_checkMetaReferences = (n: ast.ClassDe
 export const passes = [
     [CanonicalReference_RemoveIndirection],
     [__MemberExpression_simplifyCanonicalReferences],
-    [CanonicalReference_AddDependencies, IrtRoot_RemoveDeadDeclarations],
+    [CanonicalReference_AddDependencies, _IrtRoot_RemoveDeadDeclarations],
     [ClassDeclaration_VariableDeclaration_checkMetaReferences]
 ]
