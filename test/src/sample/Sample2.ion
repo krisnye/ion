@@ -1,5 +1,0 @@
-import
-    .Sample1
-
-export
-    let b = Sample1.a * 2

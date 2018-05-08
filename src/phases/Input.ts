@@ -82,7 +82,9 @@ const Module_UnresolvedReferencesResolve = (node: ast.Module, ancestors: object[
         for (let rootImport of node.imports) {
             let assembly = <ast.Assembly>ancestors[0]
             if (rootImport.children === true) {
-                let referencedModule = <ast.Module>assembly.namespaces[rootImport.path.map(x => x.name).join('.')]
+                // first check if the specified path is a module and the * refers to child variables
+                let checkPath = rootImport.path.map(x => x.name).join('.')
+                let referencedModule = <ast.Module>assembly.namespaces[checkPath]
                 if (referencedModule) {
                     let variable = referencedModule._variables[name]
                     if (variable && variable.value) {
@@ -90,11 +92,12 @@ const Module_UnresolvedReferencesResolve = (node: ast.Module, ancestors: object[
                     }
                 }
 
-                // let checkPath = rootImport.pathString + "." + name
-                // let referencedModule = assembly.namespaces[checkPath]
-                // if (referencedModule != null) {
-                //     foundModules.push(referencedModule)
-                // }
+                // second check if the * actually refers to a module directly
+                checkPath += "." + name
+                referencedModule = <ast.Module>assembly.namespaces[checkPath]
+                if (referencedModule != null) {
+                    foundModules.push(referencedModule)
+                }
 
             }
         }
@@ -207,7 +210,7 @@ const Node_AddDependenciesToIrtRoot = (node: any, ancestors: object[], path: str
         let deps = node.getDependencies(ancestors)
         for (let dep of deps) {
             if (dep == null) {
-                console.warn("Missing dep: ", node, deps)
+                console.warn("Missing dep: ", node)
             }
             else {
                 module._expressionDependencies.push([dep, node])

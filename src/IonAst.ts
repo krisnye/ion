@@ -90,10 +90,27 @@ export class VariableDeclaration extends Node implements Declaration, Expression
     value: Expression | null
     meta: Property[]
     getDependencies() {
-        if (this.value)
-            return [this.type, this.value, ...this.meta]
-        else
-            return [this.type, ...this.meta]
+        if (this.type) {
+            if (this.value)
+                return [this.type, this.value, ...this.meta]
+            else
+                return [this.type, ...this.meta]
+        }
+        else {
+            if (this.value)
+                return [this.value, ...this.meta]
+            else
+                return [...this.meta]
+        }
+
+        // lame that it takes that much code to express a conditional structure
+        //  in ion 2 it should be closer to this:
+        // return []
+        //     if type
+        //        type
+        //     if value
+        //         value
+        //     ...meta
     }
     toString() {
         return `${this.property ? 'property' : this.assignable ? 'var' : 'let'} ${this.id.name}: ${this.type}`
