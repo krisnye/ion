@@ -278,7 +278,7 @@ ExponentiationOperator "operator"
 
 ExponentiationExpression
     = left:UnaryExpression right:(_ operator:ExponentiationOperator _ right:ExponentiationExpression {return {operator,right}})?
-    { return right ? node("CallExpression", {callee:right.operator, arguments:[left, right.right]}) : left }
+    { return right ? node("BinaryExpression", {left, operator:right.operator, right:right.right}) : left }
 
 MultiplicativeOperator
     = "*" / "/" / "%"

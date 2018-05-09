@@ -166,6 +166,15 @@ export class IrtRoot extends Node {
 
 export class Assembly extends Namespace {
     options: { input: string, output: string }
+    getExportValue(path: Id[]) {
+        let pathString = path.map(id => id.name).join('.')
+        let module = <Module>this.namespaces[pathString]
+        if (module && !Array.isArray(module.exports)) {
+            let declaration = <Declaration>module.exports
+            return declaration.value
+        }
+        return null
+    }
 }
 
 export class Module extends Namespace {
@@ -190,11 +199,26 @@ export class ClassDeclaration extends Scope implements Declaration, TypeExpressi
     isStructure: boolean
     id: Id
     templateParameters: Parameter[]
-    baseClasses: TypeExpression[]
+    baseClasses: (Reference | CanonicalReference)[]
     declarations: Declaration[]
     meta: Property[]
     get value() {
         return this
+    }
+    get assignable() {
+        return false
+    }
+    getDeclarationsRecursive(root:IrtRoot, results: Declaration[] = []) {
+        for (let cref of this.baseClasses) {
+            let classDeclaration = <ClassDeclaration>root.values[cref.name]
+            if (classDeclaration == null) {
+                console.log('cref not found?', cref)
+            }
+            classDeclaration.getDeclarationsRecursive(root, results)
+        }
+        // push inherited declarations first
+        results.push(...this.declarations)
+        return results
     }
     getDeclaration(name: string) {
         for (let declaration of this.declarations) {
@@ -236,12 +260,12 @@ export function isExpression(node:any): node is Expression {
     return node != null && node.getDependencies != null
 }
 export type BooleanOperator = "<" | ">" | "<=" | ">=" | "==" | "!=" | "is" | "and" | "or" | "xor"
-export type NumberOperator = "+" | "-" | "*" | "/" | "%"
+export type NumberOperator = "+" | "-" | "*" | "/" | "%" | "^"
 export type BinaryOperator = BooleanOperator | NumberOperator
 const operatorResultTypes = {
     "<": "ion.Boolean", "<=": "ion.Boolean", ">": "ion.Boolean", ">=": "ion.Boolean", "==": "ion.Boolean",
     "!=": "ion.Boolean", "is": "ion.Boolean", "and": "ion.Boolean", "or": "ion.Boolean", "xor": "ion.Boolean",
-    "+": "ion.Number", "-": "ion.Number", "*": "ion.Number", "/": "ion.Number", "%": "ion.Number"
+    "+": "ion.Number", "-": "ion.Number", "*": "ion.Number", "/": "ion.Number", "%": "ion.Number", "^": "ion.Number"
 }
 const jsOperatorMap: {[op:string]:string|null} = {
     is: null, // null means no direct mapping
@@ -266,12 +290,12 @@ export class BinaryExpression extends Node implements Expression {
     simplify(ancestors: object[], filter: ExpressionFilter) {
         let left = filter(this.left)
         let right = filter(this.right)
-        if (left instanceof Literal && right instanceof Literal) {
+        if (left.className == Literal.name && right.className == Literal.name) {
             let jsOp = jsOperatorMap[this.operator]
             if (jsOp !== null) {
                 if (jsOp == undefined)
                     jsOp = this.operator
-                let value = eval(toJS(left) + jsOp + toJS(right))
+                let value = eval(toJS(<Literal>left) + jsOp + toJS(<Literal>right))
                 return new Literal({value}).simplify(ancestors, filter)
             }
         } else {
@@ -308,6 +332,7 @@ export interface Statement extends Node {}
 export interface Declaration extends Node, Expression {
     id: Id
     value: Expression | null
+    assignable: boolean
 }
 export class Id extends Node implements Expression, Pattern {
     name: string
@@ -324,6 +349,7 @@ export class Id extends Node implements Expression, Pattern {
 }
 export class Reference extends Node implements Expression {
     id: Id
+    get name() { return this.id.name }
     getDependencies(ancestors: object[]): Expression[] {
         let variable = this.getVariable(ancestors, this.id.name)
         if (variable == null) {
@@ -341,9 +367,11 @@ export class Reference extends Node implements Expression {
         if (ancestors == null)
             throw new Error("ancestors is missing")
         let variable = this.getVariable(ancestors, this.id.name)
-        if (variable && variable.value) {
-            return filter(variable.value)
-        }
+        // if (variable && variable.value && variable.assignable === false) {
+        //     //  if the variable is assignable then value is just the initial or default value
+        //     //  we should probably change the .value property to .defaultValue
+        //     return filter(variable.value)
+        // }
     }
     toString() {
         return this.id.toString()
@@ -375,6 +403,16 @@ export class Parameter extends Node implements Expression {
         return b
     }
 }
+
+function last<T>(array: object[], predicate: (t:object) => boolean) {
+    for (let i = array.length - 1; i >= 0; i--) {
+        let element = array[i]
+        if (predicate(element))
+            return <T><any>element
+    }
+    throw new Error("not found")
+}
+
 export class ImportDeclaration extends Node {
     path: Id[]
     as: Id
@@ -382,6 +420,10 @@ export class ImportDeclaration extends Node {
     relative: number
     implicit: boolean
     get pathString() { return this.path.map(step => step.name).join('.') }
+    getImportValue(ancestors: object[]) {
+        let assembly = <Assembly>ancestors[0]
+        return assembly.getExportValue(this.path)
+    }
 }
 
 export class DotExpression extends Node implements Expression {
@@ -528,6 +570,7 @@ export class CanonicalReference extends Node implements TypeExpression {
         super()
         this.id = id
     }
+    get name() { return this.id }
     getReferencedExpression(ancestors: object[]) {
         let root = <IrtRoot>ancestors[0]
         return <Expression>root.values[this.id]
@@ -656,3 +699,4 @@ export const getFirstOfType = (type: any, array: object[]) => {
 }
 
 export const getModule: (ancestors: object[]) => Module = getFirstOfType.bind(null, Module)
+

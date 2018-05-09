@@ -1,7 +1,7 @@
 import
     ion.*
 
-export class Point
+export class Point2
     var x: Number = 0
     var y: Number = 0
-    let length = (x * x + y * y) ^ 0.5
+    let length2 = (x * x + y * y) ^ 0.5

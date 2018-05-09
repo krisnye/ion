@@ -1,2 +1,0 @@
-let _one = 1
-export let zero = _one - _one

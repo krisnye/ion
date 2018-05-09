@@ -10,15 +10,13 @@ const Node_NoOp = (node: any) => {
 }
 
 function Freeze(value: any) {
-    // freeze things later, for now... for debugging let's leave output simpler
-    return value
-    // if (value.type == 'Literal')
-    //     return value
-    // return {
-    //     type: jst.CallExpression,
-    //     callee: { type: jst.MemberExpression, object: Id('Object'), property: Id('freeze') },
-    //     arguments: [value]
-    // }
+    if (value.type == 'Literal')
+        return value
+    return {
+        type: jst.CallExpression,
+        callee: { type: jst.MemberExpression, object: Id('Object'), property: Id('freeze') },
+        arguments: [value]
+    }
 }
 
 function Id(name: string, properties?: any) {
@@ -46,6 +44,7 @@ function getMetaValue(meta: ast.Property[], name: string) {
 const __CanonicalReference_ToJavascriptIdentifier = (n:ast.CanonicalReference) => Id(n.id)
 const __Literal_ToJavascriptLiteral = (n:ast.Literal) => Literal(n.value)
 const __Id_ToJavascriptIdentifier = (n:ast.Id) => Id(n.name)
+const __Reference_ToJavascriptIdentifier = (n: ast.Reference) => Id(n.id.name)
 const __DotExpression_ToJavascriptIdentifier = (n:ast.DotExpression) => Id('$')
 const operatorMap: {[op: string]: string} = {
     "^": "**",
@@ -62,12 +61,31 @@ const __CallExpression_ToJavascript = (n: ast.CallExpression) => {
 const __BinaryExpression_ToJavascript = (n:ast.BinaryExpression) => {
     let operator: any = n.operator
     operator = operatorMap[operator] || operator
-    // if operator = is then we need to do a type check
-    if (operator == 'is') {
+    if (operator == '**' || operator == '^') {
         return {
             type: jst.CallExpression,
-            callee: { type:jst.MemberExpression, object: n.right, property: Id('is'), computed: false },
+            callee: { type: jst.MemberExpression, object: Id('Math'), property: Id('pow') },
+            arguments: [n.left, n.right]
+        }
+    }
+
+    function toRuntimeTypeCheck() {
+        return {
+            type: jst.CallExpression,
+            callee: { type: jst.MemberExpression, object: n.right, property: Id('is'), computed: false },
             arguments: [n.left]
+        }
+    }
+    // if operator = is then we need to do a type check
+    if (operator == 'is') {
+        return toRuntimeTypeCheck()
+    }
+    // if operator = is then we need to do a type check
+    if (operator == 'isnt') {
+        return {
+            type: jst.UnaryExpression,
+            operator: '!',
+            argument: toRuntimeTypeCheck()
         }
     }
     return {type:jst.BinaryExpression, left:n.left, operator, right:n.right}
@@ -162,20 +180,107 @@ const __ConstrainedType_ToRuntimePredicate = (node:ast.ConstrainedType) => {
 
 }
 
-const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration) => {
+const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancestors: object[]) => {
     let meta = getMetaValue(node.meta, 'ion_Native_JavaScript')
     if (meta != null) {
         let value = (<ast.Literal>meta).value
         return { type: jst.Literal, value, verbatim: value }
     }
 
+    let vars = node.declarations.filter(d => d.assignable)
+    let lets = node.declarations.filter(d => !d.assignable)
     return {
         type: jst.ClassExpression,
         id: node.id,
         superClass: null,
         body: {
             type: jst.ClassBody,
-            body: []
+            body: [
+                {
+                    type: jst.MethodDefinition,
+                    kind: 'constructor',
+                    key: {
+                        type: jst.Identifier,
+                        name: "constructor"
+                    },
+                    value: {
+                        type: jst.FunctionExpression,
+                        id: null,
+                        params: vars.map(d => {
+                            return {
+                                type: jst.AssignmentPattern,
+                                left: d.id, right: d.value
+                            }
+                        }),
+                        body: {
+                            type: jst.BlockStatement,
+                            body: vars.map(d => {
+                                return {
+                                    type: jst.IfStatement,
+                                    test: __BinaryExpression_ToJavascript(new ast.BinaryExpression({
+                                        left: d.id, operator: 'isnt', right: d.type
+                                    })),
+                                    consequent: {
+                                        type: jst.ThrowStatement,
+                                        argument: {
+                                            type: jst.NewExpression,
+                                            callee: {
+                                                type: "Identifier",
+                                                name: "Error"
+                                            },
+                                            arguments: [
+                                                {
+                                                    type: jst.BinaryExpression,
+                                                    left: {
+                                                        type: jst.Literal,
+                                                        value: `${d.id.name} is not valid: `
+                                                    },
+                                                    operator: '+',
+                                                    right: d.id
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    alternate: null
+                                }
+                            }).concat(<any>vars.map(d => {
+                                return {
+                                    type: jst.ExpressionStatement,
+                                    expression: {
+                                        type: jst.AssignmentExpression,
+                                        operator: "=",
+                                        left: {
+                                            type: jst.MemberExpression,
+                                            object: { type: jst.ThisExpression },
+                                            property: d.id
+                                        },
+                                        right: d.id
+                                    }
+                                }
+                            })).concat(<any>lets.map(d => {
+                                return {
+                                    type: jst.ExpressionStatement,
+                                    expression: {
+                                        type: jst.AssignmentExpression,
+                                        operator: "=",
+                                        left: {
+                                            type: jst.MemberExpression,
+                                            object: { type: jst.ThisExpression },
+                                            property: d.id
+                                        },
+                                        right: d.value
+                                    }
+                                }
+                            }).concat(<any>[
+                                {
+                                    type: jst.ExpressionStatement,
+                                    expression: Freeze({type:jst.ThisExpression})
+                                }
+                            ]))
+                        }
+                    }
+                }
+            ]
         }
     }
 }
@@ -260,7 +365,7 @@ const __CallExpression_SimplifyTypeIsCalls = (n: any) => {
 
 export const passes = [
     [__MemberExpression_ToFunctionCallIfComputed],
-    [__CanonicalReference_ToJavascriptIdentifier, __Literal_ToJavascriptLiteral,__Id_ToJavascriptIdentifier],
+    [__CanonicalReference_ToJavascriptIdentifier, __Literal_ToJavascriptLiteral, __Id_ToJavascriptIdentifier, __Reference_ToJavascriptIdentifier],
     [__ConstrainedType_ToRuntimePredicate, __LiteralType_ToRuntimePredicate, __UnionType_ToRuntimePredicate],
     [__CallExpression_ToJavascript,__BinaryExpression_ToJavascript, __MemberExpression_ToJavascript],
     [__DotExpression_ToJavascriptIdentifier],

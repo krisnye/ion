@@ -55,11 +55,25 @@ const ClassDeclaration_AddVariableBindings = (node: ast.ClassDeclaration, ancest
     // place class name into parent scope as type variable
     let scope = ast.getScope(null, ancestors)
     scope.addVariable(node.id, node)
+    //  TODO: inherit variables RECURSIVELY
+    for (let ref of node.baseClasses) {
+        // we NEED ancestors to get the ref variable
+        let variable = scope.getVariable(ancestors, ref.name)
+        if (variable == null || variable.value == null)
+            return ref.throwSemanticError(`Base class '${ref.name}' not found.`)
+        if (!(variable.value instanceof ast.ClassDeclaration))
+            return ref.throwSemanticError(`'${ref.name}' is not a Class.`)
+        for (let declaration of variable.value.declarations) {
+            // place inherited variables into this nodes scope
+            node.addVariable(declaration.id, declaration.value, declaration.type, declaration.assignable)
+        }
+    }
 }
 const ImportDeclaration_AddVariableBindings = (node: ast.ImportDeclaration, ancestors: object[]) => {
     if (node.as != null) {
         let scope = ast.getScope(null, ancestors)
-        scope.addVariable(node.as, null)
+        let value = node.getImportValue(ancestors)
+        scope.addVariable(node.as, value)
     }
 }
 
@@ -108,8 +122,12 @@ const Module_UnresolvedReferencesResolve = (node: ast.Module, ancestors: object[
             reference.throwSemanticError(`'${name}' resolves ambiguously to ${foundModules.map(x => x.name).join(', ')}`)
         } else {
             let foundModule = foundModules[0]
+            let path = foundModule.path.map(name => new ast.Id({ name }))
+            //  if we are exporting an array then this import needs one more identifier to specify which export
+            if (Array.isArray(foundModule.exports))
+                path.push(reference.id)
             //  add new specific import declaration
-            let newImport = new ast.ImportDeclaration({ path: foundModule.path.map(name => new ast.Id({ name })).concat(reference.id), children: null, as: reference.id, relative: 0 })
+            let newImport = new ast.ImportDeclaration({ path, children: null, as: reference.id, relative: 0 })
             node.imports.push(newImport)
             //  declare new binding
             ImportDeclaration_AddVariableBindings(newImport, ancestors.concat([node]))
@@ -344,16 +362,35 @@ function inferType(value: any) {
 //     node.type = inferType(node.value)
 // }
 
+const ClassDeclaration_InheritDeclarations = (node: ast.ClassDeclaration, ancestors: object[]) => {
+    let root = <ast.IrtRoot>ancestors[0]
+    let declarations = node.getDeclarationsRecursive(root)
+    node.declarations = declarations
+}
+
 export const passes = [
+    //////////////////////////////
+    //  BEGIN variable resolution
+    //////////////////////////////
     //  initialization and adding variable bindings
     [Assembly_ModulePathInit, Module_FlattenImportDeclarations],
-    [ImportDeclaration_AddVariableBindings, ClassDeclaration_AddVariableBindings, VariableDeclaration_AddVariableBindings, Parameter_AddVariableBindings, ForInStatement_AddVariableBindings, Namespace_AddVariableBindings],
+    [Module_ImportsRelativeToAbsolute],
+    [ImportDeclaration_AddVariableBindings, VariableDeclaration_AddVariableBindings, Parameter_AddVariableBindings, ForInStatement_AddVariableBindings, Namespace_AddVariableBindings],
+    [ClassDeclaration_AddVariableBindings],
+    //  copy inherited variables
     //  check for unresolved references
-    [Module_ImportsRelativeToAbsolute, Reference_CheckIfUnresolvedAndAddToModule],
+    [Reference_CheckIfUnresolvedAndAddToModule],
     //  attempt to resolve missing references using import.*
     [Module_UnresolvedReferencesResolve],
     // [Module_ImportsResolveToModules],
-    [Module_ConvertImportsToCanonicalReferences, Module_AddCanonicalReferences, __Reference_ConvertToCanonicalReference],
+    // TODO: re-merge after fixing
+    [Module_ConvertImportsToCanonicalReferences],
+    [Module_AddCanonicalReferences],
+    [__Reference_ConvertToCanonicalReference],
+    //////////////////////////////
+    //  END variable resolution
+    //////////////////////////////
+
     //  Convert to Intermediate Representation
     [VariableDeclaration_ClassDeclaration_ExtractValues, __Assembly_ConvertToIrt],
 
@@ -361,6 +398,8 @@ export const passes = [
     // [Module_DebugValues]
     //  Phase 3: Type calculation
     [Node_AddDependenciesToIrtRoot, _IrtRoot_ToposortTypes],
+
+    [ClassDeclaration_InheritDeclarations]
 
     //  Phase 4: check semantic validity
     // [AssignmentStatement_CheckAssignable]
