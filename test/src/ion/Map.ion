@@ -1,6 +1,36 @@
+import
+    .Native
 
+[Native.JavaScript]: ""
+    (function(){
+        const emptyMap = Object.freeze(Object.assign(new Map(), {
+            clear() {},
+            delete() {},
+            set() {}
+        }))
+        return Object.freeze(Object.assign(function ion_Map(){
+            return emptyMap
+        }, {
+            is(value, KeyType, ValueType) {
+                # TODO: Once calculated on an instance we could cache the result with a unique Symbol.
+                if (value !== emptyMap) {
+                    if (!(value instanceof Map))
+                        return false
+                    for (let key of value.keys()) {
+                        if (!KeyType.is(key))
+                            return false
+                    }
+                    for (let value of value.values()) {
+                        if (!ValueType.is(value))
+                            return false
+                    }
+                }
+                return true
+            }
+        }))
+    })()
 export class Map<Key,Value>
-    let has: (key:Key) => Boolean
-    let get: (key:Key) => Value | null
-    let keys: Key[]
-    let values: Value[]
+    # let has: (key:Key) => Boolean
+    # let get: (key:Key) => Value | null
+    # let keys: Key[]
+    # let values: Value[]

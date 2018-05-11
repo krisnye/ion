@@ -41,3 +41,12 @@ TODO:
         .reverse: Array
 
     JSONObject = Map<String,Object | null>
+
+    Array<Element>
+        ion.Array.is(instance, elementType)
+    Map<KeyType,ValueType>
+        ion.Map.is(instance, keyType, valueType)
+    //  [ ] Array Type Checking
+    //  [ ] Map Type Checking
+    //  [ ] Patch Function
+    //  [ ] Point.is based on inheritance

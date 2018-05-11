@@ -2,9 +2,9 @@ import
     .Native
 
 [Native.JavaScript]: ""
-    {
+    Object.freeze({
         is(value) {
             return typeof value === 'string'
         }
-    }
+    })
 export class String

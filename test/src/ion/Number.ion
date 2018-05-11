@@ -4,7 +4,7 @@ import
     .Native
 
 [Native.JavaScript]: ""
-    {
+    Object.freeze({
         is(value) {
             return typeof value === 'number'
         },
@@ -14,7 +14,7 @@ import
         fraction(value) {
             return value % 1
         }
-    }
+    })
 export class Number
 
     # let `*` : (right: Number) -> Number

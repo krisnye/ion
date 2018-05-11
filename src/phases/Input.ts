@@ -59,8 +59,10 @@ const ClassDeclaration_AddVariableBindings = (node: ast.ClassDeclaration, ancest
     for (let ref of node.baseClasses) {
         // we NEED ancestors to get the ref variable
         let variable = scope.getVariable(ancestors, ref.name)
-        if (variable == null || variable.value == null)
+        if (variable == null || variable.value == null) {
+            console.log('ref', ref)
             return ref.throwSemanticError(`Base class '${ref.name}' not found.`)
+        }
         if (!(variable.value instanceof ast.ClassDeclaration))
             return ref.throwSemanticError(`'${ref.name}' is not a Class.`)
         for (let declaration of variable.value.declarations) {

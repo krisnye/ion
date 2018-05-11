@@ -611,6 +611,7 @@ export class TemplateReference extends Node implements TypeExpression {
     // type = new CanonicalReference("ion.Type")
     reference: Reference
     arguments: Expression[]
+    get name() { return this.reference.name }
     getDependencies(ancestors: object[]) {
         return [this.reference, ...this.arguments]
     }

@@ -63,6 +63,8 @@ export default class Compiler {
             "ion.true": true,
             "ion.Native": true,
             "ion.String": true,
+            "ion.Map": true,
+            "ion.Array": true,
             "sample.Point2": true,
             "sample.Point3": true
         }

@@ -5,3 +5,4 @@ import
 export class Point3 extends Point2
     var z: Number = 0
     let length3 = (x * x + y * y + z * z) ^ 0.5
+    var intMap: Map<Integer,Integer> = Map()

@@ -207,10 +207,10 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                         type: jst.FunctionExpression,
                         id: null,
                         params: vars.map(d => {
-                            return {
+                            return d.value ? {
                                 type: jst.AssignmentPattern,
                                 left: d.id, right: d.value
-                            }
+                            } : d.id
                         }),
                         body: {
                             type: jst.BlockStatement,
@@ -337,6 +337,10 @@ const __Program_CompileJavascript = (node:any) => {
     })
 }
 
+const __TemplateReference_ToJavascript = (node:ast.TemplateReference) => {
+    return { type: jst.Identifier, name:'TemplateReferenceHere' }
+}
+
 const classNamesFound: any = {}
 const Node_findClassNamesThatNeedConversion = (n: any) => {
     if (n.className) {
@@ -365,7 +369,7 @@ const __CallExpression_SimplifyTypeIsCalls = (n: any) => {
 
 export const passes = [
     [__MemberExpression_ToFunctionCallIfComputed],
-    [__CanonicalReference_ToJavascriptIdentifier, __Literal_ToJavascriptLiteral, __Id_ToJavascriptIdentifier, __Reference_ToJavascriptIdentifier],
+    [__CanonicalReference_ToJavascriptIdentifier, __Literal_ToJavascriptLiteral, __Id_ToJavascriptIdentifier, __Reference_ToJavascriptIdentifier, __TemplateReference_ToJavascript],
     [__ConstrainedType_ToRuntimePredicate, __LiteralType_ToRuntimePredicate, __UnionType_ToRuntimePredicate],
     [__CallExpression_ToJavascript,__BinaryExpression_ToJavascript, __MemberExpression_ToJavascript],
     [__DotExpression_ToJavascriptIdentifier],
