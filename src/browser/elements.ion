@@ -41,10 +41,10 @@ do ->
     window.document.addEventListener('keydown', syncOnRefresh)
     window.document.addEventListener('keyup', syncOnRefresh)
 
-    let nsElements = 
+    let nsElements =
         "http://www.w3.org/1999/xhtml": []
             "div","span","input","textarea","a","br","img", "p"
-            "button","caption","fieldset","form","frame","frameset"
+            "button","caption","fieldset","form","frame","iframe","frameset"
             "h1","h2","h3","h4","h5","h6","hr","legend"
             "menu","option","select","script","pre"
             "table","tbody","td","tr","thead", "canvas"
