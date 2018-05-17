@@ -28,26 +28,26 @@
                 let state =
                     filter: 'all'
                     editing: null
-                return Section({id:'todoapp'})
-                    Header({id:'header'})
+                return Section(id:'todoapp')
+                    Header(id:'header')
                         H1()
                             'todos'
                         Form()
-                            let nameField = Input({id:'new-todo', placeholder:'What needs to be done?'})
+                            let nameField = Input(id:'new-todo', placeholder:'What needs to be done?')
                             nameField
                             submit(e) ->
                                 e.preventDefault()
                                 let value = nameField.value.trim()
                                 if value.length > 0
-                                    tasks.unshift({name:value,complete:false})
+                                    tasks.unshift(name:value,complete:false)
                                 nameField.value = ''
                                 nameField.select()
-                    Section({id:'main'})
-                        Input({id:'toggle-all',type:'checkbox'})
+                    Section(id:'main')
+                        Input(id:'toggle-all',type:'checkbox')
                             change(e) ->
                                 for task in tasks
                                     task.complete = @checked
-                        Ul({id:'todo-list'})
+                        Ul(id:'todo-list')
                             let filter = filters[state.filter]
                             for task, index in tasks
                                 if filter(task)
@@ -61,7 +61,7 @@
                                                 'completed'
                                         style:
                                             order: index
-                                        Input({class:'toggle',type:'checkbox'})
+                                        Input(class:'toggle',type:'checkbox')
                                             checked: complete
                                             change(e) ->
                                                 task.complete = @checked
@@ -78,13 +78,13 @@
                                                 void editor.select()
                                             else
                                                 name
-                                        Button({class:'destroy'})
+                                        Button(class:'destroy')
                                             click(e) ->
                                                 tasks.splice(index, 1)
-                    Footer({id:'footer'})
+                    Footer(id:'footer')
                         style:
                             display: count > 0 ? 'initial': 'none'
-                        Span({id:'todo-count'})
+                        Span(id:'todo-count')
                             Strong()
                                 remaining
                             " item{{remaining isnt 1 ? 's' : ''}} left"
@@ -98,7 +98,7 @@
                                         click(e) ->
                                             state.filter = name
                                         name
-                        Button({id:'clear'})
+                        Button(id:'clear')
                             style:
                                 display: completed > 0 ? 'initial': 'none'
                             click(e) ->

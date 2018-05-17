@@ -2159,7 +2159,7 @@
         safeConcatenation = options.format.safeConcatenation;
         directive = options.directive;
         parse = json ? null : options.parse;
-        sourceMap = options.sourceMap;
+        sourceMap = false; // options.sourceMap;
         extra = options;
 
         if (sourceMap) {

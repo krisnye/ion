@@ -1,0 +1,28 @@
+Business Requirements of Data Platform
+
+    ACID
+    1. Atomic Transactions. Completely succeeds or completely fails.
+    2. Consistency. Data is always in a valid state.
+    3. Isolation. One transaction completes before another reads same data.
+    4. Durability. Committed transactions are not lost.
+
+    Other
+    5. Responsiveness.
+        Reading: Should normally take less than 100ms.
+        Writing: Should normally take less than 1000ms.
+    6. Scalability. Performance should not degrade as number of users and data increases.
+    7. Security. You should be able to secure records down to the individual field and value level.
+    8. Real time. Can you provide real time updates on changes to clients for collaboration.
+    9. Maintainability. The database and servers should be cheap to operate and maintain long term.
+    10. Sustainable. The database vendor should be likely to remain in business long term.
+    11. Analytics. Data should be available for business analysis.
+
+Where Flat SQL Databases have problems.
+
+    Scalability and maintainability. Scaling up SQL databases with sharding and replication is risky and expensive.
+
+Where NoSQL Databases have problems.
+
+    No Joins. You could implement them yourselves, but every join would at least double latency.
+    Consistency. Usually there is a flexible data model and often no mechanism to modify the existing schema.
+
