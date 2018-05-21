@@ -104,8 +104,8 @@ module.exports = exports =
             return fs.statSync(file)
         catch e
             return null
-    isFile: isFile = (file) -> getStats(file)?.isFile?() is true
-    isDirectory: isDirectory = (file) -> getStats(file)?.isDirectory?() is true
+    isFile: isFile = (file) -> typeof file is 'string' and getStats(file)?.isFile?() is true
+    isDirectory: isDirectory = (file) -> typeof file is 'string' and getStats(file)?.isDirectory?() is true
     list: list = (dir, options={}, files=[]) ->
         exclude = options.exclude ? exports.defaultFileExclude
         recursive = options.recursive ? true

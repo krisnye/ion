@@ -7,8 +7,8 @@
     },
     "repository": "https://github.com/krisnye/ion.git",
     "scripts": {
-        "dev": "yarn install && yarn link",
-        "clean": "rm -rf node_modules && rm -rf lib && yarn unlink",
+        "dev": "npm install && npm link",
+        "clean": "rm -rf node_modules && rm -rf lib && npm unlink",
         "build": "node bin/ion -c",
         "watch": "node bin/ion -w",
         "inspect": "node --inspect bin/ion -w",
