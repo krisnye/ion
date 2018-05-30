@@ -25,28 +25,19 @@ function defaultLoggerFactory() {
 }
 
 export default class Compiler {
-    input: string
+    input: string[]
     output: string
     passes: any[][] = defaultPasses
     loggerFactory: () => (names?: string[], ast?: object) => void
 
     constructor(options:{
-        input: string,
+        input: string[],
         output: string,
         loggerFactory?: () => (names?: string[], ast?: object) => void
      }){
         this.input = options.input
         this.output = options.output
         this.loggerFactory = options.loggerFactory || defaultLoggerFactory
-    }
-
-    getPathFromFilename(filename: string) {
-        filename = filename.substring(this.input.length + 1)
-        return filename.substring(0, filename.length - '.ion'.length).replace(/[\/\\]/g, '.')
-    }
-
-    getFilenameFromPath(path: string) {
-        return this.input + '/' + path.replace(/\./g, '/') + '.ion'
     }
 
     compile() {
@@ -69,13 +60,11 @@ export default class Compiler {
             "sample.Point3": true
         }
         let paths = common.getFilesRecursive(this.input)
-            .filter(filename => filename.endsWith('.ion'))
-            .map(filename => this.getPathFromFilename(filename))
-            .filter(path => debugFilter[path]);
+            .filter(({filename}) => filename.endsWith('.ion'))
+            .filter(({path}) => debugFilter[path]);
 
         let assembly = new ast.Assembly({ options:{input:this.input, output:this.output}, namespaces: {} })
-        for (let path of paths) {
-            let filename = this.getFilenameFromPath(path)
+        for (let {filename,path} of paths) {
             let source = common.read(filename)
             let module = parser.parse(source, filename)
             assembly.namespaces[path] = module

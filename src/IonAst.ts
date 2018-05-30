@@ -427,7 +427,7 @@ export class ImportDeclaration extends Node {
 }
 
 export class DotExpression extends Node implements Expression {
-    type?: CanonicalReference
+    type?: TypeExpression
     getAncestorConstrainedType(ancestors: object[]) {
         // a dot expression is dependent on it's containing baseType
         for (let i = ancestors.length - 1; i >= 0; i--) {
@@ -444,11 +444,12 @@ export class DotExpression extends Node implements Expression {
         // infer type as base type
         let constrainedType = this.getAncestorConstrainedType(ancestors)
         let baseType = filter(constrainedType.baseType)
-        if (baseType instanceof CanonicalReference) {
-            this.type = new CanonicalReference(baseType.id)
-        } else {
-            throw new Error("BaseType is not a CanonicalReference: " + baseType)
-        }
+        this.type = <TypeExpression>baseType
+        // if (baseType instanceof CanonicalReference) {
+        //     this.type = new CanonicalReference(baseType.id)
+        // } else {
+        //     throw new Error("BaseType is not a CanonicalReference: " + baseType)
+        // }
         return this
     }
     toString() {
@@ -611,6 +612,7 @@ export class TemplateReference extends Node implements TypeExpression {
     // type = new CanonicalReference("ion.Type")
     reference: Reference
     arguments: Expression[]
+    get id() { return this.reference.id }
     get name() { return this.reference.name }
     getDependencies(ancestors: object[]) {
         return [this.reference, ...this.arguments]

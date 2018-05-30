@@ -6,10 +6,13 @@ import * as HtmlLogger from "./HtmlLogger"
 
 var args = process.argv.slice(2)
 
-let path = args[0]
+if (args.length < 2) {
+    console.log('Usage: ion output input+')
+}
 
-let input = np.join(process.cwd(), path, "src")
-let output = np.join(process.cwd(), path, "lib")
+let ionSrc = np.join(__dirname, '../ionsrc')
+let output = np.join(process.cwd(), args[0])
+let input = args.slice(1).map((dir) => np.join(process.cwd(), dir)).concat([ionSrc])
 function loggerFactory() {
     return HtmlLogger.create(np.join(output,  "debug.html"))
 }

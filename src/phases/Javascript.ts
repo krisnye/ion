@@ -59,21 +59,28 @@ const __CallExpression_ToJavascript = (n: ast.CallExpression) => {
     return { type: jst.CallExpression, callee:n.callee, arguments:n.arguments }
 }
 const __BinaryExpression_ToJavascript = (n:ast.BinaryExpression) => {
+    if (!(n instanceof ast.BinaryExpression))
+        return n
+
+    let left: any = __BinaryExpression_ToJavascript(<ast.BinaryExpression>n.left)
+    let right: any = __BinaryExpression_ToJavascript(<ast.BinaryExpression>n.right)
+
     let operator: any = n.operator
     operator = operatorMap[operator] || operator
     if (operator == '**' || operator == '^') {
         return {
             type: jst.CallExpression,
             callee: { type: jst.MemberExpression, object: Id('Math'), property: Id('pow') },
-            arguments: [n.left, n.right]
+            arguments: [left, right]
         }
     }
 
     function toRuntimeTypeCheck() {
         return {
             type: jst.CallExpression,
-            callee: { type: jst.MemberExpression, object: n.right, property: Id('is'), computed: false },
-            arguments: [n.left]
+            callee: { type: jst.MemberExpression, object: right, property: Id('is'), computed: false },
+            // if Template then arguments are passed as extra arguments to is.
+            arguments: [left, ...((<any>right).arguments || [])]
         }
     }
     // if operator = is then we need to do a type check
@@ -88,7 +95,7 @@ const __BinaryExpression_ToJavascript = (n:ast.BinaryExpression) => {
             argument: toRuntimeTypeCheck()
         }
     }
-    return {type:jst.BinaryExpression, left:n.left, operator, right:n.right}
+    return {type:jst.BinaryExpression, left, operator, right}
 }
 const __MemberExpression_ToJavascript = (n:ast.MemberExpression, ancestors: object[]) => {
     return {type:jst.MemberExpression, object: n.object, property: n.property, computed: false}
@@ -338,7 +345,7 @@ const __Program_CompileJavascript = (node:any) => {
 }
 
 const __TemplateReference_ToJavascript = (node:ast.TemplateReference) => {
-    return { type: jst.Identifier, name:'TemplateReferenceHere' }
+    return node.reference
 }
 
 const classNamesFound: any = {}
@@ -369,12 +376,14 @@ const __CallExpression_SimplifyTypeIsCalls = (n: any) => {
 
 export const passes = [
     [__MemberExpression_ToFunctionCallIfComputed],
-    [__CanonicalReference_ToJavascriptIdentifier, __Literal_ToJavascriptLiteral, __Id_ToJavascriptIdentifier, __Reference_ToJavascriptIdentifier, __TemplateReference_ToJavascript],
+    [__CanonicalReference_ToJavascriptIdentifier, __Literal_ToJavascriptLiteral, __Id_ToJavascriptIdentifier, __Reference_ToJavascriptIdentifier],
     [__ConstrainedType_ToRuntimePredicate, __LiteralType_ToRuntimePredicate, __UnionType_ToRuntimePredicate],
-    [__CallExpression_ToJavascript,__BinaryExpression_ToJavascript, __MemberExpression_ToJavascript],
+    [__CallExpression_ToJavascript, __MemberExpression_ToJavascript],
+    [__BinaryExpression_ToJavascript],
     [__DotExpression_ToJavascriptIdentifier],
     [__CallExpression_SimplifyTypeIsCalls],
     [__ClassDeclaration_ToJavascriptClass],
+    [__TemplateReference_ToJavascript],
     [Node_NoOp, __IrtRoot_ToJavascriptModule],
     [Node_findClassNamesThatNeedConversion],
     [Node_NoOp, __Program_CompileJavascript]

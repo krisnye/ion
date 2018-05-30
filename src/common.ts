@@ -52,18 +52,35 @@ export function difference(a: Set<any>, b: Set<any>) {
 //  File operations
 ////////////////////////////////////////////////////////////////////////////////
 
+export type Input = { filename: string, path: string }
+
 export function read(file: any) {
     return fs.readFileSync(file, 'utf8')
 }
 
-export function getFilesRecursive(directory: string, allFiles: string[] = []) {
-    for (let file of fs.readdirSync(directory)) {
-        let fullPath = np.join(directory, file)
-        if (fs.statSync(fullPath).isFile()) {
-            allFiles.push(fullPath)
+function getPathFromFilename(filename: string, input: string) {
+    filename = filename.substring(input.length + 1)
+    return filename.substring(0, filename.length - '.ion'.length).replace(/[\/\\]/g, '.')
+}
+
+export function getFilesRecursive(directory: string | string[], rootDirectory : string | null = null, allFiles: Input[] = []): Input[] {
+    if (Array.isArray(directory)) {
+        for (let dir of directory) {
+            getFilesRecursive(dir, dir, allFiles)
         }
-        else {
-            getFilesRecursive(fullPath, allFiles)
+    }
+    else {
+        if (rootDirectory == null)
+            rootDirectory = directory
+        for (let name of fs.readdirSync(directory)) {
+            let filename = np.join(directory, name)
+            if (fs.statSync(filename).isFile()) {
+                let path = getPathFromFilename(filename, rootDirectory)
+                allFiles.push({ filename, path})
+            }
+            else {
+                getFilesRecursive(filename, rootDirectory, allFiles)
+            }
         }
     }
     return allFiles
