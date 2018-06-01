@@ -3,14 +3,16 @@
     "version": "1.9.0",
     "main": "lib/index",
     "repository": "https://github.com/krisnye/ion.git",
-    "bin": "lib/command.js",
+    "bin": {
+        "ion2boot": "lib/command.js"
+    },
     "scripts": {
-        "dev": "npm link pegs && yarn install && mkdir -p lib",
-        "build": "pegs src/parser.pegs lib/parser.js && tsc -p .",
+        "dev": "npm link pegs && yarn install && mkdir -p lib && yarn build && yarn link",
+        "build": "pegs src/parser.pegs lib/parser.js && tsc -p . && yarn unlink",
         "clean": "rm -rf node_modules && rm -rf lib",
         "watchBuild": "nodemon --ignore test/lib -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch",
-        "watchTest": "nodemon --ignore test/lib -w lib -w test -e js,ion lib/command.js test/lib test/src",
-        "watchDebug": "nodemon --ignore test/lib -w lib -w test -e js,ion --inspect-brk lib/command.js test/lib test/src",
+        "watchTest": "nodemon --ignore test/lib -w lib -w test -w ionsrc -e js,ion lib/command.js test/lib test/src",
+        "watchDebug": "nodemon --ignore test/lib -w lib -w test -w ionsrc -e js,ion --inspect-brk lib/command.js test/lib test/src",
         "watch": "yarn watchBuild & yarn watchTest",
         "debug": "yarn watchBuild & yarn watchDebug"
     },

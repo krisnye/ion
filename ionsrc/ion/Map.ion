@@ -12,7 +12,7 @@ import
             return emptyMap
         }, {
             is(value, KeyType, ValueType) {
-                # TODO: Once calculated on an instance we could cache the result with a unique Symbol.
+                // TODO: Once calculated on an instance we could cache the result with a unique Symbol.
                 if (value !== emptyMap) {
                     if (!(value instanceof Map))
                         return false

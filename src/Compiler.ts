@@ -46,22 +46,22 @@ export default class Compiler {
     }
 
     parseAssembly() {
-        const debugFilter: { [path: string]: boolean } = {
-            "ion.Type": true,
-            "ion.Number": true,
-            "ion.Integer": true,
-            "ion.constants": true,
-            "ion.true": true,
-            "ion.Native": true,
-            "ion.String": true,
-            "ion.Map": true,
-            "ion.Array": true,
-            "sample.Point2": true,
-            "sample.Point3": true
-        }
+        // const debugFilter: { [path: string]: boolean } = {
+        //     "ion.Type": true,
+        //     "ion.Number": true,
+        //     "ion.Integer": true,
+        //     "ion.constants": true,
+        //     "ion.true": true,
+        //     "ion.Native": true,
+        //     "ion.String": true,
+        //     "ion.Map": true,
+        //     "ion.Array": true,
+        //     "sample.Point2": true,
+        //     "sample.Point3": true
+        // }
         let paths = common.getFilesRecursive(this.input)
             .filter(({filename}) => filename.endsWith('.ion'))
-            .filter(({path}) => debugFilter[path]);
+            // .filter(({path}) => debugFilter[path]);
 
         let assembly = new ast.Assembly({ options:{input:this.input, output:this.output}, namespaces: {} })
         for (let {filename,path} of paths) {

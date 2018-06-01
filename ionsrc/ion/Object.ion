@@ -1,4 +1,0 @@
-
-export class Object
-    let class: Class
-    let string: String

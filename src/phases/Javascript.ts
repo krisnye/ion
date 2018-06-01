@@ -156,32 +156,29 @@ const __LiteralType_ToRuntimePredicate = (node: ast.LiteralType) => {
 const __UnionType_ToRuntimePredicate = (node: ast.UnionType) => {
     return createPredicate({
         type: jst.BinaryExpression,
-        left: {
-            type: jst.BinaryExpression,
+        left: __BinaryExpression_ToJavascript(new ast.BinaryExpression({
             left: Id('$'),
             operator: 'is',
             right: node.left
-        },
-        operator: 'or',
-        right: {
-            type: jst.BinaryExpression,
+        })),
+        operator: '||',
+        right: __BinaryExpression_ToJavascript(new ast.BinaryExpression({
             left: Id('$'),
             operator: 'is',
             right: node.right
-        }
+        })
     })
 }
 
 const __ConstrainedType_ToRuntimePredicate = (node:ast.ConstrainedType) => {
     return createPredicate({
         type: jst.BinaryExpression,
-        left: {
-            type: jst.BinaryExpression,
+        left: __BinaryExpression_ToJavascript(new ast.BinaryExpression({
             left: Id('$'),
             operator: 'is',
             right: node.baseType
-        },
-        operator: 'and',
+        })),
+        operator: '&&',
         right: node.constraint
     })
 
