@@ -170,7 +170,7 @@ const __UnionType_ToRuntimePredicate = (node: ast.UnionType) => {
             left: Id('$'),
             operator: 'is',
             right: node.right
-        })
+        }))
     })
 }
 

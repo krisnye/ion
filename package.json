@@ -8,7 +8,7 @@
     },
     "scripts": {
         "dev": "yarn link pegs && yarn install && mkdir -p lib && yarn build && yarn link",
-        "build": "pegs src/parser.pegs lib/parser.js && tsc -p . && yarn unlink",
+        "build": "pegs src/parser.pegs lib/parser.js && tsc -p .",
         "clean": "rm -rf node_modules && rm -rf lib",
         "watchBuild": "nodemon --ignore test/lib -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch",
         "watchTest": "nodemon --ignore test/lib -w lib -w test -w ionsrc -e js,ion lib/command.js test/lib test/src",
