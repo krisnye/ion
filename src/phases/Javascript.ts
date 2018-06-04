@@ -5,6 +5,10 @@ import * as jst from "../JsAstTypes"
 import * as c from "../common"
 import * as ast from "../IonAst"
 
+// to add runtime types to classes...
+// [ ] add a unique symbol to every class
+// [ ] define it and all inherited symbols in the prototype
+
 const Node_NoOp = (node: any) => {
     return skip
 }
@@ -184,7 +188,8 @@ const __ConstrainedType_ToRuntimePredicate = (node:ast.ConstrainedType) => {
 
 }
 
-const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancestors: object[]) => {
+const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancestors: object[], path: string[]) => {
+    let fullName = path[path.length - 1]
     let meta = getMetaValue(node.meta, 'ion_Native_JavaScript')
     if (meta != null) {
         let value = (<ast.Literal>meta).value
@@ -193,7 +198,7 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
 
     let vars = node.declarations.filter(d => d.assignable)
     let lets = node.declarations.filter(d => !d.assignable)
-    return {
+    let classDeclaration = {
         type: jst.ClassExpression,
         id: node.id,
         superClass: null,
@@ -278,7 +283,7 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                             }).concat(<any>[
                                 {
                                     type: jst.ExpressionStatement,
-                                    expression: Freeze({type:jst.ThisExpression})
+                                    expression: Freeze({ type: jst.ThisExpression })
                                 }
                             ]))
                         }
@@ -287,6 +292,50 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
             ]
         }
     }
+    let isFunctionVerbatim = `$ => $ != null && $.constructor.types != null && $.constructor.types.has('${fullName}')`
+    // wrap the class in an Object.assign
+    return {
+        type: jst.CallExpression,
+        callee: { type: jst.MemberExpression, object: Id('Object'), property: Id('assign') },
+        arguments: [
+            classDeclaration,
+            {
+                type: jst.ObjectExpression,
+                properties: [{
+                    type: jst.Property,
+                    key: Id('types'),
+                    kind: 'init',
+                    value: {
+                        type: jst.NewExpression,
+                        callee: Id('Set'),
+                        arguments: [{
+                            type: jst.ArrayExpression,
+                            elements: node.baseClassNames.map((name) => {
+                                return { type: jst.Literal, value: name }
+                            }).concat([{ type: jst.Literal, value: fullName}])
+                        }]
+                    }
+                }, {
+                    type: jst.Property,
+                    key: Id('is'),
+                    kind: 'init',
+                    value: {
+                        type: jst.Literal,
+                        value: isFunctionVerbatim,
+                        verbatim: isFunctionVerbatim
+                    }
+                }, {
+                    type: jst.Property,
+                    key: Id('path'),
+                    kind: 'init',
+                    value: {
+                        type: jst.Literal,
+                        value: fullName
+                    }
+                }]
+            }
+        ]
+    }        
 }
 
 const __IrtRoot_ToJavascriptModule = (node:ast.IrtRoot) => {

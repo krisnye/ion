@@ -210,7 +210,7 @@ IntersectionType
     { return right ? node('IntersectionType', {left, right}) : left }
 
 ConstrainedType
-    = baseType:TemplateReference constraint:(' ' WhereToken ' ' _ @InlineExpression)?
+    = baseType:TemplateReference constraint:(_ WhereToken? _ @InlineExpression)?
     { return constraint ? node('ConstrainedType', {baseType,constraint}) : baseType }
     / LiteralType
 
@@ -300,6 +300,7 @@ RelationalOperator
 RelationalExpression
     = head:AdditiveExpression tail:(_ RelationalOperator _ AdditiveExpression)*
         { return buildBinaryExpression(head, tail) }
+    //  implicit dot expression
     / tail:(_ RelationalOperator _ AdditiveExpression)
         { return buildBinaryExpression(node('DotExpression') , [tail]) }
 
@@ -308,7 +309,10 @@ EqualityOperator
 
 EqualityExpression
     = head:RelationalExpression tail:(_ EqualityOperator _ RelationalExpression)*
-    { return buildBinaryExpression(head, tail) }
+        { return buildBinaryExpression(head, tail) }
+    //  implicit dot expression
+    / tail:(_ EqualityOperator _ RelationalExpression)
+        { return buildBinaryExpression(node('DotExpression') , [tail]) }
 
 LogicalAndOperator
     = AndToken

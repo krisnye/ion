@@ -10,7 +10,7 @@ import
             return emptyArray
         }, {
             is(value, ValueType) {
-                # TODO: Once calculated on an instance we could cache the result with a unique Symbol.
+                // TODO: Once calculated on an instance we could cache the result with a unique Symbol.
                 if (!Array.isArray(value))
                     return false
                 for (let value of value.values()) {

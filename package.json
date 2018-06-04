@@ -7,7 +7,7 @@
         "ion2boot": "lib/command.js"
     },
     "scripts": {
-        "dev": "npm link pegs && yarn install && mkdir -p lib && yarn build && yarn link",
+        "dev": "yarn link pegs && yarn install && mkdir -p lib && yarn build && yarn link",
         "build": "pegs src/parser.pegs lib/parser.js && tsc -p . && yarn unlink",
         "clean": "rm -rf node_modules && rm -rf lib",
         "watchBuild": "nodemon --ignore test/lib -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch",

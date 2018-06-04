@@ -3,13 +3,30 @@ import
 
 [Native.JavaScript]: ""
     (function(){
-        const emptyMap = Object.freeze(Object.assign(new Map(), {
-            clear() {},
-            delete() {},
-            set() {}
-        }))
-        return Object.freeze(Object.assign(function ion_Map(){
-            return emptyMap
+        function createImmutableMap(map) {
+            return Object.freeze(Object.assign(map, {
+                clear() {},
+                delete() {},
+                set() {}
+            }))
+            
+        }
+        const emptyMap = createImmutableMap(new Map())
+        return Object.freeze(Object.assign(function ion_Map(...keyValues){
+            if (arguments.length === 0)
+                return emptyMap
+            let map = new Map()
+            for (let i = 0; i < arguments.length; i += 2) {
+                // if arguments length is odd then last value will be null
+                let key = arguments[i + 0]
+                let value = arguments[i + 1]
+                if (key === void 0)
+                    key = null
+                if (value === void 0)
+                    value = null
+                map.set(key, value)
+            }
+            return createImmutableMap(map)
         }, {
             is(value, KeyType, ValueType) {
                 // TODO: Once calculated on an instance we could cache the result with a unique Symbol.

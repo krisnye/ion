@@ -360,14 +360,15 @@ function inferType(value: any) {
     }
 }
 
-// const Literal_InferType = (node: ast.Literal) => {
-//     node.type = inferType(node.value)
-// }
-
 const ClassDeclaration_InheritDeclarations = (node: ast.ClassDeclaration, ancestors: object[]) => {
     let root = <ast.IrtRoot>ancestors[0]
     let declarations = node.getDeclarationsRecursive(root)
     node.declarations = declarations
+}
+
+const ClassDeclaration_SetBaseClassNames = (node: ast.ClassDeclaration, ancestors: object[]) => {
+    let baseClassNames = node.getBaseClassNamesRecursive(ancestors[0] as any)
+    node.baseClassNames = baseClassNames
 }
 
 export const passes = [
@@ -401,7 +402,8 @@ export const passes = [
     //  Phase 3: Type calculation
     [Node_AddDependenciesToIrtRoot, _IrtRoot_ToposortTypes],
 
-    [ClassDeclaration_InheritDeclarations]
+    [ClassDeclaration_InheritDeclarations],
+    [ClassDeclaration_SetBaseClassNames]
 
     //  Phase 4: check semantic validity
     // [AssignmentStatement_CheckAssignable]

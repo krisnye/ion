@@ -202,6 +202,7 @@ export class ClassDeclaration extends Scope implements Declaration, TypeExpressi
     baseClasses: (Reference | CanonicalReference)[]
     declarations: Declaration[]
     meta: Property[]
+    baseClassNames: string[]
     get value() {
         return this
     }
@@ -218,6 +219,17 @@ export class ClassDeclaration extends Scope implements Declaration, TypeExpressi
         }
         // push inherited declarations first
         results.push(...this.declarations)
+        return results
+    }
+    getBaseClassNamesRecursive(root: IrtRoot, results: string[] = []) {
+        for (let cref of this.baseClasses) {
+            let classDeclaration = <ClassDeclaration>root.values[cref.name]
+            if (classDeclaration == null) {
+                throw new Error('cref not found: ' + cref)
+            }
+            results.push(cref.name)
+            classDeclaration.getBaseClassNamesRecursive(root, results)
+        }
         return results
     }
     getDeclaration(name: string) {

@@ -1,0 +1,11 @@
+import
+    .Native
+    .Integer
+
+[Native.JavaScript]: ""
+    Object.freeze({
+        is(value) {
+            return value == null
+        }
+    })
+export class Null
