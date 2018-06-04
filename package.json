@@ -5,7 +5,7 @@
     "repository": "https://github.com/krisnye/ion.git",
     "bin": "lib/command.js",
     "scripts": {
-        "dev": "yarnk link pegs && yarn link ion2boot && yarn install && mkdir -p lib",
+        "dev": "yarn link pegs && yarn link ion2boot && yarn install && mkdir -p lib",
         "build": "pegs src/parser.pegs lib/parser.js && tsc -p .",
         "clean": "rm -rf node_modules && rm -rf lib",
         "watchAst": "nodemon -w ionsrc -e ion -x ion2boot src/ast ionsrc",
