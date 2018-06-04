@@ -1,0 +1,7 @@
+import
+    ion.*
+    .Id
+    .Node
+
+export class Declaration extends Node
+    var id: Id

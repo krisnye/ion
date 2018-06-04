@@ -1,8 +1,0 @@
-let _one = 1
-type Foo = 0 | 1
-type Bar = 2 | 3
-export
-    let one = _one
-    let zero = one - one
-    type Baz = Foo | Bar
-

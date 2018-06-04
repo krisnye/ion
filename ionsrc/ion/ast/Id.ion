@@ -1,0 +1,6 @@
+import
+    ion.*
+    .Expression
+
+export class Id extends Expression
+    var name: String

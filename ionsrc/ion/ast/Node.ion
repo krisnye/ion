@@ -1,0 +1,6 @@
+import
+    ion.*
+    .Location
+
+export class Node
+    var location: Location | Null = null

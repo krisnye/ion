@@ -1,5 +1,0 @@
-import
-    .String
-
-export
-    property JavaScript: String

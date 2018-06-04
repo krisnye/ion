@@ -1,0 +1,6 @@
+import
+    ion.*
+
+export struct Position
+    var line   : Integer >= 1
+    var column : Integer >= 0

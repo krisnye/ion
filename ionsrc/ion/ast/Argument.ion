@@ -1,0 +1,7 @@
+import
+    ion.*
+    .Expression
+
+export class Argument extends Expression
+    var name: String | Null = null
+    var value: Expression

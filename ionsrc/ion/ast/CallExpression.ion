@@ -1,0 +1,8 @@
+import
+    ion.*
+    .Expression
+    .Argument
+
+export class CallExpression extends Expression
+    var callee: Expression
+    var arguments: Array<Argument>

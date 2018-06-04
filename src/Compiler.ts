@@ -41,8 +41,8 @@ export default class Compiler {
     }
 
     compile() {
-        let assembly = this.parseAssembly()
-        assembly = this.compileAssembly(assembly)
+        // let assembly = this.parseAssembly()
+        // assembly = this.compileAssembly(assembly)
     }
 
     parseAssembly() {

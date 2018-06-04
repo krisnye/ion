@@ -1,0 +1,5 @@
+import
+    ion.*
+    .Id
+
+export class Reference extends Id
