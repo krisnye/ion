@@ -1,0 +1,12 @@
+import
+    ion.*
+    .Expression
+    .Id
+    .Node
+    .TypeExpression
+    # importing needs to support the local .*, possibly automatically.
+
+export class Parameter extends Node
+    var name: Id
+    var type: TypeExpression
+    var default: Expression | Null = null

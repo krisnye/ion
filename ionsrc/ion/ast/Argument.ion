@@ -1,7 +1,8 @@
 import
     ion.*
     .Expression
+    .Id
 
 export class Argument extends Expression
-    var name: String | Null = null
+    var name: Id | Null = null
     var value: Expression

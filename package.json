@@ -9,10 +9,10 @@
         "build": "pegs src/parser.pegs lib/parser.js && tsc -p .",
         "clean": "rm -rf node_modules && rm -rf lib",
         "watchAst": "nodemon -w ionsrc -e ion -x ion2boot src/ast ionsrc",
-        "watchBuild": "nodemon --ignore test/lib -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch",
-        "watchTest": "nodemon --ignore test/lib -w lib -w test -e js,ion lib/command.js test/lib test/src",
-        "watchDebug": "nodemon --ignore test/lib -w lib -w test -e js,ion --inspect-brk lib/command.js test/lib test/src",
-        "watch": "yarn watchBuild & yarn watchTest",
+        "watchBuild": "nodemon --ignore test/lib --ignore ionsrc -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch",
+        "watchTest": "nodemon --ignore test/lib --ignore ionsrc -w lib -w test -e js,ion lib/command.js test/lib test/src",
+        "watchDebug": "nodemon --ignore test/lib --ignore ionsrc -w lib -w test -e js,ion --inspect-brk lib/command.js test/lib test/src",
+        "watch": "yarn watchBuild & yarn watchTest & yarn watchAst",
         "debug": "yarn watchBuild & yarn watchDebug"
     },
     "author": {
