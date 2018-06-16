@@ -173,29 +173,29 @@ const ion_ast_Argument = Object.freeze(Object.assign(class Argument {
 }));
 const ion_ast_CallExpression = Object.freeze(Object.assign(class CallExpression {
     static create(...args) {
-        let location, callee, __arguments__;
+        let location, callee, $arguments;
         for (let arg of args) {
             if (arg != null) {
                 if (arg.location !== undefined)
                     location = arg.location;
                 if (arg.callee !== undefined)
                     callee = arg.callee;
-                if (arg.__arguments__ !== undefined)
-                    __arguments__ = arg.__arguments__;
+                if (arg.arguments !== undefined)
+                    $arguments = arg.arguments;
             }
         }
-        return new CallExpression(location, callee, __arguments__);
+        return new CallExpression(location, callee, $arguments);
     }
-    constructor(location, callee, __arguments__) {
+    constructor(location, callee, $arguments) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_ast_Expression.is(callee))
             throw new Error('callee is not valid: ' + JSON.stringify(callee));
-        if (!ion_Array.is(__arguments__, ion_ast_Argument))
-            throw new Error('__arguments__ is not valid: ' + JSON.stringify(__arguments__));
+        if (!ion_Array.is($arguments, ion_ast_Argument))
+            throw new Error('$arguments is not valid: ' + JSON.stringify($arguments));
         this.location = location;
         this.callee = callee;
-        this.__arguments__ = __arguments__;
+        this.arguments = $arguments;
         Object.freeze(this);
     }
 }, {
