@@ -23,8 +23,18 @@ function Freeze(value: any) {
     }
 }
 
+const reservedWords = 'arguments,break,case,catch,class,const,continue,debugger,default,delete,do,else,export,extends,finally,for,function,if,import,in,instanceof,new,return,super,switch,this,throw,try,typeof,var,void,while,with,yield'.split(',')
+const reservedWordSet = new Set(reservedWords)
+
+function idNameToJavascript(name: string) {
+    name = name.replace(/\./g, '_')
+    if (reservedWordSet.has(name))
+        name = `__${name}__`
+    return name
+}
+
 function Id(name: string, properties?: any) {
-    let node: any = {type:jst.Identifier, name:name.replace(/\./g, '_')}
+    let node: any = {type:jst.Identifier, name:idNameToJavascript(name)}
     if (properties) {
         for (let name in properties) {
             node[name] = properties[name]
@@ -207,12 +217,146 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
             body: [
                 {
                     type: jst.MethodDefinition,
+                    kind: 'method',
+                    static: true,
+                    key: {
+                        type: jst.Identifier,
+                        name: "create"
+                    },
+                    value: {
+                        type: jst.FunctionExpression,
+                        id: null,
+                        params: [
+                            {
+                                type: jst.RestElement,
+                                argument: { type: jst.Identifier, name: "args" }
+                            }
+                        ],
+                        body: {
+                            type: jst.BlockStatement,
+                            body: [
+                                {
+                                    type: jst.VariableDeclaration,
+                                    kind: 'let',
+                                    declarations: vars.map(d => {
+                                        return {
+                                            type: jst.VariableDeclarator,
+                                            id: d.id,
+                                            init: null
+                                        }
+                                    })
+                                },
+                                {
+                                    type: jst.ForOfStatement,
+                                    left: {
+                                        type: jst.VariableDeclaration,
+                                        declarations: [
+                                            {
+                                                type: jst.VariableDeclarator,
+                                                id: Id('arg')
+                                            }
+                                        ],
+                                        kind: "let"
+                                    },
+                                    right: Id('args'),
+                                    body: {
+                                        type: jst.BlockStatement,
+                                        body: [
+                                            {
+                                                "type": "IfStatement",
+                                                "test": {
+                                                    "type": "BinaryExpression",
+                                                    "operator": "!=",
+                                                    "left": {
+                                                        "type": "Identifier",
+                                                        "name": "arg"
+                                                    },
+                                                    "right": Literal(null),
+                                                },
+                                                "consequent": {
+                                                    "type": "BlockStatement",
+                                                    "body": vars.map(d => {
+                                                        return {
+                                                            "type": "IfStatement",
+                                                            "test": {
+                                                                "type": "BinaryExpression",
+                                                                "operator": "!==",
+                                                                "left": {
+                                                                    "type": "MemberExpression",
+                                                                    "computed": false,
+                                                                    "object": {
+                                                                        "type": "Identifier",
+                                                                        "name": "arg"
+                                                                    },
+                                                                    "property": d.id
+                                                                },
+                                                                "right": {
+                                                                    "type": "Identifier",
+                                                                    "name": "undefined"
+                                                                }
+                                                            },
+                                                            "consequent": {
+                                                                "type": "ExpressionStatement",
+                                                                "expression": {
+                                                                    "type": "AssignmentExpression",
+                                                                    "operator": "=",
+                                                                    "left": d.id,
+                                                                    "right": {
+                                                                        "type": "MemberExpression",
+                                                                        "computed": false,
+                                                                        "object": {
+                                                                            "type": "Identifier",
+                                                                            "name": "arg"
+                                                                        },
+                                                                        "property": d.id
+                                                                    }
+                                                                }
+                                                            },
+                                                            "alternate": null
+                                                        }
+                                                    })
+                                                },
+                                                "alternate": null
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    type: jst.ReturnStatement,
+                                    argument: {
+                                        type: jst.NewExpression,
+                                        callee: node.id,
+                                        arguments: vars.map(d => d.id)
+                                    }
+                                }                            ]
+                        }
+                    }
+                },
+                {
+                    type: jst.MethodDefinition,
                     kind: 'constructor',
                     key: {
                         type: jst.Identifier,
                         name: "constructor"
                     },
-                    value: {
+                    value: node.isAbstract ? {
+                        type: jst.FunctionExpression,
+                        id: null,
+                        params: [],
+                        body: {
+                            type: jst.BlockStatement,
+                            body: [
+                                {
+                                    type: jst.ThrowStatement,
+                                    argument: {
+                                        type: jst.NewExpression,
+                                        callee: Id("Error"),
+                                        arguments: [ Literal(node.id.name + " is abstract")]
+                                    }
+                                }
+                            ]
+                        }
+                    } : {
                         type: jst.FunctionExpression,
                         id: null,
                         params: vars.map(d => {
@@ -245,7 +389,15 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                                                         value: `${d.id.name} is not valid: `
                                                     },
                                                     operator: '+',
-                                                    right: d.id
+                                                    right: {
+                                                        type: jst.CallExpression,
+                                                        callee: {
+                                                            type: jst.MemberExpression,
+                                                            object: Id('JSON'),
+                                                            property: Id('stringify')
+                                                        },
+                                                        arguments: [d.id]
+                                                    }
                                                 }
                                             ]
                                         }
@@ -363,7 +515,16 @@ const __IrtRoot_ToJavascriptModule = (node:ast.IrtRoot) => {
         type: jst.Program,
         options: node.options,
         sourceType: "module",
-        body: (<any>Object.keys(node.values)).map(
+        body: [
+            {
+                "type": "ExpressionStatement",
+                "expression": {
+                    "type": "Literal",
+                    "value": "use strict"
+                },
+                "directive": "use strict"
+            }
+        ].concat((<any>Object.keys(node.values)).map(
             (name: any) => {
                 let value = node.values[name]
                 return {
@@ -378,7 +539,7 @@ const __IrtRoot_ToJavascriptModule = (node:ast.IrtRoot) => {
             }
         ).concat([
             { type: jst.ExportDefaultDeclaration, declaration: exportObject}
-        ])
+        ]))
     }
 }
 

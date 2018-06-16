@@ -197,6 +197,7 @@ export class Module extends Namespace {
 export class ClassDeclaration extends Scope implements Declaration, TypeExpression {
     // type = new CanonicalReference("ion.Type")
     isStructure: boolean
+    isAbstract: boolean
     id: Id
     templateParameters: Parameter[]
     baseClasses: (Reference | CanonicalReference)[]
@@ -218,7 +219,13 @@ export class ClassDeclaration extends Scope implements Declaration, TypeExpressi
             classDeclaration.getDeclarationsRecursive(root, results)
         }
         // push inherited declarations first
-        results.push(...this.declarations)
+        for (let declaration of this.declarations) {
+            // only inherit declarations not already inherited by the parent.
+            if (!results.find(x => x.id.name === declaration.id.name)) {
+                // this would also be a good point to make sure the declarations were compatible.
+                results.push(declaration)
+            }
+        }
         return results
     }
     getBaseClassNamesRecursive(root: IrtRoot, results: string[] = []) {

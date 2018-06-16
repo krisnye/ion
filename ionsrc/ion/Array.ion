@@ -13,8 +13,8 @@ import
                 // TODO: Once calculated on an instance we could cache the result with a unique Symbol.
                 if (!Array.isArray(value))
                     return false
-                for (let value of value.values()) {
-                    if (!ValueType.is(value))
+                for (let element of value) {
+                    if (!ValueType.is(element))
                         return false
                 }
                 return true

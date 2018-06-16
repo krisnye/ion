@@ -180,10 +180,10 @@ AssignmentProperty
 ////////////////////////////////////////////////////////////////////////////////
 
 ClassDeclaration
-    = meta:MetaProperties isStructure:(ClassToken { return false } / StructToken {return true})
+    = meta:MetaProperties isAbstract:(AbstractToken _ { return true})? isStructure:(ClassToken { return false } / StructToken {return true})
         _ id:UpperCaseId templateParameters:TemplateParameters? _ baseClasses:Extends? EOL
         Indent declarations:(Dent @Declaration)* Outdent
-        { return node("ClassDeclaration", {isStructure, id, templateParameters, meta, baseClasses:baseClasses || [], declarations}) }
+        { return node("ClassDeclaration", {isStructure, isAbstract:isAbstract || false, id, templateParameters, meta, baseClasses:baseClasses || [], declarations}) }
 
 TemplateParameters
     = "<" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ">" { return [head, ...tail] }
@@ -479,7 +479,7 @@ NullLiteral
     = NullToken { return node('Literal', {value:null}) }
 
 BooleanLiteral
-    = value: (TrueToken / FalseToken) { return node('Literal', {value: JSON.parse(value) ? 1 : 0}) }
+    = value: (TrueToken / FalseToken) { return node('Literal', {value: JSON.parse(value)}) }
 
 ExponentPart
     = 'e' [+-]? [0-9]+ !IdPart
@@ -561,6 +561,7 @@ NotToken        = @"not"        !IdPart
 WhereToken      = @"where"      !IdPart
 ImportToken     = @"import"     !IdPart
 ExportToken     = @"export"     !IdPart
+AbstractToken   = @"abstract"   !IdPart
 ClassToken      = @"class"      !IdPart
 StructToken     = @"struct"     !IdPart
 VarToken        = @"var"        !IdPart
@@ -584,7 +585,6 @@ Keyword
     / FalseToken
     / AndToken
     / IsToken
-    / AsToken
     / OrToken
     / XorToken
     / NotToken
