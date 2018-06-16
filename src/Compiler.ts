@@ -6,12 +6,14 @@ import * as ast from "./IonAst"
 
 const parser = require("./parser")()
 
-import * as input from "./phases/Input"
-import * as optimizer from "./phases/Optimizer"
-import * as javascript from "./phases/Javascript"
-import * as output from "./phases/Output"
-import * as cleanup from "./phases/Cleanup"
-const defaultPhases = [input, optimizer, javascript, output]
+// import * as input from "./phases/Input"
+// import * as optimizer from "./phases/Optimizer"
+// import * as javascript from "./phases/Javascript"
+// import * as output from "./phases/Output"
+// import * as cleanup from "./phases/Cleanup"
+import * as input from "./phases2/Input"
+
+const defaultPhases = [input]
 const defaultPasses = [].concat(...defaultPhases.map((x:any) => x.passes))
 
 function defaultLoggerFactory() {
@@ -41,8 +43,8 @@ export default class Compiler {
     }
 
     compile() {
-        // let assembly = this.parseAssembly()
-        // assembly = this.compileAssembly(assembly)
+        let assembly = this.parseAssembly()
+        assembly = this.compileAssembly(assembly)
     }
 
     parseAssembly() {

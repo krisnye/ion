@@ -2,4 +2,4 @@ import
     ion.*
     .Expression
 
-export class TypeExpression extends Expression
+export abstract class TypeExpression extends Expression

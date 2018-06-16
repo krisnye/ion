@@ -19,6 +19,7 @@ function Freeze(value: any) {
     }
 }
 
+//  creates a javascript Id, also replaces invalid id values.
 function Id(name: string, properties?: any) {
     let node: any = {type:jst.Identifier, name:name.replace(/\./g, '_')}
     if (properties) {

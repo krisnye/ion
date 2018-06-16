@@ -1,0 +1,14 @@
+import
+    ion.*
+    .Declaration
+    .Parameter
+    .Property
+    .Reference
+
+export class ClassDeclaration extends Declaration
+    var isStructure: Boolean = false
+    var isAbstract: Boolean = false
+    var templateParameters: Array<Parameter>
+    var baseClasses: Array<Reference>
+    var declarations: Array<Declaration>
+    var meta: Array<Property>

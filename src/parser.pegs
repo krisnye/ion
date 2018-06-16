@@ -1,15 +1,29 @@
 {
 
-    const ast = require('./IonAst')
+    // const ast = require('./IonAst')
+    const {default:{ion:{ast}}} = require('./ast/assembly')
 
+    let notFound = {}
     function node(type, ...values) {
-        let result = Object.assign({__location:location()}, ...values.reverse())
-        //  construct directly into our IonAst nodes
-        let ctor = ast[type]
-        if (ctor != null)
-            return new ctor(result)
-        else
-            throw new Error('Type not found: ' + type)
+        let loc = location()
+        //  convert location to strongly typed
+        loc = ast.Location.create({
+            start: ast.Position.create(loc.start),
+            end: ast.Position.create(loc.end),
+            source: loc.filename
+        })
+        let result = Object.assign({location:loc}, ...values.reverse())
+        try {
+            if (ast[type] != null) {
+                result = ast[type].create(result)
+            }
+            else {
+                if (notFound[type] == null)
+                    console.log('type not found: ' + type)
+            }
+        } catch (e) {
+            console.log(type + ": " + e.message)
+        }
         return result
     }
 
@@ -48,24 +62,27 @@ ModulePath
     { return [head, ...tail] }
 
 SubImports
-    = Indent @(Dent @ImportDeclaration)+ Outdent
+    = Indent @(Dent &'.' @ImportStep)+ Outdent
 
-ImportDeclaration
-    = relative:'.'+ "*" EOL
+ImportStepChildren
+    = &'.' child:ImportStep
+    { return [child] }
+    / EOL Indent @(Dent &'.' @ImportStep)* Outdent
+
+ImportStep
+    = relative:'.*' EOL
     {
-        return node("ImportDeclaration", {relative:relative.length,path:[],children:true,as:null})
+        return node("ImportStep", {relative:true,name:null,as:null,children:[]})
     }
-    / relative:'.'* path:ModulePath as:(_ AsToken _ @Id)? children:(".*" EOL { return true } / EOL @SubImports?)
+    / relative:'.'? name:Id as:(_ AsToken _ @Id)? children:ImportStepChildren
     {
-        if (children === undefined)
-            children = null
-        if (as == null && children == null)
-            as = path[path.length-1]
-        return node("ImportDeclaration", {relative:relative.length,path,children,as})
+        if (as == null && children.length == 0)
+            as = name
+        return node("ImportStep", {relative:relative != null,name,as,children})
     }
 
 ImportDeclarations
-    = ImportToken EOL @SubImports
+    = ImportToken EOL Indent @(Dent @ImportStep)+ Outdent
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Statements
@@ -82,19 +99,19 @@ Statement
 
 Declaration
     = ClassDeclaration
-    / VariableDeclaration
+    / Variable
 
 VariableDeclarationType
     = VarToken { return {assignable:true, property:false} }
     / LetToken { return {assignable:false, property:false} }
     / PropertyToken { return {assignable:false, property:true} }
 
-VariableDeclaration
+Variable
     = TypeToken _ id:UpperCaseId _ "=" _ value:Type EOL
-    { return node('VariableDeclaration', {assignable:false, id, value}) }
+    { return node('Variable', {assignable:false, id, value}) }
     / meta:MetaProperties declarationType: VariableDeclarationType
         _ id:Pattern _ type:(":" _ @Type)? _ value:('=' _ @OutlineExpression / EOL {return null})?
-    { return node("VariableDeclaration", declarationType, {id, type, value, meta }) }
+    { return node("Variable", declarationType, {id, type, value, meta }) }
 
 MetaProperties
  = (@DynamicOutlineProperty Dent)*
@@ -183,7 +200,7 @@ ClassDeclaration
     = meta:MetaProperties isStructure:(ClassToken { return false } / StructToken {return true})
         _ id:UpperCaseId templateParameters:TemplateParameters? _ baseClasses:Extends? EOL
         Indent declarations:(Dent @Declaration)* Outdent
-        { return node("ClassDeclaration", {isStructure, id, templateParameters, meta, baseClasses:baseClasses || [], declarations}) }
+        { return node("ClassDeclaration", {isStructure, id, templateParameters: templateParameters || [], meta, baseClasses:baseClasses || [], declarations}) }
 
 TemplateParameters
     = "<" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ">" { return [head, ...tail] }
@@ -230,7 +247,7 @@ TemplateArguments
     { return [head, ...tail] }
 
 TemplateReference
-    = reference:Reference args:(_ @TemplateArguments)?
+    = reference:TypeReference args:(_ @TemplateArguments)?
     { return args ? node("TemplateReference", {reference,arguments:args}) : reference }
     // / "[" _ type:Type '*' _ "]"
     // { return node("TemplateReference", {id:node('Id',{name:"Array"}), arguments:[type]}) }
@@ -240,6 +257,9 @@ TemplateReference
     //     let types = [head, ...tail]
     //     return node("TemplateReference", {id:node('Id',{name:"Array"}), arguments:[node("UnionType", {types})], pattern:types})
     // }
+
+TypeReference
+    = id:UpperCaseId { return node('TypeReference', {name:id.name})}
 
 Quantifier
     = "?" { return [0,1] }
@@ -341,8 +361,8 @@ ConditionalExpression
 ////////////////////////////////////////////////////////////////////////////////
 
 Parameter
-    = pattern:Pattern _ type:(":" _ @Type)? _ _default:("=" _ @InlineExpression)?
-    { return node("Parameter", {pattern, type, default:_default})}
+    = id:Pattern _ type:(":" _ @Type)? _ _default:("=" _ @InlineExpression)?
+    { return node("Parameter", {id, type, default:_default})}
 
 FunctionParameters
     = "(" _ ")" { return [] }
@@ -530,14 +550,14 @@ IdName
 Id
     = name:IdName { return node('Id', {name}) }
 
+Reference
+    = name:IdName { return node('Reference', {name}) }
+
 LowerCaseId
     = &[_a-z] @Id
 
 UpperCaseId
     = &[A-Z] @Id
-
-Reference
-    = id:Id { return node('Reference', {id}) }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Tokens and Keywords

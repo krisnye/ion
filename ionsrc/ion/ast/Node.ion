@@ -2,5 +2,5 @@ import
     ion.*
     .Location
 
-export class Node
-    var location: Location | Null = null
+export abstract class Node
+    var location: Location

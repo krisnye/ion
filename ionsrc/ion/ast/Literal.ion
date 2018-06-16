@@ -1,0 +1,7 @@
+import
+    ion.*
+    .Expression
+    .Primitive
+
+export class Literal extends Expression
+    var value: Primitive

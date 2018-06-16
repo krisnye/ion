@@ -4,5 +4,5 @@ import
     .Id
 
 export class Argument extends Expression
-    var name: Id | Null = null
+    var id: Id | Null = null
     var value: Expression

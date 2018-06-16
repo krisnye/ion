@@ -1,0 +1,10 @@
+import
+    ion.*
+    .Id
+    .Node
+
+export class ImportStep extends Node
+    var relative: Boolean = false
+    var name: Id | Null = null
+    var as: Id | Null = null
+    var children: Array<ImportStep>

@@ -1,0 +1,11 @@
+import
+    ion.*
+    .Expression
+    .Id
+    .Declaration
+    .TypeExpression
+
+export class Variable extends Declaration
+    var type: TypeExpression | Null = null
+    var value: Expression | Null = null
+    var assignable: Boolean = false

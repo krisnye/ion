@@ -5,6 +5,9 @@ const jsondiffpatch: any = require('jsondiffpatch').create({})
 const remove__prefixedProperties = (key: string, value:any) => key.startsWith("__") ? undefined : value
 const uniqueId = Symbol('uniqueId')
 let nextId = 0
+const ignoreProperties: {[name:string]:boolean} = {
+    location: true
+}
 function cloneWithJsonReferences(object: any, map: Map<object,string[]> = new Map(), path: string[] = []) {
     let type = typeof object
     if (object == null || type == 'string' || type == 'number' || type == 'boolean')
@@ -15,9 +18,12 @@ function cloneWithJsonReferences(object: any, map: Map<object,string[]> = new Ma
         return {"$ref":previousPath.join('.')}
     }
     map.set(object, path.slice(0))
-    let clone: any = Array.isArray(object) ? [] : {}
+    let clone: any = Array.isArray(object) ? [] : {"":object.constructor.name}
     for (let property in object) {
-        path.push(property)
+        if (ignoreProperties[property])
+            continue
+
+            path.push(property)
         clone[property] = cloneWithJsonReferences(object[property], map, path)
         path.pop()
     }

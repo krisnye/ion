@@ -16,11 +16,7 @@ limitations on 'let' variables:
     Vector .x > 0 and .y < 10
 
 TODO:
-    ElementType to handle determining the type of element traversed by for..in loop.
-    VariableBindings must reference source Expression
-    Id is NOT an Expression
-
-    Conceptually unify Map and Array functions
+    [x] static create function to take Object {var1:value1,var2:value2} etc.
 
     Object
         .string: String
@@ -40,13 +36,4 @@ TODO:
         .counts: Map<Value,Integer>
         .reverse: Array
 
-    JSONObject = Map<String,Object | null>
-
-    Array<Element>
-        ion.Array.is(instance, elementType)
-    Map<KeyType,ValueType>
-        ion.Map.is(instance, keyType, valueType)
-    //  [ ] Array Type Checking
-    //  [ ] Map Type Checking
     //  [ ] Patch Function
-    //  [ ] Point.is based on inheritance

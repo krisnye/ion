@@ -1,5 +1,6 @@
 import
     ion.*
     .Id
+    .Expression
 
-export class Reference extends Id
+export class Reference extends Id, Expression

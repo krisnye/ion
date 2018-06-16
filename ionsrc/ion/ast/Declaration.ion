@@ -3,5 +3,5 @@ import
     .Id
     .Node
 
-export class Declaration extends Node
+export abstract class Declaration extends Node
     var id: Id

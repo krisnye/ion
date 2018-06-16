@@ -1,0 +1,5 @@
+import
+    ion.*
+    .Expression
+
+export class DotExpression extends Expression

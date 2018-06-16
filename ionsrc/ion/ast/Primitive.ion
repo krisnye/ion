@@ -1,0 +1,4 @@
+import
+    ion.*
+
+export type Primitive = String | Number | Boolean
