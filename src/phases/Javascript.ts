@@ -26,15 +26,19 @@ function Freeze(value: any) {
 const reservedWords = 'arguments,break,case,catch,class,const,continue,debugger,default,delete,do,else,export,extends,finally,for,function,if,import,in,instanceof,new,return,super,switch,this,throw,try,typeof,var,void,while,with,yield'.split(',')
 const reservedWordSet = new Set(reservedWords)
 
-function idNameToJavascript(name: string) {
+function idNameToJavascript(name: string, convertToSafeName = false) {
     name = name.replace(/\./g, '_')
-    if (reservedWordSet.has(name))
-        name = `__${name}__`
+    if (convertToSafeName && reservedWordSet.has(name))
+        name = `$${name}`
     return name
 }
 
-function Id(name: string, properties?: any) {
-    let node: any = {type:jst.Identifier, name:idNameToJavascript(name)}
+function SafeId(id: any) {
+    return Id(id.name || id, null, true)
+}
+
+function Id(name: string, properties: any = null, convertToSafeName = false) {
+    let node: any = {type:jst.Identifier, name:idNameToJavascript(name, convertToSafeName)}
     if (properties) {
         for (let name in properties) {
             node[name] = properties[name]
@@ -241,7 +245,7 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                                     declarations: vars.map(d => {
                                         return {
                                             type: jst.VariableDeclarator,
-                                            id: d.id,
+                                            id: SafeId(d.id),
                                             init: null
                                         }
                                     })
@@ -300,7 +304,7 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                                                                 "expression": {
                                                                     "type": "AssignmentExpression",
                                                                     "operator": "=",
-                                                                    "left": d.id,
+                                                                    "left": SafeId(d.id),
                                                                     "right": {
                                                                         "type": "MemberExpression",
                                                                         "computed": false,
@@ -326,7 +330,7 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                                     argument: {
                                         type: jst.NewExpression,
                                         callee: node.id,
-                                        arguments: vars.map(d => d.id)
+                                        arguments: vars.map(d => SafeId(d.id))
                                     }
                                 }                            ]
                         }
@@ -362,8 +366,8 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                         params: vars.map(d => {
                             return d.value ? {
                                 type: jst.AssignmentPattern,
-                                left: d.id, right: d.value
-                            } : d.id
+                                left: SafeId(d.id), right: d.value
+                            } : SafeId(d.id)
                         }),
                         body: {
                             type: jst.BlockStatement,
@@ -371,7 +375,7 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                                 return {
                                     type: jst.IfStatement,
                                     test: __BinaryExpression_ToJavascript(new ast.BinaryExpression({
-                                        left: d.id, operator: 'isnt', right: d.type
+                                        left: SafeId(d.id), operator: 'isnt', right: d.type
                                     })),
                                     consequent: {
                                         type: jst.ThrowStatement,
@@ -386,7 +390,7 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                                                     type: jst.BinaryExpression,
                                                     left: {
                                                         type: jst.Literal,
-                                                        value: `${d.id.name} is not valid: `
+                                                        value: `${SafeId(d.id).name} is not valid: `
                                                     },
                                                     operator: '+',
                                                     right: {
@@ -396,7 +400,7 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                                                             object: Id('JSON'),
                                                             property: Id('stringify')
                                                         },
-                                                        arguments: [d.id]
+                                                        arguments: [SafeId(d.id)]
                                                     }
                                                 }
                                             ]
@@ -415,7 +419,7 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                                             object: { type: jst.ThisExpression },
                                             property: d.id
                                         },
-                                        right: d.id
+                                        right: SafeId(d.id)
                                     }
                                 }
                             })).concat(<any>lets.map(d => {
@@ -427,7 +431,7 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                                         left: {
                                             type: jst.MemberExpression,
                                             object: { type: jst.ThisExpression },
-                                            property: d.id
+                                            property: SafeId(d.id)
                                         },
                                         right: d.value
                                     }
