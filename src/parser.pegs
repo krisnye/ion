@@ -3,19 +3,22 @@
     // const ast = require('./IonAst')
     const {default:{ion:{ast}}} = require('./ast/assembly')
 
-    let notFound = {}
-    function node(type, ...values) {
+    function getLocation() {
         let loc = location()
         //  convert location to strongly typed
-        loc = ast.Location.create({
-            start: ast.Position.create(loc.start),
-            end: ast.Position.create(loc.end),
+        return new ast.Location({
+            start: new ast.Position(loc.start),
+            end: new ast.Position(loc.end),
             source: loc.filename
         })
-        let result = Object.assign({location:loc}, ...values.reverse())
+    }
+
+    let notFound = {}
+    function node(type, ...values) {
+        let result = Object.assign({location:getLocation()}, ...values.reverse())
         try {
             if (ast[type] != null) {
-                result = ast[type].create(result)
+                result = new ast[type](result)
             }
             else {
                 if (notFound[type] == null)

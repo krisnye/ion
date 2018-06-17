@@ -10,16 +10,6 @@ const ion_Boolean = (Object.freeze({
     }
 }));
 const ion_ast_Node = Object.freeze(Object.assign(class Node {
-    static create(...args) {
-        let location;
-        for (let arg of args) {
-            if (arg != null) {
-                if (arg.location !== undefined)
-                    location = arg.location;
-            }
-        }
-        return new Node(location);
-    }
     constructor() {
         throw new Error('Node is abstract');
     }
@@ -29,18 +19,6 @@ const ion_ast_Node = Object.freeze(Object.assign(class Node {
     path: 'ion.ast.Node'
 }));
 const ion_ast_Declaration = Object.freeze(Object.assign(class Declaration {
-    static create(...args) {
-        let location, id;
-        for (let arg of args) {
-            if (arg != null) {
-                if (arg.location !== undefined)
-                    location = arg.location;
-                if (arg.id !== undefined)
-                    id = arg.id;
-            }
-        }
-        return new Declaration(location, id);
-    }
     constructor() {
         throw new Error('Declaration is abstract');
     }
@@ -53,8 +31,8 @@ const ion_ast_Declaration = Object.freeze(Object.assign(class Declaration {
     path: 'ion.ast.Declaration'
 }));
 const ion_ast_ClassDeclaration = Object.freeze(Object.assign(class ClassDeclaration {
-    static create(...args) {
-        let location, id, isStructure, isAbstract, templateParameters, baseClasses, declarations, meta;
+    constructor(...args) {
+        let location, id, isStructure = false, isAbstract = false, templateParameters, baseClasses, declarations, meta;
         for (let arg of args) {
             if (arg != null) {
                 if (arg.location !== undefined)
@@ -75,9 +53,6 @@ const ion_ast_ClassDeclaration = Object.freeze(Object.assign(class ClassDeclarat
                     meta = arg.meta;
             }
         }
-        return new ClassDeclaration(location, id, isStructure, isAbstract, templateParameters, baseClasses, declarations, meta);
-    }
-    constructor(location, id, isStructure = false, isAbstract = false, templateParameters, baseClasses, declarations, meta) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_ast_Id.is(id))
@@ -114,16 +89,6 @@ const ion_ast_ClassDeclaration = Object.freeze(Object.assign(class ClassDeclarat
     path: 'ion.ast.ClassDeclaration'
 }));
 const ion_ast_Expression = Object.freeze(Object.assign(class Expression {
-    static create(...args) {
-        let location;
-        for (let arg of args) {
-            if (arg != null) {
-                if (arg.location !== undefined)
-                    location = arg.location;
-            }
-        }
-        return new Expression(location);
-    }
     constructor() {
         throw new Error('Expression is abstract');
     }
@@ -136,8 +101,8 @@ const ion_ast_Expression = Object.freeze(Object.assign(class Expression {
     path: 'ion.ast.Expression'
 }));
 const ion_ast_Argument = Object.freeze(Object.assign(class Argument {
-    static create(...args) {
-        let location, id, value;
+    constructor(...args) {
+        let location, id = null, value;
         for (let arg of args) {
             if (arg != null) {
                 if (arg.location !== undefined)
@@ -148,9 +113,6 @@ const ion_ast_Argument = Object.freeze(Object.assign(class Argument {
                     value = arg.value;
             }
         }
-        return new Argument(location, id, value);
-    }
-    constructor(location, id = null, value) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!{ is: $ => ion_ast_Id.is($) || ion_Null.is($) }.is(id))
@@ -172,7 +134,7 @@ const ion_ast_Argument = Object.freeze(Object.assign(class Argument {
     path: 'ion.ast.Argument'
 }));
 const ion_ast_CallExpression = Object.freeze(Object.assign(class CallExpression {
-    static create(...args) {
+    constructor(...args) {
         let location, callee, $arguments;
         for (let arg of args) {
             if (arg != null) {
@@ -184,9 +146,6 @@ const ion_ast_CallExpression = Object.freeze(Object.assign(class CallExpression 
                     $arguments = arg.arguments;
             }
         }
-        return new CallExpression(location, callee, $arguments);
-    }
-    constructor(location, callee, $arguments) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_ast_Expression.is(callee))
@@ -208,7 +167,7 @@ const ion_ast_CallExpression = Object.freeze(Object.assign(class CallExpression 
     path: 'ion.ast.CallExpression'
 }));
 const ion_ast_DotExpression = Object.freeze(Object.assign(class DotExpression {
-    static create(...args) {
+    constructor(...args) {
         let location;
         for (let arg of args) {
             if (arg != null) {
@@ -216,9 +175,6 @@ const ion_ast_DotExpression = Object.freeze(Object.assign(class DotExpression {
                     location = arg.location;
             }
         }
-        return new DotExpression(location);
-    }
-    constructor(location) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         this.location = location;
@@ -245,7 +201,7 @@ const ion_String = (Object.freeze({
     }
 }));
 const ion_ast_Id = Object.freeze(Object.assign(class Id {
-    static create(...args) {
+    constructor(...args) {
         let location, name;
         for (let arg of args) {
             if (arg != null) {
@@ -255,9 +211,6 @@ const ion_ast_Id = Object.freeze(Object.assign(class Id {
                     name = arg.name;
             }
         }
-        return new Id(location, name);
-    }
-    constructor(location, name) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_String.is(name))
@@ -276,8 +229,8 @@ const ion_ast_Id = Object.freeze(Object.assign(class Id {
     path: 'ion.ast.Id'
 }));
 const ion_ast_ImportStep = Object.freeze(Object.assign(class ImportStep {
-    static create(...args) {
-        let location, relative, name, as, children;
+    constructor(...args) {
+        let location, relative = false, name = null, as = null, children;
         for (let arg of args) {
             if (arg != null) {
                 if (arg.location !== undefined)
@@ -292,9 +245,6 @@ const ion_ast_ImportStep = Object.freeze(Object.assign(class ImportStep {
                     children = arg.children;
             }
         }
-        return new ImportStep(location, relative, name, as, children);
-    }
-    constructor(location, relative = false, name = null, as = null, children) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_Boolean.is(relative))
@@ -321,7 +271,7 @@ const ion_ast_ImportStep = Object.freeze(Object.assign(class ImportStep {
     path: 'ion.ast.ImportStep'
 }));
 const ion_ast_Literal = Object.freeze(Object.assign(class Literal {
-    static create(...args) {
+    constructor(...args) {
         let location, value;
         for (let arg of args) {
             if (arg != null) {
@@ -331,9 +281,6 @@ const ion_ast_Literal = Object.freeze(Object.assign(class Literal {
                     value = arg.value;
             }
         }
-        return new Literal(location, value);
-    }
-    constructor(location, value) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_ast_Primitive.is(value))
@@ -352,7 +299,7 @@ const ion_ast_Literal = Object.freeze(Object.assign(class Literal {
     path: 'ion.ast.Literal'
 }));
 const ion_ast_Position = Object.freeze(Object.assign(class Position {
-    static create(...args) {
+    constructor(...args) {
         let line, column;
         for (let arg of args) {
             if (arg != null) {
@@ -362,9 +309,6 @@ const ion_ast_Position = Object.freeze(Object.assign(class Position {
                     column = arg.column;
             }
         }
-        return new Position(line, column);
-    }
-    constructor(line, column) {
         if (!{ is: $ => ion_Integer.is($) && $ >= 1 }.is(line))
             throw new Error('line is not valid: ' + JSON.stringify(line));
         if (!{ is: $ => ion_Integer.is($) && $ >= 0 }.is(column))
@@ -379,7 +323,7 @@ const ion_ast_Position = Object.freeze(Object.assign(class Position {
     path: 'ion.ast.Position'
 }));
 const ion_ast_Module = Object.freeze(Object.assign(class Module {
-    static create(...args) {
+    constructor(...args) {
         let location, imports, declarations, exports;
         for (let arg of args) {
             if (arg != null) {
@@ -393,9 +337,6 @@ const ion_ast_Module = Object.freeze(Object.assign(class Module {
                     exports = arg.exports;
             }
         }
-        return new Module(location, imports, declarations, exports);
-    }
-    constructor(location, imports, declarations, exports) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_Array.is(imports, ion_ast_ImportStep))
@@ -419,7 +360,7 @@ const ion_ast_Module = Object.freeze(Object.assign(class Module {
     path: 'ion.ast.Module'
 }));
 const ion_ast_Location = Object.freeze(Object.assign(class Location {
-    static create(...args) {
+    constructor(...args) {
         let start, end, source;
         for (let arg of args) {
             if (arg != null) {
@@ -431,9 +372,6 @@ const ion_ast_Location = Object.freeze(Object.assign(class Location {
                     source = arg.source;
             }
         }
-        return new Location(start, end, source);
-    }
-    constructor(start, end, source) {
         if (!ion_ast_Position.is(start))
             throw new Error('start is not valid: ' + JSON.stringify(start));
         if (!ion_ast_Position.is(end))
@@ -473,7 +411,7 @@ const ion_Type = (Object.freeze({
 }));
 const ion_ast_Primitive = Object.freeze({ is: $ => ion_String.is($) || (ion_Number.is($) || ion_Boolean.is($)) });
 const ion_ast_Property = Object.freeze(Object.assign(class Property {
-    static create(...args) {
+    constructor(...args) {
         let location, key, value;
         for (let arg of args) {
             if (arg != null) {
@@ -485,9 +423,6 @@ const ion_ast_Property = Object.freeze(Object.assign(class Property {
                     value = arg.value;
             }
         }
-        return new Property(location, key, value);
-    }
-    constructor(location, key, value) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_ast_Expression.is(key))
@@ -508,7 +443,7 @@ const ion_ast_Property = Object.freeze(Object.assign(class Property {
     path: 'ion.ast.Property'
 }));
 const ion_ast_Reference = Object.freeze(Object.assign(class Reference {
-    static create(...args) {
+    constructor(...args) {
         let location, name;
         for (let arg of args) {
             if (arg != null) {
@@ -518,9 +453,6 @@ const ion_ast_Reference = Object.freeze(Object.assign(class Reference {
                     name = arg.name;
             }
         }
-        return new Reference(location, name);
-    }
-    constructor(location, name) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_String.is(name))
@@ -534,24 +466,12 @@ const ion_ast_Reference = Object.freeze(Object.assign(class Reference {
         'ion.ast.Id',
         'ion.ast.Expression',
         'ion.ast.Node',
-        'ion.ast.Expression',
-        'ion.ast.Node',
         'ion.ast.Reference'
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Reference')),
     path: 'ion.ast.Reference'
 }));
 const ion_ast_Statement = Object.freeze(Object.assign(class Statement {
-    static create(...args) {
-        let location;
-        for (let arg of args) {
-            if (arg != null) {
-                if (arg.location !== undefined)
-                    location = arg.location;
-            }
-        }
-        return new Statement(location);
-    }
     constructor() {
         throw new Error('Statement is abstract');
     }
@@ -564,16 +484,6 @@ const ion_ast_Statement = Object.freeze(Object.assign(class Statement {
     path: 'ion.ast.Statement'
 }));
 const ion_ast_TypeExpression = Object.freeze(Object.assign(class TypeExpression {
-    static create(...args) {
-        let location;
-        for (let arg of args) {
-            if (arg != null) {
-                if (arg.location !== undefined)
-                    location = arg.location;
-            }
-        }
-        return new TypeExpression(location);
-    }
     constructor() {
         throw new Error('TypeExpression is abstract');
     }
@@ -587,7 +497,7 @@ const ion_ast_TypeExpression = Object.freeze(Object.assign(class TypeExpression 
     path: 'ion.ast.TypeExpression'
 }));
 const ion_ast_TypeReference = Object.freeze(Object.assign(class TypeReference {
-    static create(...args) {
+    constructor(...args) {
         let location, name;
         for (let arg of args) {
             if (arg != null) {
@@ -597,9 +507,6 @@ const ion_ast_TypeReference = Object.freeze(Object.assign(class TypeReference {
                     name = arg.name;
             }
         }
-        return new TypeReference(location, name);
-    }
-    constructor(location, name) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_String.is(name))
@@ -614,8 +521,6 @@ const ion_ast_TypeReference = Object.freeze(Object.assign(class TypeReference {
         'ion.ast.Id',
         'ion.ast.Expression',
         'ion.ast.Node',
-        'ion.ast.Expression',
-        'ion.ast.Node',
         'ion.ast.TypeExpression',
         'ion.ast.Expression',
         'ion.ast.Node',
@@ -625,8 +530,8 @@ const ion_ast_TypeReference = Object.freeze(Object.assign(class TypeReference {
     path: 'ion.ast.TypeReference'
 }));
 const ion_ast_Variable = Object.freeze(Object.assign(class Variable {
-    static create(...args) {
-        let location, id, type, value, assignable;
+    constructor(...args) {
+        let location, id, type = null, value = null, assignable = false;
         for (let arg of args) {
             if (arg != null) {
                 if (arg.location !== undefined)
@@ -641,9 +546,6 @@ const ion_ast_Variable = Object.freeze(Object.assign(class Variable {
                     assignable = arg.assignable;
             }
         }
-        return new Variable(location, id, type, value, assignable);
-    }
-    constructor(location, id, type = null, value = null, assignable = false) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_ast_Id.is(id))
@@ -671,8 +573,8 @@ const ion_ast_Variable = Object.freeze(Object.assign(class Variable {
     path: 'ion.ast.Variable'
 }));
 const ion_ast_Parameter = Object.freeze(Object.assign(class Parameter {
-    static create(...args) {
-        let location, id, type, value, assignable;
+    constructor(...args) {
+        let location, id, type = null, value = null, assignable = false;
         for (let arg of args) {
             if (arg != null) {
                 if (arg.location !== undefined)
@@ -687,9 +589,6 @@ const ion_ast_Parameter = Object.freeze(Object.assign(class Parameter {
                     assignable = arg.assignable;
             }
         }
-        return new Parameter(location, id, type, value, assignable);
-    }
-    constructor(location, id, type = null, value = null, assignable = false) {
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_ast_Id.is(id))
