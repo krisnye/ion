@@ -1,5 +1,6 @@
 .DS_Store
 .yarnclean
+debug.html
 lib
 node_modules
 npm-debug.log

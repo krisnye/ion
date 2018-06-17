@@ -221,123 +221,6 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
             body: [
                 {
                     type: jst.MethodDefinition,
-                    kind: 'method',
-                    static: true,
-                    key: {
-                        type: jst.Identifier,
-                        name: "create"
-                    },
-                    value: {
-                        type: jst.FunctionExpression,
-                        id: null,
-                        params: [
-                            {
-                                type: jst.RestElement,
-                                argument: { type: jst.Identifier, name: "args" }
-                            }
-                        ],
-                        body: {
-                            type: jst.BlockStatement,
-                            body: [
-                                {
-                                    type: jst.VariableDeclaration,
-                                    kind: 'let',
-                                    declarations: vars.map(d => {
-                                        return {
-                                            type: jst.VariableDeclarator,
-                                            id: SafeId(d.id),
-                                            init: null
-                                        }
-                                    })
-                                },
-                                {
-                                    type: jst.ForOfStatement,
-                                    left: {
-                                        type: jst.VariableDeclaration,
-                                        declarations: [
-                                            {
-                                                type: jst.VariableDeclarator,
-                                                id: Id('arg')
-                                            }
-                                        ],
-                                        kind: "let"
-                                    },
-                                    right: Id('args'),
-                                    body: {
-                                        type: jst.BlockStatement,
-                                        body: [
-                                            {
-                                                "type": "IfStatement",
-                                                "test": {
-                                                    "type": "BinaryExpression",
-                                                    "operator": "!=",
-                                                    "left": {
-                                                        "type": "Identifier",
-                                                        "name": "arg"
-                                                    },
-                                                    "right": Literal(null),
-                                                },
-                                                "consequent": {
-                                                    "type": "BlockStatement",
-                                                    "body": vars.map(d => {
-                                                        return {
-                                                            "type": "IfStatement",
-                                                            "test": {
-                                                                "type": "BinaryExpression",
-                                                                "operator": "!==",
-                                                                "left": {
-                                                                    "type": "MemberExpression",
-                                                                    "computed": false,
-                                                                    "object": {
-                                                                        "type": "Identifier",
-                                                                        "name": "arg"
-                                                                    },
-                                                                    "property": d.id
-                                                                },
-                                                                "right": {
-                                                                    "type": "Identifier",
-                                                                    "name": "undefined"
-                                                                }
-                                                            },
-                                                            "consequent": {
-                                                                "type": "ExpressionStatement",
-                                                                "expression": {
-                                                                    "type": "AssignmentExpression",
-                                                                    "operator": "=",
-                                                                    "left": SafeId(d.id),
-                                                                    "right": {
-                                                                        "type": "MemberExpression",
-                                                                        "computed": false,
-                                                                        "object": {
-                                                                            "type": "Identifier",
-                                                                            "name": "arg"
-                                                                        },
-                                                                        "property": d.id
-                                                                    }
-                                                                }
-                                                            },
-                                                            "alternate": null
-                                                        }
-                                                    })
-                                                },
-                                                "alternate": null
-                                            }
-                                        ]
-                                    }
-                                },
-                                {
-                                    type: jst.ReturnStatement,
-                                    argument: {
-                                        type: jst.NewExpression,
-                                        callee: node.id,
-                                        arguments: vars.map(d => SafeId(d.id))
-                                    }
-                                }                            ]
-                        }
-                    }
-                },
-                {
-                    type: jst.MethodDefinition,
                     kind: 'constructor',
                     key: {
                         type: jst.Identifier,
@@ -363,15 +246,98 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                     } : {
                         type: jst.FunctionExpression,
                         id: null,
-                        params: vars.map(d => {
-                            return d.value ? {
-                                type: jst.AssignmentPattern,
-                                left: SafeId(d.id), right: d.value
-                            } : SafeId(d.id)
-                        }),
+                        params: [{
+                            type: jst.RestElement,
+                            argument: { type: jst.Identifier, name: "args" }
+                        }],
                         body: {
                             type: jst.BlockStatement,
-                            body: vars.map(d => {
+                            body: [{
+                                type: jst.VariableDeclaration,
+                                kind: 'let',
+                                declarations: vars.map(d => {
+                                    return {
+                                        type: jst.VariableDeclarator,
+                                        id: SafeId(d.id),
+                                        init: d.value
+                                    }
+                                })
+                            },
+                            {
+                                type: jst.ForOfStatement,
+                                left: {
+                                    type: jst.VariableDeclaration,
+                                    declarations: [
+                                        {
+                                            type: jst.VariableDeclarator,
+                                            id: Id('arg')
+                                        }
+                                    ],
+                                    kind: "let"
+                                },
+                                right: Id('args'),
+                                body: {
+                                    type: jst.BlockStatement,
+                                    body: [
+                                        {
+                                            "type": "IfStatement",
+                                            "test": {
+                                                "type": "BinaryExpression",
+                                                "operator": "!=",
+                                                "left": {
+                                                    "type": "Identifier",
+                                                    "name": "arg"
+                                                },
+                                                "right": Literal(null),
+                                            },
+                                            "consequent": {
+                                                "type": "BlockStatement",
+                                                "body": vars.map(d => {
+                                                    return {
+                                                        "type": "IfStatement",
+                                                        "test": {
+                                                            "type": "BinaryExpression",
+                                                            "operator": "!==",
+                                                            "left": {
+                                                                "type": "MemberExpression",
+                                                                "computed": false,
+                                                                "object": {
+                                                                    "type": "Identifier",
+                                                                    "name": "arg"
+                                                                },
+                                                                "property": d.id
+                                                            },
+                                                            "right": {
+                                                                "type": "Identifier",
+                                                                "name": "undefined"
+                                                            }
+                                                        },
+                                                        "consequent": {
+                                                            "type": "ExpressionStatement",
+                                                            "expression": {
+                                                                "type": "AssignmentExpression",
+                                                                "operator": "=",
+                                                                "left": SafeId(d.id),
+                                                                "right": {
+                                                                    "type": "MemberExpression",
+                                                                    "computed": false,
+                                                                    "object": {
+                                                                        "type": "Identifier",
+                                                                        "name": "arg"
+                                                                    },
+                                                                    "property": d.id
+                                                                }
+                                                            }
+                                                        },
+                                                        "alternate": null
+                                                    }
+                                                })
+                                            },
+                                            "alternate": null
+                                        }
+                                    ]
+                                }
+                            }].concat(<any>vars.map(d => {
                                 return {
                                     type: jst.IfStatement,
                                     test: __BinaryExpression_ToJavascript(new ast.BinaryExpression({
@@ -408,7 +374,7 @@ const __ClassDeclaration_ToJavascriptClass = (node:ast.ClassDeclaration, ancesto
                                     },
                                     alternate: null
                                 }
-                            }).concat(<any>vars.map(d => {
+                            })).concat(<any>vars.map(d => {
                                 return {
                                     type: jst.ExpressionStatement,
                                     expression: {
