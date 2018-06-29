@@ -12,7 +12,7 @@ Any
 |
 Map
 |
-___ Set = Map<Any,Boolean>
+--- Set = Map<Any,Boolean>
 |
 --- List = Map<Integer,Any>
 |   |
