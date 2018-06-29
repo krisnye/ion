@@ -18,8 +18,9 @@ limitations on 'let' variables:
 TODO:
     [x] static create function to take Object {var1:value1,var2:value2} etc.
 
-    Object
+    Any
         .string: String
+        .patch: (change: Any) => Object
 
     Map
         .has(key: Key) => Boolean
@@ -28,7 +29,7 @@ TODO:
         .values: Array<Value>
 
     Array
-        let Index = Integer >= 0 and < length
+        type Index = Integer >= 0 and < length
         .get(index: Index) => Value
         .indexOf(value: Value) => Index | -1
         .contains(element: Value) => Boolean

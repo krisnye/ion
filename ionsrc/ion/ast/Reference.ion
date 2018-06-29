@@ -4,3 +4,4 @@ import
     .Expression
 
 export class Reference extends Id
+    var absolute: Boolean = false

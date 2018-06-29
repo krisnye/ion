@@ -399,17 +399,17 @@ const ion_Number = (Object.freeze({
         return value % 1
     }
 }));
-const ion_Any = (Object.freeze({
-    is(value) {
-        return value !== void 0
-    }
-}));
+const ion_ast_Primitive = Object.freeze({ is: $ => ion_String.is($) || (ion_Number.is($) || ion_Boolean.is($)) });
 const ion_Type = (Object.freeze({
     is(value) {
         return value != null && typeof value.is === 'function'
     }
 }));
-const ion_ast_Primitive = Object.freeze({ is: $ => ion_String.is($) || (ion_Number.is($) || ion_Boolean.is($)) });
+const ion_Any = (Object.freeze({
+    is(value) {
+        return value !== undefined
+    }
+}));
 const ion_ast_Property = Object.freeze(Object.assign(class Property {
     constructor(...args) {
         let location, key, value;
@@ -444,21 +444,26 @@ const ion_ast_Property = Object.freeze(Object.assign(class Property {
 }));
 const ion_ast_Reference = Object.freeze(Object.assign(class Reference {
     constructor(...args) {
-        let location, name;
+        let location, name, absolute = false;
         for (let arg of args) {
             if (arg != null) {
                 if (arg.location !== undefined)
                     location = arg.location;
                 if (arg.name !== undefined)
                     name = arg.name;
+                if (arg.absolute !== undefined)
+                    absolute = arg.absolute;
             }
         }
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_String.is(name))
             throw new Error('name is not valid: ' + JSON.stringify(name));
+        if (!ion_Boolean.is(absolute))
+            throw new Error('absolute is not valid: ' + JSON.stringify(absolute));
         this.location = location;
         this.name = name;
+        this.absolute = absolute;
         Object.freeze(this);
     }
 }, {
@@ -498,21 +503,26 @@ const ion_ast_TypeExpression = Object.freeze(Object.assign(class TypeExpression 
 }));
 const ion_ast_TypeReference = Object.freeze(Object.assign(class TypeReference {
     constructor(...args) {
-        let location, name;
+        let location, name, absolute = false;
         for (let arg of args) {
             if (arg != null) {
                 if (arg.location !== undefined)
                     location = arg.location;
                 if (arg.name !== undefined)
                     name = arg.name;
+                if (arg.absolute !== undefined)
+                    absolute = arg.absolute;
             }
         }
         if (!ion_ast_Location.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_String.is(name))
             throw new Error('name is not valid: ' + JSON.stringify(name));
+        if (!ion_Boolean.is(absolute))
+            throw new Error('absolute is not valid: ' + JSON.stringify(absolute));
         this.location = location;
         this.name = name;
+        this.absolute = absolute;
         Object.freeze(this);
     }
 }, {
@@ -627,16 +637,16 @@ const ion_Map = ((function(){
     }
     const emptyMap = createImmutableMap(new Map())
     return Object.freeze(Object.assign(function ion_Map(...keyValues){
-        if (arguments.length === 0)
+        if (keyValues.length === 0)
             return emptyMap
         let map = new Map()
-        for (let i = 0; i < arguments.length; i += 2) {
-            // if arguments length is odd then last value will be null
-            let key = arguments[i + 0]
-            let value = arguments[i + 1]
-            if (key === void 0)
+        for (let i = 0; i < keyValues.length; i += 2) {
+            // if keyValues length is odd then last value will be null
+            let key = keyValues[i + 0]
+            let value = keyValues[i + 1]
+            if (key === undefined)
                 key = null
-            if (value === void 0)
+            if (value === undefined)
                 value = null
             map.set(key, value)
         }
@@ -663,8 +673,8 @@ const ion_Map = ((function(){
 const ion_Integer = Object.freeze({ is: $ => ion_Number.is($) && ion_Number.fraction($) === 0 });
 const ion_Array = ((function(){
     const emptyArray = Object.freeze([])
-    return Object.freeze(Object.assign(function ion_Array(){
-        return emptyArray
+    return Object.freeze(Object.assign(function ion_Array(...args){
+        return args.length == 0 ? emptyArray : Object.freeze(args)
     }, {
         is(value, ValueType) {
             // TODO: Once calculated on an instance we could cache the result with a unique Symbol.
@@ -674,6 +684,9 @@ const ion_Array = ((function(){
                 if (!ValueType.is(element))
                     return false
             }
+            //  when checking if it is, we will freeze it to ensure it stays a valid array
+            //  this allows javascript to create ion arrays with normal array literals: [1,2,3]
+            Object.freeze(value)
             return true
         }
     }))
@@ -712,8 +725,8 @@ export default Object.freeze({
         }),
         String: ion_String,
         Number: ion_Number,
-        Any: ion_Any,
         Type: ion_Type,
+        Any: ion_Any,
         Map: ion_Map,
         Integer: ion_Integer,
         Array: ion_Array,
