@@ -4,7 +4,7 @@ import
 [Native.JavaScript]: ""
     Object.freeze({
         is(value) {
-            return value !== void 0
+            return value !== undefined
         }
     })
 export class Any

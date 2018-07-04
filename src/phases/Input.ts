@@ -67,7 +67,7 @@ const ClassDeclaration_AddVariableBindings = (node: ast.ClassDeclaration, ancest
             return ref.throwSemanticError(`'${ref.name}' is not a Class.`)
         for (let declaration of variable.value.declarations) {
             // place inherited variables into this nodes scope
-            node.addVariable(declaration.id, declaration.value, declaration.type, declaration.assignable)
+            node.addVariable(declaration.id, declaration.value, declaration.type, declaration.assignable, false)
         }
     }
 }

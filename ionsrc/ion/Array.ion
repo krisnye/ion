@@ -6,8 +6,8 @@ import
 [Native.JavaScript]: ""
     (function(){
         const emptyArray = Object.freeze([])
-        return Object.freeze(Object.assign(function ion_Array(){
-            return emptyArray
+        return Object.freeze(Object.assign(function ion_Array(...args){
+            return args.length == 0 ? emptyArray : Object.freeze(args)
         }, {
             is(value, ValueType) {
                 // TODO: Once calculated on an instance we could cache the result with a unique Symbol.
@@ -17,6 +17,9 @@ import
                     if (!ValueType.is(element))
                         return false
                 }
+                //  when checking if it is, we will freeze it to ensure it stays a valid array
+                //  this allows javascript to create ion arrays with normal array literals: [1,2,3]
+                Object.freeze(value)
                 return true
             }
         }))

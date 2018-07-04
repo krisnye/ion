@@ -132,9 +132,9 @@ export abstract class Scope extends Node {
     //  from local variable name to a canonical type name
     //  the canonical types will be stored at the root level
     _variables: { [name: string]: VariableBinding } = {}
-    addVariable(id: Id, value:Expression|null, type:TypeExpression|null = null, assignable: boolean = false) {
+    addVariable(id: Id, value:Expression|null, type:TypeExpression|null = null, assignable: boolean = false, throwIfRedeclaration: boolean = true) {
         let { name } = id
-        if (this._variables[name] != null)
+        if (throwIfRedeclaration && this._variables[name] != null)
             id.throwSemanticError(`Cannot redeclare '${name}'`)
         this._variables[name] = new VariableBinding(value, type, assignable)
     }
