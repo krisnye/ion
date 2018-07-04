@@ -1,0 +1,9 @@
+import
+    ion.*
+    .Expression
+    .TypeExpression
+    .TypeReference
+
+export class TemplateReference extends TypeExpression
+    var baseType: TypeReference
+    var arguments: Array<Type | Expression>

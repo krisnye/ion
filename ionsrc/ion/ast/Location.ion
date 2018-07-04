@@ -3,6 +3,6 @@ import
     .Position
 
 export struct Location
-    var start  : Position
-    var end    : Position
-    var source : String == .trimmed and .length > 0 and .length < 200
+    var start    : Position
+    var end      : Position
+    var filename : String == .trimmed and .length > 0 and .length < 200

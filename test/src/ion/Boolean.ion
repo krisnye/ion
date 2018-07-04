@@ -1,0 +1,8 @@
+
+[Native.JavaScript]: ""
+    Object.freeze({
+        is(value) {
+            return value === true || value === false
+        }
+    })
+export class Boolean

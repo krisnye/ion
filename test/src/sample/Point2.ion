@@ -1,5 +1,5 @@
 import
-    ion.*
+    ion.Number  # we don't actually need this, ion.* is implicitly imported
 
 export class Point2
     var x: Number = 0

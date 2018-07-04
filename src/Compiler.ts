@@ -2,7 +2,8 @@ import * as common from "./common"
 import * as np from "path"
 import {traverse} from "./Traversal"
 import {createPass} from "./PassBuilder"
-import * as ast from "./IonAst"
+import ion from "./ion"
+const {ast} = ion
 
 const parser = require("./parser")()
 
@@ -62,17 +63,19 @@ export default class Compiler {
             "sample.Point3": true
         }
         let paths = common.getFilesRecursive(this.input)
-            .filter(({filename}) => filename.endsWith('.ion'))
-            .filter(({path}) => debugFilter[path]);
+            .filter(({ filename }) => filename.endsWith('.ion'))
+            .filter(({ path }) => debugFilter[path]);
 
-        let assembly = new ast.Assembly({ options:{input:this.input, output:this.output}, namespaces: {} })
-        for (let {filename,path} of paths) {
+        let modules = new Map()
+        for (let { filename,path } of paths) {
             let source = common.read(filename)
             let module = parser.parse(source, filename)
-            assembly.namespaces[path] = module
+            modules.set(path, module)
         }
 
-        return assembly
+        return new ion.ast.InputRoot({
+            options: new ion.ast.Options({ input:this.input,output:this.output }), modules
+        })
     }
 
     compileAssembly(assembly: ast.Assembly) {
@@ -81,9 +84,16 @@ export default class Compiler {
         logger(["input"], assembly)
         try {
             for (let pass of this.passes) {
-                let visitor = createPass(pass)
-                assembly = traverse(assembly, visitor)
-                logger(visitor.names, assembly)
+                if (typeof pass === 'function') {
+                    let custom: any = pass
+                    assembly = custom(assembly)
+                    logger(custom.name, assembly)
+                }
+                else {
+                    let visitor = createPass(pass)
+                    assembly = traverse(assembly, visitor)
+                    logger(visitor.names, assembly)
+                }
             }
         } catch (e) {
             let location = e.location
@@ -91,7 +101,7 @@ export default class Compiler {
                 throw e
             let {filename} = location
             let source = common.read(filename)
-            let error = parser.getError(e.message, location, source, location, filename)
+            let error = parser.getError(e.message, location, source, filename)
             console.log(error.message)
         } finally {
             logger(["output"], assembly)

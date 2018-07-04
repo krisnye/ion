@@ -3,14 +3,14 @@
         "allowJs": true,
         "module": "commonjs",
         "outDir": "lib",
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": true,
         "alwaysStrict": true,
         "strictNullChecks": true,
         "experimentalDecorators": true,
-        "target": "es2017",
+        "target": "ESNext",
         "typeRoots": [ "node_modules/@types" ]
     },
     "include": [

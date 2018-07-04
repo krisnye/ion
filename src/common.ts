@@ -1,6 +1,5 @@
 import * as fs from "fs"
 import * as np from "path"
-import * as ast from "./IonAst"
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Miscelaneous Functions
@@ -15,6 +14,12 @@ export function freeze(object: any, deep: boolean = true) {
             }
         }
     }
+}
+
+export function SemanticError(message: string, location: any) {
+    let error: any = new Error(message)
+    error.location = location
+    return error
 }
 
 ////////////////////////////////////////////////////////////////////////////////

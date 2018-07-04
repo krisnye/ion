@@ -1,0 +1,53 @@
+
+[Native.JavaScript]: ""
+    (function(){
+        function createImmutableMap(map) {
+            return Object.freeze(Object.assign(map, {
+                clear() {},
+                delete() {},
+                set() {}
+            }))
+        }
+        const emptyMap = createImmutableMap(new Map())
+        return Object.freeze(Object.assign(function ion_Map(...keyValues){
+            if (keyValues.length === 0)
+                return emptyMap
+            let map = new Map()
+            for (let i = 0; i < keyValues.length; i += 2) {
+                // if keyValues length is odd then last value will be null
+                let key = keyValues[i + 0]
+                let value = keyValues[i + 1]
+                if (key === undefined)
+                    key = null
+                if (value === undefined)
+                    value = null
+                map.set(key, value)
+            }
+            return createImmutableMap(map)
+        }, {
+            is(value, KeyType, ValueType) {
+                // TODO: Once calculated on an instance we could cache the result with a unique Symbol.
+                if (value !== emptyMap) {
+                    if (!(value instanceof Map))
+                        return false
+                    for (let k of value.keys()) {
+                        if (!KeyType.is(k))
+                            return false
+                    }
+                    for (let v of value.values()) {
+                        if (!ValueType.is(v))
+                            return false
+                    }
+                }
+                value.toJSON = function() {
+                    return { elements: Array.from(this.entries()) }
+                }
+                return true
+            }
+        }))
+    })()
+export class Map<Key,Value>
+    # let has: (key:Key) => Boolean
+    # let get: (key:Key) => Value | null
+    # let keys: Key[]
+    # let values: Value[]

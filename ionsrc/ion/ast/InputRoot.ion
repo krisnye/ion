@@ -1,0 +1,9 @@
+import
+    ion.*
+    .Module
+    .Node
+    .Options
+
+export class InputRoot
+    var options: Options
+    var modules: Map<String,Module>

@@ -1,6 +1,5 @@
 {
 
-    // const ast = require('./IonAst')
     const {default:{ion:{ast}}} = require('./ast/assembly')
 
     function getLocation() {
@@ -9,7 +8,7 @@
         return new ast.Location({
             start: new ast.Position(loc.start),
             end: new ast.Position(loc.end),
-            source: loc.filename
+            filename: loc.filename
         })
     }
 
@@ -21,11 +20,12 @@
                 result = new ast[type](result)
             }
             else {
-                if (notFound[type] == null)
+                if (notFound[type] == null) {
                     console.log('type not found: ' + type)
+                }
             }
         } catch (e) {
-            console.log(type + ": " + e.message)
+            console.log(type + ": " + e.message.slice(0, 20))
         }
         return result
     }
@@ -75,13 +75,13 @@ ImportStepChildren
 ImportStep
     = relative:'.*' EOL
     {
-        return node("ImportStep", {relative:true,name:null,as:null,children:[]})
+        return node("ImportStep", {relative:true,id:null,as:null,children:[]})
     }
-    / relative:'.'? name:Id as:(_ AsToken _ @Id)? children:ImportStepChildren
+    / relative:'.'? id:Id as:(_ AsToken _ @Id)? children:ImportStepChildren
     {
         if (as == null && children.length == 0)
-            as = name
-        return node("ImportStep", {relative:relative != null,name,as,children})
+            as = id
+        return node("ImportStep", {relative:relative != null,id,as,children})
     }
 
 ImportDeclarations
@@ -250,8 +250,8 @@ TemplateArguments
     { return [head, ...tail] }
 
 TemplateReference
-    = reference:TypeReference args:(_ @TemplateArguments)?
-    { return args ? node("TemplateReference", {reference,arguments:args}) : reference }
+    = baseType:TypeReference args:(_ @TemplateArguments)?
+    { return args ? node("TemplateReference", {baseType,arguments:args}) : baseType }
     // / "[" _ type:Type '*' _ "]"
     // { return node("TemplateReference", {id:node('Id',{name:"Array"}), arguments:[type]}) }
     // / "[" _ head:Type tail:(_ "," _ @Type)+ _ "]"

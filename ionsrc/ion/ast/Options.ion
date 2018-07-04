@@ -1,0 +1,6 @@
+import
+    ion.*
+
+export class Options
+    var input: Array<String>
+    var output: String

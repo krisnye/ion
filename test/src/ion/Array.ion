@@ -1,0 +1,31 @@
+
+[Native.JavaScript]: ""
+    (function(){
+        const emptyArray = Object.freeze([])
+        return Object.freeze(Object.assign(function ion_Array(...args){
+            return args.length == 0 ? emptyArray : Object.freeze(args)
+        }, {
+            is(value, ValueType) {
+                // TODO: Once calculated on an instance we could cache the result with a unique Symbol.
+                if (!Array.isArray(value))
+                    return false
+                for (let element of value) {
+                    if (!ValueType.is(element))
+                        return false
+                }
+                //  when checking if it is, we will freeze it to ensure it stays a valid array
+                //  this allows javascript to create ion arrays with normal array literals: [1,2,3]
+                Object.freeze(value)
+                return true
+            }
+        }))
+    })()
+export class Array<T> extends Map<Integer where . >= 0, T>
+    let length: Integer where >= 0
+    # let Index = Integer >= 0 and < length
+    # let indexOf: (element: T, from: Index = 0) -> Index | -1
+    # let new get: (index: Index) => Value # new version of Map.get that cannot return null, because you know the index is valid
+    # let contains: (element: T) => Boolean
+    # let count: (element: T) => Integer >= 0 and <= length
+    # let counts: Map<T,(Integer >= 0 and <= length)>
+    # let reverse: Array<T> .length == length

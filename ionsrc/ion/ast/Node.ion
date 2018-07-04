@@ -3,4 +3,4 @@ import
     .Location
 
 export abstract class Node
-    var location: Location
+    var location: Location | Null = null

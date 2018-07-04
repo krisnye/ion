@@ -1,6 +1,6 @@
-import { traverse, remove, skip, Visitor } from "../Traversal"
-import toposort from "../toposort"
-import * as c from "../common"
+
+import resolveExternalReferences from "./resolveExternalReferences"
 
 export const passes = [
+    resolveExternalReferences
 ]

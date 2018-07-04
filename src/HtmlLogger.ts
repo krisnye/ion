@@ -18,7 +18,10 @@ function cloneWithJsonReferences(object: any, map: Map<object,string[]> = new Ma
         return {"$ref":previousPath.join('.')}
     }
     map.set(object, path.slice(0))
-    let clone: any = Array.isArray(object) ? [] : {"": object.constructor.path || object.constructor.name}
+    let className = object.constructor.path || object.constructor.name
+    if (object.toJSON)
+        object = object.toJSON()
+    let clone: any = Array.isArray(object) ? [] : {"": className}
     for (let property in object) {
         if (ignoreProperties[property])
             continue
@@ -35,7 +38,8 @@ export function create(outputPath: string) {
     let passes: [string[],object][] = []
     return function(names: string[], ast: object) {
         if (names != null) {
-            passes.push([names, JSON.parse(JSON.stringify(cloneWithJsonReferences(ast), remove__prefixedProperties))])
+            passes.push([names, cloneWithJsonReferences(ast)])
+            // passes.push([names, JSON.parse(JSON.stringify(cloneWithJsonReferences(ast), remove__prefixedProperties))])
         } else {
             // convert to HTML
             let previous: string | null = null
@@ -93,6 +97,8 @@ export function create(outputPath: string) {
     <body onclick="location.reload(true)">
 `,
 ...passes.map(([names, ast]: any) => {
+    if (!Array.isArray(names))
+        names = [names]
     // convert to show refs
     let delta = previous != null ? jsondiffpatch.diff(previous, ast) : null
     let html = require('jsondiffpatch/src/formatters/html').format(delta || {}, previous || ast)

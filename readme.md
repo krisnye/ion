@@ -7,7 +7,7 @@ limitations on 'let' variables:
     x := 20
     // this is confusing because now y = 20 when x * 2 implies y should be 40
 
-    type Whole = Integer{ value > 0 and value < 10 }
+    type Whole = Integer > 0 and < 10 
     this = special keyword for class instance
     value < 10 and value > 100
 

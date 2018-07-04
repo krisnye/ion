@@ -4,11 +4,12 @@ import
     .Parameter
     .Property
     .Reference
+    .TypeExpression
 
 export class ClassDeclaration extends Declaration
     var isStructure: Boolean = false
     var isAbstract: Boolean = false
     var templateParameters: Array<Parameter>
-    var baseClasses: Array<Reference>
+    var baseClasses: Array<TypeExpression>
     var declarations: Array<Declaration>
     var meta: Array<Property>

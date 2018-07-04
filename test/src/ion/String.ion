@@ -1,0 +1,16 @@
+
+[Native.JavaScript]: ""
+    Object.freeze({
+        is(value) {
+            return typeof value === 'string'
+        },
+        length(value) {
+            return value.length
+        },
+        trimmed(value) {
+            return value.trim()
+        }
+    })
+export class String
+    var length: Integer
+    var trimmed: String
