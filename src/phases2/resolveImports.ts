@@ -132,7 +132,7 @@ function convertImportStepsToVariables(modulePath, steps, path = getParentPath(m
     return variables
 }
 
-function resolveExternalReferences(root) {
+function resolveImports(root) {
     let newModules: Map<string,any> = new Map()
     //  now that we have unresolved... we will try to resolve them in each module
     for (let moduleName of root.modules.keys()) {
@@ -173,4 +173,4 @@ function resolveExternalReferences(root) {
     return new ast.InputRoot(root, { modules: newModules })
 }
 
-export default resolveExternalReferences
+export default resolveImports

@@ -1,6 +1,6 @@
 
-import resolveExternalReferences from "./resolveExternalReferences"
+import resolveImports from "./resolveImports"
 
 export const passes = [
-    resolveExternalReferences
+    resolveImports
 ]
