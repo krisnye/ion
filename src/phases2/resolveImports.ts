@@ -1,7 +1,7 @@
 import { traverse, remove, skip, enter, leave, Visitor } from "../Traversal"
 import { SemanticError } from "../common"
-import ion from "../ion"
-const { ast } = ion
+import Compiler from "../Compiler2"
+const { ast } = require("../ion")
 
 export type varEnter = (node, ancestors: object[], path: string[], variables: Map<String, object>) => void
 export type varLeave = (node, ancestors: object[], path: string[], variables: Map<String, object>) => object | object[] | void
@@ -87,7 +87,7 @@ function getParentPath(path) {
     return index < 0 ? path : path.slice(0, index)
 }
 
-function resolveName(root, modulePath, name, steps, path = "") {
+function resolveName(compiler: Compiler, sourceNode, modulePath, name, steps, path = "") {
     for (let step of steps) {
         // root path relative
         let stepPath = path
@@ -97,21 +97,12 @@ function resolveName(root, modulePath, name, steps, path = "") {
         let wildcard = step.as == null && step.id == null
         if (wildcard) {
             let fullPath = joinPath(stepPath, name)
-            let pathModule = root.modules.get(stepPath)
-            if (pathModule && Array.isArray(pathModule.exports)) {
-                // check the declarations O(n) time
-                for (let declaration of pathModule.exports) {
-                    if (declaration.id.name === name) {
-                        return fullPath
-                    }
-                }
-            }
-            let fullPathModule = root.modules.get(fullPath)
-            if (fullPathModule)
-                return fullPath
+            let ref = compiler.getExternalReference(fullPath, sourceNode)
+            if (ref != null)
+                return [fullPath, ref]
         }
         else if (step.id && step.children.length > 0) {
-            let result = resolveName(root, modulePath, name, step.children, joinPath(path, step.id.name))
+            let result = resolveName(compiler, sourceNode, modulePath, name, step.children, joinPath(path, step.id.name))
             if (result != null)
                 return result
         }
@@ -119,58 +110,54 @@ function resolveName(root, modulePath, name, steps, path = "") {
     return null
 }
 
-function convertImportStepsToVariables(modulePath, steps, path = getParentPath(modulePath), variables = []) {
+function convertImportStepsToVariables(compiler: Compiler, modulePath, steps, path = getParentPath(modulePath), variables: any[] = []) {
     for (let step of steps) {
         if (step.id == null) {
             continue
         }
         let stepPath = step.relative ? joinPath(path, step.id.name) : step.id.name
         if (step.as != null) {
-            variables.push(new ast.Variable(step, {id:step.as, value: new ast.CanonicalReference(step.as, {name:stepPath})}))
+            let ref = compiler.getExternalReference(stepPath)
+            if (ref == null)
+                throw SemanticError(`Import path not found: ${stepPath}`, step.location)
+            variables.push(new ast.Variable(step, { id: step.as, value: ref }))
+        }
+        if (step.children.length > 0) {
+            convertImportStepsToVariables(compiler, modulePath, step.children, stepPath, variables)
         }
     }
     return variables
 }
 
-function resolveImports(root) {
-    let newModules: Map<string,any> = new Map()
-    //  now that we have unresolved... we will try to resolve them in each module
-    for (let moduleName of root.modules.keys()) {
-        let module = root.modules.get(moduleName)
-        let unresolved = getUnresolvedReferences(module)
+function resolveImports(compiler: Compiler, moduleName, module) {
+    let unresolved = getUnresolvedReferences(module)
 
-        let implicitImports = module.imports.concat([
-            new ast.ImportStep({ relative: true, id: null, children:[] }), // .*
-            new ast.ImportStep({ relative: false, id: new ast.Id({ name: "ion" }), children: [new ast.ImportStep({ relative: true, id: null, children:[] })] }), // ion.*
-        ])
+    let implicitImports = module.imports.concat([
+        new ast.ImportStep({ relative: true, id: null, children:[] }), // .*
+        new ast.ImportStep({ relative: false, id: new ast.Id({ name: "ion" }), children: [new ast.ImportStep({ relative: true, id: null, children:[] })] }), // ion.*
+    ])
 
-        let resolved: { [name: string]: any } = {}
-        for (let id of unresolved.values()) {
-            debugger
-            let path = resolveName(root, moduleName, id.name, implicitImports)
-            if (path) {
-                unresolved.delete(id.name)
-                resolved[path] = id
-            }
-            else {
-                throw SemanticError(`Unresolved Id: ${id.name}`, id.location)
-            }
+    let resolved: { [name: string]: any /* : ast.ExternalReference */ } = {}
+    for (let id of unresolved.values()) {
+        let result = resolveName(compiler, id, moduleName, id.name, implicitImports)
+        if (result) {
+            let [path, ref] = result
+            unresolved.delete(id.name)
+            resolved[path] = [path, ref, id]
         }
-
-        // console.log(moduleName, Object.keys(resolved))
-
-        let explicitImportVariables = convertImportStepsToVariables(moduleName, module.imports)
-        let implicitImportVariables = Object.keys(resolved).map(path => {
-            let id = new ast.Id(resolved[path])
-            return new ast.Variable(id, { id, value: new ast.CanonicalReference(id, { name: path })})
-        })
-        let importVariables = explicitImportVariables.concat(implicitImportVariables)
-        let newModule = new ast.Module(module, { imports:[], declarations: importVariables.concat(module.declarations) })
-
-        newModules.set(moduleName, newModule)
+        else {
+            throw SemanticError(`Unresolved Id: ${id.name}`, id.location)
+        }
     }
 
-    return new ast.InputRoot(root, { modules: newModules })
+    // console.log(moduleName, Object.keys(resolved))
+
+    let explicitImportVariables = convertImportStepsToVariables(compiler, moduleName, module.imports)
+    let implicitImportVariables = Object.values(resolved).map(([path, ref, id]) => {
+        return new ast.Variable(id, { id: new ast.Id(id), value: ref })
+    })
+    let importVariables = explicitImportVariables.concat(implicitImportVariables as any)
+    return new ast.Module(module, { imports:[], declarations: importVariables.concat(module.declarations) })
 }
 
 export default resolveImports

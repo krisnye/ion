@@ -2,17 +2,10 @@ import * as common from "./common"
 import * as np from "path"
 import {traverse} from "./Traversal"
 import {createPass} from "./PassBuilder"
-import ion from "./ion"
-const {ast} = ion
-
-const parser = require("./parser")()
-
-// import * as input from "./phases/Input"
-// import * as optimizer from "./phases/Optimizer"
-// import * as javascript from "./phases/Javascript"
-// import * as output from "./phases/Output"
-// import * as cleanup from "./phases/Cleanup"
 import * as input from "./phases2/Input"
+import ion from "./ion"
+const ast: any = ion.ast
+const parser = require("./parser")()
 
 const defaultPhases = [input]
 const defaultPasses = [].concat(...defaultPhases.map((x:any) => x.passes))
@@ -73,12 +66,12 @@ export default class Compiler {
             modules.set(path, module)
         }
 
-        return new ion.ast.InputRoot({
-            options: new ion.ast.Options({ input:this.input,output:this.output }), modules
+        return new ast.InputRoot({
+            options: new ast.Options({ input:this.input,output:this.output }), modules
         })
     }
 
-    compileAssembly(assembly: ast.Assembly) {
+    compileAssembly(assembly /* : ast.Assembly */) {
         let logger = this.loggerFactory()
 
         logger(["input"], assembly)

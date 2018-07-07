@@ -36,8 +36,10 @@ function cloneWithJsonReferences(object: any, map: Map<object,string[]> = new Ma
 export function create(outputPath: string) {
     let outputToStyle = np.relative(np.dirname(outputPath), "node_modules/jsondiffpatch/public/formatters-styles/html.css")
     let passes: [string[],object][] = []
-    return function(names: string[], ast: object) {
+    return function(names?: string | string[], ast?: any) {
         if (names != null) {
+            if (!Array.isArray(names))
+                names = [names]
             passes.push([names, cloneWithJsonReferences(ast)])
             // passes.push([names, JSON.parse(JSON.stringify(cloneWithJsonReferences(ast), remove__prefixedProperties))])
         } else {

@@ -28,3 +28,28 @@ Import .* is potentially a general way of bringing static variables into the loc
 
             let circumference = 2 * pi
             let foo = round(e ^ pi)
+
+CompileUnit -> is a new object type used in compilation.
+    What dependency does one module have on another module?
+    For every exported variable:
+        What is the value type:
+            Class
+            Type
+            Function
+            Value
+
+CompileUnit
+    .exports: Map<String | null, Declaration>
+    .getExportType(name: String | null)
+    .compile(): Map<String,File>
+
+ExternalReference
+    module: String
+    name: String | null
+
+Compiler
+    getModule(name: String): CompileUnit
+
+Decision: -> Don't focus on performance or separate files for THIS version.
+Just get valid type checking and support for functions.
+

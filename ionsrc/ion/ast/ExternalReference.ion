@@ -1,0 +1,7 @@
+import
+    ion.*
+    .Expression
+
+export class ExternalReference extends Expression
+    var moduleName: String
+    var exportName: String | Null

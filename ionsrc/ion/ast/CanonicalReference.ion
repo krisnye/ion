@@ -1,5 +1,0 @@
-import
-    ion.*
-    .Reference
-
-export class CanonicalReference extends Reference

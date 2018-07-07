@@ -238,6 +238,39 @@ const ion_ast_DotExpression = Object.freeze(Object.assign(class DotExpression {
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.DotExpression')),
     path: 'ion.ast.DotExpression'
 }));
+const ion_ast_ExternalReference = Object.freeze(Object.assign(class ExternalReference {
+    constructor(...args) {
+        let location = null, moduleName, exportName;
+        for (let arg of args) {
+            if (arg != null) {
+                if (arg.location !== undefined)
+                    location = arg.location;
+                if (arg.moduleName !== undefined)
+                    moduleName = arg.moduleName;
+                if (arg.exportName !== undefined)
+                    exportName = arg.exportName;
+            }
+        }
+        if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
+            throw new Error('location is not valid: ' + JSON.stringify(location));
+        if (!ion_String.is(moduleName))
+            throw new Error('moduleName is not valid: ' + JSON.stringify(moduleName));
+        if (!{ is: $ => ion_String.is($) || ion_Null.is($) }.is(exportName))
+            throw new Error('exportName is not valid: ' + JSON.stringify(exportName));
+        this.location = location;
+        this.moduleName = moduleName;
+        this.exportName = exportName;
+        Object.freeze(this);
+    }
+}, {
+    types: new Set([
+        'ion.ast.Expression',
+        'ion.ast.Node',
+        'ion.ast.ExternalReference'
+    ]),
+    is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.ExternalReference')),
+    path: 'ion.ast.ExternalReference'
+}));
 const ion_ast_Id = Object.freeze(Object.assign(class Id {
     constructor(...args) {
         let location = null, name;
@@ -354,6 +387,35 @@ const ion_Map = ((function(){
         }
     }))
 })());
+const ion_Any = (Object.freeze({
+    is(value) {
+        return value !== undefined
+    }
+}));
+const ion_ast_InputRoot = Object.freeze(Object.assign(class InputRoot {
+    constructor(...args) {
+        let options, modules;
+        for (let arg of args) {
+            if (arg != null) {
+                if (arg.options !== undefined)
+                    options = arg.options;
+                if (arg.modules !== undefined)
+                    modules = arg.modules;
+            }
+        }
+        if (!ion_ast_Options.is(options))
+            throw new Error('options is not valid: ' + JSON.stringify(options));
+        if (!ion_Map.is(modules, ion_String, ion_ast_Module))
+            throw new Error('modules is not valid: ' + JSON.stringify(modules));
+        this.options = options;
+        this.modules = modules;
+        Object.freeze(this);
+    }
+}, {
+    types: new Set(['ion.ast.InputRoot']),
+    is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.InputRoot')),
+    path: 'ion.ast.InputRoot'
+}));
 const ion_ast_Options = Object.freeze(Object.assign(class Options {
     constructor(...args) {
         let input, output;
@@ -602,36 +664,6 @@ const ion_ast_Reference = Object.freeze(Object.assign(class Reference {
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Reference')),
     path: 'ion.ast.Reference'
 }));
-const ion_ast_CanonicalReference = Object.freeze(Object.assign(class CanonicalReference {
-    constructor(...args) {
-        let location = null, name;
-        for (let arg of args) {
-            if (arg != null) {
-                if (arg.location !== undefined)
-                    location = arg.location;
-                if (arg.name !== undefined)
-                    name = arg.name;
-            }
-        }
-        if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
-            throw new Error('location is not valid: ' + JSON.stringify(location));
-        if (!ion_String.is(name))
-            throw new Error('name is not valid: ' + JSON.stringify(name));
-        this.location = location;
-        this.name = name;
-        Object.freeze(this);
-    }
-}, {
-    types: new Set([
-        'ion.ast.Reference',
-        'ion.ast.Id',
-        'ion.ast.Expression',
-        'ion.ast.Node',
-        'ion.ast.CanonicalReference'
-    ]),
-    is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.CanonicalReference')),
-    path: 'ion.ast.CanonicalReference'
-}));
 const ion_ast_Statement = Object.freeze(Object.assign(class Statement {
     constructor() {
         throw new Error('Statement is abstract');
@@ -806,35 +838,6 @@ const ion_ast_Variable = Object.freeze(Object.assign(class Variable {
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Variable')),
     path: 'ion.ast.Variable'
 }));
-const ion_ast_InputRoot = Object.freeze(Object.assign(class InputRoot {
-    constructor(...args) {
-        let options, modules;
-        for (let arg of args) {
-            if (arg != null) {
-                if (arg.options !== undefined)
-                    options = arg.options;
-                if (arg.modules !== undefined)
-                    modules = arg.modules;
-            }
-        }
-        if (!ion_ast_Options.is(options))
-            throw new Error('options is not valid: ' + JSON.stringify(options));
-        if (!ion_Map.is(modules, ion_String, ion_ast_Module))
-            throw new Error('modules is not valid: ' + JSON.stringify(modules));
-        this.options = options;
-        this.modules = modules;
-        Object.freeze(this);
-    }
-}, {
-    types: new Set(['ion.ast.InputRoot']),
-    is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.InputRoot')),
-    path: 'ion.ast.InputRoot'
-}));
-const ion_Any = (Object.freeze({
-    is(value) {
-        return value !== undefined
-    }
-}));
 const ion_ast_Parameter = Object.freeze(Object.assign(class Parameter {
     constructor(...args) {
         let location = null, id, type = null, value = null, assignable = false;
@@ -919,8 +922,10 @@ export default Object.freeze({
             BinaryExpression: ion_ast_BinaryExpression,
             CallExpression: ion_ast_CallExpression,
             DotExpression: ion_ast_DotExpression,
+            ExternalReference: ion_ast_ExternalReference,
             Id: ion_ast_Id,
             ImportStep: ion_ast_ImportStep,
+            InputRoot: ion_ast_InputRoot,
             Options: ion_ast_Options,
             Literal: ion_ast_Literal,
             Position: ion_ast_Position,
@@ -930,20 +935,18 @@ export default Object.freeze({
             Primitive: ion_ast_Primitive,
             Property: ion_ast_Property,
             Reference: ion_ast_Reference,
-            CanonicalReference: ion_ast_CanonicalReference,
             Statement: ion_ast_Statement,
             TypeExpression: ion_ast_TypeExpression,
             ConstrainedType: ion_ast_ConstrainedType,
             TemplateReference: ion_ast_TemplateReference,
             TypeReference: ion_ast_TypeReference,
             Variable: ion_ast_Variable,
-            InputRoot: ion_ast_InputRoot,
             Parameter: ion_ast_Parameter
         }),
         Map: ion_Map,
+        Any: ion_Any,
         Number: ion_Number,
         Type: ion_Type,
-        Any: ion_Any,
         Integer: ion_Integer,
         Array: ion_Array,
         constants: Object.freeze({
