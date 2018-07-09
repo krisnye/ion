@@ -1,0 +1,7 @@
+import
+    ion.*
+    .Statement
+    .Expression
+
+export class ReturnStatement extends Statement
+    var value: Expression

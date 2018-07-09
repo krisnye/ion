@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import * as np from "path"
-import Compiler from "./Compiler2"
+import Compiler from "./Compiler"
 import {read, write} from "./common"
 import * as HtmlLogger from "./HtmlLogger"
 
@@ -18,4 +18,10 @@ function loggerFactory() {
 }
 let compiler = new Compiler({roots, output, loggerFactory})
 
+let time = process.hrtime()
+
 compiler.compile("ion.Number")
+
+let diff = process.hrtime(time)
+let seconds = diff[0] + diff[1] / 1e9
+console.log('seconds: ', seconds)

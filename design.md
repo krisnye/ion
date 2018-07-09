@@ -50,6 +50,42 @@ ExternalReference
 Compiler
     getModule(name: String): CompileUnit
 
-Decision: -> Don't focus on performance or separate files for THIS version.
-Just get valid type checking and support for functions.
+ObjectExpressions in ion?
+    Array Literal
+        [ 10, 20, true, false, "foo", bar ]
+        Array( 10, 20, true, false, "foo", bar )
+        ObjectLiteral
+            type: 'Array'
+            elements: Expression[]
+    Map Literal
+        [ varName: 10, "y": 20, "z": 20, 10: 30, true: null, false: true ]
+        Map( varName: 10, "y": 20, "z": 20, 10: 30, true: null, false: true )
+        ObjectLiteral
+            type: 'Map'
+            elements: KeyValuePair[]
+    Object Literal
+        { x: 10, y: 20, z: z }
+        Object( x: 10, y: 20, z: z )
+        ObjectLiteral
+            type: 'Object'
+            elements: KeyValuePair[]
+    Set Literal
+        { x, y, 20, 30 }
+        Set( x, y, 20, 30 )
+        ObjectLiteral
+            type: 'Set'
+            elements: Expression[]
 
+Design Decision: Require name:value on Object Literals.
+Although the { nameAndValue } syntax is handy in Javascript,
+In Ion we should usually be returning more strongly typed objects anyways in which case the syntax would be:
+    return Point( x: 10, y: 20)
+        or
+    return Point( x, y )
+        or... if the return type of the function is explicit then it could be an implicit
+    return (x, y)
+
+Todo:
+    [ ] Change ExternalReference to just reference a single, or maybe retain explicit ImportDeclaration and ExportDeclaration statements.....??????
+    [ ] InputModule -> Resolve in one step to ResolvedModule
+    [ ] Define Module with ImportDeclaration and ExportDeclaration

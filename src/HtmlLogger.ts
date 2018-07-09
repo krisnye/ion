@@ -14,9 +14,9 @@ function cloneWithJsonReferences(object: any, map: Map<object,string[]> = new Ma
         return object
     // check the map
     let previousPath = map.get(object)
-    if (previousPath != null) {
-        return {"$ref":previousPath.join('.')}
-    }
+    // if (previousPath != null) {
+    //     return {"$ref":previousPath.join('.')}
+    // }
     map.set(object, path.slice(0))
     let className = object.constructor.path || object.constructor.name
     if (object.toJSON)

@@ -1,0 +1,8 @@
+import
+    ion.*
+    .Expression
+    .KeyValuePair
+
+export class ObjectLiteral extends Expression
+    var type: "Array" | "Map" | "Object" | "Set"
+    var elements: Array<Expression | KeyValuePair>

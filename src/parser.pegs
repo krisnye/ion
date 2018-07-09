@@ -121,7 +121,7 @@ MetaProperties
 
 DynamicOutlineProperty
     = '[' _ key:InlineExpression _ ']' value:(_ ":" _ @OutlineExpression / EOL { return null })
-    { return node("Property", {key, value, computed:true} ) }
+    { return node("KeyValuePair", {key, value, computed:true} ) }
 
 // VariableMetaProperties
 //     = EOL Indent @OutlineProperty+ Outdent
@@ -193,7 +193,7 @@ ObjectPattern
 
 AssignmentProperty
     = key:Id value:(_ ":" _ @Pattern)?
-    { return node("Property", {key, value:value || node("Id", key), shorthand:value == null} ) }
+    { return node("KeyValuePair", {key, value:value || node("Id", key), shorthand:value == null} ) }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Class
@@ -430,7 +430,7 @@ DotExpression
 
 Argument
     = key:(@Id _ ":")? _ value:InlineExpression
-    { return key ? node("Property", {key,value}) : value }
+    { return key ? node("KeyValuePair", {key,value}) : value }
 
 ArgumentList
     = head:Argument tail:(_ "," _ @Argument)* { return [head, ...tail] }

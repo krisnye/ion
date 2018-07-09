@@ -2,7 +2,7 @@ import
     ion.*
     .Declaration
     .Parameter
-    .Property
+    .KeyValuePair
     .Reference
     .TypeExpression
 
@@ -12,4 +12,4 @@ export class ClassDeclaration extends Declaration
     var templateParameters: Array<Parameter>
     var baseClasses: Array<TypeExpression>
     var declarations: Array<Declaration>
-    var meta: Array<Property>
+    var meta: Array<KeyValuePair>

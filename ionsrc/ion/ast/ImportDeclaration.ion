@@ -1,0 +1,7 @@
+import
+    ion.*
+    .Id
+    .Declaration
+
+export class ImportDeclaration extends Declaration
+    var module: Id

@@ -1,8 +1,0 @@
-import
-    ion.*
-    .Expression
-    .Node
-
-export class Property extends Node
-    var key: Expression
-    var value: Expression

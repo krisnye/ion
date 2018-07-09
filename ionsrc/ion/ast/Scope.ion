@@ -1,0 +1,5 @@
+import
+    ion.*
+    .Node
+
+export class Scope extends Node

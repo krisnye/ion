@@ -1,7 +1,7 @@
 import
     ion.*
     .Id
-    .Node
+    .Statement
 
-export abstract class Declaration extends Node
+export abstract class Declaration extends Statement
     var id: Id
