@@ -1,6 +1,7 @@
-import
-    ion.Number  # we don't actually need this, ion.* is implicitly imported
 
 export class Point2
-    var x: Number = 0
-    var y: Number = 0
+    var x: Number
+    var y: Number
+    let translate = (dx: Number, dy: Number) -> Point2(x + dx, y + dy)
+
+

@@ -3,6 +3,7 @@ import * as common from "./common"
 const parser = require("./parser")()
 const {ast} = require("./ion")
 import resolveImportsAndExports from "./phases2/resolveImportsAndExports"
+import createScopeMap from "./phases2/createScopeMap"
 
 export default class ModuleCompiler {
 
@@ -14,6 +15,7 @@ export default class ModuleCompiler {
     private imports: Set<string> = new Set()
     private exports: Set<string> = new Set()
     private resolved: any // ast.BlockStatement
+    private scopeMap: Map<any,any> | null = null
 
     constructor(compiler: Compiler, name, filename, source) {
         this.compiler = compiler
@@ -76,11 +78,13 @@ export default class ModuleCompiler {
 
     _writeCompileDebugFile() {
         let logger = this.compiler.createLogger(this.name)
-        this._ensureParsed()
-        logger("parsed", this.module)
-        this._ensureImportsResolved()
-        logger("resolved imports and exports", this.resolved)
-        logger("output", this.resolved)
+        if (this.module) {
+            logger("parsed", this.module)
+        }
+        if (this.resolved) {
+            logger("resolved imports and exports", this.resolved)
+            logger("output", this.resolved)
+        }
         logger()
     }
 
@@ -89,11 +93,12 @@ export default class ModuleCompiler {
             try {
                 this._ensureParsed()
                 this._ensureImportsResolved()
-                this._writeCompileDebugFile()
+                this.scopeMap = createScopeMap(this.resolved)
             }
             catch (e) {
                 this._reportError(e)
             }
+            this._writeCompileDebugFile()
             // now also ensure that dependencies are compiled, recursively.
             for (let path of this.imports.values()) {
                 this.compiler.getModule(path, true).ensureCompiled()

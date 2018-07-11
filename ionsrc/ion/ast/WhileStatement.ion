@@ -1,0 +1,9 @@
+import
+    ion.*
+    .Expression
+    .BlockStatement
+    .Statement
+
+export class WhileStatement extends Statement
+    var test: Expression
+    var body: BlockStatement

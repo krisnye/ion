@@ -1,7 +1,5 @@
 import { traverse, remove, skip, enter, leave, Visitor } from "../Traversal"
 import { SemanticError } from "../common"
-import Compiler from "../Compiler"
-import { BlockStatement } from "../JsAstTypes";
 import ModuleCompiler from "../ModuleCompiler";
 const { ast } = require("../ion")
 
@@ -19,21 +17,35 @@ function traverseImportSteps(steps, callback) {
     }
 }
 
-function foreachVariable(node, callback: (id, value) => any) {
+function foreachVariable(node, callback: (id, value, scopeNode) => any) {
+    if (ast.FunctionExpression.is(node)) {
+        for (let parameter of node.parameters) {
+            callback(parameter.id, parameter, node)
+        }
+    }
+
+    if (ast.BlockStatement.is(node)) {
+        for (let statement of node.statements) {
+            if (ast.Declaration.is(statement)) {
+                callback(statement.id, statement, node)
+            }
+        }
+    }
+
     if (ast.Module.is(node)) {
         traverseImportSteps(node.imports, callback)
         for (let declaration of node.declarations) {
-            callback(declaration.id, declaration)
+            callback(declaration.id, declaration, node)
         }
     }
 
     if (ast.ClassDeclaration.is(node)) {
-        callback(node.id, node)
+        callback(node.id, node, node)
         for (let declaration of node.declarations) {
-            callback(declaration.id, declaration)
+            callback(declaration.id, declaration, node)
         }
         for (let parameter of node.templateParameters) {
-            callback(parameter.id, parameter)
+            callback(parameter.id, parameter, node)
         }
     }
 }
@@ -41,11 +53,11 @@ function foreachVariable(node, callback: (id, value) => any) {
 //  need a traversal with declarations
 function traverseWithScopedVariables(root, { enter, leave }: { enter: varEnter, leave: varLeave }) {
     let scope = new Map()
-    function add(id, node) {
+    function add(id, node, sourceNode) {
         // console.log('+' + id.name)
         scope.set(id.name, node)
     }
-    function remove(id, node) {
+    function remove(id, node, sourceNode) {
         // console.log('-' + id.name)
         scope.delete(id.name)
     }
@@ -123,7 +135,7 @@ function convertImportStepToDeclarationAndMemberStatement(ref, id, importDeclara
             })
         )
         memberStatements.push(
-            new ast.Variable({
+            new ast.VariableDeclaration({
                 id: id,
                 value: new ast.MemberExpression({
                     object: new ast.Reference({ name: moduleVarName }),
@@ -171,7 +183,7 @@ function resolveImportsAndExports(moduleCompiler: ModuleCompiler, moduleName, mo
             resolved[path] = [path, ref, id]
         }
         else {
-            throw SemanticError(`Unresolved Id: ${id.name}`, id.location)
+            throw SemanticError(`Undeclared Identifier: ${id.name}`, id.location)
         }
     }
     let [imports, memberStatements] = convertImportStepsToDeclarations(moduleCompiler, moduleName, module.imports, )

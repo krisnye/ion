@@ -20,7 +20,7 @@ let compiler = new Compiler({roots, output, loggerFactory})
 
 let time = process.hrtime()
 
-compiler.compile("ion.Number")
+compiler.compile("sample.Point2")
 
 let diff = process.hrtime(time)
 let seconds = diff[0] + diff[1] / 1e9

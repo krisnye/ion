@@ -1,0 +1,6 @@
+import
+    ion.*
+    .Declaration
+    .Variable
+
+export class VariableDeclaration extends Variable, Declaration

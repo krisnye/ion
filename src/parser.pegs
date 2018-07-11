@@ -102,19 +102,19 @@ Statement
 
 Declaration
     = ClassDeclaration
-    / Variable
+    / VariableDeclaration
 
 VariableDeclarationType
     = VarToken { return {assignable:true, property:false} }
     / LetToken { return {assignable:false, property:false} }
     / PropertyToken { return {assignable:false, property:true} }
 
-Variable
+VariableDeclaration
     = TypeToken _ id:UpperCaseId _ "=" _ value:Type EOL
-    { return node('Variable', {assignable:false, id, value}) }
+    { return node('VariableDeclaration', {assignable:false, id, value}) }
     / meta:MetaProperties declarationType: VariableDeclarationType
         _ id:Pattern _ type:(":" _ @Type)? _ value:('=' _ @OutlineExpression / EOL {return null})?
-    { return node("Variable", declarationType, {id, type, value, meta }) }
+    { return node("VariableDeclaration", declarationType, {id, type, value, meta }) }
 
 MetaProperties
  = (@DynamicOutlineProperty Dent)*
@@ -134,7 +134,7 @@ AssignmentOperator
     / "\="
 
 AssignmentStatement
-    = left:Pattern _ op:AssignmentOperator _ right:OutlineExpression
+    = left:Reference _ op:AssignmentOperator _ right:OutlineExpression
     {
         if (op.length > 1) {
             right = operation(left, node("Id",{name:op.slice(0,-1)}), right)
@@ -143,8 +143,8 @@ AssignmentStatement
     }
 
 BlockStatement
-    = EOL Indent body:(Dent @Statement)+ Outdent
-    { return node("BlockStatement", body) }
+    = EOL Indent statements:(Dent @Statement)+ Outdent
+    { return node("BlockStatement", {statements}) }
 
 ForInStatement
     = ForToken _ left:Pattern _ InToken _ right:InlineExpression body:BlockStatement
@@ -160,8 +160,8 @@ IfStatement
     { return node("IfStatement", {test, consequent, alternate}) }
 
 ReturnStatement
-    = ReturnToken _ argument:InlineExpression? EOL
-    { return node("ReturnStatement", {argument}) }
+    = ReturnToken _ value:InlineExpression? EOL
+    { return node("ReturnStatement", {value}) }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Patterns
@@ -364,8 +364,8 @@ ConditionalExpression
 ////////////////////////////////////////////////////////////////////////////////
 
 Parameter
-    = id:Pattern _ type:(":" _ @Type)? _ _default:("=" _ @InlineExpression)?
-    { return node("Parameter", {id, type, default:_default})}
+    = id:Pattern _ type:(":" _ @Type)? _ value:("=" _ @InlineExpression)?
+    { return node("Parameter", {id, type, value})}
 
 FunctionParameters
     = "(" _ ")" { return [] }
@@ -378,7 +378,7 @@ FunctionHead
 
 InlineFunction
     = head:FunctionHead _ value:InlineExpression
-    { return node("FunctionExpression", head, {body:node("BlockStatement", {body:[node("ReturnStatement",{argument:value})]})}) }
+    { return node("FunctionExpression", head, { body:node("BlockStatement", { statements:[node("ReturnStatement",{ value })] }) }) }
 
 OutlineFunction
     = head:FunctionHead _ body:BlockStatement
@@ -450,11 +450,13 @@ MemberExpression =
     {
         return tail.reduce(
             (left, right) => {
-                let {property,computed} = right
-                if (Array.isArray(right))
+                if (Array.isArray(right)) {
                     return node("CallExpression", {callee:left, arguments:right})
-                else
+                }
+                else {
+                    let {property,computed} = right
                     return node("MemberExpression", {object:left, property, computed})
+                }
             }
             ,head
         )

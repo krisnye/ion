@@ -6,3 +6,4 @@ import
     .Variable
 
 export class Parameter extends Variable
+    let assignable = false

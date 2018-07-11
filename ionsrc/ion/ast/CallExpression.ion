@@ -1,8 +1,8 @@
 import
     ion.*
     .Expression
-    .Argument
+    .KeyValuePair
 
 export class CallExpression extends Expression
     var callee: Expression
-    var arguments: Array<Argument>
+    var arguments: Array<KeyValuePair | Expression>

@@ -1,0 +1,7 @@
+import
+    ion.*
+    .TypeExpression
+    .Literal
+
+export class LiteralType extends TypeExpression
+    var literal: Literal

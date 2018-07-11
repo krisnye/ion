@@ -63,8 +63,10 @@ ObjectExpressions in ion?
         ObjectLiteral
             type: 'Map'
             elements: KeyValuePair[]
-    Object Literal
-        { x: 10, y: 20, z: z }
+    Object Literal -> Anonymous Class, no dynamic members.
+        ( x: 10, y: 20, z: z )
+        ( x, y, z )
+        ( x )
         Object( x: 10, y: 20, z: z )
         ObjectLiteral
             type: 'Object'

@@ -1,8 +1,0 @@
-import
-    ion.*
-    .Expression
-    .Id
-
-export class Argument extends Expression
-    var id: Id | Null = null
-    var value: Expression

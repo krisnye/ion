@@ -19,8 +19,8 @@ function isObjectNode(object:any) {
 export const remove = Object.freeze([])
 export const skip = Symbol('skip')
 
-export type enter = (node: object, ancestors: object[], string: string[]) => Symbol | void
-export type leave = (node: object, ancestors: object[], string: string[]) => object | object[] | void
+export type enter = (node: any, ancestors: object[], string: string[]) => Symbol | void
+export type leave = (node: any, ancestors: object[], string: string[]) => object | object[] | void
 
 export type Visitor = { enter?: enter, leave?: leave }
 

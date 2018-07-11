@@ -1,0 +1,14 @@
+import
+    ion.*
+    .BlockStatement
+    .Expression
+    .TypeExpression
+    .Id
+    .Parameter
+    .Scope
+
+export class FunctionExpression extends Expression, Scope
+    var id: Id | Null = null
+    var parameters: Array<Parameter>
+    var returnType: TypeExpression | Null = null
+    var body: BlockStatement

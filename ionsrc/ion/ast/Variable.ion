@@ -2,10 +2,11 @@ import
     ion.*
     .Expression
     .Id
-    .Declaration
+    .Node
     .TypeExpression
 
-export class Variable extends Declaration
+export abstract class Variable extends Node
+    var id: Id
     var type: TypeExpression | Null = null
     var value: Expression | Null = null
     var assignable: Boolean = false
