@@ -1,6 +1,5 @@
 import { traverse, remove, skip, enter, leave, Visitor } from "../Traversal"
 import { SemanticError } from "../common"
-import { Identifier } from "../JsAstTypes";
 const { ast } = require("../ion")
 
 

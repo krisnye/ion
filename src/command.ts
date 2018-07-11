@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 import * as np from "path"
 import Compiler from "./Compiler"
-import {read, write} from "./common"
-import * as HtmlLogger from "./HtmlLogger"
 
 var args = process.argv.slice(2)
 
