@@ -8,7 +8,6 @@ import * as HtmlLogger from "./HtmlLogger"
 export default class Compiler {
     roots: string[]
     output: string
-    loggerFactory: () => (names?: string[], ast?: object) => void
     modules: Map<string, ModuleCompiler|null> = new Map()
 
     constructor(options:{
@@ -16,11 +15,9 @@ export default class Compiler {
         roots: string[],
         //  the output folder we are compiling to
         output: string,
-        loggerFactory: () => (names?: string[], ast?: object) => void
      }){
         this.roots = options.roots
         this.output = options.output
-        this.loggerFactory = options.loggerFactory
     }
 
     createLogger(moduleName) {

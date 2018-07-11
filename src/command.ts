@@ -13,10 +13,7 @@ if (args.length < 2) {
 let ionSrc = np.join(__dirname, '../ionsrc')
 let output = np.join(process.cwd(), args[0])
 let roots = args.slice(1).map((dir) => np.join(process.cwd(), dir)).concat([ionSrc])
-function loggerFactory() {
-    return HtmlLogger.create(np.join(output,  "debug.html"))
-}
-let compiler = new Compiler({roots, output, loggerFactory})
+let compiler = new Compiler({roots, output})
 
 let time = process.hrtime()
 
