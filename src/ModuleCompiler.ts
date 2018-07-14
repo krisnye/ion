@@ -2,20 +2,23 @@ import Compiler from "./Compiler"
 import * as common from "./common"
 const parser = require("./parser")()
 const {ast} = require("./ion")
-import resolveImportsAndExports from "./phases2/resolveImportsAndExports"
-import createScopeMap from "./phases2/createScopeMap"
+import resolveImportsAndExports from "./phases/resolveImportsAndExports"
+import inheritClassVariables from "./phases/inheritClassVariables"
+import createScopeMap from "./phases/createScopeMap"
 
 export default class ModuleCompiler {
 
-    private compiler: Compiler
-    private name: string
-    private filename: string
-    private source: string
-    private module: any // ast.Module
+    readonly compiler: Compiler
+    readonly name: string
+    readonly filename: string
+    readonly source: string
+    private exports: Map<string,any> = new Map()
     private imports: Set<string> = new Set()
-    private exports: Set<string> = new Set()
-    private resolved: any // ast.BlockStatement
-    private scopeMap: Map<any,any> | null = null
+
+    private parsedModule: any // ast.Module
+    private resolvedModule: any // ast.BlockStatement
+    private resolvedModuleScopeMap: Map<any,object>
+    private inheritedModule: any // ast.BlockStatement
 
     constructor(compiler: Compiler, name, filename, source) {
         this.compiler = compiler
@@ -30,8 +33,8 @@ export default class ModuleCompiler {
             return true
         }
         else {
-            this._ensureParsed()
-            return this.exports.has(name)
+            let exports = this.getExports()
+            return exports.has(name)
         }
     }
 
@@ -44,26 +47,52 @@ export default class ModuleCompiler {
         return ref
     }
 
-    _extractExports() {
-        this.exports.clear()
-        if (Array.isArray(this.module.exports)) {
-            for (let name in this.module.exports) {
-                this.exports.add(name)
+    getExports() {
+        if (this.exports == null) {
+            this.exports = new Map()
+            this.getParsedModule()
+            if (Array.isArray(this.parsedModule.exports)) {
+                for (let name in this.parsedModule.exports) {
+                    let declaration = this.parsedModule.exports[name]
+                    this.exports.set(name, declaration)
+                }
             }
         }
+        return this.exports
     }
 
-    _ensureParsed() {
-        if (this.module == null) {
-            this.module = parser.parse(this.source, this.filename)
-            this._extractExports()
+    getParsedModule() {
+        if (this.parsedModule == null) {
+            this.parsedModule = parser.parse(this.source, this.filename)
         }
+        return this.parsedModule;
     }
 
-    _ensureImportsResolved() {
-        if (this.resolved == null) {
-            this.resolved = resolveImportsAndExports(this, this.name, this.module)
+    getResolvedModule() {
+        if (this.resolvedModule == null) {
+            this.resolvedModule = resolveImportsAndExports(this)
         }
+        return this.resolvedModule
+    }
+
+    getResolvedModuleScopeMap() {
+        if (this.resolvedModuleScopeMap == null) {
+            this.resolvedModuleScopeMap = createScopeMap(this.resolvedModule)
+        }
+        return this.resolvedModuleScopeMap
+    }
+
+    getResolvedExport() {
+        let resolvedModule = this.getResolvedModule()
+        let exportStatement = resolvedModule.statements[resolvedModule.statements.length - 1]
+        return exportStatement.value
+    }
+
+    getInheritedModule() {
+        if (this.inheritedModule == null) {
+            this.inheritedModule = inheritClassVariables(this)
+        }
+        return this.inheritedModule
     }
 
     _reportError(e) {
@@ -78,22 +107,24 @@ export default class ModuleCompiler {
 
     _writeCompileDebugFile() {
         let logger = this.compiler.createLogger(this.name)
-        if (this.module) {
-            logger("parsed", this.module)
+        logger("Loading", this.source);
+        if (this.parsedModule) {
+            logger("Parsing", this.parsedModule)
         }
-        if (this.resolved) {
-            logger("resolved imports and exports", this.resolved)
-            logger("output", this.resolved)
+        if (this.resolvedModule) {
+            logger("Dependency Resolution", this.resolvedModule)
+        }
+        if (this.inheritedModule) {
+            logger("Class Inheritance", this.inheritedModule)
+            logger("Output", this.resolvedModule)            
         }
         logger()
     }
 
     ensureCompiled() {
-        if (this.resolved == null) {
+        if (this.resolvedModule == null) {
             try {
-                this._ensureParsed()
-                this._ensureImportsResolved()
-                this.scopeMap = createScopeMap(this.resolved)
+                this.getInheritedModule()
             }
             catch (e) {
                 this._reportError(e)

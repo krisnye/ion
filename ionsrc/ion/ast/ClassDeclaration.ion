@@ -5,8 +5,10 @@ import
     .KeyValuePair
     .Reference
     .TypeExpression
+    .FunctionExpression
 
 export class ClassDeclaration extends Declaration
+    var factory: FunctionExpression | Null = null
     var isStructure: Boolean = false
     var isAbstract: Boolean = false
     var templateParameters: Array<Parameter>

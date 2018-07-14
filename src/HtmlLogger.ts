@@ -103,7 +103,11 @@ export function create(outputPath: string) {
         names = [names]
     // convert to show refs
     let delta = previous != null ? jsondiffpatch.diff(previous, ast) : null
-    let html = require('jsondiffpatch/src/formatters/html').format(delta || {}, previous || ast)
+    let html = null;
+    if (typeof ast === "string")
+        html = ast
+    else
+        html = require('jsondiffpatch/src/formatters/html').format(delta || {}, previous || ast)
     previous = ast
     return `
         <article>

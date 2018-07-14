@@ -4,3 +4,4 @@ import
     .Variable
 
 export class VariableDeclaration extends Variable, Declaration
+    var property: Boolean = false

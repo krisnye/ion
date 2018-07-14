@@ -15,6 +15,11 @@ const ion_Boolean = (Object.freeze({
         return value === true || value === false
     }
 }));
+const ion_Null = (Object.freeze({
+    is(value) {
+        return value == null
+    }
+}));
 const ion_ast_Node = Object.freeze(Object.assign(class Node {
     constructor() {
         throw new Error('Node is abstract');
@@ -158,11 +163,6 @@ const ion_ast_DotExpression = Object.freeze(Object.assign(class DotExpression {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.DotExpression')),
     path: 'ion.ast.DotExpression'
-}));
-const ion_Null = (Object.freeze({
-    is(value) {
-        return value == null
-    }
 }));
 const ion_ast_Id = Object.freeze(Object.assign(class Id {
     constructor(...args) {
@@ -648,13 +648,15 @@ const ion_ast_Declaration = Object.freeze(Object.assign(class Declaration {
 }));
 const ion_ast_ClassDeclaration = Object.freeze(Object.assign(class ClassDeclaration {
     constructor(...args) {
-        let location = null, id, isStructure = false, isAbstract = false, templateParameters, baseClasses, declarations, meta;
+        let location = null, id, factory = null, isStructure = false, isAbstract = false, templateParameters, baseClasses, declarations, meta;
         for (let arg of args) {
             if (arg != null) {
                 if (arg.location !== undefined)
                     location = arg.location;
                 if (arg.id !== undefined)
                     id = arg.id;
+                if (arg.factory !== undefined)
+                    factory = arg.factory;
                 if (arg.isStructure !== undefined)
                     isStructure = arg.isStructure;
                 if (arg.isAbstract !== undefined)
@@ -673,6 +675,8 @@ const ion_ast_ClassDeclaration = Object.freeze(Object.assign(class ClassDeclarat
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_ast_Id.is(id))
             throw new Error('id is not valid: ' + JSON.stringify(id));
+        if (!{ is: $ => ion_ast_FunctionExpression.is($) || ion_Null.is($) }.is(factory))
+            throw new Error('factory is not valid: ' + JSON.stringify(factory));
         if (!ion_Boolean.is(isStructure))
             throw new Error('isStructure is not valid: ' + JSON.stringify(isStructure));
         if (!ion_Boolean.is(isAbstract))
@@ -687,6 +691,7 @@ const ion_ast_ClassDeclaration = Object.freeze(Object.assign(class ClassDeclarat
             throw new Error('meta is not valid: ' + JSON.stringify(meta));
         this.location = location;
         this.id = id;
+        this.factory = factory;
         this.isStructure = isStructure;
         this.isAbstract = isAbstract;
         this.templateParameters = templateParameters;
@@ -1061,7 +1066,7 @@ const ion_ast_Parameter = Object.freeze(Object.assign(class Parameter {
 }));
 const ion_ast_VariableDeclaration = Object.freeze(Object.assign(class VariableDeclaration {
     constructor(...args) {
-        let location = null, id, type = null, value = null, assignable = false;
+        let location = null, id, type = null, value = null, assignable = false, property = false;
         for (let arg of args) {
             if (arg != null) {
                 if (arg.location !== undefined)
@@ -1074,6 +1079,8 @@ const ion_ast_VariableDeclaration = Object.freeze(Object.assign(class VariableDe
                     value = arg.value;
                 if (arg.assignable !== undefined)
                     assignable = arg.assignable;
+                if (arg.property !== undefined)
+                    property = arg.property;
             }
         }
         if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
@@ -1086,11 +1093,14 @@ const ion_ast_VariableDeclaration = Object.freeze(Object.assign(class VariableDe
             throw new Error('value is not valid: ' + JSON.stringify(value));
         if (!ion_Boolean.is(assignable))
             throw new Error('assignable is not valid: ' + JSON.stringify(assignable));
+        if (!ion_Boolean.is(property))
+            throw new Error('property is not valid: ' + JSON.stringify(property));
         this.location = location;
         this.id = id;
         this.type = type;
         this.value = value;
         this.assignable = assignable;
+        this.property = property;
         Object.freeze(this);
     }
 }, {
@@ -1214,6 +1224,7 @@ export default Object.freeze({
     ion: Object.freeze({
         String: ion_String,
         Boolean: ion_Boolean,
+        Null: ion_Null,
         ast: Object.freeze({
             Node: ion_ast_Node,
             Expression: ion_ast_Expression,
@@ -1255,7 +1266,6 @@ export default Object.freeze({
             WhileStatement: ion_ast_WhileStatement
         }),
         Any: ion_Any,
-        Null: ion_Null,
         Number: ion_Number,
         Type: ion_Type,
         Map: ion_Map,

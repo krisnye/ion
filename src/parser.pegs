@@ -105,9 +105,9 @@ Declaration
     / VariableDeclaration
 
 VariableDeclarationType
-    = VarToken { return {assignable:true, property:false} }
-    / LetToken { return {assignable:false, property:false} }
-    / PropertyToken { return {assignable:false, property:true} }
+    = VarToken { return { assignable:true } }
+    / LetToken { return { assignable:false } }
+    / PropertyToken { return { assignable:false, property:true } }
 
 VariableDeclaration
     = TypeToken _ id:UpperCaseId _ "=" _ value:Type EOL

@@ -2,6 +2,5 @@
 export class Point2
     var x: Number
     var y: Number
-    let translate = (dx: Number, dy: Number) -> Point2(x + dx, y + dy)
 
 
