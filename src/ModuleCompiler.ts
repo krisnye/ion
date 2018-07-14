@@ -82,6 +82,10 @@ export default class ModuleCompiler {
         return this.resolvedModuleScopeMap
     }
 
+    getResolvedScope(node) {
+        return this.getResolvedModuleScopeMap().get(node)!
+    }
+
     getResolvedExport() {
         let resolvedModule = this.getResolvedModule()
         let exportStatement = resolvedModule.statements[resolvedModule.statements.length - 1]

@@ -4,6 +4,7 @@ import * as fs from "fs"
 const { ast } = require("./ion")
 import ModuleCompiler from "./ModuleCompiler"
 import * as HtmlLogger from "./HtmlLogger"
+import { SemanticError } from "./common"
 
 export default class Compiler {
     roots: string[]
@@ -84,6 +85,25 @@ export default class Compiler {
             }
         }
         return null
+    }
+
+    //  TODO: After module name is added to Location then remove sourceModule argument.
+    getResolvedDeclaration(node, sourceModule: ModuleCompiler) {
+        if (ast.Reference.is(node)) {
+            let scope = sourceModule.getResolvedScope(node)
+            let referencedDeclaration = scope[node.name]
+            if (referencedDeclaration == null)
+                throw SemanticError("Type reference not found: " + node.name, node.location)
+            return this.getResolvedDeclaration(referencedDeclaration, sourceModule)
+        }
+        else if (ast.ImportDeclaration.is(node)) {
+            let referencedModule = this.getModule(node.module.name, true)
+            let referencedExport = referencedModule.getResolvedExport()
+            return this.getResolvedDeclaration(referencedExport, referencedModule)
+        }
+        else {
+            return node
+        }
     }
 
     compile(name: string) {
