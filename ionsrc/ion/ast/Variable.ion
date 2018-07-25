@@ -3,10 +3,9 @@ import
     .Expression
     .Id
     .Node
-    .TypeExpression
 
 export abstract class Variable extends Node
     var id: Id
-    var type: TypeExpression | Null = null
+    var type: Expression | Null = null
     var value: Expression | Null = null
     var assignable: Boolean = false

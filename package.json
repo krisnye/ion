@@ -11,9 +11,12 @@
         "watchAst": "nodemon -w ionsrc -e ion -x ion2boot src/ast ionsrc",
         "watchBuild": "nodemon --ignore test/lib --ignore ionsrc -w src/parser.pegs -x pegs src/parser.pegs lib/parser.js & tsc -p . --watch",
         "watchTest": "nodemon --ignore test/lib --ignore ionsrc -w lib -w test -e js,ion lib/command.js test/lib test/src -c sample.Point3",
+        "watchUnitTest": "nodemon -w lib -e js -x yarn unitTest",
         "watchDebug": "nodemon --ignore test/lib --ignore ionsrc -w lib -w test -e js,ion --inspect-brk lib/command.js test/lib test/src -c sample.Point2",
         "watch": "yarn watchBuild & yarn watchTest & yarn watchAst",
-        "debug": "yarn watchBuild & yarn watchDebug"
+        "debug": "yarn watchBuild & yarn watchDebug",
+        "unitTest": "mocha lib/**/*.test.js",
+        "debugUnitTest": "mocha --inspect-brk lib/**/*.test.js"
     },
     "author": {
         "name": "Kris Nye",
@@ -29,6 +32,7 @@
     },
     "homepage": "https://github.com/krisnye/ion",
     "dependencies": {
+        "mocha": "^5.2.0",
         "text-diff": "^1.0.1"
     },
     "devDependencies": {

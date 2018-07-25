@@ -41,35 +41,6 @@ const ion_ast_Expression = Object.freeze(Object.assign(class Expression {
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Expression')),
     path: 'ion.ast.Expression'
 }));
-const ion_Any = (Object.freeze({
-    is(value) {
-        return value !== undefined
-    }
-}));
-const ion_ast_Options = Object.freeze(Object.assign(class Options {
-    constructor(...args) {
-        let input, output;
-        for (let arg of args) {
-            if (arg != null) {
-                if (arg.input !== undefined)
-                    input = arg.input;
-                if (arg.output !== undefined)
-                    output = arg.output;
-            }
-        }
-        if (!ion_Array.is(input, ion_String))
-            throw new Error('input is not valid: ' + JSON.stringify(input));
-        if (!ion_String.is(output))
-            throw new Error('output is not valid: ' + JSON.stringify(output));
-        this.input = input;
-        this.output = output;
-        Object.freeze(this);
-    }
-}, {
-    types: new Set(['ion.ast.Options']),
-    is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Options')),
-    path: 'ion.ast.Options'
-}));
 const ion_ast_BinaryExpression = Object.freeze(Object.assign(class BinaryExpression {
     constructor(...args) {
         let location = null, left, operator, right;
@@ -417,6 +388,35 @@ const ion_ast_Location = Object.freeze(Object.assign(class Location {
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Location')),
     path: 'ion.ast.Location'
 }));
+const ion_ast_Options = Object.freeze(Object.assign(class Options {
+    constructor(...args) {
+        let input, output;
+        for (let arg of args) {
+            if (arg != null) {
+                if (arg.input !== undefined)
+                    input = arg.input;
+                if (arg.output !== undefined)
+                    output = arg.output;
+            }
+        }
+        if (!ion_Array.is(input, ion_String))
+            throw new Error('input is not valid: ' + JSON.stringify(input));
+        if (!ion_String.is(output))
+            throw new Error('output is not valid: ' + JSON.stringify(output));
+        this.input = input;
+        this.output = output;
+        Object.freeze(this);
+    }
+}, {
+    types: new Set(['ion.ast.Options']),
+    is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Options')),
+    path: 'ion.ast.Options'
+}));
+const ion_Any = (Object.freeze({
+    is(value) {
+        return value !== undefined
+    }
+}));
 const ion_ast_ObjectLiteral = Object.freeze(Object.assign(class ObjectLiteral {
     constructor(...args) {
         let location = null, type, elements;
@@ -486,6 +486,8 @@ const ion_ast_Reference = Object.freeze(Object.assign(class Reference {
         'ion.ast.Id',
         'ion.ast.Expression',
         'ion.ast.Node',
+        'ion.ast.Expression',
+        'ion.ast.Node',
         'ion.ast.Reference'
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Reference')),
@@ -536,7 +538,7 @@ const ion_ast_FunctionExpression = Object.freeze(Object.assign(class FunctionExp
             throw new Error('id is not valid: ' + JSON.stringify(id));
         if (!ion_Array.is(parameters, ion_ast_Parameter))
             throw new Error('parameters is not valid: ' + JSON.stringify(parameters));
-        if (!{ is: $ => ion_ast_TypeExpression.is($) || ion_Null.is($) }.is(returnType))
+        if (!{ is: $ => ion_ast_Expression.is($) || ion_Null.is($) }.is(returnType))
             throw new Error('returnType is not valid: ' + JSON.stringify(returnType));
         if (!ion_ast_BlockStatement.is(body))
             throw new Error('body is not valid: ' + JSON.stringify(body));
@@ -683,7 +685,7 @@ const ion_ast_ClassDeclaration = Object.freeze(Object.assign(class ClassDeclarat
             throw new Error('isAbstract is not valid: ' + JSON.stringify(isAbstract));
         if (!ion_Array.is(templateParameters, ion_ast_Parameter))
             throw new Error('templateParameters is not valid: ' + JSON.stringify(templateParameters));
-        if (!ion_Array.is(baseClasses, ion_ast_TypeExpression))
+        if (!ion_Array.is(baseClasses, ion_ast_Expression))
             throw new Error('baseClasses is not valid: ' + JSON.stringify(baseClasses));
         if (!ion_Array.is(declarations, ion_ast_Declaration))
             throw new Error('declarations is not valid: ' + JSON.stringify(declarations));
@@ -894,7 +896,7 @@ const ion_ast_ConstrainedType = Object.freeze(Object.assign(class ConstrainedTyp
         }
         if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
-        if (!ion_ast_TypeReference.is(baseType))
+        if (!ion_ast_Reference.is(baseType))
             throw new Error('baseType is not valid: ' + JSON.stringify(baseType));
         if (!ion_ast_Expression.is(constraint))
             throw new Error('constraint is not valid: ' + JSON.stringify(constraint));
@@ -957,7 +959,7 @@ const ion_ast_TemplateReference = Object.freeze(Object.assign(class TemplateRefe
         }
         if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
-        if (!ion_ast_TypeReference.is(baseType))
+        if (!ion_ast_Reference.is(baseType))
             throw new Error('baseType is not valid: ' + JSON.stringify(baseType));
         if (!ion_Array.is($arguments, { is: $ => ion_Type.is($) || ion_ast_Expression.is($) }))
             throw new Error('$arguments is not valid: ' + JSON.stringify($arguments));
@@ -975,39 +977,6 @@ const ion_ast_TemplateReference = Object.freeze(Object.assign(class TemplateRefe
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.TemplateReference')),
     path: 'ion.ast.TemplateReference'
-}));
-const ion_ast_TypeReference = Object.freeze(Object.assign(class TypeReference {
-    constructor(...args) {
-        let location = null, name;
-        for (let arg of args) {
-            if (arg != null) {
-                if (arg.location !== undefined)
-                    location = arg.location;
-                if (arg.name !== undefined)
-                    name = arg.name;
-            }
-        }
-        if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
-            throw new Error('location is not valid: ' + JSON.stringify(location));
-        if (!ion_String.is(name))
-            throw new Error('name is not valid: ' + JSON.stringify(name));
-        this.location = location;
-        this.name = name;
-        Object.freeze(this);
-    }
-}, {
-    types: new Set([
-        'ion.ast.Reference',
-        'ion.ast.Id',
-        'ion.ast.Expression',
-        'ion.ast.Node',
-        'ion.ast.TypeExpression',
-        'ion.ast.Expression',
-        'ion.ast.Node',
-        'ion.ast.TypeReference'
-    ]),
-    is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.TypeReference')),
-    path: 'ion.ast.TypeReference'
 }));
 const ion_ast_Variable = Object.freeze(Object.assign(class Variable {
     constructor() {
@@ -1042,7 +1011,7 @@ const ion_ast_Parameter = Object.freeze(Object.assign(class Parameter {
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_ast_Id.is(id))
             throw new Error('id is not valid: ' + JSON.stringify(id));
-        if (!{ is: $ => ion_ast_TypeExpression.is($) || ion_Null.is($) }.is(type))
+        if (!{ is: $ => ion_ast_Expression.is($) || ion_Null.is($) }.is(type))
             throw new Error('type is not valid: ' + JSON.stringify(type));
         if (!{ is: $ => ion_ast_Expression.is($) || ion_Null.is($) }.is(value))
             throw new Error('value is not valid: ' + JSON.stringify(value));
@@ -1087,7 +1056,7 @@ const ion_ast_VariableDeclaration = Object.freeze(Object.assign(class VariableDe
             throw new Error('location is not valid: ' + JSON.stringify(location));
         if (!ion_ast_Id.is(id))
             throw new Error('id is not valid: ' + JSON.stringify(id));
-        if (!{ is: $ => ion_ast_TypeExpression.is($) || ion_Null.is($) }.is(type))
+        if (!{ is: $ => ion_ast_Expression.is($) || ion_Null.is($) }.is(type))
             throw new Error('type is not valid: ' + JSON.stringify(type));
         if (!{ is: $ => ion_ast_Expression.is($) || ion_Null.is($) }.is(value))
             throw new Error('value is not valid: ' + JSON.stringify(value));
@@ -1228,7 +1197,6 @@ export default Object.freeze({
         ast: Object.freeze({
             Node: ion_ast_Node,
             Expression: ion_ast_Expression,
-            Options: ion_ast_Options,
             BinaryExpression: ion_ast_BinaryExpression,
             CallExpression: ion_ast_CallExpression,
             DotExpression: ion_ast_DotExpression,
@@ -1240,6 +1208,7 @@ export default Object.freeze({
             MemberExpression: ion_ast_MemberExpression,
             Module: ion_ast_Module,
             Location: ion_ast_Location,
+            Options: ion_ast_Options,
             ObjectLiteral: ion_ast_ObjectLiteral,
             Primitive: ion_ast_Primitive,
             Reference: ion_ast_Reference,
@@ -1259,7 +1228,6 @@ export default Object.freeze({
             ConstrainedType: ion_ast_ConstrainedType,
             LiteralType: ion_ast_LiteralType,
             TemplateReference: ion_ast_TemplateReference,
-            TypeReference: ion_ast_TypeReference,
             Variable: ion_ast_Variable,
             Parameter: ion_ast_Parameter,
             VariableDeclaration: ion_ast_VariableDeclaration,

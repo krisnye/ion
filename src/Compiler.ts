@@ -5,11 +5,13 @@ const { ast } = require("./ion")
 import ModuleCompiler from "./ModuleCompiler"
 import * as HtmlLogger from "./HtmlLogger"
 import { SemanticError } from "./common"
+import DeclarationCompiler from "./DeclarationCompiler";
 
 export default class Compiler {
     roots: string[]
     output: string
     modules: Map<string, ModuleCompiler|null> = new Map()
+    readonly globalScope = {}
 
     constructor(options:{
         //  the root directories containing modules
@@ -26,32 +28,32 @@ export default class Compiler {
         return HtmlLogger.create(logfilename)
     }
 
-    getExternalReference(path) {
-        if (this.isValidExternalReference(path, null)) {
-            return {moduleName: path }
-        }
-        let index = path.lastIndexOf('.')
-        if (index < 0) {
-            return null
-        }
-        let moduleName = path.substring(0, index)
-        let exportName = path.substring(index + 1)
-        if (this.isValidExternalReference(moduleName, exportName)) {
-            return { moduleName, exportName }
-        }
-        return null
-    }
+    // getExternalReference(path) {
+    //     if (this.isValidExternalReference(path, null)) {
+    //         return {moduleName: path }
+    //     }
+    //     let index = path.lastIndexOf('.')
+    //     if (index < 0) {
+    //         return null
+    //     }
+    //     let moduleName = path.substring(0, index)
+    //     let exportName = path.substring(index + 1)
+    //     if (this.isValidExternalReference(moduleName, exportName)) {
+    //         return { moduleName, exportName }
+    //     }
+    //     return null
+    // }
 
-    isValidExternalReference(moduleName, exportName) {
-        let module = this.getModule(moduleName)
-        if (module == null) {
-            return false
-        }
-        if (exportName == null) {
-            return true
-        }
-        return module.hasExport(exportName)
-    }
+    // isValidExternalReference(moduleName, exportName) {
+    //     let module = this.getModule(moduleName)
+    //     if (module == null) {
+    //         return false
+    //     }
+    //     if (exportName == null) {
+    //         return true
+    //     }
+    //     return module.hasExport(exportName)
+    // }
 
     getModule(name: string): ModuleCompiler
     getModule(name: string, required: true): ModuleCompiler
@@ -64,8 +66,7 @@ export default class Compiler {
             let filename = this.getModuleFilename(name)
             // console.log('----filename: ' + filename)
             if (filename != null) {
-                let source = common.read(filename)
-                module = new ModuleCompiler(this, name, filename, source)
+                module = new ModuleCompiler(this, name, filename)
             }
             this.modules.set(name, module)
         }
@@ -87,27 +88,27 @@ export default class Compiler {
         return null
     }
 
-    //  TODO: After module name is added to Location then remove sourceModule argument.
-    getResolvedDeclaration(node, sourceModule: ModuleCompiler) {
-        if (ast.Reference.is(node)) {
-            let scope = sourceModule.getResolvedScope(node)
-            let referencedDeclaration = scope[node.name]
-            if (referencedDeclaration == null)
-                throw SemanticError("Type reference not found: " + node.name, node.location)
-            return this.getResolvedDeclaration(referencedDeclaration, sourceModule)
-        }
-        else if (ast.ImportDeclaration.is(node)) {
-            let referencedModule = this.getModule(node.module.name, true)
-            let referencedExport = referencedModule.getResolvedExport()
-            return this.getResolvedDeclaration(referencedExport, referencedModule)
-        }
-        else {
-            return node
-        }
-    }
+    // //  TODO: After module name is added to Location then remove sourceModule argument.
+    // getResolvedDeclaration(node, sourceModule: ModuleCompiler) {
+    //     if (ast.Reference.is(node)) {
+    //         let scope = sourceModule.getResolvedScope(node)
+    //         let referencedDeclaration = scope[node.name]
+    //         if (referencedDeclaration == null)
+    //             throw SemanticError("Type reference not found: " + node.name, node.location)
+    //         return this.getResolvedDeclaration(referencedDeclaration, sourceModule)
+    //     }
+    //     else if (ast.ImportDeclaration.is(node)) {
+    //         let referencedModule = this.getModule(node.module.name, true)
+    //         let referencedExport = referencedModule.getResolvedExport()
+    //         return this.getResolvedDeclaration(referencedExport, referencedModule)
+    //     }
+    //     else {
+    //         return node
+    //     }
+    // }
 
     compile(name: string) {
-        this.getModule(name).ensureCompiled()
+        this.getModule(name).compile()
     }
 
 }

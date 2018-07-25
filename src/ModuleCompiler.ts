@@ -2,142 +2,81 @@ import Compiler from "./Compiler"
 import * as common from "./common"
 const parser = require("./parser")()
 const {ast} = require("./ion")
-import resolveImportsAndExports from "./phases/resolveImportsAndExports"
-import inheritClassVariables from "./phases/inheritClassVariables"
-import createScopeMap from "./phases/createScopeMap"
+// import resolveImportsAndExports from "./phases/resolveImportsAndExports"
+// import inheritModuleClassVariables from "./phases/inheritClassVariables"
+// import createScopeMap from "./phases/createScopeMap"
+import DeclarationCompiler from "./DeclarationCompiler";
 
 export default class ModuleCompiler {
 
     readonly compiler: Compiler
     readonly name: string
     readonly filename: string
-    readonly source: string
-    private exports: Map<string,any> = new Map()
-    private imports: Set<string> = new Set()
+    private _source?: string
+    private _parsed?: any
+    private _exports?: Map<string, string> // name => global.name
+    private _dependencies?: Set<string> // global.name
+    private _declarations?: Map<string, DeclarationCompiler>
+    private _compiled = false
 
-    private parsedModule: any // ast.Module
-    private resolvedModule: any // ast.BlockStatement
-    private resolvedModuleScopeMap: Map<any,object>
-    private inheritedModule: any // ast.BlockStatement
-
-    constructor(compiler: Compiler, name, filename, source) {
+    constructor(compiler: Compiler, name, filename) {
         this.compiler = compiler
         this.name = name
         this.filename = filename
-        this.source = source
     }
 
-    hasExport(name: string) {
-        if (name == null) {
-            // null -> default export
-            return true
+    get source() {
+        if (this._source == null) {
+            this._source = common.read(this.filename)
         }
-        else {
-            let exports = this.getExports()
-            return exports.has(name)
-        }
+        return this._source
     }
 
-    _getExternalReference(fullPath) {
-        // track this as an import module dependency
-        let ref = this.compiler.getExternalReference(fullPath)
-        if (ref != null) {
-            this.imports.add(ref.moduleName)
+    get parsed() {
+        if (this._parsed == null) {
+            this._parsed = parser.parse(this.source, this.filename)
         }
-        return ref
+        return this._parsed
     }
 
-    getExports() {
-        if (this.exports == null) {
-            this.exports = new Map()
-            this.getParsedModule()
-            if (Array.isArray(this.parsedModule.exports)) {
-                for (let name in this.parsedModule.exports) {
-                    let declaration = this.parsedModule.exports[name]
-                    this.exports.set(name, declaration)
+    get exports() {
+        if (this._exports == null) {
+            let parsed = this.parsed
+            let exports: Map<string,string> = new Map()
+            exports.set("", this.name) // this module default export
+            if (Array.isArray(this.parsed.exports)) {
+                for (let name in this.parsed.exports) {
+                    let declaration = this.parsed.exports[name]
+                    exports.set(name, declaration)
                 }
             }
+            this._exports = exports
         }
-        return this.exports
+        return this._exports
     }
 
-    getParsedModule() {
-        if (this.parsedModule == null) {
-            this.parsedModule = parser.parse(this.source, this.filename)
+    get declarations() {
+        if (this._declarations == null) {
+            this._declarations = new Map()
+            // must create global declarations here and register them in the compilers global scope object
+            //  1. Resolve Implicit Imports and convert to Global References
+            //  2. Convert Explicit Imports to Global References
+            //  3. Convert All References to Module Scoped Variables to Global References
+            //  4. Create Default Object Export if Library
+            console.log('resolve declarations : ' + this.name)
         }
-        return this.parsedModule;
+        return this._declarations
     }
 
-    getResolvedModule() {
-        if (this.resolvedModule == null) {
-            this.resolvedModule = resolveImportsAndExports(this)
-        }
-        return this.resolvedModule
+    get compiled() {
+        return this._compiled
     }
 
-    getResolvedModuleScopeMap() {
-        if (this.resolvedModuleScopeMap == null) {
-            this.resolvedModuleScopeMap = createScopeMap(this.resolvedModule)
-        }
-        return this.resolvedModuleScopeMap
-    }
-
-    getResolvedScope(node) {
-        return this.getResolvedModuleScopeMap().get(node)!
-    }
-
-    getResolvedExport() {
-        let resolvedModule = this.getResolvedModule()
-        let exportStatement = resolvedModule.statements[resolvedModule.statements.length - 1]
-        return exportStatement.value
-    }
-
-    getInheritedModule() {
-        if (this.inheritedModule == null) {
-            this.inheritedModule = inheritClassVariables(this)
-        }
-        return this.inheritedModule
-    }
-
-    _reportError(e) {
-        let location = e.location
-        if (location == null)
-            throw e
-        let { filename } = location
-        let source = common.read(filename)
-        let error = parser.getError(e.message, location, source, filename)
-        console.log(error.message)
-    }
-
-    _writeCompileDebugFile() {
-        let logger = this.compiler.createLogger(this.name)
-        logger("Loading", this.source);
-        if (this.parsedModule) {
-            logger("Parsing", this.parsedModule)
-        }
-        if (this.resolvedModule) {
-            logger("Dependency Resolution", this.resolvedModule)
-        }
-        if (this.inheritedModule) {
-            logger("Class Inheritance", this.inheritedModule)
-            logger("Output", this.resolvedModule)            
-        }
-        logger()
-    }
-
-    ensureCompiled() {
-        if (this.resolvedModule == null) {
-            try {
-                this.getInheritedModule()
-            }
-            catch (e) {
-                this._reportError(e)
-            }
-            this._writeCompileDebugFile()
-            // now also ensure that dependencies are compiled, recursively.
-            for (let path of this.imports.values()) {
-                this.compiler.getModule(path, true).ensureCompiled()
-            }
+    compile() {
+        if (!this._compiled) {
+            console.log('compiling: ' + this.name)
+            this.declarations
+            // now compile dependencies recursively.
         }
     }
 

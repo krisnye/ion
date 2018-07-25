@@ -3,8 +3,7 @@ import
     .Declaration
     .Parameter
     .KeyValuePair
-    .Reference
-    .TypeExpression
+    .Expression
     .FunctionExpression
 
 export class ClassDeclaration extends Declaration
@@ -12,6 +11,6 @@ export class ClassDeclaration extends Declaration
     var isStructure: Boolean = false
     var isAbstract: Boolean = false
     var templateParameters: Array<Parameter>
-    var baseClasses: Array<TypeExpression>
+    var baseClasses: Array<Expression>
     var declarations: Array<Declaration>
     var meta: Array<KeyValuePair>

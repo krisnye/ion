@@ -1,9 +1,9 @@
 import
     ion.*
     .Expression
-    .TypeReference
+    .Reference
     .TypeExpression
 
 export class ConstrainedType extends TypeExpression
-    var baseType: TypeReference
+    var baseType: Reference
     var constraint: Expression

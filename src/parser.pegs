@@ -250,7 +250,7 @@ TemplateArguments
     { return [head, ...tail] }
 
 TemplateReference
-    = baseType:TypeReference args:(_ @TemplateArguments)?
+    = baseType:Reference args:(_ @TemplateArguments)?
     { return args ? node("TemplateReference", {baseType,arguments:args}) : baseType }
     // / "[" _ type:Type '*' _ "]"
     // { return node("TemplateReference", {id:node('Id',{name:"Array"}), arguments:[type]}) }
@@ -260,9 +260,6 @@ TemplateReference
     //     let types = [head, ...tail]
     //     return node("TemplateReference", {id:node('Id',{name:"Array"}), arguments:[node("UnionType", {types})], pattern:types})
     // }
-
-TypeReference
-    = id:UpperCaseId { return node('TypeReference', {name:id.name})}
 
 Quantifier
     = "?" { return [0,1] }

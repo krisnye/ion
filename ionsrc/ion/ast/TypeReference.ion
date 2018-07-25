@@ -1,6 +1,0 @@
-import
-    ion.*
-    .Reference
-    .TypeExpression
-
-export class TypeReference extends Reference, TypeExpression
