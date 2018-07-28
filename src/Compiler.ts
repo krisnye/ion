@@ -28,32 +28,29 @@ export default class Compiler {
         return HtmlLogger.create(logfilename)
     }
 
-    // getExternalReference(path) {
-    //     if (this.isValidExternalReference(path, null)) {
-    //         return {moduleName: path }
-    //     }
-    //     let index = path.lastIndexOf('.')
-    //     if (index < 0) {
-    //         return null
-    //     }
-    //     let moduleName = path.substring(0, index)
-    //     let exportName = path.substring(index + 1)
-    //     if (this.isValidExternalReference(moduleName, exportName)) {
-    //         return { moduleName, exportName }
-    //     }
-    //     return null
-    // }
+    getExternalReferencePath(path): string | null {
+        if (this.isValidExternalReference(path)) {
+            return path
+        }
+        let index = path.lastIndexOf('.')
+        if (index < 0) {
+            return null
+        }
+        let moduleName = path.substring(0, index)
+        let exportName = path.substring(index + 1)
+        if (this.isValidExternalReference(moduleName, exportName)) {
+            return moduleName + "." + exportName
+        }
+        return null
+    }
 
-    // isValidExternalReference(moduleName, exportName) {
-    //     let module = this.getModule(moduleName)
-    //     if (module == null) {
-    //         return false
-    //     }
-    //     if (exportName == null) {
-    //         return true
-    //     }
-    //     return module.hasExport(exportName)
-    // }
+    isValidExternalReference(moduleName, exportName = "") {
+        let module = this.getModule(moduleName)
+        if (module == null) {
+            return false
+        }
+        return module.exports.has(exportName)
+    }
 
     getModule(name: string): ModuleCompiler
     getModule(name: string, required: true): ModuleCompiler

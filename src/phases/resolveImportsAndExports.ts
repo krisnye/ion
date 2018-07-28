@@ -79,7 +79,10 @@ function joinPath(path, add) {
     return path.length > 0 ? path + "." + add : add
 }
 
+//  TODO: Convert references to global references
+
 function getUnresolvedReferences(module) {
+    // let referencesToRoot
     let unresolved = new Map<String, any>()
     traverseWithScopedVariables(module, {
         enter(node, ancestors, path, scope) {
@@ -101,7 +104,7 @@ function getParentPath(path) {
     return index < 0 ? path : path.slice(0, index)
 }
 
-function resolveName(moduleCompiler: ModuleCompiler, modulePath, name, steps, path = "") {
+function resolveName(moduleCompiler: ModuleCompiler, modulePath, name, steps, path = "") : string | null {
     for (let step of steps) {
         // root path relative
         let stepPath = path
@@ -111,9 +114,9 @@ function resolveName(moduleCompiler: ModuleCompiler, modulePath, name, steps, pa
         let wildcard = step.as == null && step.id == null
         if (wildcard) {
             let fullPath = joinPath(stepPath, name)
-            let ref = moduleCompiler._getExternalReference(fullPath)
-            if (ref != null)
-                return [fullPath, ref]
+            let externalPath = moduleCompiler.compiler.getExternalReferencePath(fullPath)
+            if (externalPath != null)
+                return externalPath
         }
         else if (step.id && step.children.length > 0) {
             let result = resolveName(moduleCompiler, modulePath, name, step.children, joinPath(path, step.id.name))
@@ -124,97 +127,94 @@ function resolveName(moduleCompiler: ModuleCompiler, modulePath, name, steps, pa
     return null
 }
 
-function convertImportStepToDeclarationAndMemberStatement(ref, id, importDeclarations, memberStatements) {
-    id = new ast.Id(id) //  convert to Id since the id might be a Reference or TypeReference
-    if (ref.exportName != null) {
-        let moduleVarName = `_${ref.moduleName.replace(/\./g, '_')}_`
-        importDeclarations.push(
-            new ast.ImportDeclaration({
-                id: new ast.Id({ name: moduleVarName }),
-                module: new ast.Id({ name: ref.moduleName })
-            })
-        )
-        memberStatements.push(
-            new ast.VariableDeclaration({
-                id: id,
-                value: new ast.MemberExpression({
-                    object: new ast.Reference({ name: moduleVarName }),
-                    property: new ast.Id({ name: ref.exportName })
-                })
-            })
-        )
-    }
-    else {
-        importDeclarations.push(new ast.ImportDeclaration({ id:id, module: new ast.Id({ name:ref.moduleName }) }))
-    }
-}
-
-function convertImportStepsToDeclarations(moduleCompiler: ModuleCompiler, modulePath, steps, path = getParentPath(modulePath), importDeclarations: any[] = [], memberStatements: any[] = []) {
+function convertImportStepsToDeclarations(moduleCompiler: ModuleCompiler, modulePath, steps, path = getParentPath(modulePath), declarations: any[] = []) {
     for (let step of steps) {
         if (step.id == null) {
             continue
         }
         let stepPath = step.relative ? joinPath(path, step.id.name) : step.id.name
         if (step.as != null) {
-            let ref = moduleCompiler._getExternalReference(stepPath)
-            if (ref == null)
+            let externalPath = moduleCompiler.compiler.getExternalReferencePath(stepPath)
+            if (externalPath == null) {
                 throw SemanticError(`Import path not found: ${stepPath}`, step.location)
-            convertImportStepToDeclarationAndMemberStatement(ref, step.as, importDeclarations, memberStatements)
+            }
+            declarations.push(
+                new ast.VariableDeclaration({ id: step.as, value: new ast.Reference({ name: externalPath }) })
+            )
         }
         if (step.children.length > 0) {
-            convertImportStepsToDeclarations(moduleCompiler, modulePath, step.children, stepPath, importDeclarations)
+            convertImportStepsToDeclarations(moduleCompiler, modulePath, step.children, stepPath, declarations)
         }
     }
-    return [importDeclarations, memberStatements]
+    return declarations
 }
 
-function resolveImportsAndExports(moduleCompiler: ModuleCompiler) {
+function resolveImportsAndExports(moduleCompiler: ModuleCompiler): any[] {
+
     let moduleName = moduleCompiler.name
-    let module = moduleCompiler.getParsedModule()
-    let unresolved = getUnresolvedReferences(module)
-    let implicitImports = module.imports.concat([
+    let module = moduleCompiler.parsedModule
+    // add implicit imports
+    let implicitAndExplicitImports = module.imports.concat([
         new ast.ImportStep({ relative: true, id: null, children:[] }), // .*
         new ast.ImportStep({ relative: false, id: new ast.Id({ name: "ion" }), children: [new ast.ImportStep({ relative: true, id: null, children:[] })] }), // ion.*
     ])
-    let resolved: { [name: string]: any /* : ast.ExternalReference */ } = {}
+    //  find unresolved references
+    let unresolved = getUnresolvedReferences(module)
+    //  try to resolve references by using wildcard imports
+    let resolved: Map<any,string> = new Map()
     for (let id of unresolved.values()) {
-        let result = resolveName(moduleCompiler, moduleName, id.name, implicitImports)
-        if (result) {
+        let path = resolveName(moduleCompiler, moduleName, id.name, implicitAndExplicitImports)
+        if (path) {
+            //  remove resolved paths
             unresolved.delete(id.name)
-            if (ast.Expression.is(result)) {
-                console.log('found expression result', result)
-            }
-            else {
-                let [path, ref] = result
-                resolved[path] = [path, ref, id]
-            }
+            //  and add them to our resolved map
+            resolved.set(id, path)
         }
-        // else {
-        //     console.info(`Undeclared Identifier: ${id.name}`, id.location)
-        // }
+        //  some things can't be resolved here, such as inherited variables
     }
-    let [imports, memberStatements] = convertImportStepsToDeclarations(moduleCompiler, moduleName, module.imports, )
-    for (let name in resolved) {
-        let [path, ref, id] = resolved[name]
-        convertImportStepToDeclarationAndMemberStatement(ref, id, imports, memberStatements)
-    }
-    let declarations = memberStatements.concat(module.declarations)    
-    //  now resolve exports
-    let exports: any = null
+    // convert all explicit imports into variables referencing the external canonical name
+    let explicitImportDeclarations = convertImportStepsToDeclarations(moduleCompiler, moduleName, module.imports)
+    // convert all resolved imports into variables referencing the external canonical name
+    let resolvedImportDeclarations: any[] = []
+    resolved.forEach(function (externalPath, id){
+        resolvedImportDeclarations.push(
+            new ast.VariableDeclaration({ id, value: new ast.Reference({ name: externalPath }) })
+        )
+    })
+
+    //  now create a default object export...
+    let defaultLibraryExports: any[] = []
     if (Array.isArray(module.exports)) {
         let namedExports = module.exports
         let elements = namedExports.map(declaration => new ast.KeyValuePair({ key: new ast.Id(declaration.id), value: new ast.Id(declaration.id) }))
-        exports = new ast.ExportStatement({ value: new ast.ObjectLiteral({ type: "Object", elements }) })
-        declarations.push(...namedExports)
-    }
-    else {
-        let defaultExport = module.exports
-        declarations.push(defaultExport)
-        exports = new ast.ExportStatement({ value: new ast.Reference(defaultExport.id) })
+        defaultLibraryExports.push(new ast.VariableDeclaration({
+            id: new ast.Id({ name: moduleName }),
+            value: new ast.ObjectLiteral({ type: "Object", elements })
+        }))
     }
 
-    let statements = imports.concat(declarations, exports)
-    return new ast.BlockStatement({ statements })
+    //  normal module declarations need to be re-mapped
+    //  any references to module-scoped
+
+    return [...explicitImportDeclarations, ...resolvedImportDeclarations, ...defaultLibraryExports]
+
+    // let declarations = memberStatements.concat(module.declarations)    
+    // //  now resolve exports
+    // let exports: any = null
+    // if (Array.isArray(module.exports)) {
+    //     let namedExports = module.exports
+    //     let elements = namedExports.map(declaration => new ast.KeyValuePair({ key: new ast.Id(declaration.id), value: new ast.Id(declaration.id) }))
+    //     exports = new ast.ExportStatement({ value: new ast.ObjectLiteral({ type: "Object", elements }) })
+    //     declarations.push(...namedExports)
+    // }
+    // else {
+    //     let defaultExport = module.exports
+    //     declarations.push(defaultExport)
+    //     exports = new ast.ExportStatement({ value: new ast.Reference(defaultExport.id) })
+    // }
+
+    // let statements = imports.concat(declarations, exports)
+    // return new ast.BlockStatement({ statements })
 }
 
 export default resolveImportsAndExports

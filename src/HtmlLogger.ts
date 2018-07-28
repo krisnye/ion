@@ -8,25 +8,28 @@ let nextId = 0
 const ignoreProperties: {[name:string]:boolean} = {
     location: true
 }
+
 function cloneWithJsonReferences(object: any, map: Map<object,string[]> = new Map(), path: string[] = []) {
     let type = typeof object
     if (object == null || type == 'string' || type == 'number' || type == 'boolean')
         return object
     // check the map
-    let previousPath = map.get(object)
+    // let previousPath = map.get(object)
     // if (previousPath != null) {
     //     return {"$ref":previousPath.join('.')}
     // }
-    map.set(object, path.slice(0))
+    // map.set(object, path.slice(0))
     let className = object.constructor.path || object.constructor.name
+    
     if (object.toJSON)
         object = object.toJSON()
     let clone: any = Array.isArray(object) ? [] : {"": className}
     for (let property in object) {
-        if (ignoreProperties[property])
+        if (ignoreProperties[property]) {
             continue
+        }
 
-            path.push(property)
+        path.push(property)
         clone[property] = cloneWithJsonReferences(object[property], map, path)
         path.pop()
     }
@@ -103,7 +106,7 @@ export function create(outputPath: string) {
         names = [names]
     // convert to show refs
     let delta = previous != null ? jsondiffpatch.diff(previous, ast) : null
-    let html = null;
+    let html;
     if (typeof ast === "string")
         html = ast
     else

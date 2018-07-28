@@ -12,7 +12,7 @@ export const skip = Symbol('skip')
 export type enter = (node: any, ancestors: object[], path: any[])
     => Symbol   //  Symbol('skip) to stop traversing any children.
     | void      //  do nothing
-export type leave = (node: any, ancestors: object[], path: any[], changes?: object)
+export type leave = (node: any, ancestors: object[], path: any[], changes: Patch)
     => Patch    //  Patch to apply to the current node
     | any[]     //  array to splice into the current parent array replacing current element
     | object    //  object to replace this node with

@@ -1118,6 +1118,16 @@ const ion_ast_WhileStatement = Object.freeze(Object.assign(class WhileStatement 
     path: 'ion.ast.WhileStatement'
 }));
 const ion_Map = ((function(){
+    //  add Map.prototype.toJSON
+    Object.defineProperty(
+        Map.prototype,
+        "toJSON",
+        {
+            value: function() {
+                return { elements: Array.from(this.entries()) }
+            }
+        }
+    )
     function createImmutableMap(map) {
         return Object.freeze(Object.assign(map, {
             clear() {},
@@ -1155,9 +1165,6 @@ const ion_Map = ((function(){
                     if (!ValueType.is(v))
                         return false
                 }
-            }
-            value.toJSON = function() {
-                return { elements: Array.from(this.entries()) }
             }
             return true
         }
