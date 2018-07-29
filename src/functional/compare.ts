@@ -1,20 +1,14 @@
 import equals from "./equals"
-import getHashcode from "./getHashcode";
+import getHashCode from "./getHashcode";
 
 export default function compare(a, b): number {
     if (equals(a, b)) {
         return 0
     }
-    if (a === undefined) {
+    if (a == null) {
         return 1
     }
-    if (b === undefined) {
-        return -1
-    }
-    if (a === null) {
-        return 1
-    }
-    if (b === null) {
+    if (b == null) {
         return -1
     }
 

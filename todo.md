@@ -12,8 +12,9 @@ x   Create Scope map function.
 --------------------------
     Convert to Functional Design
     X   Hashcode Function
+    X   Hashkey Function
     X   Equals Function
     X   Compare Function
     X   Sort Function
-        Intern Function
+    X   Intern Function
         Memoize Function

@@ -1,5 +1,5 @@
 import Splice from "../Splice";
-import getHashcode, {hashSymbol} from "./getHashcode";
+import getHashCode, {hashSymbol} from "./getHashcode";
 import equals from "./equals"
 
 function setHash(object, hash) {
@@ -38,5 +38,3 @@ describe('equals', function () {
         assert(!equalsIfHashCollision(new Map([[1, 2], [3, 4]]), new Map([[3, 4], [1, 3]])))
     });
 });
-
-console.log(getHashcode(new Set([0, 1, 2, 3])), getHashcode(new Set([3, 2, 1, 0])))

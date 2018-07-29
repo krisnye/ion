@@ -1,4 +1,4 @@
-import getHashcode from "./getHashcode"
+import getHashCode from "./getHashcode"
 
 export default function equals(a, b): boolean {
     if (a === b) {
@@ -18,7 +18,7 @@ export default function equals(a, b): boolean {
     if (a.constructor !== b.constructor) {
         return false
     }
-    if (getHashcode(a) !== getHashcode(b)) {
+    if (getHashCode(a) !== getHashCode(b)) {
         return false
     }
     if (Array.isArray(a)) {

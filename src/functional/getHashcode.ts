@@ -50,7 +50,15 @@ function truncate(value: number) {
     return upper ^ lower
 }
 
-export default function getHashcode(value): number {
+//  gets a key suitable for caching values related to the value
+//  for primitives we use itself, for objects we use getHashCode
+export function getHashKey(value): null | undefined | number | string | boolean | Function {
+    return (value == null || typeof value !== "object") ? value : getHashCode(value)
+}
+
+//  gets a deterministic but not guaranteed to be unique integer number
+//  that can be used as a cache key or combined to make a compound code
+export default function getHashCode(value): number {
     if (value === null) {
         return 100000000002
     }
@@ -90,20 +98,20 @@ export default function getHashcode(value): number {
                 if (Array.isArray(value)) {
                     hash = truncate(hash * factor + value.length)
                     for (let i = 0; i < value.length; i++) {
-                        hash = truncate(hash * factor + getHashcode(value[i]))
+                        hash = truncate(hash * factor + getHashCode(value[i]))
                     }
                 }
                 else if (value instanceof Set) {
                     //  order of values in a Set/Map/Object currently matters, it shouldn't
                     //  either we should sort here or sort during construction
                     for (let element of sort(value)) {
-                        hash = truncate(hash * factor + getHashcode(element))
+                        hash = truncate(hash * factor + getHashCode(element))
                     }
                 }
                 else if (value instanceof Map) {
                     for (let key of sort(value.keys())) {
-                        hash = truncate(hash * factor + getHashcode(key))
-                        hash = truncate(hash * factor + getHashcode(value.get(key)))
+                        hash = truncate(hash * factor + getHashCode(key))
+                        hash = truncate(hash * factor + getHashCode(value.get(key)))
                     }
                 }
                 else if (ctor === Object) {
@@ -111,8 +119,8 @@ export default function getHashcode(value): number {
                     let count = 0
                     for (let name of sort(Object.keys(value))) {
                         count++
-                        hash = truncate(hash * factor + getHashcode(name))
-                        hash = truncate(hash * factor + getHashcode(value[name]))
+                        hash = truncate(hash * factor + getHashCode(name))
+                        hash = truncate(hash * factor + getHashCode(value[name]))
                     }
                     hash = truncate(hash * factor + count)
                 }
@@ -120,7 +128,7 @@ export default function getHashcode(value): number {
                     //  custom object means Ion Model where we know all fields are initialized and in same order
                     //  so we skip counting or hashing names
                     for (let name in value) {
-                        hash = truncate(hash * factor + getHashcode(value[name]))
+                        hash = truncate(hash * factor + getHashCode(value[name]))
                     }
                 }
             }

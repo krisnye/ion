@@ -1,5 +1,5 @@
 import Splice from "../Splice";
-import getHashcode from "./getHashcode";
+import getHashCode from "./getHashcode";
 
 var assert = require('assert');
 describe('getHashcode', function () {
@@ -21,8 +21,8 @@ describe('getHashcode', function () {
         ]
         let map = new Map()
         for (let value of objects) {
-            let hash = getHashcode(value)
-            let hash2 = getHashcode(value)
+            let hash = getHashCode(value)
+            let hash2 = getHashCode(value)
             if (hash !== hash2) {
                 throw new Error(`Inconsistent hashes ${hash}, ${hash2} from value ${JSON.stringify(value)}`)
             }
