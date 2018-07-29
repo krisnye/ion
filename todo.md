@@ -17,4 +17,4 @@ x   Create Scope map function.
     X   Compare Function
     X   Sort Function
     X   Intern Function
-        Memoize Function
+    X   Memoize Function
