@@ -32,8 +32,8 @@ npm manifest:
           "watch": "yarn watchBuild & yarn watchTest & yarn watchAst & yarn watchUnitTest",
           "watchUnit": "yarn watchBuild & yarn watchAst & yarn watchUnitTest",
           "debug": "yarn watchBuild & yarn watchDebug",
-          "unitTest": "mocha lib/**/*.test.js",
-          "debugUnitTest": "mocha --inspect-brk lib/**/*.test.js"
+          "unitTest": "mocha lib/**/*.test.js lib/**.test.js",
+          "debugUnitTest": "mocha --inspect-brk lib/**/*.test.js lib/**.test.js"
       },
       "author": {
           "name": "Kris Nye",
@@ -333,7 +333,7 @@ Trace:
   Error: Command failed.
   Exit code: 1
   Command: sh
-  Arguments: -c mocha lib/**/*.test.js
+  Arguments: -c mocha lib/**/*.test.js lib/**.test.js
   Directory: /Users/krisnye/Projects/language/ion
   Output:
   

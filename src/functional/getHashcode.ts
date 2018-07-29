@@ -1,9 +1,15 @@
 
-let nextInitial = 133
+import sort from "./sort"
+
+//  some inspiration borrowed from: https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/builder/HashCodeBuilder.java
+//  apparently much of that came from a book on java which contained a section on writing good hashcodes
+
+let nextInitial = 1337653339
 let nextFactor = 31
 let initialSymbol = Symbol("hashcodeInitial")
 let factorSymbol = Symbol("hashcodeFactor")
-let hashSymbol = Symbol("hashcode")
+//  export hashSymbol for testing purposes
+export let hashSymbol = Symbol("hashcode")
 function getNextInitial() {
     let value = nextInitial
     nextInitial += 2
@@ -90,24 +96,32 @@ export default function getHashcode(value): number {
                 else if (value instanceof Set) {
                     //  order of values in a Set/Map/Object currently matters, it shouldn't
                     //  either we should sort here or sort during construction
-                    for (let element of value) {
+                    for (let element of sort(value)) {
                         hash = truncate(hash * factor + getHashcode(element))
                     }
                 }
                 else if (value instanceof Map) {
-                    for (let key of value) {
+                    for (let key of sort(value.keys())) {
                         hash = truncate(hash * factor + getHashcode(key))
                         hash = truncate(hash * factor + getHashcode(value.get(key)))
                     }
                 }
-                else {
+                else if (ctor === Object) {
+                    //  raw Object means we must sort the keys and check them and the values
                     let count = 0
-                    for (let name in value) {
+                    for (let name of sort(Object.keys(value))) {
                         count++
                         hash = truncate(hash * factor + getHashcode(name))
                         hash = truncate(hash * factor + getHashcode(value[name]))
                     }
                     hash = truncate(hash * factor + count)
+                }
+                else {
+                    //  custom object means Ion Model where we know all fields are initialized and in same order
+                    //  so we skip counting or hashing names
+                    for (let name in value) {
+                        hash = truncate(hash * factor + getHashcode(value[name]))
+                    }
                 }
             }
             if (Object.isFrozen(value)) {

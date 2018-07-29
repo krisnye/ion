@@ -16,8 +16,8 @@
         "watch": "yarn watchBuild & yarn watchTest & yarn watchAst & yarn watchUnitTest",
         "watchUnit": "yarn watchBuild & yarn watchAst & yarn watchUnitTest",
         "debug": "yarn watchBuild & yarn watchDebug",
-        "unitTest": "mocha lib/**/*.test.js",
-        "debugUnitTest": "mocha --inspect-brk lib/**/*.test.js"
+        "unitTest": "mocha lib/**/*.test.js lib/**.test.js",
+        "debugUnitTest": "mocha --inspect-brk lib/**/*.test.js lib/**.test.js"
     },
     "author": {
         "name": "Kris Nye",

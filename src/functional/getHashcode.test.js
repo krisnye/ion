@@ -1,6 +1,5 @@
-import Splice from "./Splice";
+import Splice from "../Splice";
 import getHashcode from "./getHashcode";
-const { ast } = require("./ion")
 
 var assert = require('assert');
 describe('getHashcode', function () {
@@ -16,6 +15,9 @@ describe('getHashcode', function () {
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21],
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22],
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 23],
+            new Set([0, 1, 2, 3]), new Set([0, 1, 2]), new Set([0, 1]), new Set([0]), new Set(), new Set([3]), new Set([4]),
+            new Map(), new Map([[0, 0]]), new Map([[0, 1]]), new Map([[1, 0]]), new Map([[1, 1]]),
+            new Map([[0, 0], [1, 1], [2, 2]]), new Map([[0, 0], [1, 1], [3, 3]])
         ]
         let map = new Map()
         for (let value of objects) {
@@ -29,7 +31,7 @@ describe('getHashcode', function () {
                 throw new Error(`Hash collision ${hash} between ${JSON.stringify(previousValue)} and ${JSON.stringify(value)}`)
             }
             map.set(hash, value)
-            // console.log(hash, JSON.stringify(value))
+            // console.log(hash, value)
         }
     });
 });
