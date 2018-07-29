@@ -2,7 +2,7 @@ Arguments:
   /usr/local/Cellar/node/10.0.0/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js unitTest
 
 PATH: 
-  /Library/Frameworks/Python.framework/Versions/3.6/bin:/Library/Frameworks/Python.framework/Versions/2.7/bin:/Users/krisnye/Downloads/google-cloud-sdk/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Frameworks/Mono.framework/Versions/Current/Commands
+  /Users/krisnye/Projects/language/ion/node_modules/.bin:/Users/krisnye/.config/yarn/link/node_modules/.bin:/Users/krisnye/Projects/language/ion/node_modules/.bin:/Users/krisnye/.config/yarn/link/node_modules/.bin:/usr/local/Cellar/node/10.0.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/usr/local/Cellar/node/10.0.0/lib/node_modules/npm/bin/node-gyp-bin:/usr/local/Cellar/node/10.0.0/bin/node_modules/npm/bin/node-gyp-bin:/Users/krisnye/Projects/language/ion/node_modules/.bin:/Users/krisnye/.config/yarn/link/node_modules/.bin:/Users/krisnye/Projects/language/ion/node_modules/.bin:/Users/krisnye/.config/yarn/link/node_modules/.bin:/usr/local/Cellar/node/10.0.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/usr/local/Cellar/node/10.0.0/lib/node_modules/npm/bin/node-gyp-bin:/usr/local/Cellar/node/10.0.0/bin/node_modules/npm/bin/node-gyp-bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/Library/Frameworks/Python.framework/Versions/2.7/bin:/Users/krisnye/Downloads/google-cloud-sdk/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Frameworks/Mono.framework/Versions/Current/Commands
 
 Yarn version: 
   1.5.1
@@ -30,6 +30,7 @@ npm manifest:
           "watchUnitTest": "nodemon -w lib -e js -x yarn unitTest",
           "watchDebug": "nodemon --ignore test/lib --ignore ionsrc -w lib -w test -e js,ion --inspect-brk lib/command.js test/lib test/src -c sample.Point2",
           "watch": "yarn watchBuild & yarn watchTest & yarn watchAst & yarn watchUnitTest",
+          "watchUnit": "yarn watchBuild & yarn watchAst & yarn watchUnitTest",
           "debug": "yarn watchBuild & yarn watchDebug",
           "unitTest": "mocha lib/**/*.test.js",
           "debugUnitTest": "mocha --inspect-brk lib/**/*.test.js"

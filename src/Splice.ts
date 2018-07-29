@@ -8,7 +8,7 @@ class Splice {
 
     constructor(index: number, insert: any[], remove: number = 0) {
         this.index = index
-        this.insert = insert
+        this.insert = <any[]>Object.freeze(insert)
         this.remove = remove
         Object.freeze(this)
     }

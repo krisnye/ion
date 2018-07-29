@@ -8,3 +8,10 @@ x   Create Scope map function.
     Then probably going to add actual real functions and calls.
     Then code generation to Javascript (with proper abstraction so it can target anything)
     Then we should have a working (but pure and without external function interface yet) language.
+
+--------------------------
+    Convert to Functional Design
+        Hashcode Function
+        Intern Function
+        Equals Functiom
+        Memoize Function
