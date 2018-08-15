@@ -1,5 +1,6 @@
 import * as fs from "fs"
 import * as np from "path"
+import File from "./File"
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Miscelaneous Functions
@@ -18,7 +19,7 @@ export function freeze(object: any, deep: boolean = true) {
 
 export function SemanticError(message: string, location: any) {
     let error: any = new Error(message)
-    error.location = location
+    error.location = location.location || location
     return error
 }
 
@@ -57,18 +58,15 @@ export function difference(a: Set<any>, b: Set<any>) {
 //  File operations
 ////////////////////////////////////////////////////////////////////////////////
 
-export type Input = { filename: string, path: string }
-
 export function read(file: any) {
     return fs.readFileSync(file, 'utf8')
 }
 
-function getPathFromFilename(filename: string, input: string) {
-    filename = filename.substring(input.length + 1)
+export function getPathFromFilename(filename: string) {
     return filename.substring(0, filename.length - '.ion'.length).replace(/[\/\\]/g, '.')
 }
 
-export function getFilesRecursive(directory: string | string[], rootDirectory : string | null = null, allFiles: Input[] = []): Input[] {
+export function getFilesRecursive(directory: string | string[], rootDirectory : string | null = null, allFiles: Map<string,File> = new Map()): Map<string,File> {
     if (Array.isArray(directory)) {
         for (let dir of directory) {
             getFilesRecursive(dir, dir, allFiles)
@@ -79,9 +77,10 @@ export function getFilesRecursive(directory: string | string[], rootDirectory : 
             rootDirectory = directory
         for (let name of fs.readdirSync(directory)) {
             let filename = np.join(directory, name)
-            if (fs.statSync(filename).isFile()) {
-                let path = getPathFromFilename(filename, rootDirectory)
-                allFiles.push({ filename, path})
+            let fileInfo = fs.statSync(filename)
+            if (fileInfo.isFile()) {
+                let path = getPathFromFilename(filename.substring(rootDirectory.length + 1))
+                allFiles.set(path, new File(filename, false, fileInfo.birthtime.getTime(), fileInfo.ctime.getTime()))
             }
             else {
                 getFilesRecursive(filename, rootDirectory, allFiles)

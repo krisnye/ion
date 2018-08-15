@@ -9,16 +9,14 @@ const ignoreProperties: {[name:string]:boolean} = {
     location: true
 }
 
-function cloneWithJsonReferences(object: any, map: Map<object,string[]> = new Map(), path: string[] = []) {
+export function stringify(object, indent = 2) {
+    return JSON.stringify(cloneWithJsonReferences(object), null, indent);
+}
+
+function cloneWithJsonReferences(object: any, path: string[] = []) {
     let type = typeof object
     if (object == null || type == 'string' || type == 'number' || type == 'boolean')
         return object
-    // check the map
-    // let previousPath = map.get(object)
-    // if (previousPath != null) {
-    //     return {"$ref":previousPath.join('.')}
-    // }
-    // map.set(object, path.slice(0))
     let className = object.constructor.path || object.constructor.name
     
     if (object.toJSON)
@@ -30,7 +28,7 @@ function cloneWithJsonReferences(object: any, map: Map<object,string[]> = new Ma
         }
 
         path.push(property)
-        clone[property] = cloneWithJsonReferences(object[property], map, path)
+        clone[property] = cloneWithJsonReferences(object[property], path)
         path.pop()
     }
     return clone

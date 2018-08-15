@@ -1,6 +1,7 @@
 import { traverse, remove, skip, enter, leave, Visitor } from "../Traversal"
 import { SemanticError } from "../common"
 import ModuleCompiler from "../ModuleCompiler";
+import { memoize } from "../functional"
 const { ast } = require("../ion")
 
 export type varEnter = (node, ancestors: object[], path: string[], variables: Map<String, object>) => void
@@ -79,11 +80,15 @@ function joinPath(path, add) {
     return path.length > 0 ? path + "." + add : add
 }
 
-//  TODO: Convert references to global references
+function getParentPath(path) {
+    let index = path.lastIndexOf('.')
+    return index < 0 ? path : path.slice(0, index)
+}
 
-function getUnresolvedReferences(module) {
+//  TODO: Convert references to global references
+export const getUnresolvedReferences = memoize(function(module) {
     // let referencesToRoot
-    let unresolved = new Map<String, any>()
+    let unresolved = new Map<string, any>()
     traverseWithScopedVariables(module, {
         enter(node, ancestors, path, scope) {
             if (ast.Reference.is(node)) {
@@ -97,12 +102,7 @@ function getUnresolvedReferences(module) {
         }
     })
     return unresolved
-}
-
-function getParentPath(path) {
-    let index = path.lastIndexOf('.')
-    return index < 0 ? path : path.slice(0, index)
-}
+})
 
 function resolveName(moduleCompiler: ModuleCompiler, modulePath, name, steps, path = "") : string | null {
     for (let step of steps) {

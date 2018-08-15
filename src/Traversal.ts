@@ -1,5 +1,5 @@
 
-function flatten(array: any[]) {
+export function flatten(array: any[]) {
     return array.reduce(
         (a:any,b:any) => {
             if (Array.isArray(b))

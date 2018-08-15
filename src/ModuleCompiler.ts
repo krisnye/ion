@@ -23,8 +23,8 @@ export default class ModuleCompiler {
     readonly filename: string
     private _source?: string
     private _parsed?: any
-    private _exports?: Map<string, string> // name => global.name
-    private _dependencies?: Set<string> // global.name
+    private _exports?: Map<string, string>  // name => global.name
+    private _dependencies?: Set<string>     // global.name
     private _declarations?: Map<string, DeclarationCompiler>
     private _compiled = false
 

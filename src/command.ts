@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import * as np from "path"
-import Compiler from "./Compiler"
+import compileModules from "./compile"
 
 
 function parseArgs() {
@@ -50,12 +50,9 @@ function main() {
     let ionSrc = np.join(__dirname, '../ionsrc')
     let output = np.join(process.cwd(), args.output)
     let roots = args.roots.map((dir) => np.join(process.cwd(), dir)).concat([ionSrc])
-    let compiler = new Compiler({roots, output})
-
     let time = process.hrtime()
 
-    for (let module of args.modules)
-        compiler.compile(module)
+    compileModules({ roots, output, modules: args.modules })
 
     let diff = process.hrtime(time)
     let seconds = diff[0] + diff[1] / 1e9

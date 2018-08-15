@@ -12,20 +12,13 @@
         })
     }
 
-    let notFound = {}
     function node(type, ...values) {
         let result = Object.assign({location:getLocation()}, ...values.reverse())
-        try {
-            if (ast[type] != null) {
-                result = new ast[type](result)
-            }
-            else {
-                if (notFound[type] == null) {
-                    console.log('type not found: ' + type)
-                }
-            }
-        } catch (e) {
-            console.log(type + ": " + e.message.slice(0, 20))
+        if (ast[type] != null) {
+            result = new ast[type](result)
+        }
+        else {
+            throw new Error('type not found: ' + type)
         }
         return result
     }
@@ -111,7 +104,7 @@ VariableDeclarationType
 
 VariableDeclaration
     = TypeToken _ id:UpperCaseId _ "=" _ value:Type EOL
-    { return node('VariableDeclaration', {assignable:false, id, value}) }
+    { return node("TypeDeclaration", {assignable:false, id, value}) }
     / meta:MetaProperties declarationType: VariableDeclarationType
         _ id:Pattern _ type:(":" _ @Type)? _ value:('=' _ @OutlineExpression / EOL {return null})?
     { return node("VariableDeclaration", declarationType, {id, type, value, meta }) }

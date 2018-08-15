@@ -2,9 +2,9 @@ import
     ion.*
     .Declaration
     .ImportStep
-    .Node
+    .Scope
 
-export class Module extends Node
+export class Module extends Scope
     var imports: Array<ImportStep>
     var declarations: Array<Declaration>
     var exports: Declaration | Array<Declaration>

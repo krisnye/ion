@@ -1,5 +1,5 @@
 import equals from "./equals"
-import {getHashKey} from "./getHashCode";
+import {getHashKey} from "./getHashcode";
 
 //  does not guarantee that keys will return same value in future
 export default function CacheMap() {

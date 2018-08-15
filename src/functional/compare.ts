@@ -11,6 +11,9 @@ export default function compare(a, b): number {
     if (b == null) {
         return -1
     }
+    if (typeof a.compare === "function" && a.constructor === b.constructor) {
+        return a.compare(b)
+    }
 
     let typeA = typeof a
     let typeB = typeof b

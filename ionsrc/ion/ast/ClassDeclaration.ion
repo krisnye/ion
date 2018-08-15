@@ -6,7 +6,7 @@ import
     .Expression
     .FunctionExpression
 
-export class ClassDeclaration extends Declaration
+export class ClassDeclaration extends Declaration, Expression
     var factory: FunctionExpression | Null = null
     var isStructure: Boolean = false
     var isAbstract: Boolean = false

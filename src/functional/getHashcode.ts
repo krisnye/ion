@@ -20,17 +20,19 @@ function getNextFactor() {
     nextFactor += 2
     return value
 }
+const factorLookup = new WeakMap<any,number>()
 function getFactor(fn: Function) {
-    let factor = fn[factorSymbol]
+    let factor = factorLookup.get(fn)
     if (factor == null) {
-        factor = fn[factorSymbol] = getNextFactor()
+        factorLookup.set(fn, factor = getNextFactor())
     }
     return factor
 }
+const initialLookup = new WeakMap<any,number>()
 function getInitial(fn: Function) {
-    let initial = fn[initialSymbol]
+    let initial = initialLookup.get(fn)
     if (initial == null) {
-        initial = fn[initialSymbol] = getNextInitial()
+        initialLookup.set(fn, initial = getNextInitial())
     }
     return initial
 }
@@ -56,6 +58,14 @@ export function getHashKey(value): null | undefined | number | string | boolean 
     return (value == null || typeof value !== "object") ? value : getHashCode(value)
 }
 
+export function getCompositeHashCode(initial, factor, ...values) {
+    let hash = initial
+    for (let value of values) {
+        hash =  truncate(hash * factor + getHashCode(value))
+    }
+    return hash
+}
+
 //  gets a deterministic but not guaranteed to be unique integer number
 //  that can be used as a cache key or combined to make a compound code
 export default function getHashCode(value): number {
@@ -65,17 +75,17 @@ export default function getHashCode(value): number {
     if (value === undefined) {
         return 100000000003
     }
+    if (typeof value.getHashCode === "function") {
+        return value.getHashCode()
+    }
     let type = typeof value
     if (type === "number") {
-        return truncate(79345 + value * 203548799)
+        return value
     }
     else if (type === "boolean") {
         return value ? 111111111111 : 100000000001
     }
-    let hash = value[hashSymbol]
-    if (hash == null) {
-        hash = hashLookup.get(value)
-    }
+    let hash = hashLookup.get(value) || null
     if (hash == null) {
         if (type === "string") {
             hash = stringInitial
@@ -117,10 +127,13 @@ export default function getHashCode(value): number {
                 else if (ctor === Object) {
                     //  raw Object means we must sort the keys and check them and the values
                     let count = 0
-                    for (let name of sort(Object.keys(value))) {
+                    for (let propertyName of sort(Object.keys(value))) {
                         count++
-                        hash = truncate(hash * factor + getHashCode(name))
-                        hash = truncate(hash * factor + getHashCode(value[name]))
+                        let propertyValue = value[propertyName]
+                        if (typeof propertyValue !== "function") {
+                            hash = truncate(hash * factor + getHashCode(propertyName))
+                            hash = truncate(hash * factor + getHashCode(propertyValue))
+                        }
                     }
                     hash = truncate(hash * factor + count)
                 }
@@ -132,14 +145,8 @@ export default function getHashCode(value): number {
                     }
                 }
             }
-            if (Object.isFrozen(value)) {
-                //  cache the hash in a weakmap
-                hashLookup.set(value, hash)
-            }
-            else {
-                // cache the hash on the object
-                value[hashSymbol] = hash
-            }
+            //  cache the hash in a weakmap
+            hashLookup.set(value, hash)
         }
     }
     return hash

@@ -1,0 +1,1179 @@
+
+<html>
+    <head>
+        <link rel="stylesheet" href="../node_modules/jsondiffpatch/public/formatters-styles/html.css" />
+        <style>
+        :root {
+            --border: solid 1px gray;
+        }
+        body {
+            display: flex;
+            flex-direction: row;
+            font-size: 12px;
+            font-family: Monaco;
+        }
+        article {
+            border: var(--border);
+        }
+        article {
+            border: var(--border);
+            padding: 0px;
+        }
+        article:not(:last-child) {
+            border-right: none;
+        }
+        article header {
+            color: rgb(150,150,150);
+            background-color: rgb(45,45,45);
+            font-weight: bold;
+            padding: 8px;
+            margin: 0px;
+            border-bottom: var(--border);
+        }
+        article header:hover {
+            display: flex;
+            flex-direction: column;
+        }
+        article p {
+            padding: 0px 8px;
+            white-space: pre;
+        }
+        ins {
+            color: lightgreen;
+            text-decoration: none;
+        }
+        del {
+            color: red;
+            text-decoration: none;
+        }
+        </style>
+    </head>
+    <body onclick="location.reload(true)">
+
+        <article>
+            <header><span>sorted</span></header>
+            <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key="0"><div class="jsondiffpatch-property-name">0</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Literal&quot;,
+  &quot;value&quot;: 0
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="1"><div class="jsondiffpatch-property-name">1</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ConstrainedType&quot;,
+  &quot;baseType&quot;: {
+    &quot;&quot;: &quot;ion.ast.Reference&quot;,
+    &quot;name&quot;: &quot;ion.Integer.$Number&quot;
+  },
+  &quot;constraint&quot;: {
+    &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+    &quot;left&quot;: {
+      &quot;&quot;: &quot;ion.ast.MemberExpression&quot;,
+      &quot;object&quot;: {
+        &quot;&quot;: &quot;ion.ast.DotExpression&quot;
+      },
+      &quot;property&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;fraction&quot;
+      }
+    },
+    &quot;operator&quot;: &quot;==&quot;,
+    &quot;right&quot;: {
+      &quot;&quot;: &quot;ion.ast.Literal&quot;,
+      &quot;value&quot;: 0
+    }
+  }
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="10"><div class="jsondiffpatch-property-name">10</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ClassDeclaration&quot;,
+  &quot;id&quot;: {
+    &quot;&quot;: &quot;ion.ast.Id&quot;,
+    &quot;name&quot;: &quot;Point3&quot;
+  },
+  &quot;factory&quot;: null,
+  &quot;isStructure&quot;: false,
+  &quot;isAbstract&quot;: false,
+  &quot;templateParameters&quot;: [],
+  &quot;baseClasses&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.Reference&quot;,
+      &quot;name&quot;: &quot;sample.Point3.$Point2&quot;
+    }
+  ],
+  &quot;declarations&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;z&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point3.$Number&quot;
+      },
+      &quot;value&quot;: null,
+      &quot;assignable&quot;: true,
+      &quot;property&quot;: false
+    },
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;translate&quot;
+      },
+      &quot;type&quot;: null,
+      &quot;value&quot;: {
+        &quot;&quot;: &quot;ion.ast.FunctionExpression&quot;,
+        &quot;id&quot;: null,
+        &quot;parameters&quot;: [
+          {
+            &quot;&quot;: &quot;ion.ast.Parameter&quot;,
+            &quot;id&quot;: {
+              &quot;&quot;: &quot;ion.ast.Id&quot;,
+              &quot;name&quot;: &quot;dx&quot;
+            },
+            &quot;type&quot;: {
+              &quot;&quot;: &quot;ion.ast.Reference&quot;,
+              &quot;name&quot;: &quot;sample.Point3.$Number&quot;
+            },
+            &quot;value&quot;: null,
+            &quot;assignable&quot;: false
+          },
+          {
+            &quot;&quot;: &quot;ion.ast.Parameter&quot;,
+            &quot;id&quot;: {
+              &quot;&quot;: &quot;ion.ast.Id&quot;,
+              &quot;name&quot;: &quot;dy&quot;
+            },
+            &quot;type&quot;: {
+              &quot;&quot;: &quot;ion.ast.Reference&quot;,
+              &quot;name&quot;: &quot;sample.Point3.$Number&quot;
+            },
+            &quot;value&quot;: null,
+            &quot;assignable&quot;: false
+          },
+          {
+            &quot;&quot;: &quot;ion.ast.Parameter&quot;,
+            &quot;id&quot;: {
+              &quot;&quot;: &quot;ion.ast.Id&quot;,
+              &quot;name&quot;: &quot;dz&quot;
+            },
+            &quot;type&quot;: {
+              &quot;&quot;: &quot;ion.ast.Reference&quot;,
+              &quot;name&quot;: &quot;sample.Point3.$Number&quot;
+            },
+            &quot;value&quot;: null,
+            &quot;assignable&quot;: false
+          }
+        ],
+        &quot;returnType&quot;: null,
+        &quot;body&quot;: {
+          &quot;&quot;: &quot;ion.ast.BlockStatement&quot;,
+          &quot;statements&quot;: [
+            {
+              &quot;&quot;: &quot;ion.ast.ReturnStatement&quot;,
+              &quot;value&quot;: {
+                &quot;&quot;: &quot;ion.ast.CallExpression&quot;,
+                &quot;callee&quot;: {
+                  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                  &quot;name&quot;: &quot;sample.Point3&quot;
+                },
+                &quot;arguments&quot;: [
+                  {
+                    &quot;&quot;: &quot;ion.ast.KeyValuePair&quot;,
+                    &quot;key&quot;: {
+                      &quot;&quot;: &quot;ion.ast.Id&quot;,
+                      &quot;name&quot;: &quot;y&quot;
+                    },
+                    &quot;value&quot;: {
+                      &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+                      &quot;left&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;y&quot;
+                      },
+                      &quot;operator&quot;: &quot;+&quot;,
+                      &quot;right&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;dy&quot;
+                      }
+                    }
+                  },
+                  {
+                    &quot;&quot;: &quot;ion.ast.KeyValuePair&quot;,
+                    &quot;key&quot;: {
+                      &quot;&quot;: &quot;ion.ast.Id&quot;,
+                      &quot;name&quot;: &quot;x&quot;
+                    },
+                    &quot;value&quot;: {
+                      &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+                      &quot;left&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;x&quot;
+                      },
+                      &quot;operator&quot;: &quot;+&quot;,
+                      &quot;right&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;dx&quot;
+                      }
+                    }
+                  },
+                  {
+                    &quot;&quot;: &quot;ion.ast.KeyValuePair&quot;,
+                    &quot;key&quot;: {
+                      &quot;&quot;: &quot;ion.ast.Id&quot;,
+                      &quot;name&quot;: &quot;z&quot;
+                    },
+                    &quot;value&quot;: {
+                      &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+                      &quot;left&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;z&quot;
+                      },
+                      &quot;operator&quot;: &quot;+&quot;,
+                      &quot;right&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;dz&quot;
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      &quot;assignable&quot;: false,
+      &quot;property&quot;: false
+    }
+  ],
+  &quot;meta&quot;: []
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="11"><div class="jsondiffpatch-property-name">11</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;ion.Number&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="2"><div class="jsondiffpatch-property-name">2</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Literal&quot;,
+  &quot;value&quot;: 0
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="3"><div class="jsondiffpatch-property-name">3</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ConstrainedType&quot;,
+  &quot;baseType&quot;: {
+    &quot;&quot;: &quot;ion.ast.Reference&quot;,
+    &quot;name&quot;: &quot;ion.Integer.$Number&quot;
+  },
+  &quot;constraint&quot;: {
+    &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+    &quot;left&quot;: {
+      &quot;&quot;: &quot;ion.ast.MemberExpression&quot;,
+      &quot;object&quot;: {
+        &quot;&quot;: &quot;ion.ast.DotExpression&quot;
+      },
+      &quot;property&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;fraction&quot;
+      }
+    },
+    &quot;operator&quot;: &quot;==&quot;,
+    &quot;right&quot;: {
+      &quot;&quot;: &quot;ion.ast.Literal&quot;,
+      &quot;value&quot;: 0
+    }
+  }
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="4"><div class="jsondiffpatch-property-name">4</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;ion.Integer&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="5"><div class="jsondiffpatch-property-name">5</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ClassDeclaration&quot;,
+  &quot;id&quot;: {
+    &quot;&quot;: &quot;ion.ast.Id&quot;,
+    &quot;name&quot;: &quot;Number&quot;
+  },
+  &quot;factory&quot;: null,
+  &quot;isStructure&quot;: false,
+  &quot;isAbstract&quot;: false,
+  &quot;templateParameters&quot;: [],
+  &quot;baseClasses&quot;: [],
+  &quot;declarations&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;integer&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;ion.Number.$Integer&quot;
+      },
+      &quot;value&quot;: null,
+      &quot;assignable&quot;: false,
+      &quot;property&quot;: false
+    },
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;fraction&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.ConstrainedType&quot;,
+        &quot;baseType&quot;: {
+          &quot;&quot;: &quot;ion.ast.Reference&quot;,
+          &quot;name&quot;: &quot;ion.Number&quot;
+        },
+        &quot;constraint&quot;: {
+          &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+          &quot;left&quot;: {
+            &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+            &quot;left&quot;: {
+              &quot;&quot;: &quot;ion.ast.DotExpression&quot;
+            },
+            &quot;operator&quot;: &quot;&gt;=&quot;,
+            &quot;right&quot;: {
+              &quot;&quot;: &quot;ion.ast.Literal&quot;,
+              &quot;value&quot;: 0
+            }
+          },
+          &quot;operator&quot;: &quot;and&quot;,
+          &quot;right&quot;: {
+            &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+            &quot;left&quot;: {
+              &quot;&quot;: &quot;ion.ast.DotExpression&quot;
+            },
+            &quot;operator&quot;: &quot;&lt;&quot;,
+            &quot;right&quot;: {
+              &quot;&quot;: &quot;ion.ast.Literal&quot;,
+              &quot;value&quot;: 1
+            }
+          }
+        }
+      },
+      &quot;value&quot;: null,
+      &quot;assignable&quot;: false,
+      &quot;property&quot;: false
+    }
+  ],
+  &quot;meta&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.KeyValuePair&quot;,
+      &quot;key&quot;: {
+        &quot;&quot;: &quot;ion.ast.MemberExpression&quot;,
+        &quot;object&quot;: {
+          &quot;&quot;: &quot;ion.ast.Reference&quot;,
+          &quot;name&quot;: &quot;Native&quot;
+        },
+        &quot;property&quot;: {
+          &quot;&quot;: &quot;ion.ast.Id&quot;,
+          &quot;name&quot;: &quot;JavaScript&quot;
+        }
+      },
+      &quot;value&quot;: {
+        &quot;&quot;: &quot;ion.ast.Literal&quot;,
+        &quot;value&quot;: &quot;Object.freeze({<br>    is(value) {<br>        return typeof value === &apos;number&apos;<br>    },<br>    integer(value) {<br>        return value - value % 1<br>    },<br>    fraction(value) {<br>        return value % 1<br>    }<br>})&quot;
+      }
+    }
+  ]
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="6"><div class="jsondiffpatch-property-name">6</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;ion.Number&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="7"><div class="jsondiffpatch-property-name">7</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;ion.Number&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="8"><div class="jsondiffpatch-property-name">8</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ClassDeclaration&quot;,
+  &quot;id&quot;: {
+    &quot;&quot;: &quot;ion.ast.Id&quot;,
+    &quot;name&quot;: &quot;Point2&quot;
+  },
+  &quot;factory&quot;: null,
+  &quot;isStructure&quot;: false,
+  &quot;isAbstract&quot;: false,
+  &quot;templateParameters&quot;: [],
+  &quot;baseClasses&quot;: [],
+  &quot;declarations&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;x&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point2.$Number&quot;
+      },
+      &quot;value&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point2.$zero&quot;
+      },
+      &quot;assignable&quot;: true,
+      &quot;property&quot;: false
+    },
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;y&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point2.$Number&quot;
+      },
+      &quot;value&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point2.$zero&quot;
+      },
+      &quot;assignable&quot;: true,
+      &quot;property&quot;: false
+    }
+  ],
+  &quot;meta&quot;: []
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="9"><div class="jsondiffpatch-property-name">9</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;sample.Point2&quot;
+}</pre></div></li></ul></div></p>
+        </article>
+    
+        <article>
+            <header><span>sorted</span></header>
+            <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key="0"><div class="jsondiffpatch-property-name">0</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Literal&quot;,
+  &quot;value&quot;: 0
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="1"><div class="jsondiffpatch-property-name">1</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ConstrainedType&quot;,
+  &quot;baseType&quot;: {
+    &quot;&quot;: &quot;ion.ast.Reference&quot;,
+    &quot;name&quot;: &quot;ion.Integer.$Number&quot;
+  },
+  &quot;constraint&quot;: {
+    &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+    &quot;left&quot;: {
+      &quot;&quot;: &quot;ion.ast.MemberExpression&quot;,
+      &quot;object&quot;: {
+        &quot;&quot;: &quot;ion.ast.DotExpression&quot;
+      },
+      &quot;property&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;fraction&quot;
+      }
+    },
+    &quot;operator&quot;: &quot;==&quot;,
+    &quot;right&quot;: {
+      &quot;&quot;: &quot;ion.ast.Literal&quot;,
+      &quot;value&quot;: 0
+    }
+  }
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="10"><div class="jsondiffpatch-property-name">10</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ClassDeclaration&quot;,
+  &quot;id&quot;: {
+    &quot;&quot;: &quot;ion.ast.Id&quot;,
+    &quot;name&quot;: &quot;Point3&quot;
+  },
+  &quot;factory&quot;: null,
+  &quot;isStructure&quot;: false,
+  &quot;isAbstract&quot;: false,
+  &quot;templateParameters&quot;: [],
+  &quot;baseClasses&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.Reference&quot;,
+      &quot;name&quot;: &quot;sample.Point3.$Point2&quot;
+    }
+  ],
+  &quot;declarations&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;z&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point3.$Number&quot;
+      },
+      &quot;value&quot;: null,
+      &quot;assignable&quot;: true,
+      &quot;property&quot;: false
+    },
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;translate&quot;
+      },
+      &quot;type&quot;: null,
+      &quot;value&quot;: {
+        &quot;&quot;: &quot;ion.ast.FunctionExpression&quot;,
+        &quot;id&quot;: null,
+        &quot;parameters&quot;: [
+          {
+            &quot;&quot;: &quot;ion.ast.Parameter&quot;,
+            &quot;id&quot;: {
+              &quot;&quot;: &quot;ion.ast.Id&quot;,
+              &quot;name&quot;: &quot;dx&quot;
+            },
+            &quot;type&quot;: {
+              &quot;&quot;: &quot;ion.ast.Reference&quot;,
+              &quot;name&quot;: &quot;sample.Point3.$Number&quot;
+            },
+            &quot;value&quot;: null,
+            &quot;assignable&quot;: false
+          },
+          {
+            &quot;&quot;: &quot;ion.ast.Parameter&quot;,
+            &quot;id&quot;: {
+              &quot;&quot;: &quot;ion.ast.Id&quot;,
+              &quot;name&quot;: &quot;dy&quot;
+            },
+            &quot;type&quot;: {
+              &quot;&quot;: &quot;ion.ast.Reference&quot;,
+              &quot;name&quot;: &quot;sample.Point3.$Number&quot;
+            },
+            &quot;value&quot;: null,
+            &quot;assignable&quot;: false
+          },
+          {
+            &quot;&quot;: &quot;ion.ast.Parameter&quot;,
+            &quot;id&quot;: {
+              &quot;&quot;: &quot;ion.ast.Id&quot;,
+              &quot;name&quot;: &quot;dz&quot;
+            },
+            &quot;type&quot;: {
+              &quot;&quot;: &quot;ion.ast.Reference&quot;,
+              &quot;name&quot;: &quot;sample.Point3.$Number&quot;
+            },
+            &quot;value&quot;: null,
+            &quot;assignable&quot;: false
+          }
+        ],
+        &quot;returnType&quot;: null,
+        &quot;body&quot;: {
+          &quot;&quot;: &quot;ion.ast.BlockStatement&quot;,
+          &quot;statements&quot;: [
+            {
+              &quot;&quot;: &quot;ion.ast.ReturnStatement&quot;,
+              &quot;value&quot;: {
+                &quot;&quot;: &quot;ion.ast.CallExpression&quot;,
+                &quot;callee&quot;: {
+                  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                  &quot;name&quot;: &quot;sample.Point3&quot;
+                },
+                &quot;arguments&quot;: [
+                  {
+                    &quot;&quot;: &quot;ion.ast.KeyValuePair&quot;,
+                    &quot;key&quot;: {
+                      &quot;&quot;: &quot;ion.ast.Id&quot;,
+                      &quot;name&quot;: &quot;y&quot;
+                    },
+                    &quot;value&quot;: {
+                      &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+                      &quot;left&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;y&quot;
+                      },
+                      &quot;operator&quot;: &quot;+&quot;,
+                      &quot;right&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;dy&quot;
+                      }
+                    }
+                  },
+                  {
+                    &quot;&quot;: &quot;ion.ast.KeyValuePair&quot;,
+                    &quot;key&quot;: {
+                      &quot;&quot;: &quot;ion.ast.Id&quot;,
+                      &quot;name&quot;: &quot;x&quot;
+                    },
+                    &quot;value&quot;: {
+                      &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+                      &quot;left&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;x&quot;
+                      },
+                      &quot;operator&quot;: &quot;+&quot;,
+                      &quot;right&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;dx&quot;
+                      }
+                    }
+                  },
+                  {
+                    &quot;&quot;: &quot;ion.ast.KeyValuePair&quot;,
+                    &quot;key&quot;: {
+                      &quot;&quot;: &quot;ion.ast.Id&quot;,
+                      &quot;name&quot;: &quot;z&quot;
+                    },
+                    &quot;value&quot;: {
+                      &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+                      &quot;left&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;z&quot;
+                      },
+                      &quot;operator&quot;: &quot;+&quot;,
+                      &quot;right&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;dz&quot;
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      &quot;assignable&quot;: false,
+      &quot;property&quot;: false
+    }
+  ],
+  &quot;meta&quot;: []
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="11"><div class="jsondiffpatch-property-name">11</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;ion.Number&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="2"><div class="jsondiffpatch-property-name">2</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Literal&quot;,
+  &quot;value&quot;: 0
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="3"><div class="jsondiffpatch-property-name">3</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ConstrainedType&quot;,
+  &quot;baseType&quot;: {
+    &quot;&quot;: &quot;ion.ast.Reference&quot;,
+    &quot;name&quot;: &quot;ion.Integer.$Number&quot;
+  },
+  &quot;constraint&quot;: {
+    &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+    &quot;left&quot;: {
+      &quot;&quot;: &quot;ion.ast.MemberExpression&quot;,
+      &quot;object&quot;: {
+        &quot;&quot;: &quot;ion.ast.DotExpression&quot;
+      },
+      &quot;property&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;fraction&quot;
+      }
+    },
+    &quot;operator&quot;: &quot;==&quot;,
+    &quot;right&quot;: {
+      &quot;&quot;: &quot;ion.ast.Literal&quot;,
+      &quot;value&quot;: 0
+    }
+  }
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="4"><div class="jsondiffpatch-property-name">4</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;ion.Integer&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="5"><div class="jsondiffpatch-property-name">5</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ClassDeclaration&quot;,
+  &quot;id&quot;: {
+    &quot;&quot;: &quot;ion.ast.Id&quot;,
+    &quot;name&quot;: &quot;Number&quot;
+  },
+  &quot;factory&quot;: null,
+  &quot;isStructure&quot;: false,
+  &quot;isAbstract&quot;: false,
+  &quot;templateParameters&quot;: [],
+  &quot;baseClasses&quot;: [],
+  &quot;declarations&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;integer&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;ion.Number.$Integer&quot;
+      },
+      &quot;value&quot;: null,
+      &quot;assignable&quot;: false,
+      &quot;property&quot;: false
+    },
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;fraction&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.ConstrainedType&quot;,
+        &quot;baseType&quot;: {
+          &quot;&quot;: &quot;ion.ast.Reference&quot;,
+          &quot;name&quot;: &quot;ion.Number&quot;
+        },
+        &quot;constraint&quot;: {
+          &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+          &quot;left&quot;: {
+            &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+            &quot;left&quot;: {
+              &quot;&quot;: &quot;ion.ast.DotExpression&quot;
+            },
+            &quot;operator&quot;: &quot;&gt;=&quot;,
+            &quot;right&quot;: {
+              &quot;&quot;: &quot;ion.ast.Literal&quot;,
+              &quot;value&quot;: 0
+            }
+          },
+          &quot;operator&quot;: &quot;and&quot;,
+          &quot;right&quot;: {
+            &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+            &quot;left&quot;: {
+              &quot;&quot;: &quot;ion.ast.DotExpression&quot;
+            },
+            &quot;operator&quot;: &quot;&lt;&quot;,
+            &quot;right&quot;: {
+              &quot;&quot;: &quot;ion.ast.Literal&quot;,
+              &quot;value&quot;: 1
+            }
+          }
+        }
+      },
+      &quot;value&quot;: null,
+      &quot;assignable&quot;: false,
+      &quot;property&quot;: false
+    }
+  ],
+  &quot;meta&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.KeyValuePair&quot;,
+      &quot;key&quot;: {
+        &quot;&quot;: &quot;ion.ast.MemberExpression&quot;,
+        &quot;object&quot;: {
+          &quot;&quot;: &quot;ion.ast.Reference&quot;,
+          &quot;name&quot;: &quot;Native&quot;
+        },
+        &quot;property&quot;: {
+          &quot;&quot;: &quot;ion.ast.Id&quot;,
+          &quot;name&quot;: &quot;JavaScript&quot;
+        }
+      },
+      &quot;value&quot;: {
+        &quot;&quot;: &quot;ion.ast.Literal&quot;,
+        &quot;value&quot;: &quot;Object.freeze({<br>    is(value) {<br>        return typeof value === &apos;number&apos;<br>    },<br>    integer(value) {<br>        return value - value % 1<br>    },<br>    fraction(value) {<br>        return value % 1<br>    }<br>})&quot;
+      }
+    }
+  ]
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="6"><div class="jsondiffpatch-property-name">6</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;ion.Number&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="7"><div class="jsondiffpatch-property-name">7</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;ion.Number&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="8"><div class="jsondiffpatch-property-name">8</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ClassDeclaration&quot;,
+  &quot;id&quot;: {
+    &quot;&quot;: &quot;ion.ast.Id&quot;,
+    &quot;name&quot;: &quot;Point2&quot;
+  },
+  &quot;factory&quot;: null,
+  &quot;isStructure&quot;: false,
+  &quot;isAbstract&quot;: false,
+  &quot;templateParameters&quot;: [],
+  &quot;baseClasses&quot;: [],
+  &quot;declarations&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;x&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point2.$Number&quot;
+      },
+      &quot;value&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point2.$zero&quot;
+      },
+      &quot;assignable&quot;: true,
+      &quot;property&quot;: false
+    },
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;y&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point2.$Number&quot;
+      },
+      &quot;value&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point2.$zero&quot;
+      },
+      &quot;assignable&quot;: true,
+      &quot;property&quot;: false
+    }
+  ],
+  &quot;meta&quot;: []
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="9"><div class="jsondiffpatch-property-name">9</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;sample.Point2&quot;
+}</pre></div></li></ul></div></p>
+        </article>
+    
+        <article>
+            <header><span>sorted</span></header>
+            <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key="0"><div class="jsondiffpatch-property-name">0</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Literal&quot;,
+  &quot;value&quot;: 0
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="1"><div class="jsondiffpatch-property-name">1</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ConstrainedType&quot;,
+  &quot;baseType&quot;: {
+    &quot;&quot;: &quot;ion.ast.Reference&quot;,
+    &quot;name&quot;: &quot;ion.Integer.$Number&quot;
+  },
+  &quot;constraint&quot;: {
+    &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+    &quot;left&quot;: {
+      &quot;&quot;: &quot;ion.ast.MemberExpression&quot;,
+      &quot;object&quot;: {
+        &quot;&quot;: &quot;ion.ast.DotExpression&quot;
+      },
+      &quot;property&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;fraction&quot;
+      }
+    },
+    &quot;operator&quot;: &quot;==&quot;,
+    &quot;right&quot;: {
+      &quot;&quot;: &quot;ion.ast.Literal&quot;,
+      &quot;value&quot;: 0
+    }
+  }
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="10"><div class="jsondiffpatch-property-name">10</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ClassDeclaration&quot;,
+  &quot;id&quot;: {
+    &quot;&quot;: &quot;ion.ast.Id&quot;,
+    &quot;name&quot;: &quot;Point3&quot;
+  },
+  &quot;factory&quot;: null,
+  &quot;isStructure&quot;: false,
+  &quot;isAbstract&quot;: false,
+  &quot;templateParameters&quot;: [],
+  &quot;baseClasses&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.Reference&quot;,
+      &quot;name&quot;: &quot;sample.Point3.$Point2&quot;
+    }
+  ],
+  &quot;declarations&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;z&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point3.$Number&quot;
+      },
+      &quot;value&quot;: null,
+      &quot;assignable&quot;: true,
+      &quot;property&quot;: false
+    },
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;translate&quot;
+      },
+      &quot;type&quot;: null,
+      &quot;value&quot;: {
+        &quot;&quot;: &quot;ion.ast.FunctionExpression&quot;,
+        &quot;id&quot;: null,
+        &quot;parameters&quot;: [
+          {
+            &quot;&quot;: &quot;ion.ast.Parameter&quot;,
+            &quot;id&quot;: {
+              &quot;&quot;: &quot;ion.ast.Id&quot;,
+              &quot;name&quot;: &quot;dx&quot;
+            },
+            &quot;type&quot;: {
+              &quot;&quot;: &quot;ion.ast.Reference&quot;,
+              &quot;name&quot;: &quot;sample.Point3.$Number&quot;
+            },
+            &quot;value&quot;: null,
+            &quot;assignable&quot;: false
+          },
+          {
+            &quot;&quot;: &quot;ion.ast.Parameter&quot;,
+            &quot;id&quot;: {
+              &quot;&quot;: &quot;ion.ast.Id&quot;,
+              &quot;name&quot;: &quot;dy&quot;
+            },
+            &quot;type&quot;: {
+              &quot;&quot;: &quot;ion.ast.Reference&quot;,
+              &quot;name&quot;: &quot;sample.Point3.$Number&quot;
+            },
+            &quot;value&quot;: null,
+            &quot;assignable&quot;: false
+          },
+          {
+            &quot;&quot;: &quot;ion.ast.Parameter&quot;,
+            &quot;id&quot;: {
+              &quot;&quot;: &quot;ion.ast.Id&quot;,
+              &quot;name&quot;: &quot;dz&quot;
+            },
+            &quot;type&quot;: {
+              &quot;&quot;: &quot;ion.ast.Reference&quot;,
+              &quot;name&quot;: &quot;sample.Point3.$Number&quot;
+            },
+            &quot;value&quot;: null,
+            &quot;assignable&quot;: false
+          }
+        ],
+        &quot;returnType&quot;: null,
+        &quot;body&quot;: {
+          &quot;&quot;: &quot;ion.ast.BlockStatement&quot;,
+          &quot;statements&quot;: [
+            {
+              &quot;&quot;: &quot;ion.ast.ReturnStatement&quot;,
+              &quot;value&quot;: {
+                &quot;&quot;: &quot;ion.ast.CallExpression&quot;,
+                &quot;callee&quot;: {
+                  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                  &quot;name&quot;: &quot;sample.Point3&quot;
+                },
+                &quot;arguments&quot;: [
+                  {
+                    &quot;&quot;: &quot;ion.ast.KeyValuePair&quot;,
+                    &quot;key&quot;: {
+                      &quot;&quot;: &quot;ion.ast.Id&quot;,
+                      &quot;name&quot;: &quot;y&quot;
+                    },
+                    &quot;value&quot;: {
+                      &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+                      &quot;left&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;y&quot;
+                      },
+                      &quot;operator&quot;: &quot;+&quot;,
+                      &quot;right&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;dy&quot;
+                      }
+                    }
+                  },
+                  {
+                    &quot;&quot;: &quot;ion.ast.KeyValuePair&quot;,
+                    &quot;key&quot;: {
+                      &quot;&quot;: &quot;ion.ast.Id&quot;,
+                      &quot;name&quot;: &quot;x&quot;
+                    },
+                    &quot;value&quot;: {
+                      &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+                      &quot;left&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;x&quot;
+                      },
+                      &quot;operator&quot;: &quot;+&quot;,
+                      &quot;right&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;dx&quot;
+                      }
+                    }
+                  },
+                  {
+                    &quot;&quot;: &quot;ion.ast.KeyValuePair&quot;,
+                    &quot;key&quot;: {
+                      &quot;&quot;: &quot;ion.ast.Id&quot;,
+                      &quot;name&quot;: &quot;z&quot;
+                    },
+                    &quot;value&quot;: {
+                      &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+                      &quot;left&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;z&quot;
+                      },
+                      &quot;operator&quot;: &quot;+&quot;,
+                      &quot;right&quot;: {
+                        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+                        &quot;name&quot;: &quot;dz&quot;
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      &quot;assignable&quot;: false,
+      &quot;property&quot;: false
+    }
+  ],
+  &quot;meta&quot;: []
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="11"><div class="jsondiffpatch-property-name">11</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;ion.Number&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="2"><div class="jsondiffpatch-property-name">2</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Literal&quot;,
+  &quot;value&quot;: 0
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="3"><div class="jsondiffpatch-property-name">3</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ConstrainedType&quot;,
+  &quot;baseType&quot;: {
+    &quot;&quot;: &quot;ion.ast.Reference&quot;,
+    &quot;name&quot;: &quot;ion.Integer.$Number&quot;
+  },
+  &quot;constraint&quot;: {
+    &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+    &quot;left&quot;: {
+      &quot;&quot;: &quot;ion.ast.MemberExpression&quot;,
+      &quot;object&quot;: {
+        &quot;&quot;: &quot;ion.ast.DotExpression&quot;
+      },
+      &quot;property&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;fraction&quot;
+      }
+    },
+    &quot;operator&quot;: &quot;==&quot;,
+    &quot;right&quot;: {
+      &quot;&quot;: &quot;ion.ast.Literal&quot;,
+      &quot;value&quot;: 0
+    }
+  }
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="4"><div class="jsondiffpatch-property-name">4</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;ion.Integer&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="5"><div class="jsondiffpatch-property-name">5</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ClassDeclaration&quot;,
+  &quot;id&quot;: {
+    &quot;&quot;: &quot;ion.ast.Id&quot;,
+    &quot;name&quot;: &quot;Number&quot;
+  },
+  &quot;factory&quot;: null,
+  &quot;isStructure&quot;: false,
+  &quot;isAbstract&quot;: false,
+  &quot;templateParameters&quot;: [],
+  &quot;baseClasses&quot;: [],
+  &quot;declarations&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;integer&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;ion.Number.$Integer&quot;
+      },
+      &quot;value&quot;: null,
+      &quot;assignable&quot;: false,
+      &quot;property&quot;: false
+    },
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;fraction&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.ConstrainedType&quot;,
+        &quot;baseType&quot;: {
+          &quot;&quot;: &quot;ion.ast.Reference&quot;,
+          &quot;name&quot;: &quot;ion.Number&quot;
+        },
+        &quot;constraint&quot;: {
+          &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+          &quot;left&quot;: {
+            &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+            &quot;left&quot;: {
+              &quot;&quot;: &quot;ion.ast.DotExpression&quot;
+            },
+            &quot;operator&quot;: &quot;&gt;=&quot;,
+            &quot;right&quot;: {
+              &quot;&quot;: &quot;ion.ast.Literal&quot;,
+              &quot;value&quot;: 0
+            }
+          },
+          &quot;operator&quot;: &quot;and&quot;,
+          &quot;right&quot;: {
+            &quot;&quot;: &quot;ion.ast.BinaryExpression&quot;,
+            &quot;left&quot;: {
+              &quot;&quot;: &quot;ion.ast.DotExpression&quot;
+            },
+            &quot;operator&quot;: &quot;&lt;&quot;,
+            &quot;right&quot;: {
+              &quot;&quot;: &quot;ion.ast.Literal&quot;,
+              &quot;value&quot;: 1
+            }
+          }
+        }
+      },
+      &quot;value&quot;: null,
+      &quot;assignable&quot;: false,
+      &quot;property&quot;: false
+    }
+  ],
+  &quot;meta&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.KeyValuePair&quot;,
+      &quot;key&quot;: {
+        &quot;&quot;: &quot;ion.ast.MemberExpression&quot;,
+        &quot;object&quot;: {
+          &quot;&quot;: &quot;ion.ast.Reference&quot;,
+          &quot;name&quot;: &quot;Native&quot;
+        },
+        &quot;property&quot;: {
+          &quot;&quot;: &quot;ion.ast.Id&quot;,
+          &quot;name&quot;: &quot;JavaScript&quot;
+        }
+      },
+      &quot;value&quot;: {
+        &quot;&quot;: &quot;ion.ast.Literal&quot;,
+        &quot;value&quot;: &quot;Object.freeze({<br>    is(value) {<br>        return typeof value === &apos;number&apos;<br>    },<br>    integer(value) {<br>        return value - value % 1<br>    },<br>    fraction(value) {<br>        return value % 1<br>    }<br>})&quot;
+      }
+    }
+  ]
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="6"><div class="jsondiffpatch-property-name">6</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;ion.Number&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="7"><div class="jsondiffpatch-property-name">7</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;ion.Number&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="8"><div class="jsondiffpatch-property-name">8</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.ClassDeclaration&quot;,
+  &quot;id&quot;: {
+    &quot;&quot;: &quot;ion.ast.Id&quot;,
+    &quot;name&quot;: &quot;Point2&quot;
+  },
+  &quot;factory&quot;: null,
+  &quot;isStructure&quot;: false,
+  &quot;isAbstract&quot;: false,
+  &quot;templateParameters&quot;: [],
+  &quot;baseClasses&quot;: [],
+  &quot;declarations&quot;: [
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;x&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point2.$Number&quot;
+      },
+      &quot;value&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point2.$zero&quot;
+      },
+      &quot;assignable&quot;: true,
+      &quot;property&quot;: false
+    },
+    {
+      &quot;&quot;: &quot;ion.ast.VariableDeclaration&quot;,
+      &quot;id&quot;: {
+        &quot;&quot;: &quot;ion.ast.Id&quot;,
+        &quot;name&quot;: &quot;y&quot;
+      },
+      &quot;type&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point2.$Number&quot;
+      },
+      &quot;value&quot;: {
+        &quot;&quot;: &quot;ion.ast.Reference&quot;,
+        &quot;name&quot;: &quot;sample.Point2.$zero&quot;
+      },
+      &quot;assignable&quot;: true,
+      &quot;property&quot;: false
+    }
+  ],
+  &quot;meta&quot;: []
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="9"><div class="jsondiffpatch-property-name">9</div><div class="jsondiffpatch-value"><pre>{
+  &quot;&quot;: &quot;ion.ast.Reference&quot;,
+  &quot;name&quot;: &quot;sample.Point2&quot;
+}</pre></div></li></ul></div></p>
+        </article>
+    
+    </body>
+</html>

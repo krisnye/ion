@@ -12,7 +12,7 @@ export const skip = Symbol('skip')
 export type enter = (node: any, ancestors: object[], path: any[])
     => Symbol   //  Symbol('skip) to stop traversing any children.
     | void      //  do nothing
-export type leave = (node: any, ancestors: object[], path: any[], changes: Patch)
+export type leave = (node: any, ancestors: object[], path: any[])
     => Patch    //  Patch to apply to the current node
     | any[]     //  array to splice into the current parent array replacing current element
     | object    //  object to replace this node with
@@ -113,14 +113,13 @@ export function traverse(
     }
     //  then call leave on node unless it's an array.
     if (isNode && leave != null) {
-        result = <any>leave(node, ancestors, path, childPatch)
+        //  if childPatch, we apply that before leaving the node
+        if (childPatch) {
+            node = Patch.apply(node, childPatch)
+        }
+        result = <any>leave(node, ancestors, path)
         if (Patch.is(result)) {
             result = Patch.apply(node, result)
-        }
-        else if (result === undefined) {
-            //  if the parent does no operation then we apply the child patches
-            //  if there is any other result then the parent is expected to apply the childPatch
-            result = Patch.apply(node, childPatch)
         }
     }
 

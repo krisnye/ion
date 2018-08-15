@@ -7,6 +7,9 @@ export default function equals(a, b): boolean {
     if (a == null || b == null) {
         return false
     }
+    if (typeof a.equals === "function") {
+        return a.equals(b)
+    }
     let typeA = typeof a
     let typeB = typeof b
     if (typeA !== typeB) {

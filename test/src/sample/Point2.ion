@@ -1,6 +1,6 @@
 
+let zero = 0
+
 export class Point2
-    var x: Number
-    var y: Number
-
-
+    var x: Number = zero
+    var y: Number = zero

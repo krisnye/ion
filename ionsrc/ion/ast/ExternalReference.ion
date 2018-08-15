@@ -1,0 +1,8 @@
+import
+    ion.*
+    .Id
+    .Reference
+
+export class ExternalReference extends Reference
+    var moduleName: String
+    var exportName: String = ""
