@@ -5,6 +5,7 @@ function intern<A>(a: A) { return a }
 import * as np from "path"
 import { getResolvedModulesAndDependencies } from "./phases/getResolvedModulesAndDependencies";
 import getSortedRootNodes from "./phases/getSortedRootNodes"
+import inheritBaseDeclarations from "./phases/inheritBaseDeclarations"
 import { create as createLogger, stringify } from "./HtmlLogger"
 import * as common from "./common"
 import File from "./File"
@@ -43,16 +44,16 @@ export class Context {
         this.getLogger(filename)(phase, ast)
     }
 
-    debugFiltered(phase: string, declarations: any[]) {
+    debugFiltered(phase: string, blockStatement: any) {
         let allName = "global.ion"
         for (let filename of this.loggers.keys()) {
             if (filename !== allName) {
-                let ast = declarations.filter(d => d.location.filename === filename)
-                this.debug(filename, phase, { declarations: ast })
+                let filteredStatements = blockStatement.statements.filter(d => d.location.filename === filename)
+                this.debug(filename, phase, new ast.BlockStatement({ statements: filteredStatements }))
             }
         }
         // also log an all file
-        this.debug(allName, phase, { declarations })
+        this.debug(allName, phase, blockStatement)
     }
 
     debugEnd() {
@@ -192,11 +193,13 @@ export default function compile(options: {
         context.debugFiltered("Sorted", sorted)
 
         //  Next: Class Inheritance
+        let inherited = inheritBaseDeclarations(sorted)
+        context.debugFiltered("Inherited", inherited)
 
-        context.debugFiltered("Output", sorted)
+        context.debugFiltered("Output", inherited)
         context.debugEnd()
 
-        console.log(sorted.map(d => d.id.name))
+        console.log(inherited.statements.map(d => d.id.name))
     }
     catch (e) {
         reportError(e, context)

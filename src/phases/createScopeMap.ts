@@ -7,7 +7,7 @@ const { ast } = require("../ion")
  * Returns a Map which will contain a scope object with variable names returning Declarations.
  * @param root the ast
  */
-export default function createScopeMap(root, {checkDeclareBeforeUse=false} = {}): Map<any,any> {
+export default function createScopeMap(root, { checkDeclareBeforeUse=false } = {}): Map<any,any> {
     let map = new Map()
     let scopes: object[] = []
 
@@ -21,8 +21,8 @@ export default function createScopeMap(root, {checkDeclareBeforeUse=false} = {})
         enter(node) {
             //  get the current scope
             let scope = scopes[scopes.length - 1]
-            //  save a map from this node to it's scope
-            map.set(node, scope)
+            //  save a map from this nodes location to it's scope
+            map.set(node.location, scope)
             //  if this node is a scope then we push a new scope
             if (ast.Scope.is(node)) {
                 // console.log('++++')

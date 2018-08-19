@@ -30,5 +30,5 @@ export default function getSortedRootNodes(declarations: any[]) {
     if (sorted.shift() !== sentinel) {
         throw new Error("Sentinel should have been first")
     }
-    return sorted
+    return new ast.BlockStatement({ statements: sorted })
 }
