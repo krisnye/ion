@@ -1,8 +1,9 @@
 import
     ion.*
     .Expression
+    .Id
     .Node
 
 export class KeyValuePair extends Node
-    var key: Expression
+    var key: Expression | Id
     var value: Expression

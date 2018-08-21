@@ -11,6 +11,8 @@ import * as common from "./common"
 import File from "./File"
 import getResolvedModule from "./phases/getResolvedModule"
 import { flatten } from "./Traversal"
+import createScopeMap from "./phases/createScopeMap"
+import { simplifyExpressions } from "./phases/simplifyExpressions";
 const { ast } = require("./ion")
 const parser = require("./parser")()
 type Logger = (name?: string, ast?: any) => void
@@ -189,12 +191,17 @@ export default function compile(options: {
         //  and to have strong runtime types
         //  and then write out generated code
 
-        let sorted = getSortedRootNodes(declarations)
-        context.debugFiltered("Sorted", sorted)
+        let sortedRootNodes = getSortedRootNodes(declarations)
+        context.debugFiltered("Sorted", sortedRootNodes)
 
-        //  Next: Class Inheritance
-        let inherited = inheritBaseDeclarations(sorted)
+        let scopeMap = createScopeMap(sortedRootNodes)
+        let inherited = inheritBaseDeclarations(sortedRootNodes, scopeMap)
         context.debugFiltered("Inherited", inherited)
+
+        let simplified = simplifyExpressions(inherited, scopeMap)
+
+        //  TODO Simplify?
+        //  TODO Reorder named function parameters.
 
         context.debugFiltered("Output", inherited)
         context.debugEnd()

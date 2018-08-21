@@ -20,7 +20,7 @@ const ion_Null = (Object.freeze({
         return value == null
     }
 }));
-const ion_ast_Node = Object.freeze(Object.assign(class Node {
+const ion_ast_Node = Object.assign(class Node {
     constructor() {
         throw new Error('Node is abstract');
     }
@@ -28,8 +28,8 @@ const ion_ast_Node = Object.freeze(Object.assign(class Node {
     types: new Set(['ion.ast.Node']),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Node')),
     path: 'ion.ast.Node'
-}));
-const ion_ast_Expression = Object.freeze(Object.assign(class Expression {
+});
+const ion_ast_Expression = Object.assign(class Expression {
     constructor() {
         throw new Error('Expression is abstract');
     }
@@ -40,8 +40,8 @@ const ion_ast_Expression = Object.freeze(Object.assign(class Expression {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Expression')),
     path: 'ion.ast.Expression'
-}));
-const ion_ast_BinaryExpression = Object.freeze(Object.assign(class BinaryExpression {
+});
+const ion_ast_BinaryExpression = Object.assign(class BinaryExpression {
     constructor(...args) {
         let location = null, left, operator, right;
         for (let arg of args) {
@@ -68,7 +68,7 @@ const ion_ast_BinaryExpression = Object.freeze(Object.assign(class BinaryExpress
         this.left = left;
         this.operator = operator;
         this.right = right;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -78,8 +78,8 @@ const ion_ast_BinaryExpression = Object.freeze(Object.assign(class BinaryExpress
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.BinaryExpression')),
     path: 'ion.ast.BinaryExpression'
-}));
-const ion_ast_CallExpression = Object.freeze(Object.assign(class CallExpression {
+});
+const ion_ast_CallExpression = Object.assign(class CallExpression {
     constructor(...args) {
         let location = null, callee, $arguments;
         for (let arg of args) {
@@ -101,7 +101,7 @@ const ion_ast_CallExpression = Object.freeze(Object.assign(class CallExpression 
         this.location = location;
         this.callee = callee;
         this.arguments = $arguments;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -111,8 +111,8 @@ const ion_ast_CallExpression = Object.freeze(Object.assign(class CallExpression 
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.CallExpression')),
     path: 'ion.ast.CallExpression'
-}));
-const ion_ast_DotExpression = Object.freeze(Object.assign(class DotExpression {
+});
+const ion_ast_DotExpression = Object.assign(class DotExpression {
     constructor(...args) {
         let location = null;
         for (let arg of args) {
@@ -124,7 +124,7 @@ const ion_ast_DotExpression = Object.freeze(Object.assign(class DotExpression {
         if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         this.location = location;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -134,8 +134,8 @@ const ion_ast_DotExpression = Object.freeze(Object.assign(class DotExpression {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.DotExpression')),
     path: 'ion.ast.DotExpression'
-}));
-const ion_ast_Id = Object.freeze(Object.assign(class Id {
+});
+const ion_ast_Id = Object.assign(class Id {
     constructor(...args) {
         let location = null, name;
         for (let arg of args) {
@@ -152,18 +152,17 @@ const ion_ast_Id = Object.freeze(Object.assign(class Id {
             throw new Error('name is not valid: ' + JSON.stringify(name));
         this.location = location;
         this.name = name;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
-        'ion.ast.Expression',
         'ion.ast.Node',
         'ion.ast.Id'
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Id')),
     path: 'ion.ast.Id'
-}));
-const ion_ast_ImportStep = Object.freeze(Object.assign(class ImportStep {
+});
+const ion_ast_ImportStep = Object.assign(class ImportStep {
     constructor(...args) {
         let location = null, relative = false, id = null, as = null, children;
         for (let arg of args) {
@@ -195,7 +194,7 @@ const ion_ast_ImportStep = Object.freeze(Object.assign(class ImportStep {
         this.id = id;
         this.as = as;
         this.children = children;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -204,8 +203,8 @@ const ion_ast_ImportStep = Object.freeze(Object.assign(class ImportStep {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.ImportStep')),
     path: 'ion.ast.ImportStep'
-}));
-const ion_ast_KeyValuePair = Object.freeze(Object.assign(class KeyValuePair {
+});
+const ion_ast_KeyValuePair = Object.assign(class KeyValuePair {
     constructor(...args) {
         let location = null, key, value;
         for (let arg of args) {
@@ -220,14 +219,14 @@ const ion_ast_KeyValuePair = Object.freeze(Object.assign(class KeyValuePair {
         }
         if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
-        if (!ion_ast_Expression.is(key))
+        if (!{ is: $ => ion_ast_Expression.is($) || ion_ast_Id.is($) }.is(key))
             throw new Error('key is not valid: ' + JSON.stringify(key));
         if (!ion_ast_Expression.is(value))
             throw new Error('value is not valid: ' + JSON.stringify(value));
         this.location = location;
         this.key = key;
         this.value = value;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -236,8 +235,8 @@ const ion_ast_KeyValuePair = Object.freeze(Object.assign(class KeyValuePair {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.KeyValuePair')),
     path: 'ion.ast.KeyValuePair'
-}));
-const ion_ast_Literal = Object.freeze(Object.assign(class Literal {
+});
+const ion_ast_Literal = Object.assign(class Literal {
     constructor(...args) {
         let location = null, value;
         for (let arg of args) {
@@ -254,7 +253,7 @@ const ion_ast_Literal = Object.freeze(Object.assign(class Literal {
             throw new Error('value is not valid: ' + JSON.stringify(value));
         this.location = location;
         this.value = value;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -264,8 +263,8 @@ const ion_ast_Literal = Object.freeze(Object.assign(class Literal {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Literal')),
     path: 'ion.ast.Literal'
-}));
-const ion_ast_Position = Object.freeze(Object.assign(class Position {
+});
+const ion_ast_Position = Object.assign(class Position {
     constructor(...args) {
         let line, column;
         for (let arg of args) {
@@ -282,14 +281,14 @@ const ion_ast_Position = Object.freeze(Object.assign(class Position {
             throw new Error('column is not valid: ' + JSON.stringify(column));
         this.line = line;
         this.column = column;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set(['ion.ast.Position']),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Position')),
     path: 'ion.ast.Position'
-}));
-const ion_ast_MemberExpression = Object.freeze(Object.assign(class MemberExpression {
+});
+const ion_ast_MemberExpression = Object.assign(class MemberExpression {
     constructor(...args) {
         let location = null, object, property;
         for (let arg of args) {
@@ -311,7 +310,7 @@ const ion_ast_MemberExpression = Object.freeze(Object.assign(class MemberExpress
         this.location = location;
         this.object = object;
         this.property = property;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -321,37 +320,8 @@ const ion_ast_MemberExpression = Object.freeze(Object.assign(class MemberExpress
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.MemberExpression')),
     path: 'ion.ast.MemberExpression'
-}));
-const ion_ast_Options = Object.freeze(Object.assign(class Options {
-    constructor(...args) {
-        let input, output;
-        for (let arg of args) {
-            if (arg != null) {
-                if (arg.input !== undefined)
-                    input = arg.input;
-                if (arg.output !== undefined)
-                    output = arg.output;
-            }
-        }
-        if (!ion_Array.is(input, ion_String))
-            throw new Error('input is not valid: ' + JSON.stringify(input));
-        if (!ion_String.is(output))
-            throw new Error('output is not valid: ' + JSON.stringify(output));
-        this.input = input;
-        this.output = output;
-        Object.freeze(this);
-    }
-}, {
-    types: new Set(['ion.ast.Options']),
-    is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Options')),
-    path: 'ion.ast.Options'
-}));
-const ion_Any = (Object.freeze({
-    is(value) {
-        return value !== undefined
-    }
-}));
-const ion_ast_Location = Object.freeze(Object.assign(class Location {
+});
+const ion_ast_Location = Object.assign(class Location {
     constructor(...args) {
         let start, end, filename;
         for (let arg of args) {
@@ -373,14 +343,43 @@ const ion_ast_Location = Object.freeze(Object.assign(class Location {
         this.start = start;
         this.end = end;
         this.filename = filename;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set(['ion.ast.Location']),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Location')),
     path: 'ion.ast.Location'
+});
+const ion_Any = (Object.freeze({
+    is(value) {
+        return value !== undefined
+    }
 }));
-const ion_ast_ObjectLiteral = Object.freeze(Object.assign(class ObjectLiteral {
+const ion_ast_Options = Object.assign(class Options {
+    constructor(...args) {
+        let input, output;
+        for (let arg of args) {
+            if (arg != null) {
+                if (arg.input !== undefined)
+                    input = arg.input;
+                if (arg.output !== undefined)
+                    output = arg.output;
+            }
+        }
+        if (!ion_Array.is(input, ion_String))
+            throw new Error('input is not valid: ' + JSON.stringify(input));
+        if (!ion_String.is(output))
+            throw new Error('output is not valid: ' + JSON.stringify(output));
+        this.input = input;
+        this.output = output;
+        this;
+    }
+}, {
+    types: new Set(['ion.ast.Options']),
+    is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Options')),
+    path: 'ion.ast.Options'
+});
+const ion_ast_ObjectLiteral = Object.assign(class ObjectLiteral {
     constructor(...args) {
         let location = null, type, elements;
         for (let arg of args) {
@@ -402,7 +401,7 @@ const ion_ast_ObjectLiteral = Object.freeze(Object.assign(class ObjectLiteral {
         this.location = location;
         this.type = type;
         this.elements = elements;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -412,7 +411,7 @@ const ion_ast_ObjectLiteral = Object.freeze(Object.assign(class ObjectLiteral {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.ObjectLiteral')),
     path: 'ion.ast.ObjectLiteral'
-}));
+});
 const ion_Number = (Object.freeze({
     is(value) {
         return typeof value === 'number'
@@ -424,8 +423,8 @@ const ion_Number = (Object.freeze({
         return value % 1
     }
 }));
-const ion_ast_Primitive = Object.freeze({ is: $ => ion_String.is($) || (ion_Number.is($) || ion_Boolean.is($)) });
-const ion_ast_Reference = Object.freeze(Object.assign(class Reference {
+const ion_ast_Primitive = { is: $ => ion_String.is($) || (ion_Number.is($) || ion_Boolean.is($)) };
+const ion_ast_Reference = Object.assign(class Reference {
     constructor(...args) {
         let location = null, name;
         for (let arg of args) {
@@ -442,12 +441,11 @@ const ion_ast_Reference = Object.freeze(Object.assign(class Reference {
             throw new Error('name is not valid: ' + JSON.stringify(name));
         this.location = location;
         this.name = name;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
         'ion.ast.Id',
-        'ion.ast.Expression',
         'ion.ast.Node',
         'ion.ast.Expression',
         'ion.ast.Node',
@@ -455,8 +453,8 @@ const ion_ast_Reference = Object.freeze(Object.assign(class Reference {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Reference')),
     path: 'ion.ast.Reference'
-}));
-const ion_ast_ExternalReference = Object.freeze(Object.assign(class ExternalReference {
+});
+const ion_ast_ExternalReference = Object.assign(class ExternalReference {
     constructor(...args) {
         let location = null, name, moduleName, exportName = '';
         for (let arg of args) {
@@ -483,13 +481,12 @@ const ion_ast_ExternalReference = Object.freeze(Object.assign(class ExternalRefe
         this.name = name;
         this.moduleName = moduleName;
         this.exportName = exportName;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
         'ion.ast.Reference',
         'ion.ast.Id',
-        'ion.ast.Expression',
         'ion.ast.Node',
         'ion.ast.Expression',
         'ion.ast.Node',
@@ -497,8 +494,8 @@ const ion_ast_ExternalReference = Object.freeze(Object.assign(class ExternalRefe
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.ExternalReference')),
     path: 'ion.ast.ExternalReference'
-}));
-const ion_ast_Scope = Object.freeze(Object.assign(class Scope {
+});
+const ion_ast_Scope = Object.assign(class Scope {
     constructor(...args) {
         let location = null;
         for (let arg of args) {
@@ -510,7 +507,7 @@ const ion_ast_Scope = Object.freeze(Object.assign(class Scope {
         if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         this.location = location;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -519,8 +516,8 @@ const ion_ast_Scope = Object.freeze(Object.assign(class Scope {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Scope')),
     path: 'ion.ast.Scope'
-}));
-const ion_ast_FunctionExpression = Object.freeze(Object.assign(class FunctionExpression {
+});
+const ion_ast_FunctionExpression = Object.assign(class FunctionExpression {
     constructor(...args) {
         let location = null, id = null, parameters, returnType = null, body;
         for (let arg of args) {
@@ -552,7 +549,7 @@ const ion_ast_FunctionExpression = Object.freeze(Object.assign(class FunctionExp
         this.parameters = parameters;
         this.returnType = returnType;
         this.body = body;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -564,8 +561,8 @@ const ion_ast_FunctionExpression = Object.freeze(Object.assign(class FunctionExp
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.FunctionExpression')),
     path: 'ion.ast.FunctionExpression'
-}));
-const ion_ast_Module = Object.freeze(Object.assign(class Module {
+});
+const ion_ast_Module = Object.assign(class Module {
     constructor(...args) {
         let location = null, imports, declarations, exports;
         for (let arg of args) {
@@ -592,7 +589,7 @@ const ion_ast_Module = Object.freeze(Object.assign(class Module {
         this.imports = imports;
         this.declarations = declarations;
         this.exports = exports;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -602,8 +599,8 @@ const ion_ast_Module = Object.freeze(Object.assign(class Module {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Module')),
     path: 'ion.ast.Module'
-}));
-const ion_ast_Statement = Object.freeze(Object.assign(class Statement {
+});
+const ion_ast_Statement = Object.assign(class Statement {
     constructor() {
         throw new Error('Statement is abstract');
     }
@@ -614,8 +611,8 @@ const ion_ast_Statement = Object.freeze(Object.assign(class Statement {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Statement')),
     path: 'ion.ast.Statement'
-}));
-const ion_ast_AssignmentStatement = Object.freeze(Object.assign(class AssignmentStatement {
+});
+const ion_ast_AssignmentStatement = Object.assign(class AssignmentStatement {
     constructor(...args) {
         let location = null, left, right;
         for (let arg of args) {
@@ -637,7 +634,7 @@ const ion_ast_AssignmentStatement = Object.freeze(Object.assign(class Assignment
         this.location = location;
         this.left = left;
         this.right = right;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -647,8 +644,8 @@ const ion_ast_AssignmentStatement = Object.freeze(Object.assign(class Assignment
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.AssignmentStatement')),
     path: 'ion.ast.AssignmentStatement'
-}));
-const ion_ast_BlockStatement = Object.freeze(Object.assign(class BlockStatement {
+});
+const ion_ast_BlockStatement = Object.assign(class BlockStatement {
     constructor(...args) {
         let location = null, statements;
         for (let arg of args) {
@@ -665,7 +662,7 @@ const ion_ast_BlockStatement = Object.freeze(Object.assign(class BlockStatement 
             throw new Error('statements is not valid: ' + JSON.stringify(statements));
         this.location = location;
         this.statements = statements;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -677,8 +674,8 @@ const ion_ast_BlockStatement = Object.freeze(Object.assign(class BlockStatement 
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.BlockStatement')),
     path: 'ion.ast.BlockStatement'
-}));
-const ion_ast_Declaration = Object.freeze(Object.assign(class Declaration {
+});
+const ion_ast_Declaration = Object.assign(class Declaration {
     constructor() {
         throw new Error('Declaration is abstract');
     }
@@ -690,8 +687,8 @@ const ion_ast_Declaration = Object.freeze(Object.assign(class Declaration {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Declaration')),
     path: 'ion.ast.Declaration'
-}));
-const ion_ast_ClassDeclaration = Object.freeze(Object.assign(class ClassDeclaration {
+});
+const ion_ast_ClassDeclaration = Object.assign(class ClassDeclaration {
     constructor(...args) {
         let location = null, id, factory = null, isStructure = false, isAbstract = false, templateParameters, baseClasses, declarations, meta;
         for (let arg of args) {
@@ -743,7 +740,7 @@ const ion_ast_ClassDeclaration = Object.freeze(Object.assign(class ClassDeclarat
         this.baseClasses = baseClasses;
         this.declarations = declarations;
         this.meta = meta;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -756,8 +753,8 @@ const ion_ast_ClassDeclaration = Object.freeze(Object.assign(class ClassDeclarat
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.ClassDeclaration')),
     path: 'ion.ast.ClassDeclaration'
-}));
-const ion_ast_ImportDeclaration = Object.freeze(Object.assign(class ImportDeclaration {
+});
+const ion_ast_ImportDeclaration = Object.assign(class ImportDeclaration {
     constructor(...args) {
         let location = null, id, module;
         for (let arg of args) {
@@ -779,7 +776,7 @@ const ion_ast_ImportDeclaration = Object.freeze(Object.assign(class ImportDeclar
         this.location = location;
         this.id = id;
         this.module = module;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -790,8 +787,8 @@ const ion_ast_ImportDeclaration = Object.freeze(Object.assign(class ImportDeclar
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.ImportDeclaration')),
     path: 'ion.ast.ImportDeclaration'
-}));
-const ion_ast_ExportStatement = Object.freeze(Object.assign(class ExportStatement {
+});
+const ion_ast_ExportStatement = Object.assign(class ExportStatement {
     constructor(...args) {
         let location = null, value;
         for (let arg of args) {
@@ -808,7 +805,7 @@ const ion_ast_ExportStatement = Object.freeze(Object.assign(class ExportStatemen
             throw new Error('value is not valid: ' + JSON.stringify(value));
         this.location = location;
         this.value = value;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -818,8 +815,8 @@ const ion_ast_ExportStatement = Object.freeze(Object.assign(class ExportStatemen
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.ExportStatement')),
     path: 'ion.ast.ExportStatement'
-}));
-const ion_ast_IfStatement = Object.freeze(Object.assign(class IfStatement {
+});
+const ion_ast_IfStatement = Object.assign(class IfStatement {
     constructor(...args) {
         let location = null, test, consequent, alternate = null;
         for (let arg of args) {
@@ -846,7 +843,7 @@ const ion_ast_IfStatement = Object.freeze(Object.assign(class IfStatement {
         this.test = test;
         this.consequent = consequent;
         this.alternate = alternate;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -856,8 +853,8 @@ const ion_ast_IfStatement = Object.freeze(Object.assign(class IfStatement {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.IfStatement')),
     path: 'ion.ast.IfStatement'
-}));
-const ion_ast_ReturnStatement = Object.freeze(Object.assign(class ReturnStatement {
+});
+const ion_ast_ReturnStatement = Object.assign(class ReturnStatement {
     constructor(...args) {
         let location = null, value;
         for (let arg of args) {
@@ -874,7 +871,7 @@ const ion_ast_ReturnStatement = Object.freeze(Object.assign(class ReturnStatemen
             throw new Error('value is not valid: ' + JSON.stringify(value));
         this.location = location;
         this.value = value;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -884,13 +881,13 @@ const ion_ast_ReturnStatement = Object.freeze(Object.assign(class ReturnStatemen
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.ReturnStatement')),
     path: 'ion.ast.ReturnStatement'
-}));
+});
 const ion_Type = (Object.freeze({
     is(value) {
         return value != null && typeof value.is === 'function'
     }
 }));
-const ion_ast_ThisExpression = Object.freeze(Object.assign(class ThisExpression {
+const ion_ast_ThisExpression = Object.assign(class ThisExpression {
     constructor(...args) {
         let location = null;
         for (let arg of args) {
@@ -902,7 +899,7 @@ const ion_ast_ThisExpression = Object.freeze(Object.assign(class ThisExpression 
         if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
             throw new Error('location is not valid: ' + JSON.stringify(location));
         this.location = location;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -912,8 +909,8 @@ const ion_ast_ThisExpression = Object.freeze(Object.assign(class ThisExpression 
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.ThisExpression')),
     path: 'ion.ast.ThisExpression'
-}));
-const ion_ast_TypeExpression = Object.freeze(Object.assign(class TypeExpression {
+});
+const ion_ast_TypeExpression = Object.assign(class TypeExpression {
     constructor() {
         throw new Error('TypeExpression is abstract');
     }
@@ -925,8 +922,8 @@ const ion_ast_TypeExpression = Object.freeze(Object.assign(class TypeExpression 
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.TypeExpression')),
     path: 'ion.ast.TypeExpression'
-}));
-const ion_ast_ConstrainedType = Object.freeze(Object.assign(class ConstrainedType {
+});
+const ion_ast_ConstrainedType = Object.assign(class ConstrainedType {
     constructor(...args) {
         let location = null, baseType, constraint;
         for (let arg of args) {
@@ -948,7 +945,7 @@ const ion_ast_ConstrainedType = Object.freeze(Object.assign(class ConstrainedTyp
         this.location = location;
         this.baseType = baseType;
         this.constraint = constraint;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -959,8 +956,42 @@ const ion_ast_ConstrainedType = Object.freeze(Object.assign(class ConstrainedTyp
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.ConstrainedType')),
     path: 'ion.ast.ConstrainedType'
-}));
-const ion_ast_LiteralType = Object.freeze(Object.assign(class LiteralType {
+});
+const ion_ast_IntersectionType = Object.assign(class IntersectionType {
+    constructor(...args) {
+        let location = null, left, right;
+        for (let arg of args) {
+            if (arg != null) {
+                if (arg.location !== undefined)
+                    location = arg.location;
+                if (arg.left !== undefined)
+                    left = arg.left;
+                if (arg.right !== undefined)
+                    right = arg.right;
+            }
+        }
+        if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
+            throw new Error('location is not valid: ' + JSON.stringify(location));
+        if (!ion_ast_Expression.is(left))
+            throw new Error('left is not valid: ' + JSON.stringify(left));
+        if (!ion_ast_Expression.is(right))
+            throw new Error('right is not valid: ' + JSON.stringify(right));
+        this.location = location;
+        this.left = left;
+        this.right = right;
+        this;
+    }
+}, {
+    types: new Set([
+        'ion.ast.TypeExpression',
+        'ion.ast.Expression',
+        'ion.ast.Node',
+        'ion.ast.IntersectionType'
+    ]),
+    is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.IntersectionType')),
+    path: 'ion.ast.IntersectionType'
+});
+const ion_ast_LiteralType = Object.assign(class LiteralType {
     constructor(...args) {
         let location = null, literal;
         for (let arg of args) {
@@ -977,7 +1008,7 @@ const ion_ast_LiteralType = Object.freeze(Object.assign(class LiteralType {
             throw new Error('literal is not valid: ' + JSON.stringify(literal));
         this.location = location;
         this.literal = literal;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -988,8 +1019,8 @@ const ion_ast_LiteralType = Object.freeze(Object.assign(class LiteralType {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.LiteralType')),
     path: 'ion.ast.LiteralType'
-}));
-const ion_ast_TemplateReference = Object.freeze(Object.assign(class TemplateReference {
+});
+const ion_ast_TemplateReference = Object.assign(class TemplateReference {
     constructor(...args) {
         let location = null, baseType, $arguments;
         for (let arg of args) {
@@ -1011,7 +1042,7 @@ const ion_ast_TemplateReference = Object.freeze(Object.assign(class TemplateRefe
         this.location = location;
         this.baseType = baseType;
         this.arguments = $arguments;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -1022,8 +1053,75 @@ const ion_ast_TemplateReference = Object.freeze(Object.assign(class TemplateRefe
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.TemplateReference')),
     path: 'ion.ast.TemplateReference'
-}));
-const ion_ast_Variable = Object.freeze(Object.assign(class Variable {
+});
+const ion_ast_UnaryExpression = Object.assign(class UnaryExpression {
+    constructor(...args) {
+        let location = null, operator, argument;
+        for (let arg of args) {
+            if (arg != null) {
+                if (arg.location !== undefined)
+                    location = arg.location;
+                if (arg.operator !== undefined)
+                    operator = arg.operator;
+                if (arg.argument !== undefined)
+                    argument = arg.argument;
+            }
+        }
+        if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
+            throw new Error('location is not valid: ' + JSON.stringify(location));
+        if (!ion_String.is(operator))
+            throw new Error('operator is not valid: ' + JSON.stringify(operator));
+        if (!ion_ast_Expression.is(argument))
+            throw new Error('argument is not valid: ' + JSON.stringify(argument));
+        this.location = location;
+        this.operator = operator;
+        this.argument = argument;
+        this;
+    }
+}, {
+    types: new Set([
+        'ion.ast.Expression',
+        'ion.ast.Node',
+        'ion.ast.UnaryExpression'
+    ]),
+    is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.UnaryExpression')),
+    path: 'ion.ast.UnaryExpression'
+});
+const ion_ast_UnionType = Object.assign(class UnionType {
+    constructor(...args) {
+        let location = null, left, right;
+        for (let arg of args) {
+            if (arg != null) {
+                if (arg.location !== undefined)
+                    location = arg.location;
+                if (arg.left !== undefined)
+                    left = arg.left;
+                if (arg.right !== undefined)
+                    right = arg.right;
+            }
+        }
+        if (!{ is: $ => ion_ast_Location.is($) || ion_Null.is($) }.is(location))
+            throw new Error('location is not valid: ' + JSON.stringify(location));
+        if (!ion_ast_Expression.is(left))
+            throw new Error('left is not valid: ' + JSON.stringify(left));
+        if (!ion_ast_Expression.is(right))
+            throw new Error('right is not valid: ' + JSON.stringify(right));
+        this.location = location;
+        this.left = left;
+        this.right = right;
+        this;
+    }
+}, {
+    types: new Set([
+        'ion.ast.TypeExpression',
+        'ion.ast.Expression',
+        'ion.ast.Node',
+        'ion.ast.UnionType'
+    ]),
+    is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.UnionType')),
+    path: 'ion.ast.UnionType'
+});
+const ion_ast_Variable = Object.assign(class Variable {
     constructor() {
         throw new Error('Variable is abstract');
     }
@@ -1034,8 +1132,8 @@ const ion_ast_Variable = Object.freeze(Object.assign(class Variable {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Variable')),
     path: 'ion.ast.Variable'
-}));
-const ion_ast_Parameter = Object.freeze(Object.assign(class Parameter {
+});
+const ion_ast_Parameter = Object.assign(class Parameter {
     constructor(...args) {
         let location = null, id, type = null, value = null, assignable = false;
         for (let arg of args) {
@@ -1067,7 +1165,7 @@ const ion_ast_Parameter = Object.freeze(Object.assign(class Parameter {
         this.type = type;
         this.value = value;
         this.assignable = assignable;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -1077,8 +1175,8 @@ const ion_ast_Parameter = Object.freeze(Object.assign(class Parameter {
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.Parameter')),
     path: 'ion.ast.Parameter'
-}));
-const ion_ast_VariableDeclaration = Object.freeze(Object.assign(class VariableDeclaration {
+});
+const ion_ast_VariableDeclaration = Object.assign(class VariableDeclaration {
     constructor(...args) {
         let location = null, id, type = null, value = null, assignable = false, property = false;
         for (let arg of args) {
@@ -1115,7 +1213,7 @@ const ion_ast_VariableDeclaration = Object.freeze(Object.assign(class VariableDe
         this.value = value;
         this.assignable = assignable;
         this.property = property;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -1128,8 +1226,8 @@ const ion_ast_VariableDeclaration = Object.freeze(Object.assign(class VariableDe
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.VariableDeclaration')),
     path: 'ion.ast.VariableDeclaration'
-}));
-const ion_ast_TypeDeclaration = Object.freeze(Object.assign(class TypeDeclaration {
+});
+const ion_ast_TypeDeclaration = Object.assign(class TypeDeclaration {
     constructor(...args) {
         let location = null, id, type = null, value = null, assignable = false, property = false;
         for (let arg of args) {
@@ -1166,7 +1264,7 @@ const ion_ast_TypeDeclaration = Object.freeze(Object.assign(class TypeDeclaratio
         this.value = value;
         this.assignable = assignable;
         this.property = property;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -1180,8 +1278,8 @@ const ion_ast_TypeDeclaration = Object.freeze(Object.assign(class TypeDeclaratio
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.TypeDeclaration')),
     path: 'ion.ast.TypeDeclaration'
-}));
-const ion_ast_WhileStatement = Object.freeze(Object.assign(class WhileStatement {
+});
+const ion_ast_WhileStatement = Object.assign(class WhileStatement {
     constructor(...args) {
         let location = null, test, body;
         for (let arg of args) {
@@ -1203,7 +1301,7 @@ const ion_ast_WhileStatement = Object.freeze(Object.assign(class WhileStatement 
         this.location = location;
         this.test = test;
         this.body = body;
-        Object.freeze(this);
+        this;
     }
 }, {
     types: new Set([
@@ -1213,7 +1311,7 @@ const ion_ast_WhileStatement = Object.freeze(Object.assign(class WhileStatement 
     ]),
     is: ($ => $ != null && $.constructor.types != null && $.constructor.types.has('ion.ast.WhileStatement')),
     path: 'ion.ast.WhileStatement'
-}));
+});
 const ion_Map = ((function(){
     //  add Map.prototype.toJSON
     Object.defineProperty(
@@ -1267,7 +1365,7 @@ const ion_Map = ((function(){
         }
     }))
 })());
-const ion_Integer = Object.freeze({ is: $ => ion_Number.is($) && ion_Number.fraction($) === 0 });
+const ion_Integer = { is: $ => ion_Number.is($) && ion_Number.fraction($) === 0 };
 const ion_Array = ((function(){
     const emptyArray = Object.freeze([])
     return Object.freeze(Object.assign(function ion_Array(...args){
@@ -1288,17 +1386,17 @@ const ion_Array = ((function(){
         }
     }))
 })());
-const ion_constants_$Foo = Object.freeze({ is: $ => $ == 0 || $ == 1 });
-const ion_constants_$Bar = Object.freeze({ is: $ => $ == 2 || $ == 3 });
+const ion_constants_$Foo = { is: $ => $ == 0 || $ == 1 };
+const ion_constants_$Bar = { is: $ => $ == 2 || $ == 3 };
 const ion_constants_one = 1;
 const ion_constants_zero = 0;
-const ion_constants_Baz = Object.freeze({ is: $ => ion_constants_$Foo.is($) || ion_constants_$Bar.is($) });
-export default Object.freeze({
-    ion: Object.freeze({
+const ion_constants_Baz = { is: $ => ion_constants_$Foo.is($) || ion_constants_$Bar.is($) };
+export default {
+    ion: {
         String: ion_String,
         Boolean: ion_Boolean,
         Null: ion_Null,
-        ast: Object.freeze({
+        ast: {
             Node: ion_ast_Node,
             Expression: ion_ast_Expression,
             BinaryExpression: ion_ast_BinaryExpression,
@@ -1310,8 +1408,8 @@ export default Object.freeze({
             Literal: ion_ast_Literal,
             Position: ion_ast_Position,
             MemberExpression: ion_ast_MemberExpression,
-            Options: ion_ast_Options,
             Location: ion_ast_Location,
+            Options: ion_ast_Options,
             ObjectLiteral: ion_ast_ObjectLiteral,
             Primitive: ion_ast_Primitive,
             Reference: ion_ast_Reference,
@@ -1331,24 +1429,27 @@ export default Object.freeze({
             ThisExpression: ion_ast_ThisExpression,
             TypeExpression: ion_ast_TypeExpression,
             ConstrainedType: ion_ast_ConstrainedType,
+            IntersectionType: ion_ast_IntersectionType,
             LiteralType: ion_ast_LiteralType,
             TemplateReference: ion_ast_TemplateReference,
+            UnaryExpression: ion_ast_UnaryExpression,
+            UnionType: ion_ast_UnionType,
             Variable: ion_ast_Variable,
             Parameter: ion_ast_Parameter,
             VariableDeclaration: ion_ast_VariableDeclaration,
             TypeDeclaration: ion_ast_TypeDeclaration,
             WhileStatement: ion_ast_WhileStatement
-        }),
+        },
         Any: ion_Any,
         Number: ion_Number,
         Type: ion_Type,
         Map: ion_Map,
         Integer: ion_Integer,
         Array: ion_Array,
-        constants: Object.freeze({
+        constants: {
             one: ion_constants_one,
             zero: ion_constants_zero,
             Baz: ion_constants_Baz
-        })
-    })
-});
+        }
+    }
+};

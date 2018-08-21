@@ -1,0 +1,8 @@
+import
+    ion.*
+    .Id
+    .Expression
+
+export class UnaryExpression extends Expression
+    var operator: String
+    var argument: Expression

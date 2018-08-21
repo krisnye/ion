@@ -24,7 +24,12 @@
     }
 
     function operation(left, operator, right) {
-            return node("BinaryExpression", {left,operator,right})
+        if (right) {
+            return node("BinaryExpression", { left, operator, right })
+        }
+        else {
+            return node("UnaryExpression", { operator, argument: left })
+        }
     }
 
     function buildBinaryExpression(head, tail) {

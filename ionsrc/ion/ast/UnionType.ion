@@ -1,0 +1,9 @@
+import
+    ion.*
+    .Expression
+    .Reference
+    .TypeExpression
+
+export class UnionType extends TypeExpression
+    var left: Expression
+    var right: Expression

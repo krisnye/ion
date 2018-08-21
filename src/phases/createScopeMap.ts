@@ -2,12 +2,15 @@ import { traverse, remove, skip, enter, leave, Visitor } from "../Traversal"
 import { SemanticError } from "../common"
 const { ast } = require("../ion")
 
+export type ScopeMap = {
+    get(node: any) : any
+}
 
 /**
  * Returns a Map which will contain a scope object with variable names returning Declarations.
  * @param root the ast
  */
-export default function createScopeMap(root, { checkDeclareBeforeUse=false } = {}): Map<any,any> {
+export default function createScopeMap(root, { checkDeclareBeforeUse=false } = {}): ScopeMap {
     let map = new Map()
     let scopes: object[] = []
 
@@ -57,5 +60,5 @@ export default function createScopeMap(root, { checkDeclareBeforeUse=false } = {
         }
     })
 
-    return map
+    return { get: (node) => node != null ? map.get(node.location) : null }
 }

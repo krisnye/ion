@@ -1,6 +1,6 @@
 import
     ion.*
-    .Expression
+    .Node
 
-export class Id extends Expression
+export class Id extends Node
     var name: String

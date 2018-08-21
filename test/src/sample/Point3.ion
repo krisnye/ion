@@ -1,4 +1,6 @@
 
+let unary = not false
+
 export class Point3 extends Point2
     var z: Number
     let translate = (dx: Number, dy: Number, dz: Number) -> Point3(y: y + dy, x: x + dx, z: z + dz)
