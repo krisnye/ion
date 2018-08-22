@@ -3,6 +3,16 @@ import
 
 [Native.JavaScript]: ""
     (function(){
+        //  add Map.prototype.toJSON
+        Object.defineProperty(
+            Map.prototype,
+            "toJSON",
+            {
+                value: function() {
+                    return { elements: Array.from(this.entries()) }
+                }
+            }
+        )
         function createImmutableMap(map) {
             return Object.freeze(Object.assign(map, {
                 clear() {},
@@ -40,9 +50,6 @@ import
                         if (!ValueType.is(v))
                             return false
                     }
-                }
-                value.toJSON = function() {
-                    return { elements: Array.from(this.entries()) }
                 }
                 return true
             }

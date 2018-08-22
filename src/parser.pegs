@@ -14,7 +14,7 @@
     }
 
     function operation(left, operator, right) {
-            return node("BinaryExpression", {left,operator,right})
+        return node("BinaryExpression", {left,operator,right})
     }
 
     function buildBinaryExpression(head, tail) {
@@ -124,7 +124,7 @@ AssignmentStatement
 
 BlockStatement
     = EOL Indent body:(Dent @Statement)+ Outdent
-    { return node("BlockStatement", body) }
+    { return node("BlockStatement", {body}) }
 
 ForInStatement
     = ForToken _ left:Pattern _ InToken _ right:InlineExpression body:BlockStatement

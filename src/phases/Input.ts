@@ -47,9 +47,8 @@ const Namespace_AddVariableBindings = (node: ast.Namespace, ancestors: object[])
     scope.addVariable(new ast.Id({name:node.name}), node)
 }
 const ForInStatement_AddVariableBindings = (node: ast.ForInStatement, ancestors: object[]) => {
-    console.log('For..in..variables not done')
-    // let scope = ast.getScope(node, ancestors)
-    // scope.addVariable(node.left)
+    let scope = ast.getScope(node, ancestors)
+    scope.addVariable(<ast.Id>node.left, node.right)
 }
 const ClassDeclaration_AddVariableBindings = (node: ast.ClassDeclaration, ancestors: object[]) => {
     // place class name into parent scope as type variable

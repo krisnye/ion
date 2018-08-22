@@ -14,6 +14,8 @@ const Node_NoOp = (node: any) => {
 }
 
 function Freeze(value: any) {
+    // // don't freeze anything
+    // return value
     if (value.type == 'Literal')
         return value
     return {
@@ -117,6 +119,48 @@ const __BinaryExpression_ToJavascript = (n:ast.BinaryExpression) => {
 }
 const __MemberExpression_ToJavascript = (n:ast.MemberExpression, ancestors: object[]) => {
     return {type:jst.MemberExpression, object: n.object, property: n.property, computed: false}
+}
+
+const __FunctionExpression_ToJavascript = (n: ast.FunctionExpression, ancestors: object[]) => {
+    return { type: jst.FunctionExpression, params: n.parameters || [], body: n.body }
+}
+
+const __BlockStatement_ToJavascript = (n: ast.BlockStatement, ancestors: object[]) => {
+    return { type: jst.BlockStatement, body: n.body }
+}
+
+const __ReturnStatement_ToJavascript = (n: ast.ReturnStatement, ancestors: object[]) => {
+    return { type: jst.ReturnStatement, argument: n.argument }
+}
+
+const __IfStatement_ToJavascript = ({ test, consequent, alternate }: ast.IfStatement, ancestors: object[]) => {
+    return { type: jst.IfStatement, test, consequent, alternate }
+}
+
+const __WhileStatement_ToJavascript = ({ test, body }: ast.WhileStatement, ancestors: object[]) => {
+    return { type: jst.WhileStatement, test, body }
+}
+
+const __ArrayExpression_ToJavascript = ({ elements }: ast.ArrayExpression, ancestors: object[]) => {
+    return { type: jst.ArrayExpression, elements }
+}
+
+const __AssignmentStatement_ToJavascript = ({ left, right }: ast.AssignmentStatement, ancestors: object[]) => {
+    return { type: jst.ExpressionStatement, expression: { type: jst.AssignmentExpression, operator: "=", left, right } }
+}
+
+const __ForInStatement_ToJavascript = ({ left, right, body }: ast.ForInStatement, ancestors: object[]) => {
+    //  For In => For Of
+    return { type: jst.ForOfStatement, left:{ type: jst.VariableDeclaration, kind:"const", declarations: [{type:jst.VariableDeclarator, id:left}]}, right, body }
+}
+
+const __VariableDeclaration_ToJavascript = (d: ast.VariableDeclaration, ancestors: object[]) => {
+    if (d instanceof ast.VariableDeclaration) {
+        return { type: jst.VariableDeclaration, kind: d.assignable ? "let" : "const", declarations:[{ type: jst.VariableDeclarator, id: d.id, init: d.value }] }
+    }
+    else {
+        return d
+    }
 }
 
 const __MemberExpression_ToFunctionCallIfComputed = (n: ast.MemberExpression, ancestors: object[]) => {
@@ -560,7 +604,7 @@ export const passes = [
     [__DotExpression_ToJavascriptIdentifier],
     [__CallExpression_SimplifyTypeIsCalls],
     [__ClassDeclaration_ToJavascriptClass],
-    [__TemplateReference_ToJavascript],
+    [__TemplateReference_ToJavascript, __BlockStatement_ToJavascript, __FunctionExpression_ToJavascript, __ReturnStatement_ToJavascript, __IfStatement_ToJavascript, __VariableDeclaration_ToJavascript, __WhileStatement_ToJavascript, __AssignmentStatement_ToJavascript, __ForInStatement_ToJavascript, __ArrayExpression_ToJavascript],
     [Node_NoOp, __IrtRoot_ToJavascriptModule],
     [Node_findClassNamesThatNeedConversion],
     [Node_NoOp, __Program_CompileJavascript]

@@ -82,6 +82,20 @@ export class File extends Node {
     encoding?: string
 }
 
+function inferType(node: Expression) {
+    if (node instanceof FunctionExpression)
+        return "ion.Function"
+    if (node instanceof Literal) {
+        if (typeof node.value === "boolean")
+            return "ion.Boolean"
+        if (typeof node.value === "number")
+            return "ion.Number"
+        if (typeof node.value === "string")
+            return "ion.String"
+    }
+    return null
+}
+
 export class VariableDeclaration extends Node implements Declaration, Expression {
     id: Id
     assignable: boolean
@@ -89,6 +103,16 @@ export class VariableDeclaration extends Node implements Declaration, Expression
     type: TypeExpression
     value: Expression | null
     meta: Property[]
+
+    constructor(...args: any[]) {
+        super(...args)
+        if (this.type == null && this.value != null) {
+            let typeName = inferType(this.value)
+            if (typeName != null)
+                this.type = new CanonicalReference(typeName)
+        }
+    }
+
     getDependencies() {
         if (this.type) {
             if (this.value)
@@ -162,6 +186,17 @@ export class IrtRoot extends Node {
             })
         }
     })
+}
+
+export class IfStatement extends Node implements Statement {
+    test: Expression
+    consequent: BlockStatement
+    alternate: BlockStatement | IfStatement
+}
+
+export class WhileStatement extends Node implements Statement {
+    test: Expression
+    body: Statement
 }
 
 export class Assembly extends Namespace {
@@ -372,7 +407,7 @@ export class Reference extends Node implements Expression {
     getDependencies(ancestors: object[]): Expression[] {
         let variable = this.getVariable(ancestors, this.id.name)
         if (variable == null) {
-            this.throwSemanticError(`Variable is unresolved: ${this.id.name}`)
+            // this.throwSemanticError(`Variable is unresolved: ${this.id.name}`)
             return []
         }
         else if (variable.value) {
