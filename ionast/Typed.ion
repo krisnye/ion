@@ -1,0 +1,7 @@
+import
+    ion.*
+    .*
+
+export
+    class Typed extends Node
+        var type: TypeDefinition | Reference | Null = null

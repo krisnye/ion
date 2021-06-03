@@ -1,0 +1,7 @@
+import
+    ion.*
+
+export
+    struct Position
+        var line: Number
+        var column: Number

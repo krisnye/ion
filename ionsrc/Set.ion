@@ -1,0 +1,4 @@
+
+export
+    class Set<V>
+        let has: value => Boolean

@@ -1,0 +1,7 @@
+import
+    ion.*
+    .*
+
+export
+    class DotExpression extends Reference
+        var name: String = "."

@@ -1,0 +1,7 @@
+import
+    ion.*
+    .*
+
+export
+    class Literal extends Expression
+        var value : String | Number | Boolean | Null

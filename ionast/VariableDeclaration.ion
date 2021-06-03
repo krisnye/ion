@@ -1,0 +1,8 @@
+import
+    ion.*
+    .*
+
+export
+    class VariableDeclaration extends Variable, Declaration
+        # A redeclaration made for type checking. Removed before output.
+        var virtual: Boolean = false

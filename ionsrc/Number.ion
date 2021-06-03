@@ -1,0 +1,18 @@
+
+export
+    struct Number
+
+    let fraction: Number
+
+    #   +
+    let add: (left: Number, right: Number) => Number
+    #   -
+    let subtract: (left: Number, right: Number) => Number
+    #   *
+    let multiply: (left: Number, right: Number) => Number
+    #   /
+    let divide: (left: Number, right: Number) => Number
+    #   %
+    let remainder: (left: Number, right: Number) => Number
+    #   ^
+    let exponent: (left: Number, right: Number) => Number

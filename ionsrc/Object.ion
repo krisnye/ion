@@ -1,0 +1,4 @@
+
+export
+    class Object
+        let toString: () => String

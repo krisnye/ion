@@ -1,0 +1,8 @@
+import
+    .*
+    ion.*
+
+export
+    class TemplateReference extends Expression
+        var reference: Reference
+        var arguments: Array<Expression>

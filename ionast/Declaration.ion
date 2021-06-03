@@ -1,0 +1,9 @@
+import
+    ion.*
+    .*
+
+export
+    class Declaration extends Typed
+        var id: Id
+        var export: Boolean = false
+        var assignable: Boolean = false

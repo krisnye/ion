@@ -1,0 +1,685 @@
+{
+
+    const ast = require("./ast")
+    const types = require("./types")
+
+    function getLocation() {
+        let { start, end, filename } = location()
+        return new ast.Location({
+            start: new ast.Position(start.line, start.column),
+            end: new ast.Position(end.line, end.column),
+            filename
+        })
+    }
+
+    function node(type, ...values) {
+        // we assign again in case it was overridden by copy values
+        let TypeConstructor = ast[type]
+        if (TypeConstructor == null) {
+            throw new Error(`Missing Type: ${type}`)
+        }
+        let result = new TypeConstructor(Object.assign({ location: getLocation() }, ...values))
+        return result
+    }
+
+    function operation(left, operator, right) {
+        if (right) {
+            return node("BinaryExpression", { left, operator, right })
+        }
+        else {
+            return node("UnaryExpression", { operator, left })
+        }
+    }
+
+    function buildBinaryExpression(head, tail) {
+        return tail.reduce(
+            (left, [,operator,,right]) => {
+                if (operator === "isnt") {
+                    return operation(operation(left, "is", right), "not")
+                } else {
+                    return operation(left, operator, right)
+                }
+            }
+            ,head
+        )
+    }
+
+    function toMap(nodes, getKey = node => node.id.name) {
+        return new Map(nodes.map(node => [getKey(node), node]))
+    }
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//  Module
+////////////////////////////////////////////////////////////////////////////////
+
+Module
+    = EOL? imports:Imports declarations:Declaration* exports:Exports EOL EOF
+    { return node("Module", { imports, declarations: [...declarations, ...exports] }) }
+    / EOL? EOF
+    { return node("Module", { imports:[], declarations: [] }) }
+
+Exports
+    //  Allow Declaration meta properties to be specified before the export declaration
+    // = meta:MetaProperties ExportToken _ value:Declaration { return node(value.constructor.name, {meta}, value) }
+    = ExportToken EOL Indent declarations:(Dent @Declaration)+ Outdent
+    { return declarations.map(d => node(d.constructor.name, d, { export: true })) }
+
+////////////////////////////////////////////////////////////////////////////////
+//  ImportDeclaration
+////////////////////////////////////////////////////////////////////////////////
+
+ModulePath
+    = head:Id tail:("." @Id)*
+    { return [head, ...tail] }
+
+SubImports
+    = Indent @(Dent &'.' @ImportStep)+ Outdent
+
+ImportStepChildren
+    = &'.' child:ImportStep
+    { return [child] }
+    / EOL Indent @(Dent &'.' @ImportStep)* Outdent
+
+ImportStep
+    = relative:'.*' EOL
+    {
+        return node("ImportStep", { relative: true, children: true })
+    }
+    / relative:'.'? id:Id as:(_ AsToken _ @Id)? children:ImportStepChildren
+    {
+        if (as == null) {
+            as = id
+        }
+        return node("ImportStep", { relative: relative != null, id, as, children })
+    }
+
+Imports
+    = ImportToken EOL Indent imports:(Dent @ImportStep)+ Outdent
+    { return imports }
+    / &.
+    { return [] }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Statements
+////////////////////////////////////////////////////////////////////////////////
+
+Statement
+    = Declaration
+    / AssignmentStatement
+    // / OutlineExpression
+    / IfStatement
+    / ForInStatement
+    / ReturnStatement
+    / WhileStatement
+    / ExpressionStatement
+
+ExpressionStatement
+    = value:OutlineExpression
+    { return node("ExpressionStatement", { value }) }
+
+Declaration
+    = ClassDeclaration
+    / VariableDeclaration
+
+VariableDeclarationType
+    = VarToken { return { assignable: true } }
+    / LetToken { return { assignable: false } }
+    // / PropertyToken { return "Property" } // I think this was used for meta?
+
+VariableDeclaration
+    = TypeToken _ id:Id _ "=" _ value:Type EOL
+    { return node("TypeDeclaration", { id, value }) }
+    / meta:MetaProperties declarationType: VariableDeclarationType
+        _ id:Pattern _ type:(":" _ @Type)? _ value:('=' _ @OutlineExpression / EOL {return null})?
+    {
+        return node("VariableDeclaration", { ...declarationType, id, type, value, meta })
+    }
+
+MetaProperties
+ = (@DynamicOutlineProperty Dent)*
+
+DynamicOutlineProperty
+    = '[' _ key:InlineExpression _ ']' value:(_ ":" _ @OutlineExpression / EOL { return null })
+    { return node("KeyValuePair", {key, value, computed:true} ) }
+
+// VariableMetaProperties
+//     = EOL Indent @OutlineProperty+ Outdent
+
+AssignmentOperator
+    = "="
+    / "+="
+    / "-="
+    / "*="
+    / "/="
+
+AssignmentStatement
+    = left:Reference _ op:AssignmentOperator _ right:OutlineExpression
+    {
+        if (op.length > 1) {
+            right = operation(left, node("Id",{name:op.slice(0,-1)}), right)
+        }
+        return node("AssignmentStatement", {left, right})
+    }
+
+BlockStatement
+    = EOL Indent statements:(Dent @Statement)+ Outdent
+    { return node("BlockStatement", { statements }) }
+
+ForInStatement
+    = ForToken _ left:Pattern _ InToken _ right:InlineExpression body:BlockStatement
+    { return node("ForInStatement", { left, right, body } ) }
+
+WhileStatement
+    = WhileToken _ test:InlineExpression body:BlockStatement
+    { return node("WhileStatement", { test, body }) }
+
+IfStatement
+    = IfToken _ test:InlineExpression consequent:BlockStatement
+        alternate:(Dent ElseToken _ @(BlockStatement / IfStatement))?
+    { return node("IfStatement", { test, consequent, alternate }) }
+
+ReturnStatement
+    = ReturnToken _ value:InlineExpression? EOL
+    { return node("ReturnStatement", { value }) }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Patterns
+////////////////////////////////////////////////////////////////////////////////
+
+Pattern
+    = Id
+    / ArrayPattern
+    / ObjectPattern
+
+ArrayPattern
+    = "[" _ element:RestElement _ "]"
+    { return node("ArrayPattern", { elements: [element] }) }
+    / "[" _ head:Pattern? tail:(_ "," _ !"." @Pattern?)* _ rest:("," _ @RestElement)? _ "]"
+    {
+        let elements = [head || null, ...tail.map((x) => x || null)]
+        if (rest)
+            elements.push(rest)
+        return node("ArrayPattern", { elements })
+    }
+
+RestElement
+    = "..." argument:Pattern
+    { return node("RestElement", { argument }) }
+
+ObjectPattern
+    = "{" _ head:AssignmentProperty tail:(_ "," @AssignmentProperty)* _ "}"
+    { return node("ObjectPattern", { elements: [head, ...tail] }) }
+
+AssignmentProperty
+    = key:Id value:(_ ":" _ @Pattern)?
+    { return node("KeyValuePair", { key, value: value || node("Id", { name: key }) } ) }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Class
+////////////////////////////////////////////////////////////////////////////////
+
+ClassDeclaration
+    = meta:MetaProperties isStructure:(ClassToken { return false } / StructToken { return true })
+        _ id:Id parameters:TemplateParameters? _ baseClasses:Extends? EOL
+        Indent declarations:(Dent @Declaration)* Outdent
+        { return node("ClassDeclaration", { id, isStructure, parameters: parameters || [], meta, baseClasses: baseClasses || [], declarations: toMap(declarations), static: new Map() }) }
+
+TemplateParameters
+    = "<" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ">" { return [head, ...tail] }
+
+Extends
+    = ExtendsToken _ head:TemplateReference tail:(_ "," _ @TemplateReference)*
+    { return [head, ...tail] }
+
+////////////////////////////////////////////////////////////////////////////////
+//  TypeExpression
+////////////////////////////////////////////////////////////////////////////////
+
+Type
+    = type:UnionType
+    {
+        let isReference = ast.BinaryExpression.is(type) && type.operator === "is" && ast.Reference.is(type.right)
+        return isReference ? type.right : node("TypeExpression", { value: type })
+    }
+
+UnionType
+    = left:ConstrainedType right:(_ "|" _ @UnionType)?
+    { return right ? node('BinaryExpression', { left, operator: "|", right }) : left }
+
+ConstrainedType
+    = left:Constraint right:(_ "&" _ @ConstrainedType)?
+    { return right ? node('BinaryExpression', { left, operator: "&", right }) : left }
+
+Constraint
+    = right:Literal
+    { return node('BinaryExpression', { left: node('DotExpression'), operator: '==', right }) }
+    / left:MemberExpression? _ operator:(">=" / "<=" / ">" / "<" / "==" / "!=" / "is") _ right:MemberExpression
+    { return node('BinaryExpression', { left: left || node('DotExpression'), operator, right }) }
+    / right:(FunctionType / Reference /* Regex */)
+    { return node('BinaryExpression', { left:node('DotExpression'), operator: 'is', right }) }
+    // / TypeofToken _ argument:Reference
+    // { return node('UnaryExpression', { operator: "typeof", argument })}
+
+FunctionType
+    = parameters:FunctionParameters _ "=>" _ returnType:Type
+    { return node("FunctionType", {parameters, returnType}) }
+    / "(" _ @FunctionType _ ")"
+
+TemplateArgument
+    = Type
+    // / InlineExpression
+
+TemplateArguments
+    = "<" _ head:TemplateArgument tail:(_ "," _ @TemplateArgument)*  _ ">"
+    { return [head, ...tail] }
+
+TemplateReference
+    = reference:Reference args:(_ @TemplateArguments)?
+    { return args ? node("TemplateReference", { reference, arguments: args }) : reference }
+
+// Quantifier
+//     = "?" { return [0,1] }
+//     / "*" { return [0, null] }
+//     / "+" { return [1, null] }
+//     / Range
+
+// Range
+//     = from:DecimalInteger _ ".." _ to:DecimalInteger? { return [from, to || null] }
+//     / ".." _ to:DecimalInteger { return [null, to] }
+//     / value:DecimalInteger { return [value, value] }
+
+// KeyValue
+//     = key:Type value:(_ ':' _ @Type)? _ quantifier:Quantifier?
+//         { return node('KeyValue', {key, value, quantifier} ) }
+
+// CollectionType
+//     = '[' _ ']'
+//         { return node('CollectionType', {elements:[]}) }
+//     / '[' _ head:KeyValue tail:(_ ',' _ @KeyValue)* _ ']'
+//         { return node('CollectionType', {elements:[head, ...tail]}) }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Operations
+////////////////////////////////////////////////////////////////////////////////
+
+UnaryOperator
+    = "+" / "-" / NotToken / TypeofToken
+
+UnaryExpression
+    = MemberExpression
+    / operator:UnaryOperator _ argument:MemberExpression { return operation(argument, operator) }
+
+ExponentiationOperator "operator"
+    = "^" / "<<" / ">>"
+
+ExponentiationExpression
+    = left:UnaryExpression right:(_ operator:ExponentiationOperator _ right:ExponentiationExpression {return {operator,right}})?
+    { return right ? node("BinaryExpression", {left, operator:right.operator, right:right.right}) : left }
+
+MultiplicativeOperator
+    = "*" / "/" / "%"
+
+MultiplicativeExpression
+    = head:ExponentiationExpression tail:(_ MultiplicativeOperator _ ExponentiationExpression)*
+    { return buildBinaryExpression(head, tail) }
+
+AdditiveOperator
+    = "+" / "-"
+
+AdditiveExpression
+    = head:MultiplicativeExpression tail:(_ AdditiveOperator _ MultiplicativeExpression)*
+    { return buildBinaryExpression(head, tail) }
+
+RelationalOperator
+    = "<=" / ">=" / "<" / ">" / IsToken / IsntToken
+
+RelationalExpression
+    = head:AdditiveExpression tail:(_ RelationalOperator _ AdditiveExpression)*
+        { return buildBinaryExpression(head, tail) }
+    / tail:(_ RelationalOperator _ AdditiveExpression)
+        { return buildBinaryExpression(node('DotExpression') , [tail]) }
+
+EqualityOperator
+    = "==" / "!="
+
+EqualityExpression
+    = head:RelationalExpression tail:(_ EqualityOperator _ RelationalExpression)*
+    { return buildBinaryExpression(head, tail) }
+
+LogicalAndOperator
+    = "&"
+
+LogicalAndExpression
+    = head:EqualityExpression tail:(_ LogicalAndOperator _ EqualityExpression)*
+    { return buildBinaryExpression(head, tail) }
+
+LogicalOrOperator
+    = "|" / XorToken
+
+LogicalOrExpression
+    = head:LogicalAndExpression tail:(_ LogicalOrOperator _ LogicalAndExpression)*
+    { return buildBinaryExpression(head, tail) }
+
+ConditionalOperator
+    = "?"
+
+ConditionalExpression
+    = test:LogicalOrExpression
+        body:(
+            _ ConditionalOperator _ consequent:ConditionalExpression
+            _ ':' _ alternate:ConditionalExpression
+            { return [consequent,alternate] }
+        )?
+    { return body ? node('ConditionalExpression', { test, body }) : test }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Functions
+////////////////////////////////////////////////////////////////////////////////
+
+Parameter
+    = id:Pattern _ type:(":" _ @Type)? _ value:("=" !">" _ @InlineExpression)?
+    { return node("Parameter", { id, type, value })}
+
+FunctionParameters
+    = "(" _ ")" { return [] }
+    / id:Id { return [node("Parameter", { id } )] }
+    / "(" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ")" { return [head, ...tail] }
+
+FunctionHead
+    = id:(@Id _ &"(")? parameters:FunctionParameters? type:(_ ":" _ @Type)? _ "=>"
+    { return { id, type, parameters: parameters || [] } }
+
+InlineFunction
+    = head:FunctionHead _ value:InlineExpression
+    { return node("FunctionExpression", { ...head, body: node("BlockStatement", { statements: [node("ReturnStatement", { value } )] } ) } ) }
+
+OutlineFunction
+    = head:FunctionHead _ body:BlockStatement
+    { return node("FunctionExpression", { ...head, body }) }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Expressions
+////////////////////////////////////////////////////////////////////////////////
+
+OutlineExpression
+    = OutlineFunction
+    / OutlineCallExpression
+    / OutlineStringLiteral
+    / @InlineExpression EOL
+    //  TODO: Allow Optional BlockStatement After to imply function call.
+
+OutlineArguments
+    = EOL Indent @(Dent @OutlineExpression)+ Outdent
+
+OutlineCallExpression
+    = callee:InlineExpression args:OutlineArguments
+    { return node("CallExpression", {callee, arguments: args}) }
+
+InlineExpression
+    = InlineFunction
+    / ConditionalExpression
+
+PrimaryExpression
+    = Reference
+    / Literal
+    / ThisExpression
+    / DotExpression
+    / GroupExpression
+    / ArrayExpression
+    / ObjectExpression
+
+GroupExpression
+    = "(" _ @InlineExpression _ ")"
+
+ThisExpression
+    = ThisToken { return node('ThisExpression') }
+
+DotExpression
+    = "." property:Id
+    { return node('MemberExpression',{object:node('DotExpression'),property,computed:false}) }
+    / ".[" _ property:InlineExpression _ "]"
+    { return node('MemberExpression',{object:node('DotExpression'),property,computed:true}) }
+    / "."
+    { return node('DotExpression') }
+
+Property
+    = "[" _ key:InlineExpression _ "]" _ ":" _ value: InlineExpression
+    / key:(@Id _ ":")? _ value:InlineExpression
+    { return node("Property", {key,value}) }
+
+PropertyList
+    = head:Property tail:(_ "," _ @Property)* { return [head, ...tail] }
+
+InlineArguments
+    = "()" { return [] }
+    / "(" _ @PropertyList _ ")"
+    // / " " _ @PropertyList
+
+MemberExpression =
+    head: PrimaryExpression
+    tail: (
+        "[" _ property:InlineExpression _ "]" { return {property, computed:false} }
+        / "." property:Id { return {property, computed:false} }
+        / InlineArguments
+    )*
+    {
+        return tail.reduce(
+            (left, right) => {
+                if (Array.isArray(right)) {
+                    return node("CallExpression", {callee:left, arguments:right})
+                }
+                else {
+                    let {property,computed} = right
+                    return node("MemberExpression", {object:left, property, computed})
+                }
+            }
+            ,head
+        )
+    }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Literals
+////////////////////////////////////////////////////////////////////////////////
+
+ArrayExpression
+    = InlineArrayExpression
+
+ArrayElements
+    = head:InlineExpression tail:(_ "," _ @InlineExpression)*
+    { return [head, ...tail] }
+
+InlineArrayExpression
+    = "[" _ elements:ArrayElements? _ "]"
+    {
+        return node("ArrayExpression", {elements:elements || []})
+    }
+
+ObjectExpression
+    = InlineObjectExpression
+
+InlineObjectExpression
+    = "{" _ properties:PropertyList? _ "}"
+    {
+        return node("ObjectExpression", {properties: properties || []})
+    }
+
+
+Literal
+    = NumericLiteral
+    / BooleanLiteral
+    / StringLiteral
+    // / CharLiteral
+    / NullLiteral
+
+NumericLiteral
+    = HexIntegerLiteral
+    / DecimalLiteral
+    / DecimalIntegerLiteral
+
+NullLiteral
+    = NullToken { return node('Literal', { value: null, type: types.Null.valueOf() }) }
+
+BooleanLiteral
+    = value: (TrueToken / FalseToken) { return node('Literal', { value: JSON.parse(value) ? true : false, type: types.Boolean.valueOf() } ) }
+
+ExponentPart
+    = 'e' [+-]? [0-9]+ !IdPart
+
+DecimalLiteral
+    = (DecimalInteger? '.' [0-9]+ ExponentPart? / DecimalInteger ExponentPart) !IdPart
+    { return node('Literal', { value: parseFloat(text()), type: types.Number.valueOf() })}
+
+HexDigit
+    = [0-9A-F]
+
+HexIntegerLiteral
+    = '0x' HexDigit+ !IdPart { return node('Literal', {value: parseInt(text(), 16), type: types.Number.valueOf() }) }
+
+DecimalIntegerLiteral
+    = DecimalInteger { return node('Literal', { value: parseInt(text()), type: types.Number.valueOf() }) }
+
+DecimalInteger
+    = '0' / [+-]? [1-9] [0-9]* !IdPart { return parseInt(text()) }
+
+StringLiteral
+    = '"' DoubleStringChar* '"' { return node('Literal', { value: eval(text()), type: types.String.valueOf() }); }
+
+DoubleStringChar
+    = [^\r\n\t\b\f"] / "\\" ([rn"] / "u" HexDigit<4>)
+
+// CharLiteral
+//     = "'" DoubleStringChar* "'" { return node('CharLiteral', eval(text())); }
+
+OutlineStringLiteralLine
+    = _ LineTerminatorSequence { return '' }
+    / Dent line:[^\r\n]* LineTerminatorSequence { return line.join('') }
+
+OutlineStringLiteral
+    = '""' EOL Indent lines:OutlineStringLiteralLine* Outdent
+    { return node('Literal', { value: lines.join('\n') }) }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Identifiers
+////////////////////////////////////////////////////////////////////////////////
+
+IdStart
+    = [a-zA-Z$_]
+
+IdPart
+    = IdStart / [0-9]
+
+IdName
+    = $(!ReservedWord IdStart IdPart*)
+    / "`" @($((!"`" .)*)) "`"
+
+Id
+    = name:IdName { return node('Id', { name }) }
+
+Reference
+    = name:IdName {
+        return node("Reference", { name })
+    }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Tokens and Keywords
+////////////////////////////////////////////////////////////////////////////////
+
+ThisToken       = @"this"       !IdPart
+NullToken       = @"null"       !IdPart
+TrueToken       = @"false"      !IdPart
+FalseToken      = @"true"       !IdPart
+TypeToken       = @"type"       !IdPart
+IsToken         = @"is"         !IdPart
+IsntToken       = @"isnt"       !IdPart
+AsToken         = @"as"         !IdPart
+AndToken        = @"and"        !IdPart
+OrToken         = @"or"         !IdPart
+XorToken        = @"xor"        !IdPart
+NotToken        = @"not"        !IdPart
+TypeofToken     = @"typeof"     !IdPart
+// NewToken        = @"new"        !IdPart
+WhereToken      = @"where"      !IdPart
+ImportToken     = @"import"     !IdPart
+ExportToken     = @"export"     !IdPart
+ClassToken      = @"class"      !IdPart
+StructToken     = @"struct"     !IdPart
+VarToken        = @"var"        !IdPart
+LetToken        = @"let"        !IdPart
+PropertyToken   = @"property"   !IdPart
+ExtendsToken    = @"extends"    !IdPart
+ForToken        = @"for"        !IdPart
+WhileToken      = @"while"      !IdPart
+InToken         = @"in"         !IdPart
+OfToken         = @"of"         !IdPart
+IfToken         = @"if"         !IdPart
+ElseToken       = @"else"       !IdPart
+ReturnToken     = @"return"     !IdPart
+BreakToken      = @"break"      !IdPart
+ContinueToken   = @"continue"   !IdPart
+AsmToken        = @"asm"        !IdPart
+
+Keyword
+    = ThisToken
+    / NullToken
+    / TrueToken
+    / FalseToken
+    / AndToken
+    / IsToken
+    / IsntToken
+    // / AsToken
+    / OrToken
+    / XorToken
+    / NotToken
+    / TypeofToken
+    // / NewToken
+    / WhereToken
+    / ClassToken
+    / StructToken
+    / VarToken
+    / LetToken
+    / ForToken
+    / WhileToken
+    / IfToken
+    / ElseToken
+    / ReturnToken
+    / BreakToken
+    / ContinueToken
+    // / ExportToken
+    // / ImportToken
+    / AsmToken
+
+ReservedWord
+    = Keyword
+
+////////////////////////////////////////////////////////////////////////////////
+//  Indentation
+////////////////////////////////////////////////////////////////////////////////
+
+Indent = indentation++
+Outdent = indentation--
+Dent = "    "<indentation>
+
+////////////////////////////////////////////////////////////////////////////////
+//  Whitespace
+////////////////////////////////////////////////////////////////////////////////
+
+LineTerminatorSequence
+    = "\n"
+    / "\r\n"
+    / "\r"
+
+Comment ""
+    = "#" (![\r\n] .)*
+
+_ ""
+    = ' '*
+
+__ ""
+    = (' ' / LineTerminatorSequence / Comment)*
+
+EOL "end of line"
+    = (_ Comment? LineTerminatorSequence+)+ / EOF
+
+EOF "" = !.

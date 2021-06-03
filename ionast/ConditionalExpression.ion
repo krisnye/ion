@@ -1,0 +1,9 @@
+import
+    ion.*
+    .*
+
+export
+    class ConditionalExpression extends Expression
+        var test: Expression
+        var consequent: Expression
+        var alternate: Expression

@@ -1,0 +1,9 @@
+import
+    .*
+    ion.*
+
+export
+    class ConditionalDeclaration extends VariableDeclaration
+        var negate: Boolean = false
+        # var assert: Expression
+        # the type will be calculated based on the assert and the scoped type in the parent

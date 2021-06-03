@@ -1,0 +1,7 @@
+import
+    ion.*
+    .*
+
+export
+    class Assembly extends Node
+        var modules: Map<String,Module>

@@ -1,0 +1,7 @@
+import
+    ion.*
+    .*
+
+export
+    class Parameter extends Variable, Declaration
+        let assignable: Boolean = false

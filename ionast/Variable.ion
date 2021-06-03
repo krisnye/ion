@@ -1,0 +1,9 @@
+import
+    ion.*
+    .*
+
+export
+    class Variable extends Typed
+        var id: Id
+        var value: Expression | Null = null
+        var assignable: Boolean = false

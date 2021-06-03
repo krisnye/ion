@@ -1,0 +1,9 @@
+import
+    ion.*
+    .*
+
+export
+    class BinaryExpression extends Expression
+        var left: Expression
+        var operator: String
+        var right: Expression

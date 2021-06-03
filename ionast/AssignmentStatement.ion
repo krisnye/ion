@@ -1,0 +1,8 @@
+import
+    ion.*
+    .*
+
+export
+    class AssignmentStatement extends Statement
+        var left: Reference
+        var right: Expression

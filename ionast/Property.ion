@@ -1,0 +1,8 @@
+import
+    ion.*
+    .*
+
+export
+    class Property extends Node
+        var key: Id | Expression | Null = null
+        var value: Expression

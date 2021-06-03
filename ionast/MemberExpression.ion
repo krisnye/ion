@@ -1,0 +1,8 @@
+import
+    ion.*
+    .*
+
+export
+    class MemberExpression extends Expression
+        var object: Expression
+        var property: Id | Expression

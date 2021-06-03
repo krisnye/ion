@@ -1,0 +1,4 @@
+
+export
+    class Array<T>
+        let length: Integer & >= 0
