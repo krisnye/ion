@@ -1,0 +1,9 @@
+import
+    ion.*
+    .*
+
+export
+    class TemplateElement extends Node
+        var valueRaw: String = ""
+        var valueCooked: String = ""
+        var tail: Boolean = false

@@ -3,5 +3,4 @@ import
     .*
 
 export
-    class DotExpression extends Reference
-        var name: String = "."
+    class DotExpression extends Expression

@@ -3,4 +3,4 @@ import
     .*
 
 export
-    class Reference extends Id, Expression
+    class Reference extends Identifier, Expression, Type, RuntimeType # Type because it could be a type.

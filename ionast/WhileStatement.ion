@@ -3,6 +3,6 @@ import
     .*
 
 export
-    class WhileStatement extends Statement
+    class WhileStatement extends LoopStatement
         var test: Expression
         var body: BlockStatement

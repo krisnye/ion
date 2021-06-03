@@ -3,7 +3,7 @@ import
     .*
 
 export
-    class CallExpression extends Expression
-        # var new : Boolean = false
+    class CallExpression extends Expression, ChainElement
+        var new : Boolean = false
         var callee: Expression
-        var arguments: Array<Property>
+        var arguments: Array<Expression | Statement | SpreadElement>

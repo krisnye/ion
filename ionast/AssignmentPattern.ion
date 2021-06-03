@@ -1,0 +1,8 @@
+import
+    ion.*
+    .*
+
+export
+    class AssignmentPattern extends Pattern
+        var left: Pattern
+        var right: Expression

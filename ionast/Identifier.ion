@@ -1,0 +1,9 @@
+import
+    ion.*
+    .*
+
+export
+    class Identifier extends Node
+        var name: String
+        var path: String | Null = null # the absolute path to the value
+        var arguments: Array<Type> | Null = null

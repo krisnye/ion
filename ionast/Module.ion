@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Module extends Scope
-        var imports: Array<ImportStep> = []
-        var declarations: Array<Declaration>

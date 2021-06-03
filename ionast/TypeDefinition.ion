@@ -1,6 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class TypeDefinition extends Expression

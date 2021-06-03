@@ -1,0 +1,8 @@
+import
+    ion.*
+    .*
+
+export
+    class File extends Scope
+        var id: Declarator
+        var body: Array<Statement | Expression>

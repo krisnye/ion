@@ -1,0 +1,7 @@
+import
+    ion.*
+    .*
+
+export
+    class Meta extends Node
+        var meta: Array<Property> | Null = null

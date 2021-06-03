@@ -1,0 +1,8 @@
+import
+    ion.*
+    .*
+
+export
+    class RegularExpression extends Expression, Type, RuntimeType
+        var pattern: String
+        var flags: String

@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Id extends Node
-        var name: String

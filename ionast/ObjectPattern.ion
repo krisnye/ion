@@ -1,0 +1,7 @@
+import
+    ion.*
+    .*
+
+export
+    class ObjectPattern extends Pattern
+        var properties: Array<Property | RestElement>

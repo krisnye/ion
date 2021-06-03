@@ -1,0 +1,9 @@
+import
+    ion.*
+    .*
+
+export
+    class AssignmentExpression extends Expression
+        var operator: String = "="
+        var left: Pattern | Expression
+        var right: Expression

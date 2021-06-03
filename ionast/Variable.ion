@@ -4,6 +4,6 @@ import
 
 export
     class Variable extends Typed
-        var id: Id
+        # Expression if it's a [symbol] or something similar on a class variable.
+        var id: Pattern | Expression
         var value: Expression | Null = null
-        var assignable: Boolean = false

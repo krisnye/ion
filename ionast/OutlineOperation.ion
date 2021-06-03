@@ -1,0 +1,8 @@
+import
+    ion.*
+    .*
+
+export
+    class OutlineOperation extends Expression
+        var operands: Array<Expression | SpreadElement | Statement | Null>
+        var operator: String

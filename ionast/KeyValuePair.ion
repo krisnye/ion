@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class KeyValuePair extends Node
-        var key: Expression | Id
-        var value: Expression

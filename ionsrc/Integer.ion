@@ -1,6 +1,0 @@
-
-
-export
-    type Integer = Number # & fraction == 0
-    # indented functions on a type indicates usage of this: Type
-    #    let parse: () -> Integer

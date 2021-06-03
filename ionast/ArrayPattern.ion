@@ -3,4 +3,5 @@ import
     .*
 
 export
-    class ArrayPattern extends ArrayExpression
+    class ArrayPattern extends Pattern
+        var elements: Array<Pattern | Null>

@@ -1,6 +1,0 @@
-import
-    ion.*
-
-export
-    let double = (v: Vector) => Vector(v.x * 2, v.y * 2, v.z * 2)
-    let triple = (a: Number) => a * 3

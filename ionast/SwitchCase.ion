@@ -1,0 +1,8 @@
+import
+    ion.*
+    .*
+
+export
+    class SwitchCase extends Node
+        var test: Expression | Null
+        var consequent: BlockStatement | Null

@@ -1,0 +1,9 @@
+import
+    ion.*
+    .*
+
+export
+    class ArrowFunctionExpression extends Expression, Scope
+        var params: Array<Parameter>
+        var body: BlockStatement | Expression
+        var expression: Boolean

@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Output
-        var files: Map<String,Object | String>

@@ -1,0 +1,10 @@
+import
+    ion.*
+    .*
+
+export
+    class ForOfStatement extends LoopStatement
+        var left: VariableDeclaration
+        var count: VariableDeclaration | Null = null
+        var right: Expression
+        var body: BlockStatement

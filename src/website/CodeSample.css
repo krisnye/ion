@@ -1,0 +1,12 @@
+.CodeSample {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.CodeSample > .samples {
+    display: flex;
+    flex-direction: row;
+    min-height: 100px;
+    white-space: pre;
+}

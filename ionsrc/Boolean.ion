@@ -1,3 +1,0 @@
-
-export
-    type Boolean = 1 | 0

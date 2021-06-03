@@ -1,0 +1,7 @@
+.TopLabel {
+    position: absolute;
+    color: orange;
+    font-size: smaller;
+    top: 2px;
+    right: 2px;
+}

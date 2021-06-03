@@ -1,5 +1,0 @@
-
-export
-    class String extends Array
-        let trim: () => String
-        let match: (pattern: String) => Boolean

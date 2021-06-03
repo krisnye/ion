@@ -3,6 +3,10 @@ import
     .*
 
 export
-    class FunctionType extends TypeDefinition, Expression
-        var parameters: Array<Parameter>
-        var returnType: Expression | Null = null
+    class FunctionType extends Type, RuntimeType
+        # params can have SpreadElements NOT RestElements because SpreadElements
+        # argument is a Reference which can include the generic Array type arguments
+        # for instance ...Array<Number>
+        var params: Array<Type | SpreadElement>
+        var async: Boolean = false
+        var returnType: Type | Null = null
