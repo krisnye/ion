@@ -1,61 +1,41 @@
 {
-    "name": "ion",
-    "version": "0.9.14",
-    "main": "lib/index",
+    "name": "@glas/ion",
+    "version": "0.1.8",
+    "repository": "https://github.com/glassorg/ion.git",
+    "author": "Kris Nye <krisnye@gmail.com>",
     "bin": {
-        "ion": "bin/ion.js"
+        "ionc": "bin/ionc.js"
     },
-    "repository": "https://github.com/krisnye/ion.git",
-    "scripts": {
-        "dev": "npm install && npm link",
-        "clean": "rm -rf node_modules && rm -rf lib && npm unlink",
-        "build": "node bin/ion -c",
-        "watch": "node bin/ion -w",
-        "inspect": "node --inspect bin/ion -w",
-        "postinstall": "node boot/builder/_command.js -c",
-        "docserver": "http-server docs/www -p 9000"
-    },
-    "directories": {
-        "lib": "lib",
-        "src": "src"
-    },
-    "build": {
-        "package": true,
-        "merge": {
-            "../dist/ion-all.js": {
-                "exclude": [
-                    "builder"
-                ]
-            },
-            "../dist/ion-browser.js": {
-                "exclude": [
-                    "builder",
-                    "test",
-                    "compiler"
-                ]
-            },
-            "../dist/ion-min.js": {
-                "exclude": [
-                    "builder",
-                    "test",
-                    "compiler"
-                ],
-                "compress": true
-            }
-        }
-    },
-    "contributors": [
-        "krisnye@gmail.com"
+    "files": [
+        "/bin",
+        "/ionsrc",
+        "/external",
+        "/lib"
     ],
+    "license": "MIT",
+    "main": "index.js",
+    "scripts": {
+        "setup": "yarn install",
+        "build": "guild build && yarn run buildGrammar",
+        "develop": "./develop.sh",
+        "watch": "./watch.sh",
+        "test": "gtest lib # echo should be just guild test, todo: fix this",
+        "watchGrammar": "nodemon -w src/parser.pegs -x yarn run buildGrammar",
+        "buildGrammar": "pegs src/parser.pegs lib/parser.js",
+        "buildAst": "ionc src/ast ionast",
+        "bootAst": "./bin/ionc.js src/ast ionast",
+        "watchAst": "nodemon -w ionast -e ion -x yarn buildAst",
+        "debug": "node --inspect-brk node_modules/\\@glas/build/bin/gtest.js lib",
+        "deploy": "yarn build && yarn publish --patch"
+    },
     "dependencies": {
-        "coffeescript": "2.2.x",
-        "esprima": "1.1.x",
-        "pegjs": "0.8.x",
-        "source-map": "^0.7.2",
-        "uglify-js": "^3.3.26"
+        "@glas/test": "^1.0.3",
+        "escodegen": "^1.14.1",
+        "jsondiffpatch": "0.2.5",
+        "pegs": "^0.1.1"
     },
     "devDependencies": {
-        "express": "^4.16.3",
-        "http-server": "^0.11.1"
+        "@glas/build": "^0.2.8",
+        "@glas/ion": "0.1.8"
     }
 }
