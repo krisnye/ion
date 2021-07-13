@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class CatchClause extends Node
-        var param: Pattern
-        var body: BlockStatement

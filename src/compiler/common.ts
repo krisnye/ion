@@ -3,10 +3,23 @@ import * as np from "path";
 import { traverse, skip } from "@glas/traverse";
 import { NodeMap, ScopeMap } from "./createScopeMaps";
 import { Reference, Node, VariableDeclaration, ModuleSpecifier, ImportDeclaration, Declarator, ImportDefaultSpecifier, ImportNamespaceSpecifier, ImportSpecifier, Declaration, Statement, Identifier, Parameter } from "./ast";
-import { getRelative } from "./pathFunctions";
 import File from "./ast/File";
 
 export const runtimeModuleName = "ionscript"
+
+function isUpperCase(name) {
+    let first = name[0]
+    return first === first.toUpperCase()
+}
+
+export function isTypeName(name) {
+    return isUpperCase(name)
+}
+
+export function hasNodesOfType<T>(root, predicate: (node) => node is T) {
+    // could optimize a bit later.
+    return getNodesOfType(root, predicate).length > 0
+}
 
 export function getNodesOfType<T>(root, predicate: (node) => node is T) {
     let nodes = new Array<T>()
@@ -205,9 +218,9 @@ export function freeze(object: any, deep: boolean = true) {
     }
 }
 
-export function SemanticError(message: string, location: any) {
+export function SemanticError(message: string, ...locations: any[]) {
     let error: any = new Error(message)
-    error.location = location.location || location
+    error.locations = locations.map(location => location.location || location)
     return error
 }
 
@@ -273,7 +286,7 @@ export function difference(a: Set<any>, b: Set<any>) {
 //  File operations
 ////////////////////////////////////////////////////////////////////////////////
 
-export const ionExt = '.is'
+export const ionExt = '.ion'
 
 export function getFilesRecursive(directory, pattern?: RegExp, rootDirectory = directory, allFiles = new Array<string>()) {
     for (let name of fs.readdirSync(directory)) {
@@ -310,8 +323,9 @@ export function read(file: any) {
 }
 
 export function getPathFromFilename(namespace: string, filename: string) {
-    let path = filename.substring(0, filename.length - ionExt.length).split(/[\/\\]+/g)
-    return namespace.replace(/[\/\\]/g, "/") + "/" + path.join("/")
+    const separator = "."
+    let path = (filename.substring(0, filename.length - ionExt.length).split(/[\/\\]+/g)).join(separator)
+    return namespace.length > 0 ? namespace.replace(/[\/\\]/g, separator) + separator + path : path
 }
 
 export function getInputFilesRecursive(directory: string | string[], namespace: string, rootDirectory : string | null = null, allFiles: {[path: string]: string} = {}): {[path: string]: string} {

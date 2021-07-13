@@ -16,7 +16,9 @@ for (let i = 0; i < count; i++) {
                 path.join(__dirname, "../../../dist"),
             ),
             {
-                commandLine: true
+                commandLine: true,
+                // treat the sample as the root namespace.
+                namespace: "",
             }
         )
     )

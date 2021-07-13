@@ -2,6 +2,9 @@ export {
     default as Analysis
 } from './Analysis';
 export {
+    default as Argument
+} from './Argument';
+export {
     default as ArrayExpression
 } from './ArrayExpression';
 export {
@@ -20,14 +23,17 @@ export {
     default as AssignmentPattern
 } from './AssignmentPattern';
 export {
+    default as AssignmentStatement
+} from './AssignmentStatement';
+export {
     default as AwaitExpression
 } from './AwaitExpression';
 export {
     default as BinaryExpression
 } from './BinaryExpression';
 export {
-    default as BlockStatement
-} from './BlockStatement';
+    default as Block
+} from './Block';
 export {
     default as BreakStatement
 } from './BreakStatement';
@@ -35,20 +41,14 @@ export {
     default as CallExpression
 } from './CallExpression';
 export {
-    default as CatchClause
-} from './CatchClause';
-export {
     default as ChainElement
 } from './ChainElement';
 export {
     default as ClassDeclaration
 } from './ClassDeclaration';
 export {
-    default as ConditionalDeclaration
-} from './ConditionalDeclaration';
-export {
-    default as ConditionalExpression
-} from './ConditionalExpression';
+    default as Conditional
+} from './Conditional';
 export {
     default as ContinueStatement
 } from './ContinueStatement';
@@ -86,12 +86,6 @@ export {
     default as File
 } from './File';
 export {
-    default as ForOfStatement
-} from './ForOfStatement';
-export {
-    default as ForStatement
-} from './ForStatement';
-export {
     default as FunctionExpression
 } from './FunctionExpression';
 export {
@@ -100,9 +94,6 @@ export {
 export {
     default as Identifier
 } from './Identifier';
-export {
-    default as IfStatement
-} from './IfStatement';
 export {
     default as ImportDeclaration
 } from './ImportDeclaration';
@@ -134,8 +125,8 @@ export {
     default as Meta
 } from './Meta';
 export {
-    default as MethodDefinition
-} from './MethodDefinition';
+    default as Module
+} from './Module';
 export {
     default as ModuleSpecifier
 } from './ModuleSpecifier';
@@ -191,12 +182,6 @@ export {
     default as Statement
 } from './Statement';
 export {
-    default as SwitchCase
-} from './SwitchCase';
-export {
-    default as SwitchStatement
-} from './SwitchStatement';
-export {
     default as TemplateElement
 } from './TemplateElement';
 export {
@@ -205,12 +190,6 @@ export {
 export {
     default as ThisExpression
 } from './ThisExpression';
-export {
-    default as ThrowStatement
-} from './ThrowStatement';
-export {
-    default as TryStatement
-} from './TryStatement';
 export {
     default as Type
 } from './Type';
@@ -229,9 +208,6 @@ export {
 export {
     default as VariableDeclaration
 } from './VariableDeclaration';
-export {
-    default as WhileStatement
-} from './WhileStatement';
 export {
     default as YieldExpression
 } from './YieldExpression';

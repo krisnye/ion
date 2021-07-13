@@ -3,7 +3,7 @@ import
     .*
 
 export
-    class Variable extends Typed
+    class Variable extends Meta, Typed
         # Expression if it's a [symbol] or something similar on a class variable.
-        var id: Pattern | Expression
+        var id: Pattern
         var value: Expression | Null = null

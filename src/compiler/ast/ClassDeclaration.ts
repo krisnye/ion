@@ -12,29 +12,18 @@ import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
 import * as Property from './Property';
-import * as Type from './Type';
-import * as Boolean from './ion/Boolean';
 import * as Declarator from './Declarator';
-import * as Parameter from './Parameter';
-import * as Reference from './Reference';
-import * as MemberExpression from './MemberExpression';
 import * as VariableDeclaration from './VariableDeclaration';
-import * as InstanceDeclarations from './InstanceDeclarations';
+import * as Parameter from './Parameter';
 import * as Class from './ion/Class';
 export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaration.Declaration , Expression.Expression , Node.Node , Statement.Statement , Typed.Typed {
     readonly location: Location.Location | Null.Null;
     readonly meta: _Array.Array<Property.Property> | Null.Null;
-    readonly type: Type.Type | Null.Null;
-    readonly isStruct: Boolean.Boolean;
-    readonly isInterface: Boolean.Boolean;
-    readonly isData: Boolean.Boolean;
+    readonly type: Expression.Expression | Null.Null;
     readonly id: Declarator.Declarator;
-    readonly parameters: _Array.Array<Parameter.Parameter>;
-    readonly baseClasses: _Array.Array<Reference.Reference | MemberExpression.MemberExpression>;
-    readonly interfaces: _Array.Array<Reference.Reference | MemberExpression.MemberExpression>;
-    readonly static: _Array.Array<VariableDeclaration.VariableDeclaration>;
-    readonly instance: InstanceDeclarations.InstanceDeclarations;
-    readonly instanceType: Type.Type | Null.Null;
+    readonly baseClasses: _Array.Array<Expression.Expression>;
+    readonly declarations: _Array.Array<VariableDeclaration.VariableDeclaration>;
+    readonly typeParameters: _Array.Array<Parameter.Parameter>;
     static readonly id = 'ClassDeclaration';
     static readonly implements = new Set([
         'ClassDeclaration',
@@ -46,90 +35,46 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         'Statement',
         'Typed'
     ]);
-    constructor({
-        location = null,
-        meta = null,
-        type = null,
-        isStruct = false,
-        isInterface = false,
-        isData = false,
-        id,
-        parameters = [],
-        baseClasses = [],
-        interfaces = [],
-        static: _static,
-        instance,
-        instanceType = null
-    }: {
+    constructor({location = null, meta = null, type = null, id, baseClasses = [], declarations, typeParameters = []}: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
-        type?: Type.Type | Null.Null,
-        isStruct?: Boolean.Boolean,
-        isInterface?: Boolean.Boolean,
-        isData?: Boolean.Boolean,
+        type?: Expression.Expression | Null.Null,
         id: Declarator.Declarator,
-        parameters?: _Array.Array<Parameter.Parameter>,
-        baseClasses?: _Array.Array<Reference.Reference | MemberExpression.MemberExpression>,
-        interfaces?: _Array.Array<Reference.Reference | MemberExpression.MemberExpression>,
-        static: _Array.Array<VariableDeclaration.VariableDeclaration>,
-        instance: InstanceDeclarations.InstanceDeclarations,
-        instanceType?: Type.Type | Null.Null
+        baseClasses?: _Array.Array<Expression.Expression>,
+        declarations: _Array.Array<VariableDeclaration.VariableDeclaration>,
+        typeParameters?: _Array.Array<Parameter.Parameter>
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(_Array.isArray(meta) || Null.isNull(meta)))
             throw new Error('meta is not a Array | Null: ' + Class.toString(meta));
-        if (!(Type.isType(type) || Null.isNull(type)))
-            throw new Error('type is not a Type | Null: ' + Class.toString(type));
-        if (!Boolean.isBoolean(isStruct))
-            throw new Error('isStruct is not a Boolean: ' + Class.toString(isStruct));
-        if (!Boolean.isBoolean(isInterface))
-            throw new Error('isInterface is not a Boolean: ' + Class.toString(isInterface));
-        if (!Boolean.isBoolean(isData))
-            throw new Error('isData is not a Boolean: ' + Class.toString(isData));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!Declarator.isDeclarator(id))
             throw new Error('id is not a Declarator: ' + Class.toString(id));
-        if (!_Array.isArray(parameters))
-            throw new Error('parameters is not a Array: ' + Class.toString(parameters));
         if (!_Array.isArray(baseClasses))
             throw new Error('baseClasses is not a Array: ' + Class.toString(baseClasses));
-        if (!_Array.isArray(interfaces))
-            throw new Error('interfaces is not a Array: ' + Class.toString(interfaces));
-        if (!_Array.isArray(_static))
-            throw new Error('static is not a Array: ' + Class.toString(_static));
-        if (!InstanceDeclarations.isInstanceDeclarations(instance))
-            throw new Error('instance is not a InstanceDeclarations: ' + Class.toString(instance));
-        if (!(Type.isType(instanceType) || Null.isNull(instanceType)))
-            throw new Error('instanceType is not a Type | Null: ' + Class.toString(instanceType));
+        if (!_Array.isArray(declarations))
+            throw new Error('declarations is not a Array: ' + Class.toString(declarations));
+        if (!_Array.isArray(typeParameters))
+            throw new Error('typeParameters is not a Array: ' + Class.toString(typeParameters));
         this.location = location;
         this.meta = meta;
         this.type = type;
-        this.isStruct = isStruct;
-        this.isInterface = isInterface;
-        this.isData = isData;
         this.id = id;
-        this.parameters = parameters;
         this.baseClasses = baseClasses;
-        this.interfaces = interfaces;
-        this.static = _static;
-        this.instance = instance;
-        this.instanceType = instanceType;
+        this.declarations = declarations;
+        this.typeParameters = typeParameters;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
-        type?: Type.Type | Null.Null,
-        isStruct?: Boolean.Boolean,
-        isInterface?: Boolean.Boolean,
-        isData?: Boolean.Boolean,
+        type?: Expression.Expression | Null.Null,
         id?: Declarator.Declarator,
-        parameters?: _Array.Array<Parameter.Parameter>,
-        baseClasses?: _Array.Array<Reference.Reference | MemberExpression.MemberExpression>,
-        interfaces?: _Array.Array<Reference.Reference | MemberExpression.MemberExpression>,
-        static?: _Array.Array<VariableDeclaration.VariableDeclaration>,
-        instance?: InstanceDeclarations.InstanceDeclarations,
-        instanceType?: Type.Type | Null.Null
+        baseClasses?: _Array.Array<Expression.Expression>,
+        declarations?: _Array.Array<VariableDeclaration.VariableDeclaration>,
+        typeParameters?: _Array.Array<Parameter.Parameter>
     }) {
         return new ClassDeclaration({
             ...this,

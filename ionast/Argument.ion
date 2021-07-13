@@ -1,0 +1,8 @@
+import
+    ion.*
+    .*
+
+export
+    class Argument extends Meta, Typed
+        var id: Identifier | Null = null
+        var value: Expression

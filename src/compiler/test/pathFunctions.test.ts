@@ -2,7 +2,10 @@ import { strict as assert } from "assert"
 
 import * as path from "../pathFunctions"
 
-assert.strictEqual(path.getRelative("alpha/foo", "foo/beta"), "foo/beta")
-assert.strictEqual(path.getRelative("alpha/foo", "./beta"), "alpha/beta")
-assert.strictEqual(path.getRelative("alpha/foo", "../beta"), "beta")
-assert.strictEqual(path.getRelative("alpha/foo", "../../beta"), "../beta")
+assert.strictEqual(path.getParent("alpha.foo"), "alpha")
+assert.strictEqual(path.getLast("alpha.foo"), "foo")
+assert.strictEqual(path.getParent("alpha"), path.globalNamespace)
+assert.strictEqual(path.getParent(path.globalNamespace), null)
+assert.strictEqual(path.resolve("foo.bar", new Map([["foo.bar", true]])), true)
+assert.strictEqual(path.resolve("foo.bar", new Map([["bar", true]])), true)
+assert.strictEqual(path.resolve("foo.bar", new Map([["foo", true]])), null)

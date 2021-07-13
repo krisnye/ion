@@ -7,12 +7,12 @@ import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as Type from './Type';
+import * as Expression from './Expression';
 import * as Declarator from './Declarator';
 import * as Class from './ion/Class';
 export class RestElement implements _Object.Object , Pattern.Pattern , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Type.Type | Null.Null;
+    readonly type: Expression.Expression | Null.Null;
     readonly argument: Declarator.Declarator;
     static readonly id = 'RestElement';
     static readonly implements = new Set([
@@ -24,13 +24,13 @@ export class RestElement implements _Object.Object , Pattern.Pattern , Typed.Typ
     ]);
     constructor({location = null, type = null, argument}: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
+        type?: Expression.Expression | Null.Null,
         argument: Declarator.Declarator
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Type.isType(type) || Null.isNull(type)))
-            throw new Error('type is not a Type | Null: ' + Class.toString(type));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!Declarator.isDeclarator(argument))
             throw new Error('argument is not a Declarator: ' + Class.toString(argument));
         this.location = location;
@@ -40,7 +40,7 @@ export class RestElement implements _Object.Object , Pattern.Pattern , Typed.Typ
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
+        type?: Expression.Expression | Null.Null,
         argument?: Declarator.Declarator
     }) {
         return new RestElement({

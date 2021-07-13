@@ -1,10 +1,8 @@
-import parsing from "./parsing"
+import identity from "./identity"
+import semanticChecks from "./semanticChecks";
+import Phase from "./Phase";
 
-const defaultPhases = [
-    parsing,
-]
-
-export default defaultPhases
-
-// we remove the last 6 phases if we're not emitting.
-export const noEmit = defaultPhases.slice(0, -1);
+export default [
+    identity,
+    semanticChecks
+] as Phase[]

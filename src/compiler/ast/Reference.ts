@@ -17,8 +17,8 @@ export class Reference implements _Object.Object , Identifier.Identifier , Expre
     readonly location: Location.Location | Null.Null;
     readonly name: String.String;
     readonly path: String.String | Null.Null;
-    readonly arguments: _Array.Array<Type.Type> | Null.Null;
-    readonly type: Type.Type | Null.Null;
+    readonly type: Expression.Expression | Null.Null;
+    readonly typeArguments: _Array.Array<Expression.Expression> | Null.Null;
     static readonly id = 'Reference';
     static readonly implements = new Set([
         'Reference',
@@ -30,18 +30,12 @@ export class Reference implements _Object.Object , Identifier.Identifier , Expre
         'Node',
         'Typed'
     ]);
-    constructor({
-        location = null,
-        name,
-        path = null,
-        arguments: _arguments = null,
-        type = null
-    }: {
+    constructor({location = null, name, path = null, type = null, typeArguments = null}: {
         location?: Location.Location | Null.Null,
         name: String.String,
         path?: String.String | Null.Null,
-        arguments?: _Array.Array<Type.Type> | Null.Null,
-        type?: Type.Type | Null.Null
+        type?: Expression.Expression | Null.Null,
+        typeArguments?: _Array.Array<Expression.Expression> | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
@@ -49,23 +43,23 @@ export class Reference implements _Object.Object , Identifier.Identifier , Expre
             throw new Error('name is not a String: ' + Class.toString(name));
         if (!(String.isString(path) || Null.isNull(path)))
             throw new Error('path is not a String | Null: ' + Class.toString(path));
-        if (!(_Array.isArray(_arguments) || Null.isNull(_arguments)))
-            throw new Error('arguments is not a Array | Null: ' + Class.toString(_arguments));
-        if (!(Type.isType(type) || Null.isNull(type)))
-            throw new Error('type is not a Type | Null: ' + Class.toString(type));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(_Array.isArray(typeArguments) || Null.isNull(typeArguments)))
+            throw new Error('typeArguments is not a Array | Null: ' + Class.toString(typeArguments));
         this.location = location;
         this.name = name;
         this.path = path;
-        this.arguments = _arguments;
         this.type = type;
+        this.typeArguments = typeArguments;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         name?: String.String,
         path?: String.String | Null.Null,
-        arguments?: _Array.Array<Type.Type> | Null.Null,
-        type?: Type.Type | Null.Null
+        type?: Expression.Expression | Null.Null,
+        typeArguments?: _Array.Array<Expression.Expression> | Null.Null
     }) {
         return new Reference({
             ...this,

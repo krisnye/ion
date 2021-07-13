@@ -39,7 +39,7 @@
     "@glas/traverse": "^1.0.6",
     "escodegen": "^2.0.0",
     "jsondiffpatch": "0.2.5",
-    "pegs": "^0.1.6",
+    "pegs": "^0.1.8",
     "yargs": "^16.2.0"
   },
   "devDependencies": {

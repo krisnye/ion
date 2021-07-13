@@ -1,0 +1,7 @@
+import
+    ion.*
+    .*
+
+export
+    class Module extends Block
+        var name: String = ""

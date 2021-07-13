@@ -4,26 +4,22 @@ This file was generated from ion source. Do not edit.
 import * as _Object from './ion/Object';
 import * as Expression from './Expression';
 import * as Scope from './Scope';
-import * as Type from './Type';
 import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Identifier from './Identifier';
-import * as Boolean from './ion/Boolean';
 import * as _Array from './ion/Array';
 import * as Parameter from './Parameter';
-import * as BlockStatement from './BlockStatement';
+import * as Block from './Block';
+import * as Type from './Type';
 import * as Class from './ion/Class';
-export class FunctionExpression implements _Object.Object , Expression.Expression , Scope.Scope , Type.Type , Typed.Typed , Node.Node {
+export class FunctionExpression implements _Object.Object , Expression.Expression , Scope.Scope , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Type.Type | Null.Null;
-    readonly id: Identifier.Identifier | (Expression.Expression | Null.Null);
-    readonly bind: Boolean.Boolean;
-    readonly params: _Array.Array<Parameter.Parameter>;
-    readonly body: BlockStatement.BlockStatement;
-    readonly async: Boolean.Boolean;
-    readonly generator: Boolean.Boolean;
+    readonly type: Expression.Expression | Null.Null;
+    readonly id: Identifier.Identifier | Null.Null;
+    readonly parameters: _Array.Array<Parameter.Parameter>;
+    readonly body: Block.Block;
     readonly returnType: Type.Type | Null.Null;
     static readonly id = 'FunctionExpression';
     static readonly implements = new Set([
@@ -31,69 +27,43 @@ export class FunctionExpression implements _Object.Object , Expression.Expressio
         'ion_Object',
         'Expression',
         'Scope',
-        'Type',
         'Typed',
         'Node'
     ]);
-    constructor({
-        location = null,
-        type = null,
-        id = null,
-        bind = false,
-        params,
-        body,
-        async: _async = false,
-        generator = false,
-        returnType = null
-    }: {
+    constructor({location = null, type = null, id = null, parameters, body, returnType = null}: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
-        id?: Identifier.Identifier | (Expression.Expression | Null.Null),
-        bind?: Boolean.Boolean,
-        params: _Array.Array<Parameter.Parameter>,
-        body: BlockStatement.BlockStatement,
-        async?: Boolean.Boolean,
-        generator?: Boolean.Boolean,
+        type?: Expression.Expression | Null.Null,
+        id?: Identifier.Identifier | Null.Null,
+        parameters: _Array.Array<Parameter.Parameter>,
+        body: Block.Block,
         returnType?: Type.Type | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Type.isType(type) || Null.isNull(type)))
-            throw new Error('type is not a Type | Null: ' + Class.toString(type));
-        if (!(Identifier.isIdentifier(id) || (Expression.isExpression(id) || Null.isNull(id))))
-            throw new Error('id is not a Identifier | Expression | Null: ' + Class.toString(id));
-        if (!Boolean.isBoolean(bind))
-            throw new Error('bind is not a Boolean: ' + Class.toString(bind));
-        if (!_Array.isArray(params))
-            throw new Error('params is not a Array: ' + Class.toString(params));
-        if (!BlockStatement.isBlockStatement(body))
-            throw new Error('body is not a BlockStatement: ' + Class.toString(body));
-        if (!Boolean.isBoolean(_async))
-            throw new Error('async is not a Boolean: ' + Class.toString(_async));
-        if (!Boolean.isBoolean(generator))
-            throw new Error('generator is not a Boolean: ' + Class.toString(generator));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Identifier.isIdentifier(id) || Null.isNull(id)))
+            throw new Error('id is not a Identifier | Null: ' + Class.toString(id));
+        if (!_Array.isArray(parameters))
+            throw new Error('parameters is not a Array: ' + Class.toString(parameters));
+        if (!Block.isBlock(body))
+            throw new Error('body is not a Block: ' + Class.toString(body));
         if (!(Type.isType(returnType) || Null.isNull(returnType)))
             throw new Error('returnType is not a Type | Null: ' + Class.toString(returnType));
         this.location = location;
         this.type = type;
         this.id = id;
-        this.bind = bind;
-        this.params = params;
+        this.parameters = parameters;
         this.body = body;
-        this.async = _async;
-        this.generator = generator;
         this.returnType = returnType;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
-        id?: Identifier.Identifier | (Expression.Expression | Null.Null),
-        bind?: Boolean.Boolean,
-        params?: _Array.Array<Parameter.Parameter>,
-        body?: BlockStatement.BlockStatement,
-        async?: Boolean.Boolean,
-        generator?: Boolean.Boolean,
+        type?: Expression.Expression | Null.Null,
+        id?: Identifier.Identifier | Null.Null,
+        parameters?: _Array.Array<Parameter.Parameter>,
+        body?: Block.Block,
         returnType?: Type.Type | Null.Null
     }) {
         return new FunctionExpression({

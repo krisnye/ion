@@ -7,13 +7,12 @@ import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as Type from './Type';
 import * as String from './ion/String';
 import * as Pattern from './Pattern';
 import * as Class from './ion/Class';
 export class AssignmentExpression implements _Object.Object , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Type.Type | Null.Null;
+    readonly type: Expression.Expression | Null.Null;
     readonly operator: String.String;
     readonly left: Pattern.Pattern | Expression.Expression;
     readonly right: Expression.Expression;
@@ -27,15 +26,15 @@ export class AssignmentExpression implements _Object.Object , Expression.Express
     ]);
     constructor({location = null, type = null, operator = '=', left, right}: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
+        type?: Expression.Expression | Null.Null,
         operator?: String.String,
         left: Pattern.Pattern | Expression.Expression,
         right: Expression.Expression
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Type.isType(type) || Null.isNull(type)))
-            throw new Error('type is not a Type | Null: ' + Class.toString(type));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!String.isString(operator))
             throw new Error('operator is not a String: ' + Class.toString(operator));
         if (!(Pattern.isPattern(left) || Expression.isExpression(left)))
@@ -51,7 +50,7 @@ export class AssignmentExpression implements _Object.Object , Expression.Express
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
+        type?: Expression.Expression | Null.Null,
         operator?: String.String,
         left?: Pattern.Pattern | Expression.Expression,
         right?: Expression.Expression

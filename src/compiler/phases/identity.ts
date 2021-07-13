@@ -1,13 +1,11 @@
 import { traverse } from "@glas/traverse";
-import { Literal } from "../ast";
+import { Module } from "../ast";
+import { Options } from "../Compiler"
 
-export default function identity(root) {
-    // traverse(root, {
-    //     leave(node) {
-    //         if (node.type === "Literal") {
-    //             console.log(node)
-    //         }
-    //     }
-    // })
-    return root
+export default function identity(
+    module: Module,
+    externals: Map<string,Module>,
+    options: Options
+): Module | Error[] {
+    return module
 }

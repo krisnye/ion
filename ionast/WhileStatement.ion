@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class WhileStatement extends LoopStatement
-        var test: Expression
-        var body: BlockStatement

@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class SwitchStatement extends Statement
-        var discriminant: Expression
-        var cases: Array<SwitchCase>

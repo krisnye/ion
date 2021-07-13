@@ -3,5 +3,5 @@ import
     .*
 
 export
-    class BlockStatement extends Statement, Scope
+    class Block extends Scope, Expression
         var body: Array<Statement>

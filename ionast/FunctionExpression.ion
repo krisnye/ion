@@ -3,12 +3,8 @@ import
     .*
 
 export
-    class FunctionExpression extends Expression, Scope, Type
-        var id: Identifier | Expression | Null = null
-        var bind: Boolean = false
-        var params: Array<Parameter>
-        var body: BlockStatement
-        var async: Boolean = false
-        var generator: Boolean = false
+    class FunctionExpression extends Expression, Scope
+        var id: Identifier | Null = null
+        var parameters: Array<Parameter>
+        var body: Block
         var returnType: Type | Null = null
-        # var typeGuard: Reference | Null = null

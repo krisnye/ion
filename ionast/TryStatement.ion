@@ -1,9 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class TryStatement extends Statement
-        var block: BlockStatement
-        var handler: CatchClause | Null = null
-        var finalizer: BlockStatement | Null = null

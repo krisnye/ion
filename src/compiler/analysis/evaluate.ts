@@ -1,7 +1,7 @@
 import Expression from "../ast/Expression";
 import Literal from "../ast/Literal";
 import * as ast from "../ast";
-import { ScopeMap, ScopeMaps } from "../createScopeMaps";
+import { ScopeMaps } from "../createScopeMaps";
 
 const binaryOps = {
     "||": (a, b) => a || b,

@@ -1,12 +1,16 @@
 import * as common from "./common";
 import fs from "fs";
-import defaultPhases, { noEmit } from "./phases";
+import Phase from "./phases/Phase";
+import defaultPhases from "./phases";
 // we need the path to lib so the code works in normal compile and in parcel
 import Parser = require("../../lib/compiler/parser");
 import watchDirectory from "./watchDirectory";
 import { copyResource } from "./phases/copyResources";
+import getExternalReferences from "./phases/getExternalReferences";
+import { Module } from "./ast";
+import { join, resolve } from "./pathFunctions";
 
-type Logger = (names?: string | string[], ast?: any) => void
+type Logger = (names?: string | string[] | null, ast?: any, file?: string) => void
 const NullLogger = () => {}
 
 export class Options {
@@ -17,7 +21,6 @@ export class Options {
     parser!: ReturnType<typeof Parser>
     debug: boolean
     emit: boolean
-    errors: Array<any>
     commandLine = false
 
     constructor(
@@ -32,7 +35,6 @@ export class Options {
         this.output = output
         this.debug = debug
         this.emit = emit
-        this.errors = []
     }
 
     static from(options) {
@@ -77,13 +79,13 @@ export function compileSingle(source: string, debug = true, name = "sample", ext
 }
 
 export function compileSample(text: string, name = "sample", debug = true, ext: ".mjs" | ".js" = ".mjs"): string | Error {
-    let emit = false
-    let compiler = new Compiler(() => {})
-    let options = new Options([], "null", "none", debug, emit)
-    let results = compiler.compile(options, { [name]: text })
-    if (results.errors.length > 0) {
-        return results.errors[0]
-    }
+    // let emit = false
+    // let compiler = new Compiler(() => {})
+    // let options = new Options([], "null", "none", debug, emit)
+    // let results = compiler.compile(options, { [name]: text })
+    // if (results.errors.length > 0) {
+    //     return results.errors[0]
+    // }
     return "[compileSample returns nothing now]"
 }
 
@@ -116,8 +118,8 @@ export default class Compiler {
                     //  we *really* should also kickoff a full recompile in a separate thread
                     //  or maybe the fast compile should be in the other thread
                     // always reset options errors
-                    options.errors.length = 0
-                    this.compile(options, { [path]: content }, defaultPhases, NullLogger)
+                    throw new Error("Watch has not been implemented yet for latest")
+                    // this.compile(options, { [path]: content }, defaultPhases, NullLogger)
                     let stop = Date.now()
                     let time = stop - start
                     console.log(`${filename} => ${time}ms`)
@@ -134,74 +136,126 @@ export default class Compiler {
         }
     }
 
-    compile(
-        optionsOrJson: Options | OptionsJSON,
-        files?: { [path: string]: string },
-        phases: any = undefined,
-        logger = this.logger
-    ): Results {
+    logOld(root, phase: string) {
+        for (let name of root.modules.keys()) {
+            let module = root.modules.get(name)
+            this.logger(phase, module, name)
+        }
+    }
+
+    getFiles(options: Options): Map<string,string> {
+        return new Map(Object.entries(common.getInputFilesRecursive(options.inputs, options.namespace)))
+    }
+
+    normalizeOptions(optionsOrJson: Options | OptionsJSON) {
         let options = Options.from(optionsOrJson)
-        if (phases == null) {
-            phases = options.emit ? defaultPhases : noEmit
-        }
         options.parser = Parser()
-        if (files == null) {
-            files = common.getInputFilesRecursive(options.inputs, options.namespace)
+        return options
+    }
+
+    compile(optionsOrJson: Options | OptionsJSON) {
+        let options = this.normalizeOptions(optionsOrJson)
+        let sources = this.getFiles(options)
+        for (let name of sources.keys()) {
+            this.logger("Source", sources.get(name), name)
         }
-        function printErrorConsole(e) {
-            let location = e.location
-            if (location == null || location.start == null) {
-                throw e
+
+        let modules = new Map(
+            Array.from(sources.entries()).map(([name, source]) => {
+                let module: Module = options.parser.parse(source, name)
+                module = module.patch({ name })
+                this.logger("Parser", module, name)
+                return [name, module]
+            })
+        )
+
+        let failedResolution = false
+        let modulesWithExternals = new Map(
+            Array.from(modules.entries()).map(([name, file]) => {
+                let [newFile, externals] = getExternalReferences(file)
+                // let's make sure it's possible to resolve these externals.
+                for (let external of externals.keys()) {
+                    let result = resolve(join(name, external), modules)
+                    if (result == null) {
+                        // failed to find an external reference.
+                        failedResolution = true
+                        let firstReference = Array.from(externals.get(external)!)[0]
+                        this.printErrorConsole(common.SemanticError(`Reference could not be resolved`, firstReference), sources, options)
+                    }
+                }
+                return [name, [file, externals] as [typeof file, typeof externals]]
+            })
+        )
+
+        if (failedResolution) {
+            return
+        }
+
+        let compiled = new Map<string,any>()
+        function areAllCompiled(externals: Iterable<string>) {
+            for (let external of externals) {
+                if (!compiled.has(external)) {
+                    return false
+                }
+            }
+            return true
+        }
+        let order = new Array<string>()
+        // now we will loop and compile files for which all their external dependencies are already compiled
+        while (compiled.size < modulesWithExternals.size) {
+            let beforeCompiledSize = compiled.size
+            for (let [name, [file, externals]] of modulesWithExternals) {
+                if (!compiled.has(name) && areAllCompiled(externals.keys())) {
+                    compiled.set(name, this.compileSingleFile(file, sources, compiled, options))
+                    order.push(name)
+                }
+            }
+            let afterCompiledSize = compiled.size
+            let compiledThisPass = afterCompiledSize - beforeCompiledSize
+            if (compiledThisPass == 0) {
+                throw new Error("Circular reference, should be resolved and debugged here")
+            }
+        }
+
+        this.logger(null, order)
+    }
+
+    printErrorConsole(e, sources, options) {
+        let location = e.locations?.[0]
+        if (location == null || location.start == null) {
+            throw e
+        }
+        else {
+            let { filename } = location
+            let source = sources.get(filename);
+            let error = options.parser.getError(e.message, e.locations, source, filename)
+            console.log("")
+            console.log(error.message)
+        }
+    }
+
+    compileSingleFile(module, sources: Map<string,string>, externals: Map<string,Module>, options: Options) {
+        let { name } = module
+        console.log(`Compiling: ${name}`)
+        let phases: Phase[] = defaultPhases
+
+        let root: any = module
+        for (let phase of phases) {
+            console.log(`    ${phase.name}`)
+            let result = phase(root, externals, options)
+            if (Array.isArray(result)) {
+                for (let e of result) {
+                    this.printErrorConsole(e, sources, options)
+                }
+                return result
             }
             else {
-                let { filename } = location
-                let source = files?.[filename];
-                let error = options.parser.getError(e.message, location, source, filename)
-                console.log("")
-                console.log(error.message.trim())
+                root = result
             }
+            this.logger(phase.name, root, name)
         }
 
-        let errors = options.errors
-        let phaseResults = new Map<any,any>()
-        let root: any = files
-        logger("Input", root)
-        let lastPhase
-        try {
-            for (let phase of phases) {
-                // console.log(phase.name)
-                lastPhase = phase
-                let before = errors.length
-                root = phase(root, options) || root
-                let after = errors.length
-                let count = after - before
-                if (count > 0) {
-                    console.log(phase.name + ": Errors: " + count)
-                }
-                phaseResults.set(phase, root)
-                logger(phase.name, root)
-            }
-            logger("Output", root)
-            logger()
-        }
-        catch (e) {
-            logger()
-            errors.push(e)
-            if (options.commandLine) {
-                console.log(lastPhase?.name)
-                printErrorConsole(e)
-                console.log("")
-            }
-        }
-
-        if (options.errors.length > 0) {
-            for (let e of options.errors) {
-                printErrorConsole(e)
-            }
-            console.log("")
-        }
-        
-        return { phases: phaseResults, errors }
+        return root
     }
 
 }

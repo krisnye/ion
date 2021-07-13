@@ -158,22 +158,34 @@ ul.jsondiffpatch-textdiff {
             --border: solid 1px gray;
         }
         body {
+        }
+        .main {
+            display: flex;
+            flex-direction: column;
+        }
+        .channel {
             display: flex;
             flex-direction: row;
             font-size: 12px;
             font-family: Monaco;
+            position: relative;
         }
-        article {
+        td {
             border: var(--border);
         }
-        article {
+        td:nth-child(1) > .content {
+            font-size: 16px;
+            writing-mode: tb-rl;
+            padding: 12px;
+        }
+        td {
             border: var(--border);
             padding: 0px;
         }
-        article:not(:last-child) {
+        td:not(:last-child) {
             border-right: none;
         }
-        article header {
+        td header {
             color: rgb(150,150,150);
             background-color: rgb(45,45,45);
             font-weight: bold;
@@ -181,13 +193,17 @@ ul.jsondiffpatch-textdiff {
             margin: 0px;
             border-bottom: var(--border);
         }
-        article header:hover {
+        td header:hover {
             display: flex;
             flex-direction: column;
         }
-        article p {
+        td p {
             padding: 0px 8px;
             white-space: pre;
+        }
+        td > div {
+            display: flex !important;
+            flex-direction: column;
         }
         ins {
             color: lightgreen;
@@ -200,49 +216,612 @@ ul.jsondiffpatch-textdiff {
         </style>
     </head>
     <body onclick="location.reload(true)">
+        <table class="main">
+<tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    AASample
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>// foo = 12
+// Foo = String | Number
+// a = min(10, 20)
 
-        <article>
-            <header><span>Input</span></header>
-            <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key="@glas/ion/Sample"><div class="jsondiffpatch-property-name">@glas/ion/Sample</div><div class="jsondiffpatch-value"><pre>&quot;<br>a = 12<br>b = 20<br>&quot;</pre></div></li></ul></div></p>
-        </article>
-    
-        <article>
-            <header><span>parsing</span></header>
-            <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-added" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Assembly&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="@glas/ion/Sample"><div class="jsondiffpatch-property-name">@glas/ion/Sample</div><div class="jsondiffpatch-value"><pre>&quot;<br>a = 12<br>b = 20<br>&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="modules"><div class="jsondiffpatch-property-name">modules</div><div class="jsondiffpatch-value"><pre>Map {
-  &quot;@glas/ion/Sample&quot;: File {
-    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;@glas/ion/Sample&quot; },
-    &quot;body&quot;: [
+foo = 12
+
+Foo =
+    &
+        . < 3
+        . != 2
+        . < 10
+Foo
+
+// double = () ->
+//     if a
+//         12
+//         13
+//     else
+//         14
+
+// AASample = . != 0
+
+// {}
+//     value: min(a, b)
+//     foo() -> 2
+
+// foo = (a: 1, optional: 10) -> 12
+
+// [Meta]: true
+// class Vector2<T> extends Foo
+//     // variables with a Type are instance variable
+//     x: T
+//     y: T
+//     // variables without a Type are static constants
+//     add = (a, b) -> a + b
+//     // variables that reference instance variables are calculated instance properties
+//     length = (x * x + y * y) ** 0.5
+//     // functions that reference this take an implicit first argument of class type
+//     scale = (factor) -> Vector2(this.x * factor, this.y * factor)
+</p>
+                </td>
+            
+                <td>
+                    <header><span>Parser</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;// foo = 12<br>// Foo = String | Number<br>// a = min(10, 20)<br><br>foo = 12<br><br>Foo =<br>    &amp;<br>        . &lt; 3<br>        . != 2<br>        . &lt; 10<br>Foo<br><br>// double = () -&gt;<br>//     if a<br>//         12<br>//         13<br>//     else<br>//         14<br><br>// AASample = . != 0<br><br>// {}<br>//     value: min(a, b)<br>//     foo() -&gt; 2<br><br>// foo = (a: 1, optional: 10) -&gt; 12<br><br>// [Meta]: true<br>// class Vector2&lt;T&gt; extends Foo<br>//     // variables with a Type are instance variable<br>//     x: T<br>//     y: T<br>//     // variables without a Type are static constants<br>//     add = (a, b) -&gt; a + b<br>//     // variables that reference instance variables are calculated instance properties<br>//     length = (x * x + y * y) ** 0.5<br>//     // functions that reference this take an implicit first argument of class type<br>//     scale = (factor) -&gt; Vector2(this.x * factor, this.y * factor)<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
+  &quot;body&quot;: [
+    VariableDeclaration {
+      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;foo&quot; },
+      &quot;value&quot;: Literal { &quot;value&quot;: 12 }
+    },
+    VariableDeclaration {
+      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Foo&quot; },
+      &quot;value&quot;: TypeExpression {
+        &quot;value&quot;: OutlineOperation {
+          &quot;operands&quot;: [
+            BinaryExpression {
+              &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
+              &quot;operator&quot;: &quot;&lt;&quot;,
+              &quot;right&quot;: Literal { &quot;value&quot;: 3 }
+            },
+            BinaryExpression {
+              &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
+              &quot;operator&quot;: &quot;!=&quot;,
+              &quot;right&quot;: Literal { &quot;value&quot;: 2 }
+            },
+            BinaryExpression {
+              &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
+              &quot;operator&quot;: &quot;&lt;&quot;,
+              &quot;right&quot;: Literal { &quot;value&quot;: 10 }
+            }
+          ],
+          &quot;operator&quot;: &quot;&amp;&quot;
+        }
+      }
+    },
+    ExpressionStatement {
+      &quot;expression&quot;: Reference { &quot;name&quot;: &quot;Foo&quot; }
+    }
+  ],
+  &quot;name&quot;: &quot;AASample&quot;
+}</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
+  VariableDeclaration {
+    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;foo&quot; },
+    &quot;value&quot;: Literal { &quot;value&quot;: 12 }
+  },
+  VariableDeclaration {
+    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Foo&quot; },
+    &quot;value&quot;: TypeExpression {
+      &quot;value&quot;: OutlineOperation {
+        &quot;operands&quot;: [
+          BinaryExpression {
+            &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
+            &quot;operator&quot;: &quot;&lt;&quot;,
+            &quot;right&quot;: Literal { &quot;value&quot;: 3 }
+          },
+          BinaryExpression {
+            &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
+            &quot;operator&quot;: &quot;!=&quot;,
+            &quot;right&quot;: Literal { &quot;value&quot;: 2 }
+          },
+          BinaryExpression {
+            &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
+            &quot;operator&quot;: &quot;&lt;&quot;,
+            &quot;right&quot;: Literal { &quot;value&quot;: 10 }
+          }
+        ],
+        &quot;operator&quot;: &quot;&amp;&quot;
+      }
+    }
+  },
+  ExpressionStatement {
+    &quot;expression&quot;: Reference { &quot;name&quot;: &quot;Foo&quot; }
+  }
+]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;AASample&quot;</pre></div></li></ul></div></p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    Number
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+class Number
+    pi = 3.14</p>
+                </td>
+            
+                <td>
+                    <header><span>Parser</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class Number<br>    pi = 3.14&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
+  &quot;body&quot;: [
+    ClassDeclaration {
+      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Number&quot; },
+      &quot;declarations&quot;: [
+        VariableDeclaration {
+          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;pi&quot; },
+          &quot;value&quot;: Literal { &quot;value&quot;: 3.14 }
+        }
+      ]
+    }
+  ],
+  &quot;name&quot;: &quot;Number&quot;
+}</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
+  ClassDeclaration {
+    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Number&quot; },
+    &quot;declarations&quot;: [
       VariableDeclaration {
-        &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; },
-        &quot;value&quot;: Literal { &quot;value&quot;: 12 }
-      },
-      VariableDeclaration {
-        &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; },
-        &quot;value&quot;: Literal { &quot;value&quot;: 20 }
+        &quot;id&quot;: Declarator { &quot;name&quot;: &quot;pi&quot; },
+        &quot;value&quot;: Literal { &quot;value&quot;: 3.14 }
       }
     ]
   }
-}</pre></div></li></ul></div></p>
-        </article>
-    
-        <article>
-            <header><span>Output</span></header>
-            <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Assembly&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="modules"><div class="jsondiffpatch-property-name">modules</div><div class="jsondiffpatch-value"><pre>Map {
-  &quot;@glas/ion/Sample&quot;: File {
-    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;@glas/ion/Sample&quot; },
-    &quot;body&quot;: [
+]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
+                </td>
+            
+                <td>
+                    <header><span>semanticChecks</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
+  ClassDeclaration {
+    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Number&quot; },
+    &quot;declarations&quot;: [
       VariableDeclaration {
-        &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; },
-        &quot;value&quot;: Literal { &quot;value&quot;: 12 }
-      },
-      VariableDeclaration {
-        &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; },
-        &quot;value&quot;: Literal { &quot;value&quot;: 20 }
+        &quot;id&quot;: Declarator { &quot;name&quot;: &quot;pi&quot; },
+        &quot;value&quot;: Literal { &quot;value&quot;: 3.14 }
       }
     ]
   }
-}</pre></div></li></ul></div></p>
-        </article>
-    
+]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    String
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+class String
+</p>
+                </td>
+            
+                <td>
+                    <header><span>Parser</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class String<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
+  &quot;body&quot;: [
+    ClassDeclaration {
+      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;String&quot; }
+    }
+  ],
+  &quot;name&quot;: &quot;String&quot;
+}</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
+  ClassDeclaration {
+    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;String&quot; }
+  }
+]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;String&quot;</pre></div></li></ul></div></p>
+                </td>
+            
+                <td>
+                    <header><span>semanticChecks</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
+  ClassDeclaration {
+    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;String&quot; }
+  }
+]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;String&quot;</pre></div></li></ul></div></p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    max
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+x: Number = 12
+
+max(a, b) ->
+    if a > b
+        a
+    else
+        b
+
+</p>
+                </td>
+            
+                <td>
+                    <header><span>Parser</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>x: Number = 12<br><br>max(a, b) -&gt;<br>    if a &gt; b<br>        a<br>    else<br>        b<br><br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
+  &quot;body&quot;: [
+    VariableDeclaration {
+      &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; },
+      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; },
+      &quot;value&quot;: Literal { &quot;value&quot;: 12 }
+    },
+    ExpressionStatement {
+      &quot;expression&quot;: FunctionExpression {
+        &quot;id&quot;: Identifier { &quot;name&quot;: &quot;max&quot; },
+        &quot;parameters&quot;: [
+          Parameter {
+            &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; }
+          },
+          Parameter {
+            &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; }
+          }
+        ],
+        &quot;body&quot;: Block {
+          &quot;body&quot;: [
+            Conditional {
+              &quot;test&quot;: BinaryExpression {
+                &quot;left&quot;: Reference { &quot;name&quot;: &quot;a&quot; },
+                &quot;operator&quot;: &quot;&gt;&quot;,
+                &quot;right&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+              },
+              &quot;consequent&quot;: Block {
+                &quot;body&quot;: [
+                  ExpressionStatement {
+                    &quot;expression&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
+                  }
+                ]
+              },
+              &quot;alternate&quot;: Block {
+                &quot;body&quot;: [
+                  ExpressionStatement {
+                    &quot;expression&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  &quot;name&quot;: &quot;max&quot;
+}</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
+  VariableDeclaration {
+    &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; },
+    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; },
+    &quot;value&quot;: Literal { &quot;value&quot;: 12 }
+  },
+  ExpressionStatement {
+    &quot;expression&quot;: FunctionExpression {
+      &quot;id&quot;: Identifier { &quot;name&quot;: &quot;max&quot; },
+      &quot;parameters&quot;: [
+        Parameter {
+          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; }
+        },
+        Parameter {
+          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; }
+        }
+      ],
+      &quot;body&quot;: Block {
+        &quot;body&quot;: [
+          Conditional {
+            &quot;test&quot;: BinaryExpression {
+              &quot;left&quot;: Reference { &quot;name&quot;: &quot;a&quot; },
+              &quot;operator&quot;: &quot;&gt;&quot;,
+              &quot;right&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+            },
+            &quot;consequent&quot;: Block {
+              &quot;body&quot;: [
+                ExpressionStatement {
+                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
+                }
+              ]
+            },
+            &quot;alternate&quot;: Block {
+              &quot;body&quot;: [
+                ExpressionStatement {
+                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;max&quot;</pre></div></li></ul></div></p>
+                </td>
+            
+                <td>
+                    <header><span>semanticChecks</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
+  VariableDeclaration {
+    &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; },
+    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; },
+    &quot;value&quot;: Literal { &quot;value&quot;: 12 }
+  },
+  ExpressionStatement {
+    &quot;expression&quot;: FunctionExpression {
+      &quot;id&quot;: Identifier { &quot;name&quot;: &quot;max&quot; },
+      &quot;parameters&quot;: [
+        Parameter {
+          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; }
+        },
+        Parameter {
+          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; }
+        }
+      ],
+      &quot;body&quot;: Block {
+        &quot;body&quot;: [
+          Conditional {
+            &quot;test&quot;: BinaryExpression {
+              &quot;left&quot;: Reference { &quot;name&quot;: &quot;a&quot; },
+              &quot;operator&quot;: &quot;&gt;&quot;,
+              &quot;right&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+            },
+            &quot;consequent&quot;: Block {
+              &quot;body&quot;: [
+                ExpressionStatement {
+                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
+                }
+              ]
+            },
+            &quot;alternate&quot;: Block {
+              &quot;body&quot;: [
+                ExpressionStatement {
+                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;max&quot;</pre></div></li></ul></div></p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    min
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+min(a, b) ->
+    if a < b
+        a
+    else
+        b
+</p>
+                </td>
+            
+                <td>
+                    <header><span>Parser</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>min(a, b) -&gt;<br>    if a &lt; b<br>        a<br>    else<br>        b<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
+  &quot;body&quot;: [
+    ExpressionStatement {
+      &quot;expression&quot;: FunctionExpression {
+        &quot;id&quot;: Identifier { &quot;name&quot;: &quot;min&quot; },
+        &quot;parameters&quot;: [
+          Parameter {
+            &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; }
+          },
+          Parameter {
+            &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; }
+          }
+        ],
+        &quot;body&quot;: Block {
+          &quot;body&quot;: [
+            Conditional {
+              &quot;test&quot;: BinaryExpression {
+                &quot;left&quot;: Reference { &quot;name&quot;: &quot;a&quot; },
+                &quot;operator&quot;: &quot;&lt;&quot;,
+                &quot;right&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+              },
+              &quot;consequent&quot;: Block {
+                &quot;body&quot;: [
+                  ExpressionStatement {
+                    &quot;expression&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
+                  }
+                ]
+              },
+              &quot;alternate&quot;: Block {
+                &quot;body&quot;: [
+                  ExpressionStatement {
+                    &quot;expression&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  &quot;name&quot;: &quot;min&quot;
+}</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
+  ExpressionStatement {
+    &quot;expression&quot;: FunctionExpression {
+      &quot;id&quot;: Identifier { &quot;name&quot;: &quot;min&quot; },
+      &quot;parameters&quot;: [
+        Parameter {
+          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; }
+        },
+        Parameter {
+          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; }
+        }
+      ],
+      &quot;body&quot;: Block {
+        &quot;body&quot;: [
+          Conditional {
+            &quot;test&quot;: BinaryExpression {
+              &quot;left&quot;: Reference { &quot;name&quot;: &quot;a&quot; },
+              &quot;operator&quot;: &quot;&lt;&quot;,
+              &quot;right&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+            },
+            &quot;consequent&quot;: Block {
+              &quot;body&quot;: [
+                ExpressionStatement {
+                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
+                }
+              ]
+            },
+            &quot;alternate&quot;: Block {
+              &quot;body&quot;: [
+                ExpressionStatement {
+                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;min&quot;</pre></div></li></ul></div></p>
+                </td>
+            
+                <td>
+                    <header><span>semanticChecks</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
+  ExpressionStatement {
+    &quot;expression&quot;: FunctionExpression {
+      &quot;id&quot;: Identifier { &quot;name&quot;: &quot;min&quot; },
+      &quot;parameters&quot;: [
+        Parameter {
+          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; }
+        },
+        Parameter {
+          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; }
+        }
+      ],
+      &quot;body&quot;: Block {
+        &quot;body&quot;: [
+          Conditional {
+            &quot;test&quot;: BinaryExpression {
+              &quot;left&quot;: Reference { &quot;name&quot;: &quot;a&quot; },
+              &quot;operator&quot;: &quot;&lt;&quot;,
+              &quot;right&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+            },
+            &quot;consequent&quot;: Block {
+              &quot;body&quot;: [
+                ExpressionStatement {
+                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
+                }
+              ]
+            },
+            &quot;alternate&quot;: Block {
+              &quot;body&quot;: [
+                ExpressionStatement {
+                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;min&quot;</pre></div></li></ul></div></p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    sample.constant
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+10
+</p>
+                </td>
+            
+                <td>
+                    <header><span>Parser</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>10<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
+  &quot;body&quot;: [
+    ExpressionStatement {
+      &quot;expression&quot;: Literal { &quot;value&quot;: 10 }
+    }
+  ],
+  &quot;name&quot;: &quot;sample.constant&quot;
+}</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
+  ExpressionStatement {
+    &quot;expression&quot;: Literal { &quot;value&quot;: 10 }
+  }
+]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;sample.constant&quot;</pre></div></li></ul></div></p>
+                </td>
+            
+                <td>
+                    <header><span>semanticChecks</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
+  ExpressionStatement {
+    &quot;expression&quot;: Literal { &quot;value&quot;: 10 }
+  }
+]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;sample.constant&quot;</pre></div></li></ul></div></p>
+                </td>
+            </tr>
+        </div>
     </body>
 </html>

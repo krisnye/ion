@@ -34,16 +34,16 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         return `[ ${node.elements.map(toCodeString).join(', ')} ]`
     },
     File(node) {
-        return `file ${node.id.name}`
+        return `file [unknown name]`
     },
     FunctionExpression(node) {
-        return `function ${(node.id as any)?.name ?? ''}(${node.params.map(toCodeString).join(',')})`
+        return `function ${(node.id as any)?.name ?? ''}(${node.parameters.map(toCodeString).join(',')})`
     },
     ArrowFunctionExpression(node) {
         return `(${node.params.map(toCodeString).join(',')}) => {?}`
     },
     FunctionType(node) {
-        return `${node.async ? "async " : ""}(${node.params.map(toCodeString).join(',')}) => ${toCodeString(node.returnType)}`
+        return `(${node.parameters.map(toCodeString).join(',')}) => ${toCodeString(node.returnType)}`
     },
     ClassDeclaration(node) {
         return `class ${node.id.name}`
@@ -92,7 +92,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     VariableDeclaration(node) {
         return codeToString.Parameter!(node)
     },
-    IfStatement(node) {
+    Conditional(node) {
         let result =`(if ${s(node.test)} then ${s(node.consequent)}`
         if (node.alternate) {
             result += ` else ${s(node.alternate)} end`
@@ -102,7 +102,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         }
         return result
     },
-    BlockStatement(node) {
+    Block(node) {
         return `{ ${node.body.map(s).join('; ')} }`
     },
     ReturnStatement(node) {

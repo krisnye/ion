@@ -1,9 +1,9 @@
 import { traverse, skip } from "@glas/traverse";
 import { ScopeMaps } from "../createScopeMaps";
 import toposort from "../toposort";
-import { Type, Node, Typed, IfStatement, Property, FunctionExpression, ReturnStatement, CallExpression, BinaryExpression, Expression } from "../ast";
+import { Node, Typed, Property, FunctionExpression, ReturnStatement, CallExpression, BinaryExpression, Expression } from "../ast";
 import * as ast from "../ast"
-import { getAncestor, SemanticError } from "../common";
+import { SemanticError } from "../common";
 
 function contains(graph, predicate) {
     let found = false
@@ -40,30 +40,30 @@ function getNonRecursiveReturnStatements(fn: FunctionExpression): ReturnStatemen
     return statements
 }
 
-export function getContainingIfTestAndOriginalDeclarator(node: ast.ConditionalDeclaration, scopeMap: ScopeMaps, ancestorMap: Map<Node, Node>): [Expression, ast.Declarator | null] {
-    let containingIf = getAncestor(node, ancestorMap, IfStatement.is)!
-    let containingIfScope = scopeMap.get(containingIf)!
-    let name = (node.id as ast.Reference).name
-    let containingVarDeclarator = containingIfScope[name] ?? null
-    return [containingIf.test, containingVarDeclarator]
-}
+// export function getContainingIfTestAndOriginalDeclarator(node: ast.ConditionalDeclaration, scopeMap: ScopeMaps, ancestorMap: Map<Node, Node>): [Expression, ast.Declarator | null] {
+//     let containingIf = getAncestor(node, ancestorMap, Conditional.is)!
+//     let containingIfScope = scopeMap.get(containingIf)!
+//     let name = (node.id as ast.Reference).name
+//     let containingVarDeclarator = containingIfScope[name] ?? null
+//     return [containingIf.test, containingVarDeclarator]
+// }
 
 export function getPredecessors(node, scopeMap: ScopeMaps, ancestorMap: Map<Node, Node>): Iterable<Typed> {
     return predecessors[node.constructor.name](node, scopeMap, ancestorMap);
 }
 
 const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>, scopeMap: ScopeMaps, ancestorMap: Map<Node, Node>) => Iterable<Typed | Typed[]>} = {
-    *ConditionalDeclaration(node, scopeMap, ancestorMap) {
-        // the conditional declaration will add it's own local conditional assertion to the variable type
-        // from the containing scope, so we are dependent on that variable being resolved first.
-        let [containingIfTest, containingVarDeclarator] = getContainingIfTestAndOriginalDeclarator(node, scopeMap, ancestorMap)
-        if (containingIfTest) {
-            yield containingIfTest
-        }
-        if (containingVarDeclarator) {
-            yield containingVarDeclarator
-        }
-    },
+    // *ConditionalDeclaration(node, scopeMap, ancestorMap) {
+    //     // the conditional declaration will add it's own local conditional assertion to the variable type
+    //     // from the containing scope, so we are dependent on that variable being resolved first.
+    //     let [containingIfTest, containingVarDeclarator] = getContainingIfTestAndOriginalDeclarator(node, scopeMap, ancestorMap)
+    //     if (containingIfTest) {
+    //         yield containingIfTest
+    //     }
+    //     if (containingVarDeclarator) {
+    //         yield containingVarDeclarator
+    //     }
+    // },
     *ArrayPattern(node) {
         for (let element of node.elements) {
             //  all pattern elements are dependent on this nodes type first.
@@ -119,8 +119,8 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         // this nodes declarator is dependent on this node
         yield [node, node.id]
         yield* node.baseClasses
-        yield* node.static.values()
-        yield* node.instance.declarations.values()
+        yield* node.declarations
+        yield* node.typeParameters
     },
     *Variable(node) {
         // make the id pattern dependent on this type
@@ -143,7 +143,7 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     },
     *FunctionExpression(node) {
         // a function depends on it's parameters which means it depends on it's parameter types
-        yield* node.params
+        yield* node.parameters
         if (node.returnType === null) {
             for (let returnStatement of getNonRecursiveReturnStatements(node)) {
                 if (returnStatement.argument != null) {
@@ -153,17 +153,18 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         }
     },
     *Reference(node, scopes) {
+        if (node.typeArguments) {
+            yield* node.typeArguments
+        }
         let referencedNode = scopes.get(node)[node.name]
         if (referencedNode != null) {
             yield referencedNode
             // we don't throw on unrealized references... we just will consider them type any
-            // throw SemanticError("Referenced value not found", node)
+        }
+        else {
+            throw SemanticError("Referenced value not found", node)
         }
     },
-    // *TemplateReference(node) {
-    //     yield node.reference
-    //     yield* node.arguments
-    // },
     *MemberExpression(node) {
         yield node.object
         if (Expression.is(node.property)) {

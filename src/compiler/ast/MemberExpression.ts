@@ -15,7 +15,7 @@ import * as Identifier from './Identifier';
 import * as Class from './ion/Class';
 export class MemberExpression implements _Object.Object , Expression.Expression , ChainElement.ChainElement , Type.Type , RuntimeType.RuntimeType , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Type.Type | Null.Null;
+    readonly type: Expression.Expression | Null.Null;
     readonly optional: Boolean.Boolean;
     readonly object: Expression.Expression;
     readonly property: Identifier.Identifier | Expression.Expression;
@@ -32,15 +32,15 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
     ]);
     constructor({location = null, type = null, optional = false, object, property}: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
+        type?: Expression.Expression | Null.Null,
         optional?: Boolean.Boolean,
         object: Expression.Expression,
         property: Identifier.Identifier | Expression.Expression
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Type.isType(type) || Null.isNull(type)))
-            throw new Error('type is not a Type | Null: ' + Class.toString(type));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(optional))
             throw new Error('optional is not a Boolean: ' + Class.toString(optional));
         if (!Expression.isExpression(object))
@@ -56,7 +56,7 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
+        type?: Expression.Expression | Null.Null,
         optional?: Boolean.Boolean,
         object?: Expression.Expression,
         property?: Identifier.Identifier | Expression.Expression

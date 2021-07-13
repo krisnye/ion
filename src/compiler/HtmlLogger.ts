@@ -1,17 +1,19 @@
-import * as np from "path"
 import * as common from "./common"
 import { readFileSync } from "fs";
 
 const jsondiffpatch: any = require('jsondiffpatch').create({})
 const remove__prefixedProperties = (key: string, value:any) => key.startsWith("__") ? undefined : value
 const uniqueId = Symbol('uniqueId')
-let nextId = 0
 const ignoreProperties: {[name:string]:boolean} = {
     location: true
 }
 
-function ignore(property, value) {
-    if (value == null) {
+function isEmpty(value) {
+    return value == null || value === false || value.length === 0
+}
+
+function ignore(property, value, object) {
+    if (isEmpty(value)) {
         return true
     }
     return ignoreProperties[property] || property.startsWith("_") || /^\/ion\b/.test(property)
@@ -33,7 +35,7 @@ function cloneWithJsonReferences(object: any, path: string[] = []) {
     if (object instanceof Map) {
         for (let key of object.keys()) {
             let value = object.get(key)
-            if (ignore(key, value)) {
+            if (ignore(key, value, object)) {
                 continue
             }
             clone[key] = cloneWithJsonReferences(value, path)
@@ -48,7 +50,7 @@ function cloneWithJsonReferences(object: any, path: string[] = []) {
     else {
         for (let property in object) {
             let value = object[property]
-            if (ignore(property, value)) {
+            if (ignore(property, value, object)) {
                 continue
             }
     
@@ -75,16 +77,22 @@ export function create(outputPath: string) {
     let style = rfs(stylePath)
     // console.log(style)
     // let outputToStyle = np.relative(np.dirname(outputPath), "node_modules/jsondiffpatch/dist/formatters-styles/html.css")
+    let channels: Map<string,[string[],object][]> = new Map()
     let passes: [string[],object][] = []
-    return function(names?: string | string[], ast?: any) {
+    return function(names?: string | string[] | null, ast?: any, channel?: string) {
         if (names != null) {
             if (!Array.isArray(names))
                 names = [names]
+            let passes = channels.get(channel!)
+            if (passes == null) {
+                channels.set(channel!, passes = [])
+            }
             passes.push([names, cloneWithJsonReferences(ast)])
             // passes.push([names, JSON.parse(JSON.stringify(cloneWithJsonReferences(ast), remove__prefixedProperties))])
         } else {
             // convert to HTML
             let previous: string | null = null
+            let keys = ast || Array.from(channels.keys());
             let html = [
 `
 <html>
@@ -97,22 +105,34 @@ export function create(outputPath: string) {
             --border: solid 1px gray;
         }
         body {
+        }
+        .main {
+            display: flex;
+            flex-direction: column;
+        }
+        .channel {
             display: flex;
             flex-direction: row;
             font-size: 12px;
             font-family: Monaco;
+            position: relative;
         }
-        article {
+        td {
             border: var(--border);
         }
-        article {
+        td:nth-child(1) > .content {
+            font-size: 16px;
+            writing-mode: tb-rl;
+            padding: 12px;
+        }
+        td {
             border: var(--border);
             padding: 0px;
         }
-        article:not(:last-child) {
+        td:not(:last-child) {
             border-right: none;
         }
-        article header {
+        td header {
             color: rgb(150,150,150);
             background-color: rgb(45,45,45);
             font-weight: bold;
@@ -120,13 +140,17 @@ export function create(outputPath: string) {
             margin: 0px;
             border-bottom: var(--border);
         }
-        article header:hover {
+        td header:hover {
             display: flex;
             flex-direction: column;
         }
-        article p {
+        td p {
             padding: 0px 8px;
             white-space: pre;
+        }
+        td > div {
+            display: flex !important;
+            flex-direction: column;
         }
         ins {
             color: lightgreen;
@@ -139,28 +163,44 @@ export function create(outputPath: string) {
         </style>
     </head>
     <body onclick="location.reload(true)">
+        <table class="main">
 `,
-...passes.map(([names, ast]: any) => {
-    if (!Array.isArray(names))
-        names = [names]
-    // convert to show refs
-    let delta = previous != null ? jsondiffpatch.diff(previous, ast) : null
-    let html;
-    if (typeof ast === "string") {
-        html = ast
-    }
-    else {
-        html = require('jsondiffpatch/src/formatters/html').format(delta || {}, previous || ast)
-    }
-    previous = ast
-    return `
-        <article>
-            <header><span>${names.join(', </span><span>')}</span></header>
-            <p>${format(html)}</p>
-        </article>
-    `
+...keys.map(channel => {
+    let passes = channels.get(channel)!;
+    return [
+        `<tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    ${channel}
+                </span>
+            </td>
+        `,
+        ...passes.map(([names, ast]: any) => {
+            if (!Array.isArray(names))
+                names = [names]
+            // convert to show refs
+            let delta = previous != null ? jsondiffpatch.diff(previous, ast) : null
+            let html;
+            if (typeof ast === "string") {
+                html = ast
+            }
+            else {
+                html = require('jsondiffpatch/src/formatters/html').format(delta || {}, previous || ast)
+            }
+            previous = ast
+            return `
+                <td>
+                    <header><span>${names.join(', </span><span>')}</span></header>
+                    <p>${format(html)}</p>
+                </td>
+            `
+        }),
+        `</tr>`
+    ].join('')
 }),
 `
+        </div>
     </body>
 </html>
 `

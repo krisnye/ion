@@ -1,0 +1,39 @@
+// foo = 12
+// Foo = String | Number
+// a = min(10, 20)
+
+foo = 12
+
+Foo =
+    &
+        . < 3
+        . != 2
+        . < 10
+Foo
+
+// double = () ->
+//     if a
+//         12
+//         13
+//     else
+//         14
+
+// AASample = . != 0
+
+// {}
+//     value: min(a, b)
+//     foo() -> 2
+
+// foo = (a: 1, optional: 10) -> 12
+
+// [Meta]: true
+// class Vector2<T> extends Foo
+//     // variables with a Type are instance variable
+//     x: T
+//     y: T
+//     // variables without a Type are static constants
+//     add = (a, b) -> a + b
+//     // variables that reference instance variables are calculated instance properties
+//     length = (x * x + y * y) ** 0.5
+//     // functions that reference this take an implicit first argument of class type
+//     scale = (factor) -> Vector2(this.x * factor, this.y * factor)

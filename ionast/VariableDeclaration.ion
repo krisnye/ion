@@ -3,4 +3,4 @@ import
     .*
 
 export
-    class VariableDeclaration extends Meta, Variable, Declaration
+    class VariableDeclaration extends Variable, Declaration

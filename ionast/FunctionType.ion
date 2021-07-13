@@ -7,6 +7,5 @@ export
         # params can have SpreadElements NOT RestElements because SpreadElements
         # argument is a Reference which can include the generic Array type arguments
         # for instance ...Array<Number>
-        var params: Array<Type | SpreadElement>
-        var async: Boolean = false
+        var parameters: Array<Type>
         var returnType: Type | Null = null

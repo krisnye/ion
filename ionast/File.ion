@@ -3,6 +3,4 @@ import
     .*
 
 export
-    class File extends Scope
-        var id: Declarator
-        var body: Array<Statement | Expression>
+    class File extends Block

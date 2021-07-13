@@ -1,0 +1,9 @@
+
+x: Number = 12
+
+max(a, b) ->
+    if a > b
+        a
+    else
+        b
+

@@ -3,7 +3,7 @@ import
     .*
 
 export
-    class ConditionalExpression extends Expression
+    class Conditional extends Expression
         var test: Expression
         var consequent: Expression
-        var alternate: Expression
+        var alternate: Expression | Null

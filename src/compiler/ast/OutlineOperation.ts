@@ -7,7 +7,6 @@ import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as Type from './Type';
 import * as _Array from './ion/Array';
 import * as SpreadElement from './SpreadElement';
 import * as Statement from './Statement';
@@ -15,7 +14,7 @@ import * as String from './ion/String';
 import * as Class from './ion/Class';
 export class OutlineOperation implements _Object.Object , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Type.Type | Null.Null;
+    readonly type: Expression.Expression | Null.Null;
     readonly operands: _Array.Array<Expression.Expression | (SpreadElement.SpreadElement | (Statement.Statement | Null.Null))>;
     readonly operator: String.String;
     static readonly id = 'OutlineOperation';
@@ -28,14 +27,14 @@ export class OutlineOperation implements _Object.Object , Expression.Expression 
     ]);
     constructor({location = null, type = null, operands, operator}: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
+        type?: Expression.Expression | Null.Null,
         operands: _Array.Array<Expression.Expression | (SpreadElement.SpreadElement | (Statement.Statement | Null.Null))>,
         operator: String.String
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Type.isType(type) || Null.isNull(type)))
-            throw new Error('type is not a Type | Null: ' + Class.toString(type));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!_Array.isArray(operands))
             throw new Error('operands is not a Array: ' + Class.toString(operands));
         if (!String.isString(operator))
@@ -48,7 +47,7 @@ export class OutlineOperation implements _Object.Object , Expression.Expression 
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
+        type?: Expression.Expression | Null.Null,
         operands?: _Array.Array<Expression.Expression | (SpreadElement.SpreadElement | (Statement.Statement | Null.Null))>,
         operator?: String.String
     }) {

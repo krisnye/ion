@@ -11,7 +11,7 @@ import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as Type from './Type';
+import * as Expression from './Expression';
 import * as _Array from './ion/Array';
 import * as Literal from './Literal';
 import * as Identifier from './Identifier';
@@ -23,7 +23,7 @@ export function isSpecifier(value): value is Specifier {
 }
 export class ImportDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Type.Type | Null.Null;
+    readonly type: Expression.Expression | Null.Null;
     readonly specifiers: _Array.Array<Specifier | ImportDeclaration>;
     readonly path: _Array.Array<Literal.Literal | Identifier.Identifier> | Null.Null;
     readonly source: Literal.Literal;
@@ -39,7 +39,7 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
     ]);
     constructor({location = null, type = null, specifiers, path = null, source, absoluteSource = null}: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
+        type?: Expression.Expression | Null.Null,
         specifiers: _Array.Array<Specifier | ImportDeclaration>,
         path?: _Array.Array<Literal.Literal | Identifier.Identifier> | Null.Null,
         source: Literal.Literal,
@@ -47,8 +47,8 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Type.isType(type) || Null.isNull(type)))
-            throw new Error('type is not a Type | Null: ' + Class.toString(type));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!_Array.isArray(specifiers))
             throw new Error('specifiers is not a Array: ' + Class.toString(specifiers));
         if (!(_Array.isArray(path) || Null.isNull(path)))
@@ -67,7 +67,7 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
+        type?: Expression.Expression | Null.Null,
         specifiers?: _Array.Array<Specifier | ImportDeclaration>,
         path?: _Array.Array<Literal.Literal | Identifier.Identifier> | Null.Null,
         source?: Literal.Literal,

@@ -1,9 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class IfStatement extends Statement
-        var test: Expression
-        var consequent: BlockStatement
-        var alternate: BlockStatement | IfStatement | Null = null

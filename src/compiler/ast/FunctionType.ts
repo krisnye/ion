@@ -10,14 +10,11 @@ import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
-import * as SpreadElement from './SpreadElement';
-import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
 export class FunctionType implements _Object.Object , Type.Type , RuntimeType.RuntimeType , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Type.Type | Null.Null;
-    readonly params: _Array.Array<Type.Type | SpreadElement.SpreadElement>;
-    readonly async: Boolean.Boolean;
+    readonly type: Expression.Expression | Null.Null;
+    readonly parameters: _Array.Array<Type.Type>;
     readonly returnType: Type.Type | Null.Null;
     static readonly id = 'FunctionType';
     static readonly implements = new Set([
@@ -29,41 +26,30 @@ export class FunctionType implements _Object.Object , Type.Type , RuntimeType.Ru
         'Typed',
         'Node'
     ]);
-    constructor({
-        location = null,
-        type = null,
-        params,
-        async: _async = false,
-        returnType = null
-    }: {
+    constructor({location = null, type = null, parameters, returnType = null}: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
-        params: _Array.Array<Type.Type | SpreadElement.SpreadElement>,
-        async?: Boolean.Boolean,
+        type?: Expression.Expression | Null.Null,
+        parameters: _Array.Array<Type.Type>,
         returnType?: Type.Type | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Type.isType(type) || Null.isNull(type)))
-            throw new Error('type is not a Type | Null: ' + Class.toString(type));
-        if (!_Array.isArray(params))
-            throw new Error('params is not a Array: ' + Class.toString(params));
-        if (!Boolean.isBoolean(_async))
-            throw new Error('async is not a Boolean: ' + Class.toString(_async));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!_Array.isArray(parameters))
+            throw new Error('parameters is not a Array: ' + Class.toString(parameters));
         if (!(Type.isType(returnType) || Null.isNull(returnType)))
             throw new Error('returnType is not a Type | Null: ' + Class.toString(returnType));
         this.location = location;
         this.type = type;
-        this.params = params;
-        this.async = _async;
+        this.parameters = parameters;
         this.returnType = returnType;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null,
-        params?: _Array.Array<Type.Type | SpreadElement.SpreadElement>,
-        async?: Boolean.Boolean,
+        type?: Expression.Expression | Null.Null,
+        parameters?: _Array.Array<Type.Type>,
         returnType?: Type.Type | Null.Null
     }) {
         return new FunctionType({

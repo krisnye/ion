@@ -4,18 +4,7 @@ import
 
 export
     class ClassDeclaration extends Meta, Declaration, Expression
-        var isStruct: Boolean = false
-        var isInterface: Boolean = false
-        var isData: Boolean = false
         var id: Declarator
-        var parameters: Array<Parameter> = []
-        var baseClasses: Array<Reference | MemberExpression> = []
-        var interfaces: Array<Reference | MemberExpression> = []
-        # var declarations: Array<VariableDeclaration>
-        var static: Array<VariableDeclaration>
-        # we place the instance declarations within a blockStatement
-        # so that the static statements are within scope for them
-        # but the instance declarations are NOT within scope from static declarations
-        var instance: InstanceDeclarations
-        var instanceType: Type | Null = null
-        # var meta: Array<KeyValuePair> = []
+        var baseClasses: Array<Expression> = []
+        var declarations: Array<VariableDeclaration>
+        var typeParameters: Array<Parameter> = []

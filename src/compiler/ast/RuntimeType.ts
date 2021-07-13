@@ -11,7 +11,7 @@ import * as Null from './ion/Null';
 import * as Class from './ion/Class';
 export class RuntimeType implements _Object.Object , Type.Type , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Type.Type | Null.Null;
+    readonly type: Expression.Expression | Null.Null;
     static readonly id = 'RuntimeType';
     static readonly implements = new Set([
         'RuntimeType',
@@ -23,19 +23,19 @@ export class RuntimeType implements _Object.Object , Type.Type , Expression.Expr
     ]);
     constructor({location = null, type = null}: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null
+        type?: Expression.Expression | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Type.isType(type) || Null.isNull(type)))
-            throw new Error('type is not a Type | Null: ' + Class.toString(type));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         this.location = location;
         this.type = type;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Type.Type | Null.Null
+        type?: Expression.Expression | Null.Null
     }) {
         return new RuntimeType({
             ...this,
