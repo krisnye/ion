@@ -70,7 +70,6 @@
         return tail.reduce(
             (left, huh) => {
                 let [,operator,,right] = huh;
-                console.log("FUCK YOU 44444444", { operator, huh })
                 return operation(left, operator, right)
             }
             ,head
@@ -387,8 +386,8 @@ ArrayPattern
     }
 
 RestElement
-    = "..." argument:Declarator
-    { return node("RestElement", { argument }) }
+    = "..." value:Declarator
+    { return node("RestElement", { value }) }
 
 ObjectPattern
     = "{" _ head:AssignmentProperty tail:(_ "," _ @AssignmentProperty)* rest:(_ "," _ @RestElement)? _ "}"
@@ -527,20 +526,14 @@ UpdateExpression
     = operator:UpdateOperator argument:MemberExpression
     { return operation(argument, operator, null, { prefix: true  }) }
     / argument:MemberExpression operator:UpdateOperator?
-    {
-        console.log("Fuck you 2222222222", { operator });
-        return operator ? operation(argument, operator, null, { prefix: false }) : argument
-    }
+    { return operator ? operation(argument, operator, null, { prefix: false }) : argument }
 
 UnaryOperator
     = "+" / "-" / "!" / TypeofToken / DeleteToken
 
 UnaryExpression
     = operator:(@UnaryOperator _)? argument:UpdateExpression
-    {
-        console.log("FUCK YOU 33333333", { operator })
-        return operator ? operation(argument, operator) : argument
-    }
+    { return operator ? operation(argument, operator) : argument }
 
 ExponentiationOperator "operator"
     = "**" / "<<" / ">>>" / ">>"

@@ -4,4 +4,4 @@ import
 
 export
     class RestElement extends Pattern
-        var argument: Declarator # In ESTREE this is a Pattern, but I think that's a bad idea.
+        var value: Declarator # In ESTREE this is a Pattern, but I think that's a bad idea.

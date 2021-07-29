@@ -13,7 +13,7 @@ import * as Class from './ion/Class';
 export class RestElement implements _Object.Object , Pattern.Pattern , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly argument: Declarator.Declarator;
+    readonly value: Declarator.Declarator;
     static readonly id = 'RestElement';
     static readonly implements = new Set([
         'RestElement',
@@ -22,26 +22,26 @@ export class RestElement implements _Object.Object , Pattern.Pattern , Typed.Typ
         'Typed',
         'Node'
     ]);
-    constructor({location = null, type = null, argument}: {
+    constructor({location = null, type = null, value}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        argument: Declarator.Declarator
+        value: Declarator.Declarator
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
-        if (!Declarator.isDeclarator(argument))
-            throw new Error('argument is not a Declarator: ' + Class.toString(argument));
+        if (!Declarator.isDeclarator(value))
+            throw new Error('value is not a Declarator: ' + Class.toString(value));
         this.location = location;
         this.type = type;
-        this.argument = argument;
+        this.value = value;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        argument?: Declarator.Declarator
+        value?: Declarator.Declarator
     }) {
         return new RestElement({
             ...this,
