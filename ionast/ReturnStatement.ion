@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class ReturnStatement extends Statement
-        var argument: Expression | Null = null

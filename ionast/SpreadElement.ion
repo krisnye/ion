@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class SpreadElement extends Node
-        var argument: Expression

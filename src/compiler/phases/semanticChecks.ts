@@ -2,7 +2,7 @@ import { traverse, skip, replace } from "@glas/traverse";
 import combineExpressions from "../analysis/combineExpressions";
 import isConsequent from "../analysis/isConsequent";
 import splitExpressions from "../analysis/splitExpressions";
-import { AssignmentStatement, BinaryExpression, CallExpression, ClassDeclaration, DotExpression, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, TypeExpression, VariableDeclaration, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation } from "../ast";
+import { Assignment, BinaryExpression, Call, ClassDeclaration, DotExpression, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, TypeExpression, VariableDeclaration, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation } from "../ast";
 import { hasNodesOfType, SemanticError, isTypeName } from "../common";
 import { Options } from "../Compiler"
 import createScopeMaps from "../createScopeMaps";
@@ -54,7 +54,7 @@ function replaceOutlineOperations(e: Expression) {
         leave(node) {
             if (OutlineOperation.is(node)) {
                 return combineExpressions(
-                    node.operands.map(value => {
+                    node.body.map(value => {
                         if (Expression.is(value)) {
                             return value
                         }
@@ -88,7 +88,7 @@ function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error
                         //  Array -> clauses for each index
                         if (ArrayExpression.is(node)) {
                             let errorsBefore = errors.length
-                            for (let element of node.elements) {
+                            for (let element of node.body) {
                                 if (!Expression.is(element)) {
                                     errors.push(SemanticError(`not allowed in type expressions `, element))
                                 }
@@ -96,7 +96,7 @@ function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error
                             let hasErrors = errors.length > errorsBefore
                             if (!hasErrors) {
                                 return replace(
-                                    ...node.elements.map((element, index) => {
+                                    ...node.body.map((element, index) => {
                                         if (Expression.is(element)) {
                                             let { location } = element
                                             return new BinaryExpression({
@@ -119,7 +119,7 @@ function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error
                         }
                         if (ObjectExpression.is(node)) {
                             let errorsBefore = errors.length
-                            for (let property of node.properties) {
+                            for (let property of node.body) {
                                 if (Property.is(property)) {
                                     //  key can ONLY be Identifier | Reference
                                     //  value can only by Type Reference or Literal or more.
@@ -135,7 +135,7 @@ function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error
                             let hasErrors = errors.length > errorsBefore
                             if (!hasErrors) {
                                 return replace(
-                                    ...node.properties.map(property => {
+                                    ...node.body.map(property => {
                                         if (Property.is(property)) {
                                             let { location } = property
                                             return new BinaryExpression({
@@ -183,7 +183,7 @@ function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error
                                 errors.push(SemanticError(`variable references not allowed as implicit type expression, use literals, Type references or (. == ${node.name})`, node))
                             }
                         }
-                        if (CallExpression.is(node)) {
+                        if (Call.is(node)) {
                             if (!hasDot(node)) {
                                 errors.push(SemanticError(`Call expression within type expression must contain dot expression`, node))
                             }
@@ -204,7 +204,7 @@ function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error
                                 break
                             }
                             if (resultab === true) {
-                                errors.push(SemanticError(`Subsequent clause is redundant`, a, b))
+                                errors.push(SemanticError(`Second clause is redundant`, a, b))
                                 break
                             }
                             let resultba = isConsequent(b, a)
@@ -214,7 +214,7 @@ function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error
                                 break
                             }
                             if (resultba === true) {
-                                errors.push(SemanticError(`Previous clause is redundant`, a, b))
+                                errors.push(SemanticError(`First clause is redundant`, a, b))
                                 break
                             }
                         }
@@ -279,7 +279,7 @@ export default function semanticChecks(
                 if (VariableDeclaration.is(node) && node.value == null) {
                     errors.push(SemanticError(`Module scoped variables are not allowed`, node))
                 }
-                if (AssignmentStatement.is(node)) {
+                if (Assignment.is(node)) {
                     errors.push(SemanticError(`Assignment statements are not allowed in the module scope`, node))
                 }
                 if (ClassDeclaration.is(node)) {
@@ -298,7 +298,7 @@ export default function semanticChecks(
                         }
                     }
                     if (ExpressionStatement.is(node)) {
-                        let value = node.expression
+                        let {value} = node
                         if (FunctionExpression.is(value)) {
                             let name = value.id?.name
                             if (name == null || name != last) {

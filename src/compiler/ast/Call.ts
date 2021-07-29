@@ -4,28 +4,27 @@ This file was generated from ion source. Do not edit.
 import * as _Object from './ion/Object';
 import * as Expression from './Expression';
 import * as ChainElement from './ChainElement';
-import * as Statement from './Statement';
 import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Boolean from './ion/Boolean';
 import * as _Array from './ion/Array';
+import * as Statement from './Statement';
 import * as Class from './ion/Class';
-export class Call implements _Object.Object , Expression.Expression , ChainElement.ChainElement , Statement.Statement , Typed.Typed , Node.Node {
+export class Call implements _Object.Object , Expression.Expression , ChainElement.ChainElement , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly optional: Boolean.Boolean;
     readonly new: Boolean.Boolean;
     readonly callee: Expression.Expression;
     readonly arguments: _Array.Array<Statement.Statement>;
-    static readonly id = 'CallExpression_Call';
+    static readonly id = 'Call';
     static readonly implements = new Set([
-        'CallExpression_Call',
+        'Call',
         'ion_Object',
         'Expression',
         'ChainElement',
-        'Statement',
         'Typed',
         'Node'
     ]);
@@ -84,3 +83,4 @@ export class Call implements _Object.Object , Expression.Expression , ChainEleme
 export function isCall(value): value is Call {
     return Class.isInstance(Call, value);
 }
+export default Call;

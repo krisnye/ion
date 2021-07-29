@@ -1,7 +1,7 @@
 import { traverse, skip } from "@glas/traverse";
 import { ScopeMaps } from "../createScopeMaps";
 import toposort from "../toposort";
-import { Node, Typed, Property, FunctionExpression, ReturnStatement, CallExpression, BinaryExpression, Expression } from "../ast";
+import { Node, Typed, Property, FunctionExpression, Return, Call, BinaryExpression, Expression } from "../ast";
 import * as ast from "../ast"
 import { SemanticError } from "../common";
 
@@ -20,18 +20,18 @@ function contains(graph, predicate) {
     return found
 }
 
-function getNonRecursiveReturnStatements(fn: FunctionExpression): ReturnStatement[] {
-    let statements: ReturnStatement[] = []
+function getNonRecursiveReturnStatements(fn: FunctionExpression): Return[] {
+    let statements: Return[] = []
     traverse(fn, {
         enter(node) {
-            if (CallExpression.is(node)) {
+            if (Call.is(node)) {
                 return skip
             }
         },
         leave(node) {
-            if (ReturnStatement.is(node) && node.argument != null) {
+            if (Return.is(node) && node.value != null) {
                 // make sure the return argument doesn't contain a recursive reference to itself.
-                if ((fn.id as any)?.path == null || !contains(node.argument, check => ast.Reference.is(check) && check.path === (fn.id as any)!.path)) {
+                if ((fn.id as any)?.path == null || !contains(node.value, check => ast.Reference.is(check) && check.path === (fn.id as any)!.path)) {
                     statements.push(node)
                 }
             }
@@ -100,7 +100,7 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         }
     },
     *ObjectExpression(node) {
-        for (let property of node.properties) {
+        for (let property of node.body) {
             if (Property.is(property)) {
                 if (Typed.is(property.key)) {
                     yield property.key
@@ -109,9 +109,12 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
                     yield property.value
                 }
             }
-            else {
+            else if (ast.Spread.is(property)){
                 // SpreadElement
-                yield property.argument
+                yield property.value
+            }
+            else {
+                throw new Error("Unrecognized Element: " + property.constructor.name);
             }
         }
     },
@@ -146,15 +149,15 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         yield* node.parameters
         if (node.returnType === null) {
             for (let returnStatement of getNonRecursiveReturnStatements(node)) {
-                if (returnStatement.argument != null) {
-                    yield returnStatement.argument
+                if (returnStatement.value != null) {
+                    yield returnStatement.value
                 }
             }
         }
     },
     *Reference(node, scopes) {
-        if (node.typeArguments) {
-            yield* node.typeArguments
+        if (node.arguments) {
+            yield* node.arguments
         }
         let referencedNode = scopes.get(node)[node.name]
         if (referencedNode != null) {
@@ -172,20 +175,20 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         }
     },
     *ArrayExpression(node) {
-        for (let element of node.elements) {
-            if (ast.SpreadElement.is(element)) {
-                yield element.argument
+        for (let element of node.body) {
+            if (ast.Spread.is(element)) {
+                yield element.value
             }
             else if (element != null) {
                 yield element
             }
         }
     },
-    *CallExpression(node, scopeMap, ancestorMap) {
+    *Call(node, scopeMap, ancestorMap) {
         yield node.callee
         for (let arg of node.arguments) {
-            if (ast.SpreadElement.is(arg)) {
-                yield arg.argument
+            if (ast.Spread.is(arg)) {
+                yield arg.value
             }
             else {
                 yield arg

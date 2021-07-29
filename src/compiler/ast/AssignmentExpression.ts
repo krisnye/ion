@@ -3,6 +3,7 @@ This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
 import * as Expression from './Expression';
+import * as Statement from './Statement';
 import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
@@ -10,7 +11,7 @@ import * as Null from './ion/Null';
 import * as String from './ion/String';
 import * as Pattern from './Pattern';
 import * as Class from './ion/Class';
-export class AssignmentExpression implements _Object.Object , Expression.Expression , Typed.Typed , Node.Node {
+export class AssignmentExpression implements _Object.Object , Expression.Expression , Statement.Statement , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly operator: String.String;
@@ -21,6 +22,7 @@ export class AssignmentExpression implements _Object.Object , Expression.Express
         'AssignmentExpression',
         'ion_Object',
         'Expression',
+        'Statement',
         'Typed',
         'Node'
     ]);

@@ -28,10 +28,10 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         return `{ ${node.properties.map(toCodeString).join(', ')} }`
     },
     ObjectExpression(node) {
-        return `{ ${node.properties.map(toCodeString).join(', ')} }`
+        return `{ ${node.body.map(toCodeString).join(', ')} }`
     },
     ArrayExpression(node) {
-        return `[ ${node.elements.map(toCodeString).join(', ')} ]`
+        return `[ ${node.body.map(toCodeString).join(', ')} ]`
     },
     File(node) {
         return `file [unknown name]`
@@ -86,7 +86,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
             return `${s(node.object)}[${s(node.property)}]`
         }
     },
-    CallExpression(node) {
+    Call(node) {
         return `${s(node.callee)}(${node.arguments.map(s).join(', ')})`
     },
     VariableDeclaration(node) {
@@ -105,11 +105,11 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     Block(node) {
         return `{ ${node.body.map(s).join('; ')} }`
     },
-    ReturnStatement(node) {
-        return `return ${toCodeString(node.argument)}`
+    Return(node) {
+        return `return ${toCodeString(node.value)}`
     },
-    SpreadElement(node) {
-        return `...${toCodeString(node.argument)}`
+    Spread(node) {
+        return `...${toCodeString(node.value)}`
     },
     RestElement(node) {
         return `...${toCodeString(node.argument)}`

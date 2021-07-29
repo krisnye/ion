@@ -2,61 +2,56 @@
 This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
-import * as Block from './Block';
-import * as Expression from './Expression';
-import * as Scope from './Scope';
+import * as Statement from './Statement';
 import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as _Array from './ion/Array';
-import * as Statement from './Statement';
+import * as Expression from './Expression';
 import * as Class from './ion/Class';
-export class File implements _Object.Object , Block.Block , Expression.Expression , Scope.Scope , Typed.Typed , Node.Node {
+export class Return implements _Object.Object , Statement.Statement , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly body: _Array.Array<Statement.Statement>;
-    static readonly id = 'File';
+    readonly value: Expression.Expression | Null.Null;
+    static readonly id = 'Return';
     static readonly implements = new Set([
-        'File',
+        'Return',
         'ion_Object',
-        'Block',
-        'Expression',
-        'Scope',
+        'Statement',
         'Typed',
         'Node'
     ]);
-    constructor({location = null, type = null, body}: {
+    constructor({location = null, type = null, value = null}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        body: _Array.Array<Statement.Statement>
+        value?: Expression.Expression | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
-        if (!_Array.isArray(body))
-            throw new Error('body is not a Array: ' + Class.toString(body));
+        if (!(Expression.isExpression(value) || Null.isNull(value)))
+            throw new Error('value is not a Expression | Null: ' + Class.toString(value));
         this.location = location;
         this.type = type;
-        this.body = body;
+        this.value = value;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        body?: _Array.Array<Statement.Statement>
+        value?: Expression.Expression | Null.Null
     }) {
-        return new File({
+        return new Return({
             ...this,
             ...properties
         });
     }
-    static is(value): value is File {
-        return isFile(value);
+    static is(value): value is Return {
+        return isReturn(value);
     }
 }
-export function isFile(value): value is File {
-    return Class.isInstance(File, value);
+export function isReturn(value): value is Return {
+    return Class.isInstance(Return, value);
 }
-export default File;
+export default Return;

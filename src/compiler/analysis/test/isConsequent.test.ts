@@ -1,5 +1,5 @@
 import { strict as assert } from "assert"
-import { BinaryExpression, Reference, Identifier, MemberExpression, UnaryExpression, CallExpression, Property, Literal, Expression, ExpressionStatement } from "../../ast"
+import { BinaryExpression, Reference, Identifier, MemberExpression, UnaryExpression, Call, Property, Literal, Expression, ExpressionStatement } from "../../ast"
 import toCodeString from "../../toCodeString"
 import isConsequent from "../isConsequent"
 import simplify from "../simplify"
@@ -24,7 +24,7 @@ function b(left: string | number | Expression, operator: string, right: string |
     return new BinaryExpression({ left, operator, right })
 }
 function c(callee, ...args: Array<string | number | Expression>) {
-    return new CallExpression({
+    return new Call({
         callee: e(callee),
         arguments: args.map(e)
     })

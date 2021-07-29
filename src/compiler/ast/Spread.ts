@@ -2,56 +2,55 @@
 This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
-import * as Statement from './Statement';
+import * as Expression from './Expression';
 import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as Expression from './Expression';
 import * as Class from './ion/Class';
-export class ReturnStatement implements _Object.Object , Statement.Statement , Typed.Typed , Node.Node {
+export class Spread implements _Object.Object , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly argument: Expression.Expression | Null.Null;
-    static readonly id = 'ReturnStatement';
+    readonly value: Expression.Expression;
+    static readonly id = 'Spread';
     static readonly implements = new Set([
-        'ReturnStatement',
+        'Spread',
         'ion_Object',
-        'Statement',
+        'Expression',
         'Typed',
         'Node'
     ]);
-    constructor({location = null, type = null, argument = null}: {
+    constructor({location = null, type = null, value}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        argument?: Expression.Expression | Null.Null
+        value: Expression.Expression
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
-        if (!(Expression.isExpression(argument) || Null.isNull(argument)))
-            throw new Error('argument is not a Expression | Null: ' + Class.toString(argument));
+        if (!Expression.isExpression(value))
+            throw new Error('value is not a Expression: ' + Class.toString(value));
         this.location = location;
         this.type = type;
-        this.argument = argument;
+        this.value = value;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        argument?: Expression.Expression | Null.Null
+        value?: Expression.Expression
     }) {
-        return new ReturnStatement({
+        return new Spread({
             ...this,
             ...properties
         });
     }
-    static is(value): value is ReturnStatement {
-        return isReturnStatement(value);
+    static is(value): value is Spread {
+        return isSpread(value);
     }
 }
-export function isReturnStatement(value): value is ReturnStatement {
-    return Class.isInstance(ReturnStatement, value);
+export function isSpread(value): value is Spread {
+    return Class.isInstance(Spread, value);
 }
-export default ReturnStatement;
+export default Spread;

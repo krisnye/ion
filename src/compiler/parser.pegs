@@ -68,7 +68,9 @@
 
     function buildBinaryExpression(head, tail) {
         return tail.reduce(
-            (left, [,operator,,right]) => {
+            (left, huh) => {
+                let [,operator,,right] = huh;
+                console.log("FUCK YOU 44444444", { operator, huh })
                 return operation(left, operator, right)
             }
             ,head
@@ -83,7 +85,7 @@
         return tail.reduce(
             (left, right) => {
                 if (right.arguments) {
-                    return node("CallExpression", {callee:left, ...right})
+                    return node("Call", {callee:left, ...right})
                 }
                 else {
                     return node("MemberExpression", { object:left, ...right })
@@ -153,15 +155,15 @@ Module
 
 Statement
     = VariableDeclaration
-    / AssignmentStatement
+    / Assignment
     / Conditional
-    / ReturnStatement
+    / Return
     / ClassDeclaration
     / ExpressionStatement
 
 ExpressionStatement
-    = expression:OutlineExpression
-    { return node("ExpressionStatement", { expression })}
+    = value:OutlineExpression
+    { return node("ExpressionStatement", { value }) }
 
 VariableDeclaration
     = meta:MetaProperties? id:Pattern type:(_ ":" _ @InlineType) value:((_ "=" _ @OutlineExpression) / EOL { return null})
@@ -174,9 +176,9 @@ VariableDeclaration
         return node("VariableDeclaration", { id, meta, type, value })
     }
 
-AssignmentStatement
-    = id:Reference _ ":=" _ value:OutlineExpression
-    { return node("AssignmentStatement", { id, value }) }
+Assignment
+    = left:Reference _ operator:":=" _ right:OutlineExpression
+    { return node("Assignment", { left, operator, right }) }
 
 Conditional
     = IfToken _ test:InlineExpression consequent:Block
@@ -236,11 +238,11 @@ InlineFunction
 // Statement
 //     = Declaration
 //     / DebuggerStatement
-//     / AssignmentStatement
+//     / Assignment
 //     / IfStatement
-//     / ForOfStatement
-//     / ReturnStatement
-//     / WhileStatement
+//     / For
+//     / Return
+//     / While
 //     / ContinueStatement
 //     / OutlineDoStatement
 //     / ExpressionStatement
@@ -329,34 +331,34 @@ AssignmentOperator
     / "||="
     / "??="
 
-ForOfStatement
+For
     = ForToken _ left:Pattern _ count:("," _ @Declarator _)? InToken _ right:InlineExpression body:Block
     {
-        return node("ForOfStatement", {
-            left: (node("VariableDeclaration", { id: left, kind: "var" })),
-            count: count ? (node("VariableDeclaration", { id: count, kind: "let" })) : null,
+        return node("For", {
+            left: (node("VariableDeclaration", { id: left })),
+            count: count ? (node("VariableDeclaration", { id: count })) : null,
             right, body
         })
     }
 
-WhileStatement
+While
     = WhileToken _ test:InlineExpression body:Block
-    { return node("WhileStatement", { test, body }) }
+    { return node("While", { test, body }) }
 
 // IfStatement
 //     = IfToken _ test:InlineExpression consequent:Block
 //         alternate:(Dent ElseToken _ @(Block / IfStatement))?
 //     { return node("IfStatement", { test, consequent, alternate }) }
 
-ReturnStatement
-    = ReturnToken _ argument:OutlineExpression
-    { return node("ReturnStatement", { argument }) }
-    / ReturnToken _ argument:InlineExpression? EOL
-    { return node("ReturnStatement", { argument: argument || null }) }
+Return
+    = ReturnToken _ value:OutlineExpression
+    { return node("Return", { value }) }
+    / ReturnToken _ value:InlineExpression? EOL
+    { return node("Return", { value: value || null }) }
 
-BreakStatement
+Break
     = BreakToken EOL
-    { return node("BreakStatement", {}) }
+    { return node("Break", {}) }
 
 ContinueStatement
     = ContinueToken EOL
@@ -525,14 +527,20 @@ UpdateExpression
     = operator:UpdateOperator argument:MemberExpression
     { return operation(argument, operator, null, { prefix: true  }) }
     / argument:MemberExpression operator:UpdateOperator?
-    { return operator ? operation(argument, operator, null, { prefix: false }) : argument }
+    {
+        console.log("Fuck you 2222222222", { operator });
+        return operator ? operation(argument, operator, null, { prefix: false }) : argument
+    }
 
 UnaryOperator
     = "+" / "-" / "!" / TypeofToken / DeleteToken
 
 UnaryExpression
     = operator:(@UnaryOperator _)? argument:UpdateExpression
-    { return operator ? operation(argument, operator) : argument }
+    {
+        console.log("FUCK YOU 33333333", { operator })
+        return operator ? operation(argument, operator) : argument
+    }
 
 ExponentiationOperator "operator"
     = "**" / "<<" / ">>>" / ">>"
@@ -561,6 +569,7 @@ RelationalOperator
 RelationalExpression
     = head:AdditiveExpression tail:(_ RelationalOperator _ AdditiveExpression)*
         { return buildBinaryExpression(head, tail) }
+    // don't remove the initial _ below. It is necessary to match tail above layout
     / tail:(_ RelationalOperator _ AdditiveExpression)
         { return buildBinaryExpression(node('DotExpression') , [tail]) }
 
@@ -569,7 +578,7 @@ EqualityOperator
 
 EqualityExpression
     = head:RelationalExpression tail:(_ EqualityOperator _ RelationalExpression)*
-    { return buildBinaryExpression(head, tail) }
+        { return buildBinaryExpression(head, tail) }
 
 BitwiseAndOperator
     = "&"
@@ -667,7 +676,7 @@ OutlineMemberExpression =
 
 OutlineDoExpression
     = DoToken " " _ callee:OutlineFunction
-    { return node("CallExpression", { callee, arguments: [] }) }
+    { return node("Call", { callee, arguments: [] }) }
 
 OutlineDoStatement
     = DoToken @Block
@@ -680,7 +689,7 @@ OutlineOperation
         if (operands.length === 2 && operands.every(ast.Expression.is)) {
             return node("BinaryExpression", { left: operands[0], operator, right: operands[1] })
         }
-        return node("OutlineOperation", { operator, operands })
+        return node("OutlineOperation", { operator, body:operands })
     }
 
 OutlineArguments
@@ -689,12 +698,12 @@ OutlineArguments
 
 OutlineCallExpression
     = call:InlineExpression args:OutlineArrayArguments
-    & { return ast.CallExpression.is(call) }
-    { return node("CallExpression", { ...call, arguments: [...call.arguments, ...args] }) }
+    & { return ast.Call.is(call) }
+    { return node("Call", { ...call, arguments: [...call.arguments, ...args] }) }
 
 OutlineNewExpression
     = NewToken _ callee:MemberExpressionNoCall args:(@InlineArguments EOL / OutlineArguments)
-    { return node("CallExpression", { new: true, callee, arguments: args }) }
+    { return node("Call", { new: true, callee, arguments: args }) }
 
 InlineExpression
     = InlineSpreadElement
@@ -704,7 +713,7 @@ InlineExpression
 
 InlineNewExpression
     = NewToken _ callee:MemberExpressionNoCall args:InlineArguments
-    { return node("CallExpression", { new: true, callee, arguments: args }) }
+    { return node("Call", { new: true, callee, arguments: args }) }
 
 PrimaryExpression
     = Reference
@@ -797,11 +806,11 @@ MemberExpressionNoCall =
 
 InlineSpreadElement
     = "..." argument:InlineExpression
-    { return node("SpreadElement", { argument }) }
+    { return node("Spread", { argument }) }
 
 OutlineSpreadElement
     = "..." argument:OutlineExpression
-    { return node("SpreadElement", { argument }) }
+    { return node("Spread", { argument }) }
 
 ArrayElement
     = InlineSpreadElement
@@ -812,10 +821,10 @@ ArrayElements
     { return [head, ...tail] }
 
 InlineArrayExpression
-    = "[" _ elements:ArrayElements? _ "]"
-    { return node("ArrayExpression", { elements:elements || [] }) }
-    / "|" _ elements:ArrayElements? _ "|"
-    { return node("ArrayExpression", { elements:elements || [], isSet: true }) }
+    = "[" _ body:ArrayElements? _ "]"
+    { return node("ArrayExpression", { body:body || [] }) }
+    // / "|" _ body:ArrayElements? _ "|"
+    // { return node("ArrayExpression", { body:body || [], isSet: true }) }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  JSX @see https://facebook.github.io/jsx/
@@ -898,14 +907,14 @@ OutlineArrayArguments
     { return args.flat() }
 
 OutlineArrayExpression
-    = "[]" elements: OutlineArrayArguments
-    { return node("ArrayExpression", { elements: elements.flat() }) }
+    = "[]" body: OutlineArrayArguments
+    { return node("ArrayExpression", { body: body.flat() }) }
     // / "||" elements: OutlineArrayArguments
     // { return node("ArrayExpression", { elements: elements.flat(), isSet: true }) }
 
 OutlineObjectExpression
     = e:InlineObjectExpression properties:OutlinePropertyList
-    { return node("ObjectExpression", { isMap: e.isMap, properties: [...e.properties, ...properties] }) }
+    { return node("ObjectExpression", { isMap: e.isMap, body: [...e.properties, ...properties] }) }
 
 // OutlineMapExpression
 //     = e:InlineMapExpression properties:OutlineMapPropertyList
@@ -1063,8 +1072,8 @@ Identifier
     = name:IdName { return node('Identifier', { name }) }
 
 Reference
-    = !ReservedWord name:IdName typeArguments:TemplateArguments? {
-        return node("Reference", { name, typeArguments })
+    = !ReservedWord name:IdName arguments:TemplateArguments? {
+        return node("Reference", { name, arguments })
     }
 
 Declarator

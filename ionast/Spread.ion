@@ -3,5 +3,5 @@ import
     .*
 
 export
-    class ExpressionStatement extends Statement
+    class Spread extends Expression
         var value: Expression

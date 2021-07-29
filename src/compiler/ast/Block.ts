@@ -2,16 +2,16 @@
 This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
-import * as Scope from './Scope';
 import * as Expression from './Expression';
-import * as Node from './Node';
+import * as Scope from './Scope';
 import * as Typed from './Typed';
+import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
 import * as Statement from './Statement';
 import * as Class from './ion/Class';
-export class Block implements _Object.Object , Scope.Scope , Expression.Expression , Node.Node , Typed.Typed {
+export class Block implements _Object.Object , Expression.Expression , Scope.Scope , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly body: _Array.Array<Statement.Statement>;
@@ -19,10 +19,10 @@ export class Block implements _Object.Object , Scope.Scope , Expression.Expressi
     static readonly implements = new Set([
         'Block',
         'ion_Object',
-        'Scope',
         'Expression',
-        'Node',
-        'Typed'
+        'Scope',
+        'Typed',
+        'Node'
     ]);
     constructor({location = null, type = null, body}: {
         location?: Location.Location | Null.Null,

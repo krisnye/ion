@@ -17,14 +17,11 @@ export {
     default as Assembly
 } from './Assembly';
 export {
-    default as AssignmentExpression
-} from './AssignmentExpression';
+    default as Assignment
+} from './Assignment';
 export {
     default as AssignmentPattern
 } from './AssignmentPattern';
-export {
-    default as AssignmentStatement
-} from './AssignmentStatement';
 export {
     default as AwaitExpression
 } from './AwaitExpression';
@@ -35,11 +32,11 @@ export {
     default as Block
 } from './Block';
 export {
-    default as BreakStatement
-} from './BreakStatement';
+    default as Break
+} from './Break';
 export {
-    default as CallExpression
-} from './CallExpression';
+    default as Call
+} from './Call';
 export {
     default as ChainElement
 } from './ChainElement';
@@ -65,9 +62,6 @@ export {
     default as DotExpression
 } from './DotExpression';
 export {
-    default as ElementExpression
-} from './ElementExpression';
-export {
     default as EnumDeclaration
 } from './EnumDeclaration';
 export {
@@ -85,6 +79,9 @@ export {
 export {
     default as File
 } from './File';
+export {
+    default as For
+} from './For';
 export {
     default as FunctionExpression
 } from './FunctionExpression';
@@ -115,9 +112,6 @@ export {
 export {
     default as Location
 } from './Location';
-export {
-    default as LoopStatement
-} from './LoopStatement';
 export {
     default as MemberExpression
 } from './MemberExpression';
@@ -167,8 +161,8 @@ export {
     default as RestElement
 } from './RestElement';
 export {
-    default as ReturnStatement
-} from './ReturnStatement';
+    default as Return
+} from './Return';
 export {
     default as RuntimeType
 } from './RuntimeType';
@@ -176,8 +170,8 @@ export {
     default as Scope
 } from './Scope';
 export {
-    default as SpreadElement
-} from './SpreadElement';
+    default as Spread
+} from './Spread';
 export {
     default as Statement
 } from './Statement';

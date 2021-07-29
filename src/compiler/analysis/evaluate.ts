@@ -53,7 +53,7 @@ export const simplifyFunctions: { [P in keyof typeof ast]?: (e: InstanceType<typ
     },
     ArrayExpression(node) {
     },
-    CallExpression(node) {
+    Call(node) {
     },
 }
 

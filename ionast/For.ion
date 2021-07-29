@@ -1,0 +1,10 @@
+import
+    ion.*
+    .*
+
+export
+    class For extends Expression
+        var left: Pattern
+        var count: VariableDeclaration
+        var right: Expression
+        var body: Block

@@ -3,35 +3,36 @@ This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
 import * as Expression from './Expression';
-import * as Statement from './Statement';
 import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Pattern from './Pattern';
-import * as String from './ion/String';
+import * as VariableDeclaration from './VariableDeclaration';
+import * as Block from './Block';
 import * as Class from './ion/Class';
-export class Assignment implements _Object.Object , Expression.Expression , Statement.Statement , Typed.Typed , Node.Node {
+export class For implements _Object.Object , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly left: Pattern.Pattern;
-    readonly operator: String.String;
+    readonly count: VariableDeclaration.VariableDeclaration;
     readonly right: Expression.Expression;
-    static readonly id = 'AssignmentStatement_Assignment';
+    readonly body: Block.Block;
+    static readonly id = 'For';
     static readonly implements = new Set([
-        'AssignmentStatement_Assignment',
+        'For',
         'ion_Object',
         'Expression',
-        'Statement',
         'Typed',
         'Node'
     ]);
-    constructor({location = null, type = null, left, operator = '=', right}: {
+    constructor({location = null, type = null, left, count, right, body}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         left: Pattern.Pattern,
-        operator?: String.String,
-        right: Expression.Expression
+        count: VariableDeclaration.VariableDeclaration,
+        right: Expression.Expression,
+        body: Block.Block
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
@@ -39,33 +40,38 @@ export class Assignment implements _Object.Object , Expression.Expression , Stat
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!Pattern.isPattern(left))
             throw new Error('left is not a Pattern: ' + Class.toString(left));
-        if (!String.isString(operator))
-            throw new Error('operator is not a String: ' + Class.toString(operator));
+        if (!VariableDeclaration.isVariableDeclaration(count))
+            throw new Error('count is not a VariableDeclaration: ' + Class.toString(count));
         if (!Expression.isExpression(right))
             throw new Error('right is not a Expression: ' + Class.toString(right));
+        if (!Block.isBlock(body))
+            throw new Error('body is not a Block: ' + Class.toString(body));
         this.location = location;
         this.type = type;
         this.left = left;
-        this.operator = operator;
+        this.count = count;
         this.right = right;
+        this.body = body;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         left?: Pattern.Pattern,
-        operator?: String.String,
-        right?: Expression.Expression
+        count?: VariableDeclaration.VariableDeclaration,
+        right?: Expression.Expression,
+        body?: Block.Block
     }) {
-        return new Assignment({
+        return new For({
             ...this,
             ...properties
         });
     }
-    static is(value): value is Assignment {
-        return isAssignment(value);
+    static is(value): value is For {
+        return isFor(value);
     }
 }
-export function isAssignment(value): value is Assignment {
-    return Class.isInstance(Assignment, value);
+export function isFor(value): value is For {
+    return Class.isInstance(For, value);
 }
+export default For;

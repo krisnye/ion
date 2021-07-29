@@ -3,6 +3,4 @@ import
     .*
 
 export
-    class ArrayExpression extends Expression
-        var elements: Array<Expression | SpreadElement | Statement | Null>
-        var isSet: Boolean = false
+    class ArrayExpression extends Block

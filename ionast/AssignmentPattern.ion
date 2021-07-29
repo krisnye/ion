@@ -3,6 +3,5 @@ import
     .*
 
 export
-    class AssignmentPattern extends Pattern
-        var left: Pattern
-        var right: Expression
+    # not sure we need this
+    class AssignmentPattern extends Assignment, Pattern

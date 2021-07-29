@@ -3,7 +3,4 @@ import
     .*
 
 export
-    class ObjectExpression extends Expression
-        var properties: Array<Property | SpreadElement>
-        var isMap: Boolean = false
-
+    class ObjectExpression extends Block

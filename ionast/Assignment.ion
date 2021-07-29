@@ -3,7 +3,7 @@ import
     .*
 
 export
-    class AssignmentExpression extends Expression
+    class Assignment extends Expression
+        var left: Pattern
         var operator: String = "="
-        var left: Pattern | Expression
         var right: Expression

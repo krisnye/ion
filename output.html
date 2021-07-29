@@ -235,9 +235,8 @@ foo = 12
 
 Foo =
     &
-        . < 3
-        . != 2
-        . < 10
+        < 5
+        < 4
 Foo
 
 // double = () ->
@@ -271,7 +270,7 @@ Foo
             
                 <td>
                     <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;// foo = 12<br>// Foo = String | Number<br>// a = min(10, 20)<br><br>foo = 12<br><br>Foo =<br>    &amp;<br>        . &lt; 3<br>        . != 2<br>        . &lt; 10<br>Foo<br><br>// double = () -&gt;<br>//     if a<br>//         12<br>//         13<br>//     else<br>//         14<br><br>// AASample = . != 0<br><br>// {}<br>//     value: min(a, b)<br>//     foo() -&gt; 2<br><br>// foo = (a: 1, optional: 10) -&gt; 12<br><br>// [Meta]: true<br>// class Vector2&lt;T&gt; extends Foo<br>//     // variables with a Type are instance variable<br>//     x: T<br>//     y: T<br>//     // variables without a Type are static constants<br>//     add = (a, b) -&gt; a + b<br>//     // variables that reference instance variables are calculated instance properties<br>//     length = (x * x + y * y) ** 0.5<br>//     // functions that reference this take an implicit first argument of class type<br>//     scale = (factor) -&gt; Vector2(this.x * factor, this.y * factor)<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;// foo = 12<br>// Foo = String | Number<br>// a = min(10, 20)<br><br>foo = 12<br><br>Foo =<br>    &amp;<br>        &lt; 5<br>        &lt; 4<br>Foo<br><br>// double = () -&gt;<br>//     if a<br>//         12<br>//         13<br>//     else<br>//         14<br><br>// AASample = . != 0<br><br>// {}<br>//     value: min(a, b)<br>//     foo() -&gt; 2<br><br>// foo = (a: 1, optional: 10) -&gt; 12<br><br>// [Meta]: true<br>// class Vector2&lt;T&gt; extends Foo<br>//     // variables with a Type are instance variable<br>//     x: T<br>//     y: T<br>//     // variables without a Type are static constants<br>//     add = (a, b) -&gt; a + b<br>//     // variables that reference instance variables are calculated instance properties<br>//     length = (x * x + y * y) ** 0.5<br>//     // functions that reference this take an implicit first argument of class type<br>//     scale = (factor) -&gt; Vector2(this.x * factor, this.y * factor)<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
   &quot;body&quot;: [
     VariableDeclaration {
       &quot;id&quot;: Declarator { &quot;name&quot;: &quot;foo&quot; },
@@ -280,30 +279,23 @@ Foo
     VariableDeclaration {
       &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Foo&quot; },
       &quot;value&quot;: TypeExpression {
-        &quot;value&quot;: OutlineOperation {
-          &quot;operands&quot;: [
-            BinaryExpression {
-              &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
-              &quot;operator&quot;: &quot;&lt;&quot;,
-              &quot;right&quot;: Literal { &quot;value&quot;: 3 }
-            },
-            BinaryExpression {
-              &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
-              &quot;operator&quot;: &quot;!=&quot;,
-              &quot;right&quot;: Literal { &quot;value&quot;: 2 }
-            },
-            BinaryExpression {
-              &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
-              &quot;operator&quot;: &quot;&lt;&quot;,
-              &quot;right&quot;: Literal { &quot;value&quot;: 10 }
-            }
-          ],
-          &quot;operator&quot;: &quot;&amp;&quot;
+        &quot;value&quot;: BinaryExpression {
+          &quot;left&quot;: BinaryExpression {
+            &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
+            &quot;operator&quot;: &quot;&lt;&quot;,
+            &quot;right&quot;: Literal { &quot;value&quot;: 5 }
+          },
+          &quot;operator&quot;: &quot;&amp;&quot;,
+          &quot;right&quot;: BinaryExpression {
+            &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
+            &quot;operator&quot;: &quot;&lt;&quot;,
+            &quot;right&quot;: Literal { &quot;value&quot;: 4 }
+          }
         }
       }
     },
     ExpressionStatement {
-      &quot;expression&quot;: Reference { &quot;name&quot;: &quot;Foo&quot; }
+      &quot;value&quot;: Reference { &quot;name&quot;: &quot;Foo&quot; }
     }
   ],
   &quot;name&quot;: &quot;AASample&quot;
@@ -320,30 +312,23 @@ Foo
   VariableDeclaration {
     &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Foo&quot; },
     &quot;value&quot;: TypeExpression {
-      &quot;value&quot;: OutlineOperation {
-        &quot;operands&quot;: [
-          BinaryExpression {
-            &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
-            &quot;operator&quot;: &quot;&lt;&quot;,
-            &quot;right&quot;: Literal { &quot;value&quot;: 3 }
-          },
-          BinaryExpression {
-            &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
-            &quot;operator&quot;: &quot;!=&quot;,
-            &quot;right&quot;: Literal { &quot;value&quot;: 2 }
-          },
-          BinaryExpression {
-            &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
-            &quot;operator&quot;: &quot;&lt;&quot;,
-            &quot;right&quot;: Literal { &quot;value&quot;: 10 }
-          }
-        ],
-        &quot;operator&quot;: &quot;&amp;&quot;
+      &quot;value&quot;: BinaryExpression {
+        &quot;left&quot;: BinaryExpression {
+          &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
+          &quot;operator&quot;: &quot;&lt;&quot;,
+          &quot;right&quot;: Literal { &quot;value&quot;: 5 }
+        },
+        &quot;operator&quot;: &quot;&amp;&quot;,
+        &quot;right&quot;: BinaryExpression {
+          &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
+          &quot;operator&quot;: &quot;&lt;&quot;,
+          &quot;right&quot;: Literal { &quot;value&quot;: 4 }
+        }
       }
     }
   },
   ExpressionStatement {
-    &quot;expression&quot;: Reference { &quot;name&quot;: &quot;Foo&quot; }
+    &quot;value&quot;: Reference { &quot;name&quot;: &quot;Foo&quot; }
   }
 ]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;AASample&quot;</pre></div></li></ul></div></p>
                 </td>
@@ -485,7 +470,7 @@ max(a, b) ->
       &quot;value&quot;: Literal { &quot;value&quot;: 12 }
     },
     ExpressionStatement {
-      &quot;expression&quot;: FunctionExpression {
+      &quot;value&quot;: FunctionExpression {
         &quot;id&quot;: Identifier { &quot;name&quot;: &quot;max&quot; },
         &quot;parameters&quot;: [
           Parameter {
@@ -506,14 +491,14 @@ max(a, b) ->
               &quot;consequent&quot;: Block {
                 &quot;body&quot;: [
                   ExpressionStatement {
-                    &quot;expression&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
+                    &quot;value&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
                   }
                 ]
               },
               &quot;alternate&quot;: Block {
                 &quot;body&quot;: [
                   ExpressionStatement {
-                    &quot;expression&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+                    &quot;value&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
                   }
                 ]
               }
@@ -536,7 +521,7 @@ max(a, b) ->
     &quot;value&quot;: Literal { &quot;value&quot;: 12 }
   },
   ExpressionStatement {
-    &quot;expression&quot;: FunctionExpression {
+    &quot;value&quot;: FunctionExpression {
       &quot;id&quot;: Identifier { &quot;name&quot;: &quot;max&quot; },
       &quot;parameters&quot;: [
         Parameter {
@@ -557,14 +542,14 @@ max(a, b) ->
             &quot;consequent&quot;: Block {
               &quot;body&quot;: [
                 ExpressionStatement {
-                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
+                  &quot;value&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
                 }
               ]
             },
             &quot;alternate&quot;: Block {
               &quot;body&quot;: [
                 ExpressionStatement {
-                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+                  &quot;value&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
                 }
               ]
             }
@@ -585,7 +570,7 @@ max(a, b) ->
     &quot;value&quot;: Literal { &quot;value&quot;: 12 }
   },
   ExpressionStatement {
-    &quot;expression&quot;: FunctionExpression {
+    &quot;value&quot;: FunctionExpression {
       &quot;id&quot;: Identifier { &quot;name&quot;: &quot;max&quot; },
       &quot;parameters&quot;: [
         Parameter {
@@ -606,14 +591,14 @@ max(a, b) ->
             &quot;consequent&quot;: Block {
               &quot;body&quot;: [
                 ExpressionStatement {
-                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
+                  &quot;value&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
                 }
               ]
             },
             &quot;alternate&quot;: Block {
               &quot;body&quot;: [
                 ExpressionStatement {
-                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+                  &quot;value&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
                 }
               ]
             }
@@ -648,7 +633,7 @@ min(a, b) ->
                     <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>min(a, b) -&gt;<br>    if a &lt; b<br>        a<br>    else<br>        b<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
   &quot;body&quot;: [
     ExpressionStatement {
-      &quot;expression&quot;: FunctionExpression {
+      &quot;value&quot;: FunctionExpression {
         &quot;id&quot;: Identifier { &quot;name&quot;: &quot;min&quot; },
         &quot;parameters&quot;: [
           Parameter {
@@ -669,14 +654,14 @@ min(a, b) ->
               &quot;consequent&quot;: Block {
                 &quot;body&quot;: [
                   ExpressionStatement {
-                    &quot;expression&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
+                    &quot;value&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
                   }
                 ]
               },
               &quot;alternate&quot;: Block {
                 &quot;body&quot;: [
                   ExpressionStatement {
-                    &quot;expression&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+                    &quot;value&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
                   }
                 ]
               }
@@ -694,7 +679,7 @@ min(a, b) ->
                     <header><span>identity</span></header>
                     <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
   ExpressionStatement {
-    &quot;expression&quot;: FunctionExpression {
+    &quot;value&quot;: FunctionExpression {
       &quot;id&quot;: Identifier { &quot;name&quot;: &quot;min&quot; },
       &quot;parameters&quot;: [
         Parameter {
@@ -715,14 +700,14 @@ min(a, b) ->
             &quot;consequent&quot;: Block {
               &quot;body&quot;: [
                 ExpressionStatement {
-                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
+                  &quot;value&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
                 }
               ]
             },
             &quot;alternate&quot;: Block {
               &quot;body&quot;: [
                 ExpressionStatement {
-                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+                  &quot;value&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
                 }
               ]
             }
@@ -738,7 +723,7 @@ min(a, b) ->
                     <header><span>semanticChecks</span></header>
                     <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
   ExpressionStatement {
-    &quot;expression&quot;: FunctionExpression {
+    &quot;value&quot;: FunctionExpression {
       &quot;id&quot;: Identifier { &quot;name&quot;: &quot;min&quot; },
       &quot;parameters&quot;: [
         Parameter {
@@ -759,14 +744,14 @@ min(a, b) ->
             &quot;consequent&quot;: Block {
               &quot;body&quot;: [
                 ExpressionStatement {
-                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
+                  &quot;value&quot;: Reference { &quot;name&quot;: &quot;a&quot; }
                 }
               ]
             },
             &quot;alternate&quot;: Block {
               &quot;body&quot;: [
                 ExpressionStatement {
-                  &quot;expression&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
+                  &quot;value&quot;: Reference { &quot;name&quot;: &quot;b&quot; }
                 }
               ]
             }
@@ -797,7 +782,7 @@ min(a, b) ->
                     <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>10<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
   &quot;body&quot;: [
     ExpressionStatement {
-      &quot;expression&quot;: Literal { &quot;value&quot;: 10 }
+      &quot;value&quot;: Literal { &quot;value&quot;: 10 }
     }
   ],
   &quot;name&quot;: &quot;sample.constant&quot;
@@ -808,7 +793,7 @@ min(a, b) ->
                     <header><span>identity</span></header>
                     <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
   ExpressionStatement {
-    &quot;expression&quot;: Literal { &quot;value&quot;: 10 }
+    &quot;value&quot;: Literal { &quot;value&quot;: 10 }
   }
 ]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;sample.constant&quot;</pre></div></li></ul></div></p>
                 </td>
@@ -817,7 +802,7 @@ min(a, b) ->
                     <header><span>semanticChecks</span></header>
                     <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
   ExpressionStatement {
-    &quot;expression&quot;: Literal { &quot;value&quot;: 10 }
+    &quot;value&quot;: Literal { &quot;value&quot;: 10 }
   }
 ]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;sample.constant&quot;</pre></div></li></ul></div></p>
                 </td>

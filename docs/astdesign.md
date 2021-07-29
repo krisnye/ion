@@ -2,9 +2,7 @@
                         Node
                         Statement   // Any node which can live on a line by itself
                         Expression: Statement
-                        //  if it could be an expression or statement it extends expression
-                        //  and we'll check at runtime if it actually is or isnt
-                        Typed{Type: Expression}
+                        Pattern
 
 //  File                File: Block
 x                       Reference{name: String}: Expression
@@ -15,12 +13,15 @@ class Vector2           Class{id: Declarator}: Statement
     x: Number           VD
     y: Number           VD
     translate(dx: Number, dy: Number) -> this{x: x + dx, y: y + dy}
-                        Function{id?: Identifier, parameters: Variable[], body: Statement[]}: Block
-if x                    If{test: Expression, consequent: Expression, alternate: Expression}: Expression
+                        Function{id?, parameters: Variable[]}: Block
+if x                    Conditional{ test, consequent, alternate }
     y                   Block{body: Statement[]}: Expression, Scope
 else
     x
-for item in array       For{left: Pattern, right: Expression, body: Statement[]}: Statement
+for item in array       For{left: Pattern, right: Expression}: Block
     x
 foo(1, option: 3) ->    Call{callee:Expression, arguments: Property[]}: Expression
 option: 3               Property{name: Expression, value: Expression}
+{ a: 1 }                ObjectExpression: Block
+{ a, b } = value        ObjectPattern: Block
+[a, b, c]               ArrayExpression: Block

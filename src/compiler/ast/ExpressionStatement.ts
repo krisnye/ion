@@ -8,12 +8,11 @@ import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Expression from './Expression';
-import * as SpreadElement from './SpreadElement';
 import * as Class from './ion/Class';
 export class ExpressionStatement implements _Object.Object , Statement.Statement , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly expression: Expression.Expression | SpreadElement.SpreadElement;
+    readonly value: Expression.Expression;
     static readonly id = 'ExpressionStatement';
     static readonly implements = new Set([
         'ExpressionStatement',
@@ -22,26 +21,26 @@ export class ExpressionStatement implements _Object.Object , Statement.Statement
         'Typed',
         'Node'
     ]);
-    constructor({location = null, type = null, expression}: {
+    constructor({location = null, type = null, value}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        expression: Expression.Expression | SpreadElement.SpreadElement
+        value: Expression.Expression
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
-        if (!(Expression.isExpression(expression) || SpreadElement.isSpreadElement(expression)))
-            throw new Error('expression is not a Expression | SpreadElement: ' + Class.toString(expression));
+        if (!Expression.isExpression(value))
+            throw new Error('value is not a Expression: ' + Class.toString(value));
         this.location = location;
         this.type = type;
-        this.expression = expression;
+        this.value = value;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        expression?: Expression.Expression | SpreadElement.SpreadElement
+        value?: Expression.Expression
     }) {
         return new ExpressionStatement({
             ...this,

@@ -3,6 +3,6 @@ import
     .*
 
 export
-    class Argument extends Meta, Typed
+    class Argument extends Meta
         var id: Identifier | Null = null
         var value: Expression
