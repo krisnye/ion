@@ -3,11 +3,13 @@ This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
 import * as Node from './Node';
+import * as Number from './ion/Number';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Identifier from './Identifier';
 import * as Class from './ion/Class';
 export class ExportSpecifier implements _Object.Object , Node.Node {
+    readonly $: Number.Number;
     readonly location: Location.Location | Null.Null;
     readonly exported: Identifier.Identifier;
     readonly local: Identifier.Identifier;
@@ -17,23 +19,28 @@ export class ExportSpecifier implements _Object.Object , Node.Node {
         'ion_Object',
         'Node'
     ]);
-    constructor({location = null, exported, local}: {
+    constructor({$ = 0, location = null, exported, local}: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         exported: Identifier.Identifier,
         local: Identifier.Identifier
     }) {
+        if (!Number.isNumber($))
+            throw new Error('$ is not a Number: ' + Class.toString($));
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!Identifier.isIdentifier(exported))
             throw new Error('exported is not a Identifier: ' + Class.toString(exported));
         if (!Identifier.isIdentifier(local))
             throw new Error('local is not a Identifier: ' + Class.toString(local));
+        this.$ = $;
         this.location = location;
         this.exported = exported;
         this.local = local;
         Object.freeze(this);
     }
     patch(properties: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         exported?: Identifier.Identifier,
         local?: Identifier.Identifier

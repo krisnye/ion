@@ -1,14 +1,17 @@
-// foo = 12
-// Foo = String | Number
 // a = min(10, 20)
 
-foo = 12
+a = 1
+b = 2
+c = a + b
+c
+//  an intermediate compiled module has a single export
+//  which is just it's final ExpressionStatement
 
-Foo =
-    &
-        < 5
-        < 4
-Foo
+// Foo =
+//     &
+//         < 5
+//         < 4
+// Foo
 
 // double = () ->
 //     if a

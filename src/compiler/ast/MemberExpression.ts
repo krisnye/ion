@@ -8,12 +8,14 @@ import * as Type from './Type';
 import * as RuntimeType from './RuntimeType';
 import * as Typed from './Typed';
 import * as Node from './Node';
+import * as Number from './ion/Number';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Boolean from './ion/Boolean';
 import * as Identifier from './Identifier';
 import * as Class from './ion/Class';
 export class MemberExpression implements _Object.Object , Expression.Expression , ChainElement.ChainElement , Type.Type , RuntimeType.RuntimeType , Typed.Typed , Node.Node {
+    readonly $: Number.Number;
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly optional: Boolean.Boolean;
@@ -30,13 +32,16 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
         'Typed',
         'Node'
     ]);
-    constructor({location = null, type = null, optional = false, object, property}: {
+    constructor({$ = 0, location = null, type = null, optional = false, object, property}: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         optional?: Boolean.Boolean,
         object: Expression.Expression,
         property: Identifier.Identifier | Expression.Expression
     }) {
+        if (!Number.isNumber($))
+            throw new Error('$ is not a Number: ' + Class.toString($));
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
@@ -47,6 +52,7 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
             throw new Error('object is not a Expression: ' + Class.toString(object));
         if (!(Identifier.isIdentifier(property) || Expression.isExpression(property)))
             throw new Error('property is not a Identifier | Expression: ' + Class.toString(property));
+        this.$ = $;
         this.location = location;
         this.type = type;
         this.optional = optional;
@@ -55,6 +61,7 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
         Object.freeze(this);
     }
     patch(properties: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         optional?: Boolean.Boolean,

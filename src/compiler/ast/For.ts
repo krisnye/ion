@@ -5,6 +5,7 @@ import * as _Object from './ion/Object';
 import * as Expression from './Expression';
 import * as Typed from './Typed';
 import * as Node from './Node';
+import * as Number from './ion/Number';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Pattern from './Pattern';
@@ -12,6 +13,7 @@ import * as VariableDeclaration from './VariableDeclaration';
 import * as Block from './Block';
 import * as Class from './ion/Class';
 export class For implements _Object.Object , Expression.Expression , Typed.Typed , Node.Node {
+    readonly $: Number.Number;
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly left: Pattern.Pattern;
@@ -26,7 +28,8 @@ export class For implements _Object.Object , Expression.Expression , Typed.Typed
         'Typed',
         'Node'
     ]);
-    constructor({location = null, type = null, left, count, right, body}: {
+    constructor({$ = 0, location = null, type = null, left, count, right, body}: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         left: Pattern.Pattern,
@@ -34,6 +37,8 @@ export class For implements _Object.Object , Expression.Expression , Typed.Typed
         right: Expression.Expression,
         body: Block.Block
     }) {
+        if (!Number.isNumber($))
+            throw new Error('$ is not a Number: ' + Class.toString($));
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
@@ -46,6 +51,7 @@ export class For implements _Object.Object , Expression.Expression , Typed.Typed
             throw new Error('right is not a Expression: ' + Class.toString(right));
         if (!Block.isBlock(body))
             throw new Error('body is not a Block: ' + Class.toString(body));
+        this.$ = $;
         this.location = location;
         this.type = type;
         this.left = left;
@@ -55,6 +61,7 @@ export class For implements _Object.Object , Expression.Expression , Typed.Typed
         Object.freeze(this);
     }
     patch(properties: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         left?: Pattern.Pattern,

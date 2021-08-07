@@ -67,6 +67,8 @@ function format(html: string) {
     return html.replace(/{\s+&quot;&quot;:\s+&quot;(\w+)&quot;,/gi, "$1 {")
         //  replace multiline object with a single value as a single line
         .replace(/{\s+([^\n]+)\s+}/gi, "{ $1 }")
+        //  replace multiline object with two values as a single line
+        .replace(/{\s+([^\n]+)\s+([^\n]+)\s+}/gi, "{ $1 $2 }")
         //  replace line ends with breaks
         .replace(/\\n/g, '<br>')
 }

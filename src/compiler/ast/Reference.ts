@@ -6,12 +6,14 @@ import * as Identifier from './Identifier';
 import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Typed from './Typed';
+import * as Number from './ion/Number';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as String from './ion/String';
 import * as _Array from './ion/Array';
 import * as Class from './ion/Class';
 export class Reference implements _Object.Object , Identifier.Identifier , Expression.Expression , Node.Node , Typed.Typed {
+    readonly $: Number.Number;
     readonly location: Location.Location | Null.Null;
     readonly name: String.String;
     readonly path: String.String | Null.Null;
@@ -27,18 +29,22 @@ export class Reference implements _Object.Object , Identifier.Identifier , Expre
         'Typed'
     ]);
     constructor({
+        $ = 0,
         location = null,
         name,
         path = null,
         type = null,
         arguments: _arguments = null
     }: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         name: String.String,
         path?: String.String | Null.Null,
         type?: Expression.Expression | Null.Null,
         arguments?: _Array.Array<Expression.Expression> | Null.Null
     }) {
+        if (!Number.isNumber($))
+            throw new Error('$ is not a Number: ' + Class.toString($));
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!String.isString(name))
@@ -49,6 +55,7 @@ export class Reference implements _Object.Object , Identifier.Identifier , Expre
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!(_Array.isArray(_arguments) || Null.isNull(_arguments)))
             throw new Error('arguments is not a Array | Null: ' + Class.toString(_arguments));
+        this.$ = $;
         this.location = location;
         this.name = name;
         this.path = path;
@@ -57,6 +64,7 @@ export class Reference implements _Object.Object , Identifier.Identifier , Expre
         Object.freeze(this);
     }
     patch(properties: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         name?: String.String,
         path?: String.String | Null.Null,

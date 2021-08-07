@@ -8,6 +8,7 @@ import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Statement from './Statement';
 import * as Typed from './Typed';
+import * as Number from './ion/Number';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
@@ -17,6 +18,7 @@ import * as VariableDeclaration from './VariableDeclaration';
 import * as Parameter from './Parameter';
 import * as Class from './ion/Class';
 export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaration.Declaration , Expression.Expression , Node.Node , Statement.Statement , Typed.Typed {
+    readonly $: Number.Number;
     readonly location: Location.Location | Null.Null;
     readonly meta: _Array.Array<Property.Property> | Null.Null;
     readonly type: Expression.Expression | Null.Null;
@@ -35,7 +37,8 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         'Statement',
         'Typed'
     ]);
-    constructor({location = null, meta = null, type = null, id, baseClasses = [], declarations, typeParameters = []}: {
+    constructor({$ = 0, location = null, meta = null, type = null, id, baseClasses = [], declarations, typeParameters = []}: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
@@ -44,6 +47,8 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         declarations: _Array.Array<VariableDeclaration.VariableDeclaration>,
         typeParameters?: _Array.Array<Parameter.Parameter>
     }) {
+        if (!Number.isNumber($))
+            throw new Error('$ is not a Number: ' + Class.toString($));
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(_Array.isArray(meta) || Null.isNull(meta)))
@@ -58,6 +63,7 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
             throw new Error('declarations is not a Array: ' + Class.toString(declarations));
         if (!_Array.isArray(typeParameters))
             throw new Error('typeParameters is not a Array: ' + Class.toString(typeParameters));
+        this.$ = $;
         this.location = location;
         this.meta = meta;
         this.type = type;
@@ -68,6 +74,7 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         Object.freeze(this);
     }
     patch(properties: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,

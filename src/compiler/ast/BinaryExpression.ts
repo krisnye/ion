@@ -5,11 +5,13 @@ import * as _Object from './ion/Object';
 import * as Expression from './Expression';
 import * as Typed from './Typed';
 import * as Node from './Node';
+import * as Number from './ion/Number';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as String from './ion/String';
 import * as Class from './ion/Class';
 export class BinaryExpression implements _Object.Object , Expression.Expression , Typed.Typed , Node.Node {
+    readonly $: Number.Number;
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly left: Expression.Expression;
@@ -23,13 +25,16 @@ export class BinaryExpression implements _Object.Object , Expression.Expression 
         'Typed',
         'Node'
     ]);
-    constructor({location = null, type = null, left, operator, right}: {
+    constructor({$ = 0, location = null, type = null, left, operator, right}: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         left: Expression.Expression,
         operator: String.String,
         right: Expression.Expression
     }) {
+        if (!Number.isNumber($))
+            throw new Error('$ is not a Number: ' + Class.toString($));
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
@@ -40,6 +45,7 @@ export class BinaryExpression implements _Object.Object , Expression.Expression 
             throw new Error('operator is not a String: ' + Class.toString(operator));
         if (!Expression.isExpression(right))
             throw new Error('right is not a Expression: ' + Class.toString(right));
+        this.$ = $;
         this.location = location;
         this.type = type;
         this.left = left;
@@ -48,6 +54,7 @@ export class BinaryExpression implements _Object.Object , Expression.Expression 
         Object.freeze(this);
     }
     patch(properties: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         left?: Expression.Expression,

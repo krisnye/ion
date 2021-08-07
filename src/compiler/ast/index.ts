@@ -14,9 +14,6 @@ export {
     default as ArrowFunctionExpression
 } from './ArrowFunctionExpression';
 export {
-    default as Assembly
-} from './Assembly';
-export {
     default as Assignment
 } from './Assignment';
 export {
@@ -76,9 +73,6 @@ export {
 export {
     default as ExpressionStatement
 } from './ExpressionStatement';
-export {
-    default as File
-} from './File';
 export {
     default as For
 } from './For';

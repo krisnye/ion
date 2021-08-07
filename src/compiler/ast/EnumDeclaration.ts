@@ -6,6 +6,7 @@ import * as Declaration from './Declaration';
 import * as Statement from './Statement';
 import * as Typed from './Typed';
 import * as Node from './Node';
+import * as Number from './ion/Number';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Expression from './Expression';
@@ -15,6 +16,7 @@ import * as _Array from './ion/Array';
 import * as Property from './Property';
 import * as Class from './ion/Class';
 export class EnumDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , Typed.Typed , Node.Node {
+    readonly $: Number.Number;
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly flags: Boolean.Boolean;
@@ -29,13 +31,16 @@ export class EnumDeclaration implements _Object.Object , Declaration.Declaration
         'Typed',
         'Node'
     ]);
-    constructor({location = null, type = null, flags = false, id, properties}: {
+    constructor({$ = 0, location = null, type = null, flags = false, id, properties}: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         flags?: Boolean.Boolean,
         id: Declarator.Declarator,
         properties: _Array.Array<Property.Property>
     }) {
+        if (!Number.isNumber($))
+            throw new Error('$ is not a Number: ' + Class.toString($));
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
@@ -46,6 +51,7 @@ export class EnumDeclaration implements _Object.Object , Declaration.Declaration
             throw new Error('id is not a Declarator: ' + Class.toString(id));
         if (!_Array.isArray(properties))
             throw new Error('properties is not a Array: ' + Class.toString(properties));
+        this.$ = $;
         this.location = location;
         this.type = type;
         this.flags = flags;
@@ -54,6 +60,7 @@ export class EnumDeclaration implements _Object.Object , Declaration.Declaration
         Object.freeze(this);
     }
     patch(properties: {
+        $?: Number.Number,
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         flags?: Boolean.Boolean,

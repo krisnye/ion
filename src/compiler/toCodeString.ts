@@ -33,8 +33,8 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     ArrayExpression(node) {
         return `[ ${node.body.map(toCodeString).join(', ')} ]`
     },
-    File(node) {
-        return `file [unknown name]`
+    Module(node) {
+        return `module ${node.name}`
     },
     FunctionExpression(node) {
         return `function ${(node.id as any)?.name ?? ''}(${node.parameters.map(toCodeString).join(',')})`
@@ -112,7 +112,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         return `...${toCodeString(node.value)}`
     },
     RestElement(node) {
-        return `...${toCodeString(node.argument)}`
+        return `...${toCodeString(node.value)}`
     },
     RegularExpression(node) {
         return `/${node.pattern}/${node.flags}`

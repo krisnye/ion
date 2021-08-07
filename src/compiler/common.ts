@@ -3,7 +3,6 @@ import * as np from "path";
 import { traverse, skip } from "@glas/traverse";
 import { NodeMap, ScopeMap } from "./createScopeMaps";
 import { Reference, Node, VariableDeclaration, ModuleSpecifier, ImportDeclaration, Declarator, ImportDefaultSpecifier, ImportNamespaceSpecifier, ImportSpecifier, Declaration, Statement, Identifier, Parameter } from "./ast";
-import File from "./ast/File";
 
 export const runtimeModuleName = "ionscript"
 

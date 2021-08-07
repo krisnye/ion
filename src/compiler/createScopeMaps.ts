@@ -3,8 +3,8 @@ import { SemanticError } from "./common"
 import { Node, Scope, Identifier, Reference, Declarator, Pattern, Parameter, ObjectPattern, RestElement, ArrayPattern, FunctionExpression } from "./ast"
 
 export type NodeMap<T> = {
-    get(node: Node): T
-    set(node: Node, t: T)
+    get(node: number): T
+    set(node: number, t: T)
 }
 
 export type ScopeMap = { [id: string]: Declarator }
@@ -32,7 +32,7 @@ export default function createScopeMaps(root, callback?: (current: Declarator, s
             declare(node, source)
         }
         else if (RestElement.is(node)) {
-            declare(node.argument, source)
+            declare(node.value, source)
         }
         else if (ObjectPattern.is(node)) {
             for (let property of node.properties) {
@@ -63,10 +63,14 @@ export default function createScopeMaps(root, callback?: (current: Declarator, s
 
     traverse(root, {
         enter(node) {
+            if (!Node.is(node)) {
+                return
+            }
             //  get the current scope
             let scope = scopes[scopes.length - 1]
             //  save a map from this nodes location to it's scope
-            map.set(node, scope)
+            // map.set(node, scope)
+            map.set(node.$, scope)
             function pushScope() {
                 scopes.push(scope = { __proto__: scope, __source: node.constructor.name + " => " + JSON.stringify(node.location ?? "NULL") })
             }

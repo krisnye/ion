@@ -4,13 +4,13 @@ Map<K,V>
     {a, b, c}
 ### Map Loop
 for key [, value [, index]] in map
-## List
-List<V>
-    [a, b, c]
-    []
-        a
-        b
-        c
+## Array
+Array<V>
+[a, b, c]
+[]
+    a
+    b
+    c
 ### List Loop
 for value [, index] in map
 ## Class Instance
@@ -18,7 +18,11 @@ Vector(x: 1, y: 2)
 Vector()
     x: 1
     y: 2
-## Named Tuple
+## Named Tuple / Anonymous Class Instance
     (x: 1, y: 2)
-## Array
-    [1, 2]
+## 
+{}
+    x = 12
+    y = 20
+    foo() -> 1
+    bar() -> 2

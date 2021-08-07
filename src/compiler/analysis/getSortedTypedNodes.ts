@@ -159,7 +159,7 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         if (node.arguments) {
             yield* node.arguments
         }
-        let referencedNode = scopes.get(node)[node.name]
+        let referencedNode = scopes.get(node.$)[node.name]
         if (referencedNode != null) {
             yield referencedNode
             // we don't throw on unrealized references... we just will consider them type any
