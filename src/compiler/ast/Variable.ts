@@ -3,6 +3,7 @@ This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
 import * as Meta from './Meta';
+import * as Expression from './Expression';
 import * as Declaration from './Declaration';
 import * as Node from './Node';
 import * as Statement from './Statement';
@@ -11,11 +12,11 @@ import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
 import * as Property from './Property';
 import * as Declarator from './Declarator';
-import * as Expression from './Expression';
 import * as Class from './ion/Class';
-export class Variable implements _Object.Object , Meta.Meta , Declaration.Declaration , Node.Node , Statement.Statement {
+export class Variable implements _Object.Object , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Statement.Statement {
     readonly location: Location.Location | Null.Null;
     readonly meta: _Array.Array<Property.Property> | Null.Null;
+    readonly type: Expression.Expression | Null.Null;
     readonly id: Declarator.Declarator;
     readonly value: Expression.Expression | Null.Null;
     static readonly id = 'Variable';
@@ -23,13 +24,15 @@ export class Variable implements _Object.Object , Meta.Meta , Declaration.Declar
         'Variable',
         'ion_Object',
         'Meta',
+        'Expression',
         'Declaration',
         'Node',
         'Statement'
     ]);
-    constructor({location = null, meta = null, id, value = null}: {
+    constructor({location = null, meta = null, type = null, id, value = null}: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
+        type?: Expression.Expression | Null.Null,
         id: Declarator.Declarator,
         value?: Expression.Expression | Null.Null
     }) {
@@ -37,12 +40,15 @@ export class Variable implements _Object.Object , Meta.Meta , Declaration.Declar
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(_Array.isArray(meta) || Null.isNull(meta)))
             throw new Error('meta is not a Array | Null: ' + Class.toString(meta));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!Declarator.isDeclarator(id))
             throw new Error('id is not a Declarator: ' + Class.toString(id));
         if (!(Expression.isExpression(value) || Null.isNull(value)))
             throw new Error('value is not a Expression | Null: ' + Class.toString(value));
         this.location = location;
         this.meta = meta;
+        this.type = type;
         this.id = id;
         this.value = value;
         Object.freeze(this);
@@ -50,6 +56,7 @@ export class Variable implements _Object.Object , Meta.Meta , Declaration.Declar
     patch(properties: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
+        type?: Expression.Expression | Null.Null,
         id?: Declarator.Declarator,
         value?: Expression.Expression | Null.Null
     }) {

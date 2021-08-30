@@ -3,6 +3,6 @@ import
     .*
 
 export
-    class Variable extends Meta, Declaration
+    class Variable extends Meta, Expression, Declaration
         # Expression if it's a [symbol] or something similar on a class variable.
         var value: Expression | Null = null

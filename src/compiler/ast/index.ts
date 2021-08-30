@@ -182,9 +182,6 @@ export {
     default as TypeExpression
 } from './TypeExpression';
 export {
-    default as Typed
-} from './Typed';
-export {
     default as UnaryExpression
 } from './UnaryExpression';
 export {
