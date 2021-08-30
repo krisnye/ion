@@ -135,12 +135,6 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
             yield node.type
         }
     },
-    *Parameter(node, scopeMap, ancestorMap) {
-        yield* predecessors.Variable!(node, scopeMap, ancestorMap)
-    },
-    *VariableDeclaration(node, scopeMap, ancestorMap) {
-        yield* predecessors.Variable!(node, scopeMap, ancestorMap)
-    },
     *TypeExpression(node) {
         yield node.value
     },
@@ -159,7 +153,7 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         if (node.arguments) {
             yield* node.arguments
         }
-        let referencedNode = scopes.get(node.$)[node.name]
+        let referencedNode = scopes.get(node)[node.name]
         if (referencedNode != null) {
             yield referencedNode
             // we don't throw on unrealized references... we just will consider them type any
@@ -185,7 +179,9 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         }
     },
     *Call(node, scopeMap, ancestorMap) {
-        yield node.callee
+        if (node.callee) {
+            yield node.callee
+        }
         for (let arg of node.arguments) {
             if (ast.Spread.is(arg)) {
                 yield arg.value

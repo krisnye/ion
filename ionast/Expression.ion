@@ -3,4 +3,6 @@ import
     .*
 
 export
-    class Expression extends Typed
+    class Expression extends Node
+        var type: Expression | Null = null
+

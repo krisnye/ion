@@ -3,4 +3,4 @@ import
     .*
 
 export
-    class Statement extends Typed
+    class Statement extends Node

@@ -4,5 +4,5 @@ import
 
 export
     class ArrowFunctionExpression extends Expression, Scope
-        var params: Array<Parameter>
+        var params: Array<Variable>
         var body: Expression

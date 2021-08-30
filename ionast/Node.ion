@@ -4,5 +4,5 @@ import
 
 export
     class Node
-        var $: Number = 0
+        # var $: Number = 0
         var location: Location | Null = null

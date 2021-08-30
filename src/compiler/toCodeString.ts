@@ -59,7 +59,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         }
         return `${s(node.value!)}`
     },
-    Parameter(node) {
+    Variable(node) {
         let value = s(node.id)
         if (node.type) {
             value += `: ${s(node.type)}`
@@ -87,10 +87,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         }
     },
     Call(node) {
-        return `${s(node.callee)}(${node.arguments.map(s).join(', ')})`
-    },
-    VariableDeclaration(node) {
-        return codeToString.Parameter!(node)
+        return `${node.callee ? s(node.callee) : ""}(${node.arguments.map(s).join(', ')})`
     },
     Conditional(node) {
         let result =`(if ${s(node.test)} then ${s(node.consequent)}`

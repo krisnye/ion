@@ -5,6 +5,6 @@ import
 export
     class FunctionExpression extends Expression, Scope
         var id: Identifier | Null = null
-        var parameters: Array<Parameter>
+        var parameters: Array<Variable>
         var body: Block
         var returnType: Type | Null = null

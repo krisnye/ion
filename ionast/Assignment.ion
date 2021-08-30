@@ -4,6 +4,6 @@ import
 
 export
     class Assignment extends Expression
-        var left: Pattern
+        var left: Pattern | Reference
         var operator: String = "="
         var right: Expression

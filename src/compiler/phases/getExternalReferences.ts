@@ -8,7 +8,7 @@ export default function getExternalReferences(module: Module): [Module,Map<strin
     traverse(module, {
         leave(node) {
             if (Reference.is(node)) {
-                let scope = scopes.get(node.$)
+                let scope = scopes.get(node)
                 if (scope[node.name] == null) {
                     let set = externals.get(node.name)
                     if (set == null) {

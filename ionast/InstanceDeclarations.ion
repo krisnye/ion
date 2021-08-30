@@ -4,4 +4,4 @@ import
 
 export
     class InstanceDeclarations extends Scope
-        var declarations: Array<VariableDeclaration>
+        var declarations: Array<Variable>

@@ -2,19 +2,19 @@ import { traverse, skip, replace } from "@glas/traverse";
 import combineExpressions from "../analysis/combineExpressions";
 import isConsequent from "../analysis/isConsequent";
 import splitExpressions from "../analysis/splitExpressions";
-import { Assignment, BinaryExpression, Call, ClassDeclaration, DotExpression, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, TypeExpression, VariableDeclaration, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation } from "../ast";
+import { Assignment, BinaryExpression, Call, ClassDeclaration, DotExpression, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, TypeExpression, Variable, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation, Declaration } from "../ast";
 import { hasNodesOfType, SemanticError, isTypeName } from "../common";
 import { Options } from "../Compiler"
 import createScopeMaps from "../createScopeMaps";
 import { getLast } from "../pathFunctions";
 import toCodeString from "../toCodeString";
 
-function toIsCheck(node: Expression) {
+function toCheck(node: Expression, operator = "is") {
     let { location } = node
     return new BinaryExpression({
         location,
         left: new DotExpression({ location }),
-        operator: "is",
+        operator,
         right: node
     })
 }
@@ -173,15 +173,10 @@ function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error
                             }
                         }
                         if (Literal.is(node)) {
-                            return toIsCheck(node)
+                            return toCheck(node)
                         }
                         if (Reference.is(node)) {
-                            if (isTypeName(node.name)) {
-                                return toIsCheck(node)
-                            }
-                            else {
-                                errors.push(SemanticError(`variable references not allowed as implicit type expression, use literals, Type references or (. == ${node.name})`, node))
-                            }
+                            return toCheck(node, isTypeName(node.name) ? "is" : "==")
                         }
                         if (Call.is(node)) {
                             if (!hasDot(node)) {
@@ -244,9 +239,11 @@ export default function semanticChecks(
     // we only create the scope map to check for redeclaration errors
     let scopes = createScopeMaps(
         module,
-        (current, source, previous) => {
+        (current, source, ancestors, previous) => {
             // only parameters (FunctionExpression source) are allowed to redeclare variable names
-            if (previous != null && !FunctionExpression.is(source)) {
+            if (previous != null && !FunctionExpression.is(ancestors[ancestors.length - 3])) {
+                console.log("....", ancestors)
+                // console.log({ current: current.location, source: source.location, previous: previous.location })
                 errors.push(SemanticError(`Cannot redeclare ${current.name}`, current))
             }
         }
@@ -266,17 +263,17 @@ export default function semanticChecks(
             }
             let isRootStatement = module.body == ancestors[ancestors.length - 1]
             if (isRootStatement) {
-                let isExpression = ExpressionStatement.is(node)
+                let isExpression = ExpressionStatement.is(node) || Expression.is(node)
                 // node might have been patched
                 let isFinalStatement = module.body.length == ++index
-                let isVariableWithSameNameAsModule = VariableDeclaration.is(node) && Identifier.is(node.id) && node.id.name == module.name
+                let isVariableWithSameNameAsModule = Variable.is(node) && Identifier.is(node.id) && node.id.name == module.name
                 if (isVariableWithSameNameAsModule && !isFinalStatement) {
                     errors.push(SemanticError(`Variable with same name as module must be final statement`, node))
                 }
-                if (isExpression && !isFinalStatement) {
+                if (!Declaration.is(node) && !isFinalStatement) {
                     errors.push(SemanticError(`Only a single final exported expression is allowed in a module`, node))
                 }
-                if (VariableDeclaration.is(node) && node.value == null) {
+                if (Variable.is(node) && node.value == null) {
                     errors.push(SemanticError(`Module scoped variables are not allowed`, node))
                 }
                 if (Assignment.is(node)) {
@@ -288,15 +285,6 @@ export default function semanticChecks(
                     }
                 }
                 if (isFinalStatement) {
-                    if (!isExpression && !ClassDeclaration.is(node)) {
-                        if (isVariableWithSameNameAsModule) {
-                            // automatically insert a final export with same name
-                            node = replace(node, new Reference(node.id))
-                        }
-                        else {
-                            errors.push(SemanticError(`Final statement in module must be a class, variable with same name as module or other expression`, node))
-                        }
-                    }
                     if (ExpressionStatement.is(node)) {
                         let {value} = node
                         if (FunctionExpression.is(value)) {
@@ -306,9 +294,26 @@ export default function semanticChecks(
                             }
                         }
                     }
+
+                    if (!isExpression) {
+                        errors.push(SemanticError(`Final statement must be an expression`, node))
+                        // automatically insert a final export with same name
+                        // if (isVariableWithSameNameAsModule) {
+                        // }
+                        // else {
+                        //     errors.push(SemanticError(`Final statement in module must be a class, variable with same name as module or other expression`, node))
+                        // }
+                    }
+                    else {
+                        // console.log(">>>>>>>>", node)
+                        if (ExpressionStatement.is(node)) {
+                            node = node.value
+                        }
+                        node = new Variable({ id: new Declarator({ location: node.location, name: "export" }), value: node })
+                    }
                 }
             }
-            if (VariableDeclaration.is(node)) {
+            if (Variable.is(node)) {
                 if (Declarator.is(node.id)) {
                     if (isTypeName(node.id.name)) {
                         // check type

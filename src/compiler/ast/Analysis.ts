@@ -3,7 +3,6 @@ This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
 import * as Node from './Node';
-import * as Number from './ion/Number';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Map from './ion/Map';
@@ -11,7 +10,6 @@ import * as String from './ion/String';
 import * as Declaration from './Declaration';
 import * as Class from './ion/Class';
 export class Analysis implements _Object.Object , Node.Node {
-    readonly $: Number.Number;
     readonly location: Location.Location | Null.Null;
     readonly declarations: Map.Map<String.String, Declaration.Declaration>;
     static readonly id = 'Analysis';
@@ -20,24 +18,19 @@ export class Analysis implements _Object.Object , Node.Node {
         'ion_Object',
         'Node'
     ]);
-    constructor({$ = 0, location = null, declarations}: {
-        $?: Number.Number,
+    constructor({location = null, declarations}: {
         location?: Location.Location | Null.Null,
         declarations: Map.Map<String.String, Declaration.Declaration>
     }) {
-        if (!Number.isNumber($))
-            throw new Error('$ is not a Number: ' + Class.toString($));
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!Map.isMap(declarations))
             throw new Error('declarations is not a Map: ' + Class.toString(declarations));
-        this.$ = $;
         this.location = location;
         this.declarations = declarations;
         Object.freeze(this);
     }
     patch(properties: {
-        $?: Number.Number,
         location?: Location.Location | Null.Null,
         declarations?: Map.Map<String.String, Declaration.Declaration>
     }) {

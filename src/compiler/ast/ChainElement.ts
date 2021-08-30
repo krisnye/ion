@@ -3,13 +3,11 @@ This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
 import * as Node from './Node';
-import * as Number from './ion/Number';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
 export class ChainElement implements _Object.Object , Node.Node {
-    readonly $: Number.Number;
     readonly location: Location.Location | Null.Null;
     readonly optional: Boolean.Boolean;
     static readonly id = 'ChainElement';
@@ -18,24 +16,19 @@ export class ChainElement implements _Object.Object , Node.Node {
         'ion_Object',
         'Node'
     ]);
-    constructor({$ = 0, location = null, optional = false}: {
-        $?: Number.Number,
+    constructor({location = null, optional = false}: {
         location?: Location.Location | Null.Null,
         optional?: Boolean.Boolean
     }) {
-        if (!Number.isNumber($))
-            throw new Error('$ is not a Number: ' + Class.toString($));
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!Boolean.isBoolean(optional))
             throw new Error('optional is not a Boolean: ' + Class.toString(optional));
-        this.$ = $;
         this.location = location;
         this.optional = optional;
         Object.freeze(this);
     }
     patch(properties: {
-        $?: Number.Number,
         location?: Location.Location | Null.Null,
         optional?: Boolean.Boolean
     }) {

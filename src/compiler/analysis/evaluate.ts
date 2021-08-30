@@ -41,9 +41,7 @@ export const simplifyFunctions: { [P in keyof typeof ast]?: (e: InstanceType<typ
     },
     ClassDeclaration(node) {
     },
-    Parameter(node) {
-    },
-    VariableDeclaration(node) {
+    Variable(node) {
     },
     FunctionExpression(node) {
     },

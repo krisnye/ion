@@ -11,6 +11,7 @@ import * as Property from '../Property';
 import * as Identifier from '../Identifier';
 import * as Expression from '../Expression';
 import * as Pattern from '../Pattern';
+import * as Reference from '../Reference';
 import * as Literal from '../Literal';
 import * as Type from '../Type';
 import * as ImportDeclaration from '../ImportDeclaration';
@@ -25,6 +26,7 @@ export type ion_types____TemplateReference____or_ion_Null_Null = _Array.Array<Pr
 export type Identifier_Identifier_or_ion_Null_Null = Identifier.Identifier | Null.Null;
 export type Expression_Expression_or_ion_Null_Null = Expression.Expression | Null.Null;
 export type Pattern_Pattern_or_ion_Null_Null = Pattern.Pattern | Null.Null;
+export type Pattern_Pattern_or_Reference_Reference = Pattern.Pattern | Reference.Reference;
 export type ion_String_String_or_ion_Null_Null = String.String | Null.Null;
 export type Declaration_Declaration_or_ion_Null_Null = Declaration.Declaration | Null.Null;
 export type Literal_Literal_or_ion_Null_Null = Literal.Literal | Null.Null;

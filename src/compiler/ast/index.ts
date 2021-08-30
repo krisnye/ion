@@ -131,9 +131,6 @@ export {
     default as OutlineOperation
 } from './OutlineOperation';
 export {
-    default as Parameter
-} from './Parameter';
-export {
     default as Pattern
 } from './Pattern';
 export {
@@ -193,9 +190,6 @@ export {
 export {
     default as Variable
 } from './Variable';
-export {
-    default as VariableDeclaration
-} from './VariableDeclaration';
 export {
     default as YieldExpression
 } from './YieldExpression';

@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as np from "path";
 import { traverse, skip } from "@glas/traverse";
 import { NodeMap, ScopeMap } from "./createScopeMaps";
-import { Reference, Node, VariableDeclaration, ModuleSpecifier, ImportDeclaration, Declarator, ImportDefaultSpecifier, ImportNamespaceSpecifier, ImportSpecifier, Declaration, Statement, Identifier, Parameter } from "./ast";
+import { Reference, Node, Variable, ModuleSpecifier, ImportDeclaration, Declarator, ImportDefaultSpecifier, ImportNamespaceSpecifier, ImportSpecifier, Declaration, Statement, Identifier } from "./ast";
 
 export const runtimeModuleName = "ionscript"
 
@@ -70,7 +70,7 @@ export function hasDeclarator(statements: Array<Statement>, name: string) {
                 }
             }
         }
-        if (VariableDeclaration.is(s)) {
+        if (Variable.is(s)) {
             if (Identifier.is(s.id)) {
                 if (s.id.name === name) {
                     return true
@@ -129,7 +129,7 @@ export function hasDeclarator(statements: Array<Statement>, name: string) {
 //         }
 //     }
 //     // traverse variables that are just constant re-declarations
-//     if (VariableDeclaration.is(parent) && Reference.is(parent.value)) {
+//     if (Variable.is(parent) && Reference.is(parent.value)) {
 //         throw new Error("Need to check if constant");
 //         // keep following references to the original
 //         // return getDeclarator(parent.value, scopes, ancestors, true, false)

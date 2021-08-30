@@ -7,12 +7,10 @@ import * as ImportNamespaceSpecifier from './ImportNamespaceSpecifier';
 import * as _Object from './ion/Object';
 import * as Declaration from './Declaration';
 import * as Statement from './Statement';
-import * as Typed from './Typed';
 import * as Node from './Node';
-import * as Number from './ion/Number';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as Expression from './Expression';
+import * as Declarator from './Declarator';
 import * as _Array from './ion/Array';
 import * as Literal from './Literal';
 import * as Identifier from './Identifier';
@@ -22,10 +20,9 @@ export type Specifier = ImportSpecifier.ImportSpecifier | (ImportDefaultSpecifie
 export function isSpecifier(value): value is Specifier {
     return ImportSpecifier.isImportSpecifier(value) || (ImportDefaultSpecifier.isImportDefaultSpecifier(value) || ImportNamespaceSpecifier.isImportNamespaceSpecifier(value));
 }
-export class ImportDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , Typed.Typed , Node.Node {
-    readonly $: Number.Number;
+export class ImportDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly id: Declarator.Declarator;
     readonly specifiers: _Array.Array<Specifier | ImportDeclaration>;
     readonly path: _Array.Array<Literal.Literal | Identifier.Identifier> | Null.Null;
     readonly source: Literal.Literal;
@@ -36,24 +33,20 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
         'ion_Object',
         'Declaration',
         'Statement',
-        'Typed',
         'Node'
     ]);
-    constructor({$ = 0, location = null, type = null, specifiers, path = null, source, absoluteSource = null}: {
-        $?: Number.Number,
+    constructor({location = null, id, specifiers, path = null, source, absoluteSource = null}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        id: Declarator.Declarator,
         specifiers: _Array.Array<Specifier | ImportDeclaration>,
         path?: _Array.Array<Literal.Literal | Identifier.Identifier> | Null.Null,
         source: Literal.Literal,
         absoluteSource?: String.String | Null.Null
     }) {
-        if (!Number.isNumber($))
-            throw new Error('$ is not a Number: ' + Class.toString($));
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Declarator.isDeclarator(id))
+            throw new Error('id is not a Declarator: ' + Class.toString(id));
         if (!_Array.isArray(specifiers))
             throw new Error('specifiers is not a Array: ' + Class.toString(specifiers));
         if (!(_Array.isArray(path) || Null.isNull(path)))
@@ -62,9 +55,8 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
             throw new Error('source is not a Literal: ' + Class.toString(source));
         if (!(String.isString(absoluteSource) || Null.isNull(absoluteSource)))
             throw new Error('absoluteSource is not a String | Null: ' + Class.toString(absoluteSource));
-        this.$ = $;
         this.location = location;
-        this.type = type;
+        this.id = id;
         this.specifiers = specifiers;
         this.path = path;
         this.source = source;
@@ -72,9 +64,8 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
         Object.freeze(this);
     }
     patch(properties: {
-        $?: Number.Number,
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        id?: Declarator.Declarator,
         specifiers?: _Array.Array<Specifier | ImportDeclaration>,
         path?: _Array.Array<Literal.Literal | Identifier.Identifier> | Null.Null,
         source?: Literal.Literal,

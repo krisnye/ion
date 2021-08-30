@@ -1,9 +1,22 @@
-// a = min(10, 20)
 
-a = 1
-b = 2
-c = a + b
-c
+false = 0
+true = 1
+Boolean = true | false
+@metaProperty = true
+
+class Vector
+    x: Number
+    y: Number
+    z: Number = 0
+    [@metaProperty]
+    translate = (x: Number = 0, y: Number = 0) ->
+        Vector(this.x + x, this.y + y)
+
+()
+    Boolean
+    Vector
+    value = 10
+
 //  an intermediate compiled module has a single export
 //  which is just it's final ExpressionStatement
 

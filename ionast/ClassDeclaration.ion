@@ -6,5 +6,5 @@ export
     class ClassDeclaration extends Meta, Declaration, Expression
         var id: Declarator
         var baseClasses: Array<Expression> = []
-        var declarations: Array<VariableDeclaration>
-        var typeParameters: Array<Parameter> = []
+        var declarations: Array<Variable>
+        var typeParameters: Array<Variable> = []

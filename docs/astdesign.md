@@ -6,7 +6,10 @@
 
 //  File                File: Block
 x                       Reference{name: String}: Expression
-x: Number = 10          Variable{id: Declarator, type: Expression, value: Expression}: Statement
+x: Type                 Variable{id, type}
+x: Number = 10          Variable{id, type, value}: Statement
+x = 10                  Variable{id, value}
+[e] = 20                Property{key, value}
 x := 20                 Assignment{id: Id, value: Expression}: Statement
 x + b                   Operation{operator: String, operands: Node[]}: Expression
 class Vector2           Class{id: Declarator}: Statement

@@ -4,7 +4,7 @@ import semanticChecks from "./semanticChecks";
 import Phase from "./Phase";
 
 export default [
-    numbering,
+    // numbering,
     semanticChecks,
     identity,
 ] as Phase[]

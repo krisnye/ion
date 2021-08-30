@@ -1,6 +1,6 @@
 ## Map
 Map<K,V>
-    {a: 1, b: 2, c: 3}
+    {a = 1, b = 2, c = 3}
     {a, b, c}
 ### Map Loop
 for key [, value [, index]] in map
@@ -14,15 +14,16 @@ Array<V>
 ### List Loop
 for value [, index] in map
 ## Class Instance
-Vector(x: 1, y: 2)
+Vector(x = 1, y = 2)
 Vector()
-    x: 1
-    y: 2
-## Named Tuple / Anonymous Class Instance
-    (x: 1, y: 2)
-## 
-{}
-    x = 12
+    x = 1
+    y = 2
+## Named Tuple / Anonymous Class Instance / Namespace
+Can only have named fields. All fields are exported.
+(x = 1, y = 2)
+()
+    @foo = 12
+    x = 10
     y = 20
     foo() -> 1
     bar() -> 2

@@ -3,16 +3,13 @@ This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
 import * as Expression from './Expression';
-import * as Typed from './Typed';
 import * as Node from './Node';
-import * as Number from './ion/Number';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as String from './ion/String';
 import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
-export class UnaryExpression implements _Object.Object , Expression.Expression , Typed.Typed , Node.Node {
-    readonly $: Number.Number;
+export class UnaryExpression implements _Object.Object , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly operator: String.String;
@@ -23,19 +20,15 @@ export class UnaryExpression implements _Object.Object , Expression.Expression ,
         'UnaryExpression',
         'ion_Object',
         'Expression',
-        'Typed',
         'Node'
     ]);
-    constructor({$ = 0, location = null, type = null, operator, argument, prefix = true}: {
-        $?: Number.Number,
+    constructor({location = null, type = null, operator, argument, prefix = true}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         operator: String.String,
         argument: Expression.Expression,
         prefix?: Boolean.Boolean
     }) {
-        if (!Number.isNumber($))
-            throw new Error('$ is not a Number: ' + Class.toString($));
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
@@ -46,7 +39,6 @@ export class UnaryExpression implements _Object.Object , Expression.Expression ,
             throw new Error('argument is not a Expression: ' + Class.toString(argument));
         if (!Boolean.isBoolean(prefix))
             throw new Error('prefix is not a Boolean: ' + Class.toString(prefix));
-        this.$ = $;
         this.location = location;
         this.type = type;
         this.operator = operator;
@@ -55,7 +47,6 @@ export class UnaryExpression implements _Object.Object , Expression.Expression ,
         Object.freeze(this);
     }
     patch(properties: {
-        $?: Number.Number,
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         operator?: String.String,
