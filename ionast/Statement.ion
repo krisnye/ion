@@ -3,4 +3,4 @@ import
     .*
 
 export
-    class Statement extends Node
+    class Statement extends Expression

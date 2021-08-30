@@ -7,6 +7,7 @@ import * as ImportNamespaceSpecifier from './ImportNamespaceSpecifier';
 import * as _Object from './ion/Object';
 import * as Declaration from './Declaration';
 import * as Statement from './Statement';
+import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
@@ -20,8 +21,9 @@ export type Specifier = ImportSpecifier.ImportSpecifier | (ImportDefaultSpecifie
 export function isSpecifier(value): value is Specifier {
     return ImportSpecifier.isImportSpecifier(value) || (ImportDefaultSpecifier.isImportDefaultSpecifier(value) || ImportNamespaceSpecifier.isImportNamespaceSpecifier(value));
 }
-export class ImportDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , Node.Node {
+export class ImportDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
+    readonly type: Expression.Expression | Null.Null;
     readonly id: Declarator.Declarator;
     readonly specifiers: _Array.Array<Specifier | ImportDeclaration>;
     readonly path: _Array.Array<Literal.Literal | Identifier.Identifier> | Null.Null;
@@ -33,10 +35,12 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
         'ion_Object',
         'Declaration',
         'Statement',
+        'Expression',
         'Node'
     ]);
-    constructor({location = null, id, specifiers, path = null, source, absoluteSource = null}: {
+    constructor({location = null, type = null, id, specifiers, path = null, source, absoluteSource = null}: {
         location?: Location.Location | Null.Null,
+        type?: Expression.Expression | Null.Null,
         id: Declarator.Declarator,
         specifiers: _Array.Array<Specifier | ImportDeclaration>,
         path?: _Array.Array<Literal.Literal | Identifier.Identifier> | Null.Null,
@@ -45,6 +49,8 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!Declarator.isDeclarator(id))
             throw new Error('id is not a Declarator: ' + Class.toString(id));
         if (!_Array.isArray(specifiers))
@@ -56,6 +62,7 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
         if (!(String.isString(absoluteSource) || Null.isNull(absoluteSource)))
             throw new Error('absoluteSource is not a String | Null: ' + Class.toString(absoluteSource));
         this.location = location;
+        this.type = type;
         this.id = id;
         this.specifiers = specifiers;
         this.path = path;
@@ -65,6 +72,7 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
+        type?: Expression.Expression | Null.Null,
         id?: Declarator.Declarator,
         specifiers?: _Array.Array<Specifier | ImportDeclaration>,
         path?: _Array.Array<Literal.Literal | Identifier.Identifier> | Null.Null,

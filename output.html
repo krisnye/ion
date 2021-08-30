@@ -221,244 +221,6 @@ ul.jsondiffpatch-textdiff {
             <td>
                 <header><span>File</span></header>
                 <span class="content">
-                    AASample
-                </span>
-            </td>
-        
-                <td>
-                    <header><span>Source</span></header>
-                    <p>
-false = 0
-true = 1
-Boolean = true | false
-@metaProperty = true
-
-class Vector
-    x: Number
-    y: Number
-    z: Number = 0
-    [@metaProperty]
-    translate = (x: Number = 0, y: Number = 0) ->
-        Vector(this.x + x, this.y + y)
-
-()
-    Boolean
-    Vector
-    value = 10
-
-//  an intermediate compiled module has a single export
-//  which is just it's final ExpressionStatement
-
-// Foo =
-//     &
-//         < 5
-//         < 4
-// Foo
-
-// double = () ->
-//     if a
-//         12
-//         13
-//     else
-//         14
-
-// AASample = . != 0
-
-// {}
-//     value: min(a, b)
-//     foo() -> 2
-
-// foo = (a: 1, optional: 10) -> 12
-
-// [Meta]: true
-// class Vector2<T> extends Foo
-//     // variables with a Type are instance variable
-//     x: T
-//     y: T
-//     // variables without a Type are static constants
-//     add = (a, b) -> a + b
-//     // variables that reference instance variables are calculated instance properties
-//     length = (x * x + y * y) ** 0.5
-//     // functions that reference this take an implicit first argument of class type
-//     scale = (factor) -> Vector2(this.x * factor, this.y * factor)
-</p>
-                </td>
-            
-                <td>
-                    <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>false = 0<br>true = 1<br>Boolean = true | false<br>@metaProperty = true<br><br>class Vector<br>    x: Number<br>    y: Number<br>    z: Number = 0<br>    [@metaProperty]<br>    translate = (x: Number = 0, y: Number = 0) -&gt;<br>        Vector(this.x + x, this.y + y)<br><br>()<br>    Boolean<br>    Vector<br>    value = 10<br><br>//  an intermediate compiled module has a single export<br>//  which is just it&apos;s final ExpressionStatement<br><br>// Foo =<br>//     &amp;<br>//         &lt; 5<br>//         &lt; 4<br>// Foo<br><br>// double = () -&gt;<br>//     if a<br>//         12<br>//         13<br>//     else<br>//         14<br><br>// AASample = . != 0<br><br>// {}<br>//     value: min(a, b)<br>//     foo() -&gt; 2<br><br>// foo = (a: 1, optional: 10) -&gt; 12<br><br>// [Meta]: true<br>// class Vector2&lt;T&gt; extends Foo<br>//     // variables with a Type are instance variable<br>//     x: T<br>//     y: T<br>//     // variables without a Type are static constants<br>//     add = (a, b) -&gt; a + b<br>//     // variables that reference instance variables are calculated instance properties<br>//     length = (x * x + y * y) ** 0.5<br>//     // functions that reference this take an implicit first argument of class type<br>//     scale = (factor) -&gt; Vector2(this.x * factor, this.y * factor)<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;false&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } },
-    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;true&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 1 } },
-    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Boolean&quot; },
-      &quot;value&quot;: TypeExpression { &quot;value&quot;: BinaryExpression { &quot;left&quot;: Reference { &quot;name&quot;: &quot;true&quot; },
-          &quot;operator&quot;: &quot;|&quot;,
-          &quot;right&quot;: Reference { &quot;name&quot;: &quot;false&quot; } } }
-    },
-    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;@metaProperty&quot; },
-      &quot;value&quot;: TypeExpression { &quot;value&quot;: Reference { &quot;name&quot;: &quot;true&quot; } } },
-    ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Vector&quot; },
-      &quot;declarations&quot;: [
-        Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; }   },
-        Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; }   },
-        Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;z&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } },
-        Variable {
-          &quot;meta&quot;: [
-            Property { &quot;key&quot;: Reference { &quot;name&quot;: &quot;@metaProperty&quot; }   }
-          ],
-          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;translate&quot; },
-          &quot;value&quot;: FunctionExpression {
-            &quot;parameters&quot;: [
-              Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } },
-              Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } }
-            ],
-            &quot;body&quot;: Block {
-              &quot;body&quot;: [
-                Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;Vector&quot; },
-                  &quot;arguments&quot;: [
-                    Argument {
-                      &quot;value&quot;: BinaryExpression { &quot;left&quot;: MemberExpression { &quot;object&quot;: { &quot;&quot;: &quot;ThisExpression&quot; },
-                          &quot;property&quot;: Identifier { &quot;name&quot;: &quot;x&quot; }   },
-                        &quot;operator&quot;: &quot;+&quot;,
-                        &quot;right&quot;: Reference { &quot;name&quot;: &quot;x&quot; } } },
-                    Argument {
-                      &quot;value&quot;: BinaryExpression { &quot;left&quot;: MemberExpression { &quot;object&quot;: { &quot;&quot;: &quot;ThisExpression&quot; },
-                          &quot;property&quot;: Identifier { &quot;name&quot;: &quot;y&quot; }   },
-                        &quot;operator&quot;: &quot;+&quot;,
-                        &quot;right&quot;: Reference { &quot;name&quot;: &quot;y&quot; } } }
-                  ]
-                }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    Call { &quot;arguments&quot;: [ Reference { &quot;name&quot;: &quot;Boolean&quot; },
-        Reference { &quot;name&quot;: &quot;Vector&quot; },
-        Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;value&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 10 } }
-      ]
-    }
-  ],
-  &quot;name&quot;: &quot;AASample&quot;
-}</pre></div></div></p>
-                </td>
-            
-                <td>
-                    <header><span>semanticChecks</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-unchanged" data-key="0"><div class="jsondiffpatch-property-name">0</div><div class="jsondiffpatch-value"><pre>Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;false&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="1"><div class="jsondiffpatch-property-name">1</div><div class="jsondiffpatch-value"><pre>Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;true&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 1 } }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="2"><div class="jsondiffpatch-property-name">2</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;Boolean&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;TypeExpression&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;BinaryExpression&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="left"><div class="jsondiffpatch-property-name">left</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Reference&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;BinaryExpression&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="left"><div class="jsondiffpatch-property-name">left</div><div class="jsondiffpatch-value"><pre>{ &quot;&quot;: &quot;DotExpression&quot; }</pre></div></li><li class="jsondiffpatch-deleted" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;true&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="operator"><div class="jsondiffpatch-property-name">operator</div><div class="jsondiffpatch-value"><pre>&quot;==&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="right"><div class="jsondiffpatch-property-name">right</div><div class="jsondiffpatch-value"><pre>Reference { &quot;name&quot;: &quot;true&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="operator"><div class="jsondiffpatch-property-name">operator</div><div class="jsondiffpatch-value"><pre>&quot;|&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="right"><div class="jsondiffpatch-property-name">right</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Reference&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;BinaryExpression&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="left"><div class="jsondiffpatch-property-name">left</div><div class="jsondiffpatch-value"><pre>{ &quot;&quot;: &quot;DotExpression&quot; }</pre></div></li><li class="jsondiffpatch-deleted" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;false&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="operator"><div class="jsondiffpatch-property-name">operator</div><div class="jsondiffpatch-value"><pre>&quot;==&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="right"><div class="jsondiffpatch-property-name">right</div><div class="jsondiffpatch-value"><pre>Reference { &quot;name&quot;: &quot;false&quot; }</pre></div></li></ul></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="3"><div class="jsondiffpatch-property-name">3</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;@metaProperty&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;TypeExpression&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;true&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>Reference { &quot;name&quot;: &quot;true&quot; }</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="4"><div class="jsondiffpatch-property-name">4</div><div class="jsondiffpatch-value"><pre>ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Vector&quot; },
-  &quot;declarations&quot;: [
-    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; }   },
-    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; }   },
-    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;z&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } },
-    Variable {
-      &quot;meta&quot;: [
-        Property { &quot;key&quot;: Reference { &quot;name&quot;: &quot;@metaProperty&quot; }   }
-      ],
-      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;translate&quot; },
-      &quot;value&quot;: FunctionExpression {
-        &quot;parameters&quot;: [
-          Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } },
-          Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } }
-        ],
-        &quot;body&quot;: Block {
-          &quot;body&quot;: [
-            Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;Vector&quot; },
-              &quot;arguments&quot;: [
-                Argument {
-                  &quot;value&quot;: BinaryExpression { &quot;left&quot;: MemberExpression { &quot;object&quot;: { &quot;&quot;: &quot;ThisExpression&quot; },
-                      &quot;property&quot;: Identifier { &quot;name&quot;: &quot;x&quot; }   },
-                    &quot;operator&quot;: &quot;+&quot;,
-                    &quot;right&quot;: Reference { &quot;name&quot;: &quot;x&quot; } } },
-                Argument {
-                  &quot;value&quot;: BinaryExpression { &quot;left&quot;: MemberExpression { &quot;object&quot;: { &quot;&quot;: &quot;ThisExpression&quot; },
-                      &quot;property&quot;: Identifier { &quot;name&quot;: &quot;y&quot; }   },
-                    &quot;operator&quot;: &quot;+&quot;,
-                    &quot;right&quot;: Reference { &quot;name&quot;: &quot;y&quot; } } }
-              ]
-            }
-          ]
-        }
-      }
-    }
-  ]
-}</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="5"><div class="jsondiffpatch-property-name">5</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Call&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="arguments"><div class="jsondiffpatch-property-name">arguments</div><div class="jsondiffpatch-value"><pre>[
-  Reference { &quot;name&quot;: &quot;Boolean&quot; }, Reference { &quot;name&quot;: &quot;Vector&quot; },
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;value&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 10 } }
-]</pre></div></li><li class="jsondiffpatch-added" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;export&quot; }</pre></div></li><li class="jsondiffpatch-added" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>Call { &quot;arguments&quot;: [ Reference { &quot;name&quot;: &quot;Boolean&quot; },
-    Reference { &quot;name&quot;: &quot;Vector&quot; },
-    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;value&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 10 } }
-  ]
-}</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;AASample&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;false&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } },
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;true&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 1 } },
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Boolean&quot; },
-    &quot;value&quot;: TypeExpression {
-      &quot;value&quot;: BinaryExpression { &quot;left&quot;: BinaryExpression { &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
-          &quot;operator&quot;: &quot;==&quot;,
-          &quot;right&quot;: Reference { &quot;name&quot;: &quot;true&quot; }   },
-        &quot;operator&quot;: &quot;|&quot;,
-        &quot;right&quot;: BinaryExpression { &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
-          &quot;operator&quot;: &quot;==&quot;,
-          &quot;right&quot;: Reference { &quot;name&quot;: &quot;false&quot; } } }
-    }
-  },
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;@metaProperty&quot; }, &quot;value&quot;: Reference { &quot;name&quot;: &quot;true&quot; } },
-  ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Vector&quot; },
-    &quot;declarations&quot;: [
-      Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; }   },
-      Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; }   },
-      Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;z&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } },
-      Variable {
-        &quot;meta&quot;: [
-          Property { &quot;key&quot;: Reference { &quot;name&quot;: &quot;@metaProperty&quot; }   }
-        ],
-        &quot;id&quot;: Declarator { &quot;name&quot;: &quot;translate&quot; },
-        &quot;value&quot;: FunctionExpression {
-          &quot;parameters&quot;: [
-            Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } },
-            Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } }
-          ],
-          &quot;body&quot;: Block {
-            &quot;body&quot;: [
-              Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;Vector&quot; },
-                &quot;arguments&quot;: [
-                  Argument {
-                    &quot;value&quot;: BinaryExpression { &quot;left&quot;: MemberExpression { &quot;object&quot;: { &quot;&quot;: &quot;ThisExpression&quot; },
-                        &quot;property&quot;: Identifier { &quot;name&quot;: &quot;x&quot; }   },
-                      &quot;operator&quot;: &quot;+&quot;,
-                      &quot;right&quot;: Reference { &quot;name&quot;: &quot;x&quot; } } },
-                  Argument {
-                    &quot;value&quot;: BinaryExpression { &quot;left&quot;: MemberExpression { &quot;object&quot;: { &quot;&quot;: &quot;ThisExpression&quot; },
-                        &quot;property&quot;: Identifier { &quot;name&quot;: &quot;y&quot; }   },
-                      &quot;operator&quot;: &quot;+&quot;,
-                      &quot;right&quot;: Reference { &quot;name&quot;: &quot;y&quot; } } }
-                ]
-              }
-            ]
-          }
-        }
-      }
-    ]
-  },
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;export&quot; },
-    &quot;value&quot;: Call { &quot;arguments&quot;: [ Reference { &quot;name&quot;: &quot;Boolean&quot; },
-        Reference { &quot;name&quot;: &quot;Vector&quot; },
-        Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;value&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 10 } }
-      ]
-    }
-  }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;AASample&quot;</pre></div></li></ul></div></p>
-                </td>
-            </tr><tr class="channel">
-            <td>
-                <header><span>File</span></header>
-                <span class="content">
                     Number
                 </span>
             </td>
@@ -808,6 +570,253 @@ min(a, b) ->
                     <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
   Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;export&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 10 } }
 ]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;sample.constant&quot;</pre></div></li></ul></div></p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    AASample
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+false = 0
+true = 1
+Boolean = true | false
+@metaProperty = true
+
+class Vector
+    x: Number
+    y: Number
+    z: Number = 0
+    [@metaProperty]
+    translate = (x: Number = 0, y: Number = 0) ->
+        Vector(this.x + x, this.y + y)
+
+()
+    Boolean
+    Vector
+    value = 10
+
+//  an intermediate compiled module has a single export
+//  which is just it's final ExpressionStatement
+
+// Foo =
+//     &
+//         < 5
+//         < 4
+// Foo
+
+// double = () ->
+//     if a
+//         12
+//         13
+//     else
+//         14
+
+// AASample = . != 0
+
+// {}
+//     value: min(a, b)
+//     foo() -> 2
+
+// foo = (a: 1, optional: 10) -> 12
+
+// [Meta]: true
+// class Vector2<T> extends Foo
+//     // variables with a Type are instance variable
+//     x: T
+//     y: T
+//     // variables without a Type are static constants
+//     add = (a, b) -> a + b
+//     // variables that reference instance variables are calculated instance properties
+//     length = (x * x + y * y) ** 0.5
+//     // functions that reference this take an implicit first argument of class type
+//     scale = (factor) -> Vector2(this.x * factor, this.y * factor)
+</p>
+                </td>
+            
+                <td>
+                    <header><span>Parser</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>false = 0<br>true = 1<br>Boolean = true | false<br>@metaProperty = true<br><br>class Vector<br>    x: Number<br>    y: Number<br>    z: Number = 0<br>    [@metaProperty]<br>    translate = (x: Number = 0, y: Number = 0) -&gt;<br>        Vector(this.x + x, this.y + y)<br><br>()<br>    Boolean<br>    Vector<br>    value = 10<br><br>//  an intermediate compiled module has a single export<br>//  which is just it&apos;s final ExpressionStatement<br><br>// Foo =<br>//     &amp;<br>//         &lt; 5<br>//         &lt; 4<br>// Foo<br><br>// double = () -&gt;<br>//     if a<br>//         12<br>//         13<br>//     else<br>//         14<br><br>// AASample = . != 0<br><br>// {}<br>//     value: min(a, b)<br>//     foo() -&gt; 2<br><br>// foo = (a: 1, optional: 10) -&gt; 12<br><br>// [Meta]: true<br>// class Vector2&lt;T&gt; extends Foo<br>//     // variables with a Type are instance variable<br>//     x: T<br>//     y: T<br>//     // variables without a Type are static constants<br>//     add = (a, b) -&gt; a + b<br>//     // variables that reference instance variables are calculated instance properties<br>//     length = (x * x + y * y) ** 0.5<br>//     // functions that reference this take an implicit first argument of class type<br>//     scale = (factor) -&gt; Vector2(this.x * factor, this.y * factor)<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
+  &quot;body&quot;: [
+    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;false&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } },
+    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;true&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 1 } },
+    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Boolean&quot; },
+      &quot;value&quot;: TypeExpression { &quot;value&quot;: BinaryExpression { &quot;left&quot;: Reference { &quot;name&quot;: &quot;true&quot; },
+          &quot;operator&quot;: &quot;|&quot;,
+          &quot;right&quot;: Reference { &quot;name&quot;: &quot;false&quot; } } }
+    },
+    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;@metaProperty&quot; },
+      &quot;value&quot;: TypeExpression { &quot;value&quot;: Reference { &quot;name&quot;: &quot;true&quot; } } },
+    ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Vector&quot; },
+      &quot;declarations&quot;: [
+        Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; } },
+        Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; } },
+        Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;z&quot; },
+          &quot;value&quot;: Literal { &quot;value&quot;: 0 }   },
+        Variable {
+          &quot;meta&quot;: [
+            Property { &quot;key&quot;: Reference { &quot;name&quot;: &quot;@metaProperty&quot; }   }
+          ],
+          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;translate&quot; },
+          &quot;value&quot;: FunctionExpression {
+            &quot;parameters&quot;: [
+              Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; },
+                &quot;value&quot;: Literal { &quot;value&quot;: 0 }   },
+              Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; },
+                &quot;value&quot;: Literal { &quot;value&quot;: 0 }   }
+            ],
+            &quot;body&quot;: Block {
+              &quot;body&quot;: [
+                Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;Vector&quot; },
+                  &quot;arguments&quot;: [
+                    Argument {
+                      &quot;value&quot;: BinaryExpression { &quot;left&quot;: MemberExpression { &quot;object&quot;: { &quot;&quot;: &quot;ThisExpression&quot; },
+                          &quot;property&quot;: Identifier { &quot;name&quot;: &quot;x&quot; }   },
+                        &quot;operator&quot;: &quot;+&quot;,
+                        &quot;right&quot;: Reference { &quot;name&quot;: &quot;x&quot; } } },
+                    Argument {
+                      &quot;value&quot;: BinaryExpression { &quot;left&quot;: MemberExpression { &quot;object&quot;: { &quot;&quot;: &quot;ThisExpression&quot; },
+                          &quot;property&quot;: Identifier { &quot;name&quot;: &quot;y&quot; }   },
+                        &quot;operator&quot;: &quot;+&quot;,
+                        &quot;right&quot;: Reference { &quot;name&quot;: &quot;y&quot; } } }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    Call { &quot;arguments&quot;: [ Reference { &quot;name&quot;: &quot;Boolean&quot; },
+        Reference { &quot;name&quot;: &quot;Vector&quot; },
+        Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;value&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 10 } }
+      ]
+    }
+  ],
+  &quot;name&quot;: &quot;AASample&quot;
+}</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>semanticChecks</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-unchanged" data-key="0"><div class="jsondiffpatch-property-name">0</div><div class="jsondiffpatch-value"><pre>Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;false&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="1"><div class="jsondiffpatch-property-name">1</div><div class="jsondiffpatch-value"><pre>Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;true&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 1 } }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="2"><div class="jsondiffpatch-property-name">2</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;Boolean&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;TypeExpression&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;BinaryExpression&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="left"><div class="jsondiffpatch-property-name">left</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Reference&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;BinaryExpression&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="left"><div class="jsondiffpatch-property-name">left</div><div class="jsondiffpatch-value"><pre>{ &quot;&quot;: &quot;DotExpression&quot; }</pre></div></li><li class="jsondiffpatch-deleted" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;true&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="operator"><div class="jsondiffpatch-property-name">operator</div><div class="jsondiffpatch-value"><pre>&quot;==&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="right"><div class="jsondiffpatch-property-name">right</div><div class="jsondiffpatch-value"><pre>Reference { &quot;name&quot;: &quot;true&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="operator"><div class="jsondiffpatch-property-name">operator</div><div class="jsondiffpatch-value"><pre>&quot;|&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="right"><div class="jsondiffpatch-property-name">right</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Reference&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;BinaryExpression&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="left"><div class="jsondiffpatch-property-name">left</div><div class="jsondiffpatch-value"><pre>{ &quot;&quot;: &quot;DotExpression&quot; }</pre></div></li><li class="jsondiffpatch-deleted" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;false&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="operator"><div class="jsondiffpatch-property-name">operator</div><div class="jsondiffpatch-value"><pre>&quot;==&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="right"><div class="jsondiffpatch-property-name">right</div><div class="jsondiffpatch-value"><pre>Reference { &quot;name&quot;: &quot;false&quot; }</pre></div></li></ul></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="3"><div class="jsondiffpatch-property-name">3</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;@metaProperty&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;TypeExpression&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;true&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>Reference { &quot;name&quot;: &quot;true&quot; }</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="4"><div class="jsondiffpatch-property-name">4</div><div class="jsondiffpatch-value"><pre>ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Vector&quot; },
+  &quot;declarations&quot;: [
+    Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; } },
+    Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; } },
+    Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;z&quot; },
+      &quot;value&quot;: Literal { &quot;value&quot;: 0 }   },
+    Variable {
+      &quot;meta&quot;: [
+        Property { &quot;key&quot;: Reference { &quot;name&quot;: &quot;@metaProperty&quot; }   }
+      ],
+      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;translate&quot; },
+      &quot;value&quot;: FunctionExpression {
+        &quot;parameters&quot;: [
+          Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; },
+            &quot;value&quot;: Literal { &quot;value&quot;: 0 }   },
+          Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; },
+            &quot;value&quot;: Literal { &quot;value&quot;: 0 }   }
+        ],
+        &quot;body&quot;: Block {
+          &quot;body&quot;: [
+            Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;Vector&quot; },
+              &quot;arguments&quot;: [
+                Argument {
+                  &quot;value&quot;: BinaryExpression { &quot;left&quot;: MemberExpression { &quot;object&quot;: { &quot;&quot;: &quot;ThisExpression&quot; },
+                      &quot;property&quot;: Identifier { &quot;name&quot;: &quot;x&quot; }   },
+                    &quot;operator&quot;: &quot;+&quot;,
+                    &quot;right&quot;: Reference { &quot;name&quot;: &quot;x&quot; } } },
+                Argument {
+                  &quot;value&quot;: BinaryExpression { &quot;left&quot;: MemberExpression { &quot;object&quot;: { &quot;&quot;: &quot;ThisExpression&quot; },
+                      &quot;property&quot;: Identifier { &quot;name&quot;: &quot;y&quot; }   },
+                    &quot;operator&quot;: &quot;+&quot;,
+                    &quot;right&quot;: Reference { &quot;name&quot;: &quot;y&quot; } } }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="5"><div class="jsondiffpatch-property-name">5</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Call&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="arguments"><div class="jsondiffpatch-property-name">arguments</div><div class="jsondiffpatch-value"><pre>[
+  Reference { &quot;name&quot;: &quot;Boolean&quot; }, Reference { &quot;name&quot;: &quot;Vector&quot; },
+  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;value&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 10 } }
+]</pre></div></li><li class="jsondiffpatch-added" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;export&quot; }</pre></div></li><li class="jsondiffpatch-added" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>Call { &quot;arguments&quot;: [ Reference { &quot;name&quot;: &quot;Boolean&quot; },
+    Reference { &quot;name&quot;: &quot;Vector&quot; },
+    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;value&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 10 } }
+  ]
+}</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;AASample&quot;</pre></div></li></ul></div></p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
+  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;false&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 0 } },
+  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;true&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 1 } },
+  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Boolean&quot; },
+    &quot;value&quot;: TypeExpression {
+      &quot;value&quot;: BinaryExpression { &quot;left&quot;: BinaryExpression { &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
+          &quot;operator&quot;: &quot;==&quot;,
+          &quot;right&quot;: Reference { &quot;name&quot;: &quot;true&quot; }   },
+        &quot;operator&quot;: &quot;|&quot;,
+        &quot;right&quot;: BinaryExpression { &quot;left&quot;: { &quot;&quot;: &quot;DotExpression&quot; },
+          &quot;operator&quot;: &quot;==&quot;,
+          &quot;right&quot;: Reference { &quot;name&quot;: &quot;false&quot; } } }
+    }
+  },
+  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;@metaProperty&quot; }, &quot;value&quot;: Reference { &quot;name&quot;: &quot;true&quot; } },
+  ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Vector&quot; },
+    &quot;declarations&quot;: [
+      Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; } },
+      Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; } },
+      Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;z&quot; },
+        &quot;value&quot;: Literal { &quot;value&quot;: 0 }   },
+      Variable {
+        &quot;meta&quot;: [
+          Property { &quot;key&quot;: Reference { &quot;name&quot;: &quot;@metaProperty&quot; }   }
+        ],
+        &quot;id&quot;: Declarator { &quot;name&quot;: &quot;translate&quot; },
+        &quot;value&quot;: FunctionExpression {
+          &quot;parameters&quot;: [
+            Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; },
+              &quot;value&quot;: Literal { &quot;value&quot;: 0 }   },
+            Variable { &quot;type&quot;: Reference { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; },
+              &quot;value&quot;: Literal { &quot;value&quot;: 0 }   }
+          ],
+          &quot;body&quot;: Block {
+            &quot;body&quot;: [
+              Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;Vector&quot; },
+                &quot;arguments&quot;: [
+                  Argument {
+                    &quot;value&quot;: BinaryExpression { &quot;left&quot;: MemberExpression { &quot;object&quot;: { &quot;&quot;: &quot;ThisExpression&quot; },
+                        &quot;property&quot;: Identifier { &quot;name&quot;: &quot;x&quot; }   },
+                      &quot;operator&quot;: &quot;+&quot;,
+                      &quot;right&quot;: Reference { &quot;name&quot;: &quot;x&quot; } } },
+                  Argument {
+                    &quot;value&quot;: BinaryExpression { &quot;left&quot;: MemberExpression { &quot;object&quot;: { &quot;&quot;: &quot;ThisExpression&quot; },
+                        &quot;property&quot;: Identifier { &quot;name&quot;: &quot;y&quot; }   },
+                      &quot;operator&quot;: &quot;+&quot;,
+                      &quot;right&quot;: Reference { &quot;name&quot;: &quot;y&quot; } } }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;export&quot; },
+    &quot;value&quot;: Call { &quot;arguments&quot;: [ Reference { &quot;name&quot;: &quot;Boolean&quot; },
+        Reference { &quot;name&quot;: &quot;Vector&quot; },
+        Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;value&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: 10 } }
+      ]
+    }
+  }
+]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;AASample&quot;</pre></div></li></ul></div></p>
                 </td>
             </tr>
         </div>

@@ -4,6 +4,7 @@ This file was generated from ion source. Do not edit.
 import * as _Object from './ion/Object';
 import * as Declaration from './Declaration';
 import * as Statement from './Statement';
+import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
@@ -12,8 +13,9 @@ import * as Boolean from './ion/Boolean';
 import * as _Array from './ion/Array';
 import * as Property from './Property';
 import * as Class from './ion/Class';
-export class EnumDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , Node.Node {
+export class EnumDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
+    readonly type: Expression.Expression | Null.Null;
     readonly id: Declarator.Declarator;
     readonly flags: Boolean.Boolean;
     readonly properties: _Array.Array<Property.Property>;
@@ -23,16 +25,20 @@ export class EnumDeclaration implements _Object.Object , Declaration.Declaration
         'ion_Object',
         'Declaration',
         'Statement',
+        'Expression',
         'Node'
     ]);
-    constructor({location = null, id, flags = false, properties}: {
+    constructor({location = null, type = null, id, flags = false, properties}: {
         location?: Location.Location | Null.Null,
+        type?: Expression.Expression | Null.Null,
         id: Declarator.Declarator,
         flags?: Boolean.Boolean,
         properties: _Array.Array<Property.Property>
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
+        if (!(Expression.isExpression(type) || Null.isNull(type)))
+            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!Declarator.isDeclarator(id))
             throw new Error('id is not a Declarator: ' + Class.toString(id));
         if (!Boolean.isBoolean(flags))
@@ -40,6 +46,7 @@ export class EnumDeclaration implements _Object.Object , Declaration.Declaration
         if (!_Array.isArray(properties))
             throw new Error('properties is not a Array: ' + Class.toString(properties));
         this.location = location;
+        this.type = type;
         this.id = id;
         this.flags = flags;
         this.properties = properties;
@@ -47,6 +54,7 @@ export class EnumDeclaration implements _Object.Object , Declaration.Declaration
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
+        type?: Expression.Expression | Null.Null,
         id?: Declarator.Declarator,
         flags?: Boolean.Boolean,
         properties?: _Array.Array<Property.Property>

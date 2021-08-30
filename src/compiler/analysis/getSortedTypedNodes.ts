@@ -1,7 +1,7 @@
 import { traverse, skip } from "@glas/traverse";
 import { ScopeMaps } from "../createScopeMaps";
 import toposort from "../toposort";
-import { Node, Typed, Property, FunctionExpression, Return, Call, BinaryExpression, Expression } from "../ast";
+import { Node, Property, FunctionExpression, Return, Call, BinaryExpression, Expression } from "../ast";
 import * as ast from "../ast"
 import { SemanticError } from "../common";
 
@@ -48,11 +48,11 @@ function getNonRecursiveReturnStatements(fn: FunctionExpression): Return[] {
 //     return [containingIf.test, containingVarDeclarator]
 // }
 
-export function getPredecessors(node, scopeMap: ScopeMaps, ancestorMap: Map<Node, Node>): Iterable<Typed> {
+export function getPredecessors(node, scopeMap: ScopeMaps, ancestorMap: Map<Node, Node>): Iterable<Expression> {
     return predecessors[node.constructor.name](node, scopeMap, ancestorMap);
 }
 
-const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>, scopeMap: ScopeMaps, ancestorMap: Map<Node, Node>) => Iterable<Typed | Typed[]>} = {
+const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>, scopeMap: ScopeMaps, ancestorMap: Map<Node, Node>) => Iterable<Expression | Expression[]>} = {
     // *ConditionalDeclaration(node, scopeMap, ancestorMap) {
     //     // the conditional declaration will add it's own local conditional assertion to the variable type
     //     // from the containing scope, so we are dependent on that variable being resolved first.
@@ -89,7 +89,7 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     },
     *Declarator(node, scopeMap, ancestorMap) {
         let parent = ancestorMap.get(node)
-        if (Typed.is(parent)) {
+        if (Expression.is(parent)) {
             yield parent
         }
     },
@@ -102,7 +102,7 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     *ObjectExpression(node) {
         for (let property of node.body) {
             if (Property.is(property)) {
-                if (Typed.is(property.key)) {
+                if (Expression.is(property.key)) {
                     yield property.key
                 }
                 if (Expression.is(property.value)) {
@@ -193,10 +193,10 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     },
 }
 
-export default function getSortedTypedNodes(root, scopeMap: ScopeMaps, ancestorsMap: Map<Node, Node>) {
-    let sentinel = {} as Typed;
-    let edges: [Typed, Typed][] = [];
-    function push(from: Typed, to: Typed) {
+export default function getSortedExpressionNodes(root, scopeMap: ScopeMaps, ancestorsMap: Map<Node, Node>) {
+    let sentinel = {} as Expression;
+    let edges: [Expression, Expression][] = [];
+    function push(from: Expression, to: Expression) {
         if (from == null || to == null) {
             throw new Error("Edge nodes may not be null")
         }
@@ -206,10 +206,10 @@ export default function getSortedTypedNodes(root, scopeMap: ScopeMaps, ancestors
         }
         edges.push([from, to])
     }
-    let nodes = new Array<Typed>()
+    let nodes = new Array<Expression>()
     traverse(root, {
         leave(node) {
-            if (Typed.is(node)) {
+            if (Expression.is(node)) {
                 nodes.push(node)
             }
         }
@@ -233,8 +233,8 @@ export default function getSortedTypedNodes(root, scopeMap: ScopeMaps, ancestors
             push(node.left, node.right)
         }
         let count = 0;
-        if (Typed.is(node)) {
-            let func = predecessors[node.constructor.name] as (node: Typed, scopeMap: ScopeMaps, ancestorsMap: Map<Node, Node>) => Iterable<Typed | Typed[]>;
+        if (Expression.is(node)) {
+            let func = predecessors[node.constructor.name] as (node: Expression, scopeMap: ScopeMaps, ancestorsMap: Map<Node, Node>) => Iterable<Expression | Expression[]>;
             if (func) {
                 for (let pred of func(node, scopeMap, ancestorsMap)) {
                     count++;

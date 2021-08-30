@@ -17,8 +17,8 @@ import * as Class from './ion/Class';
 export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaration.Declaration , Expression.Expression , Node.Node , Statement.Statement {
     readonly location: Location.Location | Null.Null;
     readonly meta: _Array.Array<Property.Property> | Null.Null;
-    readonly id: Declarator.Declarator;
     readonly type: Expression.Expression | Null.Null;
+    readonly id: Declarator.Declarator;
     readonly baseClasses: _Array.Array<Expression.Expression>;
     readonly declarations: _Array.Array<Variable.Variable>;
     readonly typeParameters: _Array.Array<Variable.Variable>;
@@ -32,11 +32,11 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         'Node',
         'Statement'
     ]);
-    constructor({location = null, meta = null, id, type = null, baseClasses = [], declarations, typeParameters = []}: {
+    constructor({location = null, meta = null, type = null, id, baseClasses = [], declarations, typeParameters = []}: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
-        id: Declarator.Declarator,
         type?: Expression.Expression | Null.Null,
+        id: Declarator.Declarator,
         baseClasses?: _Array.Array<Expression.Expression>,
         declarations: _Array.Array<Variable.Variable>,
         typeParameters?: _Array.Array<Variable.Variable>
@@ -45,10 +45,10 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(_Array.isArray(meta) || Null.isNull(meta)))
             throw new Error('meta is not a Array | Null: ' + Class.toString(meta));
-        if (!Declarator.isDeclarator(id))
-            throw new Error('id is not a Declarator: ' + Class.toString(id));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Declarator.isDeclarator(id))
+            throw new Error('id is not a Declarator: ' + Class.toString(id));
         if (!_Array.isArray(baseClasses))
             throw new Error('baseClasses is not a Array: ' + Class.toString(baseClasses));
         if (!_Array.isArray(declarations))
@@ -57,8 +57,8 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
             throw new Error('typeParameters is not a Array: ' + Class.toString(typeParameters));
         this.location = location;
         this.meta = meta;
-        this.id = id;
         this.type = type;
+        this.id = id;
         this.baseClasses = baseClasses;
         this.declarations = declarations;
         this.typeParameters = typeParameters;
@@ -67,8 +67,8 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
     patch(properties: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
-        id?: Declarator.Declarator,
         type?: Expression.Expression | Null.Null,
+        id?: Declarator.Declarator,
         baseClasses?: _Array.Array<Expression.Expression>,
         declarations?: _Array.Array<Variable.Variable>,
         typeParameters?: _Array.Array<Variable.Variable>
