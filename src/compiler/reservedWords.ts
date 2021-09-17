@@ -1,4 +1,6 @@
 
+export const _this = "this"
+
 export default new Set([
     "abstract", //  ionscript
     "break",
@@ -36,7 +38,7 @@ export default new Set([
     "interface",// ionscript
     "implements", // ionscript
     "static",   //  ionscript
-    "this",
+    _this,
     "throw",
     "try",
     "type",     //  ionscript

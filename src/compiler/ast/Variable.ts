@@ -12,6 +12,7 @@ import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
 import * as Property from './Property';
 import * as Declarator from './Declarator';
+import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
 export class Variable implements _Object.Object , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Statement.Statement {
     readonly location: Location.Location | Null.Null;
@@ -19,6 +20,12 @@ export class Variable implements _Object.Object , Meta.Meta , Expression.Express
     readonly type: Expression.Expression | Null.Null;
     readonly id: Declarator.Declarator;
     readonly value: Expression.Expression | Null.Null;
+    readonly isMutable: Boolean.Boolean;
+    readonly isType: Boolean.Boolean;
+    readonly isMeta: Boolean.Boolean;
+    readonly isInstance: Boolean.Boolean;
+    readonly isStatic: Boolean.Boolean;
+    readonly isParameter: Boolean.Boolean;
     static readonly id = 'Variable';
     static readonly implements = new Set([
         'Variable',
@@ -29,12 +36,18 @@ export class Variable implements _Object.Object , Meta.Meta , Expression.Express
         'Node',
         'Statement'
     ]);
-    constructor({location = null, meta = null, type = null, id, value = null}: {
+    constructor({location = null, meta = null, type = null, id, value = null, isMutable = false, isType = false, isMeta = false, isInstance = false, isStatic = false, isParameter = false}: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
         id: Declarator.Declarator,
-        value?: Expression.Expression | Null.Null
+        value?: Expression.Expression | Null.Null,
+        isMutable?: Boolean.Boolean,
+        isType?: Boolean.Boolean,
+        isMeta?: Boolean.Boolean,
+        isInstance?: Boolean.Boolean,
+        isStatic?: Boolean.Boolean,
+        isParameter?: Boolean.Boolean
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
@@ -46,11 +59,29 @@ export class Variable implements _Object.Object , Meta.Meta , Expression.Express
             throw new Error('id is not a Declarator: ' + Class.toString(id));
         if (!(Expression.isExpression(value) || Null.isNull(value)))
             throw new Error('value is not a Expression | Null: ' + Class.toString(value));
+        if (!Boolean.isBoolean(isMutable))
+            throw new Error('isMutable is not a Boolean: ' + Class.toString(isMutable));
+        if (!Boolean.isBoolean(isType))
+            throw new Error('isType is not a Boolean: ' + Class.toString(isType));
+        if (!Boolean.isBoolean(isMeta))
+            throw new Error('isMeta is not a Boolean: ' + Class.toString(isMeta));
+        if (!Boolean.isBoolean(isInstance))
+            throw new Error('isInstance is not a Boolean: ' + Class.toString(isInstance));
+        if (!Boolean.isBoolean(isStatic))
+            throw new Error('isStatic is not a Boolean: ' + Class.toString(isStatic));
+        if (!Boolean.isBoolean(isParameter))
+            throw new Error('isParameter is not a Boolean: ' + Class.toString(isParameter));
         this.location = location;
         this.meta = meta;
         this.type = type;
         this.id = id;
         this.value = value;
+        this.isMutable = isMutable;
+        this.isType = isType;
+        this.isMeta = isMeta;
+        this.isInstance = isInstance;
+        this.isStatic = isStatic;
+        this.isParameter = isParameter;
         Object.freeze(this);
     }
     patch(properties: {
@@ -58,7 +89,13 @@ export class Variable implements _Object.Object , Meta.Meta , Expression.Express
         meta?: _Array.Array<Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
         id?: Declarator.Declarator,
-        value?: Expression.Expression | Null.Null
+        value?: Expression.Expression | Null.Null,
+        isMutable?: Boolean.Boolean,
+        isType?: Boolean.Boolean,
+        isMeta?: Boolean.Boolean,
+        isInstance?: Boolean.Boolean,
+        isStatic?: Boolean.Boolean,
+        isParameter?: Boolean.Boolean
     }) {
         return new Variable({
             ...this,

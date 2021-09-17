@@ -278,7 +278,7 @@ MetaProperties
  = (@DynamicOutlineProperty Dent)*
 
 DynamicOutlineProperty
-    = '[' _ key:InlineExpression _ ']' value:(_ ":" _ @OutlineExpression / EOL { return null })
+    = '[' _ key:InlineExpression _ ']' value:(_ "=" _ @OutlineExpression / EOL { return null })
     { return node("Property", {key, value} ) }
 
 // VariableMetaProperties
@@ -645,7 +645,7 @@ InlineNewExpression
 PrimaryExpression
     = Reference
     / Literal
-    / ThisExpression
+    // / ThisExpression
     / DotExpression
     / AnonymousCall
     / InlineNewExpression
@@ -660,8 +660,8 @@ AnonymousCall
     / "(" _ arguments:InlineExpressionList _ ")"
     { return arguments.length == 0 ? arguments[0] : node('Call', { arguments })}
 
-ThisExpression
-    = ThisToken { return node('ThisExpression') }
+// ThisExpression
+//     = ThisToken { return node('ThisExpression') }
 
 DotExpression
     = "." property:Identifier
@@ -1013,7 +1013,7 @@ Declarator
 //  Tokens and Keywords
 ////////////////////////////////////////////////////////////////////////////////
 
-ThisToken       = @"this"       !IdPart
+// ThisToken       = @"this"       !IdPart
 NullToken       = @"null"       !IdPart
 TrueToken       = @"false"      !IdPart
 FalseToken      = @"true"       !IdPart
@@ -1072,8 +1072,8 @@ YieldToken      = @"yield"      !IdPart
 DoToken         = @"do"         !IdPart
 
 Keyword
-    = ThisToken
-    / NullToken
+    // = ThisToken
+    = NullToken
     // / TrueToken
     // / FalseToken
     / AndToken

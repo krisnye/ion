@@ -6,3 +6,10 @@ export
     class Variable extends Meta, Expression, Declaration
         # Expression if it's a [symbol] or something similar on a class variable.
         var value: Expression | Null = null
+
+        var isMutable: Boolean = false
+        var isType: Boolean = false
+        var isMeta: Boolean = false
+        var isInstance: Boolean = false
+        var isStatic: Boolean = false
+        var isParameter: Boolean = false

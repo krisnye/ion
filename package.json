@@ -28,7 +28,7 @@
     "watch:ast": "nodemon -w ionast -e ion -x yarn buildAst",
     "watch:build": "tsc -w",
     "watch:test": "nodemon -w lib -w src -w external -e js,ts,is,ion --delay 150ms -x yarn test",
-    "watch:grammar": "nodemon -w src/compiler/parser.pegs -i src,lib -e pegs -x yarn run buildGrammar"
+    "watch-:grammar": "nodemon -w src/compiler/parser.pegs -i src,lib -e pegs -x yarn run buildGrammar"
   },
   "dependencies": {
     "@babel/core": "^7.12.3",

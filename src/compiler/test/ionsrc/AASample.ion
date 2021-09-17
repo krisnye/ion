@@ -1,54 +1,38 @@
 
+// constant
 false = 0
 true = 1
+//  type
 Boolean = true | false
+//  meta
 @metaProperty = true
 
+//  class
 class Vector
+    //  instance
     x: Number
     y: Number
-    z: Number = 0
     [@metaProperty]
-    translate = (x: Number = 0, y: Number = 0) ->
-        Vector(this.x + x, this.y + y)
-
+    z: Number = 0
+    //  meta property
+    [@metaProperty] = true
+    //  static function
+    translate =
+        ()
+            //  parameter
+            x: Number = 0
+            [@metaProperty] = false
+            y: Number = 0
+        ->
+            Vector(this.x + x, this.y + y)
+    //  static function
+    length = () -> (x * x + y * y) ** 0.5
+//  final exported value
 ()
     Boolean
     Vector
-    value = 10
-
-//  an intermediate compiled module has a single export
-//  which is just it's final ExpressionStatement
-
-// Foo =
-//     &
-//         < 5
-//         < 4
-// Foo
-
-// double = () ->
-//     if a
-//         12
-//         13
-//     else
-//         14
-
-// AASample = . != 0
-
-// {}
-//     value: min(a, b)
-//     foo() -> 2
-
-// foo = (a: 1, optional: 10) -> 12
-
-// [Meta]: true
-// class Vector2<T> extends Foo
-//     // variables with a Type are instance variable
-//     x: T
-//     y: T
-//     // variables without a Type are static constants
-//     add = (a, b) -> a + b
-//     // variables that reference instance variables are calculated instance properties
-//     length = (x * x + y * y) ** 0.5
-//     // functions that reference this take an implicit first argument of class type
-//     scale = (factor) -> Vector2(this.x * factor, this.y * factor)
+    constant = 10
+    BetweenTwoAndFive =
+        &
+            >= 2
+            <= 5

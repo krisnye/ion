@@ -1,10 +1,11 @@
 import identity from "./identity"
-import numbering from "./numbering";
+// import instanceFunctions from "./instanceFunctions";
 import semanticChecks from "./semanticChecks";
 import Phase from "./Phase";
 
 export default [
     // numbering,
+    // instanceFunctions,
     semanticChecks,
     identity,
 ] as Phase[]

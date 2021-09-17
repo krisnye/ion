@@ -11,8 +11,12 @@ function isUpperCase(name) {
     return first === first.toUpperCase()
 }
 
+export function isMetaName(name) {
+    return name[0] === "@"
+}
+
 export function isTypeName(name) {
-    return isUpperCase(name)
+    return !isMetaName(name) && isUpperCase(name)
 }
 
 export function hasNodesOfType<T>(root, predicate: (node) => node is T) {

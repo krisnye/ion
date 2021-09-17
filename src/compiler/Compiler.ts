@@ -173,6 +173,8 @@ export default class Compiler {
         let modulesWithExternals = new Map(
             Array.from(modules.entries()).map(([name, file]) => {
                 let [newFile, externals] = getExternalReferences(file)
+                this.logger("getExternalReferences", newFile, name)
+
                 // let's make sure it's possible to resolve these externals.
                 for (let external of externals.keys()) {
                     let result = resolve(join(name, external), modules)

@@ -1,13 +1,15 @@
-import { traverse, skip, replace } from "@glas/traverse";
+import { traverse, skip, replace, Lookup } from "@glas/traverse";
 import combineExpressions from "../analysis/combineExpressions";
 import isConsequent from "../analysis/isConsequent";
 import splitExpressions from "../analysis/splitExpressions";
 import { Assignment, BinaryExpression, Call, ClassDeclaration, DotExpression, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, TypeExpression, Variable, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation, Declaration } from "../ast";
-import { hasNodesOfType, SemanticError, isTypeName } from "../common";
+import { hasNodesOfType, SemanticError, isTypeName, isMetaName } from "../common";
 import { Options } from "../Compiler"
 import createScopeMaps from "../createScopeMaps";
 import { getLast } from "../pathFunctions";
+import { _this } from "../reservedWords";
 import toCodeString from "../toCodeString";
+import { Class } from "../types";
 
 function toCheck(node: Expression, operator = "is") {
     let { location } = node
@@ -49,8 +51,9 @@ function getFinalExpressionStatements(node: Node, expressions: Set<ExpressionSta
     return expressions
 }
 
-function replaceOutlineOperations(e: Expression) {
+function replaceOutlineOperations(e: Expression, lookup: Lookup) {
     return traverse(e, {
+        lookup,
         leave(node) {
             if (OutlineOperation.is(node)) {
                 return combineExpressions(
@@ -69,19 +72,21 @@ function replaceOutlineOperations(e: Expression) {
     })
 }
 
-function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error>, root = false) {
+function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error>, lookup: Lookup, root = false) {
     let { value } = typeExpression
     if (root) {
-        value = replaceOutlineOperations(value)
+        value = replaceOutlineOperations(value, lookup)
     }
     let options = [...splitExpressions(value, "|")]
     options = traverse(options, {
+        lookup,
         enter(option, ancestors) { if (ancestors.length == 1) { return skip } },
         leave(option) {
             if (Expression.is(option)) {
                 let clauses = [...splitExpressions(option, "&")]
                 let before = clauses
                 clauses = traverse(clauses, {
+                    lookup,
                     enter(node, ancestors) { if (ancestors.length == 1) { return skip } },
                     leave(node) {
                         // check that this is a valid terminal expression.
@@ -109,7 +114,8 @@ function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error
                                                 operator: "is",
                                                 right: checkTypeExpression(
                                                     new TypeExpression({ location, value: element }),
-                                                    errors
+                                                    errors,
+                                                    lookup
                                                 )
                                             })
                                         }
@@ -148,7 +154,8 @@ function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error
                                                 operator: "is",
                                                 right: checkTypeExpression(
                                                     new TypeExpression({ location, value: property.value as Expression }),
-                                                    errors
+                                                    errors,
+                                                    lookup,
                                                 )
                                             })
                                         }
@@ -237,14 +244,16 @@ export default function semanticChecks(
 ): Module | Error[] {
     let errors = new Array<Error>()
     // we only create the scope map to check for redeclaration errors
+    let lookup = new Lookup()
     let scopes = createScopeMaps(
-        module,
-        (current, source, ancestors, previous) => {
-            // only parameters (FunctionExpression source) are allowed to redeclare variable names
-            if (previous != null && !FunctionExpression.is(ancestors[ancestors.length - 3])) {
-                console.log("....", ancestors)
-                // console.log({ current: current.location, source: source.location, previous: previous.location })
-                errors.push(SemanticError(`Cannot redeclare ${current.name}`, current))
+        module, {
+            lookup,
+            callback(current, ancestors, previous) {
+                // only parameters (FunctionExpression source) are allowed to redeclare variable names
+                if (previous != null && !FunctionExpression.is(ancestors[ancestors.length - 2])) {
+                    // console.log({ current: current.location, source: source.location, previous: previous.location })
+                    errors.push(SemanticError(`Cannot redeclare ${current.id.name}`, current))
+                }
             }
         }
     )
@@ -252,6 +261,7 @@ export default function semanticChecks(
     let last = getLast(module.name)
     let index = 0
     module = traverse(module, {
+        lookup,
         enter(node, ancestors) {
             if (Position.is(node) || TypeExpression.is(node)) {
                 return skip
@@ -259,8 +269,44 @@ export default function semanticChecks(
         },
         leave(node, ancestors) {
             if (TypeExpression.is(node)) {
-                node = checkTypeExpression(node, errors, true)
+                node = checkTypeExpression(node, errors, lookup, true)
             }
+            if (Variable.is(node)) {
+                var container = ancestors[ancestors.length - 1]
+                var ancestor = ancestors[ancestors.length - 2]
+                var parentClass = ClassDeclaration.is(ancestor) ? ancestor : null
+                if (parentClass) {
+                    node = node.patch(node.type ? { isInstance: true } : { isStatic: true })
+                }
+                if (FunctionExpression.is(ancestor)) {
+                    if (ancestor.parameters === container) {
+                        node = node.patch({ isParameter: true })
+                    }
+                }
+                if (isMetaName(node.id.name)) {
+                    node = node.patch({ isMeta: true })
+                }
+                else if (isTypeName(node.id.name)) {
+                    node = node.patch({ isType: true })
+                    // check type
+                    if (node.type != null) {
+                        errors.push(SemanticError(`Type declarations cannot have a type`, node))
+                    }
+                    if (node.value == null) {
+                        errors.push(SemanticError(`Type declarations must have a value`, node))
+                    }
+                    else if (TypeExpression.is(node.value)) {
+                        node = node.patch({
+                            value: checkTypeExpression(node.value, errors, lookup)
+                        })
+                    }
+                }
+            }
+
+            if (DotExpression.is(node)) {
+                errors.push(SemanticError(`Dot expressions are only valid within Type expressions`, node))
+            }
+
             let isRootStatement = module.body == ancestors[ancestors.length - 1]
             if (isRootStatement) {
                 let isExpression = ExpressionStatement.is(node) || Expression.is(node)
@@ -297,15 +343,8 @@ export default function semanticChecks(
 
                     if (!isExpression) {
                         errors.push(SemanticError(`Final statement must be an expression`, node))
-                        // automatically insert a final export with same name
-                        // if (isVariableWithSameNameAsModule) {
-                        // }
-                        // else {
-                        //     errors.push(SemanticError(`Final statement in module must be a class, variable with same name as module or other expression`, node))
-                        // }
                     }
                     else {
-                        // console.log(">>>>>>>>", node)
                         if (ExpressionStatement.is(node)) {
                             node = node.value
                         }
@@ -313,29 +352,46 @@ export default function semanticChecks(
                     }
                 }
             }
-            if (Variable.is(node)) {
-                if (Declarator.is(node.id)) {
-                    if (isTypeName(node.id.name)) {
-                        // check type
-                        if (node.type != null) {
-                            errors.push(SemanticError(`Type declarations cannot have a type`, node))
+            if (FunctionExpression.is(node)) {
+                let parent = lookup.getAncestor(node, 1)
+                let gparent = lookup.getAncestor(node, 3)
+                if (Variable.is(parent)) {
+                    // name the function expression for the variable.
+                    if (ClassDeclaration.is(gparent)) {
+                        // check that no 'this' parameters are explicitly declared
+                        for (let param of node.parameters) {
+                            if (param.id.name === _this) {
+                                errors.push(SemanticError(`Cannot explicitly declare 'this' parameter on a class function`, param.id))
+                            }
                         }
-                        if (node.value == null) {
-                            errors.push(SemanticError(`Type declarations must have a value`, node))
-                        }
-                        else if (TypeExpression.is(node.value)) {
-                            return node.patch({
-                                value: checkTypeExpression(node.value, errors)
+                        node = node.patch({
+                            // insert implicit 'this' parameter
+                            parameters: [new Variable({ id: new Declarator({ name: _this }), type: new Reference({ name: gparent.id.name })}), ...node.parameters],
+                            // add implicit 'this' to local references to class variables
+                            body: traverse(node.body, {
+                                lookup,
+                                leave(node) {
+                                    if (Reference.is(node)) {
+                                        // check against scope
+                                        let scope = scopes.get(node)
+                                        let declaration = lookup.getCurrent(scope[node.name])
+                                        if (Variable.is(declaration) && declaration.isInstance) {
+                                            return new MemberExpression({
+                                                object: new Reference({ name: _this }),
+                                                property: new Identifier(node)
+                                            })
+                                        }
+                                    }
+                                }
                             })
-                        }
+                        })
+                    }
+                    // rename anonymous functions to the name of their variable
+                    if (node.id == null) {
+                        node = node.patch({ id: parent.id }) as FunctionExpression
                     }
                 }
             }
-            if (DotExpression.is(node)) {
-                errors.push(SemanticError(`Dot expressions are only valid within Type expressions`, node))
-            }
-            // if (FunctionExpression.is(node)) {
-            // }
             return node
         }
     })
