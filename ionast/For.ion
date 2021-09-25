@@ -4,7 +4,7 @@ import
 
 export
     class For extends Expression
-        var left: Pattern
-        var count: Variable
+        var left: Variable
+        var count: Variable | Null
         var right: Expression
         var body: Block

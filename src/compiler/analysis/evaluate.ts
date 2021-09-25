@@ -1,38 +1,49 @@
 import Expression from "../ast/Expression";
 import Literal from "../ast/Literal";
 import * as ast from "../ast";
-import { ScopeMaps } from "../createScopeMaps";
+import EvaluateContext from "./EvaluateContext";
+import simplify from "./simplify";
 
-const binaryOps = {
-    "||": (a, b) => a || b,
-    "&&": (a, b) => a && b,
+export const binaryOps = {
+    "|": (a, b) => a | b,
+    "&": (a, b) => a & b,
     "+": (a, b) => a + b,
     "-": (a, b) => a - b,
     "*": (a, b) => a * b,
     "/": (a, b) => a / b,
     "**": (a, b) => a ** b,
     "^": (a, b) => a ^ b,
+    "<": (a, b) => a < b,
+    ">": (a, b) => a > b,
+    "<=": (a, b) => a <= b,
+    ">=": (a, b) => a >= b,
+    "==": (a, b) => a === b,
+    "!=": (a, b) => a !== b,
+    "&&": "&",
+    "||": "|",
+    "!==": "!=",
+    "===": "==",
 }
 
-const unaryOps = {
+export const unaryOps = {
     "!": (a) => ! a,
     "+": (a) => + a,
     "-": (a) => - a,
     "~": (a) => ~ a,
 }
 
-export const simplifyFunctions: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>, resolved: { get<T>(t: T): T }, scope: ScopeMaps) => any} = {
-    BinaryExpression(node, resolved) {
-        let left = resolved.get(node.left)
-        let right = resolved.get(node.right)
+export const evaluateFunctions: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>, context: EvaluateContext) => any} = {
+    BinaryExpression(node, c) {
+        let left = c.lookup.getCurrent(node.left)
+        let right = c.lookup.getCurrent(node.right)
         if (Literal.is(left) && Literal.is(right)) {
             let value = binaryOps[node.operator](left.value, right.value)
             return new Literal({ location: node.location, value })
         }
     },
-    UnaryExpression(node, resolved) {
+    UnaryExpression(node, c) {
         if (Literal.is(node.argument)) {
-            let arg = resolved.get(node.argument)
+            let arg = c.lookup.getCurrent(node.argument)
             let value = unaryOps[node.operator](arg.value)
             return new Literal({ location: node.location, value })
         }
@@ -55,7 +66,7 @@ export const simplifyFunctions: { [P in keyof typeof ast]?: (e: InstanceType<typ
     },
 }
 
-export default function evaluate(node: Expression, resolved: Map<ast.Node,ast.Node>, scopes: ScopeMaps) {
-    let func = simplifyFunctions[node.constructor.name]
-    return func?.(node, resolved, scopes) ?? node
+export default function evaluate(node: Expression, context: EvaluateContext) {
+    let func = evaluateFunctions[node.constructor.name]
+    return func?.(node, context) ?? node
 }

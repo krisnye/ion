@@ -1,6 +1,6 @@
 import { BinaryExpression, Expression } from "../ast"
 
-export default function combineExpressions(expressions: Array<Expression>, operator: string = "&&"): Expression {
+export default function combineExpressions(expressions: Array<Expression>, operator: string = "&"): Expression {
     let result: Expression | undefined
     for (let i = expressions.length - 1; i >= 0; i--) {
         let e = expressions[i]

@@ -1,9 +1,10 @@
-import { traverse, skip } from "@glas/traverse";
+import { traverse, skip, Lookup } from "@glas/traverse";
 import { ScopeMaps } from "../createScopeMaps";
 import toposort from "../toposort";
 import { Node, Property, FunctionExpression, Return, Call, BinaryExpression, Expression } from "../ast";
 import * as ast from "../ast"
 import { SemanticError } from "../common";
+import { errorMonitor } from "events";
 
 function contains(graph, predicate) {
     let found = false
@@ -31,7 +32,7 @@ function getNonRecursiveReturnStatements(fn: FunctionExpression): Return[] {
         leave(node) {
             if (Return.is(node) && node.value != null) {
                 // make sure the return argument doesn't contain a recursive reference to itself.
-                if ((fn.id as any)?.path == null || !contains(node.value, check => ast.Reference.is(check) && check.path === (fn.id as any)!.path)) {
+                if ((fn.id as any).name == null || !contains(node.value, check => ast.Reference.is(check) && check.name === (fn.id as any).name)) {
                     statements.push(node)
                 }
             }
@@ -40,7 +41,7 @@ function getNonRecursiveReturnStatements(fn: FunctionExpression): Return[] {
     return statements
 }
 
-// export function getContainingIfTestAndOriginalDeclarator(node: ast.ConditionalDeclaration, scopeMap: ScopeMaps, ancestorMap: Map<Node, Node>): [Expression, ast.Declarator | null] {
+// export function getContainingIfTestAndOriginalDeclarator(node: ast.ConditionalDeclaration, scopeMap: ScopeMaps, lookup: Lookup): [Expression, ast.Declarator | null] {
 //     let containingIf = getAncestor(node, ancestorMap, Conditional.is)!
 //     let containingIfScope = scopeMap.get(containingIf)!
 //     let name = (node.id as ast.Reference).name
@@ -48,15 +49,15 @@ function getNonRecursiveReturnStatements(fn: FunctionExpression): Return[] {
 //     return [containingIf.test, containingVarDeclarator]
 // }
 
-export function getPredecessors(node, scopeMap: ScopeMaps, ancestorMap: Map<Node, Node>): Iterable<Expression> {
-    return predecessors[node.constructor.name](node, scopeMap, ancestorMap);
+export function getPredecessors(node, scopeMap: ScopeMaps, lookup: Lookup): Iterable<Expression> {
+    return predecessors[node.constructor.name](node, scopeMap, lookup);
 }
 
-const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>, scopeMap: ScopeMaps, ancestorMap: Map<Node, Node>) => Iterable<Expression | Expression[]>} = {
-    // *ConditionalDeclaration(node, scopeMap, ancestorMap) {
+const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>, scopeMap: ScopeMaps, lookup: Lookup) => Iterable<Expression | Expression[]>} = {
+    // *ConditionalDeclaration(node, scopeMap) {
     //     // the conditional declaration will add it's own local conditional assertion to the variable type
     //     // from the containing scope, so we are dependent on that variable being resolved first.
-    //     let [containingIfTest, containingVarDeclarator] = getContainingIfTestAndOriginalDeclarator(node, scopeMap, ancestorMap)
+    //     let [containingIfTest, containingVarDeclarator] = getContainingIfTestAndOriginalDeclarator(node, scopeMap)
     //     if (containingIfTest) {
     //         yield containingIfTest
     //     }
@@ -64,6 +65,13 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     //         yield containingVarDeclarator
     //     }
     // },
+    *Conditional(node) {
+        yield node.test
+        yield node.consequent
+        if (node.alternate) {
+            yield node.alternate
+        }
+    },
     *ArrayPattern(node) {
         for (let element of node.elements) {
             //  all pattern elements are dependent on this nodes type first.
@@ -81,19 +89,20 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         }
     },
     *BinaryExpression(node) {
+        yield [node.left, node.right]
         yield node.left
         yield node.right
     },
     *UnaryExpression(node) {
         yield node.argument
     },
-    *Declarator(node, scopeMap, ancestorMap) {
-        let parent = ancestorMap.get(node)
-        if (Expression.is(parent)) {
-            yield parent
-        }
-    },
-    *Literal(node, scopeMap, ancestorMap) {
+    // *Declarator(node, scopeMap, lookup) {
+    //     let parent = lookup.getParent(node)
+    //     if (Expression.is(parent)) {
+    //         yield parent
+    //     }
+    // },
+    *Literal(node, scopeMap) {
         if (node.type) {
             // we need to know the type for these friggin literals right away.
             yield node.type
@@ -120,14 +129,14 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     },
     *ClassDeclaration(node) {
         // this nodes declarator is dependent on this node
-        yield [node, node.id]
+        // yield [node, node.id]
         yield* node.baseClasses
         yield* node.declarations
         yield* node.typeParameters
     },
     *Variable(node) {
         // make the id pattern dependent on this type
-        yield [node, node.id]
+        // yield [node, node.id]
         if (node.value) {
             yield node.value
         }
@@ -159,7 +168,7 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
             // we don't throw on unrealized references... we just will consider them type any
         }
         else {
-            throw SemanticError("Referenced value not found", node)
+            throw SemanticError(`Referenced value not found '${node.name}'`, node)
         }
     },
     *MemberExpression(node) {
@@ -178,25 +187,31 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
             }
         }
     },
-    *Call(node, scopeMap, ancestorMap) {
+    *Spread(node) {
+        // Spread is an expression type
+        yield node.value
+    },
+    *Call(node) {
         if (node.callee) {
             yield node.callee
         }
         for (let arg of node.arguments) {
-            if (ast.Spread.is(arg)) {
-                yield arg.value
-            }
-            else {
-                yield arg
-            }
+            yield arg
         }
     },
 }
 
-export default function getSortedExpressionNodes(root, scopeMap: ScopeMaps, ancestorsMap: Map<Node, Node>) {
+export default function getSortedExpressions(root, scopeMap: ScopeMaps, lookup: Lookup) {
     let sentinel = {} as Expression;
     let edges: [Expression, Expression][] = [];
     function push(from: Expression, to: Expression) {
+        if (ast.Module.is(from)) {
+            throw new Error("Module.from")
+        }
+        if (ast.Module.is(to)) {
+            debugger
+            throw new Error("Module.to")
+        }
         if (from == null || to == null) {
             throw new Error("Edge nodes may not be null")
         }
@@ -214,29 +229,26 @@ export default function getSortedExpressionNodes(root, scopeMap: ScopeMaps, ance
             }
         }
     });
-    // now... we can try to sort the nodes based on what order we think they should be in.
-    // the reason for this is that we neeed UFCS functions to be defined before they are called.
-    // FunctionExpression depends on parameter types => Classes
-    nodes.sort((a, b) => {
-        const afunc = FunctionExpression.is(a)
-        const bfunc = FunctionExpression.is(b)
-        if (afunc && !bfunc) {
-            return -1
-        }
-        if (bfunc && !afunc) {
-            return +1
-        }
-        return 0
-    })
+    // // now... we can try to sort the nodes based on what order we think they should be in.
+    // // the reason for this is that we neeed UFCS functions to be defined before they are called.
+    // // FunctionExpression depends on parameter types => Classes
+    // nodes.sort((a, b) => {
+    //     const afunc = FunctionExpression.is(a)
+    //     const bfunc = FunctionExpression.is(b)
+    //     if (afunc && !bfunc) {
+    //         return -1
+    //     }
+    //     if (bfunc && !afunc) {
+    //         return +1
+    //     }
+    //     return 0
+    // })
     for (let node of nodes) {
-        if (BinaryExpression.is(node)) {
-            push(node.left, node.right)
-        }
         let count = 0;
         if (Expression.is(node)) {
-            let func = predecessors[node.constructor.name] as (node: Expression, scopeMap: ScopeMaps, ancestorsMap: Map<Node, Node>) => Iterable<Expression | Expression[]>;
+            let func = predecessors[node.constructor.name] as (node: Expression, scopeMap: ScopeMaps, lookup: Lookup) => Iterable<Expression | Expression[]>;
             if (func) {
-                for (let pred of func(node, scopeMap, ancestorsMap)) {
+                for (let pred of func(node, scopeMap, lookup)) {
                     count++;
                     if (Array.isArray(pred)) {
                         push(pred[0], pred[1])

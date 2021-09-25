@@ -13,6 +13,7 @@ import * as Expression from '../Expression';
 import * as Pattern from '../Pattern';
 import * as Reference from '../Reference';
 import * as Literal from '../Literal';
+import * as Variable from '../Variable';
 import * as Type from '../Type';
 import * as ImportDeclaration from '../ImportDeclaration';
 import * as Boolean from './Boolean';
@@ -30,6 +31,7 @@ export type Pattern_Pattern_or_Reference_Reference = Pattern.Pattern | Reference
 export type ion_String_String_or_ion_Null_Null = String.String | Null.Null;
 export type Declaration_Declaration_or_ion_Null_Null = Declaration.Declaration | Null.Null;
 export type Literal_Literal_or_ion_Null_Null = Literal.Literal | Null.Null;
+export type Variable_Variable_or_ion_Null_Null = Variable.Variable | Null.Null;
 export type Type_Type_or_ion_Null_Null = Type.Type | Null.Null;
 export type ImportDeclaration_Specifier_or_ImportDeclaration_ImportDeclaration = ImportDeclaration.Specifier | ImportDeclaration.ImportDeclaration;
 export type Literal_Literal_or_Identifier_Identifier = Literal.Literal | Identifier.Identifier;

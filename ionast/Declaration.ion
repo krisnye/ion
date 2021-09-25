@@ -3,5 +3,5 @@ import
     .*
 
 export
-    class Declaration extends Statement
+    class Declaration extends Statement, SideEffect
         var id: Declarator

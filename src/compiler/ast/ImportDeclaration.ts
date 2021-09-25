@@ -7,6 +7,7 @@ import * as ImportNamespaceSpecifier from './ImportNamespaceSpecifier';
 import * as _Object from './ion/Object';
 import * as Declaration from './Declaration';
 import * as Statement from './Statement';
+import * as SideEffect from './SideEffect';
 import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
@@ -21,7 +22,7 @@ export type Specifier = ImportSpecifier.ImportSpecifier | (ImportDefaultSpecifie
 export function isSpecifier(value): value is Specifier {
     return ImportSpecifier.isImportSpecifier(value) || (ImportDefaultSpecifier.isImportDefaultSpecifier(value) || ImportNamespaceSpecifier.isImportNamespaceSpecifier(value));
 }
-export class ImportDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , Expression.Expression , Node.Node {
+export class ImportDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , SideEffect.SideEffect , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly id: Declarator.Declarator;
@@ -35,6 +36,7 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
         'ion_Object',
         'Declaration',
         'Statement',
+        'SideEffect',
         'Expression',
         'Node'
     ]);

@@ -4,6 +4,7 @@ import { memoize } from "../common";
 import { traverse } from "@glas/traverse";
 import normalize from "./normalize";
 import splitExpressions from "./splitExpressions";
+import evaluate from "./evaluate";
 
 function find<T>(items: Iterable<T>, predicate: (value: T) => boolean): T | null {
     for (let item of items) {
@@ -18,7 +19,6 @@ function equals(a: Expression, b: Expression) {
     return toCodeString(a) === toCodeString(b)
 }
 
-// A && B || A => A
 const simplify = memoize(function(e: Expression): Expression {
     e = normalize(e)
     if (TypeExpression.is(e)) {
@@ -32,45 +32,43 @@ const simplify = memoize(function(e: Expression): Expression {
         const left = simplify(e.left)
         const right = simplify(e.right)
         if (equals(left, right)) {
-            if (e.operator === "&&" || e.operator == "||" || e.operator === "&" || e.operator == "|") {
-                //  A && A => A
-                //  A || A => A
+            if (e.operator === "&" || e.operator == "|") {
                 //  A &  A => A
                 //  A |  A => A
                 return left
             }
         }
-        else if (e.operator === "||") {
-            if (find(splitExpressions(left, "&&"), c => equals(c, right))) {
-                // A && B || A => A
+        else if (e.operator === "|") {
+            if (find(splitExpressions(left, "&"), c => equals(c, right))) {
+                // A & B | A => A
                 return right
             }
-            if (find(splitExpressions(right, "&&"), c => equals(c, left))) {
-                //  A || A && B => A
+            if (find(splitExpressions(right, "&"), c => equals(c, left))) {
+                //  A | A & B => A
                 return left
             }
-            if (find(splitExpressions(left, "||"), c => equals(c, right))) {
-                // (A || B) || A => A || B
+            if (find(splitExpressions(left, "|"), c => equals(c, right))) {
+                // (A | B) | A => A | B
                 return left
             }
-            if (find(splitExpressions(right, "||"), c => equals(c, left))) {
-                //  A || (A && B) => A || B
+            if (find(splitExpressions(right, "|"), c => equals(c, left))) {
+                //  A | (A & B) => A | B
                 return right
             }
         }
-        else if (e.operator === "&&") {
-            for (let c of splitExpressions(left, "||")) {
+        else if (e.operator === "&") {
+            for (let c of splitExpressions(left, "|")) {
                 if (equals(c, right)) {
-                    // (A || B) && A => A
+                    // (A | B) & A => A
                     return right
                 }
                 if (UnaryExpression.is(right) && right.operator === "!" && equals(c, right.argument)) {
-                    //  (A || B) && !A => B
-                    //  (A || B || C) && !A => B || C
+                    //  (A | B) && !A => B
+                    //  (A | B | C) && !A => B | C
                     return traverse(left, {
                         // find and remove the impossible clause
                         leave(node) {
-                            if (BinaryExpression.is(node) && node.operator === "||") {
+                            if (BinaryExpression.is(node) && node.operator === "|") {
                                 if (equals(node.left, right.argument)) {
                                     return node.right
                                 }
@@ -82,9 +80,9 @@ const simplify = memoize(function(e: Expression): Expression {
                     })
                 }
             }
-            for (let c of splitExpressions(right, "||")) {
+            for (let c of splitExpressions(right, "|")) {
                 if (equals(c, left)) {
-                    // A && (A || B) => A
+                    // A & (A | B) => A
                     return left
                 }
             }
@@ -96,8 +94,7 @@ const simplify = memoize(function(e: Expression): Expression {
     }
     else if (UnaryExpression.is(e)) {
         let argument = simplify(e.argument)
-        if (e.operator === "!")
-        if (e.argument !== argument) {
+        if (e.operator === "!" && e.argument !== argument) {
             e = e.patch({ argument })
         }
     }

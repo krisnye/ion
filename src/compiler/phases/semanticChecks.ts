@@ -1,15 +1,16 @@
 import { traverse, skip, replace, Lookup } from "@glas/traverse";
 import combineExpressions from "../analysis/combineExpressions";
+import { binaryOps, unaryOps } from "../analysis/evaluate";
 import isConsequent from "../analysis/isConsequent";
 import splitExpressions from "../analysis/splitExpressions";
-import { Assignment, BinaryExpression, Call, ClassDeclaration, DotExpression, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, TypeExpression, Variable, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation, Declaration } from "../ast";
+import { Assignment, BinaryExpression, Call, ClassDeclaration, DotExpression, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, TypeExpression, Variable, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation, Declaration, For, SideEffect, UnaryExpression } from "../ast";
 import { hasNodesOfType, SemanticError, isTypeName, isMetaName } from "../common";
 import { Options } from "../Compiler"
 import createScopeMaps from "../createScopeMaps";
 import { getLast } from "../pathFunctions";
 import { _this } from "../reservedWords";
 import toCodeString from "../toCodeString";
-import { Class } from "../types";
+import { Void } from "../types";
 
 function toCheck(node: Expression, operator = "is") {
     let { location } = node
@@ -237,9 +238,33 @@ function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error
     }
 }
 
+function setTypeToVoidRecursive(node, errors: Error[], isFinal: boolean) {
+    if (Block.is(node)) {
+        let body = node.body.map((child, index) => {
+            let final = isFinal && index + 1 == node.body.length
+            // if (!final && !SideEffect.is(child)) {
+            //     // if a statement isn't final then it must be a declaration or an assignment
+            //     errors.push(SemanticError(`Expression has no effect`, child))
+            // }
+            return setTypeToVoidRecursive(child, errors, final)
+        })
+        return node.patch({ body, type: isFinal ? node.type : Void })
+    }
+    if (Conditional.is(node)) {
+        let consequent = setTypeToVoidRecursive(node.consequent, errors, isFinal)
+        let alternate = setTypeToVoidRecursive(node.alternate, errors, isFinal)
+        if (consequent !== node.alternate || alternate !== node.alternate) {
+            return node.patch({ consequent, alternate, type: isFinal ? node.type : Void })
+        }
+    }
+    if (For.is(node)) {
+        return node.patch({ body: setTypeToVoidRecursive(node.body, errors, isFinal), type: isFinal ? node.type : Void })
+    }
+    return node
+}
+
 export default function semanticChecks(
     module: Module,
-    externals: Map<string,Module>,
     options: Options
 ): Module | Error[] {
     let errors = new Array<Error>()
@@ -270,6 +295,20 @@ export default function semanticChecks(
         leave(node, ancestors) {
             if (TypeExpression.is(node)) {
                 node = checkTypeExpression(node, errors, lookup, true)
+            }
+            if (BinaryExpression.is(node) || OutlineOperation.is(node)) {
+                let func = binaryOps[node.operator]
+                if (typeof func !== "function") {
+                    errors.push(SemanticError(
+                        `Unsupported binary operator (${node.operator})` + (func ? `, use ${func} instead.` : ``),
+                        node
+                    ))
+                }
+            }
+            if (UnaryExpression.is(node)) {
+                if (unaryOps[node.operator] == null) {
+                    errors.push(SemanticError(`Unsupported unary operator ${node.operator}`, node))
+                }
             }
             if (Variable.is(node)) {
                 var container = ancestors[ancestors.length - 1]
@@ -320,7 +359,9 @@ export default function semanticChecks(
                     errors.push(SemanticError(`Only a single final exported expression is allowed in a module`, node))
                 }
                 if (Variable.is(node) && node.value == null) {
-                    errors.push(SemanticError(`Module scoped variables are not allowed`, node))
+                    //  This MAY be allowed, IF your declaration is a meta variable
+                    //  We'll have to check later.
+                    // errors.push(SemanticError(`Module scoped variables are not allowed`, node))
                 }
                 if (Assignment.is(node)) {
                     errors.push(SemanticError(`Assignment statements are not allowed in the module scope`, node))
@@ -391,6 +432,8 @@ export default function semanticChecks(
                         node = node.patch({ id: parent.id }) as FunctionExpression
                     }
                 }
+                // now any For/Block/Conditional is type void. if it's not the final expression.
+                node = node.patch({ body: setTypeToVoidRecursive(node.body, errors, true) })
             }
             return node
         }

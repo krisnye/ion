@@ -2,58 +2,47 @@
 This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
-import * as Statement from './Statement';
-import * as SideEffect from './SideEffect';
 import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as Declarator from './Declarator';
 import * as Class from './ion/Class';
-export class Declaration implements _Object.Object , Statement.Statement , SideEffect.SideEffect , Expression.Expression , Node.Node {
+export class Void implements _Object.Object , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly id: Declarator.Declarator;
-    static readonly id = 'Declaration';
+    static readonly id = 'Void';
     static readonly implements = new Set([
-        'Declaration',
+        'Void',
         'ion_Object',
-        'Statement',
-        'SideEffect',
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, id}: {
+    constructor({location = null, type = null}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
-        id: Declarator.Declarator
+        type?: Expression.Expression | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
-        if (!Declarator.isDeclarator(id))
-            throw new Error('id is not a Declarator: ' + Class.toString(id));
         this.location = location;
         this.type = type;
-        this.id = id;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
-        id?: Declarator.Declarator
+        type?: Expression.Expression | Null.Null
     }) {
-        return new Declaration({
+        return new Void({
             ...this,
             ...properties
         });
     }
-    static is(value): value is Declaration {
-        return isDeclaration(value);
+    static is(value): value is Void {
+        return isVoid(value);
     }
 }
-export function isDeclaration(value): value is Declaration {
-    return Class.isInstance(Declaration, value);
+export function isVoid(value): value is Void {
+    return Class.isInstance(Void, value);
 }
-export default Declaration;
+export default Void;

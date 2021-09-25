@@ -1,5 +1,4 @@
 import { Identifier } from "../ast"
-import { SemanticError } from "../common"
 import * as t from "../types"
 
 //  key = type, value = all types implemented by this type
@@ -7,8 +6,8 @@ class TypeData {
     baseType: string
     types: Set<string>
     constructor(baseType: Identifier, ...types: Identifier[]) {
-        this.baseType = baseType.path!.toString()
-        this.types = new Set(types.map(type => type.path!.toString()))
+        this.baseType = baseType.name
+        this.types = new Set(types.map(type => type.name))
         this.types.add(this.baseType)
     }
 }
@@ -37,7 +36,7 @@ function getTypeMap(types: Identifier[][]) {
     let typeMap = new Map<string,TypeData>()
     for (let typeArray of types) {
         let [type, baseType = type, ...types] = typeArray
-        typeMap.set(type.path!.toString(), new TypeData(baseType, ...types))
+        typeMap.set(type.name, new TypeData(baseType, ...types))
     }
     // now make sure we recursively add subtypes
     function addRecursive(type: string, types?: Iterable<string>, added = new Set<string>()) {
@@ -63,8 +62,8 @@ export type IsType = (isInstanceOfThisType: Identifier, anInstanceOfThisType: Id
 export function createIsType(types: Identifier[][]): IsType {
     let typeMap = getTypeMap([...baseTypes, ...types])
     return (checkIfType: Identifier, isInstanceOfOtherType: Identifier): boolean | null => {
-        let checkPath = checkIfType.path?.toString()
-        let otherPath = isInstanceOfOtherType.path?.toString()
+        let checkPath = checkIfType.name
+        let otherPath = isInstanceOfOtherType.name
         if (checkPath == null || otherPath == null) {
             console.log("TODO: Figure out why isType#createIsType path's aren't present, possibly because of cyclic references")
             return null

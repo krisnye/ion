@@ -1,9 +1,10 @@
 
-export const globalNamespace = "global"
+export const globalNamespace = "_"
 const pathSeparator = "."
 const globalPrefix = globalNamespace + pathSeparator
-export function getGlobalPath(name: string) {
-    return `${globalPrefix}${name}`
+const exportSeparator = ":"
+export function getGlobalPath(name: string, _export = "export") {
+    return _export ? `${globalPrefix}${name}${exportSeparator}${_export}` : `${globalPrefix}${name}`
 }
 export function isGlobalPath(path: string) {
     return path.startsWith(globalPrefix)

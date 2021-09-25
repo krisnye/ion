@@ -1,0 +1,41 @@
+
+12
+
+// // constant
+// false = 0
+// true = 1
+// //  type
+// Boolean = true | false
+// //  meta
+// [meta]
+// meta = true
+
+// //  class
+// class Vector
+//     //  instance
+//     x: Number
+//     y: Number
+//     [meta]
+//     z: Number = 0
+//     //  meta property
+//     [meta] = true
+//     //  static function
+//     translate =
+//         ()
+//             //  parameter
+//             x: Number = 0
+//             [meta] = false
+//             y: Number = 0
+//         ->
+//             Vector(this.x + x, this.y + y)
+//     //  static function
+//     length = () -> (x * x + y * y) ** 0.5
+// //  final exported value
+// ()
+//     Boolean
+//     Vector
+//     constant = 10
+//     BetweenTwoAndFive =
+//         &
+//             >= 2
+//             <= 5

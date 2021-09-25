@@ -4,7 +4,6 @@ import { Options } from "../Compiler"
 
 export default function numbering(
     module: Module,
-    externals: Map<string,Module>,
     options: Options
 ): Module | Error[] {
     let index = 0;

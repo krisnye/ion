@@ -1,6 +1,6 @@
 import { traverse, skip, Lookup } from "@glas/traverse"
-import { SemanticError } from "./common"
-import { Node, Scope, Reference, Declarator, Pattern, ObjectPattern, RestElement, ArrayPattern, FunctionExpression, Declaration } from "./ast"
+import { Node, Scope, Reference, Declarator, Pattern, ObjectPattern, RestElement, ArrayPattern, FunctionExpression, Declaration, Module } from "./ast"
+import { getGlobalPath } from "./pathFunctions"
 
 export type NodeMap<T> = {
     get(node: Node): T
@@ -13,6 +13,23 @@ export type ScopeMaps = NodeMap<ScopeMap>
 type Options = {
     callback?: (current: Declaration, ancestors: any[], previous?: Declarator) => void,
     lookup?: Lookup,
+    globalScope?: any
+}
+
+/**
+ * Creates a global scope by using the exports within each module.
+ */
+export function createGlobalScope(modules: Iterable<Module>) {
+    let scope: any = {}
+    for (let module of modules) {
+        for (let node of module.body) {
+            if (Declaration.is(node)) {
+                let globalPath = getGlobalPath(module.name, node.id.name)
+                scope[globalPath] = node
+            }
+        }
+    }
+    return scope
 }
 
 /**
@@ -21,7 +38,7 @@ type Options = {
  */
 export default function createScopeMaps(root, options: Options = {}): ScopeMaps {
     let map = new Map()
-    let scopes: object[] = []
+    let scopes: object[] = [options.globalScope || {}]
 
     function declare(node: Declaration, ancestors: any[]) {
         let scope: any = scopes[scopes.length - 1]

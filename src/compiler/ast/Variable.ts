@@ -7,6 +7,7 @@ import * as Expression from './Expression';
 import * as Declaration from './Declaration';
 import * as Node from './Node';
 import * as Statement from './Statement';
+import * as SideEffect from './SideEffect';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
@@ -14,7 +15,7 @@ import * as Property from './Property';
 import * as Declarator from './Declarator';
 import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
-export class Variable implements _Object.Object , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Statement.Statement {
+export class Variable implements _Object.Object , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Statement.Statement , SideEffect.SideEffect {
     readonly location: Location.Location | Null.Null;
     readonly meta: _Array.Array<Property.Property> | Null.Null;
     readonly type: Expression.Expression | Null.Null;
@@ -34,7 +35,8 @@ export class Variable implements _Object.Object , Meta.Meta , Expression.Express
         'Expression',
         'Declaration',
         'Node',
-        'Statement'
+        'Statement',
+        'SideEffect'
     ]);
     constructor({location = null, meta = null, type = null, id, value = null, isMutable = false, isType = false, isMeta = false, isInstance = false, isStatic = false, isParameter = false}: {
         location?: Location.Location | Null.Null,

@@ -1,14 +1,11 @@
 import * as common from "./common";
-import fs from "fs";
 import Phase from "./phases/Phase";
 import defaultPhases from "./phases";
 // we need the path to lib so the code works in normal compile and in parcel
 import Parser = require("../../lib/compiler/parser");
-import watchDirectory from "./watchDirectory";
-import { copyResource } from "./phases/copyResources";
 import getExternalReferences from "./phases/getExternalReferences";
 import { Module } from "./ast";
-import { join, resolve } from "./pathFunctions";
+import { createGlobalScope } from "./createScopeMaps";
 
 type Logger = (names?: string | string[] | null, ast?: any, file?: string) => void
 const NullLogger = () => {}
@@ -22,6 +19,7 @@ export class Options {
     debug: boolean
     emit: boolean
     commandLine = false
+    globalScope: any
 
     constructor(
         inputs: string[],
@@ -102,47 +100,6 @@ export default class Compiler {
         this.logger = logger
     }
 
-    watch(optionsOrJson: Options | OptionsJSON) {
-        let options = Options.from(optionsOrJson)
-        //  first compile normal
-        this.compile(options)
-        //  then watch files for changes
-        for (let input of options.inputs) {
-            watchDirectory(input, {}, (filename, previous, current, change) => {
-                //  incrementally recompile just this file
-                if (filename.endsWith(common.ionExt)) {
-                    let start = Date.now()
-                    let content = common.read(filename)
-                    let path = common.getPathFromFilename(options.namespace, filename.slice(input.length + 1))
-                    // console.log({ filename, change, path, content })
-                    //  we *really* should also kickoff a full recompile in a separate thread
-                    //  or maybe the fast compile should be in the other thread
-                    // always reset options errors
-                    throw new Error("Watch has not been implemented yet for latest")
-                    // this.compile(options, { [path]: content }, defaultPhases, NullLogger)
-                    let stop = Date.now()
-                    let time = stop - start
-                    console.log(`${filename} => ${time}ms`)
-                }
-                else {
-                    // we just copy it as content.
-                    let stats = fs.statSync(filename)
-                    if (stats && !stats.isDirectory()) {
-                        let path = filename.slice(input.length + 1)
-                        copyResource(path, filename, options)
-                    }
-                }
-            })
-        }
-    }
-
-    logOld(root, phase: string) {
-        for (let name of root.modules.keys()) {
-            let module = root.modules.get(name)
-            this.logger(phase, module, name)
-        }
-    }
-
     getFiles(options: Options): Map<string,string> {
         return new Map(Object.entries(common.getInputFilesRecursive(options.inputs, options.namespace)))
     }
@@ -156,70 +113,79 @@ export default class Compiler {
     compile(optionsOrJson: Options | OptionsJSON) {
         let options = this.normalizeOptions(optionsOrJson)
         let sources = this.getFiles(options)
-        for (let name of sources.keys()) {
-            this.logger("Source", sources.get(name), name)
-        }
+        let order = new Array<string>()
 
-        let modules = new Map(
-            Array.from(sources.entries()).map(([name, source]) => {
-                let module: Module = options.parser.parse(source, name)
-                module = module.patch({ name })
-                this.logger("Parser", module, name)
-                return [name, module]
-            })
-        )
+        try {
+            for (let name of sources.keys()) {
+                this.logger("Source", sources.get(name), name)
+            }
 
-        let failedResolution = false
-        let modulesWithExternals = new Map(
-            Array.from(modules.entries()).map(([name, file]) => {
-                let [newFile, externals] = getExternalReferences(file)
-                this.logger("getExternalReferences", newFile, name)
+            let modules = new Map(
+                Array.from(sources.entries()).map(([name, source]) => {
+                    let module: Module = options.parser.parse(source, name)
+                    module = module.patch({ name })
+                    this.logger("Parser", module, name)
+                    return [name, module]
+                })
+            )
 
-                // let's make sure it's possible to resolve these externals.
-                for (let external of externals.keys()) {
-                    let result = resolve(join(name, external), modules)
-                    if (result == null) {
-                        // failed to find an external reference.
+            let failedResolution = false
+            let modulesWithExternals = new Map(
+                Array.from(modules.entries()).map(([name, file]) => {
+                    let errors = new Array<Error>()
+                    let [newFile, externals] = getExternalReferences(file, modules, errors)
+                    this.logger("getExternalReferences", newFile, name)
+                    for (let error of errors) {
+                        this.printErrorConsole(error, sources, options)
                         failedResolution = true
-                        let firstReference = Array.from(externals.get(external)!)[0]
-                        this.printErrorConsole(common.SemanticError(`Reference could not be resolved`, firstReference), sources, options)
+                    }
+                    return [name, [newFile, externals] as [typeof file, typeof externals]]
+                })
+            )
+
+            if (failedResolution) {
+                return
+            }
+
+            let compiled = new Map<string,any>()
+            function areAllCompiled(externals: Iterable<string>) {
+                for (let external of externals) {
+                    if (!compiled.has(external)) {
+                        return false
                     }
                 }
-                return [name, [file, externals] as [typeof file, typeof externals]]
-            })
-        )
-
-        if (failedResolution) {
-            return
-        }
-
-        let compiled = new Map<string,any>()
-        function areAllCompiled(externals: Iterable<string>) {
-            for (let external of externals) {
-                if (!compiled.has(external)) {
-                    return false
+                return true
+            }
+            // now we will loop and compile files for which all their external dependencies are already compiled
+            while (compiled.size < modulesWithExternals.size) {
+                let beforeCompiledSize = compiled.size
+                for (let [name, [file, externals]] of modulesWithExternals) {
+                    if (!compiled.has(name) && areAllCompiled(externals.keys())) {
+                        compiled.set(name, this.compileSingleFile(file, sources, compiled, options))
+                        order.push(name)
+                    }
+                }
+                let afterCompiledSize = compiled.size
+                let compiledThisPass = afterCompiledSize - beforeCompiledSize
+                if (compiledThisPass == 0) {
+                    for (let [name, [file, externals]] of modulesWithExternals) {
+                        if (!compiled.has(name)) {
+                            for (let externalName of externals.keys()) {
+                                if (!compiled.has(externalName)) {
+                                    let ref = [...externals.get(externalName)!][0]
+                                    this.printErrorConsole(common.SemanticError(`Circular reference`, ref), sources, options)
+                                }
+                            }
+                        }
+                    }
+                    return
                 }
             }
-            return true
+        } catch (e) {
+            this.printErrorConsole(e, sources, options)
+        } finally {
+            this.logger(null, order)
         }
-        let order = new Array<string>()
-        // now we will loop and compile files for which all their external dependencies are already compiled
-        while (compiled.size < modulesWithExternals.size) {
-            let beforeCompiledSize = compiled.size
-            for (let [name, [file, externals]] of modulesWithExternals) {
-                if (!compiled.has(name) && areAllCompiled(externals.keys())) {
-                    compiled.set(name, this.compileSingleFile(file, sources, compiled, options))
-                    order.push(name)
-                }
-            }
-            let afterCompiledSize = compiled.size
-            let compiledThisPass = afterCompiledSize - beforeCompiledSize
-            if (compiledThisPass == 0) {
-                throw new Error("Circular reference, should be resolved and debugged here")
-            }
-        }
-
-        this.logger(null, order)
     }
 
     printErrorConsole(e, sources, options) {
@@ -244,7 +210,9 @@ export default class Compiler {
         let root: any = module
         for (let phase of phases) {
             console.log(`    ${phase.name}`)
-            let result = phase(root, externals, options)
+            // add the externals as global scope
+            options.globalScope = createGlobalScope(externals.values())
+            let result = phase(root, options)
             if (Array.isArray(result)) {
                 for (let e of result) {
                     this.printErrorConsole(e, sources, options)

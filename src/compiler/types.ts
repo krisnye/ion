@@ -1,10 +1,10 @@
 import combineExpressions from "./analysis/combineExpressions";
-import { BinaryExpression, DotExpression, Expression, Literal } from "./ast";
+import { BinaryExpression, DotExpression, Expression, Literal, Void as AstVoid } from "./ast";
 import Reference from "./ast/Reference";
 import { getGlobalPath } from "./pathFunctions";
 
 function ref(name: string) {
-    return new Reference({ name, path: getGlobalPath(name) })
+    return new Reference({ name: getGlobalPath(name) })
 }
 
 function number(type: Reference, min: number, max: number) {
@@ -30,7 +30,7 @@ export const Null = ref("Null")
 export const Any = ref("Any")
 export const Never = ref("Never")
 export const Undefined = ref("Undefined")
-export const Void = ref("Void")
+export const Void = new AstVoid({})
 export const Symbol = ref("Symbol")
 export const RegExp = ref("RegExp")
 export const WeakMap = ref("WeakMap")

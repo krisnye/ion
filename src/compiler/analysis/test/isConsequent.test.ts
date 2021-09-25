@@ -34,10 +34,10 @@ function not(a: Expression) {
 }
 type E = string | number | Expression
 function and(A: E, B: E) {
-    return b(A, "&&", B)
+    return b(A, "&", B)
 }
 function or(A: E, B: E) {
-    return b(A, "||", B)
+    return b(A, "|", B)
 }
 function lt(A: E, B: E) {
     return b(A, "<", B)
@@ -96,7 +96,7 @@ testConsequent(b("foo", "<", "x"), b("foo", "<=", "x"), true, null)
 testConsequent(b("foo", "<", "x"), b("foo", "!=", "x"), true, null)
 testConsequent(b("foo", ">", 0), b("foo", "!=", 0), true, null)
 testConsequent(
-    b(b("foo", "<", "x"), "||", b("foo", ">", "x")),
+    b(b("foo", "<", "x"), "|", b("foo", ">", "x")),
     b("foo", "!=", "x"),
     true,
     null    // although conceptually, != x implies > x | < x, our analysis does not recognize this.
@@ -140,52 +140,52 @@ testConsequent(b("foo", "is", Dog), b("foo", "is", t.RegExp), false, false)
 testConsequent(b("foo", "is", Dog), b("foo", "is", t.Array), false, false)
 
 testConsequent(
-    b(b("foo", "is", Cat), "&&", b("foo", "is", Dog)),
-    b(b("foo", "is", Cat), "||", b("foo", "is", Dog)),
+    b(b("foo", "is", Cat), "&", b("foo", "is", Dog)),
+    b(b("foo", "is", Cat), "|", b("foo", "is", Dog)),
     true,
     null
 )
 
 testConsequent(
-    b(b("foo", "is", "Bar"), "||", b("foo", "is", "Baz")),
+    b(b("foo", "is", "Bar"), "|", b("foo", "is", "Baz")),
     b("foo", "is", "Bar"),
     null,
     true
 )
 testConsequent(
-    b(b("foo", "is", "Bar"), "&&", b("foo", "is", "Baz")),
+    b(b("foo", "is", "Bar"), "&", b("foo", "is", "Baz")),
     b("foo", "is", "Bar"),
     true,
     null
 )
 testConsequent(
-    b(b("foo", "is", "Bar"), "&&", b("foo", "is", "Baz")),
-    b(b("foo", "is", "Bar"), "||", b("foo", "is", "Baz")),
+    b(b("foo", "is", "Bar"), "&", b("foo", "is", "Baz")),
+    b(b("foo", "is", "Bar"), "|", b("foo", "is", "Baz")),
     true,
     null
 )
 
 testConsequent(
-    b(b("foo", ">", 0), "&&", b("foo", "<", 10)),
-    b(b("foo", ">", 1), "&&", b("foo", "<", 8)),
+    b(b("foo", ">", 0), "&", b("foo", "<", 10)),
+    b(b("foo", ">", 1), "&", b("foo", "<", 8)),
     null,
     true
 )
 
 testConsequent(
-    b(b("foo", ">", 0), "||", b("foo", "<", 10)),
-    b(b("foo", ">", 1), "||", b("foo", "<", 8)),
+    b(b("foo", ">", 0), "|", b("foo", "<", 10)),
+    b(b("foo", ">", 1), "|", b("foo", "<", 8)),
     null,
     true
 )
 testConsequent(
-    b(b("foo", ">", 0), "||", b("foo", "<", 10)),
-    b(b("foo", ">", 1), "&&", b("foo", "<", 8)),
+    b(b("foo", ">", 0), "|", b("foo", "<", 10)),
+    b(b("foo", ">", 1), "&", b("foo", "<", 8)),
     null,
     true
 )
 testConsequent(
-    b(c("foo", 1, 2), "&&", c("bar", 3, 4)),
+    b(c("foo", 1, 2), "&", c("bar", 3, 4)),
     c("foo", 1, 2),
     true,
     null
@@ -227,6 +227,6 @@ testSimplify(and(or(A, or(B, C)), not(B)), or(A, C))
 testSimplify(eq(10, A), eq(A, 10))
 testSimplify(is(10, A), is(10, A))// make sure 'is' operator is not sorted
 
-// test toSubExpressions and combineExpressions
+// // test toSubExpressions and combineExpressions
 let chain = and(A, and(B, and(C, D)))
 assert.deepStrictEqual(toCodeString(chain), toCodeString(combineExpressions([...splitExpressions(chain)])))

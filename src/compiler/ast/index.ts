@@ -161,6 +161,9 @@ export {
     default as Scope
 } from './Scope';
 export {
+    default as SideEffect
+} from './SideEffect';
+export {
     default as Spread
 } from './Spread';
 export {
@@ -187,6 +190,9 @@ export {
 export {
     default as Variable
 } from './Variable';
+export {
+    default as Void
+} from './Void';
 export {
     default as YieldExpression
 } from './YieldExpression';

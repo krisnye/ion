@@ -1,3 +1,22 @@
 
+x = 1 + 2
+
+// fun = func(a) ->
+//     //  Variable type Number
+//     foo : Number = 1
+//     //  Variable type Number
+//     bar : Number = 2
+//     //  Conditional type Void
+//     if a
+//         bar := 3
+//         foo := 4
+//         for i in []
+//             foo := i
+//         //  block type Void
+//     else
+//         bar := 5
+//         foo := 6
+//         // block type Void
+//     foo + bar
+
 class Number
-    pi = 3.14

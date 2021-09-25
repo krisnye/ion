@@ -10,7 +10,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         return node.name
     },
     Reference(node) {
-        return node.path ?? node.name
+        return node.name
     },
     TypeExpression(node) {
         return s(node.value)

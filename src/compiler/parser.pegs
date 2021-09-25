@@ -153,7 +153,8 @@ Module
 ////////////////////////////////////////////////////////////////////////////////
 
 Statement
-    = Conditional
+    = For
+    / Conditional
     / Return
     / ClassDeclaration
     / OutlineExpression
@@ -304,7 +305,7 @@ AssignmentOperator
     / "??="
 
 For
-    = ForToken _ left:Pattern _ count:("," _ @Declarator _)? InToken _ right:InlineExpression body:Block
+    = ForToken _ left:Declarator _ count:("," _ @Declarator _)? InToken _ right:InlineExpression body:Block
     {
         return node("For", {
             left: (node("Variable", { id: left })),
@@ -925,22 +926,22 @@ ExponentPart
 
 DecimalLiteral
     = (DecimalInteger? '.' [0-9]+ ExponentPart? / DecimalInteger ExponentPart) !IdPart
-    { return node('Literal', { value: parseFloat(text()) })}
+    { return node('Literal', { value: parseFloat(text()), type: node('Reference', { name: 'Number'}) })}
 
 HexDigit
     = [0-9A-Fa-f]
 
 HexIntegerLiteral
-    = '0x' HexDigit+ !IdPart { return node('Literal', {value: parseInt(text(), 16) }) }
+    = '0x' HexDigit+ !IdPart { return node('Literal', {value: parseInt(text(), 16), type: node('Reference', { name: 'Number'}) }) }
 
 DecimalIntegerLiteral
-    = DecimalInteger { return node('Literal', { value: parseInt(text()) }) }
+    = DecimalInteger { return node('Literal', { value: parseInt(text()), type: node('Reference', { name: 'Number'}) }) }
 
 DecimalInteger
     = '0' / [+-]? [1-9] [0-9]* !IdPart { return parseInt(text()) }
 
 InlineStringLiteral
-    = '"' DoubleStringChar* '"' { return node('Literal', { value: eval(text()) }); }
+    = '"' DoubleStringChar* '"' { return node('Literal', { value: eval(text()), type: node('Reference', { name: 'String'}) }); }
 
 DoubleStringChar
     = "\\\"" / !'"' .

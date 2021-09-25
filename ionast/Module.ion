@@ -3,5 +3,6 @@ import
     .*
 
 export
-    class Module extends Block
+    class Module extends Node, Scope
+        var body: Array<Statement>
         var name: String = ""

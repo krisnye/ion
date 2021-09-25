@@ -6,15 +6,14 @@ import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as Pattern from './Pattern';
 import * as Variable from './Variable';
 import * as Block from './Block';
 import * as Class from './ion/Class';
 export class For implements _Object.Object , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly left: Pattern.Pattern;
-    readonly count: Variable.Variable;
+    readonly left: Variable.Variable;
+    readonly count: Variable.Variable | Null.Null;
     readonly right: Expression.Expression;
     readonly body: Block.Block;
     static readonly id = 'For';
@@ -27,8 +26,8 @@ export class For implements _Object.Object , Expression.Expression , Node.Node {
     constructor({location = null, type = null, left, count, right, body}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        left: Pattern.Pattern,
-        count: Variable.Variable,
+        left: Variable.Variable,
+        count: Variable.Variable | Null.Null,
         right: Expression.Expression,
         body: Block.Block
     }) {
@@ -36,10 +35,10 @@ export class For implements _Object.Object , Expression.Expression , Node.Node {
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
-        if (!Pattern.isPattern(left))
-            throw new Error('left is not a Pattern: ' + Class.toString(left));
-        if (!Variable.isVariable(count))
-            throw new Error('count is not a Variable: ' + Class.toString(count));
+        if (!Variable.isVariable(left))
+            throw new Error('left is not a Variable: ' + Class.toString(left));
+        if (!(Variable.isVariable(count) || Null.isNull(count)))
+            throw new Error('count is not a Variable | Null: ' + Class.toString(count));
         if (!Expression.isExpression(right))
             throw new Error('right is not a Expression: ' + Class.toString(right));
         if (!Block.isBlock(body))
@@ -55,8 +54,8 @@ export class For implements _Object.Object , Expression.Expression , Node.Node {
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        left?: Pattern.Pattern,
-        count?: Variable.Variable,
+        left?: Variable.Variable,
+        count?: Variable.Variable | Null.Null,
         right?: Expression.Expression,
         body?: Block.Block
     }) {

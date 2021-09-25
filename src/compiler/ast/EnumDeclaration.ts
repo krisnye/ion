@@ -4,6 +4,7 @@ This file was generated from ion source. Do not edit.
 import * as _Object from './ion/Object';
 import * as Declaration from './Declaration';
 import * as Statement from './Statement';
+import * as SideEffect from './SideEffect';
 import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
@@ -13,7 +14,7 @@ import * as Boolean from './ion/Boolean';
 import * as _Array from './ion/Array';
 import * as Property from './Property';
 import * as Class from './ion/Class';
-export class EnumDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , Expression.Expression , Node.Node {
+export class EnumDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , SideEffect.SideEffect , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly id: Declarator.Declarator;
@@ -25,6 +26,7 @@ export class EnumDeclaration implements _Object.Object , Declaration.Declaration
         'ion_Object',
         'Declaration',
         'Statement',
+        'SideEffect',
         'Expression',
         'Node'
     ]);

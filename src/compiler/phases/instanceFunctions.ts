@@ -5,7 +5,6 @@
 
 // export default function instanceFunctions(
 //     module: Module,
-//     externals: Map<string,Module>,
 //     options: Options
 // ): Module | Error[] {
 //     let errors = new Array<Error>()

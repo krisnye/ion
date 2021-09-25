@@ -43,7 +43,7 @@ function same(a: Maybe, b: Maybe): Maybe {
  * false if 'b' is necessarily false
  * null if we cannot determine
  */
-export default function isConsequent(a: Expression, b: Expression, isType: IsType = (a, b) => a.path === b.path): true | false | null {
+export default function isConsequent(a: Expression, b: Expression, isType: IsType = (a, b) => a.name === b.name): true | false | null {
     if (TypeExpression.is(a)) {
         a = a.value
     }
@@ -172,11 +172,11 @@ export default function isConsequent(a: Expression, b: Expression, isType: IsTyp
     //  if any term on the left results in a false on the right then false (not consequent)
     //  if all terms on the right are true based on any term on the left then true (consequent)
     //  otherwise null (unknown)
-    if (BinaryExpression.is(b) && b.operator === "&&" || BinaryExpression.is(a) && a.operator === "&&") {
+    if (BinaryExpression.is(b) && b.operator === "&" || BinaryExpression.is(a) && a.operator === "&") {
         let allTrue = true
-        for (let bTerm of splitExpressions(b, "&&")) {
+        for (let bTerm of splitExpressions(b, "&")) {
             let bTermResult: boolean | null = null
-            for (let aTerm of splitExpressions(a, "&&")) {
+            for (let aTerm of splitExpressions(a, "&")) {
                 let aTermResult = isConsequent(aTerm, bTerm, isType)
                 if (aTermResult === false) {
                     return false
@@ -194,10 +194,10 @@ export default function isConsequent(a: Expression, b: Expression, isType: IsTyp
     }
 
     //  A & B => C & D
-    if (BinaryExpression.is(a) && a.operator === "||") {
+    if (BinaryExpression.is(a) && a.operator === "|") {
         return same(isConsequent(a.left, b, isType), isConsequent(a.right, b, isType))
     }
-    if (BinaryExpression.is(b) && b.operator === "||") {
+    if (BinaryExpression.is(b) && b.operator === "|") {
         return max(isConsequent(a, b.left, isType), isConsequent(a, b.right, isType))
     }
     return null
