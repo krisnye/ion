@@ -13,7 +13,7 @@ export class Property implements _Object.Object , Expression.Expression , Node.N
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly key: Expression.Expression | Identifier.Identifier;
-    readonly value: Expression.Expression | (Pattern.Pattern | Null.Null);
+    readonly value: Expression.Expression | (Identifier.Identifier | (Pattern.Pattern | Null.Null));
     static readonly id = 'Property';
     static readonly implements = new Set([
         'Property',
@@ -25,7 +25,7 @@ export class Property implements _Object.Object , Expression.Expression , Node.N
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         key: Expression.Expression | Identifier.Identifier,
-        value: Expression.Expression | (Pattern.Pattern | Null.Null)
+        value: Expression.Expression | (Identifier.Identifier | (Pattern.Pattern | Null.Null))
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
@@ -33,8 +33,8 @@ export class Property implements _Object.Object , Expression.Expression , Node.N
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!(Expression.isExpression(key) || Identifier.isIdentifier(key)))
             throw new Error('key is not a Expression | Identifier: ' + Class.toString(key));
-        if (!(Expression.isExpression(value) || (Pattern.isPattern(value) || Null.isNull(value))))
-            throw new Error('value is not a Expression | Pattern | Null: ' + Class.toString(value));
+        if (!(Expression.isExpression(value) || (Identifier.isIdentifier(value) || (Pattern.isPattern(value) || Null.isNull(value)))))
+            throw new Error('value is not a Expression | Identifier | Pattern | Null: ' + Class.toString(value));
         this.location = location;
         this.type = type;
         this.key = key;
@@ -45,7 +45,7 @@ export class Property implements _Object.Object , Expression.Expression , Node.N
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         key?: Expression.Expression | Identifier.Identifier,
-        value?: Expression.Expression | (Pattern.Pattern | Null.Null)
+        value?: Expression.Expression | (Identifier.Identifier | (Pattern.Pattern | Null.Null))
     }) {
         return new Property({
             ...this,

@@ -2,65 +2,56 @@
 This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
-import * as Statement from './Statement';
-import * as SideEffect from './SideEffect';
+import * as Type from './Type';
 import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as Pattern from './Pattern';
-import * as Boolean from './ion/Boolean';
+import * as _Array from './ion/Array';
 import * as Class from './ion/Class';
-export class Declaration implements _Object.Object , Statement.Statement , SideEffect.SideEffect , Expression.Expression , Node.Node {
+export class IntersectionType implements _Object.Object , Type.Type , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly id: Pattern.Pattern;
-    readonly isMutable: Boolean.Boolean;
-    static readonly id = 'Declaration';
+    readonly types: _Array.Array<Type.Type>;
+    static readonly id = 'IntersectionType';
     static readonly implements = new Set([
-        'Declaration',
+        'IntersectionType',
         'ion_Object',
-        'Statement',
-        'SideEffect',
+        'Type',
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, id, isMutable = false}: {
+    constructor({location = null, type = null, types}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        id: Pattern.Pattern,
-        isMutable?: Boolean.Boolean
+        types: _Array.Array<Type.Type>
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
-        if (!Pattern.isPattern(id))
-            throw new Error('id is not a Pattern: ' + Class.toString(id));
-        if (!Boolean.isBoolean(isMutable))
-            throw new Error('isMutable is not a Boolean: ' + Class.toString(isMutable));
+        if (!_Array.isArray(types))
+            throw new Error('types is not a Array: ' + Class.toString(types));
         this.location = location;
         this.type = type;
-        this.id = id;
-        this.isMutable = isMutable;
+        this.types = types;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        id?: Pattern.Pattern,
-        isMutable?: Boolean.Boolean
+        types?: _Array.Array<Type.Type>
     }) {
-        return new Declaration({
+        return new IntersectionType({
             ...this,
             ...properties
         });
     }
-    static is(value): value is Declaration {
-        return isDeclaration(value);
+    static is(value): value is IntersectionType {
+        return isIntersectionType(value);
     }
 }
-export function isDeclaration(value): value is Declaration {
-    return Class.isInstance(Declaration, value);
+export function isIntersectionType(value): value is IntersectionType {
+    return Class.isInstance(IntersectionType, value);
 }
-export default Declaration;
+export default IntersectionType;

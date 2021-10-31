@@ -41,7 +41,7 @@ export const UInt16 = number(Integer, 0, 65535)
 export const Int16 = number(Integer, -32768, 32767)
 export const UInt32 = number(Integer, 0, 4294967295)
 export const Int32 = number(Integer, -2147483648, 2147483647)
-export const IntegerTypes = { UInt8, Int8, UInt16, Int16, UInt32, Int32 }
+// export const IntegerTypes = { UInt8, Int8, UInt16, Int16, UInt32, Int32 }
 
 // export const EmptyLocation = new Location({ start: new Position(0, 0), end: new Position(0, 0), filename: "inferType.empty" })
 

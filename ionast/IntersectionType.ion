@@ -1,0 +1,7 @@
+import
+    ion.*
+    .*
+
+export
+    class IntersectionType extends Type
+        var types: Array<Type>

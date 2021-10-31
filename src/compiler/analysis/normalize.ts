@@ -1,6 +1,7 @@
 import { memoize } from "../common"
-import { Expression, BinaryExpression, Literal } from "../ast"
+import { Expression, BinaryExpression, Literal, DotExpression, NumberType, Reference } from "../ast"
 import toCodeString from "../toCodeString"
+import * as types from "../types"
 
 const reassociateLeft = {
     "|": true,
@@ -11,12 +12,16 @@ const reassociateLeft = {
     "*": true,
 }
 
-const reflectOperators = {
+const relationOperators = {
     "<": ">",
     ">": "<",
     ">=": "<=",
     "<=": ">=",
     "==": "==",
+}
+
+const reflectOperators = {
+    ...relationOperators,
     "!=": "!=",
 }
 
@@ -32,6 +37,17 @@ const normalize = memoize(function(e: Expression): Expression {
         let left = normalize(e.left)
         let right = normalize(e.right)
         let operator = e.operator
+        if (DotExpression.is(left) && relationOperators[e.operator]) {
+            //  relation implies number on right, even if it's not a literal.
+            if (operator.startsWith("<")) {
+                return new NumberType({ ...e, max: right, maxExclusive: !operator.endsWith("=") })
+            }
+            if (operator.startsWith(">")) {
+                return new NumberType({ ...e, min: right, minExclusive: !operator.endsWith("=") })
+            }
+            // must be ==
+            return new NumberType({ ...e, min: right, max: right })
+        }
         if (reassociateLeft[e.operator]) {
             if (BinaryExpression.is(right) && right.operator === e.operator) {
                 left = new BinaryExpression({

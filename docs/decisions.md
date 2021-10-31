@@ -28,7 +28,42 @@ Yes to shadowing external modules.
 Yes to parameter shadowing instance variable.
 No to any other shadowing. `foo = bar` is likely to be accidentally intended as re-assignment.
 
+### Reassignable Function Parameters
+
+Not sure yet. Might be useful for incrementing random number generator or combining patches.
+
 ### Use = operator for property assignment?
 
 No because `[name] = value` is indistinguishable from destructuring.
-s
+
+### Allow function name overloading?
+
+Not yet. Maybe later.
+
+### Allow operator overloading?
+
+Yes. += operator would be convenient for pushing an item onto an array.
+
+### Conditional Declarations scope?
+
+If mutable, they should only have a refined scope up to the next assignment.
+
+### Is a Value also a Type?
+
+No. `Type = 1 | 2` is not the same as `value = 1 | 2`. The latter can be evaluated immediately.
+
+### Do we need to allow cyclical module dependencies?
+
+Probably not. I haven't yet seen a good example that would need to be modelled with cyclic dependency.
+
+    class File
+        name: String
+        children: File[] | Null = null
+        creationDate: Integer
+        isDirectory = .children isnt Null
+        isFile = !.isDirectory
+
+### Model Intervals in AST or use individual >= and <= constraints?
+
+We have to model intervals in order to accurately calculate type products.
+Individual constraints can handle +/- but they do not handle * and / operators.

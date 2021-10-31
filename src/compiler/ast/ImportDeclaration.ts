@@ -12,7 +12,8 @@ import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as Declarator from './Declarator';
+import * as Pattern from './Pattern';
+import * as Boolean from './ion/Boolean';
 import * as _Array from './ion/Array';
 import * as Literal from './Literal';
 import * as Identifier from './Identifier';
@@ -25,7 +26,8 @@ export function isSpecifier(value): value is Specifier {
 export class ImportDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , SideEffect.SideEffect , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly id: Declarator.Declarator;
+    readonly id: Pattern.Pattern;
+    readonly isMutable: Boolean.Boolean;
     readonly specifiers: _Array.Array<Specifier | ImportDeclaration>;
     readonly path: _Array.Array<Literal.Literal | Identifier.Identifier> | Null.Null;
     readonly source: Literal.Literal;
@@ -40,10 +42,11 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, id, specifiers, path = null, source, absoluteSource = null}: {
+    constructor({location = null, type = null, id, isMutable = false, specifiers, path = null, source, absoluteSource = null}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        id: Declarator.Declarator,
+        id: Pattern.Pattern,
+        isMutable?: Boolean.Boolean,
         specifiers: _Array.Array<Specifier | ImportDeclaration>,
         path?: _Array.Array<Literal.Literal | Identifier.Identifier> | Null.Null,
         source: Literal.Literal,
@@ -53,8 +56,10 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
-        if (!Declarator.isDeclarator(id))
-            throw new Error('id is not a Declarator: ' + Class.toString(id));
+        if (!Pattern.isPattern(id))
+            throw new Error('id is not a Pattern: ' + Class.toString(id));
+        if (!Boolean.isBoolean(isMutable))
+            throw new Error('isMutable is not a Boolean: ' + Class.toString(isMutable));
         if (!_Array.isArray(specifiers))
             throw new Error('specifiers is not a Array: ' + Class.toString(specifiers));
         if (!(_Array.isArray(path) || Null.isNull(path)))
@@ -66,6 +71,7 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
         this.location = location;
         this.type = type;
         this.id = id;
+        this.isMutable = isMutable;
         this.specifiers = specifiers;
         this.path = path;
         this.source = source;
@@ -75,7 +81,8 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        id?: Declarator.Declarator,
+        id?: Pattern.Pattern,
+        isMutable?: Boolean.Boolean,
         specifiers?: _Array.Array<Specifier | ImportDeclaration>,
         path?: _Array.Array<Literal.Literal | Identifier.Identifier> | Null.Null,
         source?: Literal.Literal,

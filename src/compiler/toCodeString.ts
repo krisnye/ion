@@ -1,5 +1,6 @@
 import * as ast from "./ast";
 import { Node } from "./ast";
+import TypeReference from "./ast/TypeReference";
 import { memoize } from "./common";
 
 const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P]>) => string} = {
@@ -12,8 +13,36 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     Reference(node) {
         return node.name
     },
+    ReferenceType(node) {
+        return node.name
+    },
+    ObjectType(node) {
+        let content = node.properties.map(toCodeString).join(', ')
+        switch(node.kind) {
+            case "Object": return `(${content})`
+            case "Array": return `[${content}]`
+            case "Map": return `{${content}}`
+            default: throw new Error(`Unrecognized ObjectType.kind: ${node.kind}`)
+        }
+    },
     TypeExpression(node) {
         return s(node.value)
+    },
+    NumberType(node) {
+        if (node.min && node.max && s(node.min) == s(node.max)) {
+            return `== ${s(node.min)}`
+        }
+        let text = ``
+        if (node.min) {
+            text += `${node.minExclusive ? ">" : ""}${s(node.min)}`
+        }
+        if (node.max) {
+            if (node.min) {
+                text += `..`
+                text += `${node.maxExclusive ? "<" : ""}${s(node.max)}`
+            }
+        }
+        return text
     },
     DotExpression(node) {
         return "."
@@ -50,7 +79,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     },
     Property(node) {
         if (node.key != null) {
-            if (ast.Identifier.is(node.key)) {
+            if (ast.Identifier.is(node.key) || TypeReference.is(node.key)) {
                 return `${s(node.key)}:${s(node.value!)}`
             }
             else {
@@ -58,6 +87,12 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
             }
         }
         return `${s(node.value!)}`
+    },
+    ConditionalDeclaration(node) {
+        return codeToString.Variable!(node as any)
+    },
+    Parameter(node) {
+        return codeToString.Variable!(node as any)
     },
     Variable(node) {
         let value = s(node.id)

@@ -1,6 +1,17 @@
-import { BinaryExpression, Expression } from "../ast"
+import { BinaryExpression, Expression, IntersectionType, Type, UnionType } from "../ast"
 
 export default function combineExpressions(expressions: Array<Expression>, operator: string = "&"): Expression {
+    if (Type.is(expressions[0])) {
+        // these are type expressions.
+        if (expressions.length == 1) {
+            return expressions[0]
+        }
+        switch (operator) {
+            case "&": return new IntersectionType({ types: expressions })
+            case "|": return new UnionType({ types: expressions })
+            default: throw new Error("Unsupported operator: " + operator)
+        }
+    }
     let result: Expression | undefined
     for (let i = expressions.length - 1; i >= 0; i--) {
         let e = expressions[i]

@@ -18,6 +18,7 @@ export class EnumDeclaration implements _Object.Object , Declaration.Declaration
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly id: Declarator.Declarator;
+    readonly isMutable: Boolean.Boolean;
     readonly flags: Boolean.Boolean;
     readonly properties: _Array.Array<Property.Property>;
     static readonly id = 'EnumDeclaration';
@@ -30,10 +31,11 @@ export class EnumDeclaration implements _Object.Object , Declaration.Declaration
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, id, flags = false, properties}: {
+    constructor({location = null, type = null, id, isMutable = false, flags = false, properties}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         id: Declarator.Declarator,
+        isMutable?: Boolean.Boolean,
         flags?: Boolean.Boolean,
         properties: _Array.Array<Property.Property>
     }) {
@@ -43,6 +45,8 @@ export class EnumDeclaration implements _Object.Object , Declaration.Declaration
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!Declarator.isDeclarator(id))
             throw new Error('id is not a Declarator: ' + Class.toString(id));
+        if (!Boolean.isBoolean(isMutable))
+            throw new Error('isMutable is not a Boolean: ' + Class.toString(isMutable));
         if (!Boolean.isBoolean(flags))
             throw new Error('flags is not a Boolean: ' + Class.toString(flags));
         if (!_Array.isArray(properties))
@@ -50,6 +54,7 @@ export class EnumDeclaration implements _Object.Object , Declaration.Declaration
         this.location = location;
         this.type = type;
         this.id = id;
+        this.isMutable = isMutable;
         this.flags = flags;
         this.properties = properties;
         Object.freeze(this);
@@ -58,6 +63,7 @@ export class EnumDeclaration implements _Object.Object , Declaration.Declaration
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         id?: Declarator.Declarator,
+        isMutable?: Boolean.Boolean,
         flags?: Boolean.Boolean,
         properties?: _Array.Array<Property.Property>
     }) {

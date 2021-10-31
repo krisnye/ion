@@ -1,5 +1,39 @@
 
-x = 1 + 2
+// double = (value: < 1) -> value
+
+A = 5 .. 10
+B = 20 .. 30
+
+scale = (a: A, b: B) -> a + b
+
+// MyArray1 = String[]
+// MyArray2 = [String, Number, Integer]
+// MyArray3 = [0: String, 1: Number, length: 2]
+// MyMap = { String: Number, Number: String }
+// class Vector
+// UnitVector = Vector & (length: 1)
+// Percent = |
+//     > 0 & < 10
+//     > 20 & < 100
+
+// x: Percent = 10
+
+// fn = () ->
+//     y: Number = 2
+//     x =
+//         if y < 1
+//             10
+//         else
+//             20
+
+//     // //  maybe invalid
+//     // double(y)
+//     // if y < 1
+//     //     //  valid
+//     //     double(y)
+//     // else
+//     //     //  always invalid
+//     //     double(y)
 
 // fun = func(a) ->
 //     //  Variable type Number

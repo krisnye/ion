@@ -1,0 +1,59 @@
++ operator
+
+=a  + =b    =(a+b)
+=a  + >b    >(a+b)
+=a  + >=b   >=(a+b)
+=a  + <b    <(a+b)
+=a  + <=b   <=(a+b)
+>a  + >b    >(a+b)  Integer >(a+b+1)
+>a  + >=b   >(a+b)
+>a  + <b
+>a  + <=b
+>=a + >=b   >=(a+b)
+>=a + <b
+>=a + <=b
+<a  + <b    <(a+b)
+<a  + <=b   <(a+b)
+<=a + <=b   <=(a+b)
+
+- operator the same as + -value
+
+* operator
+
+=0  * b     = 0
+=1  * b     = b
+=a  * =b    =(a*b)
+=a  * >+b   sign(a) ? > : < (a*b)
+
+
+
+=a  * >=b   >=(a*b)
+=a  * <b    <(a*b)
+=a  * <=b   <=(a*b)
+>a  * >b    sign(a) == sign(b) == 1         >(a*b)
+>a  * >=b   sign(a) == sign(b) == 1         >(a*b)
+>a  * <b
+>a  * <=b
+>=a * >=b
+            sign(a) == sign(b) == (1|0)     >=(a*b)
+>=a * <b
+>=a * <=b
+<a  * <b    sign(a) == sign(b) == (-1|0)    <(a*b)
+<a  * <=b   sign(a) == sign(b) == (-1|0)    <(a*b)
+<=a * <=b   sign(a) == sign(b) == (-1|0)    <=(a*b)
+
+inverse operation 1 / a
+
+//  we know we cannot divide by 0 so we know that < or > values can never cross the 0 divider
+1 / =a      = 1/a
+1 / <+a     = > 1/a
+1 / <-a     = > 1/a
+1 / >+a     = < 1/a
+1 / >-a     = < 1/a
+1 / <=+a    = >= 1/a
+1 / <=-a    = >= 1/a
+1 / >=+a    = <= 1/a
+1 / >=-a    = <= 1/a
+
+the math on this would be much easier if we were only working with positive numbers
+is it possible to convert to only positives, perform operations and convert back

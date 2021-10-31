@@ -3,31 +3,30 @@ This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
 import * as Type from './Type';
-import * as RuntimeType from './RuntimeType';
 import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
+import * as Variable from './Variable';
 import * as Class from './ion/Class';
-export class FunctionType implements _Object.Object , Type.Type , RuntimeType.RuntimeType , Expression.Expression , Node.Node {
+export class FunctionType implements _Object.Object , Type.Type , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly parameters: _Array.Array<Type.Type>;
+    readonly parameters: _Array.Array<Variable.Variable>;
     readonly returnType: Type.Type | Null.Null;
     static readonly id = 'FunctionType';
     static readonly implements = new Set([
         'FunctionType',
         'ion_Object',
         'Type',
-        'RuntimeType',
         'Expression',
         'Node'
     ]);
     constructor({location = null, type = null, parameters, returnType = null}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        parameters: _Array.Array<Type.Type>,
+        parameters: _Array.Array<Variable.Variable>,
         returnType?: Type.Type | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
@@ -47,7 +46,7 @@ export class FunctionType implements _Object.Object , Type.Type , RuntimeType.Ru
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        parameters?: _Array.Array<Type.Type>,
+        parameters?: _Array.Array<Variable.Variable>,
         returnType?: Type.Type | Null.Null
     }) {
         return new FunctionType({

@@ -4,6 +4,7 @@ import createScopeMaps from "../createScopeMaps";
 import { _this } from "../reservedWords";
 import { resolve, join, getGlobalPath } from "../pathFunctions";
 import { SemanticError } from "../common";
+import * as types from "../types";
 
 export default function getExternalReferences(module: Module, modules: Map<string,Module>, errors: Array<Error>): [Module,Map<string,Set<Reference>>] {
     let scopes = createScopeMaps(module)
@@ -12,7 +13,15 @@ export default function getExternalReferences(module: Module, modules: Map<strin
         leave(node) {
             if (Reference.is(node)) {
                 if (node.name !== _this) {
+                    let builtInType = types[node.name]
+                    if (Reference.is(builtInType)) {
+                        return node.patch({ name: builtInType.name })
+                    }
                     let scope = scopes.get(node)
+                    if (scope == null) {
+                        throw SemanticError(`Scope not found`, node)
+                        // console.log("SCOPE")
+                    }
                     if (scope[node.name] == null) {
                         let resolved = resolve(join(module.name, node.name), modules)
                         if (resolved) {
@@ -33,5 +42,6 @@ export default function getExternalReferences(module: Module, modules: Map<strin
             }
         }
     })
+    console.log(module.name, externals)
     return [module, externals]
 }

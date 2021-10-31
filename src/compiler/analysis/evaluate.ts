@@ -56,7 +56,16 @@ export const evaluateFunctions: { [P in keyof typeof ast]?: (e: InstanceType<typ
     },
     FunctionExpression(node) {
     },
-    Reference(node) {
+    Reference(node, c: EvaluateContext) {
+        // let scope = c.scopes.get(node)
+        // let declaration = scope[node.name]
+        // if (!declaration.isMutable && ast.Variable.is(declaration) && declaration.value != null) {
+        //     // we will only replace references with literal values IF they are numbers
+        //     let { value } = declaration
+        //     if (Literal.is(value) && typeof value.value === "number") {
+        //         return value
+        //     }
+        // }
     },
     MemberExpression(node) {
     },

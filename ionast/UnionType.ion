@@ -1,0 +1,7 @@
+import
+    ion.*
+    .*
+
+export
+    class UnionType extends Type
+        var types: Array<Type>

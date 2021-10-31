@@ -11,8 +11,8 @@ Array<V>
     a
     b
     c
-### List Loop
-for value [, index] in map
+### Array Loop
+for value [, index] in array
 ## Class Instance
 Vector(x = 1, y = 2)
 Vector()
@@ -24,6 +24,6 @@ Can only have named fields. All fields are exported.
 ()
     @foo = 12
     x = 10
-    y = 20
+    y = x * 2
     foo() -> 1
     bar() -> 2

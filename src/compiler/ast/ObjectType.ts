@@ -2,65 +2,64 @@
 This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
-import * as Statement from './Statement';
-import * as SideEffect from './SideEffect';
+import * as Type from './Type';
 import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as Pattern from './Pattern';
-import * as Boolean from './ion/Boolean';
+import * as String from './ion/String';
+import * as _Array from './ion/Array';
+import * as Property from './Property';
 import * as Class from './ion/Class';
-export class Declaration implements _Object.Object , Statement.Statement , SideEffect.SideEffect , Expression.Expression , Node.Node {
+export class ObjectType implements _Object.Object , Type.Type , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly id: Pattern.Pattern;
-    readonly isMutable: Boolean.Boolean;
-    static readonly id = 'Declaration';
+    readonly kind: String.String;
+    readonly properties: _Array.Array<Property.Property | Type.Type>;
+    static readonly id = 'ObjectType';
     static readonly implements = new Set([
-        'Declaration',
+        'ObjectType',
         'ion_Object',
-        'Statement',
-        'SideEffect',
+        'Type',
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, id, isMutable = false}: {
+    constructor({location = null, type = null, kind, properties}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        id: Pattern.Pattern,
-        isMutable?: Boolean.Boolean
+        kind: String.String,
+        properties: _Array.Array<Property.Property | Type.Type>
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
-        if (!Pattern.isPattern(id))
-            throw new Error('id is not a Pattern: ' + Class.toString(id));
-        if (!Boolean.isBoolean(isMutable))
-            throw new Error('isMutable is not a Boolean: ' + Class.toString(isMutable));
+        if (!String.isString(kind))
+            throw new Error('kind is not a String: ' + Class.toString(kind));
+        if (!_Array.isArray(properties))
+            throw new Error('properties is not a Array: ' + Class.toString(properties));
         this.location = location;
         this.type = type;
-        this.id = id;
-        this.isMutable = isMutable;
+        this.kind = kind;
+        this.properties = properties;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        id?: Pattern.Pattern,
-        isMutable?: Boolean.Boolean
+        kind?: String.String,
+        properties?: _Array.Array<Property.Property | Type.Type>
     }) {
-        return new Declaration({
+        return new ObjectType({
             ...this,
             ...properties
         });
     }
-    static is(value): value is Declaration {
-        return isDeclaration(value);
+    static is(value): value is ObjectType {
+        return isObjectType(value);
     }
 }
-export function isDeclaration(value): value is Declaration {
-    return Class.isInstance(Declaration, value);
+export function isObjectType(value): value is ObjectType {
+    return Class.isInstance(ObjectType, value);
 }
-export default Declaration;
+export default ObjectType;

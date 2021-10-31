@@ -10,16 +10,16 @@ import * as Null from './ion/Null';
 import * as Identifier from './Identifier';
 import * as _Array from './ion/Array';
 import * as Variable from './Variable';
-import * as Block from './Block';
 import * as Type from './Type';
+import * as Block from './Block';
 import * as Class from './ion/Class';
 export class FunctionExpression implements _Object.Object , Expression.Expression , Scope.Scope , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly id: Identifier.Identifier | Null.Null;
     readonly parameters: _Array.Array<Variable.Variable>;
-    readonly body: Block.Block;
     readonly returnType: Type.Type | Null.Null;
+    readonly body: Block.Block;
     static readonly id = 'FunctionExpression';
     static readonly implements = new Set([
         'FunctionExpression',
@@ -28,13 +28,13 @@ export class FunctionExpression implements _Object.Object , Expression.Expressio
         'Scope',
         'Node'
     ]);
-    constructor({location = null, type = null, id = null, parameters, body, returnType = null}: {
+    constructor({location = null, type = null, id = null, parameters, returnType = null, body}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         id?: Identifier.Identifier | Null.Null,
         parameters: _Array.Array<Variable.Variable>,
-        body: Block.Block,
-        returnType?: Type.Type | Null.Null
+        returnType?: Type.Type | Null.Null,
+        body: Block.Block
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
@@ -44,16 +44,16 @@ export class FunctionExpression implements _Object.Object , Expression.Expressio
             throw new Error('id is not a Identifier | Null: ' + Class.toString(id));
         if (!_Array.isArray(parameters))
             throw new Error('parameters is not a Array: ' + Class.toString(parameters));
-        if (!Block.isBlock(body))
-            throw new Error('body is not a Block: ' + Class.toString(body));
         if (!(Type.isType(returnType) || Null.isNull(returnType)))
             throw new Error('returnType is not a Type | Null: ' + Class.toString(returnType));
+        if (!Block.isBlock(body))
+            throw new Error('body is not a Block: ' + Class.toString(body));
         this.location = location;
         this.type = type;
         this.id = id;
         this.parameters = parameters;
-        this.body = body;
         this.returnType = returnType;
+        this.body = body;
         Object.freeze(this);
     }
     patch(properties: {
@@ -61,8 +61,8 @@ export class FunctionExpression implements _Object.Object , Expression.Expressio
         type?: Expression.Expression | Null.Null,
         id?: Identifier.Identifier | Null.Null,
         parameters?: _Array.Array<Variable.Variable>,
-        body?: Block.Block,
-        returnType?: Type.Type | Null.Null
+        returnType?: Type.Type | Null.Null,
+        body?: Block.Block
     }) {
         return new FunctionExpression({
             ...this,

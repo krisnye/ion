@@ -4,4 +4,5 @@ import
 
 export
     class Literal extends Expression, RuntimeType
-        var value : String | Number | Boolean | Null
+        var value: String | Number | Boolean | Null
+        var integer: Boolean = false

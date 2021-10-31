@@ -154,32 +154,30 @@ Module
 
 Statement
     = For
-    / Conditional
     / Return
     / ClassDeclaration
     / OutlineExpression
 
+// Either an OutlineExpression or a EOL and then an indented OutlineExpression
+NewlineExpression
+    = OutlineExpression
+    / EOL Indent Dent @OutlineExpression Outdent
+
 OutlineVariableDeclaration
-    = meta:MetaProperties? id:Pattern type:(_ ":" _ @InlineType) value:((_ "=" _ @OutlineExpression) / EOL { return null})
-    { return node("Variable", { id, meta, type, value }) }
-    / meta:MetaProperties? id:Pattern type:(_ ":" _ @InlineType)? value:(_ "=" _ @OutlineExpression)
-    {
-        if (ast.Identifier.is(id) && isTypeName(id.name)) {
-            value = node("TypeExpression", { location: value.location, value })
-        }
-        return node("Variable", { id, meta, type, value })
-    }
+    = meta:MetaProperties? id:TypeDeclarator _ "=" _ value:OutlineType
+    { return node("Variable", { id, meta, value, isMutable: false }) }
+    / meta:MetaProperties? id:Pattern type:(_ ":" _ @InlineType) value:((_ "=" _ @NewlineExpression) / EOL { return null})
+    { return node("Variable", { id, meta, value, isMutable: type != null }) }
+    / meta:MetaProperties? id:Pattern type:(_ ":" _ @InlineType)? value:(_ "=" _ @NewlineExpression)
+    { return node("Variable", { id, meta, value, isMutable: type != null }) }
 
 InlineVariableDeclaration
-    = id:Declarator type:(_ ":" _ @InlineType) value:((_ "=" _ @InlineExpression) { return null})
-    { return node("Variable", { id, type, value }) }
+    = meta:MetaProperties? id:TypeDeclarator _ "=" _ value:InlineType
+    { return node("Variable", { id, meta, value, isMutable: false }) }
+    / id:Declarator type:(_ ":" _ @InlineType) value:((_ "=" _ @InlineExpression) { return null})
+    { return node("Variable", { id, value, isMutable: type != null }) }
     / id:Declarator type:(_ ":" _ @InlineType)? value:(_ "=" _ @InlineExpression)
-    {
-        if (ast.Identifier.is(id) && isTypeName(id.name)) {
-            value = node("TypeExpression", { location: value.location, value })
-        }
-        return node("Variable", { id, type, value })
-    }
+    { return node("Variable", { id, type, value, isMutable: type != null }) }
 
 OutlineAssignment
     = left:Reference _ operator:":=" _ right:OutlineExpression
@@ -206,20 +204,20 @@ Block
 ////////////////////////////////////////////////////////////////////////////////
 
 Parameter
-    = meta:MetaProperties? id:Declarator _ type:(":" _ @InlineExpression)? _ value:("=" _ @InlineExpression)?
-    { return node("Variable", { id, meta, type, value })}
+    = meta:MetaProperties? id:Declarator _ type:(":" _ @InlineType)? _ value:("=" _ @InlineExpression)?
+    { return node("Parameter", { id, meta, type, value })}
 
 InlineFunctionParameters
     = "(" _ ")" { return [] }
     / "(" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ")" { return [head, ...tail] }
 
 InlineFunctionParametersAndType
-    = id:Identifier? parameters:InlineFunctionParameters returnType:(_ ":" _ @InlineExpression)? _ "->"
+    = id:Identifier? parameters:InlineFunctionParameters returnType:(_ ":" _ @InlineType)? _ "->"
     { return { id, parameters, returnType } }
 
 OutlineFunctionParametersAndType
     = InlineFunctionParametersAndType
-    / id:Identifier? "()" returnType:(_ ":" _ @InlineExpression)? EOL Indent parameters:(Dent @Parameter EOL)+ Outdent Dent "->"
+    / id:Identifier? "()" returnType:(_ ":" _ @InlineType)? EOL Indent parameters:(Dent @Parameter EOL)+ Outdent Dent "->"
     { return { id, parameters, returnType } }
 
 InlineBlock
@@ -429,17 +427,82 @@ Implements
 ////////////////////////////////////////////////////////////////////////////////
 
 OutlineType
-    = @InlineType EOL
+    = OutlineUnionType
+    / OutlineIntersectionType
 
 InlineType
-    = type:InlineExpression
+    = InlineUnionType
+
+TerminalType
+    = TypeReferenceOrSimpleArray
+    / NumberTypeExpression
+    / InlineObjectType
+    // OutlineObjectType
+
+TypeReferenceOrSimpleArray
+    = type:ReferenceType array:("[]")*
     {
-        return ast.Reference.is(type) ? type : node("TypeExpression", { value: type })
+        for (let i = 0; i < array.length; i++) {
+            let property = node("Property", {
+                key: node("NumberType", { min: node("Literal", { value: 0, integer: true }) }),
+                value: type
+            })
+            type = node("ObjectType", { kind: "Array", properties:[property] })
+        }
+        return type
     }
+
+InlineObjectType
+    = "(" _ properties:InlineObjectTypePropertyList _ ")"
+    { return node("ObjectType", { kind: "Object", properties }) }
+    / "{" _ properties:InlineObjectTypePropertyList _ "}"
+    { return node("ObjectType", { kind: "Map", properties }) }
+    / "[" _ properties:InlineObjectTypePropertyList _ "]"
+    { return node("ObjectType", { kind: "Array", properties }) }
+
+InlineObjectTypeProperty
+    = key:(InlineType / Identifier) _ ":" _ value: (InlineType)
+    { return node("Property", { key, value }) }
+    / InlineType
+
+InlineObjectTypePropertyList
+    = head:InlineObjectTypeProperty tail:(_ "," _ @InlineObjectTypeProperty)*
+    { return [head, ...tail] }
+
+InlineIntersectionType
+    = head:TerminalType tail:(_ "&" _ @TerminalType)*
+    { return tail.length ? node("IntersectionType", { types: [head, ...tail] }) : head }
+
+InlineUnionType
+    = head:InlineIntersectionType tail:(_ "|" _ @InlineIntersectionType)*
+    { return tail.length ? node("UnionType", { types: [head, ...tail] }) : head }
+
+OutlineIntersectionType
+    = "&" EOL Indent types:(Dent @OutlineIntersectionType)* Outdent
+    { return types.length > 0 ? node("IntersectionType", { types }) : types[0] }
+    / @InlineIntersectionType EOL
+
+OutlineUnionType
+    = "|" EOL Indent types:(Dent @OutlineUnionType)* Outdent
+    { return types.length > 0 ? node("UnionType", { types }) : types[0] }
+    / @OutlineIntersectionType
+    / @InlineUnionType EOL
+
+NumberTypeExpression
+    = minExclusive:(@">" _)? min:InlineExpression _ ".." _ maxExclusive:(@"<" _)? max:InlineExpression
+    { return max ? node("NumberType", { min, max, minExclusive: Boolean(minExclusive), maxExclusive: Boolean(maxExclusive) }) : min }
+    / op:(">=" / ">" / "<=" / "<") _ value:InlineExpression
+    {
+        return op.startsWith(">")
+            ? node('NumberType', { min: value, minExclusive: !op.endsWith("=") })
+            : node('NumberType', { max: value, maxExclusive: !op.endsWith("=") });
+    }
+    / value:NumberLiteral
+    { return node("NumberType", { min: value, max: value })}
 
 FunctionType
     = parameters:InlineFunctionParameters _ "=>" _ returnType:InlineType
-    { return node("FunctionType", { parameters, returnType }) }
+    { return node("FunctionExpression", { parameters, returnType }) }
     / "(" _ @FunctionType _ ")"
 
 TemplateArguments
@@ -493,9 +556,6 @@ RelationalOperator
 RelationalExpression
     = head:AdditiveExpression tail:(_ RelationalOperator _ AdditiveExpression)*
         { return buildBinaryExpression(head, tail) }
-    // don't remove the initial _ below. It is necessary to match tail above layout
-    / tail:(_ RelationalOperator _ AdditiveExpression)
-        { return buildBinaryExpression(node('DotExpression') , [tail]) }
 
 EqualityOperator
     = "==" / "!="
@@ -558,21 +618,14 @@ ConditionalExpression
 //         return tail ? node("AssignmentExpression", { left: head, operator, right }) : head
 //     }
 
-RangeOperator
-    = "..." { return true }
-    / ".." { return false }
-
-RangeExpression
-    = start:ConditionalExpression _ inclusive:RangeOperator _ end:ConditionalExpression step:(_ ByToken _ @ConditionalExpression)?
-    { return node("Range", { start, end, inclusive, step: step || null }) }
-
 ////////////////////////////////////////////////////////////////////////////////
 //  Expressions
 ////////////////////////////////////////////////////////////////////////////////
 
 OutlineExpression
-    = OutlineMemberExpression
-    / EOL Indent Dent @OutlineMemberExpression Outdent
+    = Conditional
+    / OutlineMemberExpression
+    // / EOL Indent Dent @OutlineMemberExpression Outdent
 
 OutlineExpressionStartsThisLine
     = OutlineAssignment
@@ -581,7 +634,6 @@ OutlineExpressionStartsThisLine
     / OutlineFunction
     / OutlineArrayExpression
     / OutlineObjectExpression
-    / OutlineJSXElementExpression
     // / OutlineMapExpression
     / OutlineCallExpression
     // / OutlineNewExpression
@@ -635,7 +687,6 @@ InlineExpression
     = InlineSpreadElement
     / InlineFunction
     / InlineAssignment
-    / RangeExpression
     / ConditionalExpression
     / InlineVariableDeclaration
 
@@ -652,7 +703,6 @@ PrimaryExpression
     / InlineNewExpression
     / InlineArrayExpression
     / InlineObjectExpression
-    / InlineJSXElementExpression
     // / InlineMapExpression
 
 AnonymousCall
@@ -757,74 +807,7 @@ InlineArrayExpression
     // / "|" _ body:ArrayElements? _ "|"
     // { return node("ArrayExpression", { body:body || [], isSet: true }) }
 
-////////////////////////////////////////////////////////////////////////////////
-//  JSX @see https://facebook.github.io/jsx/
-////////////////////////////////////////////////////////////////////////////////
-
-JSXAttributeName
-    = InlineStringLiteral
-    / JSXIdentifierOrLiteral
-
-JSXIdentifierOrLiteral
-    = [@a-zA-Z$_0-9\-]+ !"."
-    {
-        let name = text()
-        return isValidId(name) ? node("Identifier", { name } ) : node("Literal", { value: name })
-    }
-
-JSXElementName
-    = value:JSXIdentifierOrLiteral
-    { return ast.Identifier.is(value) ? new ast.Reference(value) : value }
-    / object:Reference property:( "." @Identifier)?
-    { return property ? node("MemberExpression", { object, property }) : object }
-
-JSXAttribute
-    = key:JSXAttributeName value:JSXAttributeInitializer?
-    { return node("Property", { key, value: value || node("Literal", { value: true }) }) }
-
-JSXAttributeInitializer
-    = "=" _ @JSXAttributeValue
-
-JSXAttributeValue
-    = InlineStringLiteral
-    / "{" _ @InlineExpression _ "}"
-
-JSXSpreadAttribute
-    = "{" _ @InlineSpreadElement _ "}"
-
-JSXAttributes
-    = (_ @(JSXAttribute / JSXSpreadAttribute))+
-
-InlineJSXElementSelfClosing
-    = "<" _ kind:JSXElementName _ properties:JSXAttributes? _ "/>"
-    { return node("ElementExpression", { kind, properties: properties || [], children: [] }) }
-
-InlineJSXElementOpen
-    = "<" _ kind:JSXElementName _ properties:JSXAttributes? _ ">"
-    { return node("ElementExpression", { kind, properties: properties || [], children: [] }) }
-
-InlineJSXElementClose
-    = "</" _ @JSXElementName _ ">"
-
-InlineJSXText
-    = ( !"<" !">" !"{" !"}" .)+
-    { return node("Literal", { value: text().replace(/&lt;/g, "<").replace(/&gt;/g, ">") })}
-
-InlineJSXChild
-    = "{" _ @(InlineExpression / InlineSpreadElement) _ "}"
-    / InlineJSXElementExpression
-    / InlineJSXText
-
-InlineJSXElementExpression
-    = InlineJSXElementSelfClosing
-    / open:InlineJSXElementOpen children:InlineJSXChild* close:InlineJSXElementClose
-    { return node("ElementExpression", { ...open, children, close: close || null }) }
-
-OutlineJSXElementExpression
-    = element:InlineJSXElementSelfClosing children:OutlineArrayArguments
-    { return node("ElementExpression", { ...element, children }) }
-
-// how can you tell an outline named argument from a variable?
+// how can you tell an outline named argument from a var?
 InlineArgument
     = id:(@Identifier _ ":" _)? value:InlineExpression
     { return node("Argument", { id: id || null, value }) }
@@ -903,14 +886,14 @@ InlinePropertyList
     { return [head, ...tail] }
 
 Literal
-    = NumericLiteral
+    = NumberLiteral
     // / BooleanLiteral
     / InlineStringLiteral
     / InlineTemplateStringLiteral
     / NullLiteral
     / RegularExpression
 
-NumericLiteral
+NumberLiteral
     = HexIntegerLiteral
     / DecimalLiteral
     / DecimalIntegerLiteral
@@ -926,16 +909,16 @@ ExponentPart
 
 DecimalLiteral
     = (DecimalInteger? '.' [0-9]+ ExponentPart? / DecimalInteger ExponentPart) !IdPart
-    { return node('Literal', { value: parseFloat(text()), type: node('Reference', { name: 'Number'}) })}
+    { return node('Literal', { value: parseFloat(text()) })}
 
 HexDigit
     = [0-9A-Fa-f]
 
 HexIntegerLiteral
-    = '0x' HexDigit+ !IdPart { return node('Literal', {value: parseInt(text(), 16), type: node('Reference', { name: 'Number'}) }) }
+    = '0x' HexDigit+ !IdPart { return node('Literal', {value: parseInt(text(), 16), integer: true }) }
 
 DecimalIntegerLiteral
-    = DecimalInteger { return node('Literal', { value: parseInt(text()), type: node('Reference', { name: 'Number'}) }) }
+    = DecimalInteger { return node('Literal', { value: parseInt(text()), integer: true }) }
 
 DecimalInteger
     = '0' / [+-]? [1-9] [0-9]* !IdPart { return parseInt(text()) }
@@ -1001,14 +984,19 @@ Identifier
     = name:IdName { return node('Identifier', { name }) }
 
 Reference
-    = !ReservedWord name:IdName arguments:TemplateArguments? {
-        return node("Reference", { name, arguments })
-    }
+    = !ReservedWord name:IdName arguments:TemplateArguments?
+    { return node(isUpperCase(name) ? "ReferenceType" : "Reference", { name, arguments }) }
+
+ReferenceType
+    = &[A-Z] @Reference
 
 Declarator
     = !ReservedWord name:IdName {
         return node("Declarator", { name })
     }
+
+TypeDeclarator
+    = &[A-Z] @Declarator
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Tokens and Keywords

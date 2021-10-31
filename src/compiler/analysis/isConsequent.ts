@@ -1,4 +1,4 @@
-import { Expression, BinaryExpression, Literal, TypeExpression, Reference, DotExpression } from "../ast";
+import { Expression, BinaryExpression, Literal, TypeExpression, Reference, DotExpression, Type, NumberType } from "../ast";
 import toCodeString from "../toCodeString";
 import { IsType } from "./isType";
 import splitExpressions from "./splitExpressions";
@@ -37,6 +37,25 @@ function same(a: Maybe, b: Maybe): Maybe {
     return a === b ? a : null
 }
 
+const dot = new DotExpression({})
+
+//  Our legacy isConsequent expects binary expressions
+//  We will convert our new types to dot is expressions
+function typeToLegacyExpression(type: Type) {
+    if (NumberType.is(type)) {
+        if (type.min != null && type.min === type.max) {
+            return new BinaryExpression({ left: dot, operator: "==", right: type.min! })
+        }
+        let min: Expression | null = type.min != null ? new BinaryExpression({ left: dot, operator: type.minExclusive ? ">" : ">=", right: type.min }) : null
+        let max: Expression | null = type.max != null ? new BinaryExpression({ left: dot, operator: type.maxExclusive ? "<" : "<=", right: type.max }) : null
+        if (min) {
+            return max ? new BinaryExpression({ left: min, operator: "&", right: max}) : min
+        }
+        return max!
+    }
+    return type
+}
+
 /**
  * Assuming expression 'a' is true then this function returns
  * true if 'b' is necessarily true
@@ -44,11 +63,11 @@ function same(a: Maybe, b: Maybe): Maybe {
  * null if we cannot determine
  */
 export default function isConsequent(a: Expression, b: Expression, isType: IsType = (a, b) => a.name === b.name): true | false | null {
-    if (TypeExpression.is(a)) {
-        a = a.value
+    if (Type.is(a)) {
+        a = typeToLegacyExpression(a)
     }
-    if (TypeExpression.is(b)) {
-        b = b.value
+    if (Type.is(b)) {
+        b = typeToLegacyExpression(b)
     }
     if (toCodeString(a) === toCodeString(b)) {
         return true

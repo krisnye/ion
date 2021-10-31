@@ -1,0 +1,11 @@
+import
+    ion.*
+    .*
+
+export
+    class NumberType extends Type, Expression
+        var precision: Number | Null = null
+        var min: Expression | Null = null
+        var max: Expression | Null = null
+        var minExclusive: Boolean = false
+        var maxExclusive: Boolean = false

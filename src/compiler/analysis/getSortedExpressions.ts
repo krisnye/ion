@@ -5,6 +5,7 @@ import { Node, Property, FunctionExpression, Return, Call, BinaryExpression, Exp
 import * as ast from "../ast"
 import { SemanticError } from "../common";
 import { errorMonitor } from "events";
+import { Type } from "../..";
 
 function contains(graph, predicate) {
     let found = false
@@ -93,15 +94,15 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         yield node.left
         yield node.right
     },
+    *Block(node) {
+        yield node.body[node.body.length - 1]
+    },
     *UnaryExpression(node) {
         yield node.argument
     },
-    // *Declarator(node, scopeMap, lookup) {
-    //     let parent = lookup.getParent(node)
-    //     if (Expression.is(parent)) {
-    //         yield parent
-    //     }
-    // },
+    *Declarator(node, scopeMap, lookup) {
+        yield lookup.findAncestor(node, ast.Declaration.is)!
+    },
     *Literal(node, scopeMap) {
         if (node.type) {
             // we need to know the type for these friggin literals right away.
@@ -150,13 +151,17 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     *FunctionExpression(node) {
         // a function depends on it's parameters which means it depends on it's parameter types
         yield* node.parameters
-        if (node.returnType === null) {
-            for (let returnStatement of getNonRecursiveReturnStatements(node)) {
-                if (returnStatement.value != null) {
-                    yield returnStatement.value
-                }
-            }
-        }
+        // HMMMM, have to figure out this dependency
+        // if (node.returnType === null) {
+        //     for (let returnStatement of getNonRecursiveReturnStatements(node)) {
+        //         if (returnStatement.value != null) {
+        //             yield returnStatement.value
+        //         }
+        //     }
+        // }
+    },
+    *ReferenceType(node, scopes, lookup) {
+        return predecessors.Reference!(node, scopes, lookup)
     },
     *Reference(node, scopes) {
         if (node.arguments) {
@@ -223,6 +228,12 @@ export default function getSortedExpressions(root, scopeMap: ScopeMaps, lookup: 
     }
     let nodes = new Array<Expression>()
     traverse(root, {
+        enter(node) {
+            // we don't need to type Type nodes or their descendants.
+            if (ast.Location.is(node) || ast.Type.is(node)) {
+                return skip
+            }
+        },
         leave(node) {
             if (Expression.is(node)) {
                 nodes.push(node)

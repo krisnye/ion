@@ -16,6 +16,7 @@ export class Literal implements _Object.Object , Expression.Expression , Runtime
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly value: String.String | (Number.Number | (Boolean.Boolean | Null.Null));
+    readonly integer: Boolean.Boolean;
     static readonly id = 'Literal';
     static readonly implements = new Set([
         'Literal',
@@ -25,10 +26,11 @@ export class Literal implements _Object.Object , Expression.Expression , Runtime
         'Node',
         'Type'
     ]);
-    constructor({location = null, type = null, value}: {
+    constructor({location = null, type = null, value, integer = false}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        value: String.String | (Number.Number | (Boolean.Boolean | Null.Null))
+        value: String.String | (Number.Number | (Boolean.Boolean | Null.Null)),
+        integer?: Boolean.Boolean
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
@@ -36,15 +38,19 @@ export class Literal implements _Object.Object , Expression.Expression , Runtime
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!(String.isString(value) || (Number.isNumber(value) || (Boolean.isBoolean(value) || Null.isNull(value)))))
             throw new Error('value is not a String | Number | Boolean | Null: ' + Class.toString(value));
+        if (!Boolean.isBoolean(integer))
+            throw new Error('integer is not a Boolean: ' + Class.toString(integer));
         this.location = location;
         this.type = type;
         this.value = value;
+        this.integer = integer;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        value?: String.String | (Number.Number | (Boolean.Boolean | Null.Null))
+        value?: String.String | (Number.Number | (Boolean.Boolean | Null.Null)),
+        integer?: Boolean.Boolean
     }) {
         return new Literal({
             ...this,

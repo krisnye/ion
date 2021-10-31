@@ -1,5 +1,6 @@
 import { traverse, skip, Lookup } from "@glas/traverse"
-import { Node, Scope, Reference, Declarator, Pattern, ObjectPattern, RestElement, ArrayPattern, FunctionExpression, Declaration, Module } from "./ast"
+import { Node, Scope, Reference, Declarator, Pattern, ObjectPattern, RestElement, ArrayPattern, FunctionExpression, Declaration, Module, Variable, Parameter } from "./ast"
+import { SemanticError } from "./common"
 import { getGlobalPath } from "./pathFunctions"
 
 export type NodeMap<T> = {
@@ -7,13 +8,25 @@ export type NodeMap<T> = {
     set(node: Node, t: T)
 }
 
-export type ScopeMap = { [id: string]: Declarator }
+export type ScopeMap = { [id: string]: Declaration }
 export type ScopeMaps = NodeMap<ScopeMap>
 
 type Options = {
-    callback?: (current: Declaration, ancestors: any[], previous?: Declarator) => void,
+    callback?: (current: Declarator, previous?: Declarator) => void,
     lookup?: Lookup,
     globalScope?: any
+}
+
+function declareGlobals(scope, module: Module) {
+    for (let node of module.body) {
+        if (Declaration.is(node)) {
+            if (!Declarator.is(node.id)) {
+                throw new Error("Only Declarators implemented yet")
+            }
+            let globalPath = getGlobalPath(module.name, node.id.name)
+            scope[globalPath] = node
+        }
+    }
 }
 
 /**
@@ -22,12 +35,7 @@ type Options = {
 export function createGlobalScope(modules: Iterable<Module>) {
     let scope: any = {}
     for (let module of modules) {
-        for (let node of module.body) {
-            if (Declaration.is(node)) {
-                let globalPath = getGlobalPath(module.name, node.id.name)
-                scope[globalPath] = node
-            }
-        }
+        declareGlobals(scope, module)
     }
     return scope
 }
@@ -40,48 +48,48 @@ export default function createScopeMaps(root, options: Options = {}): ScopeMaps 
     let map = new Map()
     let scopes: object[] = [options.globalScope || {}]
 
-    function declare(node: Declaration, ancestors: any[]) {
+    function declare(node: Declarator) {
         let scope: any = scopes[scopes.length - 1]
         if (options.callback) {
-            let previous = scope[node.id.name]
-            options.callback(node, ancestors, previous)
+            let previous = scope[node.name]
+            options.callback(node, previous)
         }
-        scope[node.id.name] = node
+        scope[node.name] = node
     }
 
-    // function declarePattern(node: Pattern, source: Pattern, ancestors: any[]) {
-    //     if (Declarator.is(node)) {
-    //         declare(node, source, ancestors)
-    //     }
-    //     else if (RestElement.is(node)) {
-    //         declare(node.value, source, ancestors)
-    //     }
-    //     else if (ObjectPattern.is(node)) {
-    //         for (let property of node.properties) {
-    //             if (RestElement.is(property)) {
-    //                 declarePattern(property, source, ancestors)
-    //             }
-    //             else {
-    //                 if (Reference.is(property.value)) {
-    //                     declare(property.value, source, ancestors)
-    //                 }
-    //                 else if (Pattern.is(property.value)) {
-    //                     declarePattern(property.value, source, ancestors)
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     else if (ArrayPattern.is(node)) {
-    //         for (let element of node.elements) {
-    //             if (element != null) {
-    //                 declarePattern(element, node, ancestors)
-    //             }
-    //         }
-    //     }
-    //     else {
-    //         throw SemanticError(`TODO: Handle this Pattern: ${node.constructor.name}`, node)
-    //     }
-    // }
+    function declarePattern(node: Pattern) {
+        if (Declarator.is(node)) {
+            declare(node)
+        }
+        else if (RestElement.is(node)) {
+            declare(node.value)
+        }
+        else if (ObjectPattern.is(node)) {
+            for (let property of node.properties) {
+                if (RestElement.is(property)) {
+                    declarePattern(property)
+                }
+                else {
+                    if (Reference.is(property.value)) {
+                        declare(property.value)
+                    }
+                    else if (Pattern.is(property.value)) {
+                        declarePattern(property.value)
+                    }
+                }
+            }
+        }
+        else if (ArrayPattern.is(node)) {
+            for (let element of node.elements) {
+                if (element != null) {
+                    declarePattern(element)
+                }
+            }
+        }
+        else {
+            throw SemanticError(`TODO: Handle this Pattern: ${node.constructor.name}`, node)
+        }
+    }
 
     traverse(root, {
         lookup: options.lookup,
@@ -109,17 +117,14 @@ export default function createScopeMaps(root, options: Options = {}): ScopeMaps 
             }
 
             //  declarations set themselves in scope
-            if (Declaration.is(node)) {
-                declare(node, ancestors)
+            if (Pattern.is(node)) {
+                declarePattern(node)
             }
-            // if (Pattern.is(node)) {
-            //     declarePattern(node, node, ancestors)
-            // }
 
             // //  functions set their parameters in scope
             // if (FunctionExpression.is(node)) {
             //     for (let parameter of node.parameters) {
-            //         declarePattern(parameter.id, node)
+            //         declarePattern(parameter.id)
             //     }
             // }
         },

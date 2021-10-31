@@ -113,6 +113,9 @@ export default class Compiler {
     compile(optionsOrJson: Options | OptionsJSON) {
         let options = this.normalizeOptions(optionsOrJson)
         let sources = this.getFiles(options)
+        // if debug only Number compile =>
+        sources = new Map([...sources.entries()].filter(([name, source]) => name === "Number")) as any
+
         let order = new Array<string>()
 
         try {
@@ -210,8 +213,9 @@ export default class Compiler {
         let root: any = module
         for (let phase of phases) {
             console.log(`    ${phase.name}`)
-            // add the externals as global scope
-            options.globalScope = createGlobalScope(externals.values())
+            // add the externals as global scope (including self module)
+            options.globalScope = createGlobalScope([...externals.values(), root])
+            // also add global declarations from current module
             let result = phase(root, options)
             if (Array.isArray(result)) {
                 for (let e of result) {

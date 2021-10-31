@@ -2,6 +2,7 @@
 This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
+import * as Variable from './Variable';
 import * as Meta from './Meta';
 import * as Expression from './Expression';
 import * as Declaration from './Declaration';
@@ -15,7 +16,7 @@ import * as Property from './Property';
 import * as Pattern from './Pattern';
 import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
-export class Variable implements _Object.Object , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Statement.Statement , SideEffect.SideEffect {
+export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Statement.Statement , SideEffect.SideEffect {
     readonly location: Location.Location | Null.Null;
     readonly meta: _Array.Array<Property.Property> | Null.Null;
     readonly type: Expression.Expression | Null.Null;
@@ -26,10 +27,11 @@ export class Variable implements _Object.Object , Meta.Meta , Expression.Express
     readonly isMeta: Boolean.Boolean;
     readonly isInstance: Boolean.Boolean;
     readonly isStatic: Boolean.Boolean;
-    static readonly id = 'Variable';
+    static readonly id = 'Parameter';
     static readonly implements = new Set([
-        'Variable',
+        'Parameter',
         'ion_Object',
+        'Variable',
         'Meta',
         'Expression',
         'Declaration',
@@ -93,16 +95,16 @@ export class Variable implements _Object.Object , Meta.Meta , Expression.Express
         isInstance?: Boolean.Boolean,
         isStatic?: Boolean.Boolean
     }) {
-        return new Variable({
+        return new Parameter({
             ...this,
             ...properties
         });
     }
-    static is(value): value is Variable {
-        return isVariable(value);
+    static is(value): value is Parameter {
+        return isParameter(value);
     }
 }
-export function isVariable(value): value is Variable {
-    return Class.isInstance(Variable, value);
+export function isParameter(value): value is Parameter {
+    return Class.isInstance(Parameter, value);
 }
-export default Variable;
+export default Parameter;

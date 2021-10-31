@@ -5,4 +5,4 @@ import
 export
     class Property extends Expression
         var key: Expression | Identifier
-        var value: Expression | Pattern | Null # Pattern is ONLY used here for AssignmentProperty on ObjectPatterns
+        var value: Expression | Identifier | Pattern | Null # Pattern is ONLY used here for AssignmentProperty on ObjectPatternsz

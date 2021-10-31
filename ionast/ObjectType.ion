@@ -1,0 +1,8 @@
+import
+    ion.*
+    .*
+
+export
+    class ObjectType extends Type
+        var kind: String # "Object" | "Map" | "Array"
+        var properties: Array<Property | Type>

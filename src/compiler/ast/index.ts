@@ -44,6 +44,9 @@ export {
     default as Conditional
 } from './Conditional';
 export {
+    default as ConditionalDeclaration
+} from './ConditionalDeclaration';
+export {
     default as ContinueStatement
 } from './ContinueStatement';
 export {
@@ -101,6 +104,9 @@ export {
     default as InstanceDeclarations
 } from './InstanceDeclarations';
 export {
+    default as IntersectionType
+} from './IntersectionType';
+export {
     default as Literal
 } from './Literal';
 export {
@@ -122,14 +128,23 @@ export {
     default as Node
 } from './Node';
 export {
+    default as NumberType
+} from './NumberType';
+export {
     default as ObjectExpression
 } from './ObjectExpression';
 export {
     default as ObjectPattern
 } from './ObjectPattern';
 export {
+    default as ObjectType
+} from './ObjectType';
+export {
     default as OutlineOperation
 } from './OutlineOperation';
+export {
+    default as Parameter
+} from './Parameter';
 export {
     default as Pattern
 } from './Pattern';
@@ -145,6 +160,9 @@ export {
 export {
     default as Reference
 } from './Reference';
+export {
+    default as ReferenceType
+} from './ReferenceType';
 export {
     default as RegularExpression
 } from './RegularExpression';
@@ -187,6 +205,9 @@ export {
 export {
     default as UnaryExpression
 } from './UnaryExpression';
+export {
+    default as UnionType
+} from './UnionType';
 export {
     default as Variable
 } from './Variable';

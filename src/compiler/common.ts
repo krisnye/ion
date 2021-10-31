@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as np from "path";
 import { traverse, skip } from "@glas/traverse";
 import { NodeMap, ScopeMap } from "./createScopeMaps";
-import { Reference, Node, Variable, ModuleSpecifier, ImportDeclaration, Declarator, ImportDefaultSpecifier, ImportNamespaceSpecifier, ImportSpecifier, Declaration, Statement, Identifier } from "./ast";
+import { Reference, Node, Variable, ModuleSpecifier, ImportDeclaration, Declarator, ImportDefaultSpecifier, ImportNamespaceSpecifier, ImportSpecifier, Declaration, Statement, Identifier, Block } from "./ast";
 
 export const runtimeModuleName = "ionscript"
 
@@ -17,6 +17,27 @@ export function isMetaName(name) {
 
 export function isTypeName(name) {
     return !isMetaName(name) && isUpperCase(name)
+}
+
+export function isValueName(name) {
+    return !isMetaName(name) && !isTypeName(name)
+}
+
+export function combineStatements(...statements: Statement[]) {
+    let first = statements[0]
+    if (statements.length === 1) {
+        return first
+    }
+    let body = new Array<Statement>()
+    for (let statement of statements) {
+        if (Block.is(statement)) {
+            body.push(...statement.body)
+        }
+        else {
+            body.push(statement)
+        }
+    }
+    return new Block({ location: first.location, body })
 }
 
 export function hasNodesOfType<T>(root, predicate: (node) => node is T) {

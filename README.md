@@ -19,3 +19,5 @@ Cross platform modeling language
   - [x] do we still have || and | => We only need | since it works on booleans
   - [/] calculate expression types
   - [ ] figure out why For loop parsing is not working
+  - [ ] reference older inferTypes as we reimplement new inferTypes
+  - [x] continue type inference till function argument checking is working

@@ -1,10 +1,9 @@
-import { Expression, BinaryExpression, ExpressionStatement, UnaryExpression, TypeExpression, DotExpression, Reference, FunctionType } from "../ast";
+import { Expression, BinaryExpression, UnaryExpression, TypeExpression } from "../ast";
 import toCodeString from "../toCodeString";
 import { memoize } from "../common";
 import { traverse } from "@glas/traverse";
 import normalize from "./normalize";
 import splitExpressions from "./splitExpressions";
-import evaluate from "./evaluate";
 
 function find<T>(items: Iterable<T>, predicate: (value: T) => boolean): T | null {
     for (let item of items) {
