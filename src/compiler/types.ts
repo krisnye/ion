@@ -3,7 +3,7 @@ import { BinaryExpression, DotExpression, Expression, Literal, Void as AstVoid }
 import Reference from "./ast/Reference";
 import { getGlobalPath } from "./pathFunctions";
 
-function ref(name: string) {
+export function ref(name: string) {
     return new Reference({ name: getGlobalPath(name) })
 }
 

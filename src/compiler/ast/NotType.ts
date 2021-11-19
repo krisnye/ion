@@ -2,57 +2,55 @@
 This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
-import * as Pattern from './Pattern';
+import * as Type from './Type';
 import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as _Array from './ion/Array';
-import * as RestElement from './RestElement';
 import * as Class from './ion/Class';
-export class ArrayPattern implements _Object.Object , Pattern.Pattern , Expression.Expression , Node.Node {
+export class NotType implements _Object.Object , Type.Type , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly elements: _Array.Array<Pattern.Pattern | (RestElement.RestElement | Null.Null)>;
-    static readonly id = 'ArrayPattern';
+    readonly value: Type.Type;
+    static readonly id = 'NotType';
     static readonly implements = new Set([
-        'ArrayPattern',
+        'NotType',
         'ion_Object',
-        'Pattern',
+        'Type',
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, elements}: {
+    constructor({location = null, type = null, value}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        elements: _Array.Array<Pattern.Pattern | (RestElement.RestElement | Null.Null)>
+        value: Type.Type
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
-        if (!_Array.isArray(elements))
-            throw new Error('elements is not a Array: ' + Class.toString(elements));
+        if (!Type.isType(value))
+            throw new Error('value is not a Type: ' + Class.toString(value));
         this.location = location;
         this.type = type;
-        this.elements = elements;
+        this.value = value;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        elements?: _Array.Array<Pattern.Pattern | (RestElement.RestElement | Null.Null)>
+        value?: Type.Type
     }) {
-        return new ArrayPattern({
+        return new NotType({
             ...this,
             ...properties
         });
     }
-    static is(value): value is ArrayPattern {
-        return isArrayPattern(value);
+    static is(value): value is NotType {
+        return isNotType(value);
     }
 }
-export function isArrayPattern(value): value is ArrayPattern {
-    return Class.isInstance(ArrayPattern, value);
+export function isNotType(value): value is NotType {
+    return Class.isInstance(NotType, value);
 }
-export default ArrayPattern;
+export default NotType;

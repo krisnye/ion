@@ -274,10 +274,10 @@ PropertyModifiers
     / VariableModifiers
 
 MetaProperties
- = (@DynamicOutlineProperty Dent)*
+ = (@MetaProperty Dent)*
 
-DynamicOutlineProperty
-    = '[' _ key:InlineExpression _ ']' value:(_ "=" _ @OutlineExpression / EOL { return null })
+MetaProperty
+    = '<' _ key:InlineExpression _ '>' value:(_ "=" _ @OutlineExpression / EOL { return null })
     { return node("Property", {key, value} ) }
 
 // VariableMetaProperties
@@ -357,7 +357,7 @@ RestElement
     { return node("RestElement", { value }) }
 
 ObjectPattern
-    = "{" _ head:AssignmentProperty tail:(_ "," _ @AssignmentProperty)* rest:(_ "," _ @RestElement)? _ "}"
+    = "(" _ head:PatternProperty tail:(_ "," _ @PatternProperty)* rest:(_ "," _ @RestElement)? _ ")"
     {
         let properties = [head, ...tail]
         if (rest) {
@@ -366,14 +366,14 @@ ObjectPattern
         return node("ObjectPattern", { properties })
     }
 
-AssignmentProperty
-    = key:Identifier value:(_ ":" _ @Pattern / _ "=" _ @InlineExpression)?
+PatternProperty
+    = key:Identifier id:(_ ":" _ @Pattern / _ "=" _ @InlineExpression)?
     {
-        if (ast.Expression.is(value)) {
-            // AssignmentPattern
-            return node("Property", { key, value: node("AssignmentPattern", { left: node("Declarator", key), right: value })})
-        }
-        return node("Property", { key, value: value || node("Reference", key), shorthand: value == null } )
+        // if (ast.Expression.is(value)) {
+        //     // AssignmentPattern
+        //     return node("Property", { key, value: node("AssignmentPattern", { left: node("Declarator", key), right: value })})
+        // }
+        return node("PatternProperty", { key, id: id || node("Declarator", key) } )
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -434,12 +434,12 @@ InlineType
     = InlineUnionType
 
 TerminalType
-    = TypeReferenceOrSimpleArray
+    = ReferenceTypeOrSimpleArray
     / NumberTypeExpression
     / InlineObjectType
     // OutlineObjectType
 
-TypeReferenceOrSimpleArray
+ReferenceTypeOrSimpleArray
     = type:ReferenceType array:("[]")*
     {
         for (let i = 0; i < array.length; i++) {
@@ -488,10 +488,13 @@ OutlineUnionType
     / @OutlineIntersectionType
     / @InlineUnionType EOL
 
+NumberTypeValue
+    = ReferenceType / NumberLiteral / MemberExpression
+
 NumberTypeExpression
-    = minExclusive:(@">" _)? min:InlineExpression _ ".." _ maxExclusive:(@"<" _)? max:InlineExpression
+    = minExclusive:(@">" _)? min:NumberTypeValue _ ".." _ maxExclusive:(@"<" _)? max:NumberTypeValue
     { return max ? node("NumberType", { min, max, minExclusive: Boolean(minExclusive), maxExclusive: Boolean(maxExclusive) }) : min }
-    / op:(">=" / ">" / "<=" / "<") _ value:InlineExpression
+    / op:(">=" / ">" / "<=" / "<") _ value:NumberTypeValue
     {
         return op.startsWith(">")
             ? node('NumberType', { min: value, minExclusive: !op.endsWith("=") })
@@ -628,8 +631,8 @@ OutlineExpression
     // / EOL Indent Dent @OutlineMemberExpression Outdent
 
 OutlineExpressionStartsThisLine
-    = OutlineAssignment
-    / OutlineVariableDeclaration
+    = OutlineVariableDeclaration
+    / OutlineAssignment
     / OutlineDoExpression // must be higher precedence than OutlineFunction
     / OutlineFunction
     / OutlineArrayExpression
@@ -842,10 +845,10 @@ OutlineObjectExpression
 OutlinePropertyList
     = EOL Indent @(Dent @(OutlineProperty / Statement))+ Outdent
 
-PropertyStatement
-    = OutlineProperty
-    // / OutlineMapProperty
-    // { return node("PropertyStatement", { property }) }
+// PropertyStatement
+//     = OutlineProperty
+//     // / OutlineMapProperty
+//     // { return node("PropertyStatement", { property }) }
 
 OutlineProperty
     = @InlineSpreadElement EOL
@@ -867,7 +870,7 @@ InlineMapPropertyList
     { return [head, ...tail] }
 
 InlineObjectExpression
-    = "{" _ body:InlinePropertyList? _ "}"
+    = "(" _ body:InlinePropertyList? _ ")"
     { return node("ObjectExpression", { body: body || []}) }
     // / "(" _ properties:InlineMapPropertyList? _ ")"
     // { return node("ObjectExpression", { properties: properties || [], isMap: true }) }
@@ -924,7 +927,13 @@ DecimalInteger
     = '0' / [+-]? [1-9] [0-9]* !IdPart { return parseInt(text()) }
 
 InlineStringLiteral
-    = '"' DoubleStringChar* '"' { return node('Literal', { value: eval(text()), type: node('Reference', { name: 'String'}) }); }
+    = '"' DoubleStringChar* '"'
+    {
+        let value = eval(text())
+        let length = node('Literal', { value: value.length })
+        let lengthType = node('NumberType', { min: length, max: length })
+        return node('Literal', { value: eval(text()), type: node('StringType', { value, length: lengthType }) });
+    }
 
 DoubleStringChar
     = "\\\"" / !'"' .
@@ -957,7 +966,11 @@ OutlineStringLiteralLine
 
 OutlineStringLiteral
     = '""' EOL Indent lines:OutlineStringLiteralLine+ Outdent
-    { return node('Literal', { value: lines.join('\n') }) }
+    {
+        let value = lines.join('\n')
+        let length = node('NumberType', { min: value.length, max: value.length })
+        return node('Literal', { value: eval(text()), type: node('StringType', { value, length }) });
+    }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Regular Expressions

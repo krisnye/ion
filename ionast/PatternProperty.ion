@@ -1,0 +1,9 @@
+import
+    ion.*
+    .*
+
+export
+    class PatternProperty extends Expression
+        var key: Expression | Identifier
+        var id: Pattern | Expression
+        # Expression just used for parsing

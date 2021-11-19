@@ -13,6 +13,7 @@ export default function createConditionalDeclarations(root: Analysis) {
                 // find all variable declaration references
                 let refs = new Set(getNodesOfType(node.test, Reference.is).map(n => n.name).filter(isValueName))
                 // now we have to redeclare more strongly typed stuff.
+                // TODO: use new type system, NOT DotExpressions.
                 let newConsequents = new Array<ConditionalDeclaration>()
                 let newAlternates = node.alternate != null ? new Array<ConditionalDeclaration>() : null
                 for (let name of refs) {

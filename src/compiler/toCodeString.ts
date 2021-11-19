@@ -1,6 +1,5 @@
 import * as ast from "./ast";
 import { Node } from "./ast";
-import TypeReference from "./ast/TypeReference";
 import { memoize } from "./common";
 
 const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P]>) => string} = {
@@ -16,6 +15,9 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     ReferenceType(node) {
         return node.name
     },
+    NotType(node) {
+        return `!${s(node.value)}`
+    },
     ObjectType(node) {
         let content = node.properties.map(toCodeString).join(', ')
         switch(node.kind) {
@@ -28,21 +30,27 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     TypeExpression(node) {
         return s(node.value)
     },
+    NeverType(node) {
+        return "Never"
+    },
     NumberType(node) {
-        if (node.min && node.max && s(node.min) == s(node.max)) {
-            return `== ${s(node.min)}`
+        if (node.min == null && node.max == null) {
+            return `Number`
         }
-        let text = ``
+        if (node.min && node.max && s(node.min) === s(node.max)) {
+            return `(${s(node.min)})`
+        }
+        let text = `(`
         if (node.min) {
-            text += `${node.minExclusive ? ">" : ""}${s(node.min)}`
+            text += `${node.minExclusive ? ">" : ">="}${s(node.min)}`
         }
         if (node.max) {
             if (node.min) {
                 text += `..`
-                text += `${node.maxExclusive ? "<" : ""}${s(node.max)}`
             }
+            text += `${node.maxExclusive ? "<" : "<="}${s(node.max)}`
         }
-        return text
+        return text + `)`
     },
     DotExpression(node) {
         return "."
@@ -50,9 +58,9 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     ThisExpression(node) {
         return "this"
     },
-    AssignmentPattern(node) {
-        return `${toCodeString(node.left)} = ${toCodeString(node.right)}`
-    },
+    // AssignmentPattern(node) {
+    //     return `${toCodeString(node.left)} = ${toCodeString(node.right)}`
+    // },
     ObjectPattern(node) {
         return `{ ${node.properties.map(toCodeString).join(', ')} }`
     },
@@ -61,6 +69,12 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     },
     ArrayExpression(node) {
         return `[ ${node.body.map(toCodeString).join(', ')} ]`
+    },
+    UnionType(node) {
+        return `${node.types.map(toCodeString).join(' | ')}`
+    },
+    IntersectionType(node) {
+        return `${node.types.map(toCodeString).join(' & ')}`
     },
     Module(node) {
         return `module ${node.name}`
@@ -79,7 +93,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     },
     Property(node) {
         if (node.key != null) {
-            if (ast.Identifier.is(node.key) || TypeReference.is(node.key)) {
+            if (ast.Identifier.is(node.key) || ast.ReferenceType.is(node.key)) {
                 return `${s(node.key)}:${s(node.value!)}`
             }
             else {

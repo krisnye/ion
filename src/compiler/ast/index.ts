@@ -125,8 +125,14 @@ export {
     default as ModuleSpecifier
 } from './ModuleSpecifier';
 export {
+    default as NeverType
+} from './NeverType';
+export {
     default as Node
 } from './Node';
+export {
+    default as NotType
+} from './NotType';
 export {
     default as NumberType
 } from './NumberType';
@@ -148,6 +154,9 @@ export {
 export {
     default as Pattern
 } from './Pattern';
+export {
+    default as PatternProperty
+} from './PatternProperty';
 export {
     default as Position
 } from './Position';
@@ -187,6 +196,9 @@ export {
 export {
     default as Statement
 } from './Statement';
+export {
+    default as StringType
+} from './StringType';
 export {
     default as TemplateElement
 } from './TemplateElement';

@@ -1,10 +1,34 @@
+array = [1, (name = "Kris", age = 49)]
 
-// double = (value: < 1) -> value
+[first, (name, age)] = array
 
-A = 5 .. 10
-B = 20 .. 30
+// person = (name = "Kris", age = 49)
+// (name, age) = person
 
-scale = (a: A, b: B) -> a + b
+// foo = (a: Number, b: < a) ->
+//     a
+
+// one = 20
+// two = 19
+// three = foo(one, two)
+
+// bar = (x: Number, y: Number) ->
+//     if y < x
+//         foo(x, y)
+
+// class Vector
+
+// A = 5 .. 10
+// B = 20 .. 30 | Vector
+
+// scale = (a: A, b: B) ->
+//     // TODO: add is operator
+//     min(a, b)
+//     a - b
+
+// Percent = |
+//     > 0 & < 10 & > 4
+//     > 20 & < 100
 
 // MyArray1 = String[]
 // MyArray2 = [String, Number, Integer]
@@ -12,9 +36,6 @@ scale = (a: A, b: B) -> a + b
 // MyMap = { String: Number, Number: String }
 // class Vector
 // UnitVector = Vector & (length: 1)
-// Percent = |
-//     > 0 & < 10
-//     > 20 & < 100
 
 // x: Percent = 10
 
@@ -52,5 +73,7 @@ scale = (a: A, b: B) -> a + b
 //         foo := 6
 //         // block type Void
 //     foo + bar
+
+//  looks like array destructuring
 
 class Number

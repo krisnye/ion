@@ -1,43 +1,81 @@
 import { Lookup, traverse } from "@glas/traverse";
 import evaluate from "../analysis/evaluate";
 import getSortedExpressions from "../analysis/getSortedExpressions";
-import { Expression, Literal, Module, TypeExpression } from "../ast";
+import { Expression, Literal, Module, TypeExpression, Property } from "../ast";
 import * as ast from "../ast";
-import { SemanticError } from "../common";
+import { getNodesOfType, isTypeName, SemanticError } from "../common";
 import { Options } from "../Compiler"
 import createScopeMaps, { createGlobalScope } from "../createScopeMaps";
 import * as types from "../types"
 import EvaluateContext from "../analysis/EvaluateContext";
 import toCodeString from "../toCodeString";
-import isConsequent from "../analysis/isConsequent";
 import negate from "../analysis/negate";
 import simplify from "../analysis/simplify";
 import { getFinalExpressions } from "./semanticChecks";
 import combineExpressions from "../analysis/combineExpressions";
-import { inferOperationType } from "../analysis/numberTypes";
+import { inferOperationType, numberType } from "../analysis/numberTypes";
+import { isSubtype } from "../analysis/newTypeAnalysis";
+import splitExpressions from "../analysis/splitExpressions";
+import { operatorToNumberTypes, reflectOperators } from "../analysis/normalize";
 
-function setResolved(lookup: Lookup, originalNode: Expression, currentNode: Expression) {
-    lookup.setCurrent(originalNode, currentNode)
-}
-
-function createCombinedTypeExpression(type: ast.TypeExpression, name: String, knownTrueExpression: ast.Expression | null, location: ast.Location) {
+function createCombinedTypeExpression(type: ast.TypeExpression, name: String, knownTrueExpression: ast.Expression, location: ast.Location) {
     // now we convert the node assert to a type expression (by replacing variable name references to DotExpressions) so we can combine it.
-    let found = 0
-    let assertType = knownTrueExpression == null ? null :traverse(knownTrueExpression, {
-        leave(node) {
-            if (ast.Reference.is(node) && node.name === name) {
-                found++
-                return new ast.DotExpression({})
+    let newClauses = new Array<ast.Type>()
+    for (let clause of splitExpressions(knownTrueExpression, "&")) {
+        if (ast.BinaryExpression.is(clause)) {
+            let { left, operator, right } = clause
+            // first check if is right side.
+            if (ast.Reference.is(right) && right.name === name) {
+                // try to swap to left side.
+                let reflect = reflectOperators[operator]
+                if (reflect == null) {
+                    continue
+                }
+                operator = reflect
+                let temp = right
+                right = left
+                left = temp
+            }
+            if (operator === "is" || operator === "isnt") {
+                if (!ast.ReferenceType.is(right)) {
+                    throw SemanticError(`Expected type reference`, right)
+                }
+                newClauses.push(operator === "isnt" ? new ast.NotType({ value: right }) : right)
+            } else {
+                if (ast.Reference.is(left) && left.name === name) {
+                    newClauses.push(...operatorToNumberTypes[operator](right))
+                }
             }
         }
-    })
+    }
     // didn't find any means the expression was irrelevant to the type so we can ignore it
-    if (found === 0) {
+    if (newClauses.length === 0) {
         return type
     }
-    let combinedType = combineExpressions([type, assertType], "&")!
-    return simplify(new ast.TypeExpression({ location, value: combinedType }))
+    let combinedType = combineExpressions([...(ast.IntersectionType.is(type) ? type.types : [type]), ...newClauses], "&")!
+    // console.log("--------> " + toCodeString(combinedType))
+    return combinedType
+    // return simplify(new ast.TypeExpression({ location, value: combinedType }))
 }
+
+// function callToObjectTypeToProperties(call: ast.Call, c: EvaluateContext, errors: Array<Error>) {
+//     let callee = c.lookup.getCurrent(call.callee)
+//     let calleeType = callee.type as ast.FunctionType
+//     let properties = new Array<ast.Property>()
+//     let index = 0
+//     for (let arg of call.arguments) {
+//         if (ast.Argument.is(arg)) {
+//             let currentArg = c.lookup.getCurrent(arg) as ast.Argument
+//             let value = c.lookup.getCurrent(currentArg.value)
+//             let parameter = c.lookup.getCurrent(calleeType.parameters[index++]) as ast.Variable
+//             properties.push(new ast.Property({ key: new ast.Identifier(parameter.id as ast.Declarator), value: value.type }))
+//         }
+//         else {
+//             throw SemanticError(`Argument type not supported yet`, arg)
+//         }
+//     }
+//     return properties
+// }
 
 const literalTypes = {
     boolean: types.Boolean,
@@ -64,16 +102,56 @@ const binaryOperationsType = {
     "%": null,
 }
 
+function getAncestorExpressionType(node, c: EvaluateContext) {
+    let ancestor = c.lookup.findAncestor(node, ast.Expression.is)!
+    // let declaration = c.lookup.findAncestor(node, ast.Declaration.is)!
+    // this is not technically correct, we need the type of the parent pattern
+    let type = c.lookup.getCurrent(ancestor.type)
+    return type
+}
+
+function getMemberType(objectType: ast.ObjectType, objectProperty: ast.Expression | ast.Identifier, c: EvaluateContext) {
+    for (let property of objectType.properties as Array<Property>) {
+        let matches = false
+        if (ast.Identifier.is(property.key) && ast.Identifier.is(objectProperty)) {
+            matches = property.key.name === objectProperty.name
+        }
+        else if (Expression.is(property.key) && Expression.is(objectProperty)) {
+            matches = toCodeString(property.key) === toCodeString(objectProperty)
+        }
+        else {
+            console.log("CHECK TYPES HERE-------")
+        }
+        // let matches = property.key
+        // console.log({ pkey: property.key, np: node.property })
+        if (matches) {
+            return property.value
+        }
+    }
+    console.log("NOT FOUND", JSON.stringify({ objectProperty, objectType }, null, 2))
+    throw SemanticError(`Property not found`, objectProperty)
+}
+
 export const inferType: {
     [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P]>, c: EvaluateContext, errors: Error[]) => any
 } = {
     Declarator(node, c) {
-        let declaration = c.lookup.findAncestor(node, ast.Declaration.is)!
-        let type = c.lookup.getCurrent(
-            ast.Variable.is(declaration) && declaration.isType ? declaration.value : declaration.type
-        )
+        let type = getAncestorExpressionType(node, c)
         return { type }
     },
+    PatternProperty(node, c) {
+        let ancestorType = getAncestorExpressionType(node, c)
+        let type = getMemberType(ancestorType, node.key, c)
+        return { type }
+    },
+    ObjectPattern(node, c) {
+        let type = getAncestorExpressionType(node, c)
+        return { type }
+    },
+    // ArrayPattern(node, c) {
+    //     let type = getAncestorExpressionType(node, c)
+    //     return { type }
+    // },
     BinaryExpression(node, c) {
         let type = binaryOperationsType[node.operator]
         if (type == null) {
@@ -89,7 +167,9 @@ export const inferType: {
         if (type == null) {
             throw SemanticError(`Cannot find type ${jstypeof}`, type)
         }
-        type = new ast.NumberType({ min: node, max: node })
+        if (type === types.Number) {
+            type = new ast.NumberType({ min: node, max: node })
+        }
         return { type }
     },
     Parameter(node, c, lookup) {
@@ -125,7 +205,14 @@ export const inferType: {
     },
     ReferenceType(node, c) {
         let scope = c.scopes.get(node)
+        if (node.name === types.Number.name) {
+            return numberType(null, null)
+        }
         let declarator = c.lookup.getCurrent(scope[node.name])
+        if (!declarator) {
+            console.log("Declarator not found: ", node.name)
+            return
+        }
         let declaration = c.lookup.findAncestor(declarator, ast.Declaration.is)!
         if (!ast.ClassDeclaration.is(declaration)) {
             return declarator.type
@@ -134,6 +221,9 @@ export const inferType: {
     Reference(node, c) {
         let scope = c.scopes.get(node)
         let declarator = c.lookup.getCurrent(c.lookup.getCurrent(scope[node.name]))
+        if (declarator == null) {
+            throw SemanticError(`Reference not found: ${node.name}`, node)
+        }
         let type = c.lookup.getCurrent(declarator.type)
         return { type }
     },
@@ -146,33 +236,123 @@ export const inferType: {
         if (node.negate) {
             assertion = negate(assertion)
         }
+        //  need a function to turn an Expression into a Type
+        //  then createCombinedType expression must merge two types
         let type = createCombinedTypeExpression(ancestorDeclaration.type, name, assertion, node.location!)
-        // console.log({ ancestorDeclarationType: toCodeString(ancestorDeclaration.type), assertion: toCodeString(assertion), type: toCodeString(type) })
+        return { type }
+    },
+    ArrayExpression(node, c) {
+        let items = new Array<Expression>()
+        for (let item of node.body) {
+            if (Expression.is(item)) {
+                items.push(item)
+            }
+            else {
+                // we stop confirming type at first non-expression for now.
+                break
+            }
+        }
+        let type = new ast.ObjectType({
+            location: node.location,
+            kind: "Array",
+            properties: items.map((item, index) => {
+                let key = new Literal({ value: index })
+                let value = c.lookup.getCurrent(item)
+                return new Property({
+                    key,
+                    value: value.type
+                })
+            })
+        })
+        return { type }
+    },
+    ObjectExpression(node, c) {
+        let type = new ast.ObjectType({
+            location: node.location,
+            kind: "Object",
+            properties: node.body.filter(Property.is).map(item => {
+                let key = c.lookup.getCurrent(item.key)
+                let value = c.lookup.getCurrent(item.value)
+                return new Property({
+                    key: key.type || key,
+                    value: value.type
+                })
+            })
+        })
+        return { type }
+    },
+    MemberExpression(node, c) {
+        let objectType = c.lookup.getCurrent(node.object).type as ast.ObjectType
+        let property = c.lookup.getCurrent(node.property) as ast.Property
+        let type = getMemberType(objectType, property, c)
         return { type }
     },
     Call(node, c, errors) {
         let callee = c.lookup.getCurrent(node.callee)
         let calleeType = callee.type as ast.FunctionType
-        let args = c.lookup.getCurrent(node.arguments)
         let index = 0
-        // TODO: There should just be a single Anonymous Object parameter.
-        for (let originalArg of args) {
-            if (ast.Argument.is(originalArg)) {
-                let arg = c.lookup.getCurrent(originalArg) as ast.Argument
-                let value = c.lookup.getCurrent(arg.value)
-                let valueType = value.type
-                let calleeParameter = c.lookup.getCurrent(calleeType.parameters[index])
-                let calleeParameterType = calleeParameter.type
-                let consequent = isConsequent(valueType, calleeParameterType)
-                if (consequent === false) {
-                    errors.push(SemanticError(`Argument always invalid: ${toCodeString(valueType)}, expected: ${toCodeString(calleeParameterType)}`, value))
-                }
-                else if (consequent === null) {
-                    errors.push(SemanticError(`Argument may be invalid: ${toCodeString(valueType)}, expected: ${toCodeString(calleeParameterType)}`, value))
-                }
+        //  TODO: Handle destructured parameter names
+        let paramNames = new Map(calleeType.parameters.map((value, index) => [(value.id as ast.Declarator).name, index]))
+        // console.log(paramNames)
+        let argValues = node.arguments.map(arg => {
+            if (ast.Argument.is(arg)) {
+                let currentArg = c.lookup.getCurrent(arg) as ast.Argument
+                let argValue = c.lookup.getCurrent(currentArg.value)
+                return argValue
             }
             else {
-                errors.push(SemanticError(`Non-arguments not supported yet`, originalArg))
+                throw SemanticError(`Argument type not supported yet`, arg)
+            }
+        }) as Array<ast.Expression>
+
+        for (let argValue of argValues) {
+            let argType = argValue.type!
+            let parameter = c.lookup.getCurrent(calleeType.parameters[index]) as ast.Variable
+            let parameterType = parameter.type!
+            //  replace any parameter type name references with actual arg values (with types)
+            let newParameterType = traverse(parameterType, {
+                skip(node) { return ast.Location.is(node) },
+                leave(node) {
+                    if (ast.Reference.is(node)) {
+                        let paramIndex = paramNames.get(node.name)
+                        if (paramIndex != null) {
+                            let referencedArg = argValues[paramIndex]!
+                            // console.log("?? " + toCodeString(parameter.id) + " -> " + toCodeString(referencedArg));
+                            return referencedArg
+                            // let referencedArgType = argValues[paramIndex].type!
+                            // //  replace this reference with the actual current referenced argument type
+                            // return referencedArgType
+                        }
+                        else {
+                            if (isTypeName(node.name)) {
+                                //  if this is a type reference, we should return the value of the type
+                                //  unless this is a class in which case, leave alone
+                                throw new Error("TODO, implement this")
+                            }
+                            else {
+                                let declarator = c.lookup.getCurrent(c.scopes.get(node)[node.name])
+                                return declarator.type
+                            }
+                        }
+                    }
+                }
+            })
+            // first check if it's consequent with the new replaced parameter type
+            let consequent = isSubtype(argType, newParameterType)
+            if (consequent !== true) {
+                //  if that doesn't validate it then let's simplify the newParameterType
+                let simpleParameterType = simplify(newParameterType)
+                console.log(`Replaced ${toCodeString(parameter.id)}: ` + toCodeString(parameterType) + " -> " + toCodeString(newParameterType) + " -> " + toCodeString(simpleParameterType))
+                consequent = isSubtype(argType, simpleParameterType)
+            }
+
+            // console.log({ valueType, calleeParameterType })
+            // console.log(`CHECK isSubtype ${toCodeString(valueType)} => ${toCodeString(calleeParameterType)} ? ${consequent}`)
+            if (consequent === false) {
+                errors.push(SemanticError(`Argument always invalid: ${toCodeString(argType)}, expected: ${toCodeString(newParameterType)}`, argValue))
+            }
+            else if (consequent === null) {
+                errors.push(SemanticError(`Argument may be invalid: ${toCodeString(argType)}, expected: ${toCodeString(newParameterType)}`, argValue))
             }
             index++
         }
@@ -213,9 +393,9 @@ export default function inferTypes(
         // then try to infer types
         if (currentNode.type == null) {
             let func = inferType[currentNode.constructor.name]
-            if (func == null) {
-                console.log("!!!!!!!! NO FUNCTION: " + currentNode.constructor.name)
-            }
+            // if (func == null) {
+            //     console.log("!!!!!!!! NO FUNCTION: " + currentNode.constructor.name)
+            // }
             changes = func?.(currentNode, context, errors)
         }
         else {

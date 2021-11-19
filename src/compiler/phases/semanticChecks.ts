@@ -1,10 +1,10 @@
 import { traverse, skip, replace, Lookup } from "@glas/traverse";
 import combineExpressions from "../analysis/combineExpressions";
 import { binaryOps, unaryOps } from "../analysis/evaluate";
-import isConsequent from "../analysis/isConsequent";
-import { combineNumberTypes, identityNumberType, isLiteralNumberType } from "../analysis/numberTypes";
+import { isSubtype } from "../analysis/newTypeAnalysis";
+import { combineNumberTypes, numberType, isLiteralNumberType } from "../analysis/numberTypes";
 import splitExpressions from "../analysis/splitExpressions";
-import { Assignment, BinaryExpression, Call, ClassDeclaration, Type, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, Variable, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation, Declaration, For, SideEffect, UnaryExpression, NumberType, IntersectionType, ObjectType } from "../ast";
+import { Assignment, BinaryExpression, Call, ClassDeclaration, Type, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, Variable, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation, Declaration, For, SideEffect, UnaryExpression, NumberType, IntersectionType, ObjectType, ArrayPattern, PatternProperty, RestElement, ObjectPattern } from "../ast";
 import { hasNodesOfType, SemanticError, isTypeName, isMetaName } from "../common";
 import { Options } from "../Compiler"
 import createScopeMaps from "../createScopeMaps";
@@ -74,175 +74,6 @@ function replaceOutlineOperations(e: Expression, lookup: Lookup) {
     })
 }
 
-// function checkTypeExpression(typeExpression: TypeExpression, errors: Array<Error>, lookup: Lookup, root = false) {
-//     let { value } = typeExpression
-//     if (root) {
-//         value = replaceOutlineOperations(value, lookup)
-//     }
-//     let options = [...splitExpressions(value, "|")]
-//     options = traverse(options, {
-//         lookup,
-//         enter(option, ancestors) { if (ancestors.length == 1) { return skip } },
-//         leave(option) {
-//             if (Expression.is(option)) {
-//                 let clauses = [...splitExpressions(option, "&")]
-//                 let before = clauses
-//                 clauses = traverse(clauses, {
-//                     lookup,
-//                     enter(node, ancestors) { if (ancestors.length == 1) { return skip } },
-//                     leave(node) {
-//                         // check that this is a valid terminal expression.
-//                         //  Array -> clauses for each index
-//                         if (ArrayExpression.is(node)) {
-//                             let errorsBefore = errors.length
-//                             for (let element of node.body) {
-//                                 if (!Expression.is(element)) {
-//                                     errors.push(SemanticError(`not allowed in type expressions `, element))
-//                                 }
-//                             }
-//                             let hasErrors = errors.length > errorsBefore
-//                             if (!hasErrors) {
-//                                 return replace(
-//                                     ...node.body.map((element, index) => {
-//                                         if (Expression.is(element)) {
-//                                             let { location } = element
-//                                             return new BinaryExpression({
-//                                                 location,
-//                                                 left: new MemberExpression({
-//                                                     location: element.location,
-//                                                     object: new DotExpression({ location }),
-//                                                     property: new Literal({ location, value: index })
-//                                                 }),
-//                                                 operator: "is",
-//                                                 right: checkTypeExpression(
-//                                                     new TypeExpression({ location, value: element }),
-//                                                     errors,
-//                                                     lookup
-//                                                 )
-//                                             })
-//                                         }
-//                                     })
-//                                 )
-//                             }
-//                         }
-//                         if (ObjectExpression.is(node)) {
-//                             let errorsBefore = errors.length
-//                             for (let property of node.body) {
-//                                 if (Property.is(property)) {
-//                                     //  key can ONLY be Identifier | Reference
-//                                     //  value can only by Type Reference or Literal or more.
-//                                     // these can ONLY have a named thingy.
-//                                     if (!Identifier.is(property.key)) {
-//                                         errors.push(SemanticError(`Only identifiers or computed type references are allowed as type expression member keys `, property.key))
-//                                     }
-//                                 }
-//                                 else {
-//                                     errors.push(SemanticError(`Spread Element not allowed in type expressions `, property))
-//                                 }
-//                             }
-//                             let hasErrors = errors.length > errorsBefore
-//                             if (!hasErrors) {
-//                                 return replace(
-//                                     ...node.body.map(property => {
-//                                         if (Property.is(property)) {
-//                                             let { location } = property
-//                                             return new BinaryExpression({
-//                                                 location,
-//                                                 left: new MemberExpression({
-//                                                     location: property.key.location,
-//                                                     object: new DotExpression({ location }),
-//                                                     property: property.key
-//                                                 }),
-//                                                 operator: "is",
-//                                                 right: checkTypeExpression(
-//                                                     new TypeExpression({ location, value: property.value as Expression }),
-//                                                     errors,
-//                                                     lookup,
-//                                                 )
-//                                             })
-//                                         }
-//                                     })
-//                                 )
-//                             }
-//                         }
-//                         if (BinaryExpression.is(node)) {
-//                             if (!hasDot(node.left)) {
-//                                 errors.push(SemanticError(`left hand side of binary expressions within type expressions must contain a dot expression`, node.left))
-//                             }
-//                             if (node.operator == "|" || node.operator == "&") {
-//                                 errors.push(SemanticError(`do not use logical groups within type expressions`, node))
-//                             }
-//                             if (toCodeString(node.left) === toCodeString(node.right)) {
-//                                 if (node.operator == "==") {
-//                                     errors.push(SemanticError(`clause is always true`, node))
-//                                 }
-//                                 if (node.operator == "!=") {
-//                                     errors.push(SemanticError(`clause is always false`, node))
-//                                 }
-//                             }
-//                         }
-//                         if (Literal.is(node)) {
-//                             return toCheck(node)
-//                         }
-//                         if (Reference.is(node)) {
-//                             if (node.name === types.Integer.name) {
-//                                 return new NumberType({ ...node, precision: 0 })
-//                             }
-//                             if (node.name === types.Number.name) {
-//                                 return new NumberType({ ...node, precision: 2 })
-//                             }
-//                             return toCheck(node, isTypeName(node.name) ? "is" : "==")
-//                         }
-//                         if (Call.is(node)) {
-//                             if (!hasDot(node)) {
-//                                 errors.push(SemanticError(`Call expression within type expression must contain dot expression`, node))
-//                             }
-//                         }
-//                     }
-//                 })
-//                 // make sure that each clause is compatible with each other clause
-//                 if (root) {
-//                     for (let i = 0; i < clauses.length; i++) {
-//                         let a = clauses[i]
-//                         for (let k = i + 1; k < clauses.length; k++) {
-//                             let b = clauses[k]
-//                             // check that clause a and b are compatible.
-//                             let resultab = isConsequent(a, b)
-//                             // should only have to check one direction.
-//                             if (resultab === false) {
-//                                 errors.push(SemanticError(`Clauses are incompatible`, a, b))
-//                                 break
-//                             }
-//                             if (resultab === true) {
-//                                 errors.push(SemanticError(`Second clause is redundant`, a, b))
-//                                 break
-//                             }
-//                             let resultba = isConsequent(b, a)
-//                             // should only have to check one direction.
-//                             if (resultba === false) {
-//                                 errors.push(SemanticError(`Clause are incompatible (this shouldn't be possible)`, a, b))
-//                                 break
-//                             }
-//                             if (resultba === true) {
-//                                 errors.push(SemanticError(`First clause is redundant`, a, b))
-//                                 break
-//                             }
-//                         }
-//                     }
-//                 }
-//                 return combineExpressions(clauses, "&")
-//             }
-//         }
-//     })
-//     value = combineExpressions(options, "|")
-//     //  if the only value is a reference, then we just return that
-//     //  otherwise we return a TypeExpression
-//     if (BinaryExpression.is(value) && DotExpression.is(value.left) && Reference.is(value.right)) {
-//         value = value.right
-//     }
-//     return Type.is(value) ? value : typeExpression.patch({ value })
-// }
-
 function setTypeToVoidRecursive(node, errors: Error[], isFinal: boolean) {
     if (Block.is(node)) {
         let body = node.body.map((child, index) => {
@@ -283,6 +114,7 @@ export default function semanticChecks(
                 let gparent = lookup.getAncestor(current, 2)
                 if (previous != null && !FunctionExpression.is(gparent)) {
                     // console.log({ current: current.location, source: source.location, previous: previous.location })
+                    debugger
                     errors.push(SemanticError(`Cannot redeclare ${current.name}`, current))
                 }
             }
@@ -304,7 +136,7 @@ export default function semanticChecks(
             // }
             if (BinaryExpression.is(node) || OutlineOperation.is(node)) {
                 let func = binaryOps[node.operator]
-                if (typeof func !== "function") {
+                if (func === undefined || typeof func === "string") {
                     errors.push(SemanticError(
                         `Unsupported binary operator (${node.operator})` + (func ? `, use ${func} instead.` : ``),
                         node
@@ -331,11 +163,32 @@ export default function semanticChecks(
                     }
                     node = node.patch({
                         properties: [
-                            ...types.map((type, index) => new Property({ key: identityNumberType(index), value: type })),
+                            ...types.map((type, index) => new Property({ key: numberType(index), value: type })),
                             ...node.properties.filter(type => !Type.is(type))
                         ]
                     })
                 }
+            }
+            if (ArrayPattern.is(node)) {
+                // convert to an ObjectPattern
+                let properties = new Array<PatternProperty | RestElement>()
+                let index = 0
+                for (let item of node.elements) {
+                    if (RestElement.is(item)) {
+                        properties.push(item)
+                    }
+                    else if (Expression.is(item)) {
+                        properties.push(
+                            new PatternProperty({
+                                location: item.location,
+                                key: new Literal({ value: index }),
+                                id: item
+                            })
+                        )
+                    }
+                    index++
+                }
+                return new ObjectPattern({ location: node.location, kind: "Array", properties })
             }
             if (IntersectionType.is(node)) {
                 let { types } = node
@@ -345,7 +198,7 @@ export default function semanticChecks(
                     for (let k = i + 1; k < types.length; k++) {
                         let b = types[k]
                         // check that clause a and b are compatible.
-                        let resultab = isConsequent(a, b)
+                        let resultab = isSubtype(a, b)
                         // should only have to check one direction.
                         if (resultab === false) {
                             errors.push(SemanticError(`Types are incompatible`, a, b))
@@ -355,7 +208,7 @@ export default function semanticChecks(
                             errors.push(SemanticError(`Second type is redundant`, a, b))
                             break
                         }
-                        let resultba = isConsequent(b, a)
+                        let resultba = isSubtype(b, a)
                         // should only have to check one direction.
                         if (resultba === false) {
                             errors.push(SemanticError(`Types are incompatible (this shouldn't be possible)`, a, b))
@@ -371,7 +224,7 @@ export default function semanticChecks(
                 let numberTypes = types.filter(isLiteralNumberType)
                 if (numberTypes.length > 1) {
                     node = node.patch({
-                        types: [...types.filter(value => !isLiteralNumberType(value)), combineNumberTypes(numberTypes)]
+                        types: [...types.filter(value => !isLiteralNumberType(value)), combineNumberTypes(numberTypes)!]
                     })
                 }
             }
@@ -387,23 +240,26 @@ export default function semanticChecks(
                 if (parentClass) {
                     node = node.patch(node.type ? { isInstance: true } : { isStatic: true })
                 }
-                if (isMetaName(node.id.name)) {
-                    node = node.patch({ isMeta: true })
-                }
-                else if (isTypeName(node.id.name)) {
-                    node = node.patch({ isType: true })
-                    // check type
-                    if (node.type != null) {
-                        errors.push(SemanticError(`Type declarations cannot have a type`, node))
+                if (Declarator.is(node.id)) {
+                    if (isMetaName(node.id.name)) {
+                        node = node.patch({ isMeta: true })
                     }
-                    if (node.value == null) {
-                        errors.push(SemanticError(`Type declarations must have a value`, node))
+                    else if (isTypeName(node.id.name)) {
+                        // if it's a type it has no value, the value is moved to the .type property
+                        node = node.patch({ isType: true, type: node.value, value: null })
+                        // check type
+                        if (node.type != null) {
+                            errors.push(SemanticError(`Type declarations cannot have a type`, node))
+                        }
+                        if (node.value == null) {
+                            errors.push(SemanticError(`Type declarations must have a value`, node))
+                        }
+                        // else if (TypeExpression.is(node.value)) {
+                        //     node = node.patch({
+                        //         value: checkTypeExpression(node.value, errors, lookup)
+                        //     })
+                        // }
                     }
-                    // else if (TypeExpression.is(node.value)) {
-                    //     node = node.patch({
-                    //         value: checkTypeExpression(node.value, errors, lookup)
-                    //     })
-                    // }
                 }
             }
 

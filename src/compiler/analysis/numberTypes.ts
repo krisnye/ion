@@ -1,4 +1,4 @@
-import { BinaryExpression, DotExpression, Expression, NumberType, Reference, TypeExpression, Type, Literal, Property } from "../ast";
+import { BinaryExpression, DotExpression, Expression, NumberType, Reference, TypeExpression, Type, Literal, Property, UnionType } from "../ast";
 import * as ops from "../ops";
 import toCodeString from "../toCodeString";
 import * as types from "../types";
@@ -106,13 +106,43 @@ import splitExpressions from "./splitExpressions";
 type NumberLiteral = Literal & { value: number }
 type LiteralNumberType = NumberType & { min: NumberLiteral | null, max: NumberLiteral | null}
 
-export function isLiteralNumberType(type: Type): type is LiteralNumberType {
-    return NumberType.is(type)
-        && (type.min == null || Literal.is(type.min) && typeof type.min.value === "number")
-        && (type.max == null || Literal.is(type.max) && typeof type.max.value === "number")
+function isNumberLiteral(e: Expression): e is NumberLiteral {
+    return Literal.is(e) && typeof e.value === "number"
 }
 
-export function combineNumberTypes(types: Array<LiteralNumberType>) {
+export function isLiteralNumberType(type: Type): type is LiteralNumberType {
+    return NumberType.is(type)
+        && (type.min == null || isNumberLiteral(type.min))
+        && (type.max == null || isNumberLiteral(type.max))
+}
+
+export function overlaps(max: Expression | null, min: Expression | null, exclusive: boolean): boolean | null {
+    if (max != null && min != null) {
+        if (toCodeString(max) === toCodeString(min)) {
+            return !exclusive
+        }
+        if (isNumberLiteral(max) && isNumberLiteral(min)) {
+            return exclusive ? max.value > min.value : max.value >= min.value
+        }
+    }
+    return null
+}
+
+export function isNumberSubtype(a: NumberType, b: NumberType): boolean | null {
+    if ((b.min == null || overlaps(a.min, b.min, a.minExclusive < b.minExclusive) === true) &&
+        (b.max == null || overlaps(b.max, a.max, a.maxExclusive < b.maxExclusive) === true)) {
+        return true
+    }
+    if (overlaps(a.max, b.min, b.minExclusive || a.maxExclusive) === false || overlaps(b.max, a.min, a.minExclusive || b.maxExclusive) === false) {
+        return false
+    }
+    return null
+}
+
+/**
+ * Returns null if the types are mutually incompatible.
+ */
+export function combineNumberTypes(types: Array<LiteralNumberType>): LiteralNumberType | null {
     let min: NumberLiteral | null = null
     let max: NumberLiteral | null = null
     let minExclusive = false
@@ -125,18 +155,34 @@ export function combineNumberTypes(types: Array<LiteralNumberType>) {
             }
         }
         if (type.max != null) {
-            if (max == null || type.max.value >= max.value) {
+            if (max == null || type.max.value <= max.value) {
                 max = type.max
                 maxExclusive = type.maxExclusive
             }
         }
     }
-    return new NumberType({ min, max, minExclusive, maxExclusive })
+    if (min && max && (min.value > max.value || min.value == max.value && (minExclusive || maxExclusive))) {
+        return null
+    }
+    return new NumberType({ min, max, minExclusive, maxExclusive }) as LiteralNumberType
 }
 
-export function identityNumberType(v: number) {
-    let value = new Literal({ value: v })
-    return new NumberType({ min: value, max: value})
+export function numberNotEqual(value: number | Expression) {
+    let e = Expression.is(value) ? value : new Literal({ value })
+    return new UnionType({
+        types: [
+            numberType(null, e, false, true),
+            numberType(e, null, true, false),
+        ]
+    })
+}
+
+export function numberType(min: number | null, max?: number | null, minExclusive?: boolean, maxExclusive?: boolean): LiteralNumberType
+export function numberType(min: Expression | null, max?: Expression | null, minExclusive?: boolean, maxExclusive?: boolean): NumberType
+export function numberType(min: number | Expression | null, max: number | Expression | null = min, minExclusive = false, maxExclusive = minExclusive): NumberType {
+    let minE = Expression.is(min) ? min : min == null ? null : new Literal({ value: min })
+    let maxE = Expression.is(max) ? max : max == null ? null : new Literal({ value: max })
+    return new NumberType({ min: minE, max: maxE, minExclusive: minE ? minExclusive : false, maxExclusive: maxE ? maxExclusive : false })
 }
 
 export function inferOperationType(a: Type, b: Type, operator: string, c: EvaluateContext) {
@@ -148,7 +194,6 @@ export function inferOperationType(a: Type, b: Type, operator: string, c: Evalua
                 let max = a.max && b.max ? new BinaryExpression({ left: a.max, operator, right: b.max }) : null
                 let minExclusive = a.minExclusive || b.minExclusive
                 let maxExclusive = a.maxExclusive || b.maxExclusive
-                // console.log({ a, b, min, max, minExclusive, maxExclusive })
                 return new NumberType({
                     min: min ? evaluate(min, c) : null,
                     max: max ? evaluate(max, c) : null,

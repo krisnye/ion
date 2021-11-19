@@ -73,7 +73,11 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
             yield node.alternate
         }
     },
-    *ArrayPattern(node) {
+    *Declarator(node, scopeMap, lookup) {
+        yield lookup.findAncestor(node, ast.Expression.is)!
+    },
+    *ArrayPattern(node, scopeMap, lookup) {
+        yield lookup.findAncestor(node, ast.Expression.is)!
         for (let element of node.elements) {
             //  all pattern elements are dependent on this nodes type first.
             //  then their type will be a member of this nodes type
@@ -82,7 +86,8 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
             }
         }
     },
-    *ObjectPattern(node) {
+    *ObjectPattern(node, scopeMap, lookup) {
+        yield lookup.findAncestor(node, ast.Expression.is)!
         for (let prop of node.properties) {
             //  all object pattern properties are dependent on this nodes type first.
             //  then their type will be a member of this nodes type
@@ -99,9 +104,6 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     },
     *UnaryExpression(node) {
         yield node.argument
-    },
-    *Declarator(node, scopeMap, lookup) {
-        yield lookup.findAncestor(node, ast.Declaration.is)!
     },
     *Literal(node, scopeMap) {
         if (node.type) {
@@ -129,15 +131,11 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         }
     },
     *ClassDeclaration(node) {
-        // this nodes declarator is dependent on this node
-        // yield [node, node.id]
         yield* node.baseClasses
         yield* node.declarations
         yield* node.typeParameters
     },
     *Variable(node) {
-        // make the id pattern dependent on this type
-        // yield [node, node.id]
         if (node.value) {
             yield node.value
         }
@@ -214,7 +212,6 @@ export default function getSortedExpressions(root, scopeMap: ScopeMaps, lookup: 
             throw new Error("Module.from")
         }
         if (ast.Module.is(to)) {
-            debugger
             throw new Error("Module.to")
         }
         if (from == null || to == null) {

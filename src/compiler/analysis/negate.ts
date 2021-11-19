@@ -9,6 +9,8 @@ const negateOperators = {
     "<=": ">",
     "==": "!=",
     "!=": "==",
+    "is": "isnt",
+    "isnt": "is",
 }
 
 // const primitiveTypes = {

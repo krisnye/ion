@@ -16,22 +16,6 @@ export function normalizeExpressions(node: Expression) {
     return node
 }
 
-export function simplifyType(type: Type | Expression | null) {
-    if (Expression.is(type)) {
-        type = simplify(type)
-    }
-    if (TypeExpression.is(type)) {
-        let { value } = type
-        if (BinaryExpression.is(value) && DotExpression.is(value.left) && value.operator === "is" && (Reference.is(value.right) || FunctionType.is(value.right))) {
-            return value.right
-        }
-    }
-    else if (Expression.is(type)) {
-        type = new TypeExpression({ value: type })
-    }
-    return type
-}
-
 export function and(left: Expression | null, right: Expression | null): Expression | null {
     return combineTypeExpression(left, right, "&&")
 }

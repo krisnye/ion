@@ -47,6 +47,7 @@
     Type
     |-> ReferenceType : Reference, Type
     |-> NumberType { precision, min, max, minExclusive, maxExclusive }
+    |-> StringType { value: String | Null, length: NumberType }
     |-> ObjectType { type: "Map" | "Array" | "Object", properties: Property[] }
     |-> IntersectionType { types: Type[] }
     |-> UnionType { types: Type[] }

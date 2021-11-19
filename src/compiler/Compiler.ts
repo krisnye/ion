@@ -114,7 +114,7 @@ export default class Compiler {
         let options = this.normalizeOptions(optionsOrJson)
         let sources = this.getFiles(options)
         // if debug only Number compile =>
-        sources = new Map([...sources.entries()].filter(([name, source]) => name === "Number")) as any
+        sources = new Map([...sources.entries()].filter(([name, source]) => ({Number:1,String:1,min:0,max:0})[name])) as any
 
         let order = new Array<string>()
 
@@ -164,8 +164,8 @@ export default class Compiler {
                 let beforeCompiledSize = compiled.size
                 for (let [name, [file, externals]] of modulesWithExternals) {
                     if (!compiled.has(name) && areAllCompiled(externals.keys())) {
-                        compiled.set(name, this.compileSingleFile(file, sources, compiled, options))
                         order.push(name)
+                        compiled.set(name, this.compileSingleFile(file, sources, compiled, options))
                     }
                 }
                 let afterCompiledSize = compiled.size
@@ -187,7 +187,7 @@ export default class Compiler {
         } catch (e) {
             this.printErrorConsole(e, sources, options)
         } finally {
-            this.logger(null, order)
+            this.logger(null, order.length > 0 ? order : [...sources.keys()])
         }
     }
 

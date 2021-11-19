@@ -4,4 +4,4 @@ import
 
 export
     class ArrayPattern extends Pattern
-        var elements: Array<Pattern | Null>
+        var elements: Array<Pattern | RestElement | Null>

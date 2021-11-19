@@ -1,4 +1,4 @@
-import { Expression, BinaryExpression, UnaryExpression, TypeExpression } from "../ast";
+import { Expression, BinaryExpression, UnaryExpression, TypeExpression, NumberType, NeverType } from "../ast";
 import toCodeString from "../toCodeString";
 import { memoize } from "../common";
 import { traverse } from "@glas/traverse";
@@ -20,11 +20,23 @@ function equals(a: Expression, b: Expression) {
 
 const simplify = memoize(function(e: Expression): Expression {
     e = normalize(e)
-    if (TypeExpression.is(e)) {
-        let value = simplify(e.value)
-        if (e.value !== value) {
-            e = e.patch({ value })
+
+    if (NumberType.is(e)) {
+        let min = e.min ? simplify(e.min) : e.min
+        let max = e.max ? simplify(e.max) : e.max
+        if (min != null && min.type != null) {
+            min = min.type
         }
+        if (max != null && max.type != null) {
+            max = max.type
+        }
+        if (NumberType.is(min)) {
+            min = min.max ?? min.min
+        }
+        if (NumberType.is(max)) {
+            max = max.min ?? max.max
+        }
+        return ((min != null || max != null) && (min != e.min || max != e.max)) ? e.patch({ min, max }) : e
     }
 
     if (BinaryExpression.is(e)) {

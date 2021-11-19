@@ -20,11 +20,12 @@ type Options = {
 function declareGlobals(scope, module: Module) {
     for (let node of module.body) {
         if (Declaration.is(node)) {
-            if (!Declarator.is(node.id)) {
-                throw new Error("Only Declarators implemented yet")
-            }
-            let globalPath = getGlobalPath(module.name, node.id.name)
-            scope[globalPath] = node
+            declarePattern([scope], node.id, {
+                callback(node) {
+                    let globalPath = getGlobalPath(module.name, node.name)
+                    scope[globalPath] = node
+                }
+            })
         }
     }
 }
@@ -40,6 +41,43 @@ export function createGlobalScope(modules: Iterable<Module>) {
     return scope
 }
 
+function declare(scopes: object[], node: Declarator, options: Options = {}) {
+    let scope: any = scopes[scopes.length - 1]
+    if (options.callback) {
+        let previous = scope[node.name]
+        options.callback(node, previous)
+    }
+    scope[node.name] = node
+}
+
+function declarePattern(scopes: object[], node: Pattern, options: Options = {}) {
+    if (Declarator.is(node)) {
+        declare(scopes, node, options)
+    }
+    else if (RestElement.is(node)) {
+        declare(scopes, node.value, options)
+    }
+    else if (ObjectPattern.is(node)) {
+        for (let property of node.properties) {
+            if (RestElement.is(property)) {
+                declarePattern(scopes, property, options)
+            }
+            else if (Pattern.is(property.value)) {
+                declarePattern(scopes, property.value, options)
+            }
+        }
+    }
+    else if (ArrayPattern.is(node)) {
+        for (let element of node.elements) {
+            if (element != null) {
+                declarePattern(scopes, element, options)
+            }
+        }
+    }
+    else {
+        throw SemanticError(`TODO: Handle this Pattern: ${node.constructor.name}`, node)
+    }
+}
 /**
  * Returns a Map which will contain a scope object with variable names returning Declarations.
  * @param root the ast
@@ -47,49 +85,6 @@ export function createGlobalScope(modules: Iterable<Module>) {
 export default function createScopeMaps(root, options: Options = {}): ScopeMaps {
     let map = new Map()
     let scopes: object[] = [options.globalScope || {}]
-
-    function declare(node: Declarator) {
-        let scope: any = scopes[scopes.length - 1]
-        if (options.callback) {
-            let previous = scope[node.name]
-            options.callback(node, previous)
-        }
-        scope[node.name] = node
-    }
-
-    function declarePattern(node: Pattern) {
-        if (Declarator.is(node)) {
-            declare(node)
-        }
-        else if (RestElement.is(node)) {
-            declare(node.value)
-        }
-        else if (ObjectPattern.is(node)) {
-            for (let property of node.properties) {
-                if (RestElement.is(property)) {
-                    declarePattern(property)
-                }
-                else {
-                    if (Reference.is(property.value)) {
-                        declare(property.value)
-                    }
-                    else if (Pattern.is(property.value)) {
-                        declarePattern(property.value)
-                    }
-                }
-            }
-        }
-        else if (ArrayPattern.is(node)) {
-            for (let element of node.elements) {
-                if (element != null) {
-                    declarePattern(element)
-                }
-            }
-        }
-        else {
-            throw SemanticError(`TODO: Handle this Pattern: ${node.constructor.name}`, node)
-        }
-    }
 
     traverse(root, {
         lookup: options.lookup,
@@ -116,10 +111,15 @@ export default function createScopeMaps(root, options: Options = {}): ScopeMaps 
                 pushScope()
             }
 
-            //  declarations set themselves in scope
-            if (Pattern.is(node)) {
-                declarePattern(node)
+            if (Declaration.is(node)) {
+                declarePattern(scopes, node.id, options)
             }
+
+            // //  declarations set themselves in scope
+            // if (Pattern.is(node)) {
+            //     // throw new Error(`I didn't know that patterns can exist outside of Declarations`)
+            //     declarePattern(scopes, node, options)
+            // }
 
             // //  functions set their parameters in scope
             // if (FunctionExpression.is(node)) {

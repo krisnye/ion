@@ -75,3 +75,11 @@ add = (a: Interval<Integer>, b: Interval<Integer>): (a.min + b.min) .. (a.max + 
 
 [inverse(m,x)] where m>0 | x<0 = [1/x,1/m]
 [am,ax] / [bm,bx] = [am,ax] * [inverse(bm,bx)]
+
+//  min/max functions
+
+min([a], [b]) => [min(a1, b1), min(a2, b2)]
+max([a], [b]) => [max(a1, b1), max(a2, b2)]
+
+a        a1-------------------a2
+b                b1-------b2

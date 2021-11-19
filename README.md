@@ -21,3 +21,6 @@ Cross platform modeling language
   - [ ] figure out why For loop parsing is not working
   - [ ] reference older inferTypes as we reimplement new inferTypes
   - [x] continue type inference till function argument checking is working
+  - [ ] implement new type isConsequent logic
+  - [ ] test new type isConsequent logic
+  - [ ] remove and replace old isConsequent logic with new

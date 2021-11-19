@@ -1,5 +1,5 @@
 
-max(a, b) ->
+max = (a: Number, b: Number) ->
     if a > b
         a
     else

@@ -7,14 +7,16 @@ import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
+import * as String from './ion/String';
 import * as _Array from './ion/Array';
-import * as Property from './Property';
+import * as PatternProperty from './PatternProperty';
 import * as RestElement from './RestElement';
 import * as Class from './ion/Class';
 export class ObjectPattern implements _Object.Object , Pattern.Pattern , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly properties: _Array.Array<Property.Property | RestElement.RestElement>;
+    readonly kind: String.String;
+    readonly properties: _Array.Array<PatternProperty.PatternProperty | RestElement.RestElement>;
     static readonly id = 'ObjectPattern';
     static readonly implements = new Set([
         'ObjectPattern',
@@ -23,26 +25,31 @@ export class ObjectPattern implements _Object.Object , Pattern.Pattern , Express
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, properties}: {
+    constructor({location = null, type = null, kind = 'Object', properties}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        properties: _Array.Array<Property.Property | RestElement.RestElement>
+        kind?: String.String,
+        properties: _Array.Array<PatternProperty.PatternProperty | RestElement.RestElement>
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!String.isString(kind))
+            throw new Error('kind is not a String: ' + Class.toString(kind));
         if (!_Array.isArray(properties))
             throw new Error('properties is not a Array: ' + Class.toString(properties));
         this.location = location;
         this.type = type;
+        this.kind = kind;
         this.properties = properties;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
-        properties?: _Array.Array<Property.Property | RestElement.RestElement>
+        kind?: String.String,
+        properties?: _Array.Array<PatternProperty.PatternProperty | RestElement.RestElement>
     }) {
         return new ObjectPattern({
             ...this,

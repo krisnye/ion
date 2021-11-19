@@ -1,0 +1,7 @@
+import
+    ion.*
+    .*
+
+export
+    class NotType extends Type
+        var value: Type
