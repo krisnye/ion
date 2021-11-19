@@ -62,8 +62,8 @@ function declarePattern(scopes: object[], node: Pattern, options: Options = {}) 
             if (RestElement.is(property)) {
                 declarePattern(scopes, property, options)
             }
-            else if (Pattern.is(property.value)) {
-                declarePattern(scopes, property.value, options)
+            else if (Pattern.is(property.id)) {
+                declarePattern(scopes, property.id, options)
             }
         }
     }
