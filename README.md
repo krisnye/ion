@@ -21,6 +21,9 @@ Cross platform modeling language
   - [ ] figure out why For loop parsing is not working
   - [ ] reference older inferTypes as we reimplement new inferTypes
   - [x] continue type inference till function argument checking is working
-  - [ ] implement new type isConsequent logic
-  - [ ] test new type isConsequent logic
-  - [ ] remove and replace old isConsequent logic with new
+  - [x] implement new type isConsequent logic
+  - [x] test new type isConsequent logic
+  - [x] remove and replace old isConsequent logic with new
+  - [x] infer a type for a class: Function & static properties...
+  - [x] need proper global unified namespace
+  - [x] fix so Number is exporting a class and not `Number = <= 0 | >= 0`

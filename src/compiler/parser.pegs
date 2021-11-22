@@ -164,18 +164,18 @@ NewlineExpression
     / EOL Indent Dent @OutlineExpression Outdent
 
 OutlineVariableDeclaration
-    = meta:MetaProperties? id:TypeDeclarator _ "=" _ value:OutlineType
-    { return node("Variable", { id, meta, value, isMutable: false }) }
+    = meta:MetaProperties? id:TypeDeclarator _ "=" _ type:OutlineType
+    { return node("Variable", { id, meta, type, isMutable: false }) }
     / meta:MetaProperties? id:Pattern type:(_ ":" _ @InlineType) value:((_ "=" _ @NewlineExpression) / EOL { return null})
-    { return node("Variable", { id, meta, value, isMutable: type != null }) }
+    { return node("Variable", { id, meta, type, value, isMutable: type != null }) }
     / meta:MetaProperties? id:Pattern type:(_ ":" _ @InlineType)? value:(_ "=" _ @NewlineExpression)
-    { return node("Variable", { id, meta, value, isMutable: type != null }) }
+    { return node("Variable", { id, meta, type, value, isMutable: type != null }) }
 
 InlineVariableDeclaration
-    = meta:MetaProperties? id:TypeDeclarator _ "=" _ value:InlineType
-    { return node("Variable", { id, meta, value, isMutable: false }) }
+    = meta:MetaProperties? id:TypeDeclarator _ "=" _ type:InlineType
+    { return node("Variable", { id, meta, type, isMutable: false }) }
     / id:Declarator type:(_ ":" _ @InlineType) value:((_ "=" _ @InlineExpression) { return null})
-    { return node("Variable", { id, value, isMutable: type != null }) }
+    { return node("Variable", { id, type, value, isMutable: type != null }) }
     / id:Declarator type:(_ ":" _ @InlineType)? value:(_ "=" _ @InlineExpression)
     { return node("Variable", { id, type, value, isMutable: type != null }) }
 

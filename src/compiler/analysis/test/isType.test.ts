@@ -25,4 +25,4 @@ test(t.Array, t.RegExp, false)
 test(t.Array, t.Function, false)
 test(t.Function, t.Object, true)
 // unknown references will return null => meaning unknown if implements
-test(new Reference({ name: "foo", path: "/foo" }), new Reference({ name: "bar", path: "/bar"}), null)
+test(new Reference({ name: "foo" }), new Reference({ name: "bar" }), null)

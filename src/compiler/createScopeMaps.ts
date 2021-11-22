@@ -1,7 +1,7 @@
 import { traverse, skip, Lookup } from "@glas/traverse"
 import { Node, Scope, Reference, Declarator, Pattern, ObjectPattern, RestElement, ArrayPattern, FunctionExpression, Declaration, Module, Variable, Parameter } from "./ast"
 import { SemanticError } from "./common"
-import { getGlobalPath } from "./pathFunctions"
+import { getAbsolutePath } from "./pathFunctions"
 
 export type NodeMap<T> = {
     get(node: Node): T
@@ -20,12 +20,10 @@ type Options = {
 function declareGlobals(scope, module: Module) {
     for (let node of module.body) {
         if (Declaration.is(node)) {
-            declarePattern([scope], node.id, {
-                callback(node) {
-                    let globalPath = getGlobalPath(module.name, node.name)
-                    scope[globalPath] = node
-                }
-            })
+            for (let declarator of getDeclarators(node.id)) {
+                let globalPath = getAbsolutePath(module.name, declarator.name)
+                scope[globalPath] = declarator
+            }
         }
     }
 }
@@ -50,27 +48,27 @@ function declare(scopes: object[], node: Declarator, options: Options = {}) {
     scope[node.name] = node
 }
 
-function declarePattern(scopes: object[], node: Pattern, options: Options = {}) {
+export function *getDeclarators(node: Pattern): Iterable<Declarator> {
     if (Declarator.is(node)) {
-        declare(scopes, node, options)
+        yield node
     }
     else if (RestElement.is(node)) {
-        declare(scopes, node.value, options)
+        yield node.value
     }
     else if (ObjectPattern.is(node)) {
         for (let property of node.properties) {
             if (RestElement.is(property)) {
-                declarePattern(scopes, property, options)
+                yield *getDeclarators(property)
             }
             else if (Pattern.is(property.id)) {
-                declarePattern(scopes, property.id, options)
+                yield *getDeclarators(property.id)
             }
         }
     }
     else if (ArrayPattern.is(node)) {
         for (let element of node.elements) {
             if (element != null) {
-                declarePattern(scopes, element, options)
+                yield *getDeclarators(element)
             }
         }
     }
@@ -78,6 +76,7 @@ function declarePattern(scopes: object[], node: Pattern, options: Options = {}) 
         throw SemanticError(`TODO: Handle this Pattern: ${node.constructor.name}`, node)
     }
 }
+
 /**
  * Returns a Map which will contain a scope object with variable names returning Declarations.
  * @param root the ast
@@ -96,15 +95,9 @@ export default function createScopeMaps(root, options: Options = {}): ScopeMaps 
             let scope = scopes[scopes.length - 1]
             //  save a map from this nodes location to it's scope
             map.set(node, scope)
-            // console.log("----", { node, scope })
-            // map.set(node.$, scope)
             function pushScope() {
                 scopes.push(scope = { __proto__: scope, __source: node.constructor.name + " => " + JSON.stringify(node.location ?? "NULL") })
             }
-
-            // if (Parameter.is(node)) {
-            //     return skip
-            // }
 
             //  if this node is a scope then we push a new scope
             if (Scope.is(node)) {
@@ -112,21 +105,10 @@ export default function createScopeMaps(root, options: Options = {}): ScopeMaps 
             }
 
             if (Declaration.is(node)) {
-                declarePattern(scopes, node.id, options)
+                for (let declarator of getDeclarators(node.id)) {
+                    declare(scopes, declarator, options)
+                }
             }
-
-            // //  declarations set themselves in scope
-            // if (Pattern.is(node)) {
-            //     // throw new Error(`I didn't know that patterns can exist outside of Declarations`)
-            //     declarePattern(scopes, node, options)
-            // }
-
-            // //  functions set their parameters in scope
-            // if (FunctionExpression.is(node)) {
-            //     for (let parameter of node.parameters) {
-            //         declarePattern(parameter.id)
-            //     }
-            // }
         },
         leave(node) {
             if (Scope.is(node)) {

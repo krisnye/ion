@@ -227,9 +227,16 @@ ul.jsondiffpatch-textdiff {
         
                 <td>
                     <header><span>Source</span></header>
-                    <p>array = [1, (name = "Kris", age = 49)]
+                    <p>// array = [1, (name = "Kris", age = 49)]
+// [first, (name, age)] = array
 
-[first, (name, age)] = array
+class Vector
+    x: Number
+    y: Number
+
+origin = Vector(0, 0)
+
+class Number
 
 // person = (name = "Kris", age = 49)
 // (name, age) = person
@@ -304,50 +311,35 @@ ul.jsondiffpatch-textdiff {
 //     foo + bar
 
 //  looks like array destructuring
-
-class Number
 </p>
                 </td>
             
                 <td>
                     <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;array = [1, (name = \&quot;Kris\&quot;, age = 49)]<br><br>[first, (name, age)] = array<br><br>// person = (name = \&quot;Kris\&quot;, age = 49)<br>// (name, age) = person<br><br>// foo = (a: Number, b: &lt; a) -&gt;<br>//     a<br><br>// one = 20<br>// two = 19<br>// three = foo(one, two)<br><br>// bar = (x: Number, y: Number) -&gt;<br>//     if y &lt; x<br>//         foo(x, y)<br><br>// class Vector<br><br>// A = 5 .. 10<br>// B = 20 .. 30 | Vector<br><br>// scale = (a: A, b: B) -&gt;<br>//     // TODO: add is operator<br>//     min(a, b)<br>//     a - b<br><br>// Percent = |<br>//     &gt; 0 &amp; &lt; 10 &amp; &gt; 4<br>//     &gt; 20 &amp; &lt; 100<br><br>// MyArray1 = String[]<br>// MyArray2 = [String, Number, Integer]<br>// MyArray3 = [0: String, 1: Number, length: 2]<br>// MyMap = { String: Number, Number: String }<br>// class Vector<br>// UnitVector = Vector &amp; (length: 1)<br><br>// x: Percent = 10<br><br>// fn = () -&gt;<br>//     y: Number = 2<br>//     x =<br>//         if y &lt; 1<br>//             10<br>//         else<br>//             20<br><br>//     // //  maybe invalid<br>//     // double(y)<br>//     // if y &lt; 1<br>//     //     //  valid<br>//     //     double(y)<br>//     // else<br>//     //     //  always invalid<br>//     //     double(y)<br><br>// fun = func(a) -&gt;<br>//     //  Variable type Number<br>//     foo : Number = 1<br>//     //  Variable type Number<br>//     bar : Number = 2<br>//     //  Conditional type Void<br>//     if a<br>//         bar := 3<br>//         foo := 4<br>//         for i in []<br>//             foo := i<br>//         //  block type Void<br>//     else<br>//         bar := 5<br>//         foo := 6<br>//         // block type Void<br>//     foo + bar<br><br>//  looks like array destructuring<br><br>class Number<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;// array = [1, (name = \&quot;Kris\&quot;, age = 49)]<br>// [first, (name, age)] = array<br><br>class Vector<br>    x: Number<br>    y: Number<br><br>origin = Vector(0, 0)<br><br>class Number<br><br>// person = (name = \&quot;Kris\&quot;, age = 49)<br>// (name, age) = person<br><br>// foo = (a: Number, b: &lt; a) -&gt;<br>//     a<br><br>// one = 20<br>// two = 19<br>// three = foo(one, two)<br><br>// bar = (x: Number, y: Number) -&gt;<br>//     if y &lt; x<br>//         foo(x, y)<br><br>// class Vector<br><br>// A = 5 .. 10<br>// B = 20 .. 30 | Vector<br><br>// scale = (a: A, b: B) -&gt;<br>//     // TODO: add is operator<br>//     min(a, b)<br>//     a - b<br><br>// Percent = |<br>//     &gt; 0 &amp; &lt; 10 &amp; &gt; 4<br>//     &gt; 20 &amp; &lt; 100<br><br>// MyArray1 = String[]<br>// MyArray2 = [String, Number, Integer]<br>// MyArray3 = [0: String, 1: Number, length: 2]<br>// MyMap = { String: Number, Number: String }<br>// class Vector<br>// UnitVector = Vector &amp; (length: 1)<br><br>// x: Percent = 10<br><br>// fn = () -&gt;<br>//     y: Number = 2<br>//     x =<br>//         if y &lt; 1<br>//             10<br>//         else<br>//             20<br><br>//     // //  maybe invalid<br>//     // double(y)<br>//     // if y &lt; 1<br>//     //     //  valid<br>//     //     double(y)<br>//     // else<br>//     //     //  always invalid<br>//     //     double(y)<br><br>// fun = func(a) -&gt;<br>//     //  Variable type Number<br>//     foo : Number = 1<br>//     //  Variable type Number<br>//     bar : Number = 2<br>//     //  Conditional type Void<br>//     if a<br>//         bar := 3<br>//         foo := 4<br>//         for i in []<br>//             foo := i<br>//         //  block type Void<br>//     else<br>//         bar := 5<br>//         foo := 6<br>//         // block type Void<br>//     foo + bar<br><br>//  looks like array destructuring<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
   &quot;body&quot;: [
-    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;array&quot; },
-      &quot;value&quot;: ArrayExpression {
-        &quot;body&quot;: [
-          Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-          ObjectExpression {
-            &quot;body&quot;: [
-              Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-                &quot;value&quot;: Literal {
-                  &quot;type&quot;: StringType {
-                    &quot;value&quot;: &quot;Kris&quot;,
-                    &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                  },
-                  &quot;value&quot;: &quot;Kris&quot;
-                }
-              },
-              Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-                &quot;value&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-              }
-            ]
+    ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Vector&quot; },
+      &quot;declarations&quot;: [
+        Variable { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; },
+          &quot;isMutable&quot;: true
+        },
+        Variable { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; },
+          &quot;isMutable&quot;: true
+        }
+      ]
+    },
+    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;origin&quot; },
+      &quot;value&quot;: Call { &quot;callee&quot;: ReferenceType { &quot;name&quot;: &quot;Vector&quot; },
+        &quot;arguments&quot;: [
+          Argument {
+            &quot;value&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
+          },
+          Argument {
+            &quot;value&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
           }
         ]
       }
     },
-    Variable {
-      &quot;id&quot;: ArrayPattern { &quot;elements&quot;: [ Declarator { &quot;name&quot;: &quot;first&quot; },
-          ObjectPattern {
-            &quot;kind&quot;: &quot;Object&quot;,
-            &quot;properties&quot;: [
-              PatternProperty { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;name&quot; } },
-              PatternProperty { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;age&quot; } }
-            ]
-          }
-        ]
-      },
-      &quot;value&quot;: Reference { &quot;name&quot;: &quot;array&quot; }   },
     ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Number&quot; }   }
   ],
   &quot;name&quot;: &quot;Number&quot;
@@ -356,136 +348,65 @@ class Number
             
                 <td>
                     <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;array&quot; },
-    &quot;value&quot;: ArrayExpression {
-      &quot;body&quot;: [
-        Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-        ObjectExpression {
-          &quot;body&quot;: [
-            Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-              &quot;value&quot;: Literal {
-                &quot;type&quot;: StringType {
-                  &quot;value&quot;: &quot;Kris&quot;,
-                  &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                },
-                &quot;value&quot;: &quot;Kris&quot;
-              }
-            },
-            Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-              &quot;value&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-            }
-          ]
-        }
-      ]
-    }
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ClassDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="declarations"><div class="jsondiffpatch-property-name">declarations</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;x&quot; }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="isMutable"><div class="jsondiffpatch-property-name">isMutable</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="absolute"><div class="jsondiffpatch-property-name">absolute</div><div class="jsondiffpatch-value"><pre>&quot;_.Number:export&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;y&quot; }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="isMutable"><div class="jsondiffpatch-property-name">isMutable</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="absolute"><div class="jsondiffpatch-property-name">absolute</div><div class="jsondiffpatch-value"><pre>&quot;_.Number:export&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;Vector&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;origin&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Call&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="arguments"><div class="jsondiffpatch-property-name">arguments</div><div class="jsondiffpatch-value"><pre>[
+  Argument {
+    &quot;value&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
   },
-  Variable {
-    &quot;id&quot;: ArrayPattern { &quot;elements&quot;: [ Declarator { &quot;name&quot;: &quot;first&quot; },
-        ObjectPattern {
-          &quot;kind&quot;: &quot;Object&quot;,
-          &quot;properties&quot;: [
-            PatternProperty { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;name&quot; } },
-            PatternProperty { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;age&quot; } }
-          ]
-        }
-      ]
-    },
-    &quot;value&quot;: Reference { &quot;name&quot;: &quot;array&quot; }   },
-  ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Number&quot; }   }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
+  Argument {
+    &quot;value&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
+  }
+]</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="callee"><div class="jsondiffpatch-property-name">callee</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="absolute"><div class="jsondiffpatch-property-name">absolute</div><div class="jsondiffpatch-value"><pre>&quot;_.Number:Vector&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Vector&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="2"><div class="jsondiffpatch-property-name">2</div><div class="jsondiffpatch-value"><pre>ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Number&quot; } }</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
                 </td>
             
                 <td>
                     <header><span>semanticChecks</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-unchanged" data-key="0"><div class="jsondiffpatch-property-name">0</div><div class="jsondiffpatch-value"><pre>Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;array&quot; },
-  &quot;value&quot;: ArrayExpression {
-    &quot;body&quot;: [
-      Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-      ObjectExpression {
-        &quot;body&quot;: [
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-            &quot;value&quot;: Literal {
-              &quot;type&quot;: StringType {
-                &quot;value&quot;: &quot;Kris&quot;,
-                &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-              },
-              &quot;value&quot;: &quot;Kris&quot;
-            }
-          },
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-            &quot;value&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-          }
-        ]
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ClassDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="declarations"><div class="jsondiffpatch-property-name">declarations</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;x&quot; }</pre></div></li><li class="jsondiffpatch-added" data-key="isInstance"><div class="jsondiffpatch-property-name">isInstance</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-unchanged" data-key="isMutable"><div class="jsondiffpatch-property-name">isMutable</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-unchanged" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;y&quot; }</pre></div></li><li class="jsondiffpatch-added" data-key="isInstance"><div class="jsondiffpatch-property-name">isInstance</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-unchanged" data-key="isMutable"><div class="jsondiffpatch-property-name">isMutable</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-unchanged" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; }</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;Vector&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="1"><div class="jsondiffpatch-property-name">1</div><div class="jsondiffpatch-value"><pre>Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;origin&quot; },
+  &quot;value&quot;: Call {
+    &quot;callee&quot;: ReferenceType { &quot;name&quot;: &quot;Vector&quot;, &quot;absolute&quot;: &quot;_.Number:Vector&quot; },
+    &quot;arguments&quot;: [
+      Argument {
+        &quot;value&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
+      },
+      Argument {
+        &quot;value&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
       }
     ]
   }
-}</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;ArrayPattern&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;ObjectPattern&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="elements"><div class="jsondiffpatch-property-name">elements</div><div class="jsondiffpatch-value"><pre>[
-  Declarator { &quot;name&quot;: &quot;first&quot; },
-  ObjectPattern {
-    &quot;kind&quot;: &quot;Object&quot;,
-    &quot;properties&quot;: [
-      PatternProperty { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;name&quot; } },
-      PatternProperty { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;age&quot; } }
-    ]
-  }
-]</pre></div></li><li class="jsondiffpatch-added" data-key="kind"><div class="jsondiffpatch-property-name">kind</div><div class="jsondiffpatch-value"><pre>&quot;Array&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="properties"><div class="jsondiffpatch-property-name">properties</div><div class="jsondiffpatch-value"><pre>[
-  PatternProperty { &quot;key&quot;: Literal { &quot;value&quot;: 0 }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;first&quot; } },
-  PatternProperty { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-    &quot;id&quot;: ObjectPattern {
-      &quot;kind&quot;: &quot;Object&quot;,
-      &quot;properties&quot;: [
-        PatternProperty { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;name&quot; } },
-        PatternProperty { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;age&quot; } }
-      ]
-    }
-  }
-]</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>Reference { &quot;name&quot;: &quot;array&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="2"><div class="jsondiffpatch-property-name">2</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;ClassDeclaration&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Number&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;export&quot;</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Number&quot; } }</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
+}</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="2"><div class="jsondiffpatch-property-name">2</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;ClassDeclaration&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Number&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;export&quot;</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Number&quot; } }</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
                 </td>
             
                 <td>
                     <header><span>createConditionalDeclarations</span></header>
                     <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;array&quot; },
-    &quot;value&quot;: ArrayExpression {
-      &quot;body&quot;: [
-        Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-        ObjectExpression {
-          &quot;body&quot;: [
-            Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-              &quot;value&quot;: Literal {
-                &quot;type&quot;: StringType {
-                  &quot;value&quot;: &quot;Kris&quot;,
-                  &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                },
-                &quot;value&quot;: &quot;Kris&quot;
-              }
-            },
-            Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-              &quot;value&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-            }
-          ]
+  ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Vector&quot; },
+    &quot;declarations&quot;: [
+      Variable {
+        &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+        &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; },
+        &quot;isMutable&quot;: true,
+        &quot;isInstance&quot;: true
+      },
+      Variable {
+        &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+        &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; },
+        &quot;isMutable&quot;: true,
+        &quot;isInstance&quot;: true
+      }
+    ]
+  },
+  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;origin&quot; },
+    &quot;value&quot;: Call {
+      &quot;callee&quot;: ReferenceType { &quot;name&quot;: &quot;Vector&quot;, &quot;absolute&quot;: &quot;_.Number:Vector&quot; },
+      &quot;arguments&quot;: [
+        Argument {
+          &quot;value&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
+        },
+        Argument {
+          &quot;value&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
         }
       ]
     }
   },
-  Variable {
-    &quot;id&quot;: ObjectPattern {
-      &quot;kind&quot;: &quot;Array&quot;,
-      &quot;properties&quot;: [
-        PatternProperty { &quot;key&quot;: Literal { &quot;value&quot;: 0 }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;first&quot; } },
-        PatternProperty { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-          &quot;id&quot;: ObjectPattern {
-            &quot;kind&quot;: &quot;Object&quot;,
-            &quot;properties&quot;: [
-              PatternProperty { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;name&quot; } },
-              PatternProperty { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;age&quot; } }
-            ]
-          }
-        }
-      ]
-    },
-    &quot;value&quot;: Reference { &quot;name&quot;: &quot;array&quot; }   },
   Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;export&quot; },
     &quot;value&quot;: ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Number&quot; } } }
 ]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
@@ -493,606 +414,131 @@ class Number
             
                 <td>
                     <header><span>inferTypes</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;array&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ObjectType {
-  &quot;kind&quot;: &quot;Array&quot;,
-  &quot;properties&quot;: [
-    Property { &quot;key&quot;: Literal { &quot;value&quot;: 0 },
-      &quot;value&quot;: NumberType {
-        &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-        &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-      }
-    },
-    Property { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-      &quot;value&quot;: ObjectType {
-        &quot;kind&quot;: &quot;Object&quot;,
-        &quot;properties&quot;: [
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-            &quot;value&quot;: StringType {
-              &quot;value&quot;: &quot;Kris&quot;,
-              &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-            }
-          },
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-            &quot;value&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-            }
-          }
-        ]
-      }
-    }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ObjectType {
-  &quot;kind&quot;: &quot;Array&quot;,
-  &quot;properties&quot;: [
-    Property { &quot;key&quot;: Literal { &quot;value&quot;: 0 },
-      &quot;value&quot;: NumberType {
-        &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-        &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-      }
-    },
-    Property { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-      &quot;value&quot;: ObjectType {
-        &quot;kind&quot;: &quot;Object&quot;,
-        &quot;properties&quot;: [
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-            &quot;value&quot;: StringType {
-              &quot;value&quot;: &quot;Kris&quot;,
-              &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-            }
-          },
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-            &quot;value&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-            }
-          }
-        ]
-      }
-    }
-  ]
-}</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ArrayExpression&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Literal&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="integer"><div class="jsondiffpatch-property-name">integer</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>NumberType {
-  &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-  &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>1</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ObjectExpression&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-unchanged" data-key="0"><div class="jsondiffpatch-property-name">0</div><div class="jsondiffpatch-value"><pre>Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-  &quot;value&quot;: Literal {
-    &quot;type&quot;: StringType {
-      &quot;value&quot;: &quot;Kris&quot;,
-      &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-    },
-    &quot;value&quot;: &quot;Kris&quot;
-  }
-}</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Property&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="key"><div class="jsondiffpatch-property-name">key</div><div class="jsondiffpatch-value"><pre>Identifier { &quot;name&quot;: &quot;age&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Literal&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="integer"><div class="jsondiffpatch-property-name">integer</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>NumberType {
-  &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-  &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>49</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ObjectType {
-  &quot;kind&quot;: &quot;Object&quot;,
-  &quot;properties&quot;: [
-    Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-      &quot;value&quot;: StringType {
-        &quot;value&quot;: &quot;Kris&quot;,
-        &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-      }
-    },
-    Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-      &quot;value&quot;: NumberType {
-        &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-        &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-      }
-    }
-  ]
-}</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ObjectType {
-  &quot;kind&quot;: &quot;Array&quot;,
-  &quot;properties&quot;: [
-    Property { &quot;key&quot;: Literal { &quot;value&quot;: 0 },
-      &quot;value&quot;: NumberType {
-        &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-        &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-      }
-    },
-    Property { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-      &quot;value&quot;: ObjectType {
-        &quot;kind&quot;: &quot;Object&quot;,
-        &quot;properties&quot;: [
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-            &quot;value&quot;: StringType {
-              &quot;value&quot;: &quot;Kris&quot;,
-              &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-            }
-          },
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-            &quot;value&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-            }
-          }
-        ]
-      }
-    }
-  ]
-}</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ObjectPattern&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="kind"><div class="jsondiffpatch-property-name">kind</div><div class="jsondiffpatch-value"><pre>&quot;Array&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="properties"><div class="jsondiffpatch-property-name">properties</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;PatternProperty&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;first&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>NumberType {
-  &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-  &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-}</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="key"><div class="jsondiffpatch-property-name">key</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Literal&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 0 }, &quot;max&quot;: Literal { &quot;value&quot;: 0 } }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>0</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>NumberType {
-  &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-  &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-}</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;PatternProperty&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ObjectPattern&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="kind"><div class="jsondiffpatch-property-name">kind</div><div class="jsondiffpatch-value"><pre>&quot;Object&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="properties"><div class="jsondiffpatch-property-name">properties</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;PatternProperty&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;name&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>StringType {
-  &quot;value&quot;: &quot;Kris&quot;,
-  &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-}</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="key"><div class="jsondiffpatch-property-name">key</div><div class="jsondiffpatch-value"><pre>Identifier { &quot;name&quot;: &quot;name&quot; }</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>StringType {
-  &quot;value&quot;: &quot;Kris&quot;,
-  &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-}</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;PatternProperty&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;age&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>NumberType {
-  &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-  &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-}</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="key"><div class="jsondiffpatch-property-name">key</div><div class="jsondiffpatch-value"><pre>Identifier { &quot;name&quot;: &quot;age&quot; }</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>NumberType {
-  &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-  &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-}</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ObjectType {
-  &quot;kind&quot;: &quot;Object&quot;,
-  &quot;properties&quot;: [
-    Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-      &quot;value&quot;: StringType {
-        &quot;value&quot;: &quot;Kris&quot;,
-        &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-      }
-    },
-    Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-      &quot;value&quot;: NumberType {
-        &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-        &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-      }
-    }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="key"><div class="jsondiffpatch-property-name">key</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Literal&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 1 }, &quot;max&quot;: Literal { &quot;value&quot;: 1 } }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>1</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ObjectType {
-  &quot;kind&quot;: &quot;Object&quot;,
-  &quot;properties&quot;: [
-    Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-      &quot;value&quot;: StringType {
-        &quot;value&quot;: &quot;Kris&quot;,
-        &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-      }
-    },
-    Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-      &quot;value&quot;: NumberType {
-        &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-        &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-      }
-    }
-  ]
-}</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ObjectType {
-  &quot;kind&quot;: &quot;Array&quot;,
-  &quot;properties&quot;: [
-    Property { &quot;key&quot;: Literal { &quot;value&quot;: 0 },
-      &quot;value&quot;: NumberType {
-        &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-        &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-      }
-    },
-    Property { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-      &quot;value&quot;: ObjectType {
-        &quot;kind&quot;: &quot;Object&quot;,
-        &quot;properties&quot;: [
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-            &quot;value&quot;: StringType {
-              &quot;value&quot;: &quot;Kris&quot;,
-              &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-            }
-          },
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-            &quot;value&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-            }
-          }
-        ]
-      }
-    }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ObjectType {
-  &quot;kind&quot;: &quot;Array&quot;,
-  &quot;properties&quot;: [
-    Property { &quot;key&quot;: Literal { &quot;value&quot;: 0 },
-      &quot;value&quot;: NumberType {
-        &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-        &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-      }
-    },
-    Property { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-      &quot;value&quot;: ObjectType {
-        &quot;kind&quot;: &quot;Object&quot;,
-        &quot;properties&quot;: [
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-            &quot;value&quot;: StringType {
-              &quot;value&quot;: &quot;Kris&quot;,
-              &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-            }
-          },
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-            &quot;value&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-            }
-          }
-        ]
-      }
-    }
-  ]
-}</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;array&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ObjectType {
-  &quot;kind&quot;: &quot;Array&quot;,
-  &quot;properties&quot;: [
-    Property { &quot;key&quot;: Literal { &quot;value&quot;: 0 },
-      &quot;value&quot;: NumberType {
-        &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-        &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-      }
-    },
-    Property { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-      &quot;value&quot;: ObjectType {
-        &quot;kind&quot;: &quot;Object&quot;,
-        &quot;properties&quot;: [
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-            &quot;value&quot;: StringType {
-              &quot;value&quot;: &quot;Kris&quot;,
-              &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-            }
-          },
-          Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-            &quot;value&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-            }
-          }
-        ]
-      }
-    }
-  ]
-}</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="2"><div class="jsondiffpatch-property-name">2</div><div class="jsondiffpatch-value"><pre>Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;export&quot; },
-  &quot;value&quot;: ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Number&quot; } } }</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ClassDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="declarations"><div class="jsondiffpatch-property-name">declarations</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;x&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>{ &quot;&quot;: &quot;NumberType&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="isInstance"><div class="jsondiffpatch-property-name">isInstance</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-unchanged" data-key="isMutable"><div class="jsondiffpatch-property-name">isMutable</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;ReferenceType&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;NumberType&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="absolute"><div class="jsondiffpatch-property-name">absolute</div><div class="jsondiffpatch-value"><pre>&quot;_.Number:export&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;y&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>{ &quot;&quot;: &quot;NumberType&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="isInstance"><div class="jsondiffpatch-property-name">isInstance</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-unchanged" data-key="isMutable"><div class="jsondiffpatch-property-name">isMutable</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;ReferenceType&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;NumberType&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="absolute"><div class="jsondiffpatch-property-name">absolute</div><div class="jsondiffpatch-value"><pre>&quot;_.Number:export&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Vector&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType {
+  &quot;parameters&quot;: [
+    Variable {
+      &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; }   },
+    Variable {
+      &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; }   }
+  ],
+  &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Vector&quot; } }</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType {
+  &quot;parameters&quot;: [
+    Variable {
+      &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; }   },
+    Variable {
+      &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; }   }
+  ],
+  &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Vector&quot; } }</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;origin&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ReferenceType { &quot;name&quot;: &quot;Vector&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ReferenceType { &quot;name&quot;: &quot;Vector&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Call&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="arguments"><div class="jsondiffpatch-property-name">arguments</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Argument&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Literal&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="integer"><div class="jsondiffpatch-property-name">integer</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>NumberType {
+  &quot;min&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true },
+  &quot;max&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>0</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Argument&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Literal&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="integer"><div class="jsondiffpatch-property-name">integer</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>NumberType {
+  &quot;min&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true },
+  &quot;max&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>0</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="callee"><div class="jsondiffpatch-property-name">callee</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="absolute"><div class="jsondiffpatch-property-name">absolute</div><div class="jsondiffpatch-value"><pre>&quot;_.Number:Vector&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Vector&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType {
+  &quot;parameters&quot;: [
+    Variable {
+      &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; }   },
+    Variable {
+      &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; }   }
+  ],
+  &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Vector&quot; } }</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>ReferenceType { &quot;name&quot;: &quot;Vector&quot; }</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="2"><div class="jsondiffpatch-property-name">2</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;export&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot; } }</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot; } }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ClassDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot; } }</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot; } }</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
                 </td>
             
                 <td>
                     <header><span>identity</span></header>
                     <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable {
-    &quot;type&quot;: ObjectType {
-      &quot;kind&quot;: &quot;Array&quot;,
-      &quot;properties&quot;: [
-        Property { &quot;key&quot;: Literal { &quot;value&quot;: 0 },
-          &quot;value&quot;: NumberType {
-            &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-            &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-          }
-        },
-        Property { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-          &quot;value&quot;: ObjectType {
-            &quot;kind&quot;: &quot;Object&quot;,
-            &quot;properties&quot;: [
-              Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-                &quot;value&quot;: StringType {
-                  &quot;value&quot;: &quot;Kris&quot;,
-                  &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                }
-              },
-              Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-                &quot;value&quot;: NumberType {
-                  &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-                  &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-                }
-              }
-            ]
-          }
-        }
-      ]
-    },
+  ClassDeclaration {
+    &quot;type&quot;: FunctionType {
+      &quot;parameters&quot;: [
+        Variable {
+          &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; }   },
+        Variable {
+          &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+          &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; }   }
+      ],
+      &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Vector&quot; }   },
     &quot;id&quot;: Declarator {
-      &quot;name&quot;: &quot;array&quot;,
-      &quot;type&quot;: ObjectType {
-        &quot;kind&quot;: &quot;Array&quot;,
-        &quot;properties&quot;: [
-          Property { &quot;key&quot;: Literal { &quot;value&quot;: 0 },
-            &quot;value&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-            }
-          },
-          Property { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-            &quot;value&quot;: ObjectType {
-              &quot;kind&quot;: &quot;Object&quot;,
-              &quot;properties&quot;: [
-                Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-                  &quot;value&quot;: StringType {
-                    &quot;value&quot;: &quot;Kris&quot;,
-                    &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                  }
-                },
-                Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-                  &quot;value&quot;: NumberType {
-                    &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-                    &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-                  }
-                }
-              ]
-            }
-          }
-        ]
+      &quot;name&quot;: &quot;Vector&quot;,
+      &quot;type&quot;: FunctionType {
+        &quot;parameters&quot;: [
+          Variable {
+            &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+            &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; }   },
+          Variable {
+            &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+            &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; }   }
+        ],
+        &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Vector&quot; } } },
+    &quot;declarations&quot;: [
+      Variable { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; },
+        &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot;, &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; } },
+        &quot;isMutable&quot;: true,
+        &quot;isInstance&quot;: true
+      },
+      Variable { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; },
+        &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot;, &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; } },
+        &quot;isMutable&quot;: true,
+        &quot;isInstance&quot;: true
       }
-    },
-    &quot;value&quot;: ArrayExpression {
-      &quot;type&quot;: ObjectType {
-        &quot;kind&quot;: &quot;Array&quot;,
-        &quot;properties&quot;: [
-          Property { &quot;key&quot;: Literal { &quot;value&quot;: 0 },
-            &quot;value&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-            }
-          },
-          Property { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-            &quot;value&quot;: ObjectType {
-              &quot;kind&quot;: &quot;Object&quot;,
-              &quot;properties&quot;: [
-                Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-                  &quot;value&quot;: StringType {
-                    &quot;value&quot;: &quot;Kris&quot;,
-                    &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                  }
-                },
-                Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-                  &quot;value&quot;: NumberType {
-                    &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-                    &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      },
-      &quot;body&quot;: [
-        Literal {
-          &quot;type&quot;: NumberType {
-            &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-            &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-          },
-          &quot;value&quot;: 1,
-          &quot;integer&quot;: true
-        },
-        ObjectExpression {
-          &quot;type&quot;: ObjectType {
-            &quot;kind&quot;: &quot;Object&quot;,
-            &quot;properties&quot;: [
-              Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-                &quot;value&quot;: StringType {
-                  &quot;value&quot;: &quot;Kris&quot;,
-                  &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                }
-              },
-              Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-                &quot;value&quot;: NumberType {
-                  &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-                  &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-                }
-              }
-            ]
-          },
-          &quot;body&quot;: [
-            Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-              &quot;value&quot;: Literal {
-                &quot;type&quot;: StringType {
-                  &quot;value&quot;: &quot;Kris&quot;,
-                  &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                },
-                &quot;value&quot;: &quot;Kris&quot;
-              }
-            },
-            Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-              &quot;value&quot;: Literal {
-                &quot;type&quot;: NumberType {
-                  &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-                  &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-                },
-                &quot;value&quot;: 49,
-                &quot;integer&quot;: true
-              }
-            }
-          ]
-        }
-      ]
-    }
+    ]
   },
-  Variable {
-    &quot;type&quot;: ObjectType {
-      &quot;kind&quot;: &quot;Array&quot;,
-      &quot;properties&quot;: [
-        Property { &quot;key&quot;: Literal { &quot;value&quot;: 0 },
-          &quot;value&quot;: NumberType {
-            &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-            &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-          }
-        },
-        Property { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-          &quot;value&quot;: ObjectType {
-            &quot;kind&quot;: &quot;Object&quot;,
-            &quot;properties&quot;: [
-              Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-                &quot;value&quot;: StringType {
-                  &quot;value&quot;: &quot;Kris&quot;,
-                  &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                }
-              },
-              Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-                &quot;value&quot;: NumberType {
-                  &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-                  &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-                }
-              }
-            ]
-          }
-        }
-      ]
-    },
-    &quot;id&quot;: ObjectPattern {
-      &quot;type&quot;: ObjectType {
-        &quot;kind&quot;: &quot;Array&quot;,
-        &quot;properties&quot;: [
-          Property { &quot;key&quot;: Literal { &quot;value&quot;: 0 },
-            &quot;value&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-            }
-          },
-          Property { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-            &quot;value&quot;: ObjectType {
-              &quot;kind&quot;: &quot;Object&quot;,
-              &quot;properties&quot;: [
-                Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-                  &quot;value&quot;: StringType {
-                    &quot;value&quot;: &quot;Kris&quot;,
-                    &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                  }
-                },
-                Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-                  &quot;value&quot;: NumberType {
-                    &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-                    &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      },
-      &quot;kind&quot;: &quot;Array&quot;,
-      &quot;properties&quot;: [
-        PatternProperty {
-          &quot;type&quot;: NumberType {
-            &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-            &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-          },
-          &quot;key&quot;: Literal { &quot;type&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 0 },
-              &quot;max&quot;: Literal { &quot;value&quot;: 0 }   },
-            &quot;value&quot;: 0
-          },
-          &quot;id&quot;: Declarator {
-            &quot;name&quot;: &quot;first&quot;,
+  Variable { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Vector&quot; },
+    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;origin&quot;, &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Vector&quot; } },
+    &quot;value&quot;: Call { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Vector&quot; },
+      &quot;callee&quot;: ReferenceType {
+        &quot;name&quot;: &quot;Vector&quot;,
+        &quot;absolute&quot;: &quot;_.Number:Vector&quot;,
+        &quot;type&quot;: FunctionType {
+          &quot;parameters&quot;: [
+            Variable {
+              &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+              &quot;id&quot;: Declarator { &quot;name&quot;: &quot;x&quot; }   },
+            Variable {
+              &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot;, &quot;absolute&quot;: &quot;_.Number:export&quot; },
+              &quot;id&quot;: Declarator { &quot;name&quot;: &quot;y&quot; }   }
+          ],
+          &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Vector&quot; } } },
+      &quot;arguments&quot;: [
+        Argument {
+          &quot;value&quot;: Literal {
             &quot;type&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-            }
+              &quot;min&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true },
+              &quot;max&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
+            },
+            &quot;value&quot;: 0,
+            &quot;integer&quot;: true
           }
         },
-        PatternProperty {
-          &quot;type&quot;: ObjectType {
-            &quot;kind&quot;: &quot;Object&quot;,
-            &quot;properties&quot;: [
-              Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-                &quot;value&quot;: StringType {
-                  &quot;value&quot;: &quot;Kris&quot;,
-                  &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                }
-              },
-              Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-                &quot;value&quot;: NumberType {
-                  &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-                  &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-                }
-              }
-            ]
-          },
-          &quot;key&quot;: Literal { &quot;type&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 1 },
-              &quot;max&quot;: Literal { &quot;value&quot;: 1 }   },
-            &quot;value&quot;: 1
-          },
-          &quot;id&quot;: ObjectPattern {
-            &quot;type&quot;: ObjectType {
-              &quot;kind&quot;: &quot;Object&quot;,
-              &quot;properties&quot;: [
-                Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-                  &quot;value&quot;: StringType {
-                    &quot;value&quot;: &quot;Kris&quot;,
-                    &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                  }
-                },
-                Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-                  &quot;value&quot;: NumberType {
-                    &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-                    &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-                  }
-                }
-              ]
+        Argument {
+          &quot;value&quot;: Literal {
+            &quot;type&quot;: NumberType {
+              &quot;min&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true },
+              &quot;max&quot;: Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
             },
-            &quot;kind&quot;: &quot;Object&quot;,
-            &quot;properties&quot;: [
-              PatternProperty {
-                &quot;type&quot;: StringType {
-                  &quot;value&quot;: &quot;Kris&quot;,
-                  &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                },
-                &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-                &quot;id&quot;: Declarator {
-                  &quot;name&quot;: &quot;name&quot;,
-                  &quot;type&quot;: StringType {
-                    &quot;value&quot;: &quot;Kris&quot;,
-                    &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                  }
-                }
-              },
-              PatternProperty {
-                &quot;type&quot;: NumberType {
-                  &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-                  &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-                },
-                &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-                &quot;id&quot;: Declarator {
-                  &quot;name&quot;: &quot;age&quot;,
-                  &quot;type&quot;: NumberType {
-                    &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-                    &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-                  }
-                }
-              }
-            ]
+            &quot;value&quot;: 0,
+            &quot;integer&quot;: true
           }
         }
       ]
-    },
-    &quot;value&quot;: Reference {
-      &quot;name&quot;: &quot;array&quot;,
-      &quot;type&quot;: ObjectType {
-        &quot;kind&quot;: &quot;Array&quot;,
-        &quot;properties&quot;: [
-          Property { &quot;key&quot;: Literal { &quot;value&quot;: 0 },
-            &quot;value&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-            }
-          },
-          Property { &quot;key&quot;: Literal { &quot;value&quot;: 1 },
-            &quot;value&quot;: ObjectType {
-              &quot;kind&quot;: &quot;Object&quot;,
-              &quot;properties&quot;: [
-                Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;name&quot; },
-                  &quot;value&quot;: StringType {
-                    &quot;value&quot;: &quot;Kris&quot;,
-                    &quot;length&quot;: NumberType { &quot;min&quot;: Literal { &quot;value&quot;: 4 }, &quot;max&quot;: Literal { &quot;value&quot;: 4 } }
-                  }
-                },
-                Property { &quot;key&quot;: Identifier { &quot;name&quot;: &quot;age&quot; },
-                  &quot;value&quot;: NumberType {
-                    &quot;min&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true },
-                    &quot;max&quot;: Literal { &quot;value&quot;: 49, &quot;integer&quot;: true }
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      }
     }
   },
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;export&quot; },
-    &quot;value&quot;: ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Number&quot; } } }
+  Variable { &quot;type&quot;: FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot; } },
+    &quot;id&quot;: Declarator {
+      &quot;name&quot;: &quot;export&quot;,
+      &quot;type&quot;: FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot; } } },
+    &quot;value&quot;: ClassDeclaration { &quot;type&quot;: FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot; } },
+      &quot;id&quot;: Declarator {
+        &quot;name&quot;: &quot;Number&quot;,
+        &quot;type&quot;: FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot; } } }
+    }
+  }
 ]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
                 </td>
             </tr><tr class="channel">
@@ -1141,17 +587,22 @@ class String</p>
             
                 <td>
                     <header><span>inferTypes</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;export&quot; },
-    &quot;value&quot;: ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;String&quot; } } }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;String&quot;</pre></div></li></ul></div></p>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;export&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;String&quot; } }</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;String&quot; } }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ClassDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;String&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;String&quot; } }</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;String&quot; } }</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;String&quot;</pre></div></li></ul></div></p>
                 </td>
             
                 <td>
                     <header><span>identity</span></header>
                     <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;export&quot; },
-    &quot;value&quot;: ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;String&quot; } } }
+  Variable { &quot;type&quot;: FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;String&quot; } },
+    &quot;id&quot;: Declarator {
+      &quot;name&quot;: &quot;export&quot;,
+      &quot;type&quot;: FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;String&quot; } } },
+    &quot;value&quot;: ClassDeclaration { &quot;type&quot;: FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;String&quot; } },
+      &quot;id&quot;: Declarator {
+        &quot;name&quot;: &quot;String&quot;,
+        &quot;type&quot;: FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;String&quot; } } }
+    }
+  }
 ]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;String&quot;</pre></div></li></ul></div></p>
                 </td>
             </tr>

@@ -1,10 +1,10 @@
 import combineExpressions from "./analysis/combineExpressions";
 import { BinaryExpression, DotExpression, Expression, Literal, Void as AstVoid } from "./ast";
 import Reference from "./ast/Reference";
-import { getGlobalPath } from "./pathFunctions";
+import { getAbsolutePath } from "./pathFunctions";
 
 export function ref(name: string) {
-    return new Reference({ name: getGlobalPath(name) })
+    return new Reference({ name, absolute: getAbsolutePath(name) })
 }
 
 function number(type: Reference, min: number, max: number) {

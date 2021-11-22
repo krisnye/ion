@@ -246,13 +246,13 @@ export default function semanticChecks(
                     }
                     else if (isTypeName(node.id.name)) {
                         // if it's a type it has no value, the value is moved to the .type property
-                        node = node.patch({ isType: true, type: node.value, value: null })
+                        node = node.patch({ isType: true })
                         // check type
-                        if (node.type != null) {
-                            errors.push(SemanticError(`Type declarations cannot have a type`, node))
+                        if (node.type == null) {
+                            errors.push(SemanticError(`Type declarations must have a type`, node))
                         }
-                        if (node.value == null) {
-                            errors.push(SemanticError(`Type declarations must have a value`, node))
+                        if (node.value != null) {
+                            errors.push(SemanticError(`Type declarations must not have a value`, node))
                         }
                         // else if (TypeExpression.is(node.value)) {
                         //     node = node.patch({

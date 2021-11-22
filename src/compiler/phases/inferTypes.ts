@@ -17,6 +17,7 @@ import { inferOperationType, numberType } from "../analysis/numberTypes";
 import { isSubtype } from "../analysis/newTypeAnalysis";
 import splitExpressions from "../analysis/splitExpressions";
 import { operatorToNumberTypes, reflectOperators } from "../analysis/normalize";
+import { getAbsolutePath } from "../pathFunctions";
 
 function createCombinedTypeExpression(type: ast.TypeExpression, name: String, knownTrueExpression: ast.Expression, location: ast.Location) {
     // now we convert the node assert to a type expression (by replacing variable name references to DotExpressions) so we can combine it.
@@ -102,6 +103,18 @@ const binaryOperationsType = {
     "%": null,
 }
 
+function getDeclarator(node: ast.Reference, c: EvaluateContext) {
+    let scope = c.scopes.get(node)
+    let declarator = scope[node.name]
+    return declarator
+}
+
+function getDeclaration(node: ast.Reference, c: EvaluateContext) {
+    let declarator = getDeclarator(node, c)
+    let declaration = c.lookup.findAncestor(declarator, ast.Declaration.is)
+    return declaration
+}
+
 function getAncestorExpressionType(node, c: EvaluateContext) {
     let ancestor = c.lookup.findAncestor(node, ast.Expression.is)!
     // let declaration = c.lookup.findAncestor(node, ast.Declaration.is)!
@@ -137,6 +150,7 @@ export const inferType: {
 } = {
     Declarator(node, c) {
         let type = getAncestorExpressionType(node, c)
+        // console.log('!!!!!!! ', node.name, '---', type)
         return { type }
     },
     PatternProperty(node, c) {
@@ -203,20 +217,34 @@ export const inferType: {
         let type = new ast.FunctionType({ parameters, returnType })
         return { type, returnType }
     },
-    ReferenceType(node, c) {
-        let scope = c.scopes.get(node)
+    ClassDeclaration(node, c) {
+        // there is the constructor function type AND the static type
+        let funcType = new ast.FunctionType({
+            location: node.location,
+            parameters: node.declarations.filter(d => d.isInstance).map(
+                d => new ast.Variable({ location: d.location, id: d.id, type: d.type, value: d.value })
+            ),
+            returnType: new ast.ReferenceType(node.id),
+        })
+        let type = funcType
+        // console.log('-------> ClassDeclaration.type: ' + node.id.name, funcType)
+        return { type }
+    },
+    ReferenceType(node, c, errors) {
         if (node.name === types.Number.name) {
             return numberType(null, null)
         }
-        let declarator = c.lookup.getCurrent(scope[node.name])
-        if (!declarator) {
-            console.log("Declarator not found: ", node.name)
-            return
-        }
-        let declaration = c.lookup.findAncestor(declarator, ast.Declaration.is)!
-        if (!ast.ClassDeclaration.is(declaration)) {
-            return declarator.type
-        }
+        return (inferType.Reference as any)(node, c, errors)
+        // let scope = c.scopes.get(node)
+        // let declarator = c.lookup.getCurrent(scope[node.name])
+        // if (!declarator) {
+        //     console.log("Declarator not found: ", node.name)
+        //     return
+        // }
+        // let declaration = c.lookup.findAncestor(declarator, ast.Declaration.is)!
+        // if (!ast.ClassDeclaration.is(declaration)) {
+        //     return declarator.type
+        // }
     },
     Reference(node, c) {
         let scope = c.scopes.get(node)
@@ -290,6 +318,10 @@ export const inferType: {
     Call(node, c, errors) {
         let callee = c.lookup.getCurrent(node.callee)
         let calleeType = callee.type as ast.FunctionType
+        if (calleeType == null) {
+            errors.push(SemanticError(`Callee type not found`, node.callee))
+            return
+        }
         let index = 0
         //  TODO: Handle destructured parameter names
         let paramNames = new Map(calleeType.parameters.map((value, index) => [(value.id as ast.Declarator).name, index]))
@@ -327,7 +359,15 @@ export const inferType: {
                             if (isTypeName(node.name)) {
                                 //  if this is a type reference, we should return the value of the type
                                 //  unless this is a class in which case, leave alone
-                                throw new Error("TODO, implement this")
+                                let declaration = getDeclaration(node, c)
+                                if (ast.ClassDeclaration.is(declaration)) {
+                                    return node
+                                }
+                                if (declaration && declaration.type) {
+                                    return declaration.type
+                                }
+
+                                throw new Error("Type not found?: " + node.name)
                             }
                             else {
                                 let declarator = c.lookup.getCurrent(c.scopes.get(node)[node.name])
@@ -346,8 +386,8 @@ export const inferType: {
                 consequent = isSubtype(argType, simpleParameterType)
             }
 
-            // console.log({ valueType, calleeParameterType })
-            // console.log(`CHECK isSubtype ${toCodeString(valueType)} => ${toCodeString(calleeParameterType)} ? ${consequent}`)
+            // console.log({ argType, parameterType })
+            // console.log(`CHECK isSubtype ${toCodeString(argType)} => ${toCodeString(parameterType)} ? ${consequent}`)
             if (consequent === false) {
                 errors.push(SemanticError(`Argument always invalid: ${toCodeString(argType)}, expected: ${toCodeString(newParameterType)}`, argValue))
             }
@@ -356,6 +396,9 @@ export const inferType: {
             }
             index++
         }
+
+        let type = calleeType.returnType
+        return { type }
     },
 }
 

@@ -3,10 +3,10 @@ export const globalNamespace = "_"
 const pathSeparator = "."
 const globalPrefix = globalNamespace + pathSeparator
 const exportSeparator = ":"
-export function getGlobalPath(name: string, _export = "export") {
+export function getAbsolutePath(name: string, _export = "export") {
     return _export ? `${globalPrefix}${name}${exportSeparator}${_export}` : `${globalPrefix}${name}`
 }
-export function isGlobalPath(path: string) {
+export function isAbsolutePath(path: string) {
     return path.startsWith(globalPrefix)
 }
 export function getLast(path: string): string {

@@ -1,4 +1,4 @@
-import { Expression, BinaryExpression, UnaryExpression, TypeExpression, NumberType, NeverType } from "../ast";
+import { Expression, BinaryExpression, UnaryExpression, TypeExpression, NumberType, NeverType, UnionType } from "../ast";
 import toCodeString from "../toCodeString";
 import { memoize } from "../common";
 import { traverse } from "@glas/traverse";

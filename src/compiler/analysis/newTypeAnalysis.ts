@@ -1,6 +1,7 @@
-import { Type, NumberType, ObjectType, UnionType, IntersectionType, Reference, Property, Identifier, NeverType } from "../ast";
+import { Type, NumberType, ObjectType, UnionType, IntersectionType, Reference, Property, Identifier, NeverType, ReferenceType } from "../ast";
 import toCodeString from "../toCodeString";
 import { isNumberSubtype } from "./numberTypes";
+import * as baseTypes from "../types";
 
 type Maybe = true | false | null
 //  a  \  b |  true   false   null
@@ -109,8 +110,14 @@ export function isSubtype(a: Type, b: Type ): boolean | null {
         return min(b.types.map(bi => isSubtype(a, bi)))
     }
     // number type comparison
-    if (NumberType.is(a) && NumberType.is(b)) {
-        return isNumberSubtype(a, b)
+    if (NumberType.is(a)) {
+        // if right is any number then any numbertype is a subtype
+        if (ReferenceType.is(b) && b.absolute === baseTypes.Number.absolute) {
+            return true
+        }
+        if (NumberType.is(b)) {
+            return isNumberSubtype(a, b)
+        }
     }
     // at this point, we should either be reference types or object types
     if (Reference.is(a) && Reference.is(b)) {

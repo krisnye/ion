@@ -1,6 +1,13 @@
-array = [1, (name = "Kris", age = 49)]
+// array = [1, (name = "Kris", age = 49)]
+// [first, (name, age)] = array
 
-[first, (name, age)] = array
+class Vector
+    x: Number
+    y: Number
+
+origin = Vector(0, 0)
+
+class Number
 
 // person = (name = "Kris", age = 49)
 // (name, age) = person
@@ -75,5 +82,3 @@ array = [1, (name = "Kris", age = 49)]
 //     foo + bar
 
 //  looks like array destructuring
-
-class Number
