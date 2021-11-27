@@ -19,7 +19,7 @@ Cross platform modeling language
   - [x] do we still have || and | => We only need | since it works on booleans
   - [/] calculate expression types
   - [ ] figure out why For loop parsing is not working
-  - [ ] reference older inferTypes as we reimplement new inferTypes
+  - [x] reference older inferTypes as we reimplement new inferTypes
   - [x] continue type inference till function argument checking is working
   - [x] implement new type isConsequent logic
   - [x] test new type isConsequent logic
@@ -27,3 +27,10 @@ Cross platform modeling language
   - [x] infer a type for a class: Function & static properties...
   - [x] need proper global unified namespace
   - [x] fix so Number is exporting a class and not `Number = <= 0 | >= 0`
+  - [x] outline object expressions should create scope and properties should declare
+  - [ ] interpreter
+  - [ ] Convert to string based comparison so AST looks human readable language
+    - [x] test this now with current json diff
+    - [x] Implemented a good string diff library
+  - [ ] Replace Declarators with simpler IRT Declarations
+  - [ ] Don't use absolute paths, use simpler names, no private #exports

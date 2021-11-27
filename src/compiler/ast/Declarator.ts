@@ -13,7 +13,6 @@ import * as Class from './ion/Class';
 export class Declarator implements _Object.Object , Identifier.Identifier , Pattern.Pattern , Node.Node , Expression.Expression {
     readonly location: Location.Location | Null.Null;
     readonly name: String.String;
-    readonly absolute: String.String | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     static readonly id = 'Declarator';
     static readonly implements = new Set([
@@ -24,30 +23,25 @@ export class Declarator implements _Object.Object , Identifier.Identifier , Patt
         'Node',
         'Expression'
     ]);
-    constructor({location = null, name, absolute = null, type = null}: {
+    constructor({location = null, name, type = null}: {
         location?: Location.Location | Null.Null,
         name: String.String,
-        absolute?: String.String | Null.Null,
         type?: Expression.Expression | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!String.isString(name))
             throw new Error('name is not a String: ' + Class.toString(name));
-        if (!(String.isString(absolute) || Null.isNull(absolute)))
-            throw new Error('absolute is not a String | Null: ' + Class.toString(absolute));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         this.location = location;
         this.name = name;
-        this.absolute = absolute;
         this.type = type;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         name?: String.String,
-        absolute?: String.String | Null.Null,
         type?: Expression.Expression | Null.Null
     }) {
         return new Declarator({

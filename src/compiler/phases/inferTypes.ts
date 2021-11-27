@@ -60,15 +60,15 @@ function createCombinedTypeExpression(type: ast.TypeExpression, name: String, kn
 }
 
 // function callToObjectTypeToProperties(call: ast.Call, c: EvaluateContext, errors: Array<Error>) {
-//     let callee = c.lookup.getCurrent(call.callee)
+//     let callee = c.current(call.callee)
 //     let calleeType = callee.type as ast.FunctionType
 //     let properties = new Array<ast.Property>()
 //     let index = 0
 //     for (let arg of call.arguments) {
 //         if (ast.Argument.is(arg)) {
-//             let currentArg = c.lookup.getCurrent(arg) as ast.Argument
-//             let value = c.lookup.getCurrent(currentArg.value)
-//             let parameter = c.lookup.getCurrent(calleeType.parameters[index++]) as ast.Variable
+//             let currentArg = c.current(arg) as ast.Argument
+//             let value = c.current(currentArg.value)
+//             let parameter = c.current(calleeType.parameters[index++]) as ast.Variable
 //             properties.push(new ast.Property({ key: new ast.Identifier(parameter.id as ast.Declarator), value: value.type }))
 //         }
 //         else {
@@ -119,18 +119,18 @@ function getAncestorExpressionType(node, c: EvaluateContext) {
     let ancestor = c.lookup.findAncestor(node, ast.Expression.is)!
     // let declaration = c.lookup.findAncestor(node, ast.Declaration.is)!
     // this is not technically correct, we need the type of the parent pattern
-    let type = c.lookup.getCurrent(ancestor.type)
+    let type = c.current(ancestor.type)
     return type
 }
 
 function getMemberType(objectType: ast.ObjectType, objectProperty: ast.Expression | ast.Identifier, c: EvaluateContext) {
     for (let property of objectType.properties as Array<Property>) {
         let matches = false
-        if (ast.Identifier.is(property.key) && ast.Identifier.is(objectProperty)) {
-            matches = property.key.name === objectProperty.name
+        if (ast.Identifier.is(property.id) && ast.Identifier.is(objectProperty)) {
+            matches = property.id.name === objectProperty.name
         }
-        else if (Expression.is(property.key) && Expression.is(objectProperty)) {
-            matches = toCodeString(property.key) === toCodeString(objectProperty)
+        else if (Expression.is(property.id) && Expression.is(objectProperty)) {
+            matches = toCodeString(property.id) === toCodeString(objectProperty)
         }
         else {
             console.log("CHECK TYPES HERE-------")
@@ -154,7 +154,7 @@ export const inferType: {
         return { type }
     },
     PatternProperty(node, c) {
-        let ancestorType = getAncestorExpressionType(node, c)
+        let ancestorType = getAncestorExpressionType(node, c) as ast.ObjectType
         let type = getMemberType(ancestorType, node.key, c)
         return { type }
     },
@@ -169,8 +169,8 @@ export const inferType: {
     BinaryExpression(node, c) {
         let type = binaryOperationsType[node.operator]
         if (type == null) {
-            let leftType = c.lookup.getCurrent(node.left).type
-            let rightType = c.lookup.getCurrent(node.right).type
+            let leftType = c.current(node.left).type!
+            let rightType = c.current(node.right).type!
             type = inferOperationType(leftType, rightType, node.operator, c)
         }
         return { type }
@@ -190,26 +190,26 @@ export const inferType: {
         return inferType.Variable!(node, c, lookup)
     },
     Variable(node, c) {
-        let type = c.lookup.getCurrent(node.type)
+        let type = c.current(node.type)
         // console.log("Variable------- ", {id: toCodeString(node.id)})
         if (type != null) {
         }
         else if (node.value != null) {
             // get the type from the value
-            type = c.lookup.getCurrent(node.value).type
+            type = c.current(node.value).type
         }
         return { type }
     },
     Block(node, c) {
-        let type = c.lookup.getCurrent(node.body[node.body.length - 1]).type
+        let type = c.current(node.body[node.body.length - 1]).type
         return { type }
     },
     FunctionExpression(node, c) {
         let parameters = node.parameters.map(p => {
-            return c.lookup.getCurrent(p)!.patch({ type: c.lookup.getCurrent(p.type)})
+            return c.current(p)!.patch({ type: c.current(p.type)})
         })
-        let returnType = c.lookup.getCurrent(node.returnType)
-        let returnTypes = [...getFinalExpressions(node.body)].map(e => c.lookup.getCurrent(e).type)
+        let returnType = c.current(node.returnType)
+        let returnTypes = [...getFinalExpressions(node.body)].map(e => c.current(e).type!)
         if (!returnType) {
             returnType = combineExpressions(returnTypes, "|")
             // TODO: Check returnType with actual returnType
@@ -236,7 +236,7 @@ export const inferType: {
         }
         return (inferType.Reference as any)(node, c, errors)
         // let scope = c.scopes.get(node)
-        // let declarator = c.lookup.getCurrent(scope[node.name])
+        // let declarator = c.current(scope[node.name])
         // if (!declarator) {
         //     console.log("Declarator not found: ", node.name)
         //     return
@@ -248,25 +248,25 @@ export const inferType: {
     },
     Reference(node, c) {
         let scope = c.scopes.get(node)
-        let declarator = c.lookup.getCurrent(c.lookup.getCurrent(scope[node.name]))
+        let declarator = c.current(c.current(scope[node.name]))
         if (declarator == null) {
             throw SemanticError(`Reference not found: ${node.name}`, node)
         }
-        let type = c.lookup.getCurrent(declarator.type)
+        let type = c.current(declarator.type)
         return { type }
     },
     ConditionalDeclaration(node, c) {
         let { name } = node.id
         let containingIf = c.lookup.findAncestor(node, ast.Conditional.is)!
         let containingIfScope = c.scopes.get(containingIf)
-        let ancestorDeclaration = c.lookup.getCurrent(containingIfScope[name])
+        let ancestorDeclaration = c.current(containingIfScope[name])
         let assertion = containingIf.test
         if (node.negate) {
             assertion = negate(assertion)
         }
         //  need a function to turn an Expression into a Type
         //  then createCombinedType expression must merge two types
-        let type = createCombinedTypeExpression(ancestorDeclaration.type, name, assertion, node.location!)
+        let type = createCombinedTypeExpression(ancestorDeclaration.type as TypeExpression, name, assertion, node.location!)
         return { type }
     },
     ArrayExpression(node, c) {
@@ -284,10 +284,10 @@ export const inferType: {
             location: node.location,
             kind: "Array",
             properties: items.map((item, index) => {
-                let key = new Literal({ value: index })
-                let value = c.lookup.getCurrent(item)
+                let id = new Literal({ value: index })
+                let value = c.current(item)
                 return new Property({
-                    key,
+                    id,
                     value: value.type
                 })
             })
@@ -299,24 +299,24 @@ export const inferType: {
             location: node.location,
             kind: "Object",
             properties: node.body.filter(Property.is).map(item => {
-                let key = c.lookup.getCurrent(item.key)
-                let value = c.lookup.getCurrent(item.value)
+                let id = c.current(item.id) as Expression
+                let value = c.current(item.value) as Expression
                 return new Property({
-                    key: key.type || key,
-                    value: value.type
+                    id: id.type || id,
+                    value: value.type,
                 })
             })
         })
         return { type }
     },
     MemberExpression(node, c) {
-        let objectType = c.lookup.getCurrent(node.object).type as ast.ObjectType
-        let property = c.lookup.getCurrent(node.property) as ast.Property
+        let objectType = c.current(node.object).type as ast.ObjectType
+        let property = c.current(node.property) as ast.Property
         let type = getMemberType(objectType, property, c)
         return { type }
     },
     Call(node, c, errors) {
-        let callee = c.lookup.getCurrent(node.callee)
+        let callee = c.current(node.callee)!
         let calleeType = callee.type as ast.FunctionType
         if (calleeType == null) {
             errors.push(SemanticError(`Callee type not found`, node.callee))
@@ -328,8 +328,8 @@ export const inferType: {
         // console.log(paramNames)
         let argValues = node.arguments.map(arg => {
             if (ast.Argument.is(arg)) {
-                let currentArg = c.lookup.getCurrent(arg) as ast.Argument
-                let argValue = c.lookup.getCurrent(currentArg.value)
+                let currentArg = c.current(arg) as ast.Argument
+                let argValue = c.current(currentArg.value)
                 return argValue
             }
             else {
@@ -339,7 +339,7 @@ export const inferType: {
 
         for (let argValue of argValues) {
             let argType = argValue.type!
-            let parameter = c.lookup.getCurrent(calleeType.parameters[index]) as ast.Variable
+            let parameter = c.current(calleeType.parameters[index]) as ast.Variable
             let parameterType = parameter.type!
             //  replace any parameter type name references with actual arg values (with types)
             let newParameterType = traverse(parameterType, {
@@ -370,8 +370,8 @@ export const inferType: {
                                 throw new Error("Type not found?: " + node.name)
                             }
                             else {
-                                let declarator = c.lookup.getCurrent(c.scopes.get(node)[node.name])
-                                return declarator.type
+                                let declarator = c.current(c.scopes.get(node)[node.name])
+                                return declarator.type!
                             }
                         }
                     }
@@ -408,6 +408,7 @@ export default function inferTypes(
 ): Module | Error[] {
     let lookup = new Lookup()
     let scopes = createScopeMaps(module, { globalScope: options.globalScope, lookup })
+    let context = new EvaluateContext(lookup, scopes)
     let sorted = getSortedExpressions(module, scopes, lookup)
     // console.log("==============================================")
     // console.log(sorted.map(e => `${e.constructor.name} => ${toCodeString(e)}`).join("\n"))
@@ -426,7 +427,6 @@ export default function inferTypes(
         }
 
         // let resolved = getResolved(lookup, originalNode)
-        let context = { lookup, scopes }
         // first try to simplify
         let currentNode = originalNode
         currentNode = evaluate(currentNode, context)
@@ -471,7 +471,7 @@ export default function inferTypes(
             return ast.Position.is(node)
         },
         merge(node, changes, helper) {
-            let result = lookup.getCurrent(node)
+            let result = context.current(node)
             if (customConvertedNodes.has(result)) {
                 return result
             }

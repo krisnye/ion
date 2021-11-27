@@ -8,7 +8,7 @@ import { Assignment, BinaryExpression, Call, ClassDeclaration, Type, Expression,
 import { hasNodesOfType, SemanticError, isTypeName, isMetaName } from "../common";
 import { Options } from "../Compiler"
 import createScopeMaps from "../createScopeMaps";
-import { getLast } from "../pathFunctions";
+import { getLastName } from "../pathFunctions";
 import { _this } from "../reservedWords";
 import toCodeString from "../toCodeString";
 import * as types from "../types";
@@ -121,7 +121,7 @@ export default function semanticChecks(
         }
     )
     // check that there is only a single final expression statement
-    let last = getLast(module.name)
+    let last = getLastName(module.name)
     let index = 0
     module = traverse(module, {
         lookup,
@@ -163,7 +163,7 @@ export default function semanticChecks(
                     }
                     node = node.patch({
                         properties: [
-                            ...types.map((type, index) => new Property({ key: numberType(index), value: type })),
+                            ...types.map((type, index) => new Property({ id: numberType(index), value: type })),
                             ...node.properties.filter(type => !Type.is(type))
                         ]
                     })

@@ -68,15 +68,15 @@ function getBaseType(a: Type) {
 
 function getPropertyType(objectType: ObjectType, propertyKey: Type | Identifier): Type | null {
     if (Identifier.is(propertyKey)) {
-        for (let {key, value} of objectType.properties as Array<Property>) {
-            if (Identifier.is(key) && propertyKey.name === key.name) {
+        for (let {id, value} of objectType.properties as Array<Property>) {
+            if (Identifier.is(id) && propertyKey.name === id.name) {
                 return value as Type
             }
         }
     }
     else {
-        for (let {key, value} of objectType.properties as Array<Property>) {
-            if (Type.is(key) && isSubtype(propertyKey, key)) {
+        for (let {id, value} of objectType.properties as Array<Property>) {
+            if (Type.is(id) && isSubtype(propertyKey, id)) {
                 return value as Type
             }
         }
@@ -112,7 +112,7 @@ export function isSubtype(a: Type, b: Type ): boolean | null {
     // number type comparison
     if (NumberType.is(a)) {
         // if right is any number then any numbertype is a subtype
-        if (ReferenceType.is(b) && b.absolute === baseTypes.Number.absolute) {
+        if (ReferenceType.is(b) && b.name === baseTypes.Number.name) {
             return true
         }
         if (NumberType.is(b)) {
@@ -133,8 +133,8 @@ export function isSubtype(a: Type, b: Type ): boolean | null {
     if (ObjectType.is(a) && ObjectType.is(b)) {
         //  should compare properties and verify that for each type key in a
         //  the value for that key has an instance of same type in b
-        for (let {key, value} of b.properties as Array<Property>) {
-            let propertyType = getPropertyType(a, key)
+        for (let {id, value} of b.properties as Array<Property>) {
+            let propertyType = getPropertyType(a, id)
             if (propertyType == null || !isSubtype(propertyType, value as Type)) {
                 return false
             }

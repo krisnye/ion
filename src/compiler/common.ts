@@ -3,6 +3,7 @@ import * as np from "path";
 import { traverse, skip } from "@glas/traverse";
 import { NodeMap, ScopeMap } from "./createScopeMaps";
 import { Reference, Node, Variable, ModuleSpecifier, ImportDeclaration, Declarator, ImportDefaultSpecifier, ImportNamespaceSpecifier, ImportSpecifier, Declaration, Statement, Identifier, Block } from "./ast";
+import { getLastName } from "./pathFunctions";
 
 export const runtimeModuleName = "ionscript"
 
@@ -12,15 +13,18 @@ function isUpperCase(name) {
 }
 
 export function isMetaName(name) {
+    name = getLastName(name)
     return name[0] === "@"
 }
 
 export function isTypeName(name) {
+    name = getLastName(name)
     return !isMetaName(name) && isUpperCase(name)
 }
 
 export function isValueName(name) {
-    return !isMetaName(name) && !isTypeName(name)
+    name = getLastName(name)
+    return !isMetaName(name) && !isUpperCase(name)
 }
 
 export function combineStatements(...statements: Statement[]) {

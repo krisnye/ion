@@ -73,10 +73,35 @@ function format(html: string) {
         .replace(/\\n/g, '<br>')
 }
 
+function diff(before, after, channel) {
+    let delta = before != null ? jsondiffpatch.diff(before, after) : null
+    let html: any = null;
+    if (typeof after === "string") {
+        if (typeof before === "string") {
+            var ghDiffHTML = require('gh-diff-html')
+            html = ghDiffHTML(before, after, {
+                drawFileList: false,
+                fileName: "_",
+                outputFormat: 'line-by-line' // or 'side-by-side'
+            })
+        }
+        else {
+            html = after
+        }
+    }
+    else {
+        html = require('jsondiffpatch/src/formatters/html').format(delta || {}, before || after)
+    }
+    return format(html);
+}
+
 export function create(outputPath: string) {
-    let stylePath = require.resolve("jsondiffpatch/public/formatters-styles/html.css")
+    let stylePaths = [
+        require.resolve("jsondiffpatch/public/formatters-styles/html.css"),
+        require.resolve("diff2html/dist/diff2html.min.css"),
+    ]
     let rfs = readFileSync // abstraction to prevent parcel from resolving
-    let style = rfs(stylePath)
+    let styles = stylePaths.map(stylePath => rfs(stylePath))
     // console.log(style)
     // let outputToStyle = np.relative(np.dirname(outputPath), "node_modules/jsondiffpatch/dist/formatters-styles/html.css")
     let channels: Map<string,[string[],object][]> = new Map()
@@ -100,9 +125,14 @@ export function create(outputPath: string) {
 <html>
     <head>
         <style>
-        ${style.toString()}
+        ${styles.join("")}
         </style>
         <style>
+        /* begin diff2html styles */
+        .d2h-file-header {
+            display: none;
+        }
+        /* end diff2html styles */
         :root {
             --border: solid 1px gray;
         }
@@ -119,22 +149,22 @@ export function create(outputPath: string) {
             font-family: Monaco;
             position: relative;
         }
-        td {
+        .channel > td {
             border: var(--border);
         }
-        td:nth-child(1) > .content {
+        .channel > td:nth-child(1) > .content {
             font-size: 16px;
             writing-mode: tb-rl;
             padding: 12px;
         }
-        td {
+        .channel > td {
             border: var(--border);
             padding: 0px;
         }
-        td:not(:last-child) {
+        .channel > td:not(:last-child) {
             border-right: none;
         }
-        td header {
+        .channel > td header {
             color: rgb(150,150,150);
             background-color: rgb(45,45,45);
             font-weight: bold;
@@ -142,15 +172,15 @@ export function create(outputPath: string) {
             margin: 0px;
             border-bottom: var(--border);
         }
-        td header:hover {
+        .channel > td header:hover {
             display: flex;
             flex-direction: column;
         }
-        td p {
+        .channel > td p {
             padding: 0px 8px;
             white-space: pre;
         }
-        td > div {
+        .channel > td > div {
             display: flex !important;
             flex-direction: column;
         }
@@ -182,19 +212,12 @@ export function create(outputPath: string) {
             if (!Array.isArray(names))
                 names = [names]
             // convert to show refs
-            let delta = previous != null ? jsondiffpatch.diff(previous, ast) : null
-            let html;
-            if (typeof ast === "string") {
-                html = ast
-            }
-            else {
-                html = require('jsondiffpatch/src/formatters/html').format(delta || {}, previous || ast)
-            }
+            let delta = diff(previous, ast, channel)
             previous = ast
             return `
                 <td>
                     <header><span>${names.join(', </span><span>')}</span></header>
-                    <p>${format(html)}</p>
+                    <p>${delta}</p>
                 </td>
             `
         }),

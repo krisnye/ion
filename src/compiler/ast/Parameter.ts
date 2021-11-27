@@ -14,13 +14,14 @@ import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
 import * as Property from './Property';
 import * as Pattern from './Pattern';
+import * as Identifier from './Identifier';
 import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
 export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Statement.Statement , SideEffect.SideEffect {
     readonly location: Location.Location | Null.Null;
     readonly meta: _Array.Array<Property.Property> | Null.Null;
     readonly type: Expression.Expression | Null.Null;
-    readonly id: Pattern.Pattern;
+    readonly id: Pattern.Pattern | (Identifier.Identifier | Expression.Expression);
     readonly isMutable: Boolean.Boolean;
     readonly value: Expression.Expression | Null.Null;
     readonly isType: Boolean.Boolean;
@@ -43,7 +44,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
-        id: Pattern.Pattern,
+        id: Pattern.Pattern | (Identifier.Identifier | Expression.Expression),
         isMutable?: Boolean.Boolean,
         value?: Expression.Expression | Null.Null,
         isType?: Boolean.Boolean,
@@ -57,8 +58,8 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
             throw new Error('meta is not a Array | Null: ' + Class.toString(meta));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
-        if (!Pattern.isPattern(id))
-            throw new Error('id is not a Pattern: ' + Class.toString(id));
+        if (!(Pattern.isPattern(id) || (Identifier.isIdentifier(id) || Expression.isExpression(id))))
+            throw new Error('id is not a Pattern | Identifier | Expression: ' + Class.toString(id));
         if (!Boolean.isBoolean(isMutable))
             throw new Error('isMutable is not a Boolean: ' + Class.toString(isMutable));
         if (!(Expression.isExpression(value) || Null.isNull(value)))
@@ -87,7 +88,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
-        id?: Pattern.Pattern,
+        id?: Pattern.Pattern | (Identifier.Identifier | Expression.Expression),
         isMutable?: Boolean.Boolean,
         value?: Expression.Expression | Null.Null,
         isType?: Boolean.Boolean,

@@ -114,7 +114,7 @@ export default class Compiler {
         let options = this.normalizeOptions(optionsOrJson)
         let sources = this.getFiles(options)
         // if debug only Number compile =>
-        sources = new Map([...sources.entries()].filter(([name, source]) => ({Number:1,String:1,min:0,max:0})[name])) as any
+        sources = new Map([...sources.entries()].filter(([name, source]) => ({Number:1,String:0,min:1,max:0, "aa.Sample": 1})[name])) as any
 
         let order = new Array<string>()
 

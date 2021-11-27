@@ -114,8 +114,8 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     *ObjectExpression(node) {
         for (let property of node.body) {
             if (Property.is(property)) {
-                if (Expression.is(property.key)) {
-                    yield property.key
+                if (Expression.is(property.id)) {
+                    yield property.id
                 }
                 if (Expression.is(property.value)) {
                     yield property.value

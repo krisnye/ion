@@ -67,17 +67,17 @@ assert.strictEqual(isSubtype(B, A), false)
 let Vector2 = new ObjectType({
     kind: "Object",
     properties: [
-        new Property({ key: new Identifier({ name: "x" }), value: types.Number }),
-        new Property({ key: new Identifier({ name: "y" }), value: types.Number }),
+        new Property({ id: new Identifier({ name: "x" }), value: types.Number }),
+        new Property({ id: new Identifier({ name: "y" }), value: types.Number }),
     ],
 })
 
 let Vector3 = new ObjectType({
     kind: "Object",
     properties: [
-        new Property({ key: new Identifier({ name: "x" }), value: types.Number }),
-        new Property({ key: new Identifier({ name: "y" }), value: types.Number }),
-        new Property({ key: new Identifier({ name: "z" }), value: types.Number }),
+        new Property({ id: new Identifier({ name: "x" }), value: types.Number }),
+        new Property({ id: new Identifier({ name: "y" }), value: types.Number }),
+        new Property({ id: new Identifier({ name: "z" }), value: types.Number }),
     ],
 })
 
@@ -145,9 +145,9 @@ assert.strictEqual(toCodeString(
                 new ObjectType({
                     kind: "Object",
                     properties: [
-                        new Property({ key: new Identifier({ name: "beta"}), value: numberType(0, null)}),
-                        new Property({ key: new Identifier({ name: "charlie"}), value: numberType(0, null)}),
-                        new Property({ key: new Identifier({ name: "alpha"}), value: numberType(0, null)}),
+                        new Property({ id: new Identifier({ name: "beta"}), value: numberType(0, null)}),
+                        new Property({ id: new Identifier({ name: "charlie"}), value: numberType(0, null)}),
+                        new Property({ id: new Identifier({ name: "alpha"}), value: numberType(0, null)}),
                     ]
                 })
             ]

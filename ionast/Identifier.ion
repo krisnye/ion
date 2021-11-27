@@ -5,4 +5,3 @@ import
 export
     class Identifier extends Node
         var name: String
-        var absolute: String | Null = null

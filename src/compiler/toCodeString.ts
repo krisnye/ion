@@ -92,12 +92,12 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         return `class ${node.id.name}`
     },
     Property(node) {
-        if (node.key != null) {
-            if (ast.Identifier.is(node.key) || ast.ReferenceType.is(node.key)) {
-                return `${s(node.key)}:${s(node.value!)}`
+        if (node.id != null) {
+            if (ast.Identifier.is(node.id) || ast.ReferenceType.is(node.id)) {
+                return `${s(node.id)}:${s(node.value!)}`
             }
             else {
-                return `[${s(node.key)}]:${s(node.value!)}`
+                return `[${s(node.id)}]:${s(node.value!)}`
             }
         }
         return `${s(node.value!)}`

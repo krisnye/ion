@@ -2,7 +2,7 @@ import { Declaration, Declarator, Identifier, Module, Reference } from "../ast";
 import { traverse } from "@glas/traverse";
 import createScopeMaps, { getDeclarators } from "../createScopeMaps";
 import { _this } from "../reservedWords";
-import { resolve, join, getAbsolutePath, getLast } from "../pathFunctions";
+import { resolve, join, getAbsolutePath, getLastName } from "../pathFunctions";
 import { SemanticError } from "../common";
 import * as builtins from "../builtins";
 
@@ -16,7 +16,7 @@ export default function getExternalReferences(module: Module, modules: Map<strin
             // make sure final item isn't a declaration or if it is that it's name matches last name of module
             if (Declaration.is(item)) {
                 if (Declarator.is(item.id)) {
-                    if (item.id.name !== getLast(module.name)) {
+                    if (item.id.name !== getLastName(module.name)) {
                         errors.push(SemanticError(`Final declaration name must match module name`, item.id))
                     }
                 }
@@ -24,7 +24,7 @@ export default function getExternalReferences(module: Module, modules: Map<strin
                     errors.push(SemanticError(`Final expression can only export a single declarator`, item.id))
                 }
             }
-            let localName = Declaration.is(item) && Identifier.is(item.id) ? item.id.name : getLast(module.name)
+            let localName = Declaration.is(item) && Identifier.is(item.id) ? item.id.name : getLastName(module.name)
             exports.set(localName, getAbsolutePath(module.name))
         }
         else if (Declaration.is(item)) {
@@ -37,12 +37,12 @@ export default function getExternalReferences(module: Module, modules: Map<strin
     // get own exports
     module = traverse(module, {
         leave(node) {
-            if (Reference.is(node)) {
+            if (Reference.is(node) || Declarator.is(node)) {
                 if (node.name !== _this) {
                     let scope = scopes.get(node)
                     // let builtInType = builtins[node.name]
                     // if (Reference.is(builtInType)) {
-                    //     node = node.patch({ name: builtInType.name })
+                    //     node = node.patch({ absolute: builtInType.absolute })
                     // }
                     if (scope == null) {
                         throw SemanticError(`Scope not found`, node)
@@ -55,7 +55,9 @@ export default function getExternalReferences(module: Module, modules: Map<strin
                             if (set == null) {
                                 externals.set(resolved.name, set = new Set())
                             }
-                            set.add(node)
+                            if (Reference.is(node)) {
+                                set.add(node)
+                            }
                             if (resolved) {
                                 return node.patch({ name: getAbsolutePath(resolved.name) })
                             }
@@ -68,7 +70,7 @@ export default function getExternalReferences(module: Module, modules: Map<strin
                         let localExportAbsolute = exports.get(node.name)
                         if (localExportAbsolute != null) {
                             // add absolute reference
-                            return node.patch({ absolute: localExportAbsolute })
+                            return node.patch({ name: localExportAbsolute })
                         }
                     }
                 }

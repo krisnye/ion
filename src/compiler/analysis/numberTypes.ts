@@ -200,14 +200,10 @@ export function inferOperationType(a: Type, b: Type, operator: string, c: Evalua
                     minExclusive,
                     maxExclusive
                 })
+            case "*":
+                //  need min function
+                //  need max function
         }
     }
-    // let aType = toNumberType(a)
-    // let bType = toNumberType(b)
-    if (operator === ops.addition) {
-        // just do one FFS or do we need more analysis?
-        // add this shit.
-    }
-    // next, after Number type then combine them
     return a
 }

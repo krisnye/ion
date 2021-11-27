@@ -1,5 +1,5 @@
 import { traverse, skip, Lookup } from "@glas/traverse"
-import { Node, Scope, Reference, Declarator, Pattern, ObjectPattern, RestElement, ArrayPattern, FunctionExpression, Declaration, Module, Variable, Parameter } from "./ast"
+import { Node, Scope, Reference, Declarator, Pattern, ObjectPattern, RestElement, ArrayPattern, FunctionExpression, Declaration, Module, Variable, Parameter, Property, Identifier, Expression } from "./ast"
 import { SemanticError } from "./common"
 import { getAbsolutePath } from "./pathFunctions"
 
@@ -8,7 +8,7 @@ export type NodeMap<T> = {
     set(node: Node, t: T)
 }
 
-export type ScopeMap = { [id: string]: Declaration }
+export type ScopeMap = { [id: string]: Declarator }
 export type ScopeMaps = NodeMap<ScopeMap>
 
 type Options = {
@@ -48,7 +48,7 @@ function declare(scopes: object[], node: Declarator, options: Options = {}) {
     scope[node.name] = node
 }
 
-export function *getDeclarators(node: Pattern): Iterable<Declarator> {
+export function *getDeclarators(node: Pattern | Identifier | Expression): Iterable<Declarator> {
     if (Declarator.is(node)) {
         yield node
     }
@@ -72,9 +72,11 @@ export function *getDeclarators(node: Pattern): Iterable<Declarator> {
             }
         }
     }
-    else {
+    else if (Pattern.is(node)) {
         throw SemanticError(`TODO: Handle this Pattern: ${node.constructor.name}`, node)
     }
+    //  Identifiers and Expressions end up here, yielding nothing
+    //  This is present because Property's are Declarations with possible non-Pattern id's.
 }
 
 /**
@@ -109,6 +111,9 @@ export default function createScopeMaps(root, options: Options = {}): ScopeMaps 
                     declare(scopes, declarator, options)
                 }
             }
+            // else if (Property.is(node)) {
+            //     declare(scopes, )
+            // }
         },
         leave(node) {
             if (Scope.is(node)) {

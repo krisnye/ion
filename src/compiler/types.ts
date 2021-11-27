@@ -4,7 +4,7 @@ import Reference from "./ast/Reference";
 import { getAbsolutePath } from "./pathFunctions";
 
 export function ref(name: string) {
-    return new Reference({ name, absolute: getAbsolutePath(name) })
+    return new Reference({ name: getAbsolutePath(name) })
 }
 
 function number(type: Reference, min: number, max: number) {

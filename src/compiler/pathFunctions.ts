@@ -3,13 +3,25 @@ export const globalNamespace = "_"
 const pathSeparator = "."
 const globalPrefix = globalNamespace + pathSeparator
 const exportSeparator = ":"
-export function getAbsolutePath(name: string, _export = "export") {
+const defaultExportName = "export"
+export function getAbsolutePath(name: string, _export = defaultExportName) {
     return _export ? `${globalPrefix}${name}${exportSeparator}${_export}` : `${globalPrefix}${name}`
 }
 export function isAbsolutePath(path: string) {
     return path.startsWith(globalPrefix)
 }
-export function getLast(path: string): string {
+export function getExport(path: string): string | null {
+    let exportIndex = path.lastIndexOf(exportSeparator)
+    return exportIndex >= 0 ? path.slice(exportIndex + 1) : null
+}
+export function getLastName(path: string): string {
+    let exportName = getExport(path)
+    if (exportName != null) {
+        if (exportName !== defaultExportName) {
+            return exportName
+        }
+        path = path.slice(0, path.length - exportName.length - 1)
+    }
     let lastDot = path.lastIndexOf(pathSeparator)
     return lastDot < 0 ? path : path.slice(lastDot + 1)
 }

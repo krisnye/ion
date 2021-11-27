@@ -15,7 +15,6 @@ import * as Class from './ion/Class';
 export class ReferenceType implements _Object.Object , Reference.Reference , Type.Type , Identifier.Identifier , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly name: String.String;
-    readonly absolute: String.String | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly arguments: _Array.Array<Expression.Expression> | Null.Null;
     static readonly id = 'ReferenceType';
@@ -31,13 +30,11 @@ export class ReferenceType implements _Object.Object , Reference.Reference , Typ
     constructor({
         location = null,
         name,
-        absolute = null,
         type = null,
         arguments: _arguments = null
     }: {
         location?: Location.Location | Null.Null,
         name: String.String,
-        absolute?: String.String | Null.Null,
         type?: Expression.Expression | Null.Null,
         arguments?: _Array.Array<Expression.Expression> | Null.Null
     }) {
@@ -45,15 +42,12 @@ export class ReferenceType implements _Object.Object , Reference.Reference , Typ
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!String.isString(name))
             throw new Error('name is not a String: ' + Class.toString(name));
-        if (!(String.isString(absolute) || Null.isNull(absolute)))
-            throw new Error('absolute is not a String | Null: ' + Class.toString(absolute));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!(_Array.isArray(_arguments) || Null.isNull(_arguments)))
             throw new Error('arguments is not a Array | Null: ' + Class.toString(_arguments));
         this.location = location;
         this.name = name;
-        this.absolute = absolute;
         this.type = type;
         this.arguments = _arguments;
         Object.freeze(this);
@@ -61,7 +55,6 @@ export class ReferenceType implements _Object.Object , Reference.Reference , Typ
     patch(properties: {
         location?: Location.Location | Null.Null,
         name?: String.String,
-        absolute?: String.String | Null.Null,
         type?: Expression.Expression | Null.Null,
         arguments?: _Array.Array<Expression.Expression> | Null.Null
     }) {

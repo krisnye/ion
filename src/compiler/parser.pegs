@@ -852,12 +852,12 @@ OutlinePropertyList
 
 OutlineProperty
     = @InlineSpreadElement EOL
-    / "[" _ key:InlineExpression _ "]" _ ":" _ value: OutlineExpression
-    { return node("Property", { key, value, computed: true }) }
-    / key:(@(Identifier / InlineStringLiteral) _ ":") _ value:OutlineExpression
-    { return node("Property", { key, value }) }
-    / key:Identifier EOL
-    { return node("Property", { key, value: node("Reference", key), shorthand: true }) }
+    / "[" _ id:InlineExpression _ "]" _ "=" _ value: OutlineExpression
+    { return node("Property", { id, value, computed: true }) }
+    / id:(Declarator / InlineStringLiteral) _ "=" _ value:OutlineExpression
+    { return node("Property", { id, value }) }
+    / id:Identifier EOL
+    { return node("Property", { id, value: node("Reference", id) }) }
     //  don't support inline lists on outline objects... it's harder to see specific
     // / @InlinePropertyList EOL
 

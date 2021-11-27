@@ -4,5 +4,5 @@ import
 
 export
     class Declaration extends Statement, SideEffect
-        var id: Pattern
+        var id: Pattern | Identifier | Expression
         var isMutable: Boolean = false
