@@ -12,14 +12,15 @@ import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
 import * as Property from './Property';
+import * as Boolean from './ion/Boolean';
 import * as Pattern from './Pattern';
 import * as Identifier from './Identifier';
-import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
 export class Variable implements _Object.Object , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Statement.Statement , SideEffect.SideEffect {
     readonly location: Location.Location | Null.Null;
     readonly meta: _Array.Array<Property.Property> | Null.Null;
     readonly type: Expression.Expression | Null.Null;
+    readonly resolved: Boolean.Boolean;
     readonly id: Pattern.Pattern | (Identifier.Identifier | Expression.Expression);
     readonly isMutable: Boolean.Boolean;
     readonly value: Expression.Expression | Null.Null;
@@ -38,10 +39,11 @@ export class Variable implements _Object.Object , Meta.Meta , Expression.Express
         'Statement',
         'SideEffect'
     ]);
-    constructor({location = null, meta = null, type = null, id, isMutable = false, value = null, isType = false, isMeta = false, isInstance = false, isStatic = false}: {
+    constructor({location = null, meta = null, type = null, resolved = false, id, isMutable = false, value = null, isType = false, isMeta = false, isInstance = false, isStatic = false}: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         id: Pattern.Pattern | (Identifier.Identifier | Expression.Expression),
         isMutable?: Boolean.Boolean,
         value?: Expression.Expression | Null.Null,
@@ -56,6 +58,8 @@ export class Variable implements _Object.Object , Meta.Meta , Expression.Express
             throw new Error('meta is not a Array | Null: ' + Class.toString(meta));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Boolean.isBoolean(resolved))
+            throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!(Pattern.isPattern(id) || (Identifier.isIdentifier(id) || Expression.isExpression(id))))
             throw new Error('id is not a Pattern | Identifier | Expression: ' + Class.toString(id));
         if (!Boolean.isBoolean(isMutable))
@@ -73,6 +77,7 @@ export class Variable implements _Object.Object , Meta.Meta , Expression.Express
         this.location = location;
         this.meta = meta;
         this.type = type;
+        this.resolved = resolved;
         this.id = id;
         this.isMutable = isMutable;
         this.value = value;
@@ -86,6 +91,7 @@ export class Variable implements _Object.Object , Meta.Meta , Expression.Express
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         id?: Pattern.Pattern | (Identifier.Identifier | Expression.Expression),
         isMutable?: Boolean.Boolean,
         value?: Expression.Expression | Null.Null,

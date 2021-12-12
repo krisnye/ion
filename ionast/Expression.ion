@@ -5,4 +5,5 @@ import
 export
     class Expression extends Node
         var type: Expression | Null = null
+        var resolved: Boolean = false
 

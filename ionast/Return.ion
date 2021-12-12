@@ -4,4 +4,4 @@ import
 
 export
     class Return extends Statement
-        var value: Expression | Null = null
+        var value: Expression

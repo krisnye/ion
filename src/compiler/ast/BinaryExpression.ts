@@ -6,11 +6,13 @@ import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
+import * as Boolean from './ion/Boolean';
 import * as String from './ion/String';
 import * as Class from './ion/Class';
 export class BinaryExpression implements _Object.Object , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
+    readonly resolved: Boolean.Boolean;
     readonly left: Expression.Expression;
     readonly operator: String.String;
     readonly right: Expression.Expression;
@@ -21,9 +23,10 @@ export class BinaryExpression implements _Object.Object , Expression.Expression 
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, left, operator, right}: {
+    constructor({location = null, type = null, resolved = false, left, operator, right}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         left: Expression.Expression,
         operator: String.String,
         right: Expression.Expression
@@ -32,6 +35,8 @@ export class BinaryExpression implements _Object.Object , Expression.Expression 
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Boolean.isBoolean(resolved))
+            throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!Expression.isExpression(left))
             throw new Error('left is not a Expression: ' + Class.toString(left));
         if (!String.isString(operator))
@@ -40,6 +45,7 @@ export class BinaryExpression implements _Object.Object , Expression.Expression 
             throw new Error('right is not a Expression: ' + Class.toString(right));
         this.location = location;
         this.type = type;
+        this.resolved = resolved;
         this.left = left;
         this.operator = operator;
         this.right = right;
@@ -48,6 +54,7 @@ export class BinaryExpression implements _Object.Object , Expression.Expression 
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         left?: Expression.Expression,
         operator?: String.String,
         right?: Expression.Expression

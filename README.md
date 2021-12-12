@@ -28,9 +28,12 @@ Cross platform modeling language
   - [x] need proper global unified namespace
   - [x] fix so Number is exporting a class and not `Number = <= 0 | >= 0`
   - [x] outline object expressions should create scope and properties should declare
-  - [ ] interpreter
-  - [ ] Convert to string based comparison so AST looks human readable language
+  - [-] interpreter
+  - [x] Convert to string based comparison so AST looks human readable language
     - [x] test this now with current json diff
     - [x] Implemented a good string diff library
-  - [ ] Replace Declarators with simpler IRT Declarations
-  - [ ] Don't use absolute paths, use simpler names, no private #exports
+  - [ ] Don't execute or optimize while compiling.
+  - [ ] Finish Type Inference
+    - [ ] Function return type
+  - [x] We need a map { key -> value } format that is not ambiguous with array destructuring
+  - [ ] Maybe... we should see if we need pattern matching and how that works with above

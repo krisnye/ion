@@ -11,6 +11,7 @@ import * as Class from './ion/Class';
 export class YieldExpression implements _Object.Object , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
+    readonly resolved: Boolean.Boolean;
     readonly argument: Expression.Expression;
     readonly delegate: Boolean.Boolean;
     static readonly id = 'YieldExpression';
@@ -20,9 +21,10 @@ export class YieldExpression implements _Object.Object , Expression.Expression ,
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, argument, delegate = false}: {
+    constructor({location = null, type = null, resolved = false, argument, delegate = false}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         argument: Expression.Expression,
         delegate?: Boolean.Boolean
     }) {
@@ -30,12 +32,15 @@ export class YieldExpression implements _Object.Object , Expression.Expression ,
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Boolean.isBoolean(resolved))
+            throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!Expression.isExpression(argument))
             throw new Error('argument is not a Expression: ' + Class.toString(argument));
         if (!Boolean.isBoolean(delegate))
             throw new Error('delegate is not a Boolean: ' + Class.toString(delegate));
         this.location = location;
         this.type = type;
+        this.resolved = resolved;
         this.argument = argument;
         this.delegate = delegate;
         Object.freeze(this);
@@ -43,6 +48,7 @@ export class YieldExpression implements _Object.Object , Expression.Expression ,
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         argument?: Expression.Expression,
         delegate?: Boolean.Boolean
     }) {

@@ -158,6 +158,9 @@ ul.jsondiffpatch-textdiff {
         .d2h-file-header {
             display: none;
         }
+        ins, del {
+            color: black !important;
+        }
         /* end diff2html styles */
         :root {
             --border: solid 1px gray;
@@ -232,149 +235,847 @@ ul.jsondiffpatch-textdiff {
         
                 <td>
                     <header><span>Source</span></header>
-                    <p>// array = [1, (name = "Kris", age = 49)]
-// [first, (name, age)] = array
-
-// class Vector
-//     x: Number
-//     y: Number
-
-// origin = Vector(0, 0)
-// a = 2
-// b = 10
-// c = a * b
-
-// a = ()
-// x = 10
-// y = x * 2
-
-// b = a.x + a.y
-
+                    <p>
 class Number
-
-// person = (name = "Kris", age = 49)
-// (name, age) = person
-
-// foo = (a: Number, b: < a) ->
-//     a
-
-// one = 20
-// two = 19
-// three = foo(one, two)
-
-// bar = (x: Number, y: Number) ->
-//     if y < x
-//         foo(x, y)
-
-// class Vector
-
-// A = 5 .. 10
-// B = 20 .. 30 | Vector
-
-// scale = (a: A, b: B) ->
-//     // TODO: add is operator
-//     min(a, b)
-//     a - b
-
-// Percent = |
-//     > 0 & < 10 & > 4
-//     > 20 & < 100
-
-// MyArray1 = String[]
-// MyArray2 = [String, Number, Integer]
-// MyArray3 = [0: String, 1: Number, length: 2]
-// MyMap = { String: Number, Number: String }
-// class Vector
-// UnitVector = Vector & (length: 1)
-
-// x: Percent = 10
-
-// fn = () ->
-//     y: Number = 2
-//     x =
-//         if y < 1
-//             10
-//         else
-//             20
-
-//     // //  maybe invalid
-//     // double(y)
-//     // if y < 1
-//     //     //  valid
-//     //     double(y)
-//     // else
-//     //     //  always invalid
-//     //     double(y)
-
-// fun = func(a) ->
-//     //  Variable type Number
-//     foo : Number = 1
-//     //  Variable type Number
-//     bar : Number = 2
-//     //  Conditional type Void
-//     if a
-//         bar := 3
-//         foo := 4
-//         for i in []
-//             foo := i
-//         //  block type Void
-//     else
-//         bar := 5
-//         foo := 6
-//         // block type Void
-//     foo + bar
-
-//  looks like array destructuring
 </p>
                 </td>
             
                 <td>
                     <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;// array = [1, (name = \&quot;Kris\&quot;, age = 49)]<br>// [first, (name, age)] = array<br><br>// class Vector<br>//     x: Number<br>//     y: Number<br><br>// origin = Vector(0, 0)<br>// a = 2<br>// b = 10<br>// c = a * b<br><br>// a = ()<br>// x = 10<br>// y = x * 2<br><br>// b = a.x + a.y<br><br>class Number<br><br>// person = (name = \&quot;Kris\&quot;, age = 49)<br>// (name, age) = person<br><br>// foo = (a: Number, b: &lt; a) -&gt;<br>//     a<br><br>// one = 20<br>// two = 19<br>// three = foo(one, two)<br><br>// bar = (x: Number, y: Number) -&gt;<br>//     if y &lt; x<br>//         foo(x, y)<br><br>// class Vector<br><br>// A = 5 .. 10<br>// B = 20 .. 30 | Vector<br><br>// scale = (a: A, b: B) -&gt;<br>//     // TODO: add is operator<br>//     min(a, b)<br>//     a - b<br><br>// Percent = |<br>//     &gt; 0 &amp; &lt; 10 &amp; &gt; 4<br>//     &gt; 20 &amp; &lt; 100<br><br>// MyArray1 = String[]<br>// MyArray2 = [String, Number, Integer]<br>// MyArray3 = [0: String, 1: Number, length: 2]<br>// MyMap = { String: Number, Number: String }<br>// class Vector<br>// UnitVector = Vector &amp; (length: 1)<br><br>// x: Percent = 10<br><br>// fn = () -&gt;<br>//     y: Number = 2<br>//     x =<br>//         if y &lt; 1<br>//             10<br>//         else<br>//             20<br><br>//     // //  maybe invalid<br>//     // double(y)<br>//     // if y &lt; 1<br>//     //     //  valid<br>//     //     double(y)<br>//     // else<br>//     //     //  always invalid<br>//     //     double(y)<br><br>// fun = func(a) -&gt;<br>//     //  Variable type Number<br>//     foo : Number = 1<br>//     //  Variable type Number<br>//     bar : Number = 2<br>//     //  Conditional type Void<br>//     if a<br>//         bar := 3<br>//         foo := 4<br>//         for i in []<br>//             foo := i<br>//         //  block type Void<br>//     else<br>//         bar := 5<br>//         foo := 6<br>//         // block type Void<br>//     foo + bar<br><br>//  looks like array destructuring<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Number&quot; }   }
-  ],
-  &quot;name&quot;: &quot;Number&quot;
-}</pre></div></div></p>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,3 +1,3 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">1</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">class Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>module Number {</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>    </ins>class Number<ins> {}</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>}</ins></span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
                 </td>
             
                 <td>
                     <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ClassDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Number&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;_.Number:export&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,3 +1,3 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module Number {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    class Number {}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    class <ins>$</ins>Number {}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
                 </td>
             
                 <td>
                     <header><span>semanticChecks</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;ClassDeclaration&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;_.Number:export&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;export&quot;</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;_.Number:export&quot; } }</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
+                    <p>module Number {
+    class $Number {}
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>builtinFunctionsToOps</span></header>
+                    <p>module Number {
+    class $Number {}
+}</p>
                 </td>
             
                 <td>
                     <header><span>createConditionalDeclarations</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;export&quot; },
-    &quot;value&quot;: ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;_.Number:export&quot; } } }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
+                    <p>module Number {
+    class $Number {}
+}</p>
                 </td>
             
                 <td>
                     <header><span>inferTypes</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;export&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; } }</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; } }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ClassDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;_.Number:export&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; } }</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; } }</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,3 +1,3 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module Number {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    class $Number {}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>}</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>}: (() =&gt; $Number)</ins></span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
                 </td>
             
                 <td>
                     <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable { &quot;type&quot;: FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; } },
-    &quot;id&quot;: Declarator {
-      &quot;name&quot;: &quot;export&quot;,
-      &quot;type&quot;: FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; } } },
-    &quot;value&quot;: ClassDeclaration { &quot;type&quot;: FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; } },
-      &quot;id&quot;: Declarator {
-        &quot;name&quot;: &quot;_.Number:export&quot;,
-        &quot;type&quot;: FunctionType { &quot;returnType&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; } } }
+                    <p>module Number {
+    class $Number {}
+}: (() =&gt; $Number)</p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    aa.sample
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+class Vector2
+    x: Number
+    y: Number
+
+sample = Vector2(0, 0)
+
+// min(1, 2)
+</p>
+                </td>
+            
+                <td>
+                    <header><span>Parser</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,9 +1,7 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">1</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">class Vector2</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>    </del>x: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>    </del>y: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">sample = Vector2(0, 0)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>module aa.sample {</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>    </ins>class Vector2<ins> {</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>        var </ins>x: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>        var </ins>y: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>    }</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>    const </ins>sample = Vector2(0, 0)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>}</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">8</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; min(1, 2)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">9</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>getExternalReferences</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,7 +1,7 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module aa.sample {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    class Vector2 {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var x: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var y: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    class <ins>$aa.sample.</ins>Vector2 {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var x: <ins>$</ins>Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var y: <ins>$</ins>Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const sample = Vector2(0, 0)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const <ins>$aa.</ins>sample = <ins>$aa.sample.</ins>Vector2(0, 0)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>semanticChecks</span></header>
+                    <p>module aa.sample {
+    class $aa.sample.Vector2 {
+        var x: $Number
+        var y: $Number
     }
-  }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Number&quot;</pre></div></li></ul></div></p>
+    const $aa.sample = $aa.sample.Vector2(0, 0)
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>builtinFunctionsToOps</span></header>
+                    <p>module aa.sample {
+    class $aa.sample.Vector2 {
+        var x: $Number
+        var y: $Number
+    }
+    const $aa.sample = $aa.sample.Vector2(0, 0)
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>createConditionalDeclarations</span></header>
+                    <p>module aa.sample {
+    class $aa.sample.Vector2 {
+        var x: $Number
+        var y: $Number
+    }
+    const $aa.sample = $aa.sample.Vector2(0, 0)
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>inferTypes</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,7 +1,7 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module aa.sample {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    class $aa.sample.Vector2 {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var x: <del>$</del>Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var y: <del>$</del>Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var x: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var y: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const $aa.sample = $aa.sample.Vector2(0, 0)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>}</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const $aa.sample<ins>:</ins> <ins>$aa.sample.Vector2 </ins>= $aa.sample.Vector2(0, 0)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>}: ($aa.sample.Vector2)</ins></span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
+                    <p>module aa.sample {
+    class $aa.sample.Vector2 {
+        var x: Number
+        var y: Number
+    }
+    const $aa.sample: $aa.sample.Vector2 = $aa.sample.Vector2(0, 0)
+}: ($aa.sample.Vector2)</p>
                 </td>
             </tr><tr class="channel">
             <td>
@@ -386,8 +1087,8 @@ class Number
         
                 <td>
                     <header><span>Source</span></header>
-                    <p>min = (a: Number, b: Number) ->
-    if a < b
+                    <p>min = (a: Number, b: Number) -&gt;
+    if a &lt; b
         a
     else
         b</p>
@@ -395,474 +1096,1041 @@ class Number
             
                 <td>
                     <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;min = (a: Number, b: Number) -&gt;<br>    if a &lt; b<br>        a<br>    else<br>        b&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;min&quot; },
-      &quot;value&quot;: FunctionExpression {
-        &quot;parameters&quot;: [
-          Parameter { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-          Parameter { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Number&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-        ],
-        &quot;body&quot;: Block {
-          &quot;body&quot;: [
-            Conditional { &quot;test&quot;: BinaryExpression { &quot;left&quot;: Reference { &quot;name&quot;: &quot;a&quot; },
-                &quot;operator&quot;: &quot;&lt;&quot;,
-                &quot;right&quot;: Reference { &quot;name&quot;: &quot;b&quot; }   },
-              &quot;consequent&quot;: Block { &quot;body&quot;: [ Reference { &quot;name&quot;: &quot;a&quot; }
-                ]
-              },
-              &quot;alternate&quot;: Block { &quot;body&quot;: [ Reference { &quot;name&quot;: &quot;b&quot; }
-                ]
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
-  &quot;name&quot;: &quot;min&quot;
-}</pre></div></div></p>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,5 +1,12 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">1</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">min <del>= (a: Number, b: Number) -&gt;</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>if</del> <del>a</del> <del>&lt;</del> <del>b</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        a</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>    else</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>        b</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>module </ins>min <ins>{</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>const</ins> <ins>min</ins> <ins>=</ins> <ins>function (</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        <ins>const </ins>a<ins>: Number</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>        const b: Number</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>    ) =&gt; {</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        if (a &lt; b) {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            a</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        } else {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            b</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
                 </td>
             
                 <td>
                     <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;min&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;_.min:export&quot;</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;FunctionExpression&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>Block {
-  &quot;body&quot;: [
-    Conditional { &quot;test&quot;: BinaryExpression { &quot;left&quot;: Reference { &quot;name&quot;: &quot;a&quot; },
-        &quot;operator&quot;: &quot;&lt;&quot;,
-        &quot;right&quot;: Reference { &quot;name&quot;: &quot;b&quot; }   },
-      &quot;consequent&quot;: Block { &quot;body&quot;: [ Reference { &quot;name&quot;: &quot;a&quot; }
-        ]
-      },
-      &quot;alternate&quot;: Block { &quot;body&quot;: [ Reference { &quot;name&quot;: &quot;b&quot; }
-        ]
-      }
-    }
-  ]
-}</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="parameters"><div class="jsondiffpatch-property-name">parameters</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Parameter&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;a&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Number&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;_.Number:export&quot;</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Parameter&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;b&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Number&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;_.Number:export&quot;</pre></div></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;min&quot;</pre></div></li></ul></div></p>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,7 +1,7 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module min {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const min = function (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        const a: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        const b: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const <ins>$</ins>min = function (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        const a: <ins>$</ins>Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        const b: <ins>$</ins>Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        if (a &lt; b) {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            a</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
                 </td>
             
                 <td>
                     <header><span>semanticChecks</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;_.min:export&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;export&quot;</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;FunctionExpression&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>Block {
-  &quot;body&quot;: [
-    Conditional { &quot;test&quot;: BinaryExpression { &quot;left&quot;: Reference { &quot;name&quot;: &quot;a&quot; },
-        &quot;operator&quot;: &quot;&lt;&quot;,
-        &quot;right&quot;: Reference { &quot;name&quot;: &quot;b&quot; }   },
-      &quot;consequent&quot;: Block { &quot;body&quot;: [ Reference { &quot;name&quot;: &quot;a&quot; }
-        ]
-      },
-      &quot;alternate&quot;: Block { &quot;body&quot;: [ Reference { &quot;name&quot;: &quot;b&quot; }
-        ]
-      }
-    }
-  ]
-}</pre></div></li><li class="jsondiffpatch-added" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;_.min:export&quot; }</pre></div></li><li class="jsondiffpatch-deleted" data-key="parameters"><div class="jsondiffpatch-property-name">parameters</div><div class="jsondiffpatch-value"><pre>[
-  Parameter { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-  Parameter { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-]</pre></div></li><li class="jsondiffpatch-added" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>FunctionExpression { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;_.min:export&quot; },
-  &quot;parameters&quot;: [
-    Parameter { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-    Parameter { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-  ],
-  &quot;body&quot;: Block {
-    &quot;body&quot;: [
-      Conditional { &quot;test&quot;: BinaryExpression { &quot;left&quot;: Reference { &quot;name&quot;: &quot;a&quot; },
-          &quot;operator&quot;: &quot;&lt;&quot;,
-          &quot;right&quot;: Reference { &quot;name&quot;: &quot;b&quot; }   },
-        &quot;consequent&quot;: Block { &quot;body&quot;: [ Reference { &quot;name&quot;: &quot;a&quot; }
-          ]
-        },
-        &quot;alternate&quot;: Block { &quot;body&quot;: [ Reference { &quot;name&quot;: &quot;b&quot; }
-          ]
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,5 +1,5 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module min {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const $min = function (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const $min = function <ins>$min</ins>(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        const a: $Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        const b: $Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>builtinFunctionsToOps</span></header>
+                    <p>module min {
+    const $min = function $min(
+        const a: $Number
+        const b: $Number
+    ) =&gt; {
+        if (a &lt; b) {
+            a
+        } else {
+            b
         }
-      }
-    ]
-  }
-}</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;min&quot;</pre></div></li></ul></div></p>
+    }
+}</p>
                 </td>
             
                 <td>
                     <header><span>createConditionalDeclarations</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;export&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;_.min:export&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;FunctionExpression&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Block&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Conditional&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="alternate"><div class="jsondiffpatch-property-name">alternate</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Block&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Reference&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;ConditionalDeclaration&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;a&quot; }</pre></div></li><li class="jsondiffpatch-deleted" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;b&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="negate"><div class="jsondiffpatch-property-name">negate</div><div class="jsondiffpatch-value"><pre>true</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="1"><div class="jsondiffpatch-property-name">1</div><div class="jsondiffpatch-value"><pre>ConditionalDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; },
-  &quot;negate&quot;: true
-}</pre></div></li><li class="jsondiffpatch-added" data-key="2"><div class="jsondiffpatch-property-name">2</div><div class="jsondiffpatch-value"><pre>Reference { &quot;name&quot;: &quot;b&quot; }</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="consequent"><div class="jsondiffpatch-property-name">consequent</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Block&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Reference&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;ConditionalDeclaration&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;a&quot; }</pre></div></li><li class="jsondiffpatch-deleted" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;a&quot;</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="1"><div class="jsondiffpatch-property-name">1</div><div class="jsondiffpatch-value"><pre>ConditionalDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }</pre></div></li><li class="jsondiffpatch-added" data-key="2"><div class="jsondiffpatch-property-name">2</div><div class="jsondiffpatch-value"><pre>Reference { &quot;name&quot;: &quot;a&quot; }</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="test"><div class="jsondiffpatch-property-name">test</div><div class="jsondiffpatch-value"><pre>BinaryExpression { &quot;left&quot;: Reference { &quot;name&quot;: &quot;a&quot; },
-  &quot;operator&quot;: &quot;&lt;&quot;,
-  &quot;right&quot;: Reference { &quot;name&quot;: &quot;b&quot; } }</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;_.min:export&quot; }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="parameters"><div class="jsondiffpatch-property-name">parameters</div><div class="jsondiffpatch-value"><pre>[
-  Parameter { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-  Parameter { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;_.Number:export&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-]</pre></div></li></ul></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;min&quot;</pre></div></li></ul></div></p>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -4,8 +4,12 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        const b: $Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        if (a &lt; b) {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            cond a</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            cond b</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            a</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        } else {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            cond a</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            cond b</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            b</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">14</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">15</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
                 </td>
             
                 <td>
                     <header><span>inferTypes</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;export&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType {
-  &quot;parameters&quot;: [
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType {
-  &quot;parameters&quot;: [
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-  ]
-}</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;_.min:export&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType {
-  &quot;parameters&quot;: [
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType {
-  &quot;parameters&quot;: [
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-  ]
-}</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;FunctionExpression&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Block&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Conditional&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="alternate"><div class="jsondiffpatch-property-name">alternate</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Block&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ConditionalDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;a&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-    NumberType { &quot;min&quot;: Reference { &quot;name&quot;: &quot;b&quot; }   }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="negate"><div class="jsondiffpatch-property-name">negate</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-    NumberType { &quot;min&quot;: Reference { &quot;name&quot;: &quot;b&quot; }   }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ConditionalDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;b&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-    NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;a&quot; }   }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="negate"><div class="jsondiffpatch-property-name">negate</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-    NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;a&quot; }   }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="2"><div class="jsondiffpatch-property-name">2</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;b&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-    NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;a&quot; }   }
-  ]
-}</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-    NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;a&quot; }   }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="consequent"><div class="jsondiffpatch-property-name">consequent</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Block&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ConditionalDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;a&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-    NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;b&quot; }, &quot;maxExclusive&quot;: true }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-    NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;b&quot; }, &quot;maxExclusive&quot;: true }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ConditionalDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;b&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-    NumberType { &quot;min&quot;: Reference { &quot;name&quot;: &quot;a&quot; }, &quot;minExclusive&quot;: true }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-    NumberType { &quot;min&quot;: Reference { &quot;name&quot;: &quot;a&quot; }, &quot;minExclusive&quot;: true }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="2"><div class="jsondiffpatch-property-name">2</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;a&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-    NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;b&quot; }, &quot;maxExclusive&quot;: true }
-  ]
-}</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-    NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;b&quot; }, &quot;maxExclusive&quot;: true }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="test"><div class="jsondiffpatch-property-name">test</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;BinaryExpression&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="left"><div class="jsondiffpatch-property-name">left</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;a&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>{ &quot;&quot;: &quot;NumberType&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="operator"><div class="jsondiffpatch-property-name">operator</div><div class="jsondiffpatch-value"><pre>&quot;&lt;&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="right"><div class="jsondiffpatch-property-name">right</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;b&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>{ &quot;&quot;: &quot;NumberType&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>Reference { &quot;name&quot;: &quot;_.Boolean:export&quot; }</pre></div></li></ul></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;_.min:export&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType {
-  &quot;parameters&quot;: [
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-  ]
-}</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="parameters"><div class="jsondiffpatch-property-name">parameters</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Parameter&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;a&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>{ &quot;&quot;: &quot;NumberType&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;ReferenceType&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;NumberType&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;_.Number:export&quot;</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Parameter&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;b&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>{ &quot;&quot;: &quot;NumberType&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;ReferenceType&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;NumberType&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;_.Number:export&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType {
-  &quot;parameters&quot;: [
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-  ]
-}</pre></div></li></ul></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;min&quot;</pre></div></li></ul></div></p>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,16 +1,22 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module min {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const $min <del>= function $min</del>(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        const a: <del>$</del>Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        const b: <del>$</del>Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const $min<ins>:</ins> (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        const a: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        const b: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; (&lt;=a) &amp; Number | (&lt;b) &amp; Number = function $min(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        const a: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        const b: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        if (a &lt; b) {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">            cond a</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">8</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">            cond b</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            cond a<ins>: Number &amp; (&lt;b)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            cond b<ins>: Number &amp; (&gt;a)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            a</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">10</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        <del>}</del> else {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">11</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">            cond a</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">12</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">            cond b</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        <ins>}:</ins> <ins>(Number &amp; (&lt;b)) </ins>else {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">14</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            cond a<ins>: Number &amp; (&gt;=b)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">15</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            cond b<ins>: Number &amp; (&lt;=a)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">13</div>
+<div class="line-num2">16</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            b</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">14</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        <del>}</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">17</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        <ins>}: (Number &amp; (&lt;=a))</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">15</div>
+<div class="line-num2">18</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">16</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>}</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">19</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>}: ((</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">20</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const a: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">21</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const b: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">22</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">) =&gt; (&lt;=a) &amp; Number | (&lt;b) &amp; Number)</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
                 </td>
             
                 <td>
                     <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable {
-    &quot;type&quot;: FunctionType {
-      &quot;parameters&quot;: [
-        Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-        Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-      ]
-    },
-    &quot;id&quot;: Declarator {
-      &quot;name&quot;: &quot;export&quot;,
-      &quot;type&quot;: FunctionType {
-        &quot;parameters&quot;: [
-          Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-          Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-        ]
-      }
-    },
-    &quot;value&quot;: Variable {
-      &quot;type&quot;: FunctionType {
-        &quot;parameters&quot;: [
-          Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-          Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-        ]
-      },
-      &quot;id&quot;: Declarator {
-        &quot;name&quot;: &quot;_.min:export&quot;,
-        &quot;type&quot;: FunctionType {
-          &quot;parameters&quot;: [
-            Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-            Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-          ]
-        }
-      },
-      &quot;value&quot;: FunctionExpression {
-        &quot;type&quot;: FunctionType {
-          &quot;parameters&quot;: [
-            Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-            Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-          ]
-        },
-        &quot;id&quot;: Declarator {
-          &quot;name&quot;: &quot;_.min:export&quot;,
-          &quot;type&quot;: FunctionType {
-            &quot;parameters&quot;: [
-              Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-              Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-            ]
-          }
-        },
-        &quot;parameters&quot;: [
-          Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; },
-            &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot;, &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; } }
-          },
-          Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; },
-            &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot;, &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; } }
-          }
-        ],
-        &quot;body&quot;: Block {
-          &quot;body&quot;: [
-            Conditional { &quot;test&quot;: BinaryExpression { &quot;type&quot;: Reference { &quot;name&quot;: &quot;_.Boolean:export&quot; },
-                &quot;left&quot;: Reference { &quot;name&quot;: &quot;a&quot;, &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; } },
-                &quot;operator&quot;: &quot;&lt;&quot;,
-                &quot;right&quot;: Reference { &quot;name&quot;: &quot;b&quot;, &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; } }
-              },
-              &quot;consequent&quot;: Block {
-                &quot;type&quot;: IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-                    NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;b&quot; }, &quot;maxExclusive&quot;: true }
-                  ]
-                },
-                &quot;body&quot;: [
-                  ConditionalDeclaration {
-                    &quot;type&quot;: IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-                        NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;b&quot; }, &quot;maxExclusive&quot;: true }
-                      ]
-                    },
-                    &quot;id&quot;: Declarator {
-                      &quot;name&quot;: &quot;a&quot;,
-                      &quot;type&quot;: IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-                          NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;b&quot; }, &quot;maxExclusive&quot;: true }
-                        ]
-                      }
-                    }
-                  },
-                  ConditionalDeclaration {
-                    &quot;type&quot;: IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-                        NumberType { &quot;min&quot;: Reference { &quot;name&quot;: &quot;a&quot; }, &quot;minExclusive&quot;: true }
-                      ]
-                    },
-                    &quot;id&quot;: Declarator {
-                      &quot;name&quot;: &quot;b&quot;,
-                      &quot;type&quot;: IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-                          NumberType { &quot;min&quot;: Reference { &quot;name&quot;: &quot;a&quot; }, &quot;minExclusive&quot;: true }
-                        ]
-                      }
-                    }
-                  },
-                  Reference {
-                    &quot;name&quot;: &quot;a&quot;,
-                    &quot;type&quot;: IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-                        NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;b&quot; }, &quot;maxExclusive&quot;: true }
-                      ]
-                    }
-                  }
-                ]
-              },
-              &quot;alternate&quot;: Block {
-                &quot;type&quot;: IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-                    NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;a&quot; }   }
-                  ]
-                },
-                &quot;body&quot;: [
-                  ConditionalDeclaration {
-                    &quot;type&quot;: IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-                        NumberType { &quot;min&quot;: Reference { &quot;name&quot;: &quot;b&quot; }   }
-                      ]
-                    },
-                    &quot;id&quot;: Declarator {
-                      &quot;name&quot;: &quot;a&quot;,
-                      &quot;type&quot;: IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-                          NumberType { &quot;min&quot;: Reference { &quot;name&quot;: &quot;b&quot; }   }
-                        ]
-                      }
-                    },
-                    &quot;negate&quot;: true
-                  },
-                  ConditionalDeclaration {
-                    &quot;type&quot;: IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-                        NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;a&quot; }   }
-                      ]
-                    },
-                    &quot;id&quot;: Declarator {
-                      &quot;name&quot;: &quot;b&quot;,
-                      &quot;type&quot;: IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-                          NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;a&quot; }   }
-                        ]
-                      }
-                    },
-                    &quot;negate&quot;: true
-                  },
-                  Reference {
-                    &quot;name&quot;: &quot;b&quot;,
-                    &quot;type&quot;: IntersectionType { &quot;types&quot;: [ { &quot;&quot;: &quot;NumberType&quot; },
-                        NumberType { &quot;max&quot;: Reference { &quot;name&quot;: &quot;a&quot; }   }
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      }
+                    <p>module min {
+    const $min: (
+        const a: Number
+        const b: Number
+    ) =&gt; (&lt;=a) & Number | (&lt;b) & Number = function $min(
+        const a: Number
+        const b: Number
+    ) =&gt; {
+        if (a &lt; b) {
+            cond a: Number & (&lt;b)
+            cond b: Number & (&gt;a)
+            a
+        }: (Number & (&lt;b)) else {
+            cond a: Number & (&gt;=b)
+            cond b: Number & (&lt;=a)
+            b
+        }: (Number & (&lt;=a))
     }
-  }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;min&quot;</pre></div></li></ul></div></p>
-                </td>
-            </tr><tr class="channel">
-            <td>
-                <header><span>File</span></header>
-                <span class="content">
-                    aa.Sample
-                </span>
-            </td>
-        
-                <td>
-                    <header><span>Source</span></header>
-                    <p>
-min(1, 2)
-</p>
-                </td>
-            
-                <td>
-                    <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>min(1, 2)<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;min&quot; },
-      &quot;arguments&quot;: [
-        Argument {
-          &quot;value&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-        },
-        Argument {
-          &quot;value&quot;: Literal { &quot;value&quot;: 2, &quot;integer&quot;: true }
-        }
-      ]
-    }
-  ],
-  &quot;name&quot;: &quot;aa.Sample&quot;
-}</pre></div></div></p>
-                </td>
-            
-                <td>
-                    <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Call&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="arguments"><div class="jsondiffpatch-property-name">arguments</div><div class="jsondiffpatch-value"><pre>[
-  Argument {
-    &quot;value&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-  },
-  Argument {
-    &quot;value&quot;: Literal { &quot;value&quot;: 2, &quot;integer&quot;: true }
-  }
-]</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="callee"><div class="jsondiffpatch-property-name">callee</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;min&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;_.min:export&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;aa.Sample&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>semanticChecks</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-modified" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Call&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-deleted" data-key="arguments"><div class="jsondiffpatch-property-name">arguments</div><div class="jsondiffpatch-value"><pre>[
-  Argument {
-    &quot;value&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-  },
-  Argument {
-    &quot;value&quot;: Literal { &quot;value&quot;: 2, &quot;integer&quot;: true }
-  }
-]</pre></div></li><li class="jsondiffpatch-deleted" data-key="callee"><div class="jsondiffpatch-property-name">callee</div><div class="jsondiffpatch-value"><pre>Reference { &quot;name&quot;: &quot;_.min:export&quot; }</pre></div></li><li class="jsondiffpatch-added" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;export&quot; }</pre></div></li><li class="jsondiffpatch-added" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;_.min:export&quot; },
-  &quot;arguments&quot;: [
-    Argument {
-      &quot;value&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-    },
-    Argument {
-      &quot;value&quot;: Literal { &quot;value&quot;: 2, &quot;integer&quot;: true }
-    }
-  ]
-}</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;aa.Sample&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>createConditionalDeclarations</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;export&quot; },
-    &quot;value&quot;: Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;_.min:export&quot; },
-      &quot;arguments&quot;: [
-        Argument {
-          &quot;value&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-        },
-        Argument {
-          &quot;value&quot;: Literal { &quot;value&quot;: 2, &quot;integer&quot;: true }
-        }
-      ]
-    }
-  }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;aa.Sample&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>inferTypes</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;export&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Call&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="arguments"><div class="jsondiffpatch-property-name">arguments</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Argument&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Literal&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="integer"><div class="jsondiffpatch-property-name">integer</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>NumberType {
-  &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-  &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>1</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Argument&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Literal&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="integer"><div class="jsondiffpatch-property-name">integer</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>NumberType {
-  &quot;min&quot;: Literal { &quot;value&quot;: 2, &quot;integer&quot;: true },
-  &quot;max&quot;: Literal { &quot;value&quot;: 2, &quot;integer&quot;: true }
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>2</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="callee"><div class="jsondiffpatch-property-name">callee</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;_.min:export&quot;</pre></div></li><li class="jsondiffpatch-added" data-key="type"><div class="jsondiffpatch-property-name">type</div><div class="jsondiffpatch-value"><pre>FunctionType {
-  &quot;parameters&quot;: [
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-    Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-  ]
-}</pre></div></li></ul></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;aa.Sample&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;export&quot; },
-    &quot;value&quot;: Call {
-      &quot;callee&quot;: Reference {
-        &quot;name&quot;: &quot;_.min:export&quot;,
-        &quot;type&quot;: FunctionType {
-          &quot;parameters&quot;: [
-            Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-            Parameter { &quot;type&quot;: { &quot;&quot;: &quot;NumberType&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-          ]
-        }
-      },
-      &quot;arguments&quot;: [
-        Argument {
-          &quot;value&quot;: Literal {
-            &quot;type&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-            },
-            &quot;value&quot;: 1,
-            &quot;integer&quot;: true
-          }
-        },
-        Argument {
-          &quot;value&quot;: Literal {
-            &quot;type&quot;: NumberType {
-              &quot;min&quot;: Literal { &quot;value&quot;: 2, &quot;integer&quot;: true },
-              &quot;max&quot;: Literal { &quot;value&quot;: 2, &quot;integer&quot;: true }
-            },
-            &quot;value&quot;: 2,
-            &quot;integer&quot;: true
-          }
-        }
-      ]
-    }
-  }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;aa.Sample&quot;</pre></div></li></ul></div></p>
+}: ((
+    const a: Number
+    const b: Number
+) =&gt; (&lt;=a) & Number | (&lt;b) & Number)</p>
                 </td>
             </tr>
         </div>

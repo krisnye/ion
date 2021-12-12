@@ -10,12 +10,14 @@ import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as String from './ion/String';
+import * as Boolean from './ion/Boolean';
 import * as _Array from './ion/Array';
 import * as Class from './ion/Class';
 export class ReferenceType implements _Object.Object , Reference.Reference , Type.Type , Identifier.Identifier , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly name: String.String;
     readonly type: Expression.Expression | Null.Null;
+    readonly resolved: Boolean.Boolean;
     readonly arguments: _Array.Array<Expression.Expression> | Null.Null;
     static readonly id = 'ReferenceType';
     static readonly implements = new Set([
@@ -31,11 +33,13 @@ export class ReferenceType implements _Object.Object , Reference.Reference , Typ
         location = null,
         name,
         type = null,
+        resolved = false,
         arguments: _arguments = null
     }: {
         location?: Location.Location | Null.Null,
         name: String.String,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         arguments?: _Array.Array<Expression.Expression> | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
@@ -44,11 +48,14 @@ export class ReferenceType implements _Object.Object , Reference.Reference , Typ
             throw new Error('name is not a String: ' + Class.toString(name));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Boolean.isBoolean(resolved))
+            throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!(_Array.isArray(_arguments) || Null.isNull(_arguments)))
             throw new Error('arguments is not a Array | Null: ' + Class.toString(_arguments));
         this.location = location;
         this.name = name;
         this.type = type;
+        this.resolved = resolved;
         this.arguments = _arguments;
         Object.freeze(this);
     }
@@ -56,6 +63,7 @@ export class ReferenceType implements _Object.Object , Reference.Reference , Typ
         location?: Location.Location | Null.Null,
         name?: String.String,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         arguments?: _Array.Array<Expression.Expression> | Null.Null
     }) {
         return new ReferenceType({

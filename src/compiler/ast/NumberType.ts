@@ -7,12 +7,13 @@ import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
-import * as Number from './ion/Number';
 import * as Boolean from './ion/Boolean';
+import * as Number from './ion/Number';
 import * as Class from './ion/Class';
 export class NumberType implements _Object.Object , Type.Type , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
+    readonly resolved: Boolean.Boolean;
     readonly precision: Number.Number | Null.Null;
     readonly min: Expression.Expression | Null.Null;
     readonly max: Expression.Expression | Null.Null;
@@ -26,9 +27,10 @@ export class NumberType implements _Object.Object , Type.Type , Expression.Expre
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, precision = null, min = null, max = null, minExclusive = false, maxExclusive = false}: {
+    constructor({location = null, type = null, resolved = false, precision = null, min = null, max = null, minExclusive = false, maxExclusive = false}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         precision?: Number.Number | Null.Null,
         min?: Expression.Expression | Null.Null,
         max?: Expression.Expression | Null.Null,
@@ -39,6 +41,8 @@ export class NumberType implements _Object.Object , Type.Type , Expression.Expre
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Boolean.isBoolean(resolved))
+            throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!(Number.isNumber(precision) || Null.isNull(precision)))
             throw new Error('precision is not a Number | Null: ' + Class.toString(precision));
         if (!(Expression.isExpression(min) || Null.isNull(min)))
@@ -51,6 +55,7 @@ export class NumberType implements _Object.Object , Type.Type , Expression.Expre
             throw new Error('maxExclusive is not a Boolean: ' + Class.toString(maxExclusive));
         this.location = location;
         this.type = type;
+        this.resolved = resolved;
         this.precision = precision;
         this.min = min;
         this.max = max;
@@ -61,6 +66,7 @@ export class NumberType implements _Object.Object , Type.Type , Expression.Expre
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         precision?: Number.Number | Null.Null,
         min?: Expression.Expression | Null.Null,
         max?: Expression.Expression | Null.Null,

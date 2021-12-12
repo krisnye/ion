@@ -4,7 +4,7 @@ import { binaryOps, unaryOps } from "../analysis/evaluate";
 import { isSubtype } from "../analysis/newTypeAnalysis";
 import { combineNumberTypes, numberType, isLiteralNumberType } from "../analysis/numberTypes";
 import splitExpressions from "../analysis/splitExpressions";
-import { Assignment, BinaryExpression, Call, ClassDeclaration, Type, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, Variable, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation, Declaration, For, SideEffect, UnaryExpression, NumberType, IntersectionType, ObjectType, ArrayPattern, PatternProperty, RestElement, ObjectPattern } from "../ast";
+import { Assignment, BinaryExpression, Call, ClassDeclaration, Type, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, Variable, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation, Declaration, For, SideEffect, UnaryExpression, NumberType, IntersectionType, ObjectType, ArrayPattern, PatternProperty, RestElement, ObjectPattern, Return } from "../ast";
 import { hasNodesOfType, SemanticError, isTypeName, isMetaName } from "../common";
 import { Options } from "../Compiler"
 import createScopeMaps from "../createScopeMaps";
@@ -27,7 +27,7 @@ import * as types from "../types";
 //     return hasNodesOfType(node, DotExpression.is)
 // }
 
-export function getFinalExpressions(node: Node, expressions: Set<Expression> = new Set()) {
+export function getFinalExpressionsOrReturnValues(node: Node, expressions: Set<Expression> = new Set()) {
     if (Block.is(node)) {
         // // check that this is the only expression statement
         // for (let i = 0; i < node.body.length - 1; i++) {
@@ -36,13 +36,16 @@ export function getFinalExpressions(node: Node, expressions: Set<Expression> = n
         //         throw SemanticError("Only the final statement can be an expression", statement)
         //     }
         // }
-        getFinalExpressions(node.body[node.body.length - 1], expressions)
+        getFinalExpressionsOrReturnValues(node.body[node.body.length - 1], expressions)
     }
     else if (Conditional.is(node)) {
-        getFinalExpressions(node.consequent, expressions)
+        getFinalExpressionsOrReturnValues(node.consequent, expressions)
         if (node.alternate) {
-            getFinalExpressions(node.alternate, expressions)
+            getFinalExpressionsOrReturnValues(node.alternate, expressions)
         }
+    }
+    else if (Return.is(node)) {
+        expressions.add(node.value)
     }
     else if (Expression.is(node)) {
         expressions.add(node)
@@ -306,12 +309,12 @@ export default function semanticChecks(
                     if (!isExpression) {
                         errors.push(SemanticError(`Final statement must be an expression`, node))
                     }
-                    else {
-                        if (ExpressionStatement.is(node)) {
-                            node = node.value
-                        }
-                        node = new Variable({ id: new Declarator({ location: node.location, name: "export" }), value: node })
-                    }
+                    // else {
+                    //     if (ExpressionStatement.is(node)) {
+                    //         node = node.value
+                    //     }
+                    //     node = new Variable({ id: new Declarator({ location: node.location, name: "export" }), value: node })
+                    // }
                 }
             }
             if (FunctionExpression.is(node)) {

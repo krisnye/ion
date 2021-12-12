@@ -6,6 +6,7 @@ import Parser = require("../../lib/compiler/parser");
 import getExternalReferences from "./phases/getExternalReferences";
 import { Module } from "./ast";
 import { createGlobalScope } from "./createScopeMaps";
+import toCodeString from "./toCodeString";
 
 type Logger = (names?: string | string[] | null, ast?: any, file?: string) => void
 const NullLogger = () => {}
@@ -114,7 +115,7 @@ export default class Compiler {
         let options = this.normalizeOptions(optionsOrJson)
         let sources = this.getFiles(options)
         // if debug only Number compile =>
-        sources = new Map([...sources.entries()].filter(([name, source]) => ({Number:1,String:0,min:1,max:0, "aa.Sample": 1})[name])) as any
+        sources = new Map([...sources.entries()].filter(([name, source]) => ({ Number:1, String:0, min:1, max:0, "aa.sample": 1 })[name])) as any
 
         let order = new Array<string>()
 
@@ -127,7 +128,7 @@ export default class Compiler {
                 Array.from(sources.entries()).map(([name, source]) => {
                     let module: Module = options.parser.parse(source, name)
                     module = module.patch({ name })
-                    this.logger("Parser", module, name)
+                    this.log("Parser", module, name)
                     return [name, module]
                 })
             )
@@ -137,7 +138,7 @@ export default class Compiler {
                 Array.from(modules.entries()).map(([name, file]) => {
                     let errors = new Array<Error>()
                     let [newFile, externals] = getExternalReferences(file, modules, errors)
-                    this.logger("getExternalReferences", newFile, name)
+                    this.log("getExternalReferences", newFile, name)
                     for (let error of errors) {
                         this.printErrorConsole(error, sources, options)
                         failedResolution = true
@@ -191,6 +192,14 @@ export default class Compiler {
         }
     }
 
+    log(phase: string, module: any, name: string) {
+        let viewAsCode = true
+        if (viewAsCode) {
+            module = toCodeString(module)
+        }
+        this.logger(phase, module, name)
+    }
+
     printErrorConsole(e, sources, options) {
         let location = e.locations?.[0]
         if (location == null || location.start == null) {
@@ -214,9 +223,9 @@ export default class Compiler {
         for (let phase of phases) {
             console.log(`    ${phase.name}`)
             // add the externals as global scope (including self module)
-            options.globalScope = createGlobalScope([...externals.values(), root])
+            // options.globalScope = createGlobalScope([...externals.values(), root])
             // also add global declarations from current module
-            let result = phase(root, options)
+            let result = phase(root, options, externals)
             if (Array.isArray(result)) {
                 for (let e of result) {
                     this.printErrorConsole(e, sources, options)
@@ -226,7 +235,7 @@ export default class Compiler {
             else {
                 root = result
             }
-            this.logger(phase.name, root, name)
+            this.log(phase.name, root, name)
         }
 
         return root

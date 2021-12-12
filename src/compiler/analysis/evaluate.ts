@@ -2,9 +2,6 @@ import Expression from "../ast/Expression";
 import Literal from "../ast/Literal";
 import * as ast from "../ast";
 import EvaluateContext from "./EvaluateContext";
-import simplify from "./simplify";
-import { getValue } from "@glas/traverse";
-import toCodeString from "../toCodeString";
 
 export const binaryOps = {
     "|": (a, b) => a | b,
@@ -26,6 +23,9 @@ export const binaryOps = {
     "||": "|",
     "!==": "!=",
     "===": "==",
+    "min": (a, b) => Math.min(a, b),
+    "max": (a, b) => Math.max(a, b),
+    "pow": (a, b) => Math.pow(a, b),
 }
 
 export const unaryOps = {
@@ -33,6 +33,7 @@ export const unaryOps = {
     "+": (a) => + a,
     "-": (a) => - a,
     "~": (a) => ~ a,
+    "abs": (a) => Math.abs(a),
 }
 
 export const evaluateFunctions: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>, context: EvaluateContext) => any} = {
@@ -70,8 +71,8 @@ export const evaluateFunctions: { [P in keyof typeof ast]?: (e: InstanceType<typ
     Call(node) {
         //  This is where real evaluation happens.
         //  Also, Conditionals, Loops.
-        // check and see if this is evaluatable?
-        // console.log("!!! Evaluate this shit!", node)
+        //  check and see if this is evaluatable?
+        //  console.log("!!! Evaluate this shit!", node)
     },
 }
 

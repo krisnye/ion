@@ -4,7 +4,8 @@ import { Options } from "../Compiler"
 
 type Phase = (
     module: Module,
-    options: Options
+    options: Options,
+    dependencies?: Map<string,any>,
 ) => Module | Error[]
 
 export default Phase

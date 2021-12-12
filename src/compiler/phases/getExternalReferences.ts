@@ -58,9 +58,7 @@ export default function getExternalReferences(module: Module, modules: Map<strin
                             if (Reference.is(node)) {
                                 set.add(node)
                             }
-                            if (resolved) {
-                                return node.patch({ name: getAbsolutePath(resolved.name) })
-                            }
+                            return node.patch({ name: getAbsolutePath(resolved.name) })
                         }
                         else {
                             errors.push(SemanticError(`Reference could not be resolved`, node))

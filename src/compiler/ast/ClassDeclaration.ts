@@ -12,14 +12,15 @@ import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
 import * as Property from './Property';
-import * as Declarator from './Declarator';
 import * as Boolean from './ion/Boolean';
+import * as Declarator from './Declarator';
 import * as Variable from './Variable';
 import * as Class from './ion/Class';
 export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaration.Declaration , Expression.Expression , Node.Node , Statement.Statement , SideEffect.SideEffect {
     readonly location: Location.Location | Null.Null;
     readonly meta: _Array.Array<Property.Property> | Null.Null;
     readonly type: Expression.Expression | Null.Null;
+    readonly resolved: Boolean.Boolean;
     readonly id: Declarator.Declarator;
     readonly isMutable: Boolean.Boolean;
     readonly baseClasses: _Array.Array<Expression.Expression>;
@@ -36,10 +37,11 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         'Statement',
         'SideEffect'
     ]);
-    constructor({location = null, meta = null, type = null, id, isMutable = false, baseClasses = [], declarations, typeParameters = []}: {
+    constructor({location = null, meta = null, type = null, resolved = false, id, isMutable = false, baseClasses = [], declarations, typeParameters = []}: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         id: Declarator.Declarator,
         isMutable?: Boolean.Boolean,
         baseClasses?: _Array.Array<Expression.Expression>,
@@ -52,6 +54,8 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
             throw new Error('meta is not a Array | Null: ' + Class.toString(meta));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Boolean.isBoolean(resolved))
+            throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!Declarator.isDeclarator(id))
             throw new Error('id is not a Declarator: ' + Class.toString(id));
         if (!Boolean.isBoolean(isMutable))
@@ -65,6 +69,7 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         this.location = location;
         this.meta = meta;
         this.type = type;
+        this.resolved = resolved;
         this.id = id;
         this.isMutable = isMutable;
         this.baseClasses = baseClasses;
@@ -76,6 +81,7 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         id?: Declarator.Declarator,
         isMutable?: Boolean.Boolean,
         baseClasses?: _Array.Array<Expression.Expression>,

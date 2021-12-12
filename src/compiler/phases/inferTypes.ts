@@ -3,21 +3,20 @@ import evaluate from "../analysis/evaluate";
 import getSortedExpressions from "../analysis/getSortedExpressions";
 import { Expression, Literal, Module, TypeExpression, Property } from "../ast";
 import * as ast from "../ast";
-import { getNodesOfType, isTypeName, SemanticError } from "../common";
+import { isTypeName, SemanticError } from "../common";
 import { Options } from "../Compiler"
-import createScopeMaps, { createGlobalScope } from "../createScopeMaps";
+import createScopeMaps from "../createScopeMaps";
 import * as types from "../types"
 import EvaluateContext from "../analysis/EvaluateContext";
 import toCodeString from "../toCodeString";
 import negate from "../analysis/negate";
 import simplify from "../analysis/simplify";
-import { getFinalExpressions } from "./semanticChecks";
+import { getFinalExpressionsOrReturnValues } from "./semanticChecks";
 import combineExpressions from "../analysis/combineExpressions";
 import { inferOperationType, numberType } from "../analysis/numberTypes";
 import { isSubtype } from "../analysis/newTypeAnalysis";
 import splitExpressions from "../analysis/splitExpressions";
 import { operatorToNumberTypes, reflectOperators } from "../analysis/normalize";
-import { getAbsolutePath } from "../pathFunctions";
 
 function createCombinedTypeExpression(type: ast.TypeExpression, name: String, knownTrueExpression: ast.Expression, location: ast.Location) {
     // now we convert the node assert to a type expression (by replacing variable name references to DotExpressions) so we can combine it.
@@ -109,8 +108,13 @@ function getDeclarator(node: ast.Reference, c: EvaluateContext) {
     return declarator
 }
 
-function getDeclaration(node: ast.Reference, c: EvaluateContext) {
+function getReferencedValue(node: ast.Reference, c: EvaluateContext): Expression | ast.Declaration | null {
     let declarator = getDeclarator(node, c)
+    //  this is currently broke and should be fixed, caused by external pre-dependencies not being consistently declared
+    //  with ancestor lookups
+    if (ast.Declaration.is(declarator) || Expression.is(declarator)) {
+        return declarator
+    }
     let declaration = c.lookup.findAncestor(declarator, ast.Declaration.is)
     return declaration
 }
@@ -200,6 +204,10 @@ export const inferType: {
         }
         return { type }
     },
+    Module(node, c, e) {
+        // same as Block
+        return inferType.Block!(node as any, c, e)
+    },
     Block(node, c) {
         let type = c.current(node.body[node.body.length - 1]).type
         return { type }
@@ -209,9 +217,9 @@ export const inferType: {
             return c.current(p)!.patch({ type: c.current(p.type)})
         })
         let returnType = c.current(node.returnType)
-        let returnTypes = [...getFinalExpressions(node.body)].map(e => c.current(e).type!)
+        let returnTypes = [...getFinalExpressionsOrReturnValues(node.body)].map(e => c.current(e).type!).filter(Boolean)
         if (!returnType) {
-            returnType = combineExpressions(returnTypes, "|")
+            returnType = simplify(combineExpressions(returnTypes, "|"))
             // TODO: Check returnType with actual returnType
         }
         let type = new ast.FunctionType({ parameters, returnType })
@@ -254,6 +262,15 @@ export const inferType: {
         }
         let type = c.current(declarator.type)
         return { type }
+    },
+    Conditional(node, c) {
+        //  the type of a conditional is typeof consequent | typeof alternate 
+        //  actually... the type of a conditional should depend
+        //  on whether it's within a vector or scalar context
+        let consequentType = c.current(node.consequent).type
+        let alternateType = node.alternate ? c.current(node.alternate).type : types.Void
+
+        console.log("Conditional")
     },
     ConditionalDeclaration(node, c) {
         let { name } = node.id
@@ -359,7 +376,7 @@ export const inferType: {
                             if (isTypeName(node.name)) {
                                 //  if this is a type reference, we should return the value of the type
                                 //  unless this is a class in which case, leave alone
-                                let declaration = getDeclaration(node, c)
+                                let declaration = getReferencedValue(node, c)
                                 if (ast.ClassDeclaration.is(declaration)) {
                                     return node
                                 }
@@ -367,7 +384,7 @@ export const inferType: {
                                     return declaration.type
                                 }
 
-                                throw new Error("Type not found?: " + node.name)
+                                throw new Error("Type not found: " + node.name)
                             }
                             else {
                                 let declarator = c.current(c.scopes.get(node)[node.name])
@@ -382,7 +399,7 @@ export const inferType: {
             if (consequent !== true) {
                 //  if that doesn't validate it then let's simplify the newParameterType
                 let simpleParameterType = simplify(newParameterType)
-                console.log(`Replaced ${toCodeString(parameter.id)}: ` + toCodeString(parameterType) + " -> " + toCodeString(newParameterType) + " -> " + toCodeString(simpleParameterType))
+                // console.log(`Replaced ${toCodeString(parameter.id)}: ` + toCodeString(parameterType) + " -> " + toCodeString(newParameterType) + " -> " + toCodeString(simpleParameterType))
                 consequent = isSubtype(argType, simpleParameterType)
             }
 
@@ -397,6 +414,14 @@ export const inferType: {
             index++
         }
 
+        // if there are more parameters than arg values then we need to check.
+        for (let i = argValues.length; i < calleeType.parameters.length; i++) {
+            let parameterType = calleeType.parameters[i]
+            if (parameterType.value == null) {
+                errors.push(SemanticError(`Missing required parameter ${toCodeString(parameterType.id)}`, node))
+            }
+        }
+
         let type = calleeType.returnType
         return { type }
     },
@@ -404,10 +429,11 @@ export const inferType: {
 
 export default function inferTypes(
     module: Module,
-    options: Options
+    options: Options,
+    dependencies: Map<string,any>,
 ): Module | Error[] {
     let lookup = new Lookup()
-    let scopes = createScopeMaps(module, { globalScope: options.globalScope, lookup })
+    let scopes = createScopeMaps(module, { lookup, dependencies })
     let context = new EvaluateContext(lookup, scopes)
     let sorted = getSortedExpressions(module, scopes, lookup)
     // console.log("==============================================")
@@ -419,7 +445,10 @@ export default function inferTypes(
     let errors: Error[] = []
 
     function ensureResolved(originalNode: Expression) {
-        if (alreadyResolved.has(originalNode)) {
+        //  all previously compiled nodes have .resolved set to true
+        //  we check here so that we don't try to re-resolve them
+        //  during dependent file compilation
+        if (originalNode.resolved || alreadyResolved.has(originalNode)) {
             return
         }
         else {
@@ -434,24 +463,25 @@ export default function inferTypes(
         let changes: any = null
         // console.log("--------> " + currentNode.constructor.name + " -> " + toCodeString(currentNode))
         // then try to infer types
-        if (currentNode.type == null) {
-            let func = inferType[currentNode.constructor.name]
-            // if (func == null) {
-            //     console.log("!!!!!!!! NO FUNCTION: " + currentNode.constructor.name)
-            // }
-            changes = func?.(currentNode, context, errors)
+        // if (currentNode.type == null) {
+        let func = inferType[currentNode.constructor.name]
+        if (func == null) {
+            console.log("!!!!!!!! NO FUNCTION: " + currentNode.constructor.name)
         }
-        else {
-            changes = { type: simplify(currentNode.type) }
-        }
+        changes = func?.(currentNode, context, errors)
+        // }
+        // else {
+        //     changes = { type: simplify(currentNode.type) }
+        // }
         if (changes != null) {
             if (Expression.is(changes)) {
                 // we track these so they don't get properties merged later but are returned as is.
+                changes = changes.patch({ resolved: true })
                 customConvertedNodes.add(changes)
                 currentNode = changes
             }
             else {
-                currentNode = currentNode.patch(changes)
+                currentNode = currentNode.patch({ ...changes, resolved: true })
             }
             lookup.setCurrent(originalNode, currentNode)
         }

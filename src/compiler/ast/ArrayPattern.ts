@@ -7,12 +7,14 @@ import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
+import * as Boolean from './ion/Boolean';
 import * as _Array from './ion/Array';
 import * as RestElement from './RestElement';
 import * as Class from './ion/Class';
 export class ArrayPattern implements _Object.Object , Pattern.Pattern , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
+    readonly resolved: Boolean.Boolean;
     readonly elements: _Array.Array<Pattern.Pattern | (RestElement.RestElement | Null.Null)>;
     static readonly id = 'ArrayPattern';
     static readonly implements = new Set([
@@ -22,25 +24,30 @@ export class ArrayPattern implements _Object.Object , Pattern.Pattern , Expressi
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, elements}: {
+    constructor({location = null, type = null, resolved = false, elements}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         elements: _Array.Array<Pattern.Pattern | (RestElement.RestElement | Null.Null)>
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Boolean.isBoolean(resolved))
+            throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!_Array.isArray(elements))
             throw new Error('elements is not a Array: ' + Class.toString(elements));
         this.location = location;
         this.type = type;
+        this.resolved = resolved;
         this.elements = elements;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         elements?: _Array.Array<Pattern.Pattern | (RestElement.RestElement | Null.Null)>
     }) {
         return new ArrayPattern({

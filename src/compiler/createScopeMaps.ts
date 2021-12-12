@@ -13,19 +13,23 @@ export type ScopeMaps = NodeMap<ScopeMap>
 
 type Options = {
     callback?: (current: Declarator, previous?: Declarator) => void,
-    lookup?: Lookup,
-    globalScope?: any
+    lookup?: Lookup
+    dependencies?: Map<string,any>
 }
 
 function declareGlobals(scope, module: Module) {
-    for (let node of module.body) {
-        if (Declaration.is(node)) {
-            for (let declarator of getDeclarators(node.id)) {
-                let globalPath = getAbsolutePath(module.name, declarator.name)
-                scope[globalPath] = declarator
-            }
-        }
-    }
+    let last = module.body[module.body.length - 1] as Expression
+    // for now we are linking Declarations and Expressions directly.
+    // That's not right. We need our shared references to be consistent across pre-compiled modules.
+    scope[getAbsolutePath(module.name)] = last
+    // if (Declaration.is(last)) {
+    //     for (let declarator of getDeclarators(last.id)) {
+    //         declare([scope], declarator)
+    //     }
+    // }
+    // else {
+    //     throw SemanticError(`The final statement MUST be a Declaration`, last)
+    // }
 }
 
 /**
@@ -85,7 +89,8 @@ export function *getDeclarators(node: Pattern | Identifier | Expression): Iterab
  */
 export default function createScopeMaps(root, options: Options = {}): ScopeMaps {
     let map = new Map()
-    let scopes: object[] = [options.globalScope || {}]
+    let globalScope = options.dependencies ? createGlobalScope([...options.dependencies.values(), root]) : {}
+    let scopes: object[] = [globalScope]
 
     traverse(root, {
         lookup: options.lookup,
@@ -111,9 +116,6 @@ export default function createScopeMaps(root, options: Options = {}): ScopeMaps 
                     declare(scopes, declarator, options)
                 }
             }
-            // else if (Property.is(node)) {
-            //     declare(scopes, )
-            // }
         },
         leave(node) {
             if (Scope.is(node)) {

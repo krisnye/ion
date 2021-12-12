@@ -8,29 +8,26 @@ import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Boolean from './ion/Boolean';
-import * as String from './ion/String';
-import * as NumberType from './NumberType';
+import * as _Array from './ion/Array';
 import * as Class from './ion/Class';
-export class StringType implements _Object.Object , Type.Type , Expression.Expression , Node.Node {
+export class SpreadType implements _Object.Object , Type.Type , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
-    readonly value: String.String | Null.Null;
-    readonly length: NumberType.NumberType;
-    static readonly id = 'StringType';
+    readonly types: _Array.Array<Type.Type>;
+    static readonly id = 'SpreadType';
     static readonly implements = new Set([
-        'StringType',
+        'SpreadType',
         'ion_Object',
         'Type',
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, resolved = false, value = null, length}: {
+    constructor({location = null, type = null, resolved = false, types}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         resolved?: Boolean.Boolean,
-        value?: String.String | Null.Null,
-        length: NumberType.NumberType
+        types: _Array.Array<Type.Type>
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
@@ -38,34 +35,30 @@ export class StringType implements _Object.Object , Type.Type , Expression.Expre
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
-        if (!(String.isString(value) || Null.isNull(value)))
-            throw new Error('value is not a String | Null: ' + Class.toString(value));
-        if (!NumberType.isNumberType(length))
-            throw new Error('length is not a NumberType: ' + Class.toString(length));
+        if (!_Array.isArray(types))
+            throw new Error('types is not a Array: ' + Class.toString(types));
         this.location = location;
         this.type = type;
         this.resolved = resolved;
-        this.value = value;
-        this.length = length;
+        this.types = types;
         Object.freeze(this);
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
         resolved?: Boolean.Boolean,
-        value?: String.String | Null.Null,
-        length?: NumberType.NumberType
+        types?: _Array.Array<Type.Type>
     }) {
-        return new StringType({
+        return new SpreadType({
             ...this,
             ...properties
         });
     }
-    static is(value): value is StringType {
-        return isStringType(value);
+    static is(value): value is SpreadType {
+        return isSpreadType(value);
     }
 }
-export function isStringType(value): value is StringType {
-    return Class.isInstance(StringType, value);
+export function isSpreadType(value): value is SpreadType {
+    return Class.isInstance(SpreadType, value);
 }
-export default StringType;
+export default SpreadType;

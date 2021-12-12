@@ -11,6 +11,7 @@ import * as Class from './ion/Class';
 export class Range implements _Object.Object , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
+    readonly resolved: Boolean.Boolean;
     readonly start: Expression.Expression;
     readonly end: Expression.Expression;
     readonly inclusive: Boolean.Boolean;
@@ -22,9 +23,10 @@ export class Range implements _Object.Object , Expression.Expression , Node.Node
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, start, end, inclusive, step = null}: {
+    constructor({location = null, type = null, resolved = false, start, end, inclusive, step = null}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         start: Expression.Expression,
         end: Expression.Expression,
         inclusive: Boolean.Boolean,
@@ -34,6 +36,8 @@ export class Range implements _Object.Object , Expression.Expression , Node.Node
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Boolean.isBoolean(resolved))
+            throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!Expression.isExpression(start))
             throw new Error('start is not a Expression: ' + Class.toString(start));
         if (!Expression.isExpression(end))
@@ -44,6 +48,7 @@ export class Range implements _Object.Object , Expression.Expression , Node.Node
             throw new Error('step is not a Expression | Null: ' + Class.toString(step));
         this.location = location;
         this.type = type;
+        this.resolved = resolved;
         this.start = start;
         this.end = end;
         this.inclusive = inclusive;
@@ -53,6 +58,7 @@ export class Range implements _Object.Object , Expression.Expression , Node.Node
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         start?: Expression.Expression,
         end?: Expression.Expression,
         inclusive?: Boolean.Boolean,

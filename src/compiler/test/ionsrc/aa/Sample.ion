@@ -1,2 +1,8 @@
 
-min(1, 2)
+class Vector2
+    x: Number
+    y: Number
+
+sample = Vector2(0, 0)
+
+// min(1, 2)

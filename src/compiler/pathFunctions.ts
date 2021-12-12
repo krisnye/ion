@@ -1,11 +1,18 @@
 
-export const globalNamespace = "_"
+export const globalNamespace = "$"
 const pathSeparator = "."
-const globalPrefix = globalNamespace + pathSeparator
-const exportSeparator = ":"
+const globalPrefix = globalNamespace
+const exportSeparator = "."
 const defaultExportName = "export"
-export function getAbsolutePath(name: string, _export = defaultExportName) {
-    return _export ? `${globalPrefix}${name}${exportSeparator}${_export}` : `${globalPrefix}${name}`
+export function getAbsolutePath(name: string, exportName?: string) {
+    let path = `${globalNamespace}${name}`
+    if (exportName != null) {
+        path += `${pathSeparator}${exportName}`
+    }
+    return path
+}
+function removeGlobalNamespace(name: string) {
+    return name.startsWith("$") ? name.slice(1) : name
 }
 export function isAbsolutePath(path: string) {
     return path.startsWith(globalPrefix)
@@ -15,6 +22,7 @@ export function getExport(path: string): string | null {
     return exportIndex >= 0 ? path.slice(exportIndex + 1) : null
 }
 export function getLastName(path: string): string {
+    path = removeGlobalNamespace(path)
     let exportName = getExport(path)
     if (exportName != null) {
         if (exportName !== defaultExportName) {
@@ -29,6 +37,7 @@ export function getParent(path: string): string | null {
     if (path == globalNamespace) {
         return null
     }
+    path = removeGlobalNamespace(path)
     let steps = split(path)
     if (steps.length <= 1) {
         return globalNamespace

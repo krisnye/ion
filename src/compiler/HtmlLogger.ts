@@ -74,6 +74,9 @@ function format(html: string) {
 }
 
 function diff(before, after, channel) {
+    if (before == after || before == null) {
+        return after.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
     let delta = before != null ? jsondiffpatch.diff(before, after) : null
     let html: any = null;
     if (typeof after === "string") {
@@ -131,6 +134,9 @@ export function create(outputPath: string) {
         /* begin diff2html styles */
         .d2h-file-header {
             display: none;
+        }
+        ins, del {
+            color: black !important;
         }
         /* end diff2html styles */
         :root {
@@ -198,6 +204,7 @@ export function create(outputPath: string) {
         <table class="main">
 `,
 ...keys.map(channel => {
+    previous = null;
     let passes = channels.get(channel)!;
     return [
         `<tr class="channel">

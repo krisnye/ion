@@ -7,12 +7,14 @@ import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
+import * as Boolean from './ion/Boolean';
 import * as _Array from './ion/Array';
 import * as Variable from './Variable';
 import * as Class from './ion/Class';
 export class FunctionType implements _Object.Object , Type.Type , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
+    readonly resolved: Boolean.Boolean;
     readonly parameters: _Array.Array<Variable.Variable>;
     readonly returnType: Type.Type | Null.Null;
     static readonly id = 'FunctionType';
@@ -23,9 +25,10 @@ export class FunctionType implements _Object.Object , Type.Type , Expression.Exp
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, parameters, returnType = null}: {
+    constructor({location = null, type = null, resolved = false, parameters, returnType = null}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         parameters: _Array.Array<Variable.Variable>,
         returnType?: Type.Type | Null.Null
     }) {
@@ -33,12 +36,15 @@ export class FunctionType implements _Object.Object , Type.Type , Expression.Exp
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Boolean.isBoolean(resolved))
+            throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!_Array.isArray(parameters))
             throw new Error('parameters is not a Array: ' + Class.toString(parameters));
         if (!(Type.isType(returnType) || Null.isNull(returnType)))
             throw new Error('returnType is not a Type | Null: ' + Class.toString(returnType));
         this.location = location;
         this.type = type;
+        this.resolved = resolved;
         this.parameters = parameters;
         this.returnType = returnType;
         Object.freeze(this);
@@ -46,6 +52,7 @@ export class FunctionType implements _Object.Object , Type.Type , Expression.Exp
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         parameters?: _Array.Array<Variable.Variable>,
         returnType?: Type.Type | Null.Null
     }) {

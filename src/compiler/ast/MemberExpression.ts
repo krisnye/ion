@@ -15,6 +15,7 @@ import * as Class from './ion/Class';
 export class MemberExpression implements _Object.Object , Expression.Expression , ChainElement.ChainElement , Type.Type , RuntimeType.RuntimeType , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
+    readonly resolved: Boolean.Boolean;
     readonly optional: Boolean.Boolean;
     readonly object: Expression.Expression;
     readonly property: Identifier.Identifier | Expression.Expression;
@@ -28,9 +29,10 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
         'RuntimeType',
         'Node'
     ]);
-    constructor({location = null, type = null, optional = false, object, property}: {
+    constructor({location = null, type = null, resolved = false, optional = false, object, property}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         optional?: Boolean.Boolean,
         object: Expression.Expression,
         property: Identifier.Identifier | Expression.Expression
@@ -39,6 +41,8 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Boolean.isBoolean(resolved))
+            throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!Boolean.isBoolean(optional))
             throw new Error('optional is not a Boolean: ' + Class.toString(optional));
         if (!Expression.isExpression(object))
@@ -47,6 +51,7 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
             throw new Error('property is not a Identifier | Expression: ' + Class.toString(property));
         this.location = location;
         this.type = type;
+        this.resolved = resolved;
         this.optional = optional;
         this.object = object;
         this.property = property;
@@ -55,6 +60,7 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         optional?: Boolean.Boolean,
         object?: Expression.Expression,
         property?: Identifier.Identifier | Expression.Expression

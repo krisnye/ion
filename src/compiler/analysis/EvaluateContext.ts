@@ -2,7 +2,6 @@ import { Lookup } from "@glas/traverse";
 import { ClassDeclaration, ConditionalDeclaration, Declaration, Declarator, Expression, Node, Reference, Variable } from "../ast";
 import { SemanticError } from "../common";
 import { ScopeMaps } from "../createScopeMaps";
-import { isAbsolutePath } from "../pathFunctions";
 
 export default class EvaluateContext {
 
@@ -54,14 +53,14 @@ export default class EvaluateContext {
             if (ConditionalDeclaration.is(declaration)) {
                 return null
             }
-            if (ClassDeclaration.is(declaration)) {
-                if (isAbsolutePath(declaration.id.name)) {
-                    return new Reference(declaration.id)
-                }
-                else {
-                    throw SemanticError(`Class declarations must be defined at the module root`, declaration)
-                }
-            }
+            // if (ClassDeclaration.is(declaration)) {
+            //     if (isAbsolutePath(declaration.id.name)) {
+            //         return new Reference(declaration.id)
+            //     }
+            //     else {
+            //         throw SemanticError(`Class declarations must be defined at the module root`, declaration)
+            //     }
+            // }
             throw new Error(`What type of Declaration is this: ` + declaration.constructor.name)
         }
         else {

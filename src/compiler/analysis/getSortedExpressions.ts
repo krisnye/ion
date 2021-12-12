@@ -4,42 +4,23 @@ import toposort from "../toposort";
 import { Node, Property, FunctionExpression, Return, Call, BinaryExpression, Expression } from "../ast";
 import * as ast from "../ast"
 import { SemanticError } from "../common";
-import { errorMonitor } from "events";
 import { Type } from "../..";
+import toCodeString from "../toCodeString";
+import { getFinalExpressionsOrReturnValues } from "../phases/semanticChecks";
 
-function contains(graph, predicate) {
-    let found = false
-    traverse(graph, {
-        enter(node) {
-            if (!found && predicate(node)) {
-                found = true
-            }
-            if (found) {
-                return skip
+function findFirst(node: Node, predicate: (node) => Boolean) {
+    let found
+    traverse(node, {
+        skip() {
+            return found != null
+        },
+        leave(node) {
+            if (predicate(node)) {
+                found = node
             }
         }
     })
     return found
-}
-
-function getNonRecursiveReturnStatements(fn: FunctionExpression): Return[] {
-    let statements: Return[] = []
-    traverse(fn, {
-        enter(node) {
-            if (Call.is(node)) {
-                return skip
-            }
-        },
-        leave(node) {
-            if (Return.is(node) && node.value != null) {
-                // make sure the return argument doesn't contain a recursive reference to itself.
-                if ((fn.id as any).name == null || !contains(node.value, check => ast.Reference.is(check) && check.name === (fn.id as any).name)) {
-                    statements.push(node)
-                }
-            }
-        }
-    })
-    return statements
 }
 
 // export function getContainingIfTestAndOriginalDeclarator(node: ast.ConditionalDeclaration, scopeMap: ScopeMaps, lookup: Lookup): [Expression, ast.Declarator | null] {
@@ -149,14 +130,17 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     *FunctionExpression(node) {
         // a function depends on it's parameters which means it depends on it's parameter types
         yield* node.parameters
-        // HMMMM, have to figure out this dependency
-        // if (node.returnType === null) {
-        //     for (let returnStatement of getNonRecursiveReturnStatements(node)) {
-        //         if (returnStatement.value != null) {
-        //             yield returnStatement.value
-        //         }
-        //     }
-        // }
+
+        let returnValues = getFinalExpressionsOrReturnValues(node.body)
+        let nonRecursiveReturnValues = [...returnValues].filter(value => {
+            let recursive = findFirst(value, (ref) => ast.Reference.is(ref) && ref.name === node.id?.name)
+            if (recursive && node.returnType == null) {
+                // This function *could* be indirectly recursive which would not be detected by this.
+                throw SemanticError(`Recursive functions must provide returnType`, node)
+            }
+            return !recursive
+        })
+        yield* nonRecursiveReturnValues
     },
     *ReferenceType(node, scopes, lookup) {
         return predecessors.Reference!(node, scopes, lookup)
@@ -199,7 +183,12 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
             yield node.callee
         }
         for (let arg of node.arguments) {
-            yield arg
+            if (ast.Argument.is(arg)) {
+                yield arg.value
+            }
+            else if (Expression.is(arg)) {
+                yield arg
+            }
         }
     },
 }
@@ -208,12 +197,15 @@ export default function getSortedExpressions(root, scopeMap: ScopeMaps, lookup: 
     let sentinel = {} as Expression;
     let edges: [Expression, Expression][] = [];
     function push(from: Expression, to: Expression) {
-        if (ast.Module.is(from)) {
-            throw new Error("Module.from")
+        if (from.resolved || to.resolved) {
+            return
         }
-        if (ast.Module.is(to)) {
-            throw new Error("Module.to")
-        }
+        // if (ast.Module.is(from)) {
+        //     throw new Error("Module.from")
+        // }
+        // if (ast.Module.is(to)) {
+        //     throw new Error("Module.to")
+        // }
         if (from == null || to == null) {
             throw new Error("Edge nodes may not be null")
         }

@@ -1,5 +1,5 @@
 import combineExpressions from "./analysis/combineExpressions";
-import { BinaryExpression, DotExpression, Expression, Literal, Void as AstVoid } from "./ast";
+import { BinaryExpression, DotExpression, Expression, Literal, SpreadType } from "./ast";
 import Reference from "./ast/Reference";
 import { getAbsolutePath } from "./pathFunctions";
 
@@ -27,10 +27,11 @@ export const Function = ref("Function")
 export const Type = ref("Type")
 export const Object = ref("Object")
 export const Null = ref("Null")
+// a Void is just an empty spread
+export const Void = new SpreadType({ types: [] })
 export const Any = ref("Any")
 export const Never = ref("Never")
 export const Undefined = ref("Undefined")
-export const Void = new AstVoid({})
 export const Symbol = ref("Symbol")
 export const RegExp = ref("RegExp")
 export const WeakMap = ref("WeakMap")

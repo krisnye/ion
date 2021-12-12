@@ -6,12 +6,14 @@ import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
+import * as Boolean from './ion/Boolean';
 import * as Identifier from './Identifier';
 import * as Pattern from './Pattern';
 import * as Class from './ion/Class';
 export class PatternProperty implements _Object.Object , Expression.Expression , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
+    readonly resolved: Boolean.Boolean;
     readonly key: Expression.Expression | Identifier.Identifier;
     readonly id: Pattern.Pattern | Expression.Expression;
     static readonly id = 'PatternProperty';
@@ -21,9 +23,10 @@ export class PatternProperty implements _Object.Object , Expression.Expression ,
         'Expression',
         'Node'
     ]);
-    constructor({location = null, type = null, key, id}: {
+    constructor({location = null, type = null, resolved = false, key, id}: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         key: Expression.Expression | Identifier.Identifier,
         id: Pattern.Pattern | Expression.Expression
     }) {
@@ -31,12 +34,15 @@ export class PatternProperty implements _Object.Object , Expression.Expression ,
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Boolean.isBoolean(resolved))
+            throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!(Expression.isExpression(key) || Identifier.isIdentifier(key)))
             throw new Error('key is not a Expression | Identifier: ' + Class.toString(key));
         if (!(Pattern.isPattern(id) || Expression.isExpression(id)))
             throw new Error('id is not a Pattern | Expression: ' + Class.toString(id));
         this.location = location;
         this.type = type;
+        this.resolved = resolved;
         this.key = key;
         this.id = id;
         Object.freeze(this);
@@ -44,6 +50,7 @@ export class PatternProperty implements _Object.Object , Expression.Expression ,
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         key?: Expression.Expression | Identifier.Identifier,
         id?: Pattern.Pattern | Expression.Expression
     }) {

@@ -67,3 +67,8 @@ Probably not. I haven't yet seen a good example that would need to be modelled w
 
 We have to model intervals in order to accurately calculate type products.
 Individual constraints can handle +/- but they do not handle * and / operators.
+
+### Type inference on recursive functions?
+
+For now we will require returnType on directly recursive functions.
+Later when we bootstrap we should implement Hindley-Milner to determine recursive function types.

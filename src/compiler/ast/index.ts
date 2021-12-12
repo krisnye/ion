@@ -194,6 +194,9 @@ export {
     default as Spread
 } from './Spread';
 export {
+    default as SpreadType
+} from './SpreadType';
+export {
     default as Statement
 } from './Statement';
 export {

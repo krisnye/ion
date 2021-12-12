@@ -14,6 +14,7 @@ import * as Class from './ion/Class';
 export class Call implements _Object.Object , Expression.Expression , ChainElement.ChainElement , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
+    readonly resolved: Boolean.Boolean;
     readonly optional: Boolean.Boolean;
     readonly new: Boolean.Boolean;
     readonly callee: Expression.Expression | Null.Null;
@@ -29,6 +30,7 @@ export class Call implements _Object.Object , Expression.Expression , ChainEleme
     constructor({
         location = null,
         type = null,
+        resolved = false,
         optional = false,
         new: _new = false,
         callee = null,
@@ -36,6 +38,7 @@ export class Call implements _Object.Object , Expression.Expression , ChainEleme
     }: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         optional?: Boolean.Boolean,
         new?: Boolean.Boolean,
         callee?: Expression.Expression | Null.Null,
@@ -45,6 +48,8 @@ export class Call implements _Object.Object , Expression.Expression , ChainEleme
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(Expression.isExpression(type) || Null.isNull(type)))
             throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!Boolean.isBoolean(resolved))
+            throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!Boolean.isBoolean(optional))
             throw new Error('optional is not a Boolean: ' + Class.toString(optional));
         if (!Boolean.isBoolean(_new))
@@ -55,6 +60,7 @@ export class Call implements _Object.Object , Expression.Expression , ChainEleme
             throw new Error('arguments is not a Array: ' + Class.toString(_arguments));
         this.location = location;
         this.type = type;
+        this.resolved = resolved;
         this.optional = optional;
         this.new = _new;
         this.callee = callee;
@@ -64,6 +70,7 @@ export class Call implements _Object.Object , Expression.Expression , ChainEleme
     patch(properties: {
         location?: Location.Location | Null.Null,
         type?: Expression.Expression | Null.Null,
+        resolved?: Boolean.Boolean,
         optional?: Boolean.Boolean,
         new?: Boolean.Boolean,
         callee?: Expression.Expression | Null.Null,

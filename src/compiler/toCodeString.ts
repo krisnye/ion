@@ -2,6 +2,15 @@ import * as ast from "./ast";
 import { Node } from "./ast";
 import { memoize } from "./common";
 
+function block(nodes, open = "{", close = "}") {
+    if (nodes.length === 0) {
+        return `${open}${close}`
+    }
+    let indent = '    '
+    // return nodes.map(s).join(`\n`)
+    return (`${open}\n${nodes.map(s).join(`\n`).split(`\n`).map(a => indent + a).join(`\n`)}\n${close}`)
+}
+
 const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P]>) => string} = {
     Identifier(node) {
         return node.name
@@ -67,6 +76,9 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     ObjectExpression(node) {
         return `{ ${node.body.map(toCodeString).join(', ')} }`
     },
+    Argument(node) {
+        return node.id ? `${s(node.id)} = ${s(node.value)}` : s(node.value)
+    },
     ArrayExpression(node) {
         return `[ ${node.body.map(toCodeString).join(', ')} ]`
     },
@@ -76,20 +88,11 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     IntersectionType(node) {
         return `${node.types.map(toCodeString).join(' & ')}`
     },
-    Module(node) {
-        return `module ${node.name}`
-    },
     FunctionExpression(node) {
-        return `function ${(node.id as any)?.name ?? ''}(${node.parameters.map(toCodeString).join(',')})`
-    },
-    ArrowFunctionExpression(node) {
-        return `(${node.params.map(toCodeString).join(',')}) => {?}`
+        return `function ${(node.id as any)?.name ?? ''}${block(node.parameters, "(", ")")} => ${block(node.body.body)}`
     },
     FunctionType(node) {
-        return `(${node.parameters.map(toCodeString).join(',')}) => ${toCodeString(node.returnType)}`
-    },
-    ClassDeclaration(node) {
-        return `class ${node.id.name}`
+        return `${block(node.parameters, "(", ")")} => ${toCodeString(node.returnType)}`
     },
     Property(node) {
         if (node.id != null) {
@@ -109,7 +112,28 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         return codeToString.Variable!(node as any)
     },
     Variable(node) {
-        let value = s(node.id)
+        let value = ``
+        if (ast.ConditionalDeclaration.is(node)) {
+            value += `cond `
+        }
+        else {
+            if (node.isMutable) {
+                value += `var `
+            }
+            else {
+                value += `const `
+            }
+        }
+        if (node.isStatic) {
+            value += `static `
+        }
+        if (node.isType) {
+            value += `type `
+        }
+        if (node.isMeta) {
+            value += `meta `
+        }
+        value += s(node.id)
         if (node.type) {
             value += `: ${s(node.type)}`
         }
@@ -139,17 +163,24 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         return `${node.callee ? s(node.callee) : ""}(${node.arguments.map(s).join(', ')})`
     },
     Conditional(node) {
-        let result =`(if ${s(node.test)} then ${s(node.consequent)}`
+        let result =`if ${s(node.test)} ${s(node.consequent)}`
         if (node.alternate) {
-            result += ` else ${s(node.alternate)} end`
-        }
-        else {
-            result += ` end)`
+            result += ` else ${s(node.alternate)}`
         }
         return result
     },
+    Module(node) {
+        return `module ${node.name} ${codeToString.Block!(node as any)}`
+    },
+    ClassDeclaration(node) {
+        return `class ${node.id.name} ${block(node.declarations)}`
+    },
     Block(node) {
-        return `{ ${node.body.map(s).join('; ')} }`
+        let value = block(node.body)
+        if (node.type) {
+            value += `: (${s(node.type)})`
+        }
+        return value
     },
     Return(node) {
         return `return ${toCodeString(node.value)}`
@@ -176,7 +207,10 @@ const s = memoize(
     }
 )
 
-export default function toCodeString(node: Node | null): string {
+export default function toCodeString(node: Node | null | undefined): string {
+    if (node === undefined) {
+        return "undefined"
+    }
     if (node == null) {
         return "null"
     }

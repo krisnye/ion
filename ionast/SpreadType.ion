@@ -1,0 +1,7 @@
+import
+    ion.*
+    .*
+
+export
+    class SpreadType extends Type
+        var types: Array<Type>
