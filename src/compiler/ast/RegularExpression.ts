@@ -5,13 +5,14 @@ import * as _Object from './ion/Object';
 import * as Expression from './Expression';
 import * as Type from './Type';
 import * as RuntimeType from './RuntimeType';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Boolean from './ion/Boolean';
 import * as String from './ion/String';
 import * as Class from './ion/Class';
-export class RegularExpression implements _Object.Object , Expression.Expression , Type.Type , RuntimeType.RuntimeType , Node.Node {
+export class RegularExpression implements _Object.Object , Expression.Expression , Type.Type , RuntimeType.RuntimeType , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -24,6 +25,7 @@ export class RegularExpression implements _Object.Object , Expression.Expression
         'Expression',
         'Type',
         'RuntimeType',
+        'Typed',
         'Node'
     ]);
     constructor({location = null, type = null, resolved = false, pattern, flags}: {

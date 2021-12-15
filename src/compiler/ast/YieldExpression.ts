@@ -3,12 +3,13 @@ This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
 import * as Expression from './Expression';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
-export class YieldExpression implements _Object.Object , Expression.Expression , Node.Node {
+export class YieldExpression implements _Object.Object , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -19,6 +20,7 @@ export class YieldExpression implements _Object.Object , Expression.Expression ,
         'YieldExpression',
         'ion_Object',
         'Expression',
+        'Typed',
         'Node'
     ]);
     constructor({location = null, type = null, resolved = false, argument, delegate = false}: {

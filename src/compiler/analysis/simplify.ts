@@ -1,4 +1,4 @@
-import { Expression, BinaryExpression, UnaryExpression, TypeExpression, NumberType, NeverType, UnionType } from "../ast";
+import { Expression, BinaryExpression, UnaryExpression, TypeExpression, NumberType, NeverType, UnionType, IntersectionType } from "../ast";
 import toCodeString from "../toCodeString";
 import { memoize } from "../common";
 import { traverse } from "@glas/traverse";
@@ -19,6 +19,10 @@ function equals(a: Expression, b: Expression) {
 }
 
 const simplify = memoize(function(e: Expression): Expression {
+    if ((IntersectionType.is(e) || UnionType.is(e)) && e.types.length === 1) {
+        e = e.types[0]
+    }
+
     e = normalize(e)
 
     if (NumberType.is(e)) {

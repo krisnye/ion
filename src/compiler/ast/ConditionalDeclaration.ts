@@ -6,13 +6,14 @@ import * as Declaration from './Declaration';
 import * as Statement from './Statement';
 import * as SideEffect from './SideEffect';
 import * as Expression from './Expression';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Boolean from './ion/Boolean';
 import * as Declarator from './Declarator';
 import * as Class from './ion/Class';
-export class ConditionalDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , SideEffect.SideEffect , Expression.Expression , Node.Node {
+export class ConditionalDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , SideEffect.SideEffect , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -27,6 +28,7 @@ export class ConditionalDeclaration implements _Object.Object , Declaration.Decl
         'Statement',
         'SideEffect',
         'Expression',
+        'Typed',
         'Node'
     ]);
     constructor({location = null, type = null, resolved = false, id, isMutable = false, negate = false}: {

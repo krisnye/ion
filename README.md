@@ -32,8 +32,19 @@ Cross platform modeling language
   - [x] Convert to string based comparison so AST looks human readable language
     - [x] test this now with current json diff
     - [x] Implemented a good string diff library
-  - [ ] Don't execute or optimize while compiling.
+  - [x] Don't execute or optimize while compiling.
   - [ ] Finish Type Inference
-    - [ ] Function return type
+    - [x] Function return type
+    - [x] min operator
+    - [x] max operator
+    - [x] * operator
+    - [x] / operator
+    - [x] % operator
+    - [x] abs operator
+    - [x] inv operator
+    - [x] ** operator
+    - [ ] Conditional
+  - [ ] array bounds checking
+  - [ ] class inheritance
   - [x] We need a map { key -> value } format that is not ambiguous with array destructuring
   - [ ] Maybe... we should see if we need pattern matching and how that works with above

@@ -1,7 +1,7 @@
 import { traverse, skip, Lookup } from "@glas/traverse";
 import { ScopeMaps } from "../createScopeMaps";
 import toposort from "../toposort";
-import { Node, Property, FunctionExpression, Return, Call, BinaryExpression, Expression } from "../ast";
+import { Node, Property, Typed, FunctionExpression, Return, Call, BinaryExpression, Expression } from "../ast";
 import * as ast from "../ast"
 import { SemanticError } from "../common";
 import { Type } from "../..";
@@ -31,11 +31,11 @@ function findFirst(node: Node, predicate: (node) => Boolean) {
 //     return [containingIf.test, containingVarDeclarator]
 // }
 
-export function getPredecessors(node, scopeMap: ScopeMaps, lookup: Lookup): Iterable<Expression> {
+export function getPredecessors(node, scopeMap: ScopeMaps, lookup: Lookup): Iterable<Typed> {
     return predecessors[node.constructor.name](node, scopeMap, lookup);
 }
 
-const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>, scopeMap: ScopeMaps, lookup: Lookup) => Iterable<Expression | Expression[]>} = {
+const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>, scopeMap: ScopeMaps, lookup: Lookup) => Iterable<Typed | Typed[]>} = {
     // *ConditionalDeclaration(node, scopeMap) {
     //     // the conditional declaration will add it's own local conditional assertion to the variable type
     //     // from the containing scope, so we are dependent on that variable being resolved first.
@@ -116,6 +116,14 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         yield* node.declarations
         yield* node.typeParameters
     },
+    *Property(node) {
+        // if (Expression.is(node.id)) {
+        //     yield node.id
+        // }
+        if (Expression.is(node.value)) {
+            yield node.value
+        }
+    },
     *Variable(node) {
         if (node.value) {
             yield node.value
@@ -194,9 +202,9 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
 }
 
 export default function getSortedExpressions(root, scopeMap: ScopeMaps, lookup: Lookup) {
-    let sentinel = {} as Expression;
-    let edges: [Expression, Expression][] = [];
-    function push(from: Expression, to: Expression) {
+    let sentinel = {} as Typed;
+    let edges: [Typed, Typed][] = [];
+    function push(from: Typed, to: Typed) {
         if (from.resolved || to.resolved) {
             return
         }
@@ -245,8 +253,8 @@ export default function getSortedExpressions(root, scopeMap: ScopeMaps, lookup: 
     // })
     for (let node of nodes) {
         let count = 0;
-        if (Expression.is(node)) {
-            let func = predecessors[node.constructor.name] as (node: Expression, scopeMap: ScopeMaps, lookup: Lookup) => Iterable<Expression | Expression[]>;
+        if (Typed.is(node)) {
+            let func = predecessors[node.constructor.name] as (node: Typed, scopeMap: ScopeMaps, lookup: Lookup) => Iterable<Typed | Typed[]>;
             if (func) {
                 for (let pred of func(node, scopeMap, lookup)) {
                     count++;

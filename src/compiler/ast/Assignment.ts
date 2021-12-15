@@ -4,6 +4,7 @@ This file was generated from ion source. Do not edit.
 import * as _Object from './ion/Object';
 import * as Expression from './Expression';
 import * as SideEffect from './SideEffect';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
@@ -12,7 +13,7 @@ import * as Pattern from './Pattern';
 import * as Reference from './Reference';
 import * as String from './ion/String';
 import * as Class from './ion/Class';
-export class Assignment implements _Object.Object , Expression.Expression , SideEffect.SideEffect , Node.Node {
+export class Assignment implements _Object.Object , Expression.Expression , SideEffect.SideEffect , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -25,6 +26,7 @@ export class Assignment implements _Object.Object , Expression.Expression , Side
         'ion_Object',
         'Expression',
         'SideEffect',
+        'Typed',
         'Node'
     ]);
     constructor({location = null, type = null, resolved = false, left, operator = '=', right}: {

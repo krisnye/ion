@@ -10,6 +10,7 @@ export const binaryOps = {
     "-": (a, b) => a - b,
     "*": (a, b) => a * b,
     "/": (a, b) => a / b,
+    "%": (a, b) => a % b,
     "**": (a, b) => a ** b,
     "^": (a, b) => a ^ b,
     "<": (a, b) => a < b,
@@ -34,12 +35,13 @@ export const unaryOps = {
     "-": (a) => - a,
     "~": (a) => ~ a,
     "abs": (a) => Math.abs(a),
+    "inv": (a) => 1 / a,
 }
 
 export const evaluateFunctions: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>, context: EvaluateContext) => any} = {
     BinaryExpression(node, c) {
-        let left = c.lookup.getCurrent(node.left)
-        let right = c.lookup.getCurrent(node.right)
+        let left = evaluate(c.lookup.getCurrent(node.left), c)
+        let right = evaluate(c.lookup.getCurrent(node.right), c)
         if (Literal.is(left) && Literal.is(right)) {
             let value = binaryOps[node.operator](left.value, right.value)
             return new Literal({ location: node.location, value })

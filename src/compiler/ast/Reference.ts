@@ -5,13 +5,14 @@ import * as _Object from './ion/Object';
 import * as Identifier from './Identifier';
 import * as Expression from './Expression';
 import * as Node from './Node';
+import * as Typed from './Typed';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as String from './ion/String';
 import * as Boolean from './ion/Boolean';
 import * as _Array from './ion/Array';
 import * as Class from './ion/Class';
-export class Reference implements _Object.Object , Identifier.Identifier , Expression.Expression , Node.Node {
+export class Reference implements _Object.Object , Identifier.Identifier , Expression.Expression , Node.Node , Typed.Typed {
     readonly location: Location.Location | Null.Null;
     readonly name: String.String;
     readonly type: Expression.Expression | Null.Null;
@@ -23,7 +24,8 @@ export class Reference implements _Object.Object , Identifier.Identifier , Expre
         'ion_Object',
         'Identifier',
         'Expression',
-        'Node'
+        'Node',
+        'Typed'
     ]);
     constructor({
         location = null,

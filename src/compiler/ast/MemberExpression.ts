@@ -6,13 +6,14 @@ import * as Expression from './Expression';
 import * as ChainElement from './ChainElement';
 import * as Type from './Type';
 import * as RuntimeType from './RuntimeType';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Boolean from './ion/Boolean';
 import * as Identifier from './Identifier';
 import * as Class from './ion/Class';
-export class MemberExpression implements _Object.Object , Expression.Expression , ChainElement.ChainElement , Type.Type , RuntimeType.RuntimeType , Node.Node {
+export class MemberExpression implements _Object.Object , Expression.Expression , ChainElement.ChainElement , Type.Type , RuntimeType.RuntimeType , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -27,6 +28,7 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
         'ChainElement',
         'Type',
         'RuntimeType',
+        'Typed',
         'Node'
     ]);
     constructor({location = null, type = null, resolved = false, optional = false, object, property}: {

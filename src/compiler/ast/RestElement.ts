@@ -4,13 +4,14 @@ This file was generated from ion source. Do not edit.
 import * as _Object from './ion/Object';
 import * as Pattern from './Pattern';
 import * as Expression from './Expression';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Boolean from './ion/Boolean';
 import * as Declarator from './Declarator';
 import * as Class from './ion/Class';
-export class RestElement implements _Object.Object , Pattern.Pattern , Expression.Expression , Node.Node {
+export class RestElement implements _Object.Object , Pattern.Pattern , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -21,6 +22,7 @@ export class RestElement implements _Object.Object , Pattern.Pattern , Expressio
         'ion_Object',
         'Pattern',
         'Expression',
+        'Typed',
         'Node'
     ]);
     constructor({location = null, type = null, resolved = false, value}: {

@@ -1,6 +1,6 @@
 import * as ast from "./ast";
 import { Node } from "./ast";
-import { memoize } from "./common";
+import { memoize, SemanticError } from "./common";
 
 function block(nodes, open = "{", close = "}") {
     if (nodes.length === 0) {
@@ -95,6 +95,9 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         return `${block(node.parameters, "(", ")")} => ${toCodeString(node.returnType)}`
     },
     Property(node) {
+        if (node.value == null) {
+            throw SemanticError(`Node.value missing!?`, node)
+        }
         if (node.id != null) {
             if (ast.Identifier.is(node.id) || ast.ReferenceType.is(node.id)) {
                 return `${s(node.id)}:${s(node.value!)}`
@@ -149,7 +152,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         return `(${s(node.left)} ${node.operator} ${s(node.right)})`
     },
     UnaryExpression(node) {
-        return `${node.operator}${s(node.argument)}`
+        return `${node.operator} ${s(node.argument)}`
     },
     MemberExpression(node) {
         if (ast.Identifier.is(node.property)) {
@@ -197,15 +200,18 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
 }
 
 
-const s = memoize(
+const s = //memoize(
     function (node: Node) {
+        if (node == null) {
+            throw new Error("Cannot call toCodeString on a null node")
+        }
         let fn = codeToString[node.constructor.name]
         if (fn == null) {
             throw new Error(`codeToString function not found for type: ${node.constructor.name}`)
         }
         return fn(node)
     }
-)
+//)
 
 export default function toCodeString(node: Node | null | undefined): string {
     if (node === undefined) {

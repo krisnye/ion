@@ -1,7 +1,7 @@
 import { BinaryExpression, Expression, IntersectionType, Type, UnionType } from "../ast"
 
 export default function combineExpressions(expressions: Array<Expression>, operator: string = "&"): Expression {
-    if (Type.is(expressions[0])) {
+    if (Type.is(expressions[0]) && (operator == "|" || operator == "&")) {
         // these are type expressions.
         if (expressions.length == 1) {
             return expressions[0]

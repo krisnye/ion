@@ -4,13 +4,14 @@ This file was generated from ion source. Do not edit.
 import * as _Object from './ion/Object';
 import * as Type from './Type';
 import * as Expression from './Expression';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Boolean from './ion/Boolean';
 import * as Number from './ion/Number';
 import * as Class from './ion/Class';
-export class NumberType implements _Object.Object , Type.Type , Expression.Expression , Node.Node {
+export class NumberType implements _Object.Object , Type.Type , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -25,6 +26,7 @@ export class NumberType implements _Object.Object , Type.Type , Expression.Expre
         'ion_Object',
         'Type',
         'Expression',
+        'Typed',
         'Node'
     ]);
     constructor({location = null, type = null, resolved = false, precision = null, min = null, max = null, minExclusive = false, maxExclusive = false}: {

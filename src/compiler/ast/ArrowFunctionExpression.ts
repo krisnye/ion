@@ -4,6 +4,7 @@ This file was generated from ion source. Do not edit.
 import * as _Object from './ion/Object';
 import * as Expression from './Expression';
 import * as Scope from './Scope';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
@@ -11,7 +12,7 @@ import * as Boolean from './ion/Boolean';
 import * as _Array from './ion/Array';
 import * as Variable from './Variable';
 import * as Class from './ion/Class';
-export class ArrowFunctionExpression implements _Object.Object , Expression.Expression , Scope.Scope , Node.Node {
+export class ArrowFunctionExpression implements _Object.Object , Expression.Expression , Scope.Scope , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -23,6 +24,7 @@ export class ArrowFunctionExpression implements _Object.Object , Expression.Expr
         'ion_Object',
         'Expression',
         'Scope',
+        'Typed',
         'Node'
     ]);
     constructor({location = null, type = null, resolved = false, params, body}: {

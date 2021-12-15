@@ -1,8 +1,12 @@
 
-class Vector2
-    x: Number
-    y: Number
 
-sample = Vector2(0, 0)
+sample = () ->
+    a: 0..2 = 1
+    b: 2..4 = 3
+    c = a ** b
 
+// class Vector2
+//     x: Number
+//     y: Number
+// sample = Vector2(0, 0)
 // min(1, 2)

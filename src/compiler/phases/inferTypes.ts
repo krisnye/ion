@@ -13,7 +13,7 @@ import negate from "../analysis/negate";
 import simplify from "../analysis/simplify";
 import { getFinalExpressionsOrReturnValues } from "./semanticChecks";
 import combineExpressions from "../analysis/combineExpressions";
-import { inferOperationType, numberType } from "../analysis/numberTypes";
+import { inferBinaryOperationType, inferUnaryOperationType, numberType } from "../analysis/numberTypes";
 import { isSubtype } from "../analysis/newTypeAnalysis";
 import splitExpressions from "../analysis/splitExpressions";
 import { operatorToNumberTypes, reflectOperators } from "../analysis/normalize";
@@ -82,6 +82,12 @@ const literalTypes = {
     number: types.Number,
     object: types.Object,
     string: types.String,
+}
+
+const unaryOperationsType = {
+    "!": types.Boolean,
+    "abs": null,
+    "inv": null,
 }
 
 const binaryOperationsType = {
@@ -170,12 +176,20 @@ export const inferType: {
     //     let type = getAncestorExpressionType(node, c)
     //     return { type }
     // },
+    UnaryExpression(node, c) {
+        let type = unaryOperationsType[node.operator]
+        if (type == null) {
+            let argumentType = c.current(node.argument).type!
+            type = inferUnaryOperationType(argumentType, node.operator, c)
+        }
+        return { type }
+    },
     BinaryExpression(node, c) {
         let type = binaryOperationsType[node.operator]
         if (type == null) {
             let leftType = c.current(node.left).type!
-            let rightType = c.current(node.right).type!
-            type = inferOperationType(leftType, rightType, node.operator, c)
+            let rightType = c.current(node.right).type! 
+            type = inferBinaryOperationType(leftType, rightType, node.operator, c)
         }
         return { type }
     },
@@ -190,8 +204,11 @@ export const inferType: {
         }
         return { type }
     },
-    Parameter(node, c, lookup) {
-        return inferType.Variable!(node, c, lookup)
+    Property(node, c, errors) {
+        return inferType.Variable!(node as any, c, errors)
+    },
+    Parameter(node, c, errors) {
+        return inferType.Variable!(node, c, errors)
     },
     Variable(node, c) {
         let type = c.current(node.type)
@@ -254,13 +271,16 @@ export const inferType: {
         //     return declarator.type
         // }
     },
-    Reference(node, c) {
+    Reference(node, c, errors) {
         let scope = c.scopes.get(node)
         let declarator = c.current(c.current(scope[node.name]))
         if (declarator == null) {
             throw SemanticError(`Reference not found: ${node.name}`, node)
         }
         let type = c.current(declarator.type)
+        if (type == null) {
+            errors.push(SemanticError(`Can't find type`, declarator))
+        }
         return { type }
     },
     Conditional(node, c) {
@@ -319,7 +339,7 @@ export const inferType: {
                 let id = c.current(item.id) as Expression
                 let value = c.current(item.value) as Expression
                 return new Property({
-                    id: id.type || id,
+                    id: ast.Declarator.is(id) ? id : id.type!,
                     value: value.type,
                 })
             })
@@ -481,6 +501,9 @@ export default function inferTypes(
                 currentNode = changes
             }
             else {
+                if (changes.type) {
+                    changes.type = simplify(changes.type)
+                }
                 currentNode = currentNode.patch({ ...changes, resolved: true })
             }
             lookup.setCurrent(originalNode, currentNode)

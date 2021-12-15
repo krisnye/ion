@@ -4,6 +4,7 @@ This file was generated from ion source. Do not edit.
 import * as _Object from './ion/Object';
 import * as Expression from './Expression';
 import * as ChainElement from './ChainElement';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
@@ -11,7 +12,7 @@ import * as Boolean from './ion/Boolean';
 import * as _Array from './ion/Array';
 import * as Statement from './Statement';
 import * as Class from './ion/Class';
-export class Call implements _Object.Object , Expression.Expression , ChainElement.ChainElement , Node.Node {
+export class Call implements _Object.Object , Expression.Expression , ChainElement.ChainElement , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -25,6 +26,7 @@ export class Call implements _Object.Object , Expression.Expression , ChainEleme
         'ion_Object',
         'Expression',
         'ChainElement',
+        'Typed',
         'Node'
     ]);
     constructor({

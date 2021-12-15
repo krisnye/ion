@@ -6,6 +6,7 @@ import * as Assignment from './Assignment';
 import * as Pattern from './Pattern';
 import * as Expression from './Expression';
 import * as SideEffect from './SideEffect';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
@@ -13,7 +14,7 @@ import * as Boolean from './ion/Boolean';
 import * as Reference from './Reference';
 import * as String from './ion/String';
 import * as Class from './ion/Class';
-export class AssignmentPattern implements _Object.Object , Assignment.Assignment , Pattern.Pattern , Expression.Expression , SideEffect.SideEffect , Node.Node {
+export class AssignmentPattern implements _Object.Object , Assignment.Assignment , Pattern.Pattern , Expression.Expression , SideEffect.SideEffect , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -28,6 +29,7 @@ export class AssignmentPattern implements _Object.Object , Assignment.Assignment
         'Pattern',
         'Expression',
         'SideEffect',
+        'Typed',
         'Node'
     ]);
     constructor({location = null, type = null, resolved = false, left, operator = '=', right}: {

@@ -4,6 +4,7 @@ This file was generated from ion source. Do not edit.
 import * as _Object from './ion/Object';
 import * as Expression from './Expression';
 import * as Declaration from './Declaration';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Statement from './Statement';
 import * as SideEffect from './SideEffect';
@@ -13,7 +14,7 @@ import * as Boolean from './ion/Boolean';
 import * as Identifier from './Identifier';
 import * as Declarator from './Declarator';
 import * as Class from './ion/Class';
-export class Property implements _Object.Object , Expression.Expression , Declaration.Declaration , Node.Node , Statement.Statement , SideEffect.SideEffect {
+export class Property implements _Object.Object , Expression.Expression , Declaration.Declaration , Typed.Typed , Node.Node , Statement.Statement , SideEffect.SideEffect {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -26,6 +27,7 @@ export class Property implements _Object.Object , Expression.Expression , Declar
         'ion_Object',
         'Expression',
         'Declaration',
+        'Typed',
         'Node',
         'Statement',
         'SideEffect'

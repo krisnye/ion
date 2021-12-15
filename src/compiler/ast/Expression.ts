@@ -2,12 +2,13 @@
 This file was generated from ion source. Do not edit.
 */
 import * as _Object from './ion/Object';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
-export class Expression implements _Object.Object , Node.Node {
+export class Expression implements _Object.Object , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -15,6 +16,7 @@ export class Expression implements _Object.Object , Node.Node {
     static readonly implements = new Set([
         'Expression',
         'ion_Object',
+        'Typed',
         'Node'
     ]);
     constructor({location = null, type = null, resolved = false}: {

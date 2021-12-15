@@ -9,6 +9,7 @@ import * as Declaration from './Declaration';
 import * as Statement from './Statement';
 import * as SideEffect from './SideEffect';
 import * as Expression from './Expression';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
@@ -23,7 +24,7 @@ export type Specifier = ImportSpecifier.ImportSpecifier | (ImportDefaultSpecifie
 export function isSpecifier(value): value is Specifier {
     return ImportSpecifier.isImportSpecifier(value) || (ImportDefaultSpecifier.isImportDefaultSpecifier(value) || ImportNamespaceSpecifier.isImportNamespaceSpecifier(value));
 }
-export class ImportDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , SideEffect.SideEffect , Expression.Expression , Node.Node {
+export class ImportDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , SideEffect.SideEffect , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -41,6 +42,7 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
         'Statement',
         'SideEffect',
         'Expression',
+        'Typed',
         'Node'
     ]);
     constructor({location = null, type = null, resolved = false, id, isMutable = false, specifiers, path = null, source, absoluteSource = null}: {

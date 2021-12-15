@@ -1,0 +1,5 @@
+abs = (a: Number) ->
+    if a < 0
+        - a
+    else
+        a

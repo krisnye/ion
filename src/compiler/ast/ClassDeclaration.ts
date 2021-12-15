@@ -8,6 +8,7 @@ import * as Expression from './Expression';
 import * as Node from './Node';
 import * as Statement from './Statement';
 import * as SideEffect from './SideEffect';
+import * as Typed from './Typed';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
@@ -16,7 +17,7 @@ import * as Boolean from './ion/Boolean';
 import * as Declarator from './Declarator';
 import * as Variable from './Variable';
 import * as Class from './ion/Class';
-export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaration.Declaration , Expression.Expression , Node.Node , Statement.Statement , SideEffect.SideEffect {
+export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaration.Declaration , Expression.Expression , Node.Node , Statement.Statement , SideEffect.SideEffect , Typed.Typed {
     readonly location: Location.Location | Null.Null;
     readonly meta: _Array.Array<Property.Property> | Null.Null;
     readonly type: Expression.Expression | Null.Null;
@@ -35,7 +36,8 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         'Expression',
         'Node',
         'Statement',
-        'SideEffect'
+        'SideEffect',
+        'Typed'
     ]);
     constructor({location = null, meta = null, type = null, resolved = false, id, isMutable = false, baseClasses = [], declarations, typeParameters = []}: {
         location?: Location.Location | Null.Null,

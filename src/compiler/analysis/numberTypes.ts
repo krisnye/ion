@@ -1,107 +1,8 @@
-import { BinaryExpression, DotExpression, Expression, NumberType, Reference, TypeExpression, Type, Literal, Property, UnionType } from "../ast";
-import * as ops from "../ops";
+import { BinaryExpression, Expression, NumberType, Type, Literal, UnionType, UnaryExpression, IntersectionType } from "../ast";
 import toCodeString from "../toCodeString";
-import * as types from "../types";
 import combineExpressions from "./combineExpressions";
 import evaluate from "./evaluate";
 import EvaluateContext from "./EvaluateContext";
-import splitExpressions from "./splitExpressions";
-
-// function toNumberType(type: Expression): NumberType {
-//     let precision = 2
-//     let min: Type | null = null
-//     let max: Type | null = null
-//     let minExclusive = false
-//     let maxExclusive = false
-//     let orOps = [...splitExpressions(TypeExpression.is(type) ? type.value : type, ops.or)]
-//     if (orOps.length > 1) {
-//         throw new Error(`Numeric | types not implemented yet`)
-//     }
-//     function getValuesFromConstraint(e: Expression) {
-//         if (Reference.is(e)) {
-//             if (e.name === types.Number.name) {
-//                 precision = 2
-//             }
-//             else if (e.name === types.Integer.name) {
-//                 precision = 0
-//             }
-//         }
-//         else if (BinaryExpression.is(e)) {
-//             if (DotExpression.is(e.left)) {
-//                 if (!Type.is(e.right)) {
-//                     throw new Error(`Expected right side of op to be a type: ${toCodeString(e)}`)
-//                 }
-//                 if (e.operator === ops.is) {
-//                     getValuesFromConstraint(e.right)
-//                 }
-//                 else if (e.operator === ops.greaterThan) {
-//                     min = e.right
-//                     minExclusive = true
-//                 }
-//                 else if (e.operator === ops.greaterThanOrEqual) {
-//                     min = e.right
-//                 }
-//                 else if (e.operator === ops.lessThan) {
-//                     max = e.right
-//                     maxExclusive = true
-//                 }
-//                 else if (e.operator === ops.lessThanOrEqual) {
-//                     max = e.right
-//                 }
-//             }
-//         }
-//     }
-//     for (let e of splitExpressions(orOps[0], ops.and)) {
-//         getValuesFromConstraint(e)
-//     }
-//     return new NumberType({
-//         precision,
-//         min: Type.is(min) ? min as any : new Literal({ location: type.location, value: min, integer: precision === 0 }),
-//         max: Type.is(max) ? max as any  : new Literal({ location: type.location, value: max, integer: precision === 0 }),
-//         minExclusive,
-//         maxExclusive
-//     })
-// }
-
-// function toTypeExpression(type: NumberType) {
-//     if (!type.minExclusive && !type.maxExclusive) {
-//         if (type.min == null && type.max == null) {
-//             return type.precision === 0 ? types.Integer : types.Number
-//         }
-//     }
-//     let constraints = new Array<Expression>()
-//     constraints.push(
-//         new BinaryExpression({
-//             location: type.location,
-//             left: new DotExpression({}),
-//             operator: ops.is,
-//             right: type.precision === 0 ? types.Integer : types.Number
-//         })
-//     )
-//     if (type.min != null) {
-//         // add minimum constraint
-//         constraints.push(
-//             new BinaryExpression({
-//                 location: type.location,
-//                 left: new DotExpression({}),
-//                 operator: type.minExclusive ? ops.greaterThan : ops.greaterThanOrEqual,
-//                 right: type.min
-//             })
-//         )
-//     }
-//     if (type.max != null) {
-//         // add maximum constraint
-//         constraints.push(
-//             new BinaryExpression({
-//                 location: type.location,
-//                 left: new DotExpression({}),
-//                 operator: type.maxExclusive ? ops.lessThan : ops.lessThanOrEqual,
-//                 right: type.max
-//             })
-//         )
-//     }
-//     return new TypeExpression({ value: combineExpressions(constraints, ops.and) })
-// }
 
 type NumberLiteral = Literal & { value: number }
 type LiteralNumberType = NumberType & { min: NumberLiteral | null, max: NumberLiteral | null}
@@ -138,6 +39,13 @@ export function isNumberSubtype(a: NumberType, b: NumberType): boolean | null {
     }
     return null
 }
+
+const anyNumber = numberType(null)
+const positive = numberType(0, null, true)
+const positiveOrZero = numberType(0, null)
+const zero = numberType(0, 0, false, false)
+const negative = numberType(null, 0, true)
+const negativeOrZero = numberType(null, 0)
 
 /**
  * Returns null if the types are mutually incompatible.
@@ -185,24 +93,154 @@ export function numberType(min: number | Expression | null, max: number | Expres
     return new NumberType({ min: minE, max: maxE, minExclusive: minE ? minExclusive : false, maxExclusive: maxE ? maxExclusive : false })
 }
 
-export function inferOperationType(a: Type, b: Type, operator: string, c: EvaluateContext) {
+export function inferUnaryOperationType(a: Type, operator: string, c: EvaluateContext) {
+    if (NumberType.is(a)) {
+        switch (operator) {
+            case "abs":
+                //  abs [a0,a1]
+                //  if a0 == null || a1 == null
+                //      [0, null]
+                //  if sign(a0) == sign(a1)
+                //      [min(abs(a0),abs(a1)), max(abs(a0),abs(a1))]
+                //  else
+                //      [0, max(abs(a0),abs(a1))]
+                {
+                    if (a.min == null || a.max == null) {
+                        // if either end is unbounded then we are any number >= 0
+                        return numberType(0, null)
+                    }
+                    let sameSign = Literal.is(a.min) && Literal.is(a.max) && Math.sign(a.min.value as number) === Math.sign(a.max.value as number) 
+                    let absMin = evaluate(new UnaryExpression({ operator, argument: a.min}), c)
+                    let absMax = evaluate(new UnaryExpression({ operator, argument: a.max}), c)
+                    let min = sameSign ? evaluate(new BinaryExpression({
+                        left: absMin,
+                        operator: "min",
+                        right: absMax,
+                    }), c) : new Literal({ value: 0 })
+                    let max = evaluate(new BinaryExpression({
+                        left: absMin,
+                        operator: "max",
+                        right: absMax,
+                    }), c)
+                    let minExclusive = sameSign ? a.minExclusive || a.maxExclusive : false
+                    let maxExclusive = a.minExclusive || a.maxExclusive
+                    return numberType(min, max, minExclusive, maxExclusive)
+                }
+            case "inv":
+                //  inv [a0,a1]
+                {
+                    let sameSign = Literal.is(a.min) && Literal.is(a.max) && Math.sign(a.min.value as number) === Math.sign(a.max.value as number) 
+                    let hasZero = !sameSign
+                    let min = a.max ? evaluate(new UnaryExpression({ operator, argument: a.max }), c) : null
+                    let max = a.min ? evaluate(new UnaryExpression({ operator, argument: a.min }), c) : null
+                    let minExclusive = a.maxExclusive
+                    let maxExclusive = a.minExclusive
+                    if (hasZero) {
+                        return new UnionType({
+                            types: [
+                                numberType(null, max, false, maxExclusive),
+                                numberType(min, null, minExclusive, false),
+                            ]
+                        })
+                    }
+                    else {
+                        return numberType(min, max, minExclusive, maxExclusive)
+                    }
+                }
+        }
+    }
+    return a
+}
+
+export function inferBinaryOperationType(a: Type, b: Type, operator: string, c: EvaluateContext) {
     if (NumberType.is(a) && NumberType.is(b)) {
-        switch(operator) {
+        switch (operator) {
             case "+":
+                //  [a0,a1] + [b0, b1]
+                //  -> [a0 + b0, a1 + b1]
             case "-":
-                let min = a.min && b.min ? new BinaryExpression({ left: a.min, operator, right: b.min }) : null
-                let max = a.max && b.max ? new BinaryExpression({ left: a.max, operator, right: b.max }) : null
-                let minExclusive = a.minExclusive || b.minExclusive
-                let maxExclusive = a.maxExclusive || b.maxExclusive
-                return new NumberType({
-                    min: min ? evaluate(min, c) : null,
-                    max: max ? evaluate(max, c) : null,
-                    minExclusive,
-                    maxExclusive
-                })
+                //  [a0,a1] - [b0, b1]
+                //  -> [a0 - b0, a1 - b1]
+            case "min":
+                //  [a0,a1] min [b0, b1]
+                //  -> [a0 min b0, a1 min b1]
+            case "max":
+                //  [a0,a1] max [b0, b1]
+                //  -> [a0 max b0, a1 max b1]
+                {
+                    let min = a.min && b.min ? new BinaryExpression({ left: a.min, operator, right: b.min }) : null
+                    let max = a.max && b.max ? new BinaryExpression({ left: a.max, operator, right: b.max }) : null
+                    let minExclusive = a.minExclusive || b.minExclusive
+                    let maxExclusive = a.maxExclusive || b.maxExclusive
+                    return new NumberType({
+                        min: min ? evaluate(min, c) : null,
+                        max: max ? evaluate(max, c) : null,
+                        minExclusive,
+                        maxExclusive,
+                    })
+                }
             case "*":
-                //  need min function
-                //  need max function
+                //  [a0,a1] * [b0,b1]
+                //  -> [min(a0*b0,a0*b1,a1*b0,a1*b1), max((a0*b0,a0*b1,a1*b0,a1*b1))]
+            case "**":
+                //  [a0,a1] ** [b0,b1]
+                //  -> [min(a0**b0,a0**b1,a1**b0,a1**b1), max((a0**b0,a0**b1,a1**b0,a1**b1))]
+                    {
+                    let a1b1 = a.min && b.min ? new BinaryExpression({ left: a.min, operator, right: b.min }) : null
+                    let a1b2 = a.min && b.max ? new BinaryExpression({ left: a.min, operator, right: b.max }) : null
+                    let a2b1 = a.max && b.min ? new BinaryExpression({ left: a.max, operator, right: b.min }) : null
+                    let a2b2 = a.max && b.max ? new BinaryExpression({ left: a.max, operator, right: b.max }) : null
+                    let exclusive = a.minExclusive || a.maxExclusive || b.minExclusive || b.maxExclusive
+                    let expressions = [a1b1, a1b2, a2b1, a2b2].filter(Boolean) as Expression[]
+                    let min = expressions.length > 0 ? combineExpressions(expressions, "min") : null
+                    let max = expressions.length > 0 ? combineExpressions(expressions, "max") : null
+                    return new NumberType({
+                        min: min ? evaluate(min, c) : null,
+                        max: max ? evaluate(max, c) : null,
+                        minExclusive: exclusive,
+                        maxExclusive: exclusive,
+                    })
+                }
+            case "/":
+                //  [a0,a1] / [b0,b1]
+                //  -> [a0,a1] * inv([b0,b1])
+                {
+                    // get the inverse of the right hand operand
+                    let invB = inferUnaryOperationType(b, "inv", c)
+                    if (NumberType.is(invB)) {
+                        return inferBinaryOperationType(a, invB, "*", c)
+                    }
+                    else {
+                        // some number, let's not get too complicated.
+                        return anyNumber
+                    }
+                }
+            case "%":
+                //  [a0,a1] % [b0,b1]
+                {
+                    if (isNumberSubtype(a, zero)) {
+                        return zero
+                    }
+                    if (b.min == null || b.max == null) {
+                        return anyNumber
+                    }
+                    let a_alwaysPositiveOrZero = isNumberSubtype(a, positiveOrZero)
+                    let a_alwaysNegativeOrZero = !a_alwaysPositiveOrZero && isNumberSubtype(a, negativeOrZero)
+                    // continue from here...........
+                    let zeroLiteral = new Literal({ value: 0 })
+                    let absMax = evaluate(new UnaryExpression({ operator: "abs", argument: b.max }), c)
+                    if (a_alwaysPositiveOrZero) {
+                        // if a > 0 then a % b is [0,b1]
+                        return numberType(zeroLiteral, absMax, false, true)
+                    }
+                    let negativeAbsMax = evaluate(new UnaryExpression({ operator: "-", argument: absMax }), c)
+                    if (a_alwaysNegativeOrZero) {
+                        // if a < 0 then a % b is [-b1,0]
+                        return numberType(negativeAbsMax, zeroLiteral, true, false)                        
+                    }
+                    // a % b is [-b1,b1]
+                    return numberType(negativeAbsMax, absMax, true, true)
+                }
         }
     }
     return a

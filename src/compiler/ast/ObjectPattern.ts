@@ -4,6 +4,7 @@ This file was generated from ion source. Do not edit.
 import * as _Object from './ion/Object';
 import * as Pattern from './Pattern';
 import * as Expression from './Expression';
+import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
@@ -13,7 +14,7 @@ import * as _Array from './ion/Array';
 import * as PatternProperty from './PatternProperty';
 import * as RestElement from './RestElement';
 import * as Class from './ion/Class';
-export class ObjectPattern implements _Object.Object , Pattern.Pattern , Expression.Expression , Node.Node {
+export class ObjectPattern implements _Object.Object , Pattern.Pattern , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
@@ -25,6 +26,7 @@ export class ObjectPattern implements _Object.Object , Pattern.Pattern , Express
         'ion_Object',
         'Pattern',
         'Expression',
+        'Typed',
         'Node'
     ]);
     constructor({location = null, type = null, resolved = false, kind = 'Object', properties}: {

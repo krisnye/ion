@@ -7,6 +7,7 @@ import * as Meta from './Meta';
 import * as Expression from './Expression';
 import * as Declaration from './Declaration';
 import * as Node from './Node';
+import * as Typed from './Typed';
 import * as Statement from './Statement';
 import * as SideEffect from './SideEffect';
 import * as Location from './Location';
@@ -17,7 +18,7 @@ import * as Boolean from './ion/Boolean';
 import * as Pattern from './Pattern';
 import * as Identifier from './Identifier';
 import * as Class from './ion/Class';
-export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Statement.Statement , SideEffect.SideEffect {
+export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Typed.Typed , Statement.Statement , SideEffect.SideEffect {
     readonly location: Location.Location | Null.Null;
     readonly meta: _Array.Array<Property.Property> | Null.Null;
     readonly type: Expression.Expression | Null.Null;
@@ -38,6 +39,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
         'Expression',
         'Declaration',
         'Node',
+        'Typed',
         'Statement',
         'SideEffect'
     ]);

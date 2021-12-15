@@ -6,12 +6,13 @@ import * as Identifier from './Identifier';
 import * as Pattern from './Pattern';
 import * as Node from './Node';
 import * as Expression from './Expression';
+import * as Typed from './Typed';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as String from './ion/String';
 import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
-export class Declarator implements _Object.Object , Identifier.Identifier , Pattern.Pattern , Node.Node , Expression.Expression {
+export class Declarator implements _Object.Object , Identifier.Identifier , Pattern.Pattern , Node.Node , Expression.Expression , Typed.Typed {
     readonly location: Location.Location | Null.Null;
     readonly name: String.String;
     readonly type: Expression.Expression | Null.Null;
@@ -23,7 +24,8 @@ export class Declarator implements _Object.Object , Identifier.Identifier , Patt
         'Identifier',
         'Pattern',
         'Node',
-        'Expression'
+        'Expression',
+        'Typed'
     ]);
     constructor({location = null, name, type = null, resolved = false}: {
         location?: Location.Location | Null.Null,

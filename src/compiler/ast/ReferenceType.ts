@@ -7,13 +7,14 @@ import * as Type from './Type';
 import * as Identifier from './Identifier';
 import * as Expression from './Expression';
 import * as Node from './Node';
+import * as Typed from './Typed';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as String from './ion/String';
 import * as Boolean from './ion/Boolean';
 import * as _Array from './ion/Array';
 import * as Class from './ion/Class';
-export class ReferenceType implements _Object.Object , Reference.Reference , Type.Type , Identifier.Identifier , Expression.Expression , Node.Node {
+export class ReferenceType implements _Object.Object , Reference.Reference , Type.Type , Identifier.Identifier , Expression.Expression , Node.Node , Typed.Typed {
     readonly location: Location.Location | Null.Null;
     readonly name: String.String;
     readonly type: Expression.Expression | Null.Null;
@@ -27,7 +28,8 @@ export class ReferenceType implements _Object.Object , Reference.Reference , Typ
         'Type',
         'Identifier',
         'Expression',
-        'Node'
+        'Node',
+        'Typed'
     ]);
     constructor({
         location = null,
