@@ -1,12 +1,19 @@
 import { strict as assert } from "assert"
 import { Identifier, NumberType, Type, ObjectType, Property, Reference, ReferenceType, UnionType, IntersectionType } from "../../ast"
 import { isSubtype } from "../newTypeAnalysis"
-import { combineNumberTypes, isNumberSubtype, numberNotEqual, numberType } from "../numberTypes"
+import { numberTypesAdjacent, intersectionOfNumberTypes, isNumberSubtype, numberNotEqual, numberType } from "../numberTypes"
 import * as types from "../../types"
 import toCodeString from "../../toCodeString"
 import normalize from "../normalize"
 
-assert.strictEqual(combineNumberTypes([numberType(10), numberType(20)]), null)
+assert.strictEqual(intersectionOfNumberTypes([numberType(10), numberType(20)]), null)
+
+// numbertypes overlapping
+assert.strictEqual(numberTypesAdjacent(numberType(1, 2, true, true), numberType(3, 4, true, true)), false)
+assert.strictEqual(numberTypesAdjacent(numberType(1, 2, true, true), numberType(2, 3, true, true)), false)
+assert.strictEqual(numberTypesAdjacent(numberType(1, 2, true, false), numberType(2, 3, true, true)), true)
+assert.strictEqual(numberTypesAdjacent(numberType(1, 2, true, true), numberType(2, 3, false, true)), true)
+assert.strictEqual(numberTypesAdjacent(numberType(1, 2, true, true), numberType(2, 3, true, true)), false)
 
 // mutually exclusive ranges
 assert.strictEqual(isNumberSubtype(numberType(10, 20), numberType(30, 40)), false)

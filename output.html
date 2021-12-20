@@ -521,10 +521,15 @@ class Number
                     <header><span>Source</span></header>
                     <p>
 
-sample = () -&gt;
-    a: 0..2 = 1
-    b: 2..4 = 3
-    c = a ** b
+sample = (a: Number) -&gt;
+    b: 1 .. 2 = 1
+    c: 3 .. 4 = 3
+    d = b * c
+    // notZero: 1 .. &lt;2 | &gt;2 .. 20
+    // divided = 1000 / notZero
+    // []
+    //     if a &gt; 0
+    //         a
 
 // class Vector2
 //     x: Number
@@ -553,7 +558,7 @@ sample = () -&gt;
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,13 +1,7 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,18 +1,9 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
@@ -583,7 +588,7 @@ sample = () -&gt;
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>sample</del> = <del>() -&gt;</del></span>
+            <span class="d2h-code-line-ctn"><del>sample</del> <del>= (</del>a: Number<del>) -&gt;</del></span>
         </div>
     </td>
 </tr><tr>
@@ -594,7 +599,7 @@ sample = () -&gt;
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>    a</del>: <del>0..</del>2 = <del>1</del></span>
+            <span class="d2h-code-line-ctn">    <del>b:</del> <del>1</del> <del>.. 2 = 1</del></span>
         </div>
     </td>
 </tr><tr>
@@ -605,7 +610,7 @@ sample = () -&gt;
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>    b:</del> <del>2..4</del> = <del>3</del></span>
+            <span class="d2h-code-line-ctn"><del>    c</del>: <del>3</del> <del>.. 4 </del>= <del>3</del></span>
         </div>
     </td>
 </tr><tr>
@@ -616,7 +621,7 @@ sample = () -&gt;
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    <del>c = a ** b</del></span>
+            <span class="d2h-code-line-ctn"><del>    d</del> <del>=</del> <del>b</del> <del>*</del> <del>c</del></span>
         </div>
     </td>
 </tr><tr>
@@ -627,6 +632,29 @@ sample = () -&gt;
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>    &#x2F;&#x2F;</del> <del>notZero:</del> <del>1</del> <del>..</del> <del>&lt;2</del> <del>| &gt;2 .. 20</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">8</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>&#x2F;&#x2F; divided = 1000 &#x2F; notZero</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">9</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>    &#x2F;&#x2F; []</del></span>
         </div>
     </td>
 </tr><tr>
@@ -648,7 +676,7 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>    const sample = function () =&gt; {</ins></span>
+            <span class="d2h-code-line-ctn"><ins>    const sample = function (</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -659,7 +687,7 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>        var</ins> <ins>a: (&gt;=0..&lt;=2) </ins>= <ins>1</ins></span>
+            <span class="d2h-code-line-ctn"><ins>        const</ins> a: Number</span>
         </div>
     </td>
 </tr><tr>
@@ -670,7 +698,7 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>        var b</ins>: <ins>(&gt;=</ins>2<ins>..&lt;=4)</ins> = <ins>3</ins></span>
+            <span class="d2h-code-line-ctn">    <ins>)</ins> <ins>=&gt;</ins> <ins>{</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -681,7 +709,7 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>        const</ins> <ins>c</ins> = <ins>(a ** b)</ins></span>
+            <span class="d2h-code-line-ctn"><ins>        var b</ins>: <ins>(&gt;=1..&lt;=2)</ins> = <ins>1</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -692,7 +720,7 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>}</ins></span>
+            <span class="d2h-code-line-ctn"><ins>        var</ins> <ins>c:</ins> <ins>(&gt;=3..&lt;=4)</ins> <ins>=</ins> <ins>3</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -703,29 +731,29 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>        const</ins> <ins>d</ins> <ins>=</ins> <ins>(b</ins> <ins>*</ins> <ins>c)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>}</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
             <span class="d2h-code-line-ctn"><ins>}</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">8</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; class Vector2</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">9</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F;     x: Number</span>
         </div>
     </td>
 </tr><tr>
@@ -736,7 +764,7 @@ sample = () -&gt;
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F;     y: Number</span>
+            <span class="d2h-code-line-ctn">    &#x2F;&#x2F;     if a &gt; 0</span>
         </div>
     </td>
 </tr><tr>
@@ -747,7 +775,7 @@ sample = () -&gt;
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; sample = Vector2(0, 0)</span>
+            <span class="d2h-code-line-ctn">    &#x2F;&#x2F;         a</span>
         </div>
     </td>
 </tr><tr>
@@ -758,12 +786,66 @@ sample = () -&gt;
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; min(1, 2)</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
       <div class="line-num1">13</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; class Vector2</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">14</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F;     x: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">15</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F;     y: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">16</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; sample = Vector2(0, 0)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">17</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; min(1, 2)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">18</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -799,7 +881,7 @@ sample = () -&gt;
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,5 +1,5 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,6 +1,6 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -820,7 +902,18 @@ sample = () -&gt;
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const sample = function () =&gt; {</span>
+            <span class="d2h-code-line-ctn">    const sample = function (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        const a: Number</span>
         </div>
     </td>
 </tr><tr>
@@ -831,18 +924,18 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const <ins>$aa.</ins>sample = function () =&gt; {</span>
+            <span class="d2h-code-line-ctn">    const <ins>$aa.</ins>sample = function (</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
 <div class="line-num2">3</div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a: (&gt;=0..&lt;=2) = 1</span>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        const a: <ins>$</ins>Number</span>
         </div>
     </td>
 </tr><tr>
@@ -853,7 +946,7 @@ sample = () -&gt;
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b: (&gt;=2..&lt;=4) = 3</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
@@ -864,7 +957,18 @@ sample = () -&gt;
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        const c = (a ** b)</span>
+            <span class="d2h-code-line-ctn">        var b: (&gt;=1..&lt;=2) = 1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var c: (&gt;=3..&lt;=4) = 3</span>
         </div>
     </td>
 </tr>
@@ -916,7 +1020,7 @@ sample = () -&gt;
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const $aa.sample = function () =&gt; {</span>
+            <span class="d2h-code-line-ctn">    const $aa.sample = function (</span>
         </div>
     </td>
 </tr><tr>
@@ -927,7 +1031,7 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const $aa.sample = function <ins>$aa.sample</ins>() =&gt; {</span>
+            <span class="d2h-code-line-ctn">    const $aa.sample = function <ins>$aa.sample</ins>(</span>
         </div>
     </td>
 </tr><tr>
@@ -938,7 +1042,7 @@ sample = () -&gt;
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a: (&gt;=0..&lt;=2) = 1</span>
+            <span class="d2h-code-line-ctn">        const a: $Number</span>
         </div>
     </td>
 </tr><tr>
@@ -949,7 +1053,7 @@ sample = () -&gt;
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b: (&gt;=2..&lt;=4) = 3</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
@@ -960,7 +1064,7 @@ sample = () -&gt;
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        const c = (a ** b)</span>
+            <span class="d2h-code-line-ctn">        var b: (&gt;=1..&lt;=2) = 1</span>
         </div>
     </td>
 </tr>
@@ -975,10 +1079,12 @@ sample = () -&gt;
                 <td>
                     <header><span>builtinFunctionsToOps</span></header>
                     <p>module aa.sample {
-    const $aa.sample = function $aa.sample() =&gt; {
-        var a: (&gt;=0..&lt;=2) = 1
-        var b: (&gt;=2..&lt;=4) = 3
-        const c = (a ** b)
+    const $aa.sample = function $aa.sample(
+        const a: $Number
+    ) =&gt; {
+        var b: (&gt;=1..&lt;=2) = 1
+        var c: (&gt;=3..&lt;=4) = 3
+        const d = (b * c)
     }
 }</p>
                 </td>
@@ -986,10 +1092,12 @@ sample = () -&gt;
                 <td>
                     <header><span>createConditionalDeclarations</span></header>
                     <p>module aa.sample {
-    const $aa.sample = function $aa.sample() =&gt; {
-        var a: (&gt;=0..&lt;=2) = 1
-        var b: (&gt;=2..&lt;=4) = 3
-        const c = (a ** b)
+    const $aa.sample = function $aa.sample(
+        const a: $Number
+    ) =&gt; {
+        var b: (&gt;=1..&lt;=2) = 1
+        var c: (&gt;=3..&lt;=4) = 3
+        const d = (b * c)
     }
 }</p>
                 </td>
@@ -1013,7 +1121,7 @@ sample = () -&gt;
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,7 +1,7 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,9 +1,13 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1034,7 +1142,18 @@ sample = () -&gt;
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const $aa.sample = function $aa.sample() =&gt; {</span>
+            <span class="d2h-code-line-ctn">    const $aa.sample <del>= function $aa.sample</del>(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        const a: <del>$</del>Number</span>
         </div>
     </td>
 </tr><tr>
@@ -1045,40 +1164,29 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const $aa.sample<ins>:</ins> <ins>() =&gt; (&gt;=0..&lt;=16) </ins>= function $aa.sample() =&gt; {</span>
+            <span class="d2h-code-line-ctn">    const $aa.sample<ins>:</ins> (</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
 <div class="line-num2">3</div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a: (&gt;=0..&lt;=2) = 1</span>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        const a: Number</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
 <div class="line-num2">4</div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b: (&gt;=2..&lt;=4) = 3</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">5</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        const c = (a ** b)</span>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; (&gt;=3..&lt;=8) = function $aa.sample(</span>
         </div>
     </td>
 </tr><tr>
@@ -1089,13 +1197,68 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        const c<ins>:</ins> <ins>(&gt;=0..&lt;=16) </ins>= (a ** b)</span>
+            <span class="d2h-code-line-ctn">        const a: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var b: (&gt;=1..&lt;=2) = 1</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">6</div>
-<div class="line-num2">6</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var c: (&gt;=3..&lt;=4) = 3</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        const d = (b * c)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        const d<ins>:</ins> <ins>(&gt;=3..&lt;=8) </ins>= (b * c)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">10</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1105,7 +1268,7 @@ sample = () -&gt;
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">7</div>
+      <div class="line-num1">9</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -1117,12 +1280,34 @@ sample = () -&gt;
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">7</div>
+<div class="line-num2">11</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>}: (() =&gt; (&gt;=0..&lt;=16))</ins></span>
+            <span class="d2h-code-line-ctn"><ins>}: ((</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const a: Number</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">) =&gt; (&gt;=3..&lt;=8))</span>
         </div>
     </td>
 </tr>
@@ -1137,12 +1322,18 @@ sample = () -&gt;
                 <td>
                     <header><span>identity</span></header>
                     <p>module aa.sample {
-    const $aa.sample: () =&gt; (&gt;=0..&lt;=16) = function $aa.sample() =&gt; {
-        var a: (&gt;=0..&lt;=2) = 1
-        var b: (&gt;=2..&lt;=4) = 3
-        const c: (&gt;=0..&lt;=16) = (a ** b)
+    const $aa.sample: (
+        const a: Number
+    ) =&gt; (&gt;=3..&lt;=8) = function $aa.sample(
+        const a: Number
+    ) =&gt; {
+        var b: (&gt;=1..&lt;=2) = 1
+        var c: (&gt;=3..&lt;=4) = 3
+        const d: (&gt;=3..&lt;=8) = (b * c)
     }
-}: (() =&gt; (&gt;=0..&lt;=16))</p>
+}: ((
+    const a: Number
+) =&gt; (&gt;=3..&lt;=8))</p>
                 </td>
             </tr><tr class="channel">
             <td>
@@ -1831,7 +2022,7 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; (&lt;0) &amp; Number | (&gt;=0) &amp; Number = function $abs(</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; Number = function $abs(</span>
         </div>
     </td>
 </tr><tr>
@@ -1886,7 +2077,7 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            cond a<ins>: (&lt;0) &amp; Number</ins></span>
+            <span class="d2h-code-line-ctn">            cond a<ins>: Number</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1930,7 +2121,7 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>}:</ins> <ins>((&lt;0) &amp; Number) </ins>else {</span>
+            <span class="d2h-code-line-ctn">        <ins>}:</ins> <ins>(Number) </ins>else {</span>
         </div>
     </td>
 </tr><tr>
@@ -1941,7 +2132,7 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            cond a<ins>: (&gt;=0) &amp; Number</ins></span>
+            <span class="d2h-code-line-ctn">            cond a<ins>: Number</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1974,7 +2165,7 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>}: ((&gt;=0) &amp; Number)</ins></span>
+            <span class="d2h-code-line-ctn">        <ins>}: (Number)</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -2029,7 +2220,7 @@ sample = () -&gt;
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">) =&gt; (&lt;0) &amp; Number | (&gt;=0) &amp; Number)</span>
+            <span class="d2h-code-line-ctn">) =&gt; Number)</span>
         </div>
     </td>
 </tr>
@@ -2046,20 +2237,20 @@ sample = () -&gt;
                     <p>module abs {
     const $abs: (
         const a: Number
-    ) =&gt; (&lt;0) & Number | (&gt;=0) & Number = function $abs(
+    ) =&gt; Number = function $abs(
         const a: Number
     ) =&gt; {
         if (a &lt; 0) {
-            cond a: (&lt;0) & Number
+            cond a: Number
             - a
-        }: ((&lt;0) & Number) else {
-            cond a: (&gt;=0) & Number
+        }: (Number) else {
+            cond a: Number
             a
-        }: ((&gt;=0) & Number)
+        }: (Number)
     }
 }: ((
     const a: Number
-) =&gt; (&lt;0) & Number | (&gt;=0) & Number)</p>
+) =&gt; Number)</p>
                 </td>
             </tr><tr class="channel">
             <td>

@@ -44,6 +44,9 @@ Cross platform modeling language
     - [x] inv operator
     - [x] ** operator
     - [ ] Conditional
+      - [-] Scalar Conditionals
+      - [-] Vector Conditionals (within Array)
+      - [X] Maybe only use SpreadType or single Type.
   - [ ] array bounds checking
   - [ ] class inheritance
   - [x] We need a map { key -> value } format that is not ambiguous with array destructuring

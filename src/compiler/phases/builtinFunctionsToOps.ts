@@ -2,7 +2,7 @@ import { traverse, skip, replace, Lookup } from "@glas/traverse";
 import combineExpressions from "../analysis/combineExpressions";
 import { binaryOps, unaryOps } from "../analysis/evaluate";
 import { isSubtype } from "../analysis/newTypeAnalysis";
-import { combineNumberTypes, numberType, isLiteralNumberType } from "../analysis/numberTypes";
+import { numberType, isLiteralNumberType } from "../analysis/numberTypes";
 import { Assignment, BinaryExpression, Call, ClassDeclaration, Type, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, Variable, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation, Declaration, For, SideEffect, UnaryExpression, NumberType, IntersectionType, ObjectType, ArrayPattern, PatternProperty, RestElement, ObjectPattern, Argument } from "../ast";
 import { hasNodesOfType, SemanticError, isTypeName, isMetaName, getLast } from "../common";
 import { Options } from "../Compiler"

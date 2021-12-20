@@ -1,9 +1,10 @@
-import { Expression, BinaryExpression, UnaryExpression, TypeExpression, NumberType, NeverType, UnionType, IntersectionType } from "../ast";
+import { Expression, BinaryExpression, UnaryExpression, TypeExpression, NumberType, NeverType, UnionType, IntersectionType, Node, Type } from "../ast";
 import toCodeString from "../toCodeString";
 import { memoize } from "../common";
 import { traverse } from "@glas/traverse";
 import normalize from "./normalize";
 import splitExpressions from "./splitExpressions";
+import { combineAnyNumberTypes, intersectionOfNumberTypes, isLiteralNumberType } from "./numberTypes";
 
 function find<T>(items: Iterable<T>, predicate: (value: T) => boolean): T | null {
     for (let item of items) {
@@ -18,9 +19,29 @@ function equals(a: Expression, b: Expression) {
     return toCodeString(a) === toCodeString(b)
 }
 
+function removeDuplicates(nodes: Array<Type>) {
+    let found = new Set<string>()
+    let removed = nodes.filter(node => {
+        let cs = toCodeString(node)
+        if (found.has(cs)) {
+            return false
+        }
+        found.add(cs)
+        return true
+    })
+    return removed.length < nodes.length ? removed : nodes
+}
+
 const simplify = memoize(function(e: Expression): Expression {
-    if ((IntersectionType.is(e) || UnionType.is(e)) && e.types.length === 1) {
-        e = e.types[0]
+    if ((IntersectionType.is(e) || UnionType.is(e))) {
+        // merge any adjacent number types
+        let types = combineAnyNumberTypes(removeDuplicates(e.types as any))
+        if (types.length === 1) {
+            e = types[0]
+        }
+        else {
+            e = e.patch({ types })
+        }
     }
 
     e = normalize(e)

@@ -2,7 +2,8 @@ import { traverse, skip, replace, Lookup } from "@glas/traverse";
 import combineExpressions from "../analysis/combineExpressions";
 import { binaryOps, unaryOps } from "../analysis/evaluate";
 import { isSubtype } from "../analysis/newTypeAnalysis";
-import { combineNumberTypes, numberType, isLiteralNumberType } from "../analysis/numberTypes";
+import { intersectionOfNumberTypes, numberType, isLiteralNumberType } from "../analysis/numberTypes";
+import simplify from "../analysis/simplify";
 import splitExpressions from "../analysis/splitExpressions";
 import { Assignment, BinaryExpression, Call, ClassDeclaration, Type, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, Variable, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation, Declaration, For, SideEffect, UnaryExpression, NumberType, IntersectionType, ObjectType, ArrayPattern, PatternProperty, RestElement, ObjectPattern, Return } from "../ast";
 import { hasNodesOfType, SemanticError, isTypeName, isMetaName } from "../common";
@@ -222,13 +223,6 @@ export default function semanticChecks(
                             break
                         }
                     }
-                }
-                // combine NumberTypes > 1
-                let numberTypes = types.filter(isLiteralNumberType)
-                if (numberTypes.length > 1) {
-                    node = node.patch({
-                        types: [...types.filter(value => !isLiteralNumberType(value)), combineNumberTypes(numberTypes)!]
-                    })
                 }
             }
             if (UnaryExpression.is(node)) {

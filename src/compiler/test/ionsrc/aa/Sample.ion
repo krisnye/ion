@@ -1,9 +1,14 @@
 
 
-sample = () ->
-    a: 0..2 = 1
-    b: 2..4 = 3
-    c = a ** b
+sample = (a: Number) ->
+    b: 1 .. 2 = 1
+    c: 3 .. 4 = 3
+    d = b * c
+    // notZero: 1 .. <2 | >2 .. 20
+    // divided = 1000 / notZero
+    // []
+    //     if a > 0
+    //         a
 
 // class Vector2
 //     x: Number

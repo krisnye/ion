@@ -80,7 +80,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         return node.id ? `${s(node.id)} = ${s(node.value)}` : s(node.value)
     },
     ArrayExpression(node) {
-        return `[ ${node.body.map(toCodeString).join(', ')} ]`
+        return block(node.body, '[', ']')
     },
     UnionType(node) {
         return `${node.types.map(toCodeString).join(' | ')}`
