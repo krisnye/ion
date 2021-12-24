@@ -17,6 +17,7 @@ import { inferBinaryOperationType, inferUnaryOperationType, numberType } from ".
 import { isSubtype } from "../analysis/newTypeAnalysis";
 import splitExpressions from "../analysis/splitExpressions";
 import { operatorToNumberTypes, reflectOperators } from "../analysis/normalize";
+import { isAbsolutePath } from "../pathFunctions";
 
 function createCombinedTypeExpression(type: ast.TypeExpression, name: String, knownTrueExpression: ast.Expression, location: ast.Location) {
     // now we convert the node assert to a type expression (by replacing variable name references to DotExpressions) so we can combine it.
@@ -56,6 +57,22 @@ function createCombinedTypeExpression(type: ast.TypeExpression, name: String, kn
     // console.log("--------> " + toCodeString(combinedType))
     return combinedType
     // return simplify(new ast.TypeExpression({ location, value: combinedType }))
+}
+
+function getInstanceType(node: ast.ReferenceType, c: EvaluateContext) {
+    // a Reference to Array<T> should yield Function & { static: properties }
+    // a ReferenceType to Array<T> should yield { get(index): T, length: >= 0 }
+    let declarator = getDeclarator(node, c)
+    if (declarator == null) {
+        throw SemanticError(`Reference not found: ${node.name}`, node)
+    }
+    let declaration = ast.Declaration.is(declarator) ? declarator : c.lookup.findAncestor(declarator, ast.Declaration.is)!
+    if (ast.ClassDeclaration.is(declaration)) {
+        return declaration.instanceType
+    }
+    else {
+        return declarator.type
+    }
 }
 
 // function callToObjectTypeToProperties(call: ast.Call, c: EvaluateContext, errors: Array<Error>) {
@@ -109,12 +126,13 @@ const binaryOperationsType = {
 }
 
 function getDeclarator(node: ast.Reference, c: EvaluateContext) {
-    let scope = c.scopes.get(node)
+    let scope = c.scopes.get(isAbsolutePath(node.name) ? null : node)
     let declarator = scope[node.name]
     return declarator
 }
 
 function getReferencedValue(node: ast.Reference, c: EvaluateContext): Expression | ast.Declaration | null {
+    //  broke here, because external functions don't have scopes... 
     let declarator = getDeclarator(node, c)
     //  this is currently broke and should be fixed, caused by external pre-dependencies not being consistently declared
     //  with ancestor lookups
@@ -133,25 +151,33 @@ function getAncestorExpressionType(node, c: EvaluateContext) {
     return type
 }
 
-function getMemberType(objectType: ast.ObjectType, objectProperty: ast.Expression | ast.Identifier, c: EvaluateContext) {
-    for (let property of objectType.properties as Array<Property>) {
-        let matches = false
-        if (ast.Identifier.is(property.id) && ast.Identifier.is(objectProperty)) {
-            matches = property.id.name === objectProperty.name
-        }
-        else if (Expression.is(property.id) && Expression.is(objectProperty)) {
-            matches = toCodeString(property.id) === toCodeString(objectProperty)
-        }
-        else {
-            console.log("CHECK TYPES HERE-------")
-        }
-        // let matches = property.key
-        // console.log({ pkey: property.key, np: node.property })
-        if (matches) {
-            return property.value
+function getMemberType(objectType: ast.Type, objectProperty: ast.Expression | ast.Identifier, c: EvaluateContext) {
+    if (ast.ReferenceType.is(objectType)) {
+        objectType = getInstanceType(objectType, c)
+    }
+    if (ast.IntersectionType.is(objectType)) {
+        objectType = objectType.types.find(ast.ObjectType.is)!
+    }
+    if (ast.ObjectType.is(objectType)) {
+        for (let property of objectType.properties as Array<Property>) {
+            let matches = false
+            if (ast.Identifier.is(property.id) && ast.Identifier.is(objectProperty)) {
+                matches = property.id.name === objectProperty.name
+            }
+            else if (Expression.is(property.id) && Expression.is(objectProperty)) {
+                matches = toCodeString(property.id) === toCodeString(objectProperty)
+            }
+            else {
+                console.log("CHECK TYPES HERE-------")
+            }
+            // let matches = property.key
+            // console.log({ pkey: property.key, np: node.property })
+            if (matches) {
+                return property.value
+            }
         }
     }
-    console.log("NOT FOUND", JSON.stringify({ objectProperty, objectType }, null, 2))
+    // console.log("NOT FOUND", JSON.stringify({ objectProperty, objectType }, null, 2))
     throw SemanticError(`Property not found`, objectProperty)
 }
 
@@ -252,24 +278,36 @@ export const inferType: {
             returnType: new ast.ReferenceType(node.id),
         })
         let type = funcType
+        let instanceType = new ast.ObjectType({
+            kind: "Object",
+            properties: node.declarations.map(variable => new Property({
+                id: variable.id,
+                value: variable.type,
+            }))
+        })
+        // now need instanceType
         // console.log('-------> ClassDeclaration.type: ' + node.id.name, funcType)
-        return { type }
+        return { type, instanceType }
     },
     ReferenceType(node, c, errors) {
-        if (node.name === types.Number.name) {
-            return numberType(null, null)
-        }
-        return (inferType.Reference as any)(node, c, errors)
-        // let scope = c.scopes.get(node)
-        // let declarator = c.current(scope[node.name])
-        // if (!declarator) {
-        //     console.log("Declarator not found: ", node.name)
-        //     return
+        // if (node.name === types.Number.name) {
+        //     return numberType(null, null)
         // }
-        // let declaration = c.lookup.findAncestor(declarator, ast.Declaration.is)!
-        // if (!ast.ClassDeclaration.is(declaration)) {
+        // // a Reference to Array<T> should yield Function & { static: properties }
+        // // a ReferenceType to Array<T> should yield { get(index): T, length: >= 0 }
+        // let scope = c.scopes.get(node)
+        // let declarator = c.current(c.current(scope[node.name]))
+        // if (declarator == null) {
+        //     throw SemanticError(`Reference not found: ${node.name}`, node)
+        // }
+        // let declaration = ast.Declaration.is(declarator) ? declarator : c.lookup.findAncestor(declarator, ast.Declaration.is)!
+        // if (ast.ClassDeclaration.is(declaration)) {
+        //     return declaration.instanceType
+        // }
+        // else {
         //     return declarator.type
         // }
+        return (inferType.Reference as any)(node, c, errors)
     },
     Reference(node, c, errors) {
         let scope = c.scopes.get(node)
@@ -290,7 +328,7 @@ export const inferType: {
         let consequentType = c.current(node.consequent).type
         let alternateType = node.alternate ? c.current(node.alternate).type : types.Void
 
-        console.log("Conditional")
+        // console.log("Conditional")
     },
     ConditionalDeclaration(node, c) {
         let { name } = node.id
@@ -301,9 +339,14 @@ export const inferType: {
         if (node.negate) {
             assertion = negate(assertion)
         }
-        //  need a function to turn an Expression into a Type
-        //  then createCombinedType expression must merge two types
         let type = createCombinedTypeExpression(ancestorDeclaration.type as TypeExpression, name, assertion, node.location!)
+        let simplified = simplify(type)
+        // console.log("ConditionalDeclaration", {
+        //     assertion: toCodeString(assertion),
+        //     ancestorDeclarationType: toCodeString(ancestorDeclaration.type),
+        //     type: toCodeString(type),
+        //     simplified: toCodeString(simplified),
+        // })
         return { type }
     },
     ArrayExpression(node, c) {
@@ -317,18 +360,30 @@ export const inferType: {
                 break
             }
         }
-        let type = new ast.ObjectType({
-            location: node.location,
-            kind: "Array",
-            properties: items.map((item, index) => {
-                let id = new Literal({ value: index })
-                let value = c.current(item)
-                return new Property({
-                    id,
-                    value: value.type
-                })
-            })
+        let type = new ast.IntersectionType({
+            types: [
+                new ast.ReferenceType(types.Array),
+                new ast.ObjectType({
+                    location: node.location,
+                    kind: "Array",
+                    properties: [
+                        ...items.map((item, index) => {
+                            let id = new Literal({ value: index })
+                            let value = c.current(item)
+                            return new Property({
+                                id,
+                                value: value.type
+                            })
+                        }),
+                        new Property({
+                            id: new ast.Identifier({ name: "length" }),
+                            value: new Literal({ value: items.length }),
+                        })
+                    ]
+                }),
+            ]
         })
+
         return { type }
     },
     ObjectExpression(node, c) {
@@ -346,17 +401,26 @@ export const inferType: {
         })
         return { type }
     },
+    NumberType(node, c) {
+    },
     MemberExpression(node, c) {
-        let objectType = c.current(node.object).type as ast.ObjectType
+        let objectType = c.current(node.object).type!
         let property = c.current(node.property) as ast.Property
         let type = getMemberType(objectType, property, c)
         return { type }
     },
     Call(node, c, errors) {
         let callee = c.current(node.callee)!
-        let calleeType = callee.type as ast.FunctionType
+        let calleeType: Expression | null | undefined = callee.type
         if (calleeType == null) {
             errors.push(SemanticError(`Callee type not found`, node.callee))
+            return
+        }
+        if (ast.IntersectionType.is(calleeType)) {
+            calleeType = calleeType.types.find(ast.FunctionType.is)
+        }
+        if (!ast.FunctionType.is(calleeType)) {
+            errors.push(SemanticError(`Callee is not a function`, callee))
             return
         }
         let index = 0
@@ -382,15 +446,14 @@ export const inferType: {
             let newParameterType = traverse(parameterType, {
                 skip(node) { return ast.Location.is(node) },
                 leave(node) {
+                    // CURRENTLY
+                    //  This section replaces parameter type references with actual argument values.
                     if (ast.Reference.is(node)) {
                         let paramIndex = paramNames.get(node.name)
                         if (paramIndex != null) {
                             let referencedArg = argValues[paramIndex]!
                             // console.log("?? " + toCodeString(parameter.id) + " -> " + toCodeString(referencedArg));
                             return referencedArg
-                            // let referencedArgType = argValues[paramIndex].type!
-                            // //  replace this reference with the actual current referenced argument type
-                            // return referencedArgType
                         }
                         else {
                             if (isTypeName(node.name)) {
@@ -417,8 +480,28 @@ export const inferType: {
             // first check if it's consequent with the new replaced parameter type
             let consequent = isSubtype(argType, newParameterType)
             if (consequent !== true) {
-                //  if that doesn't validate it then let's simplify the newParameterType
-                let simpleParameterType = simplify(newParameterType)
+                // if that doesn't validate it then let's simplify the newParameterType
+                // first lets traverse and see if we can resolve member expressions
+                let resolvedMemberExpressionTypes = traverse(newParameterType, {
+                    leave(node) {
+                        if (ast.MemberExpression.is(node)) {
+                            let { type } = inferType.MemberExpression!(node, c, errors)
+                            //  we only allow this type of simplification
+                            //  if the value is a number type with a bounded range
+                            //  if not, then this can oversimplify and give a false positive.
+                            // if (ast.NumberType.is(type) && type.min != null && type.max != null) {
+                            return type
+                            // }
+                        }
+                    }
+                })
+                let simpleParameterType = simplify(resolvedMemberExpressionTypes)
+                // console.log({
+                //     argType: toCodeString(argType),
+                //     newParameterType: toCodeString(newParameterType),
+                //     resolvedMemberExpressionTypes: toCodeString(resolvedMemberExpressionTypes),
+                //     simpleParameterType: toCodeString(simpleParameterType),
+                // })
                 // console.log(`Replaced ${toCodeString(parameter.id)}: ` + toCodeString(parameterType) + " -> " + toCodeString(newParameterType) + " -> " + toCodeString(simpleParameterType))
                 consequent = isSubtype(argType, simpleParameterType)
             }
@@ -515,11 +598,7 @@ export default function inferTypes(
         ensureResolved(originalNode)
     }
 
-    if (errors.length > 0) {
-        return errors
-    }
-
-    return traverse(module, {
+    let result = traverse(module, {
         skip(node) {
             return ast.Position.is(node)
         },
@@ -535,5 +614,5 @@ export default function inferTypes(
             // }
         }
     })
-
+    return [result, errors]
 }

@@ -14,9 +14,9 @@ import * as ops from "../ops";
 export default function builtinFunctionsToOps(
     module: Module,
     options: Options
-): Module | Error[] {
+) {
     let errors = new Array<Error>()
-    return traverse(module, {
+    module = traverse(module, {
         // skip(node) {
         //     return Node.is(node)
         // },
@@ -44,4 +44,5 @@ export default function builtinFunctionsToOps(
             }
         }
     })
+    return [module, errors]
 }

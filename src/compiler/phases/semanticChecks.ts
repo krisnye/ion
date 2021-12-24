@@ -106,7 +106,7 @@ function setTypeToVoidRecursive(node, errors: Error[], isFinal: boolean) {
 export default function semanticChecks(
     module: Module,
     options: Options
-): Module | Error[] {
+) {
     let errors = new Array<Error>()
     // we only create the scope map to check for redeclaration errors
     let lookup = new Lookup()
@@ -237,7 +237,14 @@ export default function semanticChecks(
                 if (parentClass) {
                     node = node.patch(node.type ? { isInstance: true } : { isStatic: true })
                 }
-                if (Declarator.is(node.id)) {
+                var isTypeParameter = path[path.length - 2] === "typeParameters";
+                if (isTypeParameter) {
+                    if (!isTypeName(node.id.name)) {
+                        errors.push(SemanticError(`Type parameters must start with uppercase letter`, node.id))
+                    }
+                    node = node.patch({ isTypeParameter: true })
+                }
+                else if (Declarator.is(node.id)) {
                     if (isMetaName(node.id.name)) {
                         node = node.patch({ isMeta: true })
                     }
@@ -356,5 +363,5 @@ export default function semanticChecks(
             return node
         }
     })
-    return errors.length ? errors : module
+    return [module, errors]
 }

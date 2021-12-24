@@ -115,7 +115,7 @@ export default class Compiler {
         let options = this.normalizeOptions(optionsOrJson)
         let sources = this.getFiles(options)
         // if debug only Number compile =>
-        sources = new Map([...sources.entries()].filter(([name, source]) => ({ Number:1, String:0, min:1, max:1, abs:1, "aa.sample": 1 })[name])) as any
+        sources = new Map([...sources.entries()].filter(([name, source]) => ({ Number:1, String:0, min:1, max:1, abs:1, Array: 1, "aa.sample": 1 })[name])) as any
 
         let order = new Array<string>()
 
@@ -225,9 +225,10 @@ export default class Compiler {
             // add the externals as global scope (including self module)
             // options.globalScope = createGlobalScope([...externals.values(), root])
             // also add global declarations from current module
-            let result = phase(root, options, externals)
-            if (Array.isArray(result)) {
-                for (let e of result) {
+            let [result,errors] = phase(root, options, externals)
+            this.log(phase.name, result, name)
+            if (errors.length > 0) {
+                for (let e of errors) {
                     this.printErrorConsole(e, sources, options)
                 }
                 return result
@@ -235,7 +236,6 @@ export default class Compiler {
             else {
                 root = result
             }
-            this.log(phase.name, root, name)
         }
 
         return root

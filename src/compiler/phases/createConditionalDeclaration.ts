@@ -3,7 +3,7 @@ import { traverse, skip } from "@glas/traverse";
 import { combineStatements, getNodesOfType, isValueName } from "../common";
 
 export default function createConditionalDeclarations(root: Analysis) {
-    return traverse(root, {
+    return [traverse(root, {
         enter(node) {
         },
         leave(node) {
@@ -47,5 +47,5 @@ export default function createConditionalDeclarations(root: Analysis) {
                 })
             }
         }
-    })
+    }), []]
 }

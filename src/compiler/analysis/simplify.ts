@@ -1,10 +1,11 @@
-import { Expression, BinaryExpression, UnaryExpression, TypeExpression, NumberType, NeverType, UnionType, IntersectionType, Node, Type } from "../ast";
+import { Expression, BinaryExpression, UnaryExpression, TypeExpression, NumberType, NeverType, UnionType, IntersectionType, Node, Type, ReferenceType, Literal } from "../ast";
 import toCodeString from "../toCodeString";
 import { memoize } from "../common";
 import { traverse } from "@glas/traverse";
 import normalize from "./normalize";
 import splitExpressions from "./splitExpressions";
-import { combineAnyNumberTypes, intersectionOfNumberTypes, isLiteralNumberType } from "./numberTypes";
+import { combineAnyNumberTypes, intersectionOfNumberTypes, isLiteralNumberType, numberType } from "./numberTypes";
+import * as types from "../types";
 
 function find<T>(items: Iterable<T>, predicate: (value: T) => boolean): T | null {
     for (let item of items) {
@@ -32,10 +33,26 @@ function removeDuplicates(nodes: Array<Type>) {
     return removed.length < nodes.length ? removed : nodes
 }
 
+function isLiteralNumberOrType(e: Expression, value: number) {
+    return Literal.is(e) && e.value === value
+        || isLiteralNumberType(e) && e.min?.value === value && e.max?.value === value;
+}
+
 const simplify = memoize(function(e: Expression): Expression {
-    if ((IntersectionType.is(e) || UnionType.is(e))) {
+    if (UnaryExpression.is(e)) {
+        let argument = simplify(e.argument)
+        if (e.operator === "-" && isLiteralNumberType(argument) && argument.min?.value === 0 && argument.max?.value === 0) {
+            return argument
+        }
+        return argument !== e.argument ? e.patch({ argument }) : e
+    }
+    if (ReferenceType.is(e) && e.name === types.Number.name) {
+        return numberType(null, null)
+    }
+
+    if (IntersectionType.is(e) || UnionType.is(e)) {
         // merge any adjacent number types
-        let types = combineAnyNumberTypes(removeDuplicates(e.types as any))
+        let types = combineAnyNumberTypes(removeDuplicates(e.types.map(simplify)), UnionType.is(e))
         if (types.length === 1) {
             e = types[0]
         }
@@ -55,11 +72,11 @@ const simplify = memoize(function(e: Expression): Expression {
         if (max != null && max.type != null) {
             max = max.type
         }
-        if (NumberType.is(min)) {
-            min = min.max ?? min.min
+        if (NumberType.is(min) && min.min) {
+            min = min.min
         }
-        if (NumberType.is(max)) {
-            max = max.min ?? max.max
+        if (NumberType.is(max) && max.max) {
+            max = max.max
         }
         return ((min != null || max != null) && (min != e.min || max != e.max)) ? e.patch({ min, max }) : e
     }
@@ -72,6 +89,19 @@ const simplify = memoize(function(e: Expression): Expression {
                 //  A &  A => A
                 //  A |  A => A
                 return left
+            }
+        }
+        else if (e.operator === "+") {
+            if (isLiteralNumberOrType(e.left, 0)) {
+                return e.right
+            }
+            if (isLiteralNumberOrType(e.right, 0)) {
+                return e.left
+            }
+        }
+        else if (e.operator === "-") {
+            if (isLiteralNumberOrType(e.right, 0)) {
+                return e.left
             }
         }
         else if (e.operator === "|") {

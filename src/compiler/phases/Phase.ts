@@ -6,6 +6,6 @@ type Phase = (
     module: Module,
     options: Options,
     dependencies?: Map<string,any>,
-) => Module | Error[]
+) => [Module, Array<Error>]
 
 export default Phase

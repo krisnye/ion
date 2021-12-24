@@ -1,4 +1,5 @@
 import { BinaryExpression, Expression, NumberType, Type, Literal, UnionType, UnaryExpression, IntersectionType } from "../ast";
+import { SemanticError } from "../common";
 import toCodeString from "../toCodeString";
 import { Number } from "../types";
 import combineExpressions from "./combineExpressions";
@@ -50,15 +51,17 @@ const zero = numberType(0, 0, false, false)
 const negative = numberType(null, 0, true)
 const negativeOrZero = numberType(null, 0)
 
-export function combineAnyNumberTypes(types: Array<Expression>)
+export function combineAnyNumberTypes(types: Array<Expression>, unionOrIntersection = true)
 {
-    let numberTypes = new Array<LiteralNumberType>()
+    let numberTypes = new Array<NumberType>()
     let otherTypes = new Array<Expression>()
     for (let type of types) {
-        if (isLiteralNumberType(type)) {
+        if (NumberType.is(type)) {
             let last = numberTypes[numberTypes.length - 1]
             if (last != null) {
-                let combined = mergeOverlappingNumberTypes(last, type)
+                let combined = unionOrIntersection
+                    ? unionOfNumberTypes(last, type)
+                    : intersectionOfNumberTypes(last, type);
                 if (combined) {
                     numberTypes[numberTypes.length - 1] = combined
                 }
@@ -80,12 +83,24 @@ export function combineAnyNumberTypes(types: Array<Expression>)
 /**
  * Returns null if the types are mutually incompatible.
  */
-export function intersectionOfNumberTypes(types: Array<LiteralNumberType>): LiteralNumberType | null {
+export function intersectionOfNumberTypes(a: NumberType, b: NumberType): NumberType | null {
+    if (!isLiteralNumberType(a) || !isLiteralNumberType(b)) {
+        // if one has min but no max and the other has no min then combine them.
+        if (a != null && b != null) {
+            if (a.min != null && a.max == null && b.min == null) {
+                return new NumberType({ min: a.min, minExclusive: a.minExclusive, max: b.max, maxExclusive: b.maxExclusive })
+            }
+            if (b.min != null && b.max == null && a.min == null) {
+                return new NumberType({ min: b.min, minExclusive: b.minExclusive, max: a.max, maxExclusive: a.maxExclusive })
+            }
+        }
+        return null
+    }
     let min: NumberLiteral | null = null
     let max: NumberLiteral | null = null
     let minExclusive = false
     let maxExclusive = false
-    for (let type of types) {
+    for (let type of [a, b]) {
         if (type.min != null) {
             if (min == null || type.min.value >= min.value) {
                 min = type.min
@@ -103,7 +118,7 @@ export function intersectionOfNumberTypes(types: Array<LiteralNumberType>): Lite
         return null
     }
     let result = new NumberType({ min, max, minExclusive, maxExclusive }) as LiteralNumberType
-    console.log("intersection: ", { before: toCodeString(new IntersectionType({ types })), after: toCodeString(result)})
+    // console.log("intersection: ", { before: toCodeString(new IntersectionType({ types })), after: toCodeString(result)})
     return result
 }
 
@@ -117,7 +132,16 @@ export function numberTypesAdjacent(a: LiteralNumberType, b: LiteralNumberType) 
 /**
  * Returns null if the types are discontiguous
  */
-export function mergeOverlappingNumberTypes(a: LiteralNumberType, b: LiteralNumberType): LiteralNumberType | null {
+export function unionOfNumberTypes(a: NumberType, b: NumberType): NumberType | null {
+    if (a.min == null && a.max == null) {
+        return b
+    }
+    if (b.min == null && b.max == null) {
+        return a
+    }
+    if (!isLiteralNumberType(a) || !isLiteralNumberType(b)) {
+        return null
+    }
     if (!numberTypesAdjacent(a, b)) {
         return null
     }
@@ -172,6 +196,13 @@ export function numberType(min: number | Expression | null, max: number | Expres
 export function inferUnaryOperationType(a: Type, operator: string, c: EvaluateContext) {
     if (NumberType.is(a)) {
         switch (operator) {
+            case "-":
+                //  - [a0,a1] => [-a1,-a0]
+                let min = a.max != null ? evaluate(simplify(new UnaryExpression({ operator, argument: a.max })), c) : null;
+                let max = a.min != null ? evaluate(simplify(new UnaryExpression({ operator, argument: a.min })), c) : null;
+                let minExclusive = a.maxExclusive;
+                let maxExclusive = a.minExclusive;
+                return numberType(min, max, minExclusive, maxExclusive)
             case "abs":
                 //  abs [a0,a1]
                 //  if a0 == null || a1 == null

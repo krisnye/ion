@@ -4,7 +4,7 @@ import { SemanticError } from "./common"
 import { getAbsolutePath } from "./pathFunctions"
 
 export type NodeMap<T> = {
-    get(node: Node): T
+    get(node: Node | null): T
     set(node: Node, t: T)
 }
 
@@ -18,18 +18,20 @@ type Options = {
 }
 
 function declareGlobals(scope, module: Module) {
-    let last = module.body[module.body.length - 1] as Expression
-    // for now we are linking Declarations and Expressions directly.
-    // That's not right. We need our shared references to be consistent across pre-compiled modules.
-    scope[getAbsolutePath(module.name)] = last
-    // if (Declaration.is(last)) {
-    //     for (let declarator of getDeclarators(last.id)) {
-    //         declare([scope], declarator)
-    //     }
-    // }
-    // else {
-    //     throw SemanticError(`The final statement MUST be a Declaration`, last)
-    // }
+    if (module.body) {
+        let last = module.body[module.body.length - 1] as Expression
+        // for now we are linking Declarations and Expressions directly.
+        // That's not right. We need our shared references to be consistent across pre-compiled modules.
+        scope[getAbsolutePath(module.name)] = last
+        // if (Declaration.is(last)) {
+        //     for (let declarator of getDeclarators(last.id)) {
+        //         declare([scope], declarator)
+        //     }
+        // }
+        // else {
+        //     throw SemanticError(`The final statement MUST be a Declaration`, last)
+        // }
+    }
 }
 
 /**
@@ -37,8 +39,10 @@ function declareGlobals(scope, module: Module) {
  */
 export function createGlobalScope(modules: Iterable<Module>) {
     let scope: any = {}
-    for (let module of modules) {
-        declareGlobals(scope, module)
+    if (modules) {
+        for (let module of modules) {
+            declareGlobals(scope, module)
+        }
     }
     return scope
 }
@@ -90,6 +94,7 @@ export function *getDeclarators(node: Pattern | Identifier | Expression): Iterab
 export default function createScopeMaps(root, options: Options = {}): ScopeMaps {
     let map = new Map()
     let globalScope = options.dependencies ? createGlobalScope([...options.dependencies.values(), root]) : {}
+    map.set(null, globalScope)
     let scopes: object[] = [globalScope]
 
     traverse(root, {

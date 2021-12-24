@@ -1,6 +1,7 @@
 import * as ast from "./ast";
 import { Node } from "./ast";
 import { memoize, SemanticError } from "./common";
+import { isAbsolutePath } from "./pathFunctions";
 
 function block(nodes, open = "{", close = "}") {
     if (nodes.length === 0) {
@@ -11,19 +12,16 @@ function block(nodes, open = "{", close = "}") {
     return (`${open}\n${nodes.map(s).join(`\n`).split(`\n`).map(a => indent + a).join(`\n`)}\n${close}`)
 }
 
+function toName(node: ast.Identifier) {
+    let { name } = node
+    return name.indexOf('.') >= 0 ? "`" + name + "`" : name
+}
+
 const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P]>) => string} = {
-    Identifier(node) {
-        return node.name
-    },
-    Declarator(node) {
-        return node.name
-    },
-    Reference(node) {
-        return node.name
-    },
-    ReferenceType(node) {
-        return node.name
-    },
+    Identifier: toName,
+    Declarator: toName,
+    Reference: toName,
+    ReferenceType: toName,
     NotType(node) {
         return `!${s(node.value)}`
     },
@@ -116,25 +114,27 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     },
     Variable(node) {
         let value = ``
-        if (ast.ConditionalDeclaration.is(node)) {
-            value += `cond `
-        }
-        else {
-            if (node.isMutable) {
-                value += `var `
+        if (!node.isTypeParameter) {
+            if (ast.ConditionalDeclaration.is(node)) {
+                value += `cond `
             }
             else {
-                value += `const `
+                if (node.isMutable) {
+                    value += `var `
+                }
+                else {
+                    value += `const `
+                }
             }
-        }
-        if (node.isStatic) {
-            value += `static `
-        }
-        if (node.isType) {
-            value += `type `
-        }
-        if (node.isMeta) {
-            value += `meta `
+            if (node.isStatic) {
+                value += `static `
+            }
+            if (node.isType) {
+                value += `type `
+            }
+            if (node.isMeta) {
+                value += `meta `
+            }
         }
         value += s(node.id)
         if (node.type) {
@@ -176,7 +176,10 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         return `module ${node.name} ${codeToString.Block!(node as any)}`
     },
     ClassDeclaration(node) {
-        return `class ${node.id.name} ${block(node.declarations)}`
+        if (node.typeParameters.length > 0)
+            return `class ${node.id.name}<${node.typeParameters.map(s).join(",")}> ${block(node.declarations)}`
+        else
+            return `class ${node.id.name} ${block(node.declarations)}`
     },
     Block(node) {
         let value = block(node.body)

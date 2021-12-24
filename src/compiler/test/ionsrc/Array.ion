@@ -1,0 +1,3 @@
+
+class Array<T>
+    length: >= 0

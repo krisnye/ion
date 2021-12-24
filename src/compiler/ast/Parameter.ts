@@ -30,6 +30,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
     readonly isMeta: Boolean.Boolean;
     readonly isInstance: Boolean.Boolean;
     readonly isStatic: Boolean.Boolean;
+    readonly isTypeParameter: Boolean.Boolean;
     static readonly id = 'Parameter';
     static readonly implements = new Set([
         'Parameter',
@@ -43,7 +44,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
         'Statement',
         'SideEffect'
     ]);
-    constructor({location = null, meta = null, type = null, resolved = false, id, isMutable = false, value = null, isType = false, isMeta = false, isInstance = false, isStatic = false}: {
+    constructor({location = null, meta = null, type = null, resolved = false, id, isMutable = false, value = null, isType = false, isMeta = false, isInstance = false, isStatic = false, isTypeParameter = false}: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
@@ -54,7 +55,8 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
         isType?: Boolean.Boolean,
         isMeta?: Boolean.Boolean,
         isInstance?: Boolean.Boolean,
-        isStatic?: Boolean.Boolean
+        isStatic?: Boolean.Boolean,
+        isTypeParameter?: Boolean.Boolean
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
@@ -78,6 +80,8 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
             throw new Error('isInstance is not a Boolean: ' + Class.toString(isInstance));
         if (!Boolean.isBoolean(isStatic))
             throw new Error('isStatic is not a Boolean: ' + Class.toString(isStatic));
+        if (!Boolean.isBoolean(isTypeParameter))
+            throw new Error('isTypeParameter is not a Boolean: ' + Class.toString(isTypeParameter));
         this.location = location;
         this.meta = meta;
         this.type = type;
@@ -89,6 +93,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
         this.isMeta = isMeta;
         this.isInstance = isInstance;
         this.isStatic = isStatic;
+        this.isTypeParameter = isTypeParameter;
         Object.freeze(this);
     }
     patch(properties: {
@@ -102,7 +107,8 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
         isType?: Boolean.Boolean,
         isMeta?: Boolean.Boolean,
         isInstance?: Boolean.Boolean,
-        isStatic?: Boolean.Boolean
+        isStatic?: Boolean.Boolean,
+        isTypeParameter?: Boolean.Boolean
     }) {
         return new Parameter({
             ...this,

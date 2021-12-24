@@ -1,10 +1,9 @@
 import combineExpressions from "./analysis/combineExpressions";
-import { BinaryExpression, DotExpression, Expression, Literal, SpreadType } from "./ast";
-import Reference from "./ast/Reference";
+import { BinaryExpression, DotExpression, Expression, Literal, SpreadType, Reference, ReferenceType } from "./ast";
 import { getAbsolutePath } from "./pathFunctions";
 
 export function ref(name: string) {
-    return new Reference({ name: getAbsolutePath(name) })
+    return new ReferenceType({ name: getAbsolutePath(name) })
 }
 
 function number(type: Reference, min: number, max: number) {

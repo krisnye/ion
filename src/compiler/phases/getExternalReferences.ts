@@ -4,32 +4,47 @@ import createScopeMaps, { getDeclarators } from "../createScopeMaps";
 import { _this } from "../reservedWords";
 import { resolve, join, getAbsolutePath, getLastName } from "../pathFunctions";
 import { SemanticError } from "../common";
-import * as builtins from "../builtins";
+import addDefaultExport from "./addDefaultExport";
 
 export default function getExternalReferences(module: Module, modules: Map<string,Module>, errors: Array<Error>): [Module,Map<string,Set<Reference>>] {
+    module = addDefaultExport(module)
+
+    let moduleLastName = getLastName(module.name)
     let scopes = createScopeMaps(module)
     let externals = new Map<string,Set<Reference>>()
-    let exports = new Map<string,string>()
+    let exportNameToAbsolutePath = new Map<string,string>()
+    let exportDeclarators = new Set<Declarator>()
     for (let item of module.body) {
         let last = item === module.body[module.body.length - 1]
         if (last) {
             // make sure final item isn't a declaration or if it is that it's name matches last name of module
             if (Declaration.is(item)) {
                 if (Declarator.is(item.id)) {
-                    if (item.id.name !== getLastName(module.name)) {
+                    if (item.id.name !== moduleLastName) {
                         errors.push(SemanticError(`Final declaration name must match module name`, item.id))
                     }
                 }
                 else {
                     errors.push(SemanticError(`Final expression can only export a single declarator`, item.id))
                 }
+
+                if (!Declarator.is(item.id)) {
+                    errors.push(SemanticError(`Final expression must have a single declarator`, item.id))
+                }
+                else {
+                    exportNameToAbsolutePath.set(moduleLastName, getAbsolutePath(module.name))
+                    exportDeclarators.add(item.id)
+                }
             }
-            let localName = Declaration.is(item) && Identifier.is(item.id) ? item.id.name : getLastName(module.name)
-            exports.set(localName, getAbsolutePath(module.name))
+            else {
+                errors.push(SemanticError(`Impossible, last statement must be a Declaration`, item))
+            }
         }
+
         else if (Declaration.is(item)) {
             for (let declarator of getDeclarators(item.id)) {
-                exports.set(declarator.name, getAbsolutePath(module.name, declarator.name))
+                exportNameToAbsolutePath.set(declarator.name, getAbsolutePath(module.name, declarator.name))
+                exportDeclarators.add(declarator)
             }
         }
     }
@@ -48,7 +63,9 @@ export default function getExternalReferences(module: Module, modules: Map<strin
                         throw SemanticError(`Scope not found`, node)
                         // console.log("SCOPE")
                     }
-                    if (scope[node.name] == null) {
+
+                    let declarator = scope[node.name]
+                    if (declarator == null) {
                         let resolved = resolve(join(module.name, node.name), modules)
                         if (resolved) {
                             let set = externals.get(resolved.name)
@@ -65,10 +82,12 @@ export default function getExternalReferences(module: Module, modules: Map<strin
                         }
                     }
                     else {
-                        let localExportAbsolute = exports.get(node.name)
+                        let localExportAbsolute = exportNameToAbsolutePath.get(node.name)
                         if (localExportAbsolute != null) {
-                            // add absolute reference
-                            return node.patch({ name: localExportAbsolute })
+                            if (exportDeclarators.has(declarator)) {
+                                // add absolute reference
+                                return node.patch({ name: localExportAbsolute })
+                            }
                         }
                     }
                 }

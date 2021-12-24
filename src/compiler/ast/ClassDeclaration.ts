@@ -16,6 +16,7 @@ import * as Property from './Property';
 import * as Boolean from './ion/Boolean';
 import * as Declarator from './Declarator';
 import * as Variable from './Variable';
+import * as Type from './Type';
 import * as Class from './ion/Class';
 export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaration.Declaration , Expression.Expression , Node.Node , Statement.Statement , SideEffect.SideEffect , Typed.Typed {
     readonly location: Location.Location | Null.Null;
@@ -27,6 +28,7 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
     readonly baseClasses: _Array.Array<Expression.Expression>;
     readonly declarations: _Array.Array<Variable.Variable>;
     readonly typeParameters: _Array.Array<Variable.Variable>;
+    readonly instanceType: Type.Type | Null.Null;
     static readonly id = 'ClassDeclaration';
     static readonly implements = new Set([
         'ClassDeclaration',
@@ -39,7 +41,7 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         'SideEffect',
         'Typed'
     ]);
-    constructor({location = null, meta = null, type = null, resolved = false, id, isMutable = false, baseClasses = [], declarations, typeParameters = []}: {
+    constructor({location = null, meta = null, type = null, resolved = false, id, isMutable = false, baseClasses = [], declarations, typeParameters = [], instanceType = null}: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
@@ -48,7 +50,8 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         isMutable?: Boolean.Boolean,
         baseClasses?: _Array.Array<Expression.Expression>,
         declarations: _Array.Array<Variable.Variable>,
-        typeParameters?: _Array.Array<Variable.Variable>
+        typeParameters?: _Array.Array<Variable.Variable>,
+        instanceType?: Type.Type | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
@@ -68,6 +71,8 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
             throw new Error('declarations is not a Array: ' + Class.toString(declarations));
         if (!_Array.isArray(typeParameters))
             throw new Error('typeParameters is not a Array: ' + Class.toString(typeParameters));
+        if (!(Type.isType(instanceType) || Null.isNull(instanceType)))
+            throw new Error('instanceType is not a Type | Null: ' + Class.toString(instanceType));
         this.location = location;
         this.meta = meta;
         this.type = type;
@@ -77,6 +82,7 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         this.baseClasses = baseClasses;
         this.declarations = declarations;
         this.typeParameters = typeParameters;
+        this.instanceType = instanceType;
         Object.freeze(this);
     }
     patch(properties: {
@@ -88,7 +94,8 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
         isMutable?: Boolean.Boolean,
         baseClasses?: _Array.Array<Expression.Expression>,
         declarations?: _Array.Array<Variable.Variable>,
-        typeParameters?: _Array.Array<Variable.Variable>
+        typeParameters?: _Array.Array<Variable.Variable>,
+        instanceType?: Type.Type | Null.Null
     }) {
         return new ClassDeclaration({
             ...this,

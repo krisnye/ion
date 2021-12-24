@@ -1,9 +1,19 @@
 
+get = (array: Array, index: 0 .. < array.length) ->
+    1
 
-sample = (a: Number) ->
-    b: 1 .. 2 = 1
-    c: 3 .. 4 = 3
-    d = b * c
+// array = [1, 2]
+// foo = get(array, 1)
+
+sample = (a: Array, i: Number) ->
+    // get(a, i)
+    if i >= 0 & i < a.length
+        get(a, 0 + i)
+
+// sample = (a: Number) ->
+//     b: 1 .. 2 = 1
+//     c: 3 .. 4 = 3
+//     d = b / c
     // notZero: 1 .. <2 | >2 .. 20
     // divided = 1000 / notZero
     // []

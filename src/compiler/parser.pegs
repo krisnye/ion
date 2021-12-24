@@ -277,8 +277,8 @@ MetaProperties
  = (@MetaProperty Dent)*
 
 MetaProperty
-    = '<' _ key:InlineExpression _ '>' value:(_ "=" _ @OutlineExpression / EOL { return null })
-    { return node("Property", {key, value} ) }
+    = '<' _ id:InlineExpression _ '>' value:(_ "=" _ @OutlineExpression / EOL { return null })
+    { return node("Property", {id, value} ) }
 
 // VariableMetaProperties
 //     = EOL Indent @OutlineProperty+ Outdent
@@ -381,8 +381,8 @@ PatternProperty
 ////////////////////////////////////////////////////////////////////////////////
 
 EnumProperty
-    = Dent key:Identifier _ "=" _ value:OutlineExpression
-    { return node("Property", { key, value })}
+    = Dent id:Identifier _ "=" _ value:OutlineExpression
+    { return node("Property", { id, value })}
 
 EnumDeclaration
     = EnumToken _ id:Declarator EOL Indent properties:EnumProperty+ Outdent
@@ -434,7 +434,8 @@ InlineType
     = InlineUnionType
 
 TerminalType
-    = ReferenceTypeOrSimpleArray
+    = FunctionType
+    / ReferenceTypeOrSimpleArray
     / NumberTypeExpression
     / InlineObjectType
     // OutlineObjectType
@@ -444,7 +445,7 @@ ReferenceTypeOrSimpleArray
     {
         for (let i = 0; i < array.length; i++) {
             let property = node("Property", {
-                key: node("NumberType", { min: node("Literal", { value: 0, integer: true }) }),
+                id: node("NumberType", { min: node("Literal", { value: 0, integer: true }) }),
                 value: type
             })
             type = node("ObjectType", { kind: "Array", properties:[property] })
@@ -461,8 +462,8 @@ InlineObjectType
     { return node("ObjectType", { kind: "Array", properties }) }
 
 InlineObjectTypeProperty
-    = key:(InlineType / Identifier) _ ":" _ value: (InlineType)
-    { return node("Property", { key, value }) }
+    = id:(InlineType / Identifier) _ ":" _ value: (InlineType)
+    { return node("Property", { id, value }) }
     / InlineType
 
 InlineObjectTypePropertyList
@@ -505,7 +506,7 @@ NumberTypeExpression
 
 FunctionType
     = parameters:InlineFunctionParameters _ "=>" _ returnType:InlineType
-    { return node("FunctionExpression", { parameters, returnType }) }
+    { return node("FunctionType", { parameters, returnType }) }
     / "(" _ @FunctionType _ ")"
 
 TemplateArguments
@@ -839,8 +840,8 @@ OutlineObjectExpression
 //     = EOL Indent @(Dent @(OutlineMapProperty / Statement))+ Outdent
 
 // OutlineMapProperty
-//     = key:InlineExpression _ ":" _ value:OutlineExpression
-//     { return node("Property", { key, value, computed: true })}
+//     = id:InlineExpression _ ":" _ value:OutlineExpression
+//     { return node("Property", { id, value, computed: true })}
 
 OutlinePropertyList
     = EOL Indent @(Dent @(OutlineProperty / Statement))+ Outdent
@@ -862,8 +863,8 @@ OutlineProperty
     // / @InlinePropertyList EOL
 
 InlineMapProperty
-    = key:InlineExpression _ ":" _ value:InlineExpression
-    { return node("Property", { key, value, computed: true })}
+    = id:InlineExpression _ ":" _ value:InlineExpression
+    { return node("Property", { id, value, computed: true })}
 
 InlineMapPropertyList
     = head:InlineMapProperty tail:(_ "," _ @InlineMapProperty)*
@@ -877,12 +878,12 @@ InlineObjectExpression
 
 InlineProperty
     = InlineSpreadElement
-    / "[" _ key:InlineExpression _ "]" _ "=" _ value: InlineExpression
-    { return node("Property", { key, value }) }
-    / key:(@(Identifier / InlineStringLiteral) _ "=") _ value:InlineExpression
-    { return node("Property", { key, value }) }
-    / key:Identifier
-    { return node("Property", { key, value: node("Reference", key), shorthand: true }) }
+    / "[" _ id:InlineExpression _ "]" _ "=" _ value: InlineExpression
+    { return node("Property", { id, value }) }
+    / id:(@(Identifier / InlineStringLiteral) _ "=") _ value:InlineExpression
+    { return node("Property", { id, value }) }
+    / id:Identifier
+    { return node("Property", { id, value: node("Reference", id), shorthand: true }) }
 
 InlinePropertyList
     = head:InlineProperty tail:(_ "," _ @InlineProperty)*

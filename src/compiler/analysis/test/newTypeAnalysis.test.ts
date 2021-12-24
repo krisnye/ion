@@ -5,6 +5,7 @@ import { numberTypesAdjacent, intersectionOfNumberTypes, isNumberSubtype, number
 import * as types from "../../types"
 import toCodeString from "../../toCodeString"
 import normalize from "../normalize"
+import simplify from "../simplify"
 
 assert.strictEqual(intersectionOfNumberTypes([numberType(10), numberType(20)]), null)
 
@@ -161,3 +162,42 @@ assert.strictEqual(toCodeString(
         })
     )
 ), "A & B & C & (alpha:(>=0), beta:(>=0), charlie:(>=0))")
+
+assert.strictEqual(toCodeString(simplify(
+    new IntersectionType({
+        types: [
+            types.Number,
+            numberType(null, null),
+            numberType(1, 10)
+        ]
+    })
+)), toCodeString(numberType(1, 10)))
+
+assert.strictEqual(toCodeString(simplify(
+    new UnionType({
+        types: [
+            types.Number,
+            numberType(null, null),
+            numberType(1, 10)
+        ]
+    })
+)), toCodeString(numberType(1, 10)))
+
+let foo = new IntersectionType({
+    types: [
+        numberType(ref("a"), null),
+        numberType(null, ref("b"))
+    ]
+})
+debugger
+
+simplify(foo)
+
+assert.strictEqual(toCodeString(simplify(
+    new IntersectionType({
+        types: [
+            numberType(ref("a"), null),
+            numberType(null, ref("b"))
+        ]
+    })
+)), toCodeString(numberType(ref("a"), ref("b"))))

@@ -47,7 +47,9 @@ Cross platform modeling language
       - [-] Scalar Conditionals
       - [-] Vector Conditionals (within Array)
       - [X] Maybe only use SpreadType or single Type.
-  - [ ] array bounds checking
+  - [x] array bounds checking
+    - [x] getting declarator in Array, but can't find scope
+  - [ ] get function for indexers on Array and other things
   - [ ] class inheritance
   - [x] We need a map { key -> value } format that is not ambiguous with array destructuring
   - [ ] Maybe... we should see if we need pattern matching and how that works with above

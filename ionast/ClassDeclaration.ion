@@ -8,3 +8,4 @@ export
         var baseClasses: Array<Expression> = []
         var declarations: Array<Variable>
         var typeParameters: Array<Variable> = []
+        var instanceType: Type | Null = null
