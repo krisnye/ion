@@ -1,3 +1,3 @@
 
-[@meta]
-@meta: Boolean = true
+class @Meta
+    multiple: Boolean = false

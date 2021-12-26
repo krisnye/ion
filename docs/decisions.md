@@ -72,3 +72,7 @@ Individual constraints can handle +/- but they do not handle * and / operators.
 
 For now we will require returnType on directly recursive functions.
 Later when we bootstrap we should implement Hindley-Milner to determine recursive function types.
+
+### Multiple Dispatch?
+
+Not for version 1.0.

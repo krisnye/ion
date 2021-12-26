@@ -4,4 +4,4 @@ import
 
 export
     class Meta extends Node
-        var meta: Array<Property> | Null = null
+        var meta: Array<Call | Property> | Null = null

@@ -118,7 +118,6 @@ export default function semanticChecks(
                 let gparent = lookup.getAncestor(current, 2)
                 if (previous != null && !FunctionExpression.is(gparent)) {
                     // console.log({ current: current.location, source: source.location, previous: previous.location })
-                    debugger
                     errors.push(SemanticError(`Cannot redeclare ${current.name}`, current))
                 }
             }
@@ -292,7 +291,7 @@ export default function semanticChecks(
                     errors.push(SemanticError(`Assignment statements are not allowed in the module scope`, node))
                 }
                 if (ClassDeclaration.is(node)) {
-                    if (!isTypeName(node.id.name)) {
+                    if (!isTypeName(node.id.name) && !isMetaName(node.id.name)) {
                         errors.push(SemanticError(`Class names start with an upper case letter`, node))
                     }
                 }
@@ -321,6 +320,19 @@ export default function semanticChecks(
             if (FunctionExpression.is(node)) {
                 let parent = lookup.getAncestor(node, 1)
                 let gparent = lookup.getAncestor(node, 3)
+                // check that no required parameters can come after optional parameters
+                let foundOptional: any = null;
+                for (let param of node.parameters) {
+                    let required = param.value == null;
+                    if (required) {
+                        if (foundOptional) {
+                            errors.push(SemanticError(`Required parameters cannot follow optional parameters`, foundOptional, param))
+                        }
+                    }
+                    else if (foundOptional == null) {
+                        foundOptional = param;
+                    }
+                }
                 if (Variable.is(parent)) {
                     // name the function expression for the variable.
                     if (ClassDeclaration.is(gparent)) {

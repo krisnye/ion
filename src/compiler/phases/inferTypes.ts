@@ -3,7 +3,7 @@ import evaluate from "../analysis/evaluate";
 import getSortedExpressions from "../analysis/getSortedExpressions";
 import { Expression, Literal, Module, TypeExpression, Property } from "../ast";
 import * as ast from "../ast";
-import { isTypeName, SemanticError } from "../common";
+import { isMetaName, isTypeName, SemanticError } from "../common";
 import { Options } from "../Compiler"
 import createScopeMaps from "../createScopeMaps";
 import * as types from "../types"
@@ -59,14 +59,23 @@ function createCombinedTypeExpression(type: ast.TypeExpression, name: String, kn
     // return simplify(new ast.TypeExpression({ location, value: combinedType }))
 }
 
-function getInstanceType(node: ast.ReferenceType, c: EvaluateContext) {
-    // a Reference to Array<T> should yield Function & { static: properties }
-    // a ReferenceType to Array<T> should yield { get(index): T, length: >= 0 }
+function getDeclarator(node: ast.Reference, c: EvaluateContext) {
+    let scope = c.scopes.get(node) || c.scopes.get(c.original(node)) || c.scopes.get(null);
+    let declarator = scope[node.name];
+    return c.current(declarator);
+}
+
+function getDeclaration(node: ast.Reference, c: EvaluateContext) {
     let declarator = getDeclarator(node, c)
     if (declarator == null) {
         throw SemanticError(`Reference not found: ${node.name}`, node)
     }
     let declaration = ast.Declaration.is(declarator) ? declarator : c.lookup.findAncestor(declarator, ast.Declaration.is)!
+    return c.current(declaration);
+}
+
+function getInstanceType(node: ast.ReferenceType, c: EvaluateContext) {
+    let declaration = getDeclaration(node, c)
     if (ast.ClassDeclaration.is(declaration)) {
         return declaration.instanceType
     }
@@ -123,12 +132,6 @@ const binaryOperationsType = {
     "*": null,
     "/": null,
     "%": null,
-}
-
-function getDeclarator(node: ast.Reference, c: EvaluateContext) {
-    let scope = c.scopes.get(isAbsolutePath(node.name) ? null : node)
-    let declarator = scope[node.name]
-    return declarator
 }
 
 function getReferencedValue(node: ast.Reference, c: EvaluateContext): Expression | ast.Declaration | null {
@@ -236,16 +239,24 @@ export const inferType: {
     Parameter(node, c, errors) {
         return inferType.Variable!(node, c, errors)
     },
-    Variable(node, c) {
-        let type = c.current(node.type)
-        // console.log("Variable------- ", {id: toCodeString(node.id)})
-        if (type != null) {
-        }
-        else if (node.value != null) {
+    Variable(node, c, errors) {
+        let declaredType = c.current(node.type)
+        let valueType: Expression | null = null
+        if (node.value != null) {
             // get the type from the value
-            type = c.current(node.value).type
+            valueType = c.current(node.value).type
         }
-        return { type }
+        if (declaredType != null && valueType != null) {
+            // check that value type is assignable to declared type
+            let consequent = isSubtype(valueType, declaredType)
+            if (consequent === false) {
+                errors.push(SemanticError(`Value always invalid: ${toCodeString(valueType)}, expected: ${toCodeString(declaredType)}`, node.value))
+            }
+            else if (consequent === null) {
+                errors.push(SemanticError(`Value may be invalid: ${toCodeString(valueType)}, expected: ${toCodeString(declaredType)}`, node.value))
+            }
+        }
+        return { type: declaredType }
     },
     Module(node, c, e) {
         // same as Block
@@ -416,6 +427,7 @@ export const inferType: {
             errors.push(SemanticError(`Callee type not found`, node.callee))
             return
         }
+
         if (ast.IntersectionType.is(calleeType)) {
             calleeType = calleeType.types.find(ast.FunctionType.is)
         }
@@ -423,98 +435,136 @@ export const inferType: {
             errors.push(SemanticError(`Callee is not a function`, callee))
             return
         }
-        let index = 0
         //  TODO: Handle destructured parameter names
         let paramNames = new Map(calleeType.parameters.map((value, index) => [(value.id as ast.Declarator).name, index]))
         // console.log(paramNames)
-        let argValues = node.arguments.map(arg => {
-            if (ast.Argument.is(arg)) {
-                let currentArg = c.current(arg) as ast.Argument
-                let argValue = c.current(currentArg.value)
-                return argValue
-            }
-            else {
-                throw SemanticError(`Argument type not supported yet`, arg)
-            }
-        }) as Array<ast.Expression>
-
-        for (let argValue of argValues) {
-            let argType = argValue.type!
-            let parameter = c.current(calleeType.parameters[index]) as ast.Variable
-            let parameterType = parameter.type!
-            //  replace any parameter type name references with actual arg values (with types)
-            let newParameterType = traverse(parameterType, {
-                skip(node) { return ast.Location.is(node) },
-                leave(node) {
-                    // CURRENTLY
-                    //  This section replaces parameter type references with actual argument values.
-                    if (ast.Reference.is(node)) {
-                        let paramIndex = paramNames.get(node.name)
-                        if (paramIndex != null) {
-                            let referencedArg = argValues[paramIndex]!
-                            // console.log("?? " + toCodeString(parameter.id) + " -> " + toCodeString(referencedArg));
-                            return referencedArg
+        let argValues = new Array<ast.Expression>()
+        if (node.arguments.length > 0) {
+            let index = 0;
+            let named = false;
+            for (let arg of node.arguments) {
+                if (ast.Argument.is(arg)) {
+                    let argIndex = index;
+                    let currentArg = c.current(arg) as ast.Argument
+                    let argValue = c.current(currentArg.value)
+                    let name = arg.id?.name ?? null;
+                    if (name != null) {
+                        named = true;
+                        argIndex = paramNames.get(name) ?? -1
+                        if (argIndex < 0) {
+                            throw SemanticError(`Invalid argument id: ${name}`, arg.id)
                         }
-                        else {
-                            if (isTypeName(node.name)) {
-                                //  if this is a type reference, we should return the value of the type
-                                //  unless this is a class in which case, leave alone
-                                let declaration = getReferencedValue(node, c)
-                                if (ast.ClassDeclaration.is(declaration)) {
-                                    return node
-                                }
-                                if (declaration && declaration.type) {
-                                    return declaration.type
-                                }
-
-                                throw new Error("Type not found: " + node.name)
-                            }
-                            else {
-                                let declarator = c.current(c.scopes.get(node)[node.name])
-                                return declarator.type!
-                            }
+                        if (argValues[argIndex] != null) {
+                            throw SemanticError(`Argument value already provided for id: ${name}`, arg.id)
                         }
                     }
+                    else if (named) {
+                        throw SemanticError(`All arguments after first named argument must have an id`, arg)
+                    }
+                    argValues[argIndex] = argValue
                 }
-            })
-            // first check if it's consequent with the new replaced parameter type
-            let consequent = isSubtype(argType, newParameterType)
-            if (consequent !== true) {
-                // if that doesn't validate it then let's simplify the newParameterType
-                // first lets traverse and see if we can resolve member expressions
-                let resolvedMemberExpressionTypes = traverse(newParameterType, {
+                else {
+                    // function parameter names
+                    throw SemanticError(`Argument type not supported yet`, arg)
+                }
+                index++;
+            }
+        }
+        // now add any missing default values
+        for (let index = 0; index < calleeType.parameters.length; index++) {
+            let param = calleeType.parameters[index];
+            if (argValues[index] == null) {
+                // get the default value
+                let defaultValue = c.current(param.value);
+                if (defaultValue == null) {
+                    throw SemanticError(`Missing required parameter "${(param.id as ast.Identifier).name}"`, node)
+                }
+                else {
+                    argValues[index] = defaultValue;
+                }
+            }
+        }
+
+        if (argValues.length > 0) {
+            let index = 0;
+            for (let argValue of argValues) {
+                let argType = argValue.type!
+                let parameter = c.current(calleeType.parameters[index]) as ast.Variable
+                let parameterType = parameter.type!
+                //  replace any parameter type name references with actual arg values (with types)
+                let newParameterType = traverse(parameterType, {
+                    skip(node) { return ast.Location.is(node) },
                     leave(node) {
-                        if (ast.MemberExpression.is(node)) {
-                            let { type } = inferType.MemberExpression!(node, c, errors)
-                            //  we only allow this type of simplification
-                            //  if the value is a number type with a bounded range
-                            //  if not, then this can oversimplify and give a false positive.
-                            // if (ast.NumberType.is(type) && type.min != null && type.max != null) {
-                            return type
-                            // }
+                        // CURRENTLY
+                        //  This section replaces parameter type references with actual argument values.
+                        if (ast.Reference.is(node)) {
+                            let paramIndex = paramNames.get(node.name)
+                            if (paramIndex != null) {
+                                let referencedArg = argValues[paramIndex]!
+                                // console.log("?? " + toCodeString(parameter.id) + " -> " + toCodeString(referencedArg));
+                                return referencedArg
+                            }
+                            else {
+                                if (isTypeName(node.name)) {
+                                    //  if this is a type reference, we should return the value of the type
+                                    //  unless this is a class in which case, leave alone
+                                    let declaration = getReferencedValue(node, c)
+                                    if (ast.ClassDeclaration.is(declaration)) {
+                                        return node
+                                    }
+                                    if (declaration && declaration.type) {
+                                        return declaration.type
+                                    }
+    
+                                    throw new Error("Type not found: " + node.name)
+                                }
+                                else {
+                                    let declarator = c.current(c.scopes.get(node)[node.name])
+                                    return declarator.type!
+                                }
+                            }
                         }
                     }
                 })
-                let simpleParameterType = simplify(resolvedMemberExpressionTypes)
-                // console.log({
-                //     argType: toCodeString(argType),
-                //     newParameterType: toCodeString(newParameterType),
-                //     resolvedMemberExpressionTypes: toCodeString(resolvedMemberExpressionTypes),
-                //     simpleParameterType: toCodeString(simpleParameterType),
-                // })
-                // console.log(`Replaced ${toCodeString(parameter.id)}: ` + toCodeString(parameterType) + " -> " + toCodeString(newParameterType) + " -> " + toCodeString(simpleParameterType))
-                consequent = isSubtype(argType, simpleParameterType)
+                // first check if it's consequent with the new replaced parameter type
+                let consequent = isSubtype(argType, newParameterType)
+                if (consequent !== true) {
+                    // if that doesn't validate it then let's simplify the newParameterType
+                    // first lets traverse and see if we can resolve member expressions
+                    let resolvedMemberExpressionTypes = traverse(newParameterType, {
+                        leave(node) {
+                            if (ast.MemberExpression.is(node)) {
+                                let { type } = inferType.MemberExpression!(node, c, errors)
+                                //  we only allow this type of simplification
+                                //  if the value is a number type with a bounded range
+                                //  if not, then this can oversimplify and give a false positive.
+                                // if (ast.NumberType.is(type) && type.min != null && type.max != null) {
+                                return type
+                                // }
+                            }
+                        }
+                    })
+                    let simpleParameterType = simplify(resolvedMemberExpressionTypes)
+                    // console.log({
+                    //     argType: toCodeString(argType),
+                    //     newParameterType: toCodeString(newParameterType),
+                    //     resolvedMemberExpressionTypes: toCodeString(resolvedMemberExpressionTypes),
+                    //     simpleParameterType: toCodeString(simpleParameterType),
+                    // })
+                    // console.log(`Replaced ${toCodeString(parameter.id)}: ` + toCodeString(parameterType) + " -> " + toCodeString(newParameterType) + " -> " + toCodeString(simpleParameterType))
+                    consequent = isSubtype(argType, simpleParameterType)
+                }
+    
+                // console.log({ argType, parameterType })
+                // console.log(`CHECK isSubtype ${toCodeString(argType)} => ${toCodeString(parameterType)} ? ${consequent}`)
+                if (consequent === false) {
+                    errors.push(SemanticError(`Argument always invalid: ${toCodeString(argType)}, expected: ${toCodeString(newParameterType)}`, argValue))
+                }
+                else if (consequent === null) {
+                    errors.push(SemanticError(`Argument may be invalid: ${toCodeString(argType)}, expected: ${toCodeString(newParameterType)}`, argValue))
+                }
+                index++
             }
-
-            // console.log({ argType, parameterType })
-            // console.log(`CHECK isSubtype ${toCodeString(argType)} => ${toCodeString(parameterType)} ? ${consequent}`)
-            if (consequent === false) {
-                errors.push(SemanticError(`Argument always invalid: ${toCodeString(argType)}, expected: ${toCodeString(newParameterType)}`, argValue))
-            }
-            else if (consequent === null) {
-                errors.push(SemanticError(`Argument may be invalid: ${toCodeString(argType)}, expected: ${toCodeString(newParameterType)}`, argValue))
-            }
-            index++
         }
 
         // if there are more parameters than arg values then we need to check.
@@ -525,8 +575,16 @@ export const inferType: {
             }
         }
 
-        let type = calleeType.returnType
-        return { type }
+        return node.patch({
+            type: calleeType.returnType,
+            arguments: argValues.map((arg, index) => {
+                return new ast.Argument({
+                    location: arg.location,
+                    id: new ast.Declarator((calleeType as ast.FunctionExpression).parameters[index].id as ast.Identifier),
+                    value: arg,
+                })
+            }) as any
+        })
     },
 }
 

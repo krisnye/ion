@@ -3,18 +3,21 @@ import { Node } from "./ast";
 import { memoize, SemanticError } from "./common";
 import { isAbsolutePath } from "./pathFunctions";
 
-function block(nodes, open = "{", close = "}") {
-    if (nodes.length === 0) {
-        return `${open}${close}`
+function block(nodes, open = "{", close = "}", indent = '    ') {
+    if (nodes == null || nodes.length === 0) {
+        return `${open}${close}`;
     }
-    let indent = '    '
     // return nodes.map(s).join(`\n`)
-    return (`${open}\n${nodes.map(s).join(`\n`).split(`\n`).map(a => indent + a).join(`\n`)}\n${close}`)
+    return (`${open}\n${nodes.map(s).join(`\n`).split(`\n`).map(a => indent + a).join(`\n`)}\n${close}`);
 }
 
 function toName(node: ast.Identifier) {
     let { name } = node
     return name.indexOf('.') >= 0 ? "`" + name + "`" : name
+}
+
+function meta(node: ast.Meta) {
+    return block(node.meta, "", "", "")
 }
 
 const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P]>) => string} = {
@@ -40,6 +43,9 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     NeverType(node) {
         return "Never"
     },
+    SpreadType(node) {
+        return `...(${node.types.map(s).join(",")})`
+    },
     NumberType(node) {
         if (node.min == null && node.max == null) {
             return `Number`
@@ -49,13 +55,13 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         }
         let text = `(`
         if (node.min) {
-            text += `${node.minExclusive ? ">" : ">="}${s(node.min)}`
+            text += `${node.minExclusive ? ">" : (node.max ? "" : ">=")}${s(node.min)}`
         }
         if (node.max) {
             if (node.min) {
                 text += `..`
             }
-            text += `${node.maxExclusive ? "<" : "<="}${s(node.max)}`
+            text += `${node.maxExclusive ? "<" : (node.min ? "" : "<=")}${s(node.max)}`
         }
         return text + `)`
     },
@@ -113,7 +119,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
         return codeToString.Variable!(node as any)
     },
     Variable(node) {
-        let value = ``
+        let value = meta(node)
         if (!node.isTypeParameter) {
             if (ast.ConditionalDeclaration.is(node)) {
                 value += `cond `
@@ -177,9 +183,9 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     },
     ClassDeclaration(node) {
         if (node.typeParameters.length > 0)
-            return `class ${node.id.name}<${node.typeParameters.map(s).join(",")}> ${block(node.declarations)}`
+            return `${meta(node)} class ${node.id.name}<${node.typeParameters.map(s).join(",")}> ${block(node.declarations)}`
         else
-            return `class ${node.id.name} ${block(node.declarations)}`
+            return `${meta(node)} class ${node.id.name} ${block(node.declarations)}`
     },
     Block(node) {
         let value = block(node.body)

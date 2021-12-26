@@ -13,6 +13,7 @@ import * as SideEffect from './SideEffect';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
+import * as Call from './Call';
 import * as Property from './Property';
 import * as Boolean from './ion/Boolean';
 import * as Pattern from './Pattern';
@@ -20,7 +21,7 @@ import * as Identifier from './Identifier';
 import * as Class from './ion/Class';
 export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Typed.Typed , Statement.Statement , SideEffect.SideEffect {
     readonly location: Location.Location | Null.Null;
-    readonly meta: _Array.Array<Property.Property> | Null.Null;
+    readonly meta: _Array.Array<Call.Call | Property.Property> | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly id: Pattern.Pattern | (Identifier.Identifier | Expression.Expression);
@@ -46,7 +47,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
     ]);
     constructor({location = null, meta = null, type = null, resolved = false, id, isMutable = false, value = null, isType = false, isMeta = false, isInstance = false, isStatic = false, isTypeParameter = false}: {
         location?: Location.Location | Null.Null,
-        meta?: _Array.Array<Property.Property> | Null.Null,
+        meta?: _Array.Array<Call.Call | Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
         resolved?: Boolean.Boolean,
         id: Pattern.Pattern | (Identifier.Identifier | Expression.Expression),
@@ -98,7 +99,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        meta?: _Array.Array<Property.Property> | Null.Null,
+        meta?: _Array.Array<Call.Call | Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
         resolved?: Boolean.Boolean,
         id?: Pattern.Pattern | (Identifier.Identifier | Expression.Expression),

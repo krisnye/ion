@@ -277,8 +277,8 @@ MetaProperties
  = (@MetaProperty Dent)*
 
 MetaProperty
-    = '<' _ id:InlineExpression _ '>' value:(_ "=" _ @OutlineExpression / EOL { return null })
-    { return node("Property", {id, value} ) }
+    = &"@" @OutlineCallExpression
+    / &"@" callee:Reference args:AnonymousCall? EOL { return node("Call", { arguments:[], ...args, callee, location:getLocation() }) }
 
 // VariableMetaProperties
 //     = EOL Indent @OutlineProperty+ Outdent
@@ -490,7 +490,7 @@ OutlineUnionType
     / @InlineUnionType EOL
 
 NumberTypeValue
-    = ReferenceType / NumberLiteral / MemberExpression
+    = NumberLiteral / MemberExpression
 
 NumberTypeExpression
     = minExclusive:(@">" _)? min:NumberTypeValue _ ".." _ maxExclusive:(@"<" _)? max:NumberTypeValue
@@ -712,7 +712,7 @@ PrimaryExpression
 AnonymousCall
     = "()"
     { return node('Call', { arguments: [] })}
-    / "(" _ arguments:InlineExpressionList _ ")"
+    / arguments:InlineArguments
     { return arguments.length == 0 ? arguments[0] : node('Call', { arguments })}
 
 // ThisExpression
@@ -813,7 +813,7 @@ InlineArrayExpression
 
 // how can you tell an outline named argument from a var?
 InlineArgument
-    = id:(@Identifier _ ":" _)? value:InlineExpression
+    = id:(@Identifier _ "=" _)? value:InlineExpression
     { return node("Argument", { id: id || null, value }) }
 
 InlineArgumentList
@@ -999,15 +999,15 @@ Identifier
 
 Reference
     = !ReservedWord name:IdName arguments:TemplateArguments?
-    { return node(isUpperCase(name) ? "ReferenceType" : "Reference", { name, arguments }) }
+    { return node("Reference", { name, arguments }) }
 
 ReferenceType
-    = &[A-Z] @Reference
+    = ref:Reference
+    { return node("ReferenceType", ref) }
 
 Declarator
-    = !ReservedWord name:IdName {
-        return node("Declarator", { name })
-    }
+    = !ReservedWord name:IdName
+    { return node("Declarator", { name }) }
 
 TypeDeclarator
     = &[A-Z] @Declarator

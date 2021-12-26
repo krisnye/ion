@@ -1,6 +1,6 @@
 import { traverse, skip, Lookup } from "@glas/traverse"
-import { Node, Scope, Reference, Declarator, Pattern, ObjectPattern, RestElement, ArrayPattern, FunctionExpression, Declaration, Module, Variable, Parameter, Property, Identifier, Expression } from "./ast"
-import { SemanticError } from "./common"
+import { Node, Scope, Reference, Declarator, Pattern, Location, ObjectPattern, RestElement, ArrayPattern, FunctionExpression, Declaration, Module, Variable, Parameter, Property, Identifier, Expression } from "./ast"
+import { isMetaName, SemanticError } from "./common"
 import { getAbsolutePath } from "./pathFunctions"
 
 export type NodeMap<T> = {
@@ -99,10 +99,10 @@ export default function createScopeMaps(root, options: Options = {}): ScopeMaps 
 
     traverse(root, {
         lookup: options.lookup,
+        skip(node) {
+            return Location.is(node)
+        },
         enter(node, ancestors) {
-            if (!Node.is(node)) {
-                return
-            }
             //  get the current scope
             let scope = scopes[scopes.length - 1]
             //  save a map from this nodes location to it's scope

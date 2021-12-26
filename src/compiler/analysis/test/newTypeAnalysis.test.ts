@@ -183,16 +183,6 @@ assert.strictEqual(toCodeString(simplify(
     })
 )), toCodeString(numberType(1, 10)))
 
-let foo = new IntersectionType({
-    types: [
-        numberType(ref("a"), null),
-        numberType(null, ref("b"))
-    ]
-})
-debugger
-
-simplify(foo)
-
 assert.strictEqual(toCodeString(simplify(
     new IntersectionType({
         types: [

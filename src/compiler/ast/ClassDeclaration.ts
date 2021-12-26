@@ -12,6 +12,7 @@ import * as Typed from './Typed';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
+import * as Call from './Call';
 import * as Property from './Property';
 import * as Boolean from './ion/Boolean';
 import * as Declarator from './Declarator';
@@ -20,7 +21,7 @@ import * as Type from './Type';
 import * as Class from './ion/Class';
 export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaration.Declaration , Expression.Expression , Node.Node , Statement.Statement , SideEffect.SideEffect , Typed.Typed {
     readonly location: Location.Location | Null.Null;
-    readonly meta: _Array.Array<Property.Property> | Null.Null;
+    readonly meta: _Array.Array<Call.Call | Property.Property> | Null.Null;
     readonly type: Expression.Expression | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly id: Declarator.Declarator;
@@ -43,7 +44,7 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
     ]);
     constructor({location = null, meta = null, type = null, resolved = false, id, isMutable = false, baseClasses = [], declarations, typeParameters = [], instanceType = null}: {
         location?: Location.Location | Null.Null,
-        meta?: _Array.Array<Property.Property> | Null.Null,
+        meta?: _Array.Array<Call.Call | Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
         resolved?: Boolean.Boolean,
         id: Declarator.Declarator,
@@ -87,7 +88,7 @@ export class ClassDeclaration implements _Object.Object , Meta.Meta , Declaratio
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        meta?: _Array.Array<Property.Property> | Null.Null,
+        meta?: _Array.Array<Call.Call | Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
         resolved?: Boolean.Boolean,
         id?: Declarator.Declarator,

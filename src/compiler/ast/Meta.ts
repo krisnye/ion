@@ -6,11 +6,12 @@ import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
+import * as Call from './Call';
 import * as Property from './Property';
 import * as Class from './ion/Class';
 export class Meta implements _Object.Object , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly meta: _Array.Array<Property.Property> | Null.Null;
+    readonly meta: _Array.Array<Call.Call | Property.Property> | Null.Null;
     static readonly id = 'Meta';
     static readonly implements = new Set([
         'Meta',
@@ -19,7 +20,7 @@ export class Meta implements _Object.Object , Node.Node {
     ]);
     constructor({location = null, meta = null}: {
         location?: Location.Location | Null.Null,
-        meta?: _Array.Array<Property.Property> | Null.Null
+        meta?: _Array.Array<Call.Call | Property.Property> | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
@@ -31,7 +32,7 @@ export class Meta implements _Object.Object , Node.Node {
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        meta?: _Array.Array<Property.Property> | Null.Null
+        meta?: _Array.Array<Call.Call | Property.Property> | Null.Null
     }) {
         return new Meta({
             ...this,

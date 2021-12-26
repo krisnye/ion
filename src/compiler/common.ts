@@ -14,7 +14,7 @@ function isUpperCase(name) {
 
 export function isMetaName(name) {
     name = getLastName(name)
-    return name[0] === "@"
+    return name[0] === "@" && isUpperCase(name.slice(1))
 }
 
 export function isTypeName(name) {
