@@ -36,7 +36,7 @@
     "@babel/plugin-proposal-optional-chaining": "^7.12.7",
     "@babel/plugin-transform-modules-commonjs": "^7.12.1",
     "@glas/test": "^1.0.3",
-    "@glas/traverse": "^1.0.6",
+    "@glas/traverse": "^1.0.7",
     "escodegen": "^2.0.0",
     "jsondiffpatch": "0.2.5",
     "pegs": "^0.1.8",

@@ -135,13 +135,7 @@ const binaryOperationsType = {
 }
 
 function getReferencedValue(node: ast.Reference, c: EvaluateContext): Expression | ast.Declaration | null {
-    //  broke here, because external functions don't have scopes... 
     let declarator = getDeclarator(node, c)
-    //  this is currently broke and should be fixed, caused by external pre-dependencies not being consistently declared
-    //  with ancestor lookups
-    if (ast.Declaration.is(declarator) || Expression.is(declarator)) {
-        return declarator
-    }
     let declaration = c.lookup.findAncestor(declarator, ast.Declaration.is)
     return declaration
 }
@@ -189,7 +183,7 @@ export const inferType: {
 } = {
     Declarator(node, c) {
         let type = getAncestorExpressionType(node, c)
-        // console.log('!!!!!!! ', node.name, '---', type)
+        // console.log('!!!!!!! ', node.name, '---', toCodeString(type))
         return { type }
     },
     PatternProperty(node, c) {
@@ -237,6 +231,11 @@ export const inferType: {
         return inferType.Variable!(node as any, c, errors)
     },
     Parameter(node, c, errors) {
+        // if (node.typeParameterIndex != null) {
+        //     console.log("!!!!!! Parameter Type " + toCodeString(node.id))
+        //     let type = new ast.TemplateType({ typeParameterIndex: node.typeParameterIndex })
+        //     return { type }
+        // }
         return inferType.Variable!(node, c, errors)
     },
     Variable(node, c, errors) {
@@ -321,14 +320,21 @@ export const inferType: {
         return (inferType.Reference as any)(node, c, errors)
     },
     Reference(node, c, errors) {
-        let scope = c.scopes.get(node)
-        let declarator = c.current(c.current(scope[node.name]))
+        let declarator = getDeclarator(node, c)
         if (declarator == null) {
             throw SemanticError(`Reference not found: ${node.name}`, node)
         }
         let type = c.current(declarator.type)
         if (type == null) {
-            errors.push(SemanticError(`Can't find type`, declarator))
+            let declaration = getDeclaration(node, c)
+            // if (ast.Variable.is(declaration) && declaration.typeParameterIndex != null) {
+            //     type = new ast.TemplateType({ typeParameterIndex: declaration.typeParameterIndex })
+            // }
+            if (type == null) {
+                debugger
+                throw SemanticError(`Can't find type`, declarator)
+                // errors.push(SemanticError(`Can't find type`, declarator))
+            }
         }
         return { type }
     },
@@ -397,6 +403,8 @@ export const inferType: {
 
         return { type }
     },
+    TemplateType(node) {
+    },
     ObjectExpression(node, c) {
         let type = new ast.ObjectType({
             location: node.location,
@@ -422,6 +430,9 @@ export const inferType: {
     },
     Call(node, c, errors) {
         let callee = c.current(node.callee)!
+        if (callee == null) {
+            console.log("______", node)
+        }
         let calleeType: Expression | null | undefined = callee.type
         if (calleeType == null) {
             errors.push(SemanticError(`Callee type not found`, node.callee))
@@ -515,17 +526,34 @@ export const inferType: {
                                     if (declaration && declaration.type) {
                                         return declaration.type
                                     }
-    
+
+                                    debugger
                                     throw new Error("Type not found: " + node.name)
                                 }
                                 else {
-                                    let declarator = c.current(c.scopes.get(node)[node.name])
+                                    let declarator = getDeclarator(node, c)
+                                    console.log("Declarator", { paramNames, node })
                                     return declarator.type!
                                 }
                             }
                         }
                     }
                 })
+                // if TemplateType, find correct template arg
+                if (ast.TemplateType.is(newParameterType)) {
+                    // find type arguments
+                    let typeArguments: Expression[] | null = null
+                    if (ast.Reference.is(node.callee)) {
+                        typeArguments = node.callee.typeArguments as any;
+                    }
+                    if (typeArguments == null) {
+                        throw SemanticError(`Missing type arguments`, node.callee)
+                    }
+                    newParameterType = c.current(typeArguments[newParameterType.typeParameterIndex])
+                    if (newParameterType.type != null) {
+                        newParameterType = newParameterType.type
+                    }
+                }
                 // first check if it's consequent with the new replaced parameter type
                 let consequent = isSubtype(argType, newParameterType)
                 if (consequent !== true) {
@@ -554,10 +582,11 @@ export const inferType: {
                     // console.log(`Replaced ${toCodeString(parameter.id)}: ` + toCodeString(parameterType) + " -> " + toCodeString(newParameterType) + " -> " + toCodeString(simpleParameterType))
                     consequent = isSubtype(argType, simpleParameterType)
                 }
-    
+
                 // console.log({ argType, parameterType })
                 // console.log(`CHECK isSubtype ${toCodeString(argType)} => ${toCodeString(parameterType)} ? ${consequent}`)
                 if (consequent === false) {
+                    debugger
                     errors.push(SemanticError(`Argument always invalid: ${toCodeString(argType)}, expected: ${toCodeString(newParameterType)}`, argValue))
                 }
                 else if (consequent === null) {

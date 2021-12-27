@@ -4,7 +4,7 @@ import
 
 export
     class Reference extends Identifier, Expression
-        var arguments: Array<Expression> | Null = null
+        var typeArguments: Array<Expression> | Null = null
 
 # a function has normal "parameters"
 # a function can have type "parameters"

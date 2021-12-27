@@ -18,6 +18,7 @@ import * as Property from './Property';
 import * as Boolean from './ion/Boolean';
 import * as Pattern from './Pattern';
 import * as Identifier from './Identifier';
+import * as Number from './ion/Number';
 import * as Class from './ion/Class';
 export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Typed.Typed , Statement.Statement , SideEffect.SideEffect {
     readonly location: Location.Location | Null.Null;
@@ -31,7 +32,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
     readonly isMeta: Boolean.Boolean;
     readonly isInstance: Boolean.Boolean;
     readonly isStatic: Boolean.Boolean;
-    readonly isTypeParameter: Boolean.Boolean;
+    readonly typeParameterIndex: Number.Number | Null.Null;
     static readonly id = 'Parameter';
     static readonly implements = new Set([
         'Parameter',
@@ -45,7 +46,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
         'Statement',
         'SideEffect'
     ]);
-    constructor({location = null, meta = null, type = null, resolved = false, id, isMutable = false, value = null, isType = false, isMeta = false, isInstance = false, isStatic = false, isTypeParameter = false}: {
+    constructor({location = null, meta = null, type = null, resolved = false, id, isMutable = false, value = null, isType = false, isMeta = false, isInstance = false, isStatic = false, typeParameterIndex = null}: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Call.Call | Property.Property> | Null.Null,
         type?: Expression.Expression | Null.Null,
@@ -57,7 +58,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
         isMeta?: Boolean.Boolean,
         isInstance?: Boolean.Boolean,
         isStatic?: Boolean.Boolean,
-        isTypeParameter?: Boolean.Boolean
+        typeParameterIndex?: Number.Number | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
@@ -81,8 +82,8 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
             throw new Error('isInstance is not a Boolean: ' + Class.toString(isInstance));
         if (!Boolean.isBoolean(isStatic))
             throw new Error('isStatic is not a Boolean: ' + Class.toString(isStatic));
-        if (!Boolean.isBoolean(isTypeParameter))
-            throw new Error('isTypeParameter is not a Boolean: ' + Class.toString(isTypeParameter));
+        if (!(Number.isNumber(typeParameterIndex) || Null.isNull(typeParameterIndex)))
+            throw new Error('typeParameterIndex is not a Number | Null: ' + Class.toString(typeParameterIndex));
         this.location = location;
         this.meta = meta;
         this.type = type;
@@ -94,7 +95,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
         this.isMeta = isMeta;
         this.isInstance = isInstance;
         this.isStatic = isStatic;
-        this.isTypeParameter = isTypeParameter;
+        this.typeParameterIndex = typeParameterIndex;
         Object.freeze(this);
     }
     patch(properties: {
@@ -109,7 +110,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
         isMeta?: Boolean.Boolean,
         isInstance?: Boolean.Boolean,
         isStatic?: Boolean.Boolean,
-        isTypeParameter?: Boolean.Boolean
+        typeParameterIndex?: Number.Number | Null.Null
     }) {
         return new Parameter({
             ...this,

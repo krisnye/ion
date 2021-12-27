@@ -1,16 +1,23 @@
 
+class Pair<T>
+    a: T
+
+Percent = 0 .. 100
+
+sample = Pair<Percent>(100)
+
 // class @Foo
 //     value: 0..10
 
 // @Foo(value = 10)
-// @Foo(value = 2)
-get = (array: Array, index: 0 .. < array.length, optional: Number = 10) ->
-    1
+// @Foo(10)
+// get = (array: Array, index: 0 .. < array.length, optional: Number = 10) ->
+//     1
 
-sample = (a: Array, i: Number) ->
-    // get(a, i)
-    if i >= 0 & i < a.length
-        get(a, i)
+// sample = (a: Array, i: Number) ->
+//     // get(a, i)
+//     if i >= 0 & i < a.length
+//         get(a, i)
 
 // class Vector2
 //     x: Number

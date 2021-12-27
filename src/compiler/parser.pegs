@@ -510,7 +510,7 @@ FunctionType
     / "(" _ @FunctionType _ ")"
 
 TemplateArguments
-    = "<" _ head:InlineExpression tail:(_ "," _ @InlineExpression)*  _ ">"
+    = "<" _ head:ReferenceType tail:(_ "," _ @ReferenceType)*  _ ">"
     { return [head, ...tail] }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -998,8 +998,8 @@ Identifier
     = name:IdName { return node('Identifier', { name }) }
 
 Reference
-    = !ReservedWord name:IdName arguments:TemplateArguments?
-    { return node("Reference", { name, arguments }) }
+    = !ReservedWord name:IdName typeArguments:TemplateArguments?
+    { return node("Reference", { name, typeArguments }) }
 
 ReferenceType
     = ref:Reference

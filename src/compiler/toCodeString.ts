@@ -1,3 +1,4 @@
+import { type } from "os";
 import * as ast from "./ast";
 import { Node } from "./ast";
 import { memoize, SemanticError } from "./common";
@@ -13,7 +14,11 @@ function block(nodes, open = "{", close = "}", indent = '    ') {
 
 function toName(node: ast.Identifier) {
     let { name } = node
-    return name.indexOf('.') >= 0 ? "`" + name + "`" : name
+    let value = name.indexOf('.') >= 0 ? "`" + name + "`" : name
+    if (ast.Reference.is(node) && node.typeArguments != null && node.typeArguments?.length > 0) {
+        value += "<" + node.typeArguments.map(s).join(",") + ">"
+    }
+    return value
 }
 
 function meta(node: ast.Meta) {
@@ -118,9 +123,12 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
     Parameter(node) {
         return codeToString.Variable!(node as any)
     },
+    TemplateType(node) {
+        return `<${node.typeParameterIndex}>`
+    },
     Variable(node) {
         let value = meta(node)
-        if (!node.isTypeParameter) {
+        if (node.typeParameterIndex == null) {
             if (ast.ConditionalDeclaration.is(node)) {
                 value += `cond `
             }

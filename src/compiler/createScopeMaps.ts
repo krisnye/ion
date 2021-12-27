@@ -13,35 +13,34 @@ export type ScopeMaps = NodeMap<ScopeMap>
 
 type Options = {
     callback?: (current: Declarator, previous?: Declarator) => void,
-    lookup?: Lookup
-    dependencies?: Map<string,any>
+    lookup?: Lookup,
+    dependencies?: Map<string,any>,
+    skipFunctionBodies?: Boolean,
+    globalScope?: object,
 }
 
-function declareGlobals(scope, module: Module) {
+function declareGlobals(module: Module, options: Options & { globalScope }, map: Map<any,any>) {
     if (module.body) {
         let last = module.body[module.body.length - 1] as Expression
         // for now we are linking Declarations and Expressions directly.
         // That's not right. We need our shared references to be consistent across pre-compiled modules.
-        scope[getAbsolutePath(module.name)] = last
-        // if (Declaration.is(last)) {
-        //     for (let declarator of getDeclarators(last.id)) {
-        //         declare([scope], declarator)
-        //     }
-        // }
-        // else {
-        //     throw SemanticError(`The final statement MUST be a Declaration`, last)
-        // }
+        options.globalScope[getAbsolutePath(module.name)] = last
+        createScopeMaps(module, options, map)
     }
 }
 
 /**
  * Creates a global scope by using the exports within each module.
  */
-export function createGlobalScope(modules: Iterable<Module>) {
+function createGlobalScope(modules: Iterable<Module>, map: Map<any,any>, options: Options) {
     let scope: any = {}
     if (modules) {
         for (let module of modules) {
-            declareGlobals(scope, module)
+            declareGlobals(
+                module,
+                {...options, skipFunctionBodies: true, dependencies: undefined, globalScope: scope },
+                map
+            )
         }
     }
     return scope
@@ -91,11 +90,10 @@ export function *getDeclarators(node: Pattern | Identifier | Expression): Iterab
  * Returns a Map which will contain a scope object with variable names returning Declarations.
  * @param root the ast
  */
-export default function createScopeMaps(root, options: Options = {}): ScopeMaps {
-    let map = new Map()
-    let globalScope = options.dependencies ? createGlobalScope([...options.dependencies.values(), root]) : {}
-    map.set(null, globalScope)
-    let scopes: object[] = [globalScope]
+export default function createScopeMaps(root, options: Options = {}, map = new Map()): ScopeMaps {
+    let globalScope = options.globalScope || (options.dependencies ? createGlobalScope(options.dependencies.values(), map, options) : {});
+    map.set(null, globalScope);
+    let scopes: object[] = [globalScope];
 
     traverse(root, {
         lookup: options.lookup,

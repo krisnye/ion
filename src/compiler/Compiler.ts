@@ -5,7 +5,6 @@ import defaultPhases from "./phases";
 import Parser = require("../../lib/compiler/parser");
 import getExternalReferences from "./phases/getExternalReferences";
 import { Module } from "./ast";
-import { createGlobalScope } from "./createScopeMaps";
 import toCodeString from "./toCodeString";
 
 type Logger = (names?: string | string[] | null, ast?: any, file?: string) => void

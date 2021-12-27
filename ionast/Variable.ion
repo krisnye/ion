@@ -11,4 +11,4 @@ export
         var isMeta: Boolean = false
         var isInstance: Boolean = false
         var isStatic: Boolean = false
-        var isTypeParameter: Boolean = false
+        var typeParameterIndex: Number | Null = null

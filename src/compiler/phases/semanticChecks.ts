@@ -5,7 +5,7 @@ import { isSubtype } from "../analysis/newTypeAnalysis";
 import { intersectionOfNumberTypes, numberType, isLiteralNumberType } from "../analysis/numberTypes";
 import simplify from "../analysis/simplify";
 import splitExpressions from "../analysis/splitExpressions";
-import { Assignment, BinaryExpression, Call, ClassDeclaration, Type, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, Variable, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation, Declaration, For, SideEffect, UnaryExpression, NumberType, IntersectionType, ObjectType, ArrayPattern, PatternProperty, RestElement, ObjectPattern, Return } from "../ast";
+import { Assignment, BinaryExpression, Call, ClassDeclaration, Type, Expression, ExpressionStatement, FunctionExpression, Identifier, Literal, Module, ObjectExpression, Position, Reference, Variable, Property, MemberExpression, ArrayExpression, Declarator, Node, Block, Conditional, OutlineOperation, Declaration, For, SideEffect, UnaryExpression, NumberType, IntersectionType, ObjectType, ArrayPattern, PatternProperty, RestElement, ObjectPattern, Return, TemplateType } from "../ast";
 import { hasNodesOfType, SemanticError, isTypeName, isMetaName } from "../common";
 import { Options } from "../Compiler"
 import createScopeMaps from "../createScopeMaps";
@@ -241,7 +241,8 @@ export default function semanticChecks(
                     if (!isTypeName(node.id.name)) {
                         errors.push(SemanticError(`Type parameters must start with uppercase letter`, node.id))
                     }
-                    node = node.patch({ isTypeParameter: true })
+                    let typeParameterIndex = (container as any[]).findIndex(child => child.id?.name === node.id?.name)
+                    node = node.patch({ typeParameterIndex, type: new TemplateType({ typeParameterIndex }) })
                 }
                 else if (Declarator.is(node.id)) {
                     if (isMetaName(node.id.name)) {

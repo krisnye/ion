@@ -49,7 +49,10 @@ Cross platform modeling language
       - [X] Maybe only use SpreadType or single Type.
   - [x] array bounds checking
     - [x] getting declarator in Array, but can't find scope
-  - [ ] convert Meta properties to Meta classes
+  - [x] convert Meta properties to Meta classes
+  - [x] we need dependency scopes to find declarations, at LEAST for exported functions and classes.
+  - [ ] We need template Types
+  - [ ] class instance functions to static functions
   - [ ] get function for indexers on Array and other things
   - [ ] class inheritance
   - [x] We need a map { key -> value } format that is not ambiguous with array destructuring

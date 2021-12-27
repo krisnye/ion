@@ -209,6 +209,9 @@ export {
     default as TemplateLiteral
 } from './TemplateLiteral';
 export {
+    default as TemplateType
+} from './TemplateType';
+export {
     default as ThisExpression
 } from './ThisExpression';
 export {

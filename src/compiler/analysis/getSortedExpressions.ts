@@ -47,6 +47,12 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     //         yield containingVarDeclarator
     //     }
     // },
+    *Module(node) {        
+    },
+    *TemplateType(node) {
+    },
+    *ConditionalDeclaration(node) {
+    },
     *Conditional(node) {
         yield node.test
         yield node.consequent
@@ -114,7 +120,8 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     *ClassDeclaration(node) {
         yield* node.baseClasses
         yield* node.declarations
-        yield* node.typeParameters
+        // a class is NOT dependent on it's type parameters
+        // yield* node.typeParameters
     },
     *Property(node) {
         // if (Expression.is(node.id)) {
@@ -123,6 +130,9 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         if (Expression.is(node.value)) {
             yield node.value
         }
+    },
+    *Parameter(node, scopeMap, lookup) {
+        yield* predecessors.Variable!(node, scopeMap, lookup)
     },
     *Variable(node) {
         if (node.value) {
@@ -151,16 +161,15 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         yield* nonRecursiveReturnValues
     },
     *ReferenceType(node, scopes, lookup) {
-        return predecessors.Reference!(node, scopes, lookup)
+        yield* predecessors.Reference!(node as any, scopes, lookup)
     },
     *Reference(node, scopes) {
-        if (node.arguments) {
-            yield* node.arguments
+        if (node.typeArguments) {
+            yield* node.typeArguments
         }
         let referencedNode = scopes.get(node)[node.name]
         if (referencedNode != null) {
             yield referencedNode
-            // we don't throw on unrealized references... we just will consider them type any
         }
         else {
             throw SemanticError(`Referenced value not found '${node.name}'`, node)
@@ -227,7 +236,7 @@ export default function getSortedExpressions(root, scopeMap: ScopeMaps, lookup: 
     traverse(root, {
         enter(node) {
             // we don't need to type Type nodes or their descendants.
-            if (ast.Location.is(node) || ast.Type.is(node)) {
+            if (ast.Location.is(node)) {
                 return skip
             }
         },
@@ -237,20 +246,8 @@ export default function getSortedExpressions(root, scopeMap: ScopeMaps, lookup: 
             }
         }
     });
-    // // now... we can try to sort the nodes based on what order we think they should be in.
-    // // the reason for this is that we neeed UFCS functions to be defined before they are called.
-    // // FunctionExpression depends on parameter types => Classes
-    // nodes.sort((a, b) => {
-    //     const afunc = FunctionExpression.is(a)
-    //     const bfunc = FunctionExpression.is(b)
-    //     if (afunc && !bfunc) {
-    //         return -1
-    //     }
-    //     if (bfunc && !afunc) {
-    //         return +1
-    //     }
-    //     return 0
-    // })
+
+
     for (let node of nodes) {
         let count = 0;
         if (Typed.is(node)) {
@@ -266,6 +263,9 @@ export default function getSortedExpressions(root, scopeMap: ScopeMaps, lookup: 
                     }
                 }
             }
+            else {
+                console.log("getSortedExpressions function not found: " + node.constructor.name)
+            }
             if (count === 0) {
                 push(sentinel, node);
             }
@@ -274,5 +274,6 @@ export default function getSortedExpressions(root, scopeMap: ScopeMaps, lookup: 
     let sorted = toposort(edges);
     //  remove sentinel
     sorted.splice(sorted.indexOf(sentinel), 1)
+
     return sorted;
 }

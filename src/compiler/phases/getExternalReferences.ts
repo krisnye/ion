@@ -1,5 +1,5 @@
 import { Declaration, Declarator, Identifier, Module, Reference } from "../ast";
-import { traverse } from "@glas/traverse";
+import { Lookup, traverse } from "@glas/traverse";
 import createScopeMaps, { getDeclarators } from "../createScopeMaps";
 import { _this } from "../reservedWords";
 import { resolve, join, getAbsolutePath, getLastName } from "../pathFunctions";
@@ -10,7 +10,8 @@ export default function getExternalReferences(module: Module, modules: Map<strin
     module = addDefaultExport(module)
 
     let moduleLastName = getLastName(module.name)
-    let scopes = createScopeMaps(module)
+    let lookup = new Lookup()
+    let scopes = createScopeMaps(module, { lookup })
     let externals = new Map<string,Set<Reference>>()
     let exportNameToAbsolutePath = new Map<string,string>()
     let exportDeclarators = new Set<Declarator>()
@@ -51,14 +52,11 @@ export default function getExternalReferences(module: Module, modules: Map<strin
     // console.log(exports)
     // get own exports
     module = traverse(module, {
+        lookup,
         leave(node) {
             if (Reference.is(node) || Declarator.is(node)) {
                 if (node.name !== _this) {
-                    let scope = scopes.get(node)
-                    // let builtInType = builtins[node.name]
-                    // if (Reference.is(builtInType)) {
-                    //     node = node.patch({ absolute: builtInType.absolute })
-                    // }
+                    let scope = scopes.get(lookup.getOriginal(node))
                     if (scope == null) {
                         throw SemanticError(`Scope not found`, node)
                         // console.log("SCOPE")
@@ -75,7 +73,7 @@ export default function getExternalReferences(module: Module, modules: Map<strin
                             if (Reference.is(node)) {
                                 set.add(node)
                             }
-                            return node.patch({ name: getAbsolutePath(resolved.name) })
+                            node = node.patch({ name: getAbsolutePath(resolved.name) })
                         }
                         else {
                             errors.push(SemanticError(`Reference could not be resolved`, node))
@@ -86,7 +84,7 @@ export default function getExternalReferences(module: Module, modules: Map<strin
                         if (localExportAbsolute != null) {
                             if (exportDeclarators.has(declarator)) {
                                 // add absolute reference
-                                return node.patch({ name: localExportAbsolute })
+                                node = node.patch({ name: localExportAbsolute })
                             }
                         }
                     }
