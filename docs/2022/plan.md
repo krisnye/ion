@@ -7,6 +7,7 @@
 - All operators are defined in root namespace and can be extended.
 - All operators can operate on any type defined for them.
 - Use same operators for Type operations.
+- Define core operator return types using metadata.
 
 ## Step 1: Design Intermediate Representation
 

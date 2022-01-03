@@ -19,9 +19,8 @@ a <= b      less than or equal
 a >= b      greater than or equal
 a == b      equal
 a != b      not equal
-a & b       and
-a | b       or
-a ^ b       xor
-
-we don't need logical && or logical ||
-because there is no short circuit in a pure functional language
+a & b       bitwise and
+a | b       bitwise or
+a ^ b       bitwise xor
+a && b      logical and
+a || b      logical or
