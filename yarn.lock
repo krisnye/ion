@@ -915,10 +915,18 @@
   resolved "https://registry.yarnpkg.com/@glas/test/-/test-1.0.3.tgz#f2d1780aed3bb42b34de27920fee27f7f86d02df"
   integrity sha512-SJqhXBwN48D60njrq544fxowiqrFivQ9FfgeHYyCNv99p72KE19kFDXY1aqsAY7MN9hnBS3P+0/3VBqhVw92Bw==
 
-"@glas/traverse@^1.0.4", "@glas/traverse@^1.0.6":
+"@glas/traverse@^1.0.4":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@glas/traverse/-/traverse-1.0.6.tgz#a3b8d8e40f4f8a2c66f9c5f39303d55335823e6c"
   integrity sha512-1nM/AzPUkZ69blHCReZ+DSjuAumQRhHRPKWA9KjOdvNqDp//IgAiqEN656vfP4mvbcHMHdgLrXDl146PzMwqfQ==
+  dependencies:
+    "@glas/test" "^1.0.3"
+    "@types/node" "^14.6.2"
+
+"@glas/traverse@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@glas/traverse/-/traverse-1.0.7.tgz#fb60d62fcf074894fee24ffab0c825641fa78925"
+  integrity sha512-UIsTWc8F5Sv+Rd2qw0kiOIl22RPMJn0hLga4Bmkn7FyOkyd750GPUg1IJ3TQ9BGS/LaKk8yG8DdhsErFHxiEgQ==
   dependencies:
     "@glas/test" "^1.0.3"
     "@types/node" "^14.6.2"
