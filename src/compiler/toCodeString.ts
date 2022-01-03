@@ -108,7 +108,7 @@ const codeToString: { [P in keyof typeof ast]?: (node: InstanceType<typeof ast[P
             throw SemanticError(`Node.value missing!?`, node)
         }
         if (node.id != null) {
-            if (ast.Identifier.is(node.id) || ast.ReferenceType.is(node.id)) {
+            if (ast.Identifier.is(node.id)) {
                 return `${s(node.id)}:${s(node.value!)}`
             }
             else {

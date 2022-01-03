@@ -1,4 +1,6 @@
 
 class Array<T>
     length: >= 0
-    // get: (index: 0 .. < length) => T
+
+    @Native()
+    get: (index: 0 .. < length) => T

@@ -10,12 +10,13 @@ import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
+import * as Type from './Type';
 import * as Boolean from './ion/Boolean';
 import * as Declarator from './Declarator';
 import * as Class from './ion/Class';
 export class ConditionalDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , SideEffect.SideEffect , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly id: Declarator.Declarator;
     readonly isMutable: Boolean.Boolean;
@@ -33,7 +34,7 @@ export class ConditionalDeclaration implements _Object.Object , Declaration.Decl
     ]);
     constructor({location = null, type = null, resolved = false, id, isMutable = false, negate = false}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         id: Declarator.Declarator,
         isMutable?: Boolean.Boolean,
@@ -41,8 +42,8 @@ export class ConditionalDeclaration implements _Object.Object , Declaration.Decl
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!Declarator.isDeclarator(id))
@@ -61,7 +62,7 @@ export class ConditionalDeclaration implements _Object.Object , Declaration.Decl
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         id?: Declarator.Declarator,
         isMutable?: Boolean.Boolean,

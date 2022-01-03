@@ -13,18 +13,6 @@ const negateOperators = {
     "isnt": "is",
 }
 
-// const primitiveTypes = {
-//     "ion.String:String": true,
-//     "ion.String:Number": true,
-//     "ion.String:Boolean": true,
-//     "ion.String:Array": true
-//     "ion.String:Map": true,
-//     "ion.String:Set": true,
-//     "ion.String:Null": true,
-//     "ion.String:Class": true,
-//     "ion.String:Function": true,
-// }
-
 // // A | B & !A
 // // what am I using this for anyways?
 // function areTypesReferencesMutuallyExclusive(a: string, b: string): boolean {

@@ -7,7 +7,7 @@ import toCodeString from "../../toCodeString"
 import normalize from "../normalize"
 import simplify from "../simplify"
 
-assert.strictEqual(intersectionOfNumberTypes([numberType(10), numberType(20)]), null)
+assert.strictEqual(intersectionOfNumberTypes(numberType(10), numberType(20)), null)
 
 // numbertypes overlapping
 assert.strictEqual(numberTypesAdjacent(numberType(1, 2, true, true), numberType(3, 4, true, true)), false)
@@ -65,12 +65,17 @@ assert.strictEqual(isNumberSubtype(new NumberType({ min: ref("a"), minExclusive:
 
 //  check object types
 
-let A = new ReferenceType({ name: "a" })
-let B = new ReferenceType({ name: "b" })
+let A = new ReferenceType({ name: "A" })
+let B = new ReferenceType({ name: "B" })
 assert.strictEqual(isSubtype(A, A), true)
 assert.strictEqual(isSubtype(B, B), true)
-assert.strictEqual(isSubtype(A, B), false)
-assert.strictEqual(isSubtype(B, A), false)
+assert.strictEqual(isSubtype(A, B), null)
+assert.strictEqual(isSubtype(B, A), null)
+
+let C = new ReferenceType({ name: "Array" })
+let D = new ReferenceType({ name: "Array", typeArguments: [A] })
+assert.strictEqual(isSubtype(D, C), true)
+assert.strictEqual(isSubtype(C, D), null)
 
 let Vector2 = new ObjectType({
     kind: "Object",
@@ -161,7 +166,7 @@ assert.strictEqual(toCodeString(
             ]
         })
     )
-), "A & B & C & (alpha:(>=0), beta:(>=0), charlie:(>=0))")
+), "A & B & C & (beta:(>=0), charlie:(>=0), alpha:(>=0))")
 
 assert.strictEqual(toCodeString(simplify(
     new IntersectionType({

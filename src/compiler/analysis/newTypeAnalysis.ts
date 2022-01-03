@@ -2,6 +2,7 @@ import { Type, NumberType, ObjectType, UnionType, IntersectionType, Reference, P
 import toCodeString from "../toCodeString";
 import { isNumberSubtype } from "./numberTypes";
 import * as baseTypes from "../types";
+import EvaluateContext from "./EvaluateContext";
 
 type Maybe = true | false | null
 //  a  \  b |  true   false   null
@@ -89,9 +90,15 @@ function getPropertyType(objectType: ObjectType, propertyKey: Type | Identifier)
  * Returns false if all instances of type 'b' are not instances of type 'b'
  * Returns null if some instances of type 'a' could be instances of type 'b'
  */
-export function isSubtype(a: Type, b: Type ): boolean | null {
+export function isSubtype(a: Type | null, b: Type | null): boolean | null {
     if (a === b || toCodeString(a) === toCodeString(b)) {
         return true
+    }
+    if (b == null) {
+        return true
+    }
+    if (a == null) {
+        return null
     }
     if (NeverType.is(a as any) || NeverType.is(b as any)) {
         return false
@@ -121,8 +128,26 @@ export function isSubtype(a: Type, b: Type ): boolean | null {
     }
     // at this point, we should either be reference types or object types
     if (Reference.is(a) && Reference.is(b)) {
+        if (a.name !== b.name) {
+            return null
+        }
+        let aTypes = a.typeArguments || []
+        let bTypes = b.typeArguments || []
+        let result: boolean | null = true
+        for (let i = 0; i < bTypes.length; i++) {
+            let aType = aTypes[i]
+            let bType = bTypes[i]
+            let subcheck = isSubtype(aType, bType)
+            if (subcheck === false) {
+                result = false
+                break
+            }
+            else if (subcheck === null) {
+                result = null
+            }
+        }
         // different references, different types, no implements yet
-        return false
+        return result
     }
     let baseA = getBaseType(a)
     let baseB = getBaseType(b)

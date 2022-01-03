@@ -114,7 +114,7 @@ export default class Compiler {
         let options = this.normalizeOptions(optionsOrJson)
         let sources = this.getFiles(options)
         // if debug only Number compile =>
-        sources = new Map([...sources.entries()].filter(([name, source]) => ({ Number:1, Boolean: 0, true: 0, false: 0, String:0, min:1, max:1, abs:1, Array: 1, "@Meta": 0, "aa.sample": 1 })[name])) as any
+        sources = new Map([...sources.entries()].filter(([name, source]) => true || ({ Boolean: 1, true: 1, false: 1, "aa.sample": 0 })[name])) as any
 
         let order = new Array<string>()
 
@@ -192,7 +192,7 @@ export default class Compiler {
     }
 
     log(phase: string, module: any, name: string) {
-        let viewAsCode = true
+        let viewAsCode = false
         if (viewAsCode) {
             module = toCodeString(module)
         }

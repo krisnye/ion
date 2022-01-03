@@ -18,8 +18,8 @@ e -> 20                 Property{key, value}
 x := 20                 Assignment{id: Id, value: Expression}: Statement
 x + b                   Operation{operator: String, operands: Node[]}: Expression
 class Vector2           Class{id: Declarator}: Statement
-    x: Number           VariableDeclaration
-    y: Number           VariableDeclaration
+    x: Number           Variable
+    y: Number           Variable
     translate(dx: Number, dy: Number) -> this{x: x + dx, y: y + dy}
                         Function{id?, parameters: Variable[]}: Block
 if x                    Conditional{ test, consequent, alternate }

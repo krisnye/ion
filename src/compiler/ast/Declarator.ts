@@ -10,12 +10,13 @@ import * as Typed from './Typed';
 import * as Location from './Location';
 import * as Null from './ion/Null';
 import * as String from './ion/String';
+import * as Type from './Type';
 import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
 export class Declarator implements _Object.Object , Identifier.Identifier , Pattern.Pattern , Node.Node , Expression.Expression , Typed.Typed {
     readonly location: Location.Location | Null.Null;
     readonly name: String.String;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     static readonly id = 'Declarator';
     static readonly implements = new Set([
@@ -30,15 +31,15 @@ export class Declarator implements _Object.Object , Identifier.Identifier , Patt
     constructor({location = null, name, type = null, resolved = false}: {
         location?: Location.Location | Null.Null,
         name: String.String,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!String.isString(name))
             throw new Error('name is not a String: ' + Class.toString(name));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         this.location = location;
@@ -50,7 +51,7 @@ export class Declarator implements _Object.Object , Identifier.Identifier , Patt
     patch(properties: {
         location?: Location.Location | Null.Null,
         name?: String.String,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean
     }) {
         return new Declarator({

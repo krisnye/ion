@@ -13,6 +13,7 @@ import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
+import * as Type from './Type';
 import * as Boolean from './ion/Boolean';
 import * as Pattern from './Pattern';
 import * as Identifier from './Identifier';
@@ -26,7 +27,7 @@ export function isSpecifier(value): value is Specifier {
 }
 export class ImportDeclaration implements _Object.Object , Declaration.Declaration , Statement.Statement , SideEffect.SideEffect , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly id: Pattern.Pattern | (Identifier.Identifier | Expression.Expression);
     readonly isMutable: Boolean.Boolean;
@@ -47,7 +48,7 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
     ]);
     constructor({location = null, type = null, resolved = false, id, isMutable = false, specifiers, path = null, source, absoluteSource = null}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         id: Pattern.Pattern | (Identifier.Identifier | Expression.Expression),
         isMutable?: Boolean.Boolean,
@@ -58,8 +59,8 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!(Pattern.isPattern(id) || (Identifier.isIdentifier(id) || Expression.isExpression(id))))
@@ -87,7 +88,7 @@ export class ImportDeclaration implements _Object.Object , Declaration.Declarati
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         id?: Pattern.Pattern | (Identifier.Identifier | Expression.Expression),
         isMutable?: Boolean.Boolean,

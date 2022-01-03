@@ -7,11 +7,12 @@ import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
+import * as Type from './Type';
 import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
 export class Range implements _Object.Object , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly start: Expression.Expression;
     readonly end: Expression.Expression;
@@ -27,7 +28,7 @@ export class Range implements _Object.Object , Expression.Expression , Typed.Typ
     ]);
     constructor({location = null, type = null, resolved = false, start, end, inclusive, step = null}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         start: Expression.Expression,
         end: Expression.Expression,
@@ -36,8 +37,8 @@ export class Range implements _Object.Object , Expression.Expression , Typed.Typ
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!Expression.isExpression(start))
@@ -59,7 +60,7 @@ export class Range implements _Object.Object , Expression.Expression , Typed.Typ
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         start?: Expression.Expression,
         end?: Expression.Expression,

@@ -4,6 +4,6 @@ import
 
 export
     class Typed extends Node
-        var type: Expression | Null = null
+        var type: Type | Null = null
         var resolved: Boolean = false
 

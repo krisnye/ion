@@ -12,7 +12,7 @@ import * as Boolean from './ion/Boolean';
 import * as Class from './ion/Class';
 export class TypeExpression implements _Object.Object , Type.Type , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly value: Expression.Expression;
     static readonly id = 'TypeExpression';
@@ -26,14 +26,14 @@ export class TypeExpression implements _Object.Object , Type.Type , Expression.E
     ]);
     constructor({location = null, type = null, resolved = false, value}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         value: Expression.Expression
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!Expression.isExpression(value))
@@ -46,7 +46,7 @@ export class TypeExpression implements _Object.Object , Type.Type , Expression.E
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         value?: Expression.Expression
     }) {

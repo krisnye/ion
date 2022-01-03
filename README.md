@@ -51,9 +51,16 @@ Cross platform modeling language
     - [x] getting declarator in Array, but can't find scope
   - [x] convert Meta properties to Meta classes
   - [x] we need dependency scopes to find declarations, at LEAST for exported functions and classes.
-  - [ ] We need template Types
-  - [ ] class instance functions to static functions
-  - [ ] get function for indexers on Array and other things
-  - [ ] class inheritance
+  - [x] We need template Types
+  - [x] get function for indexers on Array and other things
+  - [?] it seems that Variable type is being set on changes AFTER other inference
   - [x] We need a map { key -> value } format that is not ambiguous with array destructuring
-  - [ ] Maybe... we should see if we need pattern matching and how that works with above
+  - [-] Maybe... we should see if we need pattern matching and how that works with above
+  - [ ] class instance functions to static functions
+  - [ ] class inheritance
+  - [ ] uniform function call syntax
+  - [ ] refactoring
+    - [-] UnionType to left/right operation
+    - [-] IntersectionType to left/right operation
+    - [ ] create normalized Type so Union of ObjectType or NumberType
+  

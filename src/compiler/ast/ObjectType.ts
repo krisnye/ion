@@ -15,7 +15,7 @@ import * as Property from './Property';
 import * as Class from './ion/Class';
 export class ObjectType implements _Object.Object , Type.Type , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly kind: String.String;
     readonly properties: _Array.Array<Property.Property | Type.Type>;
@@ -30,15 +30,15 @@ export class ObjectType implements _Object.Object , Type.Type , Expression.Expre
     ]);
     constructor({location = null, type = null, resolved = false, kind, properties}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         kind: String.String,
         properties: _Array.Array<Property.Property | Type.Type>
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!String.isString(kind))
@@ -54,7 +54,7 @@ export class ObjectType implements _Object.Object , Type.Type , Expression.Expre
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         kind?: String.String,
         properties?: _Array.Array<Property.Property | Type.Type>

@@ -14,7 +14,7 @@ import * as NumberType from './NumberType';
 import * as Class from './ion/Class';
 export class StringType implements _Object.Object , Type.Type , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly value: String.String | Null.Null;
     readonly length: NumberType.NumberType;
@@ -29,15 +29,15 @@ export class StringType implements _Object.Object , Type.Type , Expression.Expre
     ]);
     constructor({location = null, type = null, resolved = false, value = null, length}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         value?: String.String | Null.Null,
         length: NumberType.NumberType
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!(String.isString(value) || Null.isNull(value)))
@@ -53,7 +53,7 @@ export class StringType implements _Object.Object , Type.Type , Expression.Expre
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         value?: String.String | Null.Null,
         length?: NumberType.NumberType

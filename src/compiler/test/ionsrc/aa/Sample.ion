@@ -1,10 +1,26 @@
+// class A
+//     a: Number
+// class B
+//     b: Number
+// C = A & B
 
-class Pair<T>
-    a: T
+// both = (): C -> 1
 
-Percent = 0 .. 100
+// sample = both()
 
-sample = Pair<Percent>(100)
+sample = (a: Array, i: 0 .. < a.length) -> 1
+
+// array = [1,2]
+// index: 0..1 = 1
+// sample = array[index]
+
+// class Pair<T>
+//     a: T
+//     b: T
+// Percent = 0 .. 100
+// sample = Pair<Percent>(1, 1)
+
+// sample: Boolean = false
 
 // class @Foo
 //     value: 0..10

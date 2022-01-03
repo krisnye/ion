@@ -14,7 +14,7 @@ import * as Variable from './Variable';
 import * as Class from './ion/Class';
 export class FunctionType implements _Object.Object , Type.Type , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly parameters: _Array.Array<Variable.Variable>;
     readonly returnType: Type.Type | Null.Null;
@@ -29,15 +29,15 @@ export class FunctionType implements _Object.Object , Type.Type , Expression.Exp
     ]);
     constructor({location = null, type = null, resolved = false, parameters, returnType = null}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         parameters: _Array.Array<Variable.Variable>,
         returnType?: Type.Type | Null.Null
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!_Array.isArray(parameters))
@@ -53,7 +53,7 @@ export class FunctionType implements _Object.Object , Type.Type , Expression.Exp
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         parameters?: _Array.Array<Variable.Variable>,
         returnType?: Type.Type | Null.Null

@@ -60,10 +60,9 @@ const normalize = memoize(function(e: Expression): Expression {
         })
     }
     if (ObjectType.is(e)) {
+        //  we DO NOT sort ObjectType items as the order matters for analysis
         return e.patch({
-            properties: e.properties.map(normalize).sort((a, b) => {
-                return toCodeString(a).localeCompare(toCodeString(b))
-            })
+            properties: e.properties.map(normalize)
         })
     }
     if (BinaryExpression.is(e)) {

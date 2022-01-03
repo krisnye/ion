@@ -13,7 +13,7 @@ import * as _Array from './ion/Array';
 import * as Class from './ion/Class';
 export class SpreadType implements _Object.Object , Type.Type , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly types: _Array.Array<Type.Type>;
     static readonly id = 'SpreadType';
@@ -27,14 +27,14 @@ export class SpreadType implements _Object.Object , Type.Type , Expression.Expre
     ]);
     constructor({location = null, type = null, resolved = false, types}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         types: _Array.Array<Type.Type>
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!_Array.isArray(types))
@@ -47,7 +47,7 @@ export class SpreadType implements _Object.Object , Type.Type , Expression.Expre
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         types?: _Array.Array<Type.Type>
     }) {

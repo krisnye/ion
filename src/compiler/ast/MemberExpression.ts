@@ -15,7 +15,7 @@ import * as Identifier from './Identifier';
 import * as Class from './ion/Class';
 export class MemberExpression implements _Object.Object , Expression.Expression , ChainElement.ChainElement , Type.Type , RuntimeType.RuntimeType , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly optional: Boolean.Boolean;
     readonly object: Expression.Expression;
@@ -33,7 +33,7 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
     ]);
     constructor({location = null, type = null, resolved = false, optional = false, object, property}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         optional?: Boolean.Boolean,
         object: Expression.Expression,
@@ -41,8 +41,8 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!Boolean.isBoolean(optional))
@@ -61,7 +61,7 @@ export class MemberExpression implements _Object.Object , Expression.Expression 
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         optional?: Boolean.Boolean,
         object?: Expression.Expression,

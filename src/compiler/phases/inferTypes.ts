@@ -1,7 +1,7 @@
 import { Lookup, traverse } from "@glas/traverse";
 import evaluate from "../analysis/evaluate";
 import getSortedExpressions from "../analysis/getSortedExpressions";
-import { Expression, Literal, Module, TypeExpression, Property } from "../ast";
+import { Expression, Literal, Module, TypeExpression, Property, Type } from "../ast";
 import * as ast from "../ast";
 import { isMetaName, isTypeName, SemanticError } from "../common";
 import { Options } from "../Compiler"
@@ -54,7 +54,6 @@ function createCombinedTypeExpression(type: ast.TypeExpression, name: String, kn
         return type
     }
     let combinedType = combineExpressions([...(ast.IntersectionType.is(type) ? type.types : [type]), ...newClauses], "&")!
-    // console.log("--------> " + toCodeString(combinedType))
     return combinedType
     // return simplify(new ast.TypeExpression({ location, value: combinedType }))
 }
@@ -74,34 +73,15 @@ function getDeclaration(node: ast.Reference, c: EvaluateContext) {
     return c.current(declaration);
 }
 
-function getInstanceType(node: ast.ReferenceType, c: EvaluateContext) {
+function getInstanceType(node: ast.ReferenceType, c: EvaluateContext): ast.Type {
     let declaration = getDeclaration(node, c)
     if (ast.ClassDeclaration.is(declaration)) {
-        return declaration.instanceType
+        return declaration.instanceType!
     }
     else {
-        return declarator.type
+        return declaration.type!
     }
 }
-
-// function callToObjectTypeToProperties(call: ast.Call, c: EvaluateContext, errors: Array<Error>) {
-//     let callee = c.current(call.callee)
-//     let calleeType = callee.type as ast.FunctionType
-//     let properties = new Array<ast.Property>()
-//     let index = 0
-//     for (let arg of call.arguments) {
-//         if (ast.Argument.is(arg)) {
-//             let currentArg = c.current(arg) as ast.Argument
-//             let value = c.current(currentArg.value)
-//             let parameter = c.current(calleeType.parameters[index++]) as ast.Variable
-//             properties.push(new ast.Property({ key: new ast.Identifier(parameter.id as ast.Declarator), value: value.type }))
-//         }
-//         else {
-//             throw SemanticError(`Argument type not supported yet`, arg)
-//         }
-//     }
-//     return properties
-// }
 
 const literalTypes = {
     boolean: types.Boolean,
@@ -149,33 +129,51 @@ function getAncestorExpressionType(node, c: EvaluateContext) {
 }
 
 function getMemberType(objectType: ast.Type, objectProperty: ast.Expression | ast.Identifier, c: EvaluateContext) {
-    if (ast.ReferenceType.is(objectType)) {
-        objectType = getInstanceType(objectType, c)
-    }
+    objectType = toFlatType(objectType, c)
     if (ast.IntersectionType.is(objectType)) {
         objectType = objectType.types.find(ast.ObjectType.is)!
     }
     if (ast.ObjectType.is(objectType)) {
+        // array index check
         for (let property of objectType.properties as Array<Property>) {
-            let matches = false
+            let matches: boolean | null = false
             if (ast.Identifier.is(property.id) && ast.Identifier.is(objectProperty)) {
                 matches = property.id.name === objectProperty.name
             }
-            else if (Expression.is(property.id) && Expression.is(objectProperty)) {
-                matches = toCodeString(property.id) === toCodeString(objectProperty)
+            else if (Type.is(property.id) && Expression.is(objectProperty)) {
+                matches = isSubtype(objectProperty.type as Expression, property.id as Expression)
             }
             else {
-                console.log("CHECK TYPES HERE-------")
-            }
+                throw SemanticError(`Compiler error, this shouldn't happen`, objectProperty)
+            } 
+            // if (Expression.is(property.id) && Expression.is(objectProperty)) {
+            //     matches = toCodeString(property.id) === toCodeString(objectProperty)
+            // }
             // let matches = property.key
             // console.log({ pkey: property.key, np: node.property })
             if (matches) {
                 return property.value
             }
         }
+        // custom message for array indexer
+        if (objectType.kind === "Array" && Expression.is(objectProperty)) {
+            throw SemanticError(`Invalid Array Indexer: ${toCodeString(objectProperty.type)}`, objectProperty)
+        }
     }
-    // console.log("NOT FOUND", JSON.stringify({ objectProperty, objectType }, null, 2))
-    throw SemanticError(`Property not found`, objectProperty)
+    // console.log("NOT FOUND", JSON.stringify({ objectProperty, objectType: toCodeString(objectType) }, null, 2))
+    throw SemanticError(`Property not found '${toCodeString(objectProperty)}'`, objectProperty)
+}
+
+/**
+ * Converts from the user friendly form which retains class name references
+ * into a single ObjectType, NumberType or a UnionType of those.
+ */
+export function toFlatType(type: ast.Type, c: EvaluateContext) {
+    if (ast.ReferenceType.is(type)) {
+        type = getInstanceType(type, c)
+    }
+    console.log("_______toFlatType", toCodeString(type))
+    return type
 }
 
 export const inferType: {
@@ -216,6 +214,8 @@ export const inferType: {
         }
         return { type }
     },
+    UnionType(node) {
+    },
     Literal(node) {
         let jstypeof = typeof node.value
         let type = literalTypes[jstypeof]
@@ -243,7 +243,7 @@ export const inferType: {
         let valueType: Expression | null = null
         if (node.value != null) {
             // get the type from the value
-            valueType = c.current(node.value).type
+            valueType = c.current(c.current(node.value).type)
         }
         if (declaredType != null && valueType != null) {
             // check that value type is assignable to declared type
@@ -255,14 +255,14 @@ export const inferType: {
                 errors.push(SemanticError(`Value may be invalid: ${toCodeString(valueType)}, expected: ${toCodeString(declaredType)}`, node.value))
             }
         }
-        return { type: declaredType }
+        return { type: declaredType ?? valueType }
     },
     Module(node, c, e) {
         // same as Block
         return inferType.Block!(node as any, c, e)
     },
     Block(node, c) {
-        let type = c.current(node.body[node.body.length - 1]).type
+        let type = c.current(c.current(node.body[node.body.length - 1]).type)
         return { type }
     },
     FunctionExpression(node, c) {
@@ -295,28 +295,19 @@ export const inferType: {
                 value: variable.type,
             }))
         })
-        // now need instanceType
-        // console.log('-------> ClassDeclaration.type: ' + node.id.name, funcType)
         return { type, instanceType }
     },
     ReferenceType(node, c, errors) {
-        // if (node.name === types.Number.name) {
-        //     return numberType(null, null)
-        // }
-        // // a Reference to Array<T> should yield Function & { static: properties }
-        // // a ReferenceType to Array<T> should yield { get(index): T, length: >= 0 }
-        // let scope = c.scopes.get(node)
-        // let declarator = c.current(c.current(scope[node.name]))
-        // if (declarator == null) {
-        //     throw SemanticError(`Reference not found: ${node.name}`, node)
-        // }
-        // let declaration = ast.Declaration.is(declarator) ? declarator : c.lookup.findAncestor(declarator, ast.Declaration.is)!
-        // if (ast.ClassDeclaration.is(declaration)) {
-        //     return declaration.instanceType
-        // }
-        // else {
-        //     return declarator.type
-        // }
+        if (node.name === types.Number.name) {
+            return numberType(null, null)
+        }
+        let declaration = getDeclaration(node, c)
+        if (!ast.ClassDeclaration.is(declaration)) {
+            // console.log("!!!!!!!!!ReferenceType " + node.name, declaration.type)
+            // if we aren't referencing a class declaration
+            //  then just replace this ReferenceType with the declarator type
+            return c.current(declaration.type)
+        }
         return (inferType.Reference as any)(node, c, errors)
     },
     Reference(node, c, errors) {
@@ -326,15 +317,7 @@ export const inferType: {
         }
         let type = c.current(declarator.type)
         if (type == null) {
-            let declaration = getDeclaration(node, c)
-            // if (ast.Variable.is(declaration) && declaration.typeParameterIndex != null) {
-            //     type = new ast.TemplateType({ typeParameterIndex: declaration.typeParameterIndex })
-            // }
-            if (type == null) {
-                debugger
-                throw SemanticError(`Can't find type`, declarator)
-                // errors.push(SemanticError(`Can't find type`, declarator))
-            }
+            errors.push(SemanticError(`Can't find type`, declarator))
         }
         return { type }
     },
@@ -377,27 +360,27 @@ export const inferType: {
                 break
             }
         }
-        let type = new ast.IntersectionType({
-            types: [
-                new ast.ReferenceType(types.Array),
-                new ast.ObjectType({
-                    location: node.location,
-                    kind: "Array",
-                    properties: [
-                        ...items.map((item, index) => {
-                            let id = new Literal({ value: index })
-                            let value = c.current(item)
-                            return new Property({
-                                id,
-                                value: value.type
-                            })
-                        }),
-                        new Property({
-                            id: new ast.Identifier({ name: "length" }),
-                            value: new Literal({ value: items.length }),
-                        })
-                    ]
+        let type = new ast.ObjectType({
+            location: node.location,
+            kind: "Array",
+            properties: [
+                ...items.map((item, index) => {
+                    let value = c.current(item)
+                    return new Property({
+                        id: numberType(index, index),
+                        value: value.type
+                    })
                 }),
+                new Property({
+                    id: numberType(0, items.length, false, true),
+                    value: new ast.UnionType({
+                        types: items.map(item => c.current(item).type) as any
+                    }),
+                }),
+                new Property({
+                    id: new ast.Identifier({ name: "length" }),
+                    value: numberType(items.length, items.length),
+                })
             ]
         })
 
@@ -430,9 +413,6 @@ export const inferType: {
     },
     Call(node, c, errors) {
         let callee = c.current(node.callee)!
-        if (callee == null) {
-            console.log("______", node)
-        }
         let calleeType: Expression | null | undefined = callee.type
         if (calleeType == null) {
             errors.push(SemanticError(`Callee type not found`, node.callee))
@@ -476,6 +456,7 @@ export const inferType: {
                 }
                 else {
                     // function parameter names
+                    console.log({ arg })
                     throw SemanticError(`Argument type not supported yet`, arg)
                 }
                 index++;
@@ -524,16 +505,14 @@ export const inferType: {
                                         return node
                                     }
                                     if (declaration && declaration.type) {
-                                        return declaration.type
+                                        return c.current(declaration.type)
                                     }
-
-                                    debugger
                                     throw new Error("Type not found: " + node.name)
                                 }
                                 else {
                                     let declarator = getDeclarator(node, c)
                                     console.log("Declarator", { paramNames, node })
-                                    return declarator.type!
+                                    return c.current(declarator.type)!
                                 }
                             }
                         }
@@ -586,7 +565,6 @@ export const inferType: {
                 // console.log({ argType, parameterType })
                 // console.log(`CHECK isSubtype ${toCodeString(argType)} => ${toCodeString(parameterType)} ? ${consequent}`)
                 if (consequent === false) {
-                    debugger
                     errors.push(SemanticError(`Argument always invalid: ${toCodeString(argType)}, expected: ${toCodeString(newParameterType)}`, argValue))
                 }
                 else if (consequent === null) {
@@ -645,24 +623,17 @@ export default function inferTypes(
             alreadyResolved.add(originalNode)
         }
 
-        // let resolved = getResolved(lookup, originalNode)
         // first try to simplify
         let currentNode = originalNode
         currentNode = evaluate(currentNode, context)
         lookup.setCurrent(originalNode, currentNode)
         let changes: any = null
-        // console.log("--------> " + currentNode.constructor.name + " -> " + toCodeString(currentNode))
-        // then try to infer types
-        // if (currentNode.type == null) {
+
         let func = inferType[currentNode.constructor.name]
         if (func == null) {
             console.log("!!!!!!!! NO FUNCTION: " + currentNode.constructor.name)
         }
         changes = func?.(currentNode, context, errors)
-        // }
-        // else {
-        //     changes = { type: simplify(currentNode.type) }
-        // }
         if (changes != null) {
             if (Expression.is(changes)) {
                 // we track these so they don't get properties merged later but are returned as is.
@@ -695,10 +666,6 @@ export default function inferTypes(
                 return result
             }
             return helper.patch(result, changes)
-            // if (result) {
-            //     // this doesn't work anymore? why not?
-            //     return Expression.is(changes) ? changes : helper.patch(result, changes)
-            // }
         }
     })
     return [result, errors]

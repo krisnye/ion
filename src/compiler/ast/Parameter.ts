@@ -15,6 +15,7 @@ import * as Null from './ion/Null';
 import * as _Array from './ion/Array';
 import * as Call from './Call';
 import * as Property from './Property';
+import * as Type from './Type';
 import * as Boolean from './ion/Boolean';
 import * as Pattern from './Pattern';
 import * as Identifier from './Identifier';
@@ -23,7 +24,7 @@ import * as Class from './ion/Class';
 export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta , Expression.Expression , Declaration.Declaration , Node.Node , Typed.Typed , Statement.Statement , SideEffect.SideEffect {
     readonly location: Location.Location | Null.Null;
     readonly meta: _Array.Array<Call.Call | Property.Property> | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly id: Pattern.Pattern | (Identifier.Identifier | Expression.Expression);
     readonly isMutable: Boolean.Boolean;
@@ -49,7 +50,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
     constructor({location = null, meta = null, type = null, resolved = false, id, isMutable = false, value = null, isType = false, isMeta = false, isInstance = false, isStatic = false, typeParameterIndex = null}: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Call.Call | Property.Property> | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         id: Pattern.Pattern | (Identifier.Identifier | Expression.Expression),
         isMutable?: Boolean.Boolean,
@@ -64,8 +65,8 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
         if (!(_Array.isArray(meta) || Null.isNull(meta)))
             throw new Error('meta is not a Array | Null: ' + Class.toString(meta));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!(Pattern.isPattern(id) || (Identifier.isIdentifier(id) || Expression.isExpression(id))))
@@ -101,7 +102,7 @@ export class Parameter implements _Object.Object , Variable.Variable , Meta.Meta
     patch(properties: {
         location?: Location.Location | Null.Null,
         meta?: _Array.Array<Call.Call | Property.Property> | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         id?: Pattern.Pattern | (Identifier.Identifier | Expression.Expression),
         isMutable?: Boolean.Boolean,

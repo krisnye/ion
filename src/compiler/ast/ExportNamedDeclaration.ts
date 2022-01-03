@@ -8,6 +8,7 @@ import * as Typed from './Typed';
 import * as Node from './Node';
 import * as Location from './Location';
 import * as Null from './ion/Null';
+import * as Type from './Type';
 import * as Boolean from './ion/Boolean';
 import * as Declaration from './Declaration';
 import * as _Array from './ion/Array';
@@ -16,7 +17,7 @@ import * as Literal from './Literal';
 import * as Class from './ion/Class';
 export class ExportNamedDeclaration implements _Object.Object , Statement.Statement , Expression.Expression , Typed.Typed , Node.Node {
     readonly location: Location.Location | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly declaration: Declaration.Declaration | Null.Null;
     readonly specifiers: _Array.Array<ExportSpecifier.ExportSpecifier>;
@@ -32,7 +33,7 @@ export class ExportNamedDeclaration implements _Object.Object , Statement.Statem
     ]);
     constructor({location = null, type = null, resolved = false, declaration = null, specifiers, source = null}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         declaration?: Declaration.Declaration | Null.Null,
         specifiers: _Array.Array<ExportSpecifier.ExportSpecifier>,
@@ -40,8 +41,8 @@ export class ExportNamedDeclaration implements _Object.Object , Statement.Statem
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!(Declaration.isDeclaration(declaration) || Null.isNull(declaration)))
@@ -60,7 +61,7 @@ export class ExportNamedDeclaration implements _Object.Object , Statement.Statem
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         declaration?: Declaration.Declaration | Null.Null,
         specifiers?: _Array.Array<ExportSpecifier.ExportSpecifier>,

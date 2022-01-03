@@ -1,3 +1,4 @@
+
 min = (a: Number, b: Number) ->
     if a < b
         a

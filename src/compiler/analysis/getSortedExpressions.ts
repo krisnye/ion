@@ -47,7 +47,11 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
     //         yield containingVarDeclarator
     //     }
     // },
-    *Module(node) {        
+    *Module(node) {
+        yield node.body[node.body.length - 1]
+    },
+    *Block(node) {
+        yield node.body[node.body.length - 1]
     },
     *TemplateType(node) {
     },
@@ -85,9 +89,6 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
         yield [node.left, node.right]
         yield node.left
         yield node.right
-    },
-    *Block(node) {
-        yield node.body[node.body.length - 1]
     },
     *UnaryExpression(node) {
         yield node.argument
@@ -208,6 +209,12 @@ const predecessors: { [P in keyof typeof ast]?: (e: InstanceType<typeof ast[P]>,
             }
         }
     },
+    *UnionType(node) {
+        yield* node.types
+    },
+    *IntersectionType(node) {
+        yield* node.types
+    },
 }
 
 export default function getSortedExpressions(root, scopeMap: ScopeMaps, lookup: Lookup) {
@@ -250,30 +257,31 @@ export default function getSortedExpressions(root, scopeMap: ScopeMaps, lookup: 
 
     for (let node of nodes) {
         let count = 0;
-        if (Typed.is(node)) {
-            let func = predecessors[node.constructor.name] as (node: Typed, scopeMap: ScopeMaps, lookup: Lookup) => Iterable<Typed | Typed[]>;
-            if (func) {
-                for (let pred of func(node, scopeMap, lookup)) {
-                    count++;
-                    if (Array.isArray(pred)) {
-                        push(pred[0], pred[1])
-                    }
-                    else {
-                        push(pred, node);
-                    }
+        let func = predecessors[node.constructor.name] as (node: Typed, scopeMap: ScopeMaps, lookup: Lookup) => Iterable<Typed | Typed[]>;
+        if (func) {
+            for (let pred of func(node, scopeMap, lookup)) {
+                count++;
+                if (Array.isArray(pred)) {
+                    push(pred[0], pred[1])
+                }
+                else {
+                    push(pred, node);
                 }
             }
-            else {
-                console.log("getSortedExpressions function not found: " + node.constructor.name)
-            }
-            if (count === 0) {
-                push(sentinel, node);
-            }
+        }
+        else {
+            console.log("getSortedExpressions function not found: " + node.constructor.name)
+        }
+        if (count === 0) {
+            push(sentinel, node);
         }
     }
     let sorted = toposort(edges);
     //  remove sentinel
-    sorted.splice(sorted.indexOf(sentinel), 1)
+    let sentinelIndex = sorted.indexOf(sentinel)
+    if (sentinelIndex >= 0) {
+        sorted.splice(sentinelIndex, 1)
+    }
 
     return sorted;
 }

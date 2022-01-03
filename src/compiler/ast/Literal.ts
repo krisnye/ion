@@ -15,7 +15,7 @@ import * as Number from './ion/Number';
 import * as Class from './ion/Class';
 export class Literal implements _Object.Object , Expression.Expression , RuntimeType.RuntimeType , Typed.Typed , Node.Node , Type.Type {
     readonly location: Location.Location | Null.Null;
-    readonly type: Expression.Expression | Null.Null;
+    readonly type: Type.Type | Null.Null;
     readonly resolved: Boolean.Boolean;
     readonly value: String.String | (Number.Number | (Boolean.Boolean | Null.Null));
     readonly integer: Boolean.Boolean;
@@ -31,15 +31,15 @@ export class Literal implements _Object.Object , Expression.Expression , Runtime
     ]);
     constructor({location = null, type = null, resolved = false, value, integer = false}: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         value: String.String | (Number.Number | (Boolean.Boolean | Null.Null)),
         integer?: Boolean.Boolean
     }) {
         if (!(Location.isLocation(location) || Null.isNull(location)))
             throw new Error('location is not a Location | Null: ' + Class.toString(location));
-        if (!(Expression.isExpression(type) || Null.isNull(type)))
-            throw new Error('type is not a Expression | Null: ' + Class.toString(type));
+        if (!(Type.isType(type) || Null.isNull(type)))
+            throw new Error('type is not a Type | Null: ' + Class.toString(type));
         if (!Boolean.isBoolean(resolved))
             throw new Error('resolved is not a Boolean: ' + Class.toString(resolved));
         if (!(String.isString(value) || (Number.isNumber(value) || (Boolean.isBoolean(value) || Null.isNull(value)))))
@@ -55,7 +55,7 @@ export class Literal implements _Object.Object , Expression.Expression , Runtime
     }
     patch(properties: {
         location?: Location.Location | Null.Null,
-        type?: Expression.Expression | Null.Null,
+        type?: Type.Type | Null.Null,
         resolved?: Boolean.Boolean,
         value?: String.String | (Number.Number | (Boolean.Boolean | Null.Null)),
         integer?: Boolean.Boolean
