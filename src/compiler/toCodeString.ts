@@ -1,8 +1,7 @@
 import { type } from "os";
 import * as ast from "./ast";
 import { Node } from "./ast";
-import { memoize, SemanticError } from "./common";
-import { isAbsolutePath } from "./pathFunctions";
+import { isValidId, memoize, SemanticError } from "./common";
 
 function block(nodes, open = "{", close = "}", indent = '    ') {
     if (nodes == null || nodes.length === 0) {
@@ -14,7 +13,7 @@ function block(nodes, open = "{", close = "}", indent = '    ') {
 
 function toName(node: ast.Identifier) {
     let { name } = node
-    let value = name.indexOf('.') >= 0 ? "`" + name + "`" : name
+    let value = isValidId(name) ? name : "`" + name + "`"
     if (ast.Reference.is(node) && node.typeArguments != null && node.typeArguments?.length > 0) {
         value += "<" + node.typeArguments.map(s).join(",") + ">"
     }

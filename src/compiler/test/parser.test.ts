@@ -1,11 +1,11 @@
 import { strict as assert } from "assert"
 import Compiler, { Options } from "../Compiler";
-import * as HtmlLogger from "../HtmlLogger";
+import { create } from "@glas/diff-logger";
 import path from "path";
 
 const perfTest = false
 
-let compiler = new Compiler(perfTest ? (() => {}) : HtmlLogger.create("./output.html"))
+let compiler = new Compiler(perfTest ? (() => {}) : create("./output.html") as any)
 let start = Date.now()
 let count = perfTest ? 1000 : 1
 for (let i = 0; i < count; i++) {

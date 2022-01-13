@@ -1,0 +1,10 @@
+js = "(a, b) => new a.constructor({ value: a.valueOf() + b.valueOf() })"
+
+@Native(js)
+`+`(a: Integer, b: Integer) =>
+
+// @Native(js)
+// `+`(a: Float, b: Float) =>
+
+// @Native(js)
+// `+`(a: String, b: String) =>

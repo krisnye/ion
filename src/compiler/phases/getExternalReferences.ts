@@ -4,10 +4,10 @@ import createScopeMaps, { getDeclarators } from "../createScopeMaps";
 import { _this } from "../reservedWords";
 import { resolve, join, getAbsolutePath, getLastName } from "../pathFunctions";
 import { SemanticError } from "../common";
-import addDefaultExport from "./addDefaultExport";
+// import addDefaultExport from "./addDefaultExport";
 
 export default function getExternalReferences(module: Module, modules: Map<string,Module>, errors: Array<Error>): [Module,Map<string,Set<Reference>>] {
-    module = addDefaultExport(module)
+    // module = addDefaultExport(module)
 
     let moduleLastName = getLastName(module.name)
     let lookup = new Lookup()
@@ -20,28 +20,27 @@ export default function getExternalReferences(module: Module, modules: Map<strin
         if (last) {
             // make sure final item isn't a declaration or if it is that it's name matches last name of module
             if (Declaration.is(item)) {
-                if (Declarator.is(item.id)) {
-                    if (item.id.name !== moduleLastName) {
-                        errors.push(SemanticError(`Final declaration name must match module name`, item.id))
-                    }
-                }
-                else {
-                    errors.push(SemanticError(`Final expression can only export a single declarator`, item.id))
-                }
+                // if (Declarator.is(item.id)) {
+                //     if (item.id.name !== moduleLastName) {
+                //         errors.push(SemanticError(`Final declaration name must match module name`, item.id))
+                //     }
+                // }
+                // else {
+                //     errors.push(SemanticError(`Final expression can only export a single declarator`, item.id))
+                // }
 
-                if (!Declarator.is(item.id)) {
-                    errors.push(SemanticError(`Final expression must have a single declarator`, item.id))
-                }
-                else {
+                if (Declarator.is(item.id)) {
                     exportNameToAbsolutePath.set(moduleLastName, getAbsolutePath(module.name))
                     exportDeclarators.add(item.id)
                 }
+                // else {
+                //     errors.push(SemanticError(`Final expression must have a single declarator`, item.id))
+                // }
             }
-            else {
-                errors.push(SemanticError(`Impossible, last statement must be a Declaration`, item))
-            }
+            // else {
+            //     errors.push(SemanticError(`Impossible, last statement must be a Declaration`, item))
+            // }
         }
-
         else if (Declaration.is(item)) {
             for (let declarator of getDeclarators(item.id)) {
                 exportNameToAbsolutePath.set(declarator.name, getAbsolutePath(module.name, declarator.name))

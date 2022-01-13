@@ -9,9 +9,9 @@ import builtinFunctionsToOps from "./builtinFunctionsToOps";
 export default [
     // numbering,
     // instanceFunctions,
-    semanticChecks,
-    builtinFunctionsToOps,
-    createConditionalDeclarations,
-    inferTypes,
+    // semanticChecks,
+    // builtinFunctionsToOps,
+    // createConditionalDeclarations,
+    // inferTypes,
     identity,
 ] as Phase[]

@@ -1,2 +1,2 @@
 
-Integer = Number
+class Integer

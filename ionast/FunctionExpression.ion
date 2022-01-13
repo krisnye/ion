@@ -3,8 +3,8 @@ import
     .*
 
 export
-    class FunctionExpression extends Expression, Scope
+    class FunctionExpression extends Expression, Meta, Scope
         var id: Identifier | Null = null
         var parameters: Array<Variable>
         var returnType: Type | Null = null
-        var body: Block
+        var body: Block | Null = null

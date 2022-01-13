@@ -75,4 +75,9 @@ Later when we bootstrap we should implement Hindley-Milner to determine recursiv
 
 ### Multiple Dispatch?
 
-Not for version 1.0.
+Yes. Combined with treating all operators as function calls can provide a simple and unified operator overloading mechanism.
+
+### How to encode Strings?
+
+https://utf8everywhere.org/
+

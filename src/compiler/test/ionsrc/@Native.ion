@@ -1,2 +1,5 @@
 
-class @Native extends @Meta
+@Meta()
+class @Native
+    js: String
+    jsType: String

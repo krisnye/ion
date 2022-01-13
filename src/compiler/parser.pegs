@@ -53,7 +53,7 @@
 
     function operation(left, operator, right, props) {
         if (right) {
-            return node("BinaryExpression", { left, operator, right, ...props })
+            return node("Call", { callee: operator, arguments: [left, right], ...props })
         }
         else {
             // if the right is a Literal, then we return a literal, NOT a unary expression.
@@ -212,12 +212,12 @@ InlineFunctionParameters
     / "(" _ head:Parameter tail:(_ ',' _ @Parameter)* _ ")" { return [head, ...tail] }
 
 InlineFunctionParametersAndType
-    = id:Identifier? parameters:InlineFunctionParameters returnType:(_ ":" _ @InlineType)? _ "->"
+    = id:Identifier? parameters:InlineFunctionParameters returnType:(_ ":" _ @InlineType)? _ "=>"
     { return { id, parameters, returnType } }
 
 OutlineFunctionParametersAndType
     = InlineFunctionParametersAndType
-    / id:Identifier? "()" returnType:(_ ":" _ @InlineType)? EOL Indent parameters:(Dent @Parameter EOL)+ Outdent Dent "->"
+    / id:Identifier? "()" returnType:(_ ":" _ @InlineType)? EOL Indent parameters:(Dent @Parameter EOL)+ Outdent Dent "=>"
     { return { id, parameters, returnType } }
 
 InlineBlock
@@ -225,17 +225,15 @@ InlineBlock
     { return node("Block", { body: [value] }) }
 
 OutlineFunction
-    = head:OutlineFunctionParametersAndType _ body:(Block / (@InlineBlock EOL))
-    { return node("FunctionExpression", { ...head, body }) }
+    = meta:MetaProperties? head:OutlineFunctionParametersAndType _ body:(Block / (@InlineBlock EOL))
+    { return node("FunctionExpression", { ...head, body, meta }) }
 
 InlineFunction
-    = head:InlineFunctionParametersAndType _ body:InlineBlock
+    = head:InlineFunctionParametersAndType _ body:InlineBlock?
     { return node("FunctionExpression", { ...head, body }) }
 
-// do classes next, and at least placeholders for generics.
-
 ////////////////////////////////////////////////////////////////////////////////
-//  OLD ------------------->
+//  OLD -------------------
 ////////////////////////////////////////////////////////////////////////////////
 
 DebuggerStatement
@@ -278,7 +276,7 @@ MetaProperties
 
 MetaProperty
     = &"@" @OutlineCallExpression
-    / &"@" callee:Reference args:AnonymousCall? EOL { return node("Call", { arguments:[], ...args, callee, location:getLocation() }) }
+    / &"@" callee:Reference args:AnonymousCall? EOL { return node("Call", { ...(args ? args : { arguments: [] }), callee, location:getLocation() }) }
 
 // VariableMetaProperties
 //     = EOL Indent @OutlineProperty+ Outdent
@@ -518,7 +516,7 @@ TemplateArguments
 ////////////////////////////////////////////////////////////////////////////////
 
 UpdateOperator
-    = "++" / "--"
+    = ("++" / "--") { return node("Reference", { name: text() })}
 
 UpdateExpression
     = operator:UpdateOperator argument:MemberExpression
@@ -527,84 +525,84 @@ UpdateExpression
     { return operator ? operation(argument, operator, null, { prefix: false }) : argument }
 
 UnaryOperator
-    = "+" / "-" / "!" / TypeofToken / DeleteToken
+    = ("+" / "-" / "!" / TypeofToken / DeleteToken) { return node("Reference", { name: text() })}
 
 UnaryExpression
     = operator:(@UnaryOperator _)? argument:UpdateExpression
     { return operator ? operation(argument, operator) : argument }
 
 ExponentiationOperator "operator"
-    = "**" / "<<" / ">>>" / ">>"
+    = ("**" / "<<" / ">>>" / ">>") { return node("Reference", { name: text() })}
 
 ExponentiationExpression
     = left:UnaryExpression right:(_ operator:ExponentiationOperator _ right:ExponentiationExpression {return {operator,right}})?
     { return right ? node("BinaryExpression", {left, operator:right.operator, right:right.right}) : left }
 
 MultiplicativeOperator
-    = "*" / "/" / "%"
+    = ("*" / "/" / "%") { return node("Reference", { name: text() })}
 
 MultiplicativeExpression
     = head:ExponentiationExpression tail:(_ MultiplicativeOperator _ ExponentiationExpression)*
     { return buildBinaryExpression(head, tail) }
 
 AdditiveOperator
-    = "+" / "-"
+    = ("+" / "-") { return node("Reference", { name: text() })}
 
 AdditiveExpression
     = head:MultiplicativeExpression tail:(_ AdditiveOperator _ MultiplicativeExpression)*
     { return buildBinaryExpression(head, tail) }
 
 RelationalOperator
-    = "<=" / ">=" / "<" / ">" / IsntToken / IsToken
+    = ("<=" / ">=" / "<" / ">" / IsntToken / IsToken) { return node("Reference", { name: text() })}
 
 RelationalExpression
     = head:AdditiveExpression tail:(_ RelationalOperator _ AdditiveExpression)*
         { return buildBinaryExpression(head, tail) }
 
 EqualityOperator
-    = "==" / "!="
+    = ("==" / "!=") { return node("Reference", { name: text() })}
 
 EqualityExpression
     = head:RelationalExpression tail:(_ EqualityOperator _ RelationalExpression)*
         { return buildBinaryExpression(head, tail) }
 
 BitwiseAndOperator
-    = "&"
+    = ("&") { return node("Reference", { name: text() })}
 
 BitwiseAndExpression
     = head:EqualityExpression tail:(_ BitwiseAndOperator _ EqualityExpression)*
     { return buildBinaryExpression(head, tail) }
 
 BitwiseXorOperator
-    = "^"
+    = ("^") { return node("Reference", { name: text() })}
 
 BitwiseXorExpression
     = head:BitwiseAndExpression tail:(_ BitwiseXorOperator _ BitwiseAndExpression)*
     { return buildBinaryExpression(head, tail) }
 
 BitwiseOrOperator
-    = "|"
+    = ("|") { return node("Reference", { name: text() })}
 
 BitwiseOrExpression
     = head:BitwiseXorExpression tail:(_ BitwiseOrOperator _ BitwiseXorExpression)*
     { return buildBinaryExpression(head, tail) }
 
 LogicalAndOperator
-    = "&&"
+    = ("&&") { return node("Reference", { name: text() })}
 
 LogicalAndExpression
     = head:BitwiseOrExpression tail:(_ LogicalAndOperator _ BitwiseOrExpression)*
     { return buildBinaryExpression(head, tail) }
 
 LogicalOrOperator
-    = "||" / "??" / XorToken
+    = ("||" / "??" / XorToken) { return node("Reference", { name: text() })}
 
 LogicalOrExpression
     = head:LogicalAndExpression tail:(_ LogicalOrOperator _ LogicalAndExpression)*
     { return buildBinaryExpression(head, tail) }
 
 ConditionalOperator
-    = "?"
+    = ("?") { return node("Reference", { name: text() })}
 
 ConditionalExpression
     = test:LogicalOrExpression
@@ -929,12 +927,7 @@ DecimalInteger
 
 InlineStringLiteral
     = '"' DoubleStringChar* '"'
-    {
-        let value = eval(text())
-        let length = node('Literal', { value: value.length })
-        let lengthType = node('NumberType', { min: length, max: length })
-        return node('Literal', { value: eval(text()), type: node('StringType', { value, length: lengthType }) });
-    }
+    { return node('Literal', { value: eval(text()) }); }
 
 DoubleStringChar
     = "\\\"" / !'"' .
@@ -969,8 +962,7 @@ OutlineStringLiteral
     = '""' EOL Indent lines:OutlineStringLiteralLine+ Outdent
     {
         let value = lines.join('\n')
-        let length = node('NumberType', { min: value.length, max: value.length })
-        return node('Literal', { value: eval(text()), type: node('StringType', { value, length }) });
+        return node('Literal', { value });
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -993,6 +985,7 @@ IdPart
 
 IdName
     = $(IdStart IdPart*)
+    / "`" @$((!"`" .)+) "`"
 
 Identifier
     = name:IdName { return node('Identifier', { name }) }

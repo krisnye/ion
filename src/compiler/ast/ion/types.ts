@@ -17,6 +17,7 @@ import * as Reference from '../Reference';
 import * as Expression from '../Expression';
 import * as Literal from '../Literal';
 import * as Variable from '../Variable';
+import * as Block from '../Block';
 import * as ImportDeclaration from '../ImportDeclaration';
 import * as Boolean from './Boolean';
 import * as Number from './Number';
@@ -39,6 +40,7 @@ export type Pattern_Pattern_or_ion_types_Identifier_Identifier_or_Expression_Exp
 export type Declaration_Declaration_or_ion_Null_Null = Declaration.Declaration | Null.Null;
 export type Literal_Literal_or_ion_Null_Null = Literal.Literal | Null.Null;
 export type Variable_Variable_or_ion_Null_Null = Variable.Variable | Null.Null;
+export type Block_Block_or_ion_Null_Null = Block.Block | Null.Null;
 export type ImportDeclaration_Specifier_or_ImportDeclaration_ImportDeclaration = ImportDeclaration.Specifier | ImportDeclaration.ImportDeclaration;
 export type Literal_Literal_or_Identifier_Identifier = Literal.Literal | Identifier.Identifier;
 export type ion_String_String_or_ion_Null_Null = String.String | Null.Null;
