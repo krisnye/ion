@@ -1,6 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Parameter extends Variable

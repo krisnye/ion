@@ -1,9 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class EnumDeclaration extends Declaration
-        var flags: Boolean = false
-        var id: Declarator
-        var properties: Array<Property>

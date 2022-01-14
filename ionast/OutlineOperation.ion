@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class OutlineOperation extends Block
-        var operator: String

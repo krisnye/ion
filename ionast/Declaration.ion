@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Declaration extends Statement, SideEffect
-        var id: Pattern | Identifier | Expression
-        var isMutable: Boolean = false

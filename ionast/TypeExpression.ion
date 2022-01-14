@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class TypeExpression extends Type, Expression
-        var value: Expression

@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class AwaitExpression extends Expression
-        var argument: Expression

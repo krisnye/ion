@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class TemplateLiteral extends Expression
-        var quasis: Array<TemplateElement>
-        var expressions: Array<Expression>

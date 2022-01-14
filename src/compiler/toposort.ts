@@ -1,4 +1,3 @@
-import toCodeString from "./toCodeString"
 
 // copied from https://github.com/marcelklehr/toposort/blob/master/index.js
 /**
@@ -11,7 +10,7 @@ export default function(edges){
     return toposort(uniqueNodes(edges), edges)
   }
   
-  exports.array = toposort
+  // exports.array = toposort
   
   function toposort(nodes, edges) {
     var cursor = nodes.length;
@@ -31,7 +30,7 @@ export default function(edges){
   
     function visit(node, i, predecessors, set) {
       if (set.has(node)) {
-        console.log("cycle detected, skipping: " + toCodeString(node));
+        console.log("cycle detected, skipping: " + node);
         return;
       }
       // if (predecessors.indexOf(node) >= 0) {

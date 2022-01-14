@@ -1,6 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class ReferenceType extends Reference, Type

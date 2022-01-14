@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class ChainElement extends Node
-        var optional: Boolean = false

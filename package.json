@@ -17,43 +17,22 @@
   },
   "scripts": {
     "setup": "yarn install",
-    "build": "tsc && yarn buildAst && yarn run buildGrammar",
-    "buildAst": "ionc src/compiler/ast ionast",
-    "dev": "ln -s ../ node_modules/ionscript && echo symlinked dependency to ourselves since parcel uses it with parcel-plugin-ionscript",
-    "test": "gtest lib # echo should be just guild test, todo: fix this",
-    "buildGrammar": "pegs src/compiler/parser.pegs lib/compiler/parser.js",
+    "build": "tsc",
+    "test": "gtest lib",
     "debug": "node --inspect-brk node_modules/@glas/test/gtest.js lib",
     "deploy": "npm version patch && npm publish",
     "watch": "run-p watch:*",
-    "watch--:ast": "nodemon -w ionast -e ion -x yarn buildAst",
     "watch:build": "tsc -w",
-    "watch:test": "nodemon -w lib -w src -w external -e js,ts,is,ion --delay 150ms -x yarn test",
-    "watch--:grammar": "nodemon -w src/compiler/parser.pegs -i src,lib -e pegs -x yarn run buildGrammar"
+    "watch:test": "nodemon -w lib -w src -w external -e js,ts,is,ion --delay 150ms -x yarn test"
   },
   "dependencies": {
-    "@babel/core": "^7.12.3",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
-    "@babel/plugin-proposal-optional-chaining": "^7.12.7",
-    "@babel/plugin-transform-modules-commonjs": "^7.12.1",
+    "@glas/diff-logger": "^1.0.0",
     "@glas/test": "^1.0.3",
     "@glas/traverse": "^1.0.7",
-    "escodegen": "^2.0.0",
-    "jsondiffpatch": "0.2.5",
-    "pegs": "^0.1.8",
     "yargs": "^16.2.0"
   },
   "devDependencies": {
-    "@glas/ion": "0.1.8",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "gh-diff-html": "^0.0.3",
-    "highlight-javascript-syntax": "^1.1.0",
-    "ionscript": "^0.2.8",
     "npm-run-all": "^4.1.5",
-    "parcel-bundler": "^1.12.4",
-    "parcel-plugin-ionscript": "*",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "typescript": "^4.1.3"
+    "typescript": "^4.5.4"
   }
 }

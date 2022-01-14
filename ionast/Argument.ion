@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Argument extends Statement, Meta
-        var id: Identifier | Null = null
-        var value: Expression

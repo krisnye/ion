@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Block extends Expression, Scope
-        var body: Array<Statement>

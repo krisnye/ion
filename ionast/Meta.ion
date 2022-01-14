@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Meta extends Node
-        var meta: Array<Call | Property> | Null = null

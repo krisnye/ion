@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Property extends Expression, Declaration
-        var id: Expression | Identifier | Declarator
-        var value: Expression | Identifier | Null

@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class RestElement extends Pattern
-        var value: Declarator # In ESTREE this is a Pattern, but I think that's a bad idea.

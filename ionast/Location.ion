@@ -1,9 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Location
-        var start: Position
-        var end: Position
-        var filename: String

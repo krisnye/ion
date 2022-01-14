@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class ObjectPattern extends Pattern
-        var kind: String = "Object"
-        var properties: Array<PatternProperty | RestElement>

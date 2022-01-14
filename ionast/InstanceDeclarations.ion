@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class InstanceDeclarations extends Scope
-        var declarations: Array<Variable>

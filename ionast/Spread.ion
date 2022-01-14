@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Spread extends Expression
-        var value: Expression

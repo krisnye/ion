@@ -1,5 +1,0 @@
-
-@Meta()
-class @Native
-    js: String
-    jsType: String

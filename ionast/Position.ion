@@ -1,8 +1,0 @@
-import
-    ion.*
-
-export
-    struct Position
-        var offset: Number
-        var line: Number
-        var column: Number

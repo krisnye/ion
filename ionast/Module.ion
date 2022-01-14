@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Module extends Expression, Scope
-        var body: Array<Statement>
-        var name: String = ""

@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class ModuleSpecifier extends Node
-        var local: Declarator

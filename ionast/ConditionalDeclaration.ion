@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class ConditionalDeclaration extends Declaration
-        var negate: Boolean = false
-        var id: Declarator

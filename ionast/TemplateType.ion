@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class TemplateType extends Type
-        var typeParameterIndex: Number

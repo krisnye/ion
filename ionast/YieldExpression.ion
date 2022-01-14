@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class YieldExpression extends Expression
-        var argument: Expression
-        var delegate: Boolean = false

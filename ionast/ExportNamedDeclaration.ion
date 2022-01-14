@@ -1,9 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class ExportNamedDeclaration extends Statement
-        var declaration: Declaration | Null = null
-        var specifiers: Array<ExportSpecifier>
-        var source: Literal | Null = null

@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class ArrowFunctionExpression extends Expression, Scope
-        var params: Array<Variable>
-        var body: Expression

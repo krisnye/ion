@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class ArrayPattern extends Pattern
-        var elements: Array<Pattern | RestElement | Null>

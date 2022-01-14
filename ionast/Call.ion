@@ -1,9 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Call extends Expression, ChainElement
-        var new : Boolean = false
-        var callee: Expression | Null = null
-        var arguments: Array<Statement>

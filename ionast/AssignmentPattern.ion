@@ -1,7 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    # not sure we need this
-    class AssignmentPattern extends Assignment, Pattern

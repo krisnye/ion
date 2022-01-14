@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class MemberExpression extends Expression, ChainElement, Type, RuntimeType
-        var object: Expression
-        var property: Identifier | Expression

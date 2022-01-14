@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Node
-        # var $: Number = 0
-        var location: Location | Null = null

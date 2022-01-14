@@ -1,8 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class StringType extends Type
-        var value: String | Null = null
-        var length: NumberType

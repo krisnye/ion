@@ -1,9 +1,0 @@
-import
-    ion.*
-    .*
-
-export
-    class Assignment extends Expression, SideEffect
-        var left: Pattern | Reference
-        var operator: String = "="
-        var right: Expression
