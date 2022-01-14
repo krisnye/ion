@@ -1,4 +1,4 @@
-import { NonFunctionProperties, NonFunctionPropertyNames } from "../../types";
+import { NonFunctionProperties } from "../../types";
 import { Immutable } from "../Immutable";
 import { SourceLocation } from "./SourceLocation";
 
@@ -14,4 +14,10 @@ export class Token extends Immutable {
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }
 
+    static merge(left: Token, right: Token) {
+        return left.patch({
+            source: left.source + right.source,
+            location: SourceLocation.merge(left.location, right.location)
+        })
+    }
 }

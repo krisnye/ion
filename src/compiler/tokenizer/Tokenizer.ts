@@ -29,9 +29,17 @@ export class Tokenizer {
                         new SourcePosition(line, column),
                         new SourcePosition(line, column + matchLength),
                     );
-                    tokens.push(new Token({ type, source, value, location }));
+                    let lastToken = tokens[tokens.length - 1];
+                    let newToken = new Token({ type, source, value, location });
+                    if (tokenType.mergeAdjacent && lastToken?.type === newToken.type) {
+                        tokens[tokens.length - 1] = Token.merge(lastToken, newToken);
+                    }
+                    else {
+                        tokens.push(newToken);
+                    }
                     columnIndex += matchLength;
                     lineSource = lineSource.slice(matchLength);
+                    // maybe merge adjacent tokens if same type
                     break;
                 }
             }

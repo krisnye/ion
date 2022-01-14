@@ -12,4 +12,12 @@ export class SourceLocation {
         this.finish = finish;
     }
 
+    static merge(left: SourceLocation, right: SourceLocation) {
+        return new SourceLocation(
+            left.filename,
+            SourcePosition.min(left.start, right.start),
+            SourcePosition.max(left.finish, right.finish),
+        )
+    }
+
 }
