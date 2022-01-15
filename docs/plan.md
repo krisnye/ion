@@ -1,6 +1,11 @@
 
 # 2022 Plan
 
+## Implement New Hand Parser
+
+- [x] Implement Tokenizer
+- [ ] Operator Precedence Parsing
+
 ## Dramatically Simplify AST Format
 
 - Call
@@ -12,6 +17,7 @@
 - For
 - Array
 - Object
+- Reference
 
 ## Changes to existing system
 

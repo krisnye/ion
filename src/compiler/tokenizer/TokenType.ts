@@ -1,13 +1,13 @@
 
-type ValueFunction = (source: string) => any;
-
+type ValueFunction = (source: string) => any
 type Options = { value?: ValueFunction, mergeAdjacent?: boolean }
+const identity = source => source;
 
 export class TokenType {
 
     readonly name: string;
     readonly match: (line: string) => number;
-    readonly value?: ValueFunction;
+    readonly value: ValueFunction;
     readonly mergeAdjacent: boolean;
 
     constructor(name: string, match: RegExp, options?: Options)
@@ -22,8 +22,12 @@ export class TokenType {
         }
         this.name = name;
         this.match = match;
-        this.value = options?.value ?? undefined;
+        this.value = options?.value ?? identity;
         this.mergeAdjacent = options?.mergeAdjacent ?? false;
+    }
+
+    toString() {
+        return this.name;
     }
 
 }

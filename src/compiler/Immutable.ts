@@ -1,8 +1,9 @@
+import { Serializable } from "./Serializable";
 
-
-export class Immutable {
+export class Immutable extends Serializable {
 
     constructor(props) {
+        super();
         Object.assign(this, props);
     }
 

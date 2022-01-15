@@ -1,11 +1,13 @@
+import { Serializable } from "../Serializable";
 import { SourceLocation } from "./SourceLocation";
 
-export class SourcePosition {
+export class SourcePosition extends Serializable {
 
     line: number;
     column: number;
 
     constructor(line: number, column: number) {
+        super();
         this.line = line;
         this.column = column;
     }

@@ -1,14 +1,14 @@
 import { Line } from "./Line";
-import { SourceLocation } from "./SourceLocation";
-import { SourcePosition } from "./SourcePosition";
+import { SourceLocation } from "../ast/SourceLocation";
+import { SourcePosition } from "../ast/SourcePosition";
 import { Token } from "./Token";
-import { TokenType, tokenTypes } from "./TokenType";
+import { TokenType } from "./TokenType";
 
 export class Tokenizer {
 
     readonly types: { readonly [type: string]: TokenType };
 
-    constructor(types: { readonly [type: string]: TokenType } = tokenTypes) {
+    constructor(types: { readonly [type: string]: TokenType }) {
         this.types = types;
     }
 

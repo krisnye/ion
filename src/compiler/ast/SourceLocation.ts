@@ -1,12 +1,14 @@
+import { Serializable } from "../Serializable";
 import { SourcePosition } from "./SourcePosition";
 
-export class SourceLocation {
+export class SourceLocation extends Serializable {
 
     filename: string;
     start: SourcePosition;
     finish: SourcePosition;
 
     constructor(filename: string, start: SourcePosition, finish: SourcePosition) {
+        super();
         this.filename = filename;
         this.start = start;
         this.finish = finish;
