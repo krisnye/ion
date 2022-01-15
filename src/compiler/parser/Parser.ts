@@ -3,16 +3,20 @@ import { PrefixParselet } from "./PrefixParselet";
 import { SemanticError } from "../SemanticError";
 import { Token } from "../tokenizer/Token";
 import { tokenTypes } from "../tokenizer/TokenType";
+import { InfixParselet } from "./InfixParslet";
 
 export class Parser {
 
     private tokens: Token[] = [];
     private prefixParselets: { [key in keyof typeof tokenTypes]?: PrefixParselet };
+    private infixParselets: { [key in keyof typeof tokenTypes]?: InfixParselet };
 
     constructor(
-        prefixParselets: { [key in keyof typeof tokenTypes]?: PrefixParselet }
+        prefixParselets: { [key in keyof typeof tokenTypes]?: PrefixParselet },
+        infixParselets: { [key in keyof typeof tokenTypes]?: InfixParselet },
     ) {
         this.prefixParselets = prefixParselets;
+        this.infixParselets = infixParselets;
     }
 
     consume(tokenType?: keyof typeof tokenTypes) {
@@ -26,13 +30,13 @@ export class Parser {
         return token;
     }
 
+    peek(): Token | undefined {
+        return this.tokens[this.tokens.length - 1];
+    }
+
     setTokens(tokens: Token[]) {
         this.tokens = [...tokens].reverse();
     }
-
-    // parseModule() {
-    //     return this.parseExpression();
-    // }
 
     parseExpression(): Expression {
         let token = this.consume();
@@ -40,7 +44,16 @@ export class Parser {
         if (prefix == null) {
             throw new SemanticError(`Could not parse: ${token.type}(${token.source})`)
         }
-        return prefix.parse(this, token);
+        let left = prefix.parse(this, token);
+        let next = this.peek();
+        if (next != null) {
+            let infix = this.infixParselets[next.type as keyof typeof tokenTypes];
+            if (infix != null) {
+                this.consume();
+                return infix.parse(this, left, next);
+            }
+        }
+        return left;
     }
 
 }

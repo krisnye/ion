@@ -5,6 +5,11 @@ export const prefix: { [op: string]: number | undefined } = {
     "!": 10,
 } as const;
 
+export const infix: { [op: string]: number | undefined } = {
+    "+": 10,
+    "-": 10,
+} as const;
+
 // built in operators
 //  () [] {}
 //  .

@@ -1,6 +1,6 @@
 import { strict as assert } from "assert";
-import { createTokenizer } from "../createTokenizer";
-import { tokenTypes } from "../TokenType";
+import { createTokenizer } from "../tokenizer/createTokenizer";
+import { tokenTypes } from "../tokenizer/TokenType";
 
 let tokenizer = createTokenizer();
 

@@ -5,6 +5,8 @@ import { Parser } from "./Parser";
 import { PrefixOperatorParselet } from "./PrefixOperatorParselet";
 import { StringLiteral } from "../ast/StringLiteral";
 import { tokenTypes } from "../tokenizer/TokenType";
+import { RoutingInfixParselet } from "./RoutingInfixParselet";
+import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
 
 export function createParser() {
     return new Parser({
@@ -12,5 +14,11 @@ export function createParser() {
         [tokenTypes.Integer.name]: new LiteralParselet(IntegerLiteral),
         [tokenTypes.String.name]: new LiteralParselet(StringLiteral),
         [tokenTypes.Operator.name]: new PrefixOperatorParselet(),
+    }, {
+        [tokenTypes.Operator.name]: new RoutingInfixParselet(
+            {
+            },
+            new BinaryOperatorParselet(),
+        )
     })
 }
