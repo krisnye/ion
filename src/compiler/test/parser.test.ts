@@ -9,7 +9,7 @@ let tokenizer = createTokenizer();
 function testParseExpression(source: string, expected: string) {
     let { tokens } = tokenizer.tokenizeLine("test.ion", source, 0);
     parser.setTokens(tokens.filter(token => token.type !== tokenTypes.Whitespace.name));
-    let expression = parser.parseExpression();
+    let expression = parser.parseExpression(0);
     let actual = JSON.stringify(expression);
     if (actual != expected) {
         console.log(actual);
@@ -35,4 +35,20 @@ testParseExpression(
 testParseExpression(
     "1.0 - 2.0",
     `{"":"Call","callee":{"":"Reference","name":"-"},"arguments":[{"":"FloatLiteral","value":1},{"":"FloatLiteral","value":2}]}`
+)
+
+testParseExpression(
+    "1 + 2 * 3",
+    `{"":"Call","callee":{"":"Reference","name":"+"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Call","callee":{"":"Reference","name":"*"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}`
+)
+
+testParseExpression(
+    "1 * 2 + 3",
+    `{"":"Call","callee":{"":"Reference","name":"+"},"arguments":[{"":"Call","callee":{"":"Reference","name":"*"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]},{"":"IntegerLiteral","value":3}]}`
+)
+
+//  test right associativity
+testParseExpression(
+    "1 ** 2 ** 3",
+    `{"":"Call","callee":{"":"Reference","name":"**"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Call","callee":{"":"Reference","name":"**"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}`
 )

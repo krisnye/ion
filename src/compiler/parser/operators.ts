@@ -1,13 +1,33 @@
 
-export const prefix: { [op: string]: number | undefined } = {
+export const prefixPrecedence: { [op: string]: number | undefined } = {
     "+": 10,
     "-": 10,
     "!": 10,
 } as const;
 
-export const infix: { [op: string]: number | undefined } = {
-    "+": 10,
-    "-": 10,
+export const infixPrecedence: { [op: string]: number | undefined } = {
+    "+": 12,
+    "-": 12,
+    "*": 13,
+    "/": 13,
+    "%": 13,
+    "**": 14,
+
+    "<": 10,
+    "<=": 10,
+    ">": 10,
+    ">=": 10,
+    "==": 10,
+    "!=": 10,
+    "|": 10,
+    "||": 10,
+    "&": 10,
+    "&&": 10,
+} as const;
+
+export const infixRightAssociative: { [op: string]: boolean | undefined } = {
+    "=": true,
+    "**": true,
 } as const;
 
 // built in operators

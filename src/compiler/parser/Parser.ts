@@ -38,21 +38,27 @@ export class Parser {
         this.tokens = [...tokens].reverse();
     }
 
-    parseExpression(): Expression {
+    parseExpression(precedence: number): Expression {
         let token = this.consume();
         let prefix = this.prefixParselets[token.type as keyof typeof tokenTypes];
         if (prefix == null) {
             throw new SemanticError(`Could not parse: ${token.type}(${token.source})`)
         }
         let left = prefix.parse(this, token);
-        let next = this.peek();
-        if (next != null) {
-            let infix = this.infixParselets[next.type as keyof typeof tokenTypes];
-            if (infix != null) {
-                this.consume();
-                return infix.parse(this, left, next);
+
+        while (true) {
+            let next = this.peek();
+            if (next != null) {
+                let infix = this.infixParselets[next.type as keyof typeof tokenTypes];
+                if (infix != null && precedence < infix.getPrecedence(next)) {
+                    this.consume();
+                    left = infix.parse(this, left, next);
+                    continue;
+                }
             }
+            break;
         }
+
         return left;
     }
 

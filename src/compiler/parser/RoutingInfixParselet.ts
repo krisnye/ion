@@ -23,4 +23,10 @@ export class RoutingInfixParselet extends InfixParselet {
         return parselet.parse(p, left, token);
     }
 
+    getPrecedence(token: Token) {
+        let { value } = token;
+        let parselet = this.valueParselets[value] ?? this.defaultParselet;
+        return parselet.getPrecedence(token);
+    }
+
 }

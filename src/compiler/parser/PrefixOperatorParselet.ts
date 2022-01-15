@@ -1,6 +1,6 @@
 import { Parser } from "./Parser";
 import { Token } from "../tokenizer/Token";
-import { prefix } from "./operators";
+import { prefixPrecedence } from "./operators";
 import { Reference } from "../ast/Reference";
 import { Call } from "../ast/Call";
 import { SemanticError } from "../SemanticError";
@@ -12,11 +12,11 @@ export class PrefixOperatorParselet extends PrefixParselet {
 
     parse(p: Parser, token: Token): Expression {
         let { value, location } = token;
-        let precedence = prefix[value];
+        let precedence = prefixPrecedence[value];
         if (precedence == null) {
             throw new SemanticError(`Prefix operator not found: ${value}`, location);
         }
-        let argument = p.parseExpression();
+        let argument = p.parseExpression(precedence);
         let callee = new Reference({ location, name: value });
         return new Call({
             location: SourceLocation.merge(location, argument.location),
