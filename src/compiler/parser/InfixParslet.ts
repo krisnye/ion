@@ -1,10 +1,10 @@
 import { Parser } from "./Parser";
 import { Token } from "../tokenizer/Token";
-import { Expression } from "../ast/Expression";
+import { Node } from "../ast/Node";
 
 export abstract class InfixParselet {
 
-    abstract parse(p: Parser, left: Expression, token: Token): Expression
+    abstract parse(p: Parser, left: Node, token: Token): Node
     abstract getPrecedence(token: Token): number;
 
 }

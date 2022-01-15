@@ -1,9 +1,9 @@
 import { Parser } from "./Parser";
 import { Token } from "../tokenizer/Token";
-import { Expression } from "../ast/Expression";
+import { Node } from "../ast/Node";
 
 export abstract class PrefixParselet {
 
-    abstract parse(p: Parser, token: Token): Expression
+    abstract parse(p: Parser, token: Token): Node
 
 }

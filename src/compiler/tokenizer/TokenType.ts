@@ -32,16 +32,26 @@ export class TokenType {
 
 }
 
+function parse(value: string) {
+    if (value.startsWith("+")) {
+        value = value.slice(1);
+    }
+    return JSON.parse(value);
+}
+
 export const tokenTypes = {
-    Id: new TokenType("Id", /^[_@a-z][_$@a-z0-9]*/i),
+    //  Comment must come before Operator otherwise '//' interpreted as an operator
     Comment: new TokenType("Comment", /^\/\/.*/),
-    Operator: new TokenType("Operator", /^[\=\+\-\*\&\^\%\!\~\/\.\:\;\?\,\<\>]+/i),
     Tab: new TokenType("Tab", /^((    )|\t)+/, { value: source => source.length / 4 }),
     Whitespace: new TokenType("Whitespace", /^\s+/),
-    Open: new TokenType("Open",  /^[\({\[]/),
+    Open: new TokenType("Open", /^[\({\[]/),
     Close: new TokenType("Close", /^[\)}\]]/),
-    Float: new TokenType("Float", /^-?[1-9][0-9]*\.[0-9]+(e[+-]?[0-9]+)?/, { value: JSON.parse }),
-    Integer: new TokenType("Integer", /^-?([1-9][0-9]*|0x[0-9]+)/, { value: JSON.parse }),
+    Float: new TokenType("Float", /^[-\+]?[1-9][0-9]*\.[0-9]+(e[+-]?[0-9]+)?/, { value: parse }),
+    Integer: new TokenType("Integer", /^[-\+]?([1-9][0-9]*|0x[0-9]+)/, { value: parse }),
     String: new TokenType("String", /^"([^"\\]|\\.)*"/, { value: JSON.parse }),
+    // Operator has to come after Float/Integer so an adjacent - or + binds to literal.
+    Operator: new TokenType("Operator", /^(void|[\=\+\-\*\&\^\%\!\~\/\.\:\;\?\,\<\>]+)/i),
+    //  Id has to come after Operator because of operator 'void'
+    Id: new TokenType("Id", /^[_@a-z][_$@a-z0-9]*/i),
     Unknown: new TokenType("Unknown", /^./, { mergeAdjacent: true }),
 } as const;

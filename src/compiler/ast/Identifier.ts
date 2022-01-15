@@ -1,9 +1,9 @@
 import { NonFunctionProperties } from "../../types";
-import { Expression } from "./Expression";
+import { Node } from "./Node";
 
-type Props = NonFunctionProperties<Reference>;
+type Props = NonFunctionProperties<Identifier>;
 
-export class Reference extends Expression {
+export class Identifier extends Node {
 
     name!: string;
 

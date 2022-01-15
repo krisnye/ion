@@ -1,9 +1,9 @@
-import { Expression } from "../ast/Expression";
 import { PrefixParselet } from "./PrefixParselet";
 import { SemanticError } from "../SemanticError";
 import { Token } from "../tokenizer/Token";
-import { tokenTypes } from "../tokenizer/TokenType";
 import { InfixParselet } from "./InfixParslet";
+import { tokenTypes } from "../tokenizer/TokenType";
+import { Node } from "../ast/Node";
 
 export class Parser {
 
@@ -19,13 +19,16 @@ export class Parser {
         this.infixParselets = infixParselets;
     }
 
-    consume(tokenType?: keyof typeof tokenTypes) {
+    consume(tokenType?: string, value?: any) {
         let token = this.tokens.pop();
         if (token == null) {
             throw new Error(`Unexpected EOF`)
         }
         if (tokenType != null && token.type !== tokenType) {
             throw new SemanticError(`Expected: ${tokenType}`, token.location)
+        }
+        if (value !== undefined && token.value !== value) {
+            throw new SemanticError(`Expected: ${value}`, token.value)
         }
         return token;
     }
@@ -38,7 +41,7 @@ export class Parser {
         this.tokens = [...tokens].reverse();
     }
 
-    parseExpression(precedence: number): Expression {
+    parseExpression(precedence: number): Node {
         let token = this.consume();
         let prefix = this.prefixParselets[token.type as keyof typeof tokenTypes];
         if (prefix == null) {

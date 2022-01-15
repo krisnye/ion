@@ -1,12 +1,13 @@
 import { NonFunctionProperties } from "../../types";
 import { Node } from "./Node";
 
-type Props = NonFunctionProperties<Call>;
+type Props = NonFunctionProperties<Member>;
 
-export class Call extends Node {
+export class Member extends Node {
 
-    callee!: Node;
-    arguments!: Node[];
+    object!: Node;
+    property!: Node;
+    computed!: boolean;
 
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }

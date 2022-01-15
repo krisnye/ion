@@ -1,23 +1,23 @@
 import { Parser } from "./Parser";
 import { Token } from "../tokenizer/Token";
 import { infixPrecedence, infixRightAssociative } from "./operators";
-import { Reference } from "../ast/Reference";
+import { Identifier } from "../ast/Identifier";
 import { Call } from "../ast/Call";
 import { SemanticError } from "../SemanticError";
-import { Expression } from "../ast/Expression";
+import { Node } from "../ast/Node";
 import { SourceLocation } from "../ast/SourceLocation";
 import { InfixParselet } from "./InfixParslet";
 
 export class BinaryOperatorParselet extends InfixParselet {
 
-    parse(p: Parser, left: Expression, token: Token): Expression {
+    parse(p: Parser, left: Node, token: Token): Node {
         let { value, location } = token;
         let precedence = infixPrecedence[value];
         if (precedence == null) {
             throw new SemanticError(`Infix operator not found: ${value}`, location);
         }
         let right = p.parseExpression(precedence + (infixRightAssociative[value] ? -1 : 0));
-        let callee = new Reference({ location, name: value });
+        let callee = new Identifier({ location, name: value });
         return new Call({
             location: SourceLocation.merge(location, right.location),
             callee,

@@ -1,28 +1,36 @@
 
 export const prefixPrecedence: { [op: string]: number | undefined } = {
-    "+": 10,
-    "-": 10,
-    "!": 10,
+    "+": 14,
+    "-": 14,
+    "!": 14,
+    "~": 14,
+    "void": 1,
 } as const;
 
 export const infixPrecedence: { [op: string]: number | undefined } = {
-    "+": 12,
-    "-": 12,
+    "[": 18,    //  ]
+    ".": 18,
+    "**": 15,
     "*": 13,
     "/": 13,
     "%": 13,
-    "**": 14,
-
+    "+": 12,
+    "-": 12,
+    "<<": 11,
+    ">>": 11,
     "<": 10,
     "<=": 10,
     ">": 10,
     ">=": 10,
-    "==": 10,
-    "!=": 10,
-    "|": 10,
-    "||": 10,
-    "&": 10,
-    "&&": 10,
+    "==": 9,
+    "!=": 9,
+    "&": 8,
+    "^": 7,
+    "|": 6,
+    "&&": 5,
+    "||": 4,
+    "=": 2,
+    ",": 1,
 } as const;
 
 export const infixRightAssociative: { [op: string]: boolean | undefined } = {

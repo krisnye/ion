@@ -1,6 +1,6 @@
-import { Expression } from "./Expression";
+import { Node } from "./Node";
 
-export class Literal extends Expression {
+export class Literal extends Node {
 
     value!: any;
 
