@@ -111,6 +111,6 @@ testParseExpression(
 // this has to be turned into assignments
 testParseExpression(
     "void x = y = 3",
-    `{"":"Call","callee":{"":"Identifier","name":"void"},"arguments":[{"":"Call","callee":{"":"Identifier","name":"="},"arguments":[{"":"Identifier","name":"x"},{"":"Call","callee":{"":"Identifier","name":"="},"arguments":[{"":"Identifier","name":"y"},{"":"IntegerLiteral","value":3}]}]}]}`
+    `{"":"Call","callee":{"":"Identifier","name":"void"},"arguments":[{"":"Assignment","id":{"":"Identifier","name":"x"},"value":{"":"Assignment","id":{"":"Identifier","name":"y"},"value":{"":"IntegerLiteral","value":3}}}]}`
 )
 

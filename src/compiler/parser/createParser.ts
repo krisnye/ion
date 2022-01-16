@@ -9,7 +9,7 @@ import { MemberParselet } from "./MemberParselet";
 import { TerminalParselet } from "./TerminalParselet";
 import { tokenTypes } from "../tokenizer/TokenType";
 import { Identifier } from "../ast/Identifier";
-import { Member } from "../ast/Member";
+import { AssignmentParselet } from "./AssignmentParselet";
 
 export function createParser() {
     return new Parser({
@@ -23,6 +23,7 @@ export function createParser() {
         [tokenTypes.Operator.name]: new RoutingInfixParselet(
             {
                 ".": new MemberParselet(false),
+                "=": new AssignmentParselet(),
             },
             new BinaryOperatorParselet(),
         ),

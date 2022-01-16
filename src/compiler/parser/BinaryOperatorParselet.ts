@@ -10,13 +10,19 @@ import { InfixParselet } from "./InfixParslet";
 
 export class BinaryOperatorParselet extends InfixParselet {
 
-    parse(p: Parser, left: Node, token: Token): Node {
+    protected parseRight(p: Parser, token: Token): Node {
         let { value, location } = token;
         let precedence = infixPrecedence[value];
         if (precedence == null) {
             throw new SemanticError(`Infix operator not found: ${value}`, location);
         }
         let right = p.parseExpression(precedence + (infixRightAssociative[value] ? -1 : 0));
+        return right;
+    }
+
+    parse(p: Parser, left: Node, token: Token): Node {
+        let { value, location } = token;
+        let right = this.parseRight(p, token);
         let callee = new Identifier({ location, name: value });
         return new Call({
             location: SourceLocation.merge(location, right.location),
