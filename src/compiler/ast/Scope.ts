@@ -1,12 +1,11 @@
 import { NonFunctionProperties } from "../../types";
-import { Token } from "../tokenizer/Token";
 import { Node } from "./Node";
 
-type Props = NonFunctionProperties<Assignment>;
-export class Assignment extends Node {
+type Props = NonFunctionProperties<Scope>;
 
-    id!: Node;
-    value!: Node;
+export class Scope extends Node {
+
+    nodes!: Node[];
 
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }

@@ -7,30 +7,44 @@ import { RoutingInfixParselet } from "./RoutingInfixParselet";
 import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
 import { MemberParselet } from "./MemberParselet";
 import { TerminalParselet } from "./TerminalParselet";
-import { tokenTypes } from "../tokenizer/TokenType";
 import { Identifier } from "../ast/Identifier";
 import { AssignmentParselet } from "./AssignmentParselet";
+import { GroupParselet } from "./GroupParselet";
+import { CallParselet } from "./CallParselet";
+import { SequenceParselet } from "./SequenceParselet";
 
 export function createParser() {
     return new Parser({
-        [tokenTypes.Float.name]: new TerminalParselet(FloatLiteral, "value"),
-        [tokenTypes.Integer.name]: new TerminalParselet(IntegerLiteral, "value"),
-        [tokenTypes.String.name]: new TerminalParselet(StringLiteral, "value"),
-        [tokenTypes.Operator.name]: new PrefixOperatorParselet(),
-        [tokenTypes.Id.name]: new TerminalParselet(Identifier, "name"),
+        Float: new TerminalParselet(FloatLiteral, "value"),
+        Integer: new TerminalParselet(IntegerLiteral, "value"),
+        String: new TerminalParselet(StringLiteral, "value"),
+        Operator: new PrefixOperatorParselet(),
+        Id: new TerminalParselet(Identifier, "name"),
+        OpenParen: new GroupParselet("CloseParen"),
     },
     {
-        [tokenTypes.Operator.name]: new RoutingInfixParselet(
+        Operator: new RoutingInfixParselet(
             {
-                ".": new MemberParselet(false),
+                ".": new MemberParselet(),
+                ",": new SequenceParselet(),
                 "=": new AssignmentParselet(),
+                "+=": new AssignmentParselet(),
+                "-=": new AssignmentParselet(),
+                "**=": new AssignmentParselet(),
+                "*=": new AssignmentParselet(),
+                "/=": new AssignmentParselet(),
+                "%=": new AssignmentParselet(),
+                "<<=": new AssignmentParselet(),
+                ">>=": new AssignmentParselet(),
+                "^=": new AssignmentParselet(),
+                "&=": new AssignmentParselet(),
+                "|=": new AssignmentParselet(),
+                "&&=": new AssignmentParselet(),
+                "||=": new AssignmentParselet(),
             },
             new BinaryOperatorParselet(),
         ),
-        [tokenTypes.Open.name]: new RoutingInfixParselet(
-            {
-                "[": new MemberParselet(true),
-            }
-        ),
+        OpenParen: new CallParselet("CloseParen"),
+        OpenBracket: new MemberParselet("CloseBracket"),
     })
 }

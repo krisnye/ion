@@ -6,111 +6,58 @@ import { createParser } from "../parser/createParser";
 let parser = createParser();
 let tokenizer = createTokenizer();
 
-function testParseExpression(source: string, expected: string) {
-    let { tokens } = tokenizer.tokenizeLine("test.ion", source, 0);
-    parser.setTokens(tokens.filter(token => token.type !== tokenTypes.Whitespace.name));
+function test(source: string, expected: string) {
+    let tokens = tokenizer.tokenize("test.ion", source);
+    parser.setTokens(tokens);
     let expression = parser.parseExpression(0);
     let actual = JSON.stringify(expression);
     if (actual != expected) {
+        console.log(tokens);
         console.log(actual);
     }
     assert.equal(actual, expected, source);
 }
 
-testParseExpression(
-    "+ - !1.8",
-    `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"Call","callee":{"":"Identifier","name":"!"},"arguments":[{"":"FloatLiteral","value":1.8}]}]}]}`
+//  literals
+test("1.8", `{"":"FloatLiteral","value":1.8}`)
+//  binary operations
+test("+ - !1.8", `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"Call","callee":{"":"Identifier","name":"!"},"arguments":[{"":"FloatLiteral","value":1.8}]}]}]}`)
+test("1 + 2", `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}`)
+test("1.0 - 2.0", `{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"FloatLiteral","value":1},{"":"FloatLiteral","value":2}]}`)
+test("1 + 2 * 3", `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Call","callee":{"":"Identifier","name":"*"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}`)
+test("1 * 2 + 3", `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"Call","callee":{"":"Identifier","name":"*"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]},{"":"IntegerLiteral","value":3}]}`)
+//  right associativity
+test("1 ** 2 ** 3", `{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}`)
+//  member
+test("x[2]", `{"":"Member","object":{"":"Identifier","name":"x"},"property":{"":"IntegerLiteral","value":2},"computed":true}`)
+test("x.y", `{"":"Member","object":{"":"Identifier","name":"x"},"property":{"":"Identifier","name":"y"},"computed":false}`)
+test("x.y.z", `{"":"Member","object":{"":"Member","object":{"":"Identifier","name":"x"},"property":{"":"Identifier","name":"y"},"computed":false},"property":{"":"Identifier","name":"z"},"computed":false}`)
+//  unary
+test("-1", `{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"IntegerLiteral","value":1}]}`)
+test("-1.0", `{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"FloatLiteral","value":1}]}`)
+//  unary operator and exponentiation ambiguity
+assert.throws(
+    () => test("-1 ** 2", `{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":-1},{"":"IntegerLiteral","value":2}]}`)
 )
-
-testParseExpression(
-    "1.8",
-    `{"":"FloatLiteral","value":1.8}`
-)
-
-testParseExpression(
-    "1 + 2",
-    `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}`
-)
-
-testParseExpression(
-    "1.0 - 2.0",
-    `{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"FloatLiteral","value":1},{"":"FloatLiteral","value":2}]}`
-)
-
-testParseExpression(
-    "1 + 2 * 3",
-    `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Call","callee":{"":"Identifier","name":"*"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}`
-)
-
-testParseExpression(
-    "1 * 2 + 3",
-    `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"Call","callee":{"":"Identifier","name":"*"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]},{"":"IntegerLiteral","value":3}]}`
-)
-
-//  test right associativity
-testParseExpression(
-    "1 ** 2 ** 3",
-    `{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}`
-)
-
-testParseExpression(
-    "x[2]",
-    `{"":"Member","object":{"":"Identifier","name":"x"},"property":{"":"IntegerLiteral","value":2},"computed":true}`
-)
-
-testParseExpression(
-    "x.y",
-    `{"":"Member","object":{"":"Identifier","name":"x"},"property":{"":"Identifier","name":"y"},"computed":false}`
-)
-
-testParseExpression(
-    "x.y.z",
-    `{"":"Member","object":{"":"Member","object":{"":"Identifier","name":"x"},"property":{"":"Identifier","name":"y"},"computed":false},"property":{"":"Identifier","name":"z"},"computed":false}`
-)
-
-testParseExpression(
-    "-1",
-    `{"":"IntegerLiteral","value":-1}`
-)
-
-testParseExpression(
-    "-1.0",
-    `{"":"FloatLiteral","value":-1}`
-)
-
-testParseExpression(
-    "-1 ** 2",
-    `{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":-1},{"":"IntegerLiteral","value":2}]}`
-)
-
-testParseExpression(
-    "- 1 ** 2",
-    `{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}]}`
-)
-
-testParseExpression(
-    "+1 ** 2",
-    `{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}`
-)
-
-testParseExpression(
-    "+ 1 ** 2",
-    `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}]}`
-)
-
-testParseExpression(
-    "x",
-    `{"":"Identifier","name":"x"}`
-)
-
-testParseExpression(
-    "void x",
-    `{"":"Call","callee":{"":"Identifier","name":"void"},"arguments":[{"":"Identifier","name":"x"}]}`
-)
-
-// this has to be turned into assignments
-testParseExpression(
-    "void x = y = 3",
-    `{"":"Call","callee":{"":"Identifier","name":"void"},"arguments":[{"":"Assignment","id":{"":"Identifier","name":"x"},"value":{"":"Assignment","id":{"":"Identifier","name":"y"},"value":{"":"IntegerLiteral","value":3}}}]}`
-)
-
+test("-(1 ** 2)", `{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"Sequence","nodes":[{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}]}]}`);
+test("+(1 ** 2)", `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"Sequence","nodes":[{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}]}]}`);
+test("(- 1) ** 2", `{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"Sequence","nodes":[{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"IntegerLiteral","value":1}]}]},{"":"IntegerLiteral","value":2}]}`);
+//  various
+test("x", `{"":"Identifier","name":"x"}`)
+test("void x", `{"":"Call","callee":{"":"Identifier","name":"void"},"arguments":[{"":"Identifier","name":"x"}]}`)
+test("void x = y = 3", `{"":"Call","callee":{"":"Identifier","name":"void"},"arguments":[{"":"Assignment","id":{"":"Identifier","name":"x"},"value":{"":"Assignment","id":{"":"Identifier","name":"y"},"value":{"":"IntegerLiteral","value":3}}}]}`)
+test("1 * (2 + 3)", `{"":"Call","callee":{"":"Identifier","name":"*"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Sequence","nodes":[{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}]}`);
+test("1*(2+3)", `{"":"Call","callee":{"":"Identifier","name":"*"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Sequence","nodes":[{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}]}`);
+//  Sequences
+test("a, b", `{"":"Sequence","nodes":[{"":"Identifier","name":"a"},{"":"Identifier","name":"b"}]}`)
+test("a, b, c", `{"":"Sequence","nodes":[{"":"Identifier","name":"a"},{"":"Identifier","name":"b"},{"":"Identifier","name":"c"}]}`)
+test("a,b,c,d", `{"":"Sequence","nodes":[{"":"Identifier","name":"a"},{"":"Identifier","name":"b"},{"":"Identifier","name":"c"},{"":"Identifier","name":"d"}]}`)
+//  Calls
+test("a(1)", `{"":"Call","callee":{"":"Identifier","name":"a"},"arguments":[{"":"IntegerLiteral","value":1}]}`)
+test("a(1, 2)", `{"":"Call","callee":{"":"Identifier","name":"a"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}`)
+test("a(1, 2 + 3)", `{"":"Call","callee":{"":"Identifier","name":"a"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}`)
+//  Assignment Operations
+test("a += 1", `{"":"Assignment","id":{"":"Identifier","name":"a"},"value":{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"Identifier","name":"a"},{"":"IntegerLiteral","value":1}]}}`)
+for (let op of ["+", "-", "**", "*", "/", "%", "<<", ">>", "^", "&", "|", "&&", "||"]) {
+    test(`a ${op}= 1`, `{"":"Assignment","id":{"":"Identifier","name":"a"},"value":{"":"Call","callee":{"":"Identifier","name":"${op}"},"arguments":[{"":"Identifier","name":"a"},{"":"IntegerLiteral","value":1}]}}`)
+}

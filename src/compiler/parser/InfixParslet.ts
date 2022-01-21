@@ -5,6 +5,6 @@ import { Node } from "../ast/Node";
 export abstract class InfixParselet {
 
     abstract parse(p: Parser, left: Node, token: Token): Node
-    abstract getPrecedence(token: Token): number;
+    abstract getPrecedence(token: Token): number | undefined;
 
 }

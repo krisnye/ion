@@ -12,7 +12,7 @@ export class BinaryOperatorParselet extends InfixParselet {
 
     protected parseRight(p: Parser, token: Token): Node {
         let { value, location } = token;
-        let precedence = infixPrecedence[value];
+        let precedence = this.getPrecedence(token);
         if (precedence == null) {
             throw new SemanticError(`Infix operator not found: ${value}`, location);
         }
@@ -20,19 +20,17 @@ export class BinaryOperatorParselet extends InfixParselet {
         return right;
     }
 
-    parse(p: Parser, left: Node, token: Token): Node {
-        let { value, location } = token;
-        let right = this.parseRight(p, token);
-        let callee = new Identifier({ location, name: value });
+    parse(p: Parser, left: Node, operator: Token): Node {
+        let right = this.parseRight(p, operator);
         return new Call({
-            location: SourceLocation.merge(location, right.location),
-            callee,
+            location: SourceLocation.merge(left.location, right.location),
+            callee: new Identifier({ location: operator.value, name: operator.value }),
             arguments: [left, right]
         });
     }
 
     getPrecedence(token: Token) {
-        return infixPrecedence[token.value] || -1;
+        return infixPrecedence[token.value];
     }
 
 }

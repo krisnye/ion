@@ -19,17 +19,41 @@ export class Parser {
         this.infixParselets = infixParselets;
     }
 
-    consume(tokenType?: string, value?: any) {
-        let token = this.tokens.pop();
+    maybeConsume(tokenType?: string, value?: any) {
+        return this.consumeInternal(tokenType, value, false);
+    }
+
+    consume(tokenType?: string, value?: any): Token {
+        return this.consumeInternal(tokenType, value, true)!;
+    }
+
+    private consumeInternal(tokenType?: string, value?: any, required = true): Token | null {
+        let token = this.peek();
         if (token == null) {
-            throw new Error(`Unexpected EOF`)
+            if (required) {
+                throw new Error(`Unexpected EOF`)
+            }
+            else {
+                return null;
+            }
         }
         if (tokenType != null && token.type !== tokenType) {
-            throw new SemanticError(`Expected: ${tokenType}`, token.location)
+            if (required) {
+                throw new SemanticError(`Expected: ${tokenType}`, token.location)
+            }
+            else {
+                return null;
+            }
         }
         if (value !== undefined && token.value !== value) {
-            throw new SemanticError(`Expected: ${value}`, token.value)
+            if (required) {
+                throw new SemanticError(`Expected: ${value}`, token.value)
+            }
+            else {
+                return null;
+            }
         }
+        this.tokens.pop();
         return token;
     }
 
@@ -41,7 +65,18 @@ export class Parser {
         this.tokens = [...tokens].reverse();
     }
 
+    parseStatement(): Node {
+        //  if
+        //  for
+        //  return
+        //  class
+        //  switch
+        //  named function?
+        throw "nyi";
+    }
+
     parseExpression(precedence: number): Node {
+        this.maybeConsume(tokenTypes.Whitespace.name);
         let token = this.consume();
         let prefix = this.prefixParselets[token.type as keyof typeof tokenTypes];
         if (prefix == null) {
@@ -50,10 +85,12 @@ export class Parser {
         let left = prefix.parse(this, token);
 
         while (true) {
+            this.maybeConsume(tokenTypes.Whitespace.name);
             let next = this.peek();
             if (next != null) {
                 let infix = this.infixParselets[next.type as keyof typeof tokenTypes];
-                if (infix != null && precedence < infix.getPrecedence(next)) {
+                if (infix != null && precedence < (infix.getPrecedence(next) ?? 0)) {
+                    this.maybeConsume(tokenTypes.Whitespace.name);
                     this.consume();
                     left = infix.parse(this, left, next);
                     continue;

@@ -1,5 +1,6 @@
 
 export const prefixPrecedence: { [op: string]: number | undefined } = {
+    "(": 19,
     "+": 14,
     "-": 14,
     "!": 14,
@@ -10,6 +11,7 @@ export const prefixPrecedence: { [op: string]: number | undefined } = {
 export const infixPrecedence: { [op: string]: number | undefined } = {
     "[": 18,    //  ]
     ".": 18,
+    "(": 18,    //  )
     "**": 15,
     "*": 13,
     "/": 13,
@@ -30,6 +32,19 @@ export const infixPrecedence: { [op: string]: number | undefined } = {
     "&&": 5,
     "||": 4,
     "=": 2,
+    "+=": 2,
+    "-=": 2,
+    "**=": 2,
+    "*=": 2,
+    "/=": 2,
+    "%=": 2,
+    "<<=": 2,
+    ">>=": 2,
+    "^=": 2,
+    "&=": 2,
+    "|=": 2,
+    "&&=": 2,
+    "||=": 2,
     ",": 1,
 } as const;
 

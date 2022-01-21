@@ -4,46 +4,101 @@ import { tokenTypes } from "../tokenizer/TokenType";
 
 let tokenizer = createTokenizer();
 
-function testLine(line: string, expectedResult: string) {
-    let { tokens } = tokenizer.tokenizeLine("test.ion", line, 1);
-    let actualResult = tokens.filter(token => token.type != tokenTypes.Whitespace.name).map(token => [token.type, token.value ?? token.source].join(":")).join("\n");
+function test(line: string, expectedResult: string) {
+    let tokens = tokenizer.tokenize("test.ion", line);
+    let actualResult = tokens.filter(
+        token => token.type != tokenTypes.Whitespace.name).map(
+            token => [token.type, tokenTypes[token.type].isWhitespace ? JSON.stringify(token.source) : token.value ?? token.source].join(":")
+        ).join("\n"
+    );
     if (actualResult !== expectedResult) {
         console.log(actualResult);
     }
     assert.equal(actualResult, expectedResult, line);
 }
 
-testLine("f",
+test("f",
 `Id:f`);
 
-testLine("foo",
+test("foo",
 `Id:foo`);
 
-testLine("    foo: bar = () => a.b // foo",
-`Tab:1
+test("    foo: bar = () => a.b // foo",
+`Indent:"    "
 Id:foo
 Operator::
 Id:bar
 Operator:=
-Open:(
-Close:)
+OpenParen:(
+CloseParen:)
 Operator:=>
 Id:a
 Operator:.
 Id:b
-Comment:// foo`
+Comment:// foo
+Outdent:""`
 );
 
-testLine(`"foo\\"bar"`, `String:foo"bar`);
+test(`"foo\\"bar"`, `String:foo"bar`);
 
-testLine(`foo##bar`,
+test(`foo##bar`,
 `Id:foo
 Unknown:##
 Id:bar`
 );
 
-// assert.deepEqual(JSON.parse(JSON.stringify(tokenizer.tokenizeFile("foo.ion", `
-// foo = bar
-//     doo()
-//         baz .. quz
-// `))), [{"tokens":[],"children":[]},{"tokens":[{"type":"Id","source":"foo","value":"foo","location":{"filename":"foo.ion","start":{"line":2,"column":1},"finish":{"line":2,"column":4}}},{"type":"Whitespace","source":" ","value":" ","location":{"filename":"foo.ion","start":{"line":2,"column":4},"finish":{"line":2,"column":5}}},{"type":"Operator","source":"=","value":"=","location":{"filename":"foo.ion","start":{"line":2,"column":5},"finish":{"line":2,"column":6}}},{"type":"Whitespace","source":" ","value":" ","location":{"filename":"foo.ion","start":{"line":2,"column":6},"finish":{"line":2,"column":7}}},{"type":"Id","source":"bar","value":"bar","location":{"filename":"foo.ion","start":{"line":2,"column":7},"finish":{"line":2,"column":10}}}],"children":[]},{"tokens":[{"type":"Tab","source":"    ","value":1,"location":{"filename":"foo.ion","start":{"line":3,"column":1},"finish":{"line":3,"column":5}}},{"type":"Id","source":"doo","value":"doo","location":{"filename":"foo.ion","start":{"line":3,"column":5},"finish":{"line":3,"column":8}}},{"type":"Open","source":"(","value":"(","location":{"filename":"foo.ion","start":{"line":3,"column":8},"finish":{"line":3,"column":9}}},{"type":"Close","source":")","value":")","location":{"filename":"foo.ion","start":{"line":3,"column":9},"finish":{"line":3,"column":10}}}],"children":[]},{"tokens":[{"type":"Tab","source":"        ","value":2,"location":{"filename":"foo.ion","start":{"line":4,"column":1},"finish":{"line":4,"column":9}}},{"type":"Id","source":"baz","value":"baz","location":{"filename":"foo.ion","start":{"line":4,"column":9},"finish":{"line":4,"column":12}}},{"type":"Whitespace","source":" ","value":" ","location":{"filename":"foo.ion","start":{"line":4,"column":12},"finish":{"line":4,"column":13}}},{"type":"Operator","source":"..","value":"..","location":{"filename":"foo.ion","start":{"line":4,"column":13},"finish":{"line":4,"column":15}}},{"type":"Whitespace","source":" ","value":" ","location":{"filename":"foo.ion","start":{"line":4,"column":15},"finish":{"line":4,"column":16}}},{"type":"Id","source":"quz","value":"quz","location":{"filename":"foo.ion","start":{"line":4,"column":16},"finish":{"line":4,"column":19}}}],"children":[]},{"tokens":[],"children":[]}])
+test(
+`
+foo
+        x
+        y
+            a
+            b
+        z
+`,
+`Eol:"\\n"
+Id:foo
+Eol:"\\n"
+Indent:"    "
+Indent:"    "
+Id:x
+Eol:"\\n"
+Id:y
+Eol:"\\n"
+Indent:"    "
+Id:a
+Eol:"\\n"
+Id:b
+Eol:"\\n"
+Outdent:""
+Id:z
+Eol:"\\n"
+Outdent:""
+Outdent:""`)
+
+test(
+`
+foo
+    x
+    y
+        a
+        b
+    z
+`,
+`Eol:"\\n"
+Id:foo
+Eol:"\\n"
+Indent:"    "
+Id:x
+Eol:"\\n"
+Id:y
+Eol:"\\n"
+Indent:"    "
+Id:a
+Eol:"\\n"
+Id:b
+Eol:"\\n"
+Outdent:""
+Id:z
+Eol:"\\n"
+Outdent:""`)
