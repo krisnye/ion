@@ -17,7 +17,7 @@ export class CallParselet extends BinaryOperatorParselet {
     }
 
     parse(p: Parser, callee: Node, open: Token): Node {
-        let args = p.parseExpression(0);
+        let args = p.parseExpression();
         let close = p.consume(this.closeTokenType);
         return new Call({
             location: SourceLocation.merge(callee.location, close.location),

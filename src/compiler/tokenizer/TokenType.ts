@@ -41,6 +41,7 @@ function parse(value: string) {
     return JSON.parse(value);
 }
 
+//  this is linear time now on types. We can make it much faster later.
 export const tokenTypes = {
     //  Comment must come before Operator otherwise '//' interpreted as an operator
     Comment: new TokenType("Comment", /^\/\/.*/),
@@ -58,6 +59,10 @@ export const tokenTypes = {
     // Operator has to come after Float/Integer so an adjacent - or + binds to literal.
     Operator: new TokenType("Operator", /^(void|[\=\+\-\*\&\^\%\!\~\/\.\:\;\?\,\<\>\|\&]+)/i),
     //  Id has to come after Operator because of operator 'void'
+    If: new TokenType("If", /^if*/i),
+    Else: new TokenType("Else", /^else*/i),
+    Return: new TokenType("Return", /^return*/i),
+    Class: new TokenType("Class", /^class*/i),
     Id: new TokenType("Id", /^[_@a-z][_$@a-z0-9]*/i),
     Eol: new TokenType("Eol", /^\r\n|\r|\n/, { isWhitespace: true }),
     Unknown: new TokenType("Unknown", /^./, { mergeAdjacent: true }),

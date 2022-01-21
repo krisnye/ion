@@ -1,6 +1,5 @@
 import { strict as assert } from "assert";
 import { createTokenizer } from "../tokenizer/createTokenizer";
-import { tokenTypes } from "../tokenizer/TokenType";
 import { createParser } from "../parser/createParser";
 
 let parser = createParser();
@@ -9,7 +8,7 @@ let tokenizer = createTokenizer();
 function test(source: string, expected: string) {
     let tokens = tokenizer.tokenize("test.ion", source);
     parser.setTokens(tokens);
-    let expression = parser.parseExpression(0);
+    let expression = parser.parseExpression();
     let actual = JSON.stringify(expression);
     if (actual != expected) {
         console.log(tokens);
@@ -61,3 +60,27 @@ test("a += 1", `{"":"Assignment","id":{"":"Identifier","name":"a"},"value":{"":"
 for (let op of ["+", "-", "**", "*", "/", "%", "<<", ">>", "^", "&", "|", "&&", "||"]) {
     test(`a ${op}= 1`, `{"":"Assignment","id":{"":"Identifier","name":"a"},"value":{"":"Call","callee":{"":"Identifier","name":"${op}"},"arguments":[{"":"Identifier","name":"a"},{"":"IntegerLiteral","value":1}]}}`)
 }
+//  if expressions
+test(
+`if x
+    y
+`,
+`{"":"Conditional","test":{"":"Identifier","name":"x"},"consequent":{"":"Block","nodes":[{"":"Identifier","name":"y"}]},"alternate":null}`);
+
+test(
+`if x
+    y
+else
+    z
+`,
+`{"":"Conditional","test":{"":"Identifier","name":"x"},"consequent":{"":"Block","nodes":[{"":"Identifier","name":"y"}]},"alternate":{"":"Block","nodes":[{"":"Identifier","name":"z"}]}}`
+);
+
+test(
+`if x
+    y
+else if z
+    w
+`,
+`{"":"Conditional","test":{"":"Identifier","name":"x"},"consequent":{"":"Block","nodes":[{"":"Identifier","name":"y"}]},"alternate":{"":"Conditional","test":{"":"Identifier","name":"z"},"consequent":{"":"Block","nodes":[{"":"Identifier","name":"w"}]},"alternate":null}}`
+)

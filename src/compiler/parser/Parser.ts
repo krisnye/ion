@@ -4,6 +4,8 @@ import { Token } from "../tokenizer/Token";
 import { InfixParselet } from "./InfixParslet";
 import { tokenTypes } from "../tokenizer/TokenType";
 import { Node } from "../ast/Node";
+import { Block } from "../ast/Block";
+import { SourceLocation } from "../ast/SourceLocation";
 
 export class Parser {
 
@@ -57,6 +59,10 @@ export class Parser {
         return token;
     }
 
+    done() {
+        return this.tokens.length === 0;
+    }
+
     peek(): Token | undefined {
         return this.tokens[this.tokens.length - 1];
     }
@@ -65,17 +71,25 @@ export class Parser {
         this.tokens = [...tokens].reverse();
     }
 
-    parseStatement(): Node {
-        //  if
-        //  for
-        //  return
-        //  class
-        //  switch
-        //  named function?
-        throw "nyi";
+    parseBlock(): Node {
+        this.consume(tokenTypes.Eol.name);
+        this.consume(tokenTypes.Indent.name);
+        let nodes = new Array<Node>();
+        while (!this.done()) {
+            nodes.push(this.parseExpression());
+            this.maybeConsume(tokenTypes.Eol.name);
+            if (this.maybeConsume(tokenTypes.Outdent.name)) {
+                break;
+            }
+        }
+
+        return new Block({
+            location: SourceLocation.merge(nodes[0].location, nodes[nodes.length - 1].location),
+            nodes,
+        })
     }
 
-    parseExpression(precedence: number): Node {
+    parseExpression(precedence: number = 0): Node {
         this.maybeConsume(tokenTypes.Whitespace.name);
         let token = this.consume();
         let prefix = this.prefixParselets[token.type as keyof typeof tokenTypes];

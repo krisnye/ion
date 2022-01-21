@@ -23,6 +23,12 @@ test("f",
 test("foo",
 `Id:foo`);
 
+test("if class else return",
+`If:if
+Class:class
+Else:else
+Return:return`);
+
 test("    foo: bar = () => a.b // foo",
 `Indent:"    "
 Id:foo
@@ -102,3 +108,11 @@ Outdent:""
 Id:z
 Eol:"\\n"
 Outdent:""`)
+
+// test(
+// `if x
+//     y
+// else if z
+//     w
+// `,
+// ``)

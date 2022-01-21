@@ -12,6 +12,7 @@ import { AssignmentParselet } from "./AssignmentParselet";
 import { GroupParselet } from "./GroupParselet";
 import { CallParselet } from "./CallParselet";
 import { SequenceParselet } from "./SequenceParselet";
+import { IfParselet } from "./IfParselet";
 
 export function createParser() {
     return new Parser({
@@ -20,7 +21,8 @@ export function createParser() {
         String: new TerminalParselet(StringLiteral, "value"),
         Operator: new PrefixOperatorParselet(),
         Id: new TerminalParselet(Identifier, "name"),
-        OpenParen: new GroupParselet("CloseParen"),
+        If: new IfParselet(),
+        OpenParen: new GroupParselet("CloseParen")
     },
     {
         Operator: new RoutingInfixParselet(

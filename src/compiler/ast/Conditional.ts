@@ -1,11 +1,12 @@
 import { NonFunctionProperties } from "../../types";
 import { Node } from "./Node";
 
-type Props = NonFunctionProperties<Assignment>;
-export class Assignment extends Node {
+type Props = NonFunctionProperties<Conditional>;
+export class Conditional extends Node {
 
-    id!: Node;
-    value!: Node;
+    test!: Node;
+    consequent!: Node;
+    alternate!: Node | null;
 
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }
