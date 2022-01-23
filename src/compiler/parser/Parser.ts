@@ -63,15 +63,19 @@ export class Parser {
         return this.tokens.length === 0;
     }
 
-    peek(): Token | undefined {
-        return this.tokens[this.tokens.length - 1];
+    peek(tokenType?: string): Token | null {
+        let token = this.tokens[this.tokens.length - 1];
+        if (token != null && (tokenType == null || tokenType === token.type)) {
+            return token;
+        }
+        return null;
     }
 
     setTokens(tokens: Token[]) {
         this.tokens = [...tokens].reverse();
     }
 
-    parseBlock(): Node {
+    parseBlock(): Block {
         this.consume(tokenTypes.Eol.name);
         this.consume(tokenTypes.Indent.name);
         let nodes = new Array<Node>();
@@ -91,6 +95,10 @@ export class Parser {
 
     parseExpression(precedence: number = 0): Node {
         this.maybeConsume(tokenTypes.Whitespace.name);
+        if (this.peek(tokenTypes.Eol.name)) {
+            return this.parseBlock();
+        }
+
         let token = this.consume();
         let prefix = this.prefixParselets[token.type as keyof typeof tokenTypes];
         if (prefix == null) {

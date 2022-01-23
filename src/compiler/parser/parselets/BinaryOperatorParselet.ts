@@ -1,12 +1,12 @@
-import { Parser } from "./Parser";
-import { Token } from "../tokenizer/Token";
-import { infixPrecedence, infixRightAssociative } from "./operators";
-import { Identifier } from "../ast/Identifier";
-import { Call } from "../ast/Call";
-import { SemanticError } from "../SemanticError";
-import { Node } from "../ast/Node";
-import { SourceLocation } from "../ast/SourceLocation";
-import { InfixParselet } from "./InfixParslet";
+import { Parser } from "../Parser";
+import { Token } from "../../tokenizer/Token";
+import { infixPrecedence, infixRightAssociative } from "../operators";
+import { Identifier } from "../../ast/Identifier";
+import { Call } from "../../ast/Call";
+import { SemanticError } from "../../SemanticError";
+import { Node } from "../../ast/Node";
+import { SourceLocation } from "../../ast/SourceLocation";
+import { InfixParselet } from "../InfixParslet";
 
 export class BinaryOperatorParselet extends InfixParselet {
 

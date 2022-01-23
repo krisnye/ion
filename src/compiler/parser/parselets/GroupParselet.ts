@@ -1,9 +1,9 @@
-import { Parser } from "./Parser";
-import { Token } from "../tokenizer/Token";
-import { Node } from "../ast/Node";
+import { Parser } from "../Parser";
+import { Token } from "../../tokenizer/Token";
+import { Node } from "../../ast/Node";
 import { PrefixOperatorParselet } from "./PrefixOperatorParselet";
-import { SourceLocation } from "../ast/SourceLocation";
-import { Sequence } from "../ast/Sequence";
+import { SourceLocation } from "../../ast/SourceLocation";
+import { Sequence } from "../../ast/Sequence";
 
 export class GroupParselet extends PrefixOperatorParselet {
 
@@ -21,7 +21,12 @@ export class GroupParselet extends PrefixOperatorParselet {
         //  we use a Sequence with one node instead of dedicated Group node
         //  the Sequence will be removed later, but it helps during some semantic analysis.
         //  for instance, we want to know if -1 ** 2 was properly disambiguated.
-        return new Sequence({ location, nodes: [value] });
+        if (value instanceof Sequence) {
+            return value.patch({ location });
+        }
+        else {
+            return new Sequence({ location, nodes: [value] });
+        }
     }
 
 }

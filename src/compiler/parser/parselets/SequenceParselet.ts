@@ -1,8 +1,8 @@
-import { Parser } from "./Parser";
-import { Token } from "../tokenizer/Token";
-import { Node } from "../ast/Node";
+import { Parser } from "../Parser";
+import { Token } from "../../tokenizer/Token";
+import { Node } from "../../ast/Node";
 import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
-import { Sequence } from "../ast/Sequence";
+import { Sequence } from "../../ast/Sequence";
 
 export class SequenceParselet extends BinaryOperatorParselet {
 

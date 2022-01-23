@@ -20,6 +20,9 @@ function test(line: string, expectedResult: string) {
 test("f",
 `Id:f`);
 
+test("iff",
+`Id:iff`);
+
 test("foo",
 `Id:foo`);
 
@@ -107,12 +110,26 @@ Eol:"\\n"
 Outdent:""
 Id:z
 Eol:"\\n"
-Outdent:""`)
+Outdent:""`);
 
-// test(
-// `if x
-//     y
-// else if z
-//     w
-// `,
-// ``)
+test(
+`if x
+    y
+else if z
+    w
+`,
+`If:if
+Id:x
+Eol:"\\n"
+Indent:"    "
+Id:y
+Eol:"\\n"
+Outdent:""
+Else:else
+If:if
+Id:z
+Eol:"\\n"
+Indent:"    "
+Id:w
+Eol:"\\n"
+Outdent:""`);

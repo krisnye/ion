@@ -1,18 +1,23 @@
 import { FloatLiteral } from "../ast/FloatLiteral";
 import { IntegerLiteral } from "../ast/IntegerLiteral";
 import { Parser } from "./Parser";
-import { PrefixOperatorParselet } from "./PrefixOperatorParselet";
+import { PrefixOperatorParselet } from "./parselets/PrefixOperatorParselet";
 import { StringLiteral } from "../ast/StringLiteral";
-import { RoutingInfixParselet } from "./RoutingInfixParselet";
-import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
-import { MemberParselet } from "./MemberParselet";
-import { TerminalParselet } from "./TerminalParselet";
+import { RoutingInfixParselet } from "./parselets/RoutingInfixParselet";
+import { BinaryOperatorParselet } from "./parselets/BinaryOperatorParselet";
+import { MemberParselet } from "./parselets/MemberParselet";
+import { TerminalParselet } from "./parselets/TerminalParselet";
 import { Identifier } from "../ast/Identifier";
-import { AssignmentParselet } from "./AssignmentParselet";
-import { GroupParselet } from "./GroupParselet";
-import { CallParselet } from "./CallParselet";
-import { SequenceParselet } from "./SequenceParselet";
-import { IfParselet } from "./IfParselet";
+import { AssignmentParselet } from "./parselets/AssignmentParselet";
+import { GroupParselet } from "./parselets/GroupParselet";
+import { CallParselet } from "./parselets/CallParselet";
+import { SequenceParselet } from "./parselets/SequenceParselet";
+import { IfParselet } from "./parselets/IfParselet";
+import { ReturnParselet } from "./parselets/ReturnParselet";
+import { ClassParselet } from "./parselets/ClassParselet";
+import { VariableParselet } from "./parselets/VariableParselet";
+import { ForParselet } from "./parselets/ForParselet";
+import { FunctionParselet } from "./parselets/FunctionParselet";
 
 export function createParser() {
     return new Parser({
@@ -22,6 +27,9 @@ export function createParser() {
         Operator: new PrefixOperatorParselet(),
         Id: new TerminalParselet(Identifier, "name"),
         If: new IfParselet(),
+        For: new ForParselet(),
+        Class: new ClassParselet(),
+        Return: new ReturnParselet(),
         OpenParen: new GroupParselet("CloseParen")
     },
     {
@@ -29,6 +37,8 @@ export function createParser() {
             {
                 ".": new MemberParselet(),
                 ",": new SequenceParselet(),
+                ":": new VariableParselet(),
+                "=>": new FunctionParselet(),
                 "=": new AssignmentParselet(),
                 "+=": new AssignmentParselet(),
                 "-=": new AssignmentParselet(),

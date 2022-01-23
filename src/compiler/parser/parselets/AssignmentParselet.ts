@@ -1,11 +1,11 @@
-import { Parser } from "./Parser";
-import { Token } from "../tokenizer/Token";
-import { Node } from "../ast/Node";
+import { Parser } from "../Parser";
+import { Token } from "../../tokenizer/Token";
+import { Node } from "../../ast/Node";
 import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
-import { Assignment } from "../ast/Assignment";
-import { Call } from "../ast/Call";
-import { SourceLocation } from "../ast/SourceLocation";
-import { Identifier } from "../ast/Identifier";
+import { Assignment } from "../../ast/Assignment";
+import { Call } from "../../ast/Call";
+import { SourceLocation } from "../../ast/SourceLocation";
+import { Identifier } from "../../ast/Identifier";
 
 export class AssignmentParselet extends BinaryOperatorParselet {
 
@@ -19,7 +19,11 @@ export class AssignmentParselet extends BinaryOperatorParselet {
                 arguments: [id, value]
             })
         }
-        return new Assignment({ location, id, value });
+        return new Assignment({
+            location: SourceLocation.merge(id.location, value.location),
+            id,
+            value
+        });
     }
 
 }

@@ -1,12 +1,12 @@
-import { Parser } from "./Parser";
-import { Token } from "../tokenizer/Token";
-import { infixPrecedence, prefixPrecedence } from "./operators";
-import { Identifier } from "../ast/Identifier";
-import { Call } from "../ast/Call";
-import { SemanticError } from "../SemanticError";
-import { Node } from "../ast/Node";
-import { PrefixParselet } from "./PrefixParselet";
-import { SourceLocation } from "../ast/SourceLocation";
+import { Parser } from "../Parser";
+import { Token } from "../../tokenizer/Token";
+import { infixPrecedence, prefixPrecedence } from "../operators";
+import { Identifier } from "../../ast/Identifier";
+import { Call } from "../../ast/Call";
+import { SemanticError } from "../../SemanticError";
+import { Node } from "../../ast/Node";
+import { PrefixParselet } from "../PrefixParselet";
+import { SourceLocation } from "../../ast/SourceLocation";
 
 export function getBinaryOperationPrecedence(node) {
     if (node instanceof Call && node.arguments.length === 2 && node.callee instanceof Identifier) {

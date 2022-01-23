@@ -1,7 +1,7 @@
-import { Parser } from "./Parser";
-import { Token } from "../tokenizer/Token";
-import { PrefixParselet } from "./PrefixParselet";
-import { Node } from "../ast/Node";
+import { Parser } from "../Parser";
+import { Token } from "../../tokenizer/Token";
+import { PrefixParselet } from "../PrefixParselet";
+import { Node } from "../../ast/Node";
 
 export class TerminalParselet<T extends typeof Node> extends PrefixParselet {
 

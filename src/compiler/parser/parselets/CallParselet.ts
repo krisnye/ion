@@ -1,11 +1,11 @@
-import { Parser } from "./Parser";
-import { Token } from "../tokenizer/Token";
-import { Node } from "../ast/Node";
-import { SourceLocation } from "../ast/SourceLocation";
-import { tokenTypes } from "../tokenizer/TokenType";
+import { Parser } from "../Parser";
+import { Token } from "../../tokenizer/Token";
+import { Node } from "../../ast/Node";
+import { SourceLocation } from "../../ast/SourceLocation";
+import { tokenTypes } from "../../tokenizer/TokenType";
 import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
-import { Call } from "../ast/Call";
-import { Sequence } from "../ast/Sequence";
+import { Call } from "../../ast/Call";
+import { Sequence } from "../../ast/Sequence";
 
 export class CallParselet extends BinaryOperatorParselet {
 
