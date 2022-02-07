@@ -1,16 +1,16 @@
 import { NonFunctionProperties } from "../../types";
-import { Block } from "./Block";
-import { Node } from "./Node";
+import { Node } from "../Node";
 
-type Props = NonFunctionProperties<For>;
+type Props = NonFunctionProperties<Group>;
+export class Group extends Node {
 
-export class For extends Node {
-
-    id!: Node;
     value!: Node;
-    body!: Block;
 
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }
+
+    toString() {
+        return `(${this.value})`;
+    }
 
 }

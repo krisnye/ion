@@ -1,11 +1,13 @@
 import { PrefixParselet } from "./PrefixParselet";
 import { SemanticError } from "../SemanticError";
-import { Token } from "../tokenizer/Token";
+import { Token } from "../Token";
 import { InfixParselet } from "./InfixParslet";
+import { Node } from "../Node";
+import { Block } from "../pst/Block";
+import { SourceLocation } from "../SourceLocation";
+import { Module } from "../pst/Module";
+import { SourcePosition } from "../SourcePosition";
 import { tokenTypes } from "../tokenizer/TokenType";
-import { Node } from "../ast/Node";
-import { Block } from "../ast/Block";
-import { SourceLocation } from "../ast/SourceLocation";
 
 export class Parser {
 
@@ -21,8 +23,16 @@ export class Parser {
         this.infixParselets = infixParselets;
     }
 
-    maybeConsume(tokenType?: string, value?: any) {
-        return this.consumeInternal(tokenType, value, false);
+    maybeConsume(tokenType?: string, value?: any)
+    maybeConsume(tokenType?: string[], value?: any)
+    maybeConsume(tokenType?: string | string[], value?: any) {
+        for (let type of Array.isArray(tokenType) ? tokenType : [tokenType]) {
+            let result = this.consumeInternal(type, value, false);
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
     }
 
     consume(tokenType?: string, value?: any): Token {
@@ -71,35 +81,75 @@ export class Parser {
         return null;
     }
 
-    setTokens(tokens: Token[]) {
+    setTokens(tokens: Token[]): this {
         this.tokens = [...tokens].reverse();
+        return this;
     }
 
-    parseBlock(): Block {
-        this.consume(tokenTypes.Eol.name);
-        this.consume(tokenTypes.Indent.name);
+    parseModule(filename: string, tokens: Token[]): Module {
+        this.setTokens(tokens);
+
+        this.eol(0);
         let nodes = new Array<Node>();
         while (!this.done()) {
             nodes.push(this.parseExpression());
-            this.maybeConsume(tokenTypes.Eol.name);
-            if (this.maybeConsume(tokenTypes.Outdent.name)) {
+            if (this.eol() === 0) {
+                break;
+            }
+        }
+
+        if (!this.done()) {
+            throw new SemanticError(`Expected EOL or EOF`, this.peek()!.location);
+        }
+
+        return new Module({
+            location: nodes.length > 0
+                ? SourceLocation.merge(nodes[0].location, nodes[nodes.length - 1].location)
+                : new SourceLocation(filename, new SourcePosition(0, 0), new SourcePosition(0, 0)),
+            name: filename,
+            nodes,
+        })
+    }
+
+    parseBlock(indent = (this.eol(1), this.consume(tokenTypes.Indent.name))): Block {
+        let nodes = new Array<Node>();
+        let outdent: Token | null = null;
+        while (!this.done()) {
+            nodes.push(this.parseExpression());
+            if (this.eol() === 0 || (outdent = this.maybeConsume(tokenTypes.Outdent.name))) {
                 break;
             }
         }
 
         return new Block({
-            location: SourceLocation.merge(nodes[0].location, nodes[nodes.length - 1].location),
+            location: SourceLocation.merge(indent.location, outdent!.location),
             nodes,
         })
     }
 
+    eol(min = 0) {
+        let count = 0;
+        this.whitespace();
+        while (this.maybeConsume(tokenTypes.Eol.name)) {
+            count++;
+            this.whitespace();
+        }
+        if (count < min) {
+            throw new SemanticError(`Expected EOL`, this.peek()!.location);
+        }
+        return count;
+    }
+
+    whitespace() {
+        return this.maybeConsume(tokenTypes.Whitespace.name);
+    }
+
     parseExpression(precedence: number = 0): Node {
-        this.maybeConsume(tokenTypes.Whitespace.name);
         if (this.peek(tokenTypes.Eol.name)) {
             return this.parseBlock();
         }
-
         let token = this.consume();
+        this.whitespace();
         let prefix = this.prefixParselets[token.type as keyof typeof tokenTypes];
         if (prefix == null) {
             throw new SemanticError(`Could not parse: ${token.type}(${token.source})`)
@@ -107,13 +157,13 @@ export class Parser {
         let left = prefix.parse(this, token);
 
         while (true) {
-            this.maybeConsume(tokenTypes.Whitespace.name);
+            this.whitespace();
             let next = this.peek();
             if (next != null) {
                 let infix = this.infixParselets[next.type as keyof typeof tokenTypes];
                 if (infix != null && precedence < (infix.getPrecedence(next) ?? 0)) {
-                    this.maybeConsume(tokenTypes.Whitespace.name);
                     this.consume();
+                    this.whitespace();
                     left = infix.parse(this, left, next);
                     continue;
                 }

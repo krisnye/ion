@@ -51,3 +51,6 @@ The first interpreter will NOT handle any type constraints, only class based inv
 
 ## Build type system IN language
 
+    Types have to be evaluated at compile time. How do we do that?
+    `..` = (a, b) => Interval(a, b)
+    type = 1 .. 2 | 3 .. 4

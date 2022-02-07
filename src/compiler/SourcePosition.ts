@@ -1,5 +1,4 @@
-import { Serializable } from "../Serializable";
-import { SourceLocation } from "./SourceLocation";
+import { Serializable } from "./Serializable";
 
 export class SourcePosition extends Serializable {
 

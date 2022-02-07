@@ -1,11 +1,11 @@
 import { Parser } from "../Parser";
-import { Token } from "../../tokenizer/Token";
-import { Node } from "../../ast/Node";
-import { SourceLocation } from "../../ast/SourceLocation";
+import { Token } from "../../Token";
+import { Node } from "../../Node";
+import { SourceLocation } from "../../SourceLocation";
 import { tokenTypes } from "../../tokenizer/TokenType";
 import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
-import { Call } from "../../ast/Call";
-import { Sequence } from "../../ast/Sequence";
+import { Call } from "../../pst/Call";
+import { Sequence } from "../../pst/Sequence";
 
 export class CallParselet extends BinaryOperatorParselet {
 
@@ -17,12 +17,12 @@ export class CallParselet extends BinaryOperatorParselet {
     }
 
     parse(p: Parser, callee: Node, open: Token): Node {
-        let args = p.parseExpression();
+        let args = p.peek(this.closeTokenType) ? null : p.parseExpression();
         let close = p.consume(this.closeTokenType);
         return new Call({
             location: SourceLocation.merge(callee.location, close.location),
             callee,
-            arguments: args instanceof Sequence ? args.nodes : [args],
+            args,
         });
     }
 

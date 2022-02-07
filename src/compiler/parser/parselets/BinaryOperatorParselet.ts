@@ -1,12 +1,12 @@
 import { Parser } from "../Parser";
-import { Token } from "../../tokenizer/Token";
+import { Token } from "../../Token";
 import { infixPrecedence, infixRightAssociative } from "../operators";
-import { Identifier } from "../../ast/Identifier";
-import { Call } from "../../ast/Call";
+import { Identifier } from "../../pst/Identifier";
 import { SemanticError } from "../../SemanticError";
-import { Node } from "../../ast/Node";
-import { SourceLocation } from "../../ast/SourceLocation";
+import { Node } from "../../Node";
+import { SourceLocation } from "../../SourceLocation";
 import { InfixParselet } from "../InfixParslet";
+import { BinaryOperation } from "../../pst/BinaryOperation";
 
 export class BinaryOperatorParselet extends InfixParselet {
 
@@ -22,10 +22,12 @@ export class BinaryOperatorParselet extends InfixParselet {
 
     parse(p: Parser, left: Node, operator: Token): Node {
         let right = this.parseRight(p, operator);
-        return new Call({
+        
+        return new BinaryOperation({
             location: SourceLocation.merge(left.location, right.location),
-            callee: new Identifier({ location: operator.value, name: operator.value }),
-            arguments: [left, right]
+            left,
+            operator,
+            right,
         });
     }
 

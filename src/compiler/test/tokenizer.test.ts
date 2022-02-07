@@ -17,6 +17,8 @@ function test(line: string, expectedResult: string) {
     assert.equal(actualResult, expectedResult, line);
 }
 
+test(``,``);
+
 test("f",
 `Id:f`);
 
@@ -133,3 +135,19 @@ Indent:"    "
 Id:w
 Eol:"\\n"
 Outdent:""`);
+
+test(
+`a
+
+b`,
+`Id:a
+Eol:"\\n"
+Eol:"\\n"
+Id:b`
+)
+test(
+`foo()`,
+`Id:foo
+OpenParen:(
+CloseParen:)`
+)

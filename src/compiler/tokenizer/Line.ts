@@ -1,6 +1,6 @@
 import { NonFunctionProperties } from "../../types";
 import { Immutable } from "../Immutable";
-import { Token } from "./Token";
+import { Token } from "../Token";
 
 type Props = NonFunctionProperties<Line>;
 

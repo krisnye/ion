@@ -1,6 +1,6 @@
 import { Parser } from "../Parser";
-import { Token } from "../../tokenizer/Token";
-import { Node } from "../../ast/Node";
+import { Token } from "../../Token";
+import { Node } from "../../Node";
 import { InfixParselet } from "../InfixParslet";
 import { SemanticError } from "../../SemanticError";
 

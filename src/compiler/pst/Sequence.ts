@@ -1,7 +1,7 @@
 import { NonFunctionProperties } from "../../types";
-import { Node } from "./Node";
+import { Node } from "../Node";
 import { Scope } from "./Scope";
-import { SourceLocation } from "./SourceLocation";
+import { SourceLocation } from "../SourceLocation";
 
 type Props = NonFunctionProperties<Sequence>;
 

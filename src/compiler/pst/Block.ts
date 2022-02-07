@@ -1,14 +1,11 @@
 import { NonFunctionProperties } from "../../types";
-import { Node } from "./Node";
+import { Scope } from "./Scope";
 
-type Props = NonFunctionProperties<Function>;
+type Props = NonFunctionProperties<Block>;
 
-export class Function extends Node {
-
-    parameters!: Node;
-    body!: Node;
+export class Block extends Scope {
 
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }
-
+    
 }

@@ -1,14 +1,15 @@
 import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
-import { Function } from "../../ast/Function";
-import { Node } from "../../ast/Node";
+import { Function } from "../../pst/Function";
+import { Node } from "../../Node";
 import { Parser } from "../Parser";
-import { SourceLocation } from "../../ast/SourceLocation";
-import { Token } from "../../tokenizer/Token";
+import { SourceLocation } from "../../SourceLocation";
+import { Token } from "../../Token";
+import { tokenTypes } from "../../tokenizer/TokenType";
 
 export class FunctionParselet extends BinaryOperatorParselet {
 
     parse(p: Parser, parameters: Node, operator: Token): Node {
-        let body = this.parseRight(p, operator);
+        let body = p.peek(tokenTypes.Eol.name) ? p.parseBlock() : this.parseRight(p, operator);
         return new Function({
             location: SourceLocation.merge(parameters.location, body.location),
             parameters,

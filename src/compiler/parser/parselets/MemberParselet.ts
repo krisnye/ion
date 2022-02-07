@@ -1,10 +1,10 @@
 import { Parser } from "../Parser";
-import { Token } from "../../tokenizer/Token";
-import { Node } from "../../ast/Node";
-import { SourceLocation } from "../../ast/SourceLocation";
+import { Token } from "../../Token";
+import { Node } from "../../Node";
+import { SourceLocation } from "../../SourceLocation";
 import { tokenTypes } from "../../tokenizer/TokenType";
 import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
-import { Member } from "../../ast/Member";
+import { Member } from "../../pst/Member";
 import { infixPrecedence } from "../operators";
 
 export class MemberParselet extends BinaryOperatorParselet {

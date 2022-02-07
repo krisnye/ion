@@ -1,11 +1,11 @@
 import { Parser } from "../Parser";
-import { Token } from "../../tokenizer/Token";
-import { Node } from "../../ast/Node";
+import { Token } from "../../Token";
+import { Node } from "../../Node";
 import { PrefixParselet } from "../PrefixParselet";
-import { SourceLocation } from "../../ast/SourceLocation";
-import { Identifier } from "../../ast/Identifier";
+import { SourceLocation } from "../../SourceLocation";
+import { Identifier } from "../../pst/Identifier";
 import { SemanticError } from "../../SemanticError";
-import { Class } from "../../ast/Class";
+import { Class } from "../../pst/Class";
 
 export class ClassParselet extends PrefixParselet {
 

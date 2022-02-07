@@ -1,7 +1,7 @@
 import { Line } from "./Line";
-import { SourceLocation } from "../ast/SourceLocation";
-import { SourcePosition } from "../ast/SourcePosition";
-import { Token } from "./Token";
+import { SourceLocation } from "../SourceLocation";
+import { SourcePosition } from "../SourcePosition";
+import { Token } from "../Token";
 import { TokenType, tokenTypes } from "./TokenType";
 import { indentation } from "./indentation";
 

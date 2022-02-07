@@ -5,146 +5,188 @@ import { createParser } from "../parser/createParser";
 let parser = createParser();
 let tokenizer = createTokenizer();
 
-function test(source: string, expected: string) {
-    let tokens = tokenizer.tokenize("test.ion", source);
+function testExpression(source: string, expected: string | object) {
+    let filename = "test.ion";
+    let tokens = tokenizer.tokenize(filename, source);
     parser.setTokens(tokens);
     let expression = parser.parseExpression();
-    let actual = JSON.stringify(expression);
+    let actual = typeof expected === "string" ? expression.toString() : JSON.stringify(expression);
+    if (typeof expected !== "string") {
+        expected = JSON.stringify(expected);
+    }
     if (actual != expected) {
-        console.log(tokens);
+        // console.log(tokens);
         console.log(actual);
     }
     assert.equal(actual, expected, source);
 }
 
+function testModule(source: string, expected: string | object) {
+    let filename = "test.ion";
+    let tokens = tokenizer.tokenize(filename, source);
+    let module = parser.parseModule(filename, tokens);
+    let actual = typeof expected === "string" ? module.toString() : JSON.stringify(module);
+    if (typeof expected !== "string") {
+        expected = JSON.stringify(expected);
+    }
+    if (actual != expected) {
+        // console.log(tokens);
+        console.log(actual);
+    }
+     assert.equal(actual, expected, source);
+}
+
 //  literals
-test("1.8", `{"":"FloatLiteral","value":1.8}`);
-//  binary operations
-test("+ - !1.8", `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"Call","callee":{"":"Identifier","name":"!"},"arguments":[{"":"FloatLiteral","value":1.8}]}]}]}`);
-test("1 + 2", `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}`);
-test("1.0 - 2.0", `{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"FloatLiteral","value":1},{"":"FloatLiteral","value":2}]}`);
-test("1 + 2 * 3", `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Call","callee":{"":"Identifier","name":"*"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}`);
-test("1 * 2 + 3", `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"Call","callee":{"":"Identifier","name":"*"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]},{"":"IntegerLiteral","value":3}]}`);
+testExpression("1.8", `1.8`);
+// //  binary operations
+testExpression("+ - !1.8", `+ - ! 1.8`);
+testExpression("1 + 2", `1 + 2`);
+testExpression("1.0 - 2.0", `1.0 - 2.0`);
+testExpression("1 + 2 * 3", `1 + 2 * 3`);
+testExpression("1 * 2 + 3", `1 * 2 + 3`);
+testExpression("(1 + 2) * 3", `(1 + 2) * 3`);
 //  right associativity
-test("1 ** 2 ** 3", `{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}`);
+testExpression("1 ** 2 ** 3", `1 ** 2 ** 3`);
 //  member
-test("x[2]", `{"":"Member","object":{"":"Identifier","name":"x"},"property":{"":"IntegerLiteral","value":2},"computed":true}`);
-test("x.y", `{"":"Member","object":{"":"Identifier","name":"x"},"property":{"":"Identifier","name":"y"},"computed":false}`);
-test("x.y.z", `{"":"Member","object":{"":"Member","object":{"":"Identifier","name":"x"},"property":{"":"Identifier","name":"y"},"computed":false},"property":{"":"Identifier","name":"z"},"computed":false}`);
+testExpression("x[2]", `x[2]`);
+testExpression("x.y", `x . y`);
+testExpression("x.y.z", `x . y . z`);
 //  unary
-test("-1", `{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"IntegerLiteral","value":1}]}`);
-test("-1.0", `{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"FloatLiteral","value":1}]}`);
+testExpression("-1", `- 1`);
+testExpression("-1.0", `- 1.0`);
 //  unary operator and exponentiation ambiguity
 assert.throws(
-    () => test("-1 ** 2", `{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":-1},{"":"IntegerLiteral","value":2}]}`)
+    () => testExpression("-1 ** 2", `- 1 ** 2`)
 );
-test("-(1 ** 2)", `{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"Sequence","nodes":[{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}]}]}`);
-test("+(1 ** 2)", `{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"Sequence","nodes":[{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}]}]}`);
-test("(- 1) ** 2", `{"":"Call","callee":{"":"Identifier","name":"**"},"arguments":[{"":"Sequence","nodes":[{"":"Call","callee":{"":"Identifier","name":"-"},"arguments":[{"":"IntegerLiteral","value":1}]}]},{"":"IntegerLiteral","value":2}]}`);
+testExpression("-(1 ** 2)", `- (1 ** 2)`);
+testExpression("+(1 ** 2)", `+ (1 ** 2)`);
+testExpression("(- 1) ** 2", `(- 1) ** 2`);
 //  various
-test("x", `{"":"Identifier","name":"x"}`);
-test("void x", `{"":"Call","callee":{"":"Identifier","name":"void"},"arguments":[{"":"Identifier","name":"x"}]}`);
-test("void x = y = 3", `{"":"Call","callee":{"":"Identifier","name":"void"},"arguments":[{"":"Assignment","id":{"":"Identifier","name":"x"},"value":{"":"Assignment","id":{"":"Identifier","name":"y"},"value":{"":"IntegerLiteral","value":3}}}]}`);
-test("1 * (2 + 3)", `{"":"Call","callee":{"":"Identifier","name":"*"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Sequence","nodes":[{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}]}`);
-test("1*(2+3)", `{"":"Call","callee":{"":"Identifier","name":"*"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Sequence","nodes":[{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}]}`);
+testExpression("x", {"":"Identifier","name":"x"});
+testExpression("void x", `void x`);
+testExpression("void x = y = 3", `void x = y = 3`);
+testExpression("1 * (2 + 3)", `1 * (2 + 3)`);
+testExpression("1*(2+3)", `1 * (2 + 3)`);
 //  Sequences
-test("a, b", `{"":"Sequence","nodes":[{"":"Identifier","name":"a"},{"":"Identifier","name":"b"}]}`);
-test("a, b, c", `{"":"Sequence","nodes":[{"":"Identifier","name":"a"},{"":"Identifier","name":"b"},{"":"Identifier","name":"c"}]}`);
-test("a,b,c,d", `{"":"Sequence","nodes":[{"":"Identifier","name":"a"},{"":"Identifier","name":"b"},{"":"Identifier","name":"c"},{"":"Identifier","name":"d"}]}`);
+testExpression("a, b", {"":"BinaryOperation","left":{"":"Identifier","name":"a"},"operator":",","right":{"":"Identifier","name":"b"}});
+testExpression("a, b, c", `a , b , c`);
 //  Calls
-test("a(1)", `{"":"Call","callee":{"":"Identifier","name":"a"},"arguments":[{"":"IntegerLiteral","value":1}]}`);
-test("a(1, 2)", `{"":"Call","callee":{"":"Identifier","name":"a"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}`);
-test("a(1, 2 + 3)", `{"":"Call","callee":{"":"Identifier","name":"a"},"arguments":[{"":"IntegerLiteral","value":1},{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"IntegerLiteral","value":2},{"":"IntegerLiteral","value":3}]}]}`);
+testExpression("a(1)", `a(1)`);
+testExpression("a(1, 2)", `a(1 , 2)`);
 //  Assignment Operations
-test("a += 1", `{"":"Assignment","id":{"":"Identifier","name":"a"},"value":{"":"Call","callee":{"":"Identifier","name":"+"},"arguments":[{"":"Identifier","name":"a"},{"":"IntegerLiteral","value":1}]}}`);
+testExpression("a += 1", `a += 1`);
 for (let op of ["+", "-", "**", "*", "/", "%", "<<", ">>", "^", "&", "|", "&&", "||"]) {
-    test(`a ${op}= 1`, `{"":"Assignment","id":{"":"Identifier","name":"a"},"value":{"":"Call","callee":{"":"Identifier","name":"${op}"},"arguments":[{"":"Identifier","name":"a"},{"":"IntegerLiteral","value":1}]}}`);
+    testExpression(`a ${op}= 1`, `a ${op}= 1`);
 };
 //  if expressions
-test(
+testExpression(
 `if x
     y
 `,
-`{"":"Conditional","test":{"":"Identifier","name":"x"},"consequent":{"":"Block","nodes":[{"":"Identifier","name":"y"}]},"alternate":null}`
+`if x {\n    y\n}`
 );
 
-test(
+testExpression(
 `if x
     y
 else
     z
 `,
-`{"":"Conditional","test":{"":"Identifier","name":"x"},"consequent":{"":"Block","nodes":[{"":"Identifier","name":"y"}]},"alternate":{"":"Block","nodes":[{"":"Identifier","name":"z"}]}}`
-);
+`if x {\n    y\n} else {\n    z\n}`);
 
-test(
+testExpression(
 `if x
     y
 else if z
     w
 `,
-`{"":"Conditional","test":{"":"Identifier","name":"x"},"consequent":{"":"Block","nodes":[{"":"Identifier","name":"y"}]},"alternate":{"":"Conditional","test":{"":"Identifier","name":"z"},"consequent":{"":"Block","nodes":[{"":"Identifier","name":"w"}]},"alternate":null}}`
-);
+`if x {\n    y\n} else if z {\n    w\n}`);
 
 //  return
-test(`return x`, `{"":"Return","value":{"":"Identifier","name":"x"}}`);
+testExpression(`return x`, {"":"Return","value":{"":"Identifier","name":"x"}});
 
 //  variables
-test(
+testExpression(
 `x: Number`,
-`{"":"Variable","id":{"":"Identifier","name":"x"},"type":{"":"Identifier","name":"Number"},"value":null}`
+`x : Number`
 );
 
-test(
+testExpression(
 `x: Number | String = 1 | 2`,
-`{"":"Assignment","id":{"":"Variable","id":{"":"Identifier","name":"x"},"type":{"":"Call","callee":{"":"Identifier","name":"|"},"arguments":[{"":"Identifier","name":"Number"},{"":"Identifier","name":"String"}]},"value":null},"value":{"":"Call","callee":{"":"Identifier","name":"|"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}}`
+`x : Number | String = 1 | 2`
 );
 
 //  class
-test(
+testExpression(
 `class Vector
     x: Number
     y: Number
 `,
-`{"":"Class","id":{"":"Identifier","name":"Vector"},"extends":[],"nodes":[{"":"Variable","id":{"":"Identifier","name":"x"},"type":{"":"Identifier","name":"Number"},"value":null},{"":"Variable","id":{"":"Identifier","name":"y"},"type":{"":"Identifier","name":"Number"},"value":null}]}`
+`class Vector extends  {\n    x : Number\n    y : Number\n}`
 );
 
 //  for loops
-test(
+testExpression(
 `for x in y
     z
 `,
-`{"":"For","id":{"":"Identifier","name":"x"},"value":{"":"Identifier","name":"y"},"body":{"":"Block","nodes":[{"":"Identifier","name":"z"}]}}`
+`for x in y {\n    z\n}`
 );
 
 //  Functions
-test(
+testExpression(
 `(a, b) => 12`,
-`{"":"Function","parameters":{"":"Sequence","nodes":[{"":"Identifier","name":"a"},{"":"Identifier","name":"b"}]},"body":{"":"IntegerLiteral","value":12}}`
+`(a , b) => 12`
 );
 
-test(
+testExpression(
 `a => 1`,
-`{"":"Function","parameters":{"":"Identifier","name":"a"},"body":{"":"IntegerLiteral","value":1}}`
+`a => 1`,
 );
 
-test(
+testExpression(
 `(a, b) =>
     x
     return y
 `,
-`{"":"Function","parameters":{"":"Sequence","nodes":[{"":"Identifier","name":"a"},{"":"Identifier","name":"b"}]},"body":{"":"Block","nodes":[{"":"Identifier","name":"x"},{"":"Return","value":{"":"Identifier","name":"y"}}]}}`
+`(a , b) => {\n    x\n    return y\n}`
 );
 
-test(
+testExpression(
 `(a: Number): A | B => 1 | 2`,
-`{"":"Function","parameters":{"":"Variable","id":{"":"Sequence","nodes":[{"":"Variable","id":{"":"Identifier","name":"a"},"type":{"":"Identifier","name":"Number"},"value":null}]},"type":{"":"Call","callee":{"":"Identifier","name":"|"},"arguments":[{"":"Identifier","name":"A"},{"":"Identifier","name":"B"}]},"value":null},"body":{"":"Call","callee":{"":"Identifier","name":"|"},"arguments":[{"":"IntegerLiteral","value":1},{"":"IntegerLiteral","value":2}]}}`
-)
+`(a : Number) : A | B => 1 | 2`,
+);
 
-/*
-()
-    a: Number
-    b: Number
-=>
-    c
-*/
+//  modules
+assert.throws(() =>
+testModule(`
+x y z`,
+``)
+);
+
+testModule(
+`x
+y`,
+`module test.ion {\n    x\n    y\n}`
+);
+
+testModule(
+`
+@Meta(1)
+x = 10
+`,
+`module test.ion {\n    @Meta(1)\n    x = 10\n}`
+);
+
+testModule(
+`foo()
+`,
+`module test.ion {\n    foo(null)\n}`
+);
+
+testModule(
+`foo
+    a
+`,
+`module test.ion {\n    foo\n    {\n        a\n    }\n}`
+);

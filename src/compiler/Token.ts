@@ -1,10 +1,10 @@
-import { NonFunctionProperties } from "../../types";
-import { Immutable } from "../Immutable";
-import { SourceLocation } from "../ast/SourceLocation";
+import { NonFunctionProperties } from "../types";
+import { Node } from "./Node";
+import { SourceLocation } from "./SourceLocation";
 
 type Props = NonFunctionProperties<Token>;
 
-export class Token extends Immutable {
+export class Token extends Node {
 
     readonly type!: string;
     readonly source!: string;
@@ -21,4 +21,13 @@ export class Token extends Immutable {
             location: SourceLocation.merge(left.location, right.location)
         })
     }
+
+    toString() {
+        return this.source;
+    }
+
+    toJSON() {
+        return this.source;
+    }
+
 }

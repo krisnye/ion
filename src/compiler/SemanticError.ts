@@ -1,5 +1,5 @@
-import { Node } from "./ast/Node";
-import { SourceLocation } from "./ast/SourceLocation";
+import { Node } from "./Node";
+import { SourceLocation } from "./SourceLocation";
 
 export class SemanticError extends Error {
 

@@ -81,3 +81,15 @@ Yes. Combined with treating all operators as function calls can provide a simple
 
 https://utf8everywhere.org/
 
+### Are function parameter names part of the function signature?
+
+Con: Doesn't make sense for operators where you can't provide names.
+Pro: Otherwise using optional named arguments only works for static functions.
+
+Solution: Names for optional parameters are part of the signature.
+
+### Are optional parameter default values part of the function signature?
+
+Pro: They can be provided at compile time.
+Con: Then all signatures must provide the same default value.
+Maybe: Functions that implement same signature explicitly, don't have to specify type, so will inherit same default values as type.

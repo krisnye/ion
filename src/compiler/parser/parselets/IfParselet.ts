@@ -1,9 +1,9 @@
 import { Parser } from "../Parser";
-import { Token } from "../../tokenizer/Token";
-import { Node } from "../../ast/Node";
+import { Token } from "../../Token";
+import { Node } from "../../Node";
 import { PrefixParselet } from "../PrefixParselet";
-import { Conditional } from "../../ast/Conditional";
-import { SourceLocation } from "../../ast/SourceLocation";
+import { Conditional } from "../../pst/Conditional";
+import { SourceLocation } from "../../SourceLocation";
 import { tokenTypes } from "../../tokenizer/TokenType";
 
 export class IfParselet extends PrefixParselet {
@@ -13,9 +13,10 @@ export class IfParselet extends PrefixParselet {
         let consequent = p.parseBlock();
         let alternate: Node | null = null;
         if (p.maybeConsume(tokenTypes.Else.name)) {
-            p.maybeConsume(tokenTypes.Whitespace.name);
+            p.whitespace();
             let elseIfToken = p.maybeConsume(tokenTypes.If.name)
             if (elseIfToken) {
+                p.whitespace();
                 alternate = this.parse(p, elseIfToken);
             }
             else {

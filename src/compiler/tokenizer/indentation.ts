@@ -1,4 +1,4 @@
-import { Token } from "./Token";
+import { Token } from "../Token";
 import { TokenType, tokenTypes } from "./TokenType";
 
 function splitIntoLines(tokens: Token[]): Token[][] {

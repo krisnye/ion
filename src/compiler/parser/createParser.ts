@@ -1,23 +1,19 @@
-import { FloatLiteral } from "../ast/FloatLiteral";
-import { IntegerLiteral } from "../ast/IntegerLiteral";
+import { FloatLiteral } from "../pst/FloatLiteral";
+import { IntegerLiteral } from "../pst/IntegerLiteral";
 import { Parser } from "./Parser";
 import { PrefixOperatorParselet } from "./parselets/PrefixOperatorParselet";
-import { StringLiteral } from "../ast/StringLiteral";
-import { RoutingInfixParselet } from "./parselets/RoutingInfixParselet";
+import { StringLiteral } from "../pst/StringLiteral";
 import { BinaryOperatorParselet } from "./parselets/BinaryOperatorParselet";
 import { MemberParselet } from "./parselets/MemberParselet";
 import { TerminalParselet } from "./parselets/TerminalParselet";
-import { Identifier } from "../ast/Identifier";
-import { AssignmentParselet } from "./parselets/AssignmentParselet";
+import { Identifier } from "../pst/Identifier";
 import { GroupParselet } from "./parselets/GroupParselet";
 import { CallParselet } from "./parselets/CallParselet";
-import { SequenceParselet } from "./parselets/SequenceParselet";
 import { IfParselet } from "./parselets/IfParselet";
 import { ReturnParselet } from "./parselets/ReturnParselet";
 import { ClassParselet } from "./parselets/ClassParselet";
-import { VariableParselet } from "./parselets/VariableParselet";
 import { ForParselet } from "./parselets/ForParselet";
-import { FunctionParselet } from "./parselets/FunctionParselet";
+import { BlockParselet } from "./parselets/BlockParselet";
 
 export function createParser() {
     return new Parser({
@@ -30,32 +26,33 @@ export function createParser() {
         For: new ForParselet(),
         Class: new ClassParselet(),
         Return: new ReturnParselet(),
-        OpenParen: new GroupParselet("CloseParen")
+        OpenParen: new GroupParselet("CloseParen"),
+        Indent: new BlockParselet(),
     },
     {
-        Operator: new RoutingInfixParselet(
-            {
-                ".": new MemberParselet(),
-                ",": new SequenceParselet(),
-                ":": new VariableParselet(),
-                "=>": new FunctionParselet(),
-                "=": new AssignmentParselet(),
-                "+=": new AssignmentParselet(),
-                "-=": new AssignmentParselet(),
-                "**=": new AssignmentParselet(),
-                "*=": new AssignmentParselet(),
-                "/=": new AssignmentParselet(),
-                "%=": new AssignmentParselet(),
-                "<<=": new AssignmentParselet(),
-                ">>=": new AssignmentParselet(),
-                "^=": new AssignmentParselet(),
-                "&=": new AssignmentParselet(),
-                "|=": new AssignmentParselet(),
-                "&&=": new AssignmentParselet(),
-                "||=": new AssignmentParselet(),
-            },
-            new BinaryOperatorParselet(),
-        ),
+        Operator: new BinaryOperatorParselet(),
+        // Operator: new RoutingInfixParselet(
+        //     {
+        //         ",": new SequenceParselet(),
+        //         ":": new VariableParselet(),
+        //         "=>": new FunctionParselet(),
+        //         "=": new AssignmentParselet(),
+        //         "+=": new AssignmentParselet(),
+        //         "-=": new AssignmentParselet(),
+        //         "**=": new AssignmentParselet(),
+        //         "*=": new AssignmentParselet(),
+        //         "/=": new AssignmentParselet(),
+        //         "%=": new AssignmentParselet(),
+        //         "<<=": new AssignmentParselet(),
+        //         ">>=": new AssignmentParselet(),
+        //         "^=": new AssignmentParselet(),
+        //         "&=": new AssignmentParselet(),
+        //         "|=": new AssignmentParselet(),
+        //         "&&=": new AssignmentParselet(),
+        //         "||=": new AssignmentParselet(),
+        //     },
+        //     new BinaryOperatorParselet(),
+        // ),
         OpenParen: new CallParselet("CloseParen"),
         OpenBracket: new MemberParselet("CloseBracket"),
     })

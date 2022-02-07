@@ -12,4 +12,8 @@ export class Class extends Scope {
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }
 
+    toString() {
+        return `class ${this.id} extends ${this.extends} ${ super.toString() }`;
+    }
+
 }
