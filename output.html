@@ -229,37 +229,67 @@ ul.jsondiffpatch-textdiff {
             <td>
                 <header><span>File</span></header>
                 <span class="content">
-                    Float
+                    +
                 </span>
             </td>
         
                 <td>
                     <header><span>Source</span></header>
                     <p>
-class Float
+foo = []
 </p>
                 </td>
             
                 <td>
-                    <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class Float<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Float&quot; }   }
-  ],
-  &quot;name&quot;: &quot;Float&quot;
-}</pre></div></div></p>
+                    <header><span>tokenization</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>foo = []<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;foo&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;=&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;OpenBracket&quot;, &quot;source&quot;: &quot;[&quot; },
+  Token { &quot;type&quot;: &quot;CloseBracket&quot;, &quot;source&quot;: &quot;]&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; }
+]</pre></div></div></p>
                 </td>
             
                 <td>
-                    <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ClassDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Float&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$Float&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Float&quot;</pre></div></li></ul></div></p>
+                    <header><span>parsing</span></header>
+                    <p>module + { foo = [] }</p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    Any
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+@Abstract
+class Any
+</p>
                 </td>
             
                 <td>
-                    <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;$Float&quot; }   }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Float&quot;</pre></div></li></ul></div></p>
+                    <header><span>tokenization</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>@Abstract<br>class Any<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@Abstract&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Class&quot;, &quot;source&quot;: &quot;class&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;Any&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; }
+]</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>parsing</span></header>
+                    <p>module Any { @Abstract class Any extends  {} }</p>
                 </td>
             </tr><tr class="channel">
             <td>
@@ -277,406 +307,52 @@ class Integer
                 </td>
             
                 <td>
-                    <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class Integer<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Integer&quot; }   }
-  ],
-  &quot;name&quot;: &quot;Integer&quot;
-}</pre></div></div></p>
+                    <header><span>tokenization</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class Integer<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Class&quot;, &quot;source&quot;: &quot;class&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;Integer&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; }
+]</pre></div></div></p>
                 </td>
             
                 <td>
-                    <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ClassDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Integer&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$Integer&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Integer&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;$Integer&quot; }   }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Integer&quot;</pre></div></li></ul></div></p>
+                    <header><span>parsing</span></header>
+                    <p>module Integer { class Integer extends  {} }</p>
                 </td>
             </tr><tr class="channel">
             <td>
                 <header><span>File</span></header>
                 <span class="content">
-                    String
+                    Unkown
                 </span>
             </td>
         
                 <td>
                     <header><span>Source</span></header>
                     <p>
-class String
+@Abstract
+class Unknown
 </p>
                 </td>
             
                 <td>
-                    <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class String<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;String&quot; }   }
-  ],
-  &quot;name&quot;: &quot;String&quot;
-}</pre></div></div></p>
+                    <header><span>tokenization</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>@Abstract<br>class Unknown<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@Abstract&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Class&quot;, &quot;source&quot;: &quot;class&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;Unknown&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; }
+]</pre></div></div></p>
                 </td>
             
                 <td>
-                    <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ClassDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;String&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$String&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;String&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;$String&quot; }   }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;String&quot;</pre></div></li></ul></div></p>
-                </td>
-            </tr><tr class="channel">
-            <td>
-                <header><span>File</span></header>
-                <span class="content">
-                    false
-                </span>
-            </td>
-        
-                <td>
-                    <header><span>Source</span></header>
-                    <p>0</p>
-                </td>
-            
-                <td>
-                    <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;0&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
-  ],
-  &quot;name&quot;: &quot;false&quot;
-}</pre></div></div></p>
-                </td>
-            
-                <td>
-                    <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;false&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Literal { &quot;value&quot;: 0, &quot;integer&quot;: true }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;false&quot;</pre></div></li></ul></div></p>
-                </td>
-            </tr><tr class="channel">
-            <td>
-                <header><span>File</span></header>
-                <span class="content">
-                    true
-                </span>
-            </td>
-        
-                <td>
-                    <header><span>Source</span></header>
-                    <p>
-1
-</p>
-                </td>
-            
-                <td>
-                    <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>1<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-  ],
-  &quot;name&quot;: &quot;true&quot;
-}</pre></div></div></p>
-                </td>
-            
-                <td>
-                    <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;true&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;true&quot;</pre></div></li></ul></div></p>
-                </td>
-            </tr><tr class="channel">
-            <td>
-                <header><span>File</span></header>
-                <span class="content">
-                    Boolean
-                </span>
-            </td>
-        
-                <td>
-                    <header><span>Source</span></header>
-                    <p>
-Boolean = true | false
-</p>
-                </td>
-            
-                <td>
-                    <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>Boolean = true | false<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    Variable {
-      &quot;type&quot;: UnionType { &quot;types&quot;: [ ReferenceType { &quot;name&quot;: &quot;true&quot; },
-          ReferenceType { &quot;name&quot;: &quot;false&quot; } ] },
-      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;Boolean&quot; }   }
-  ],
-  &quot;name&quot;: &quot;Boolean&quot;
-}</pre></div></div></p>
-                </td>
-            
-                <td>
-                    <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Boolean&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$Boolean&quot;</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;UnionType&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="types"><div class="jsondiffpatch-property-name">types</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;true&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$true&quot;</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;false&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$false&quot;</pre></div></li></ul></li></ul></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Boolean&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable {
-    &quot;type&quot;: UnionType { &quot;types&quot;: [ ReferenceType { &quot;name&quot;: &quot;$true&quot; },
-        ReferenceType { &quot;name&quot;: &quot;$false&quot; } ] },
-    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;$Boolean&quot; }   }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;Boolean&quot;</pre></div></li></ul></div></p>
-                </td>
-            </tr><tr class="channel">
-            <td>
-                <header><span>File</span></header>
-                <span class="content">
-                    @Meta
-                </span>
-            </td>
-        
-                <td>
-                    <header><span>Source</span></header>
-                    <p>
-class @Meta
-    multiple: Boolean = false
-</p>
-                </td>
-            
-                <td>
-                    <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class @Meta<br>    multiple: Boolean = false<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;@Meta&quot; },
-      &quot;declarations&quot;: [
-        Variable { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Boolean&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;multiple&quot; },
-          &quot;isMutable&quot;: true,
-          &quot;value&quot;: Reference { &quot;name&quot;: &quot;false&quot; }   }
-      ]
-    }
-  ],
-  &quot;name&quot;: &quot;@Meta&quot;
-}</pre></div></div></p>
-                </td>
-            
-                <td>
-                    <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ClassDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="declarations"><div class="jsondiffpatch-property-name">declarations</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;multiple&quot; }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="isMutable"><div class="jsondiffpatch-property-name">isMutable</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Boolean&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$Boolean&quot;</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;false&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$false&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;@Meta&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$@Meta&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;@Meta&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  ClassDeclaration { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;$@Meta&quot; },
-    &quot;declarations&quot;: [
-      Variable { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;$Boolean&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;multiple&quot; },
-        &quot;isMutable&quot;: true,
-        &quot;value&quot;: Reference { &quot;name&quot;: &quot;$false&quot; }   }
-    ]
-  }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;@Meta&quot;</pre></div></li></ul></div></p>
-                </td>
-            </tr><tr class="channel">
-            <td>
-                <header><span>File</span></header>
-                <span class="content">
-                    @Native
-                </span>
-            </td>
-        
-                <td>
-                    <header><span>Source</span></header>
-                    <p>
-@Meta()
-class @Native
-    js: String
-    jsType: String
-</p>
-                </td>
-            
-                <td>
-                    <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>@Meta()<br>class @Native<br>    js: String<br>    jsType: String<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    ClassDeclaration {
-      &quot;meta&quot;: [
-        Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;@Meta&quot; }   }
-      ],
-      &quot;id&quot;: Declarator { &quot;name&quot;: &quot;@Native&quot; },
-      &quot;declarations&quot;: [
-        Variable { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;String&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;js&quot; },
-          &quot;isMutable&quot;: true
-        },
-        Variable { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;String&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;jsType&quot; },
-          &quot;isMutable&quot;: true
-        }
-      ]
-    }
-  ],
-  &quot;name&quot;: &quot;@Native&quot;
-}</pre></div></div></p>
-                </td>
-            
-                <td>
-                    <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ClassDeclaration&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="declarations"><div class="jsondiffpatch-property-name">declarations</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;js&quot; }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="isMutable"><div class="jsondiffpatch-property-name">isMutable</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;String&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$String&quot;</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;jsType&quot; }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="isMutable"><div class="jsondiffpatch-property-name">isMutable</div><div class="jsondiffpatch-value"><pre>true</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;String&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$String&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;@Native&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$@Native&quot;</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="meta"><div class="jsondiffpatch-property-name">meta</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Call&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="callee"><div class="jsondiffpatch-property-name">callee</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;@Meta&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$@Meta&quot;</pre></div></li></ul></li></ul></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;@Native&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  ClassDeclaration {
-    &quot;meta&quot;: [
-      Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;$@Meta&quot; }   }
-    ],
-    &quot;id&quot;: Declarator { &quot;name&quot;: &quot;$@Native&quot; },
-    &quot;declarations&quot;: [
-      Variable { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;$String&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;js&quot; },
-        &quot;isMutable&quot;: true
-      },
-      Variable { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;$String&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;jsType&quot; },
-        &quot;isMutable&quot;: true
-      }
-    ]
-  }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;@Native&quot;</pre></div></li></ul></div></p>
-                </td>
-            </tr><tr class="channel">
-            <td>
-                <header><span>File</span></header>
-                <span class="content">
-                    +
-                </span>
-            </td>
-        
-                <td>
-                    <header><span>Source</span></header>
-                    <p>js = "(a, b) =&gt; new a.constructor({ value: a.valueOf() + b.valueOf() })"
-
-@Native(js)
-`+`(a: Integer, b: Integer) =&gt;
-
-// @Native(js)
-// `+`(a: Float, b: Float) =&gt;
-
-// @Native(js)
-// `+`(a: String, b: String) =&gt;
-</p>
-                </td>
-            
-                <td>
-                    <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;js = \&quot;(a, b) =&gt; new a.constructor({ value: a.valueOf() + b.valueOf() })\&quot;<br><br>@Native(js)<br>`+`(a: Integer, b: Integer) =&gt;<br><br>// @Native(js)<br>// `+`(a: Float, b: Float) =&gt;<br><br>// @Native(js)<br>// `+`(a: String, b: String) =&gt;<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;js&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: &quot;(a, b) =&gt; new a.constructor({ value: a.valueOf() + b.valueOf() })&quot; } },
-    Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;@Native&quot; },
-      &quot;arguments&quot;: [
-        Argument { &quot;value&quot;: Reference { &quot;name&quot;: &quot;js&quot; }   }
-      ]
-    },
-    FunctionExpression { &quot;id&quot;: Identifier { &quot;name&quot;: &quot;+&quot; },
-      &quot;parameters&quot;: [
-        Parameter { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Integer&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-        Parameter { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;Integer&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-      ]
-    }
-  ],
-  &quot;name&quot;: &quot;+&quot;
-}</pre></div></div></p>
-                </td>
-            
-                <td>
-                    <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Variable&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="id"><div class="jsondiffpatch-property-name">id</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Declarator&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;js&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$+.js&quot;</pre></div></li></ul></li><li class="jsondiffpatch-unchanged" data-key="value"><div class="jsondiffpatch-property-name">value</div><div class="jsondiffpatch-value"><pre>Literal { &quot;value&quot;: &quot;(a, b) =&gt; new a.constructor({ value: a.valueOf() + b.valueOf() })&quot; }</pre></div></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Call&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="arguments"><div class="jsondiffpatch-property-name">arguments</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Argument&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="value"><div class="jsondiffpatch-property-name">value</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;js&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$+.js&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="callee"><div class="jsondiffpatch-property-name">callee</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;@Native&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$@Native&quot;</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="2"><div class="jsondiffpatch-property-name">2</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;FunctionExpression&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Identifier { &quot;name&quot;: &quot;+&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="parameters"><div class="jsondiffpatch-property-name">parameters</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Parameter&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;a&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Integer&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$Integer&quot;</pre></div></li></ul></li></ul></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="1"><div class="jsondiffpatch-property-name">1</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Parameter&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="id"><div class="jsondiffpatch-property-name">id</div><div class="jsondiffpatch-value"><pre>Declarator { &quot;name&quot;: &quot;b&quot; }</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="type"><div class="jsondiffpatch-property-name">type</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;ReferenceType&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;Integer&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$Integer&quot;</pre></div></li></ul></li></ul></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;+&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Variable { &quot;id&quot;: Declarator { &quot;name&quot;: &quot;$+.js&quot; }, &quot;value&quot;: Literal { &quot;value&quot;: &quot;(a, b) =&gt; new a.constructor({ value: a.valueOf() + b.valueOf() })&quot; } },
-  Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;$@Native&quot; },
-    &quot;arguments&quot;: [
-      Argument { &quot;value&quot;: Reference { &quot;name&quot;: &quot;$+.js&quot; }   }
-    ]
-  },
-  FunctionExpression { &quot;id&quot;: Identifier { &quot;name&quot;: &quot;+&quot; },
-    &quot;parameters&quot;: [
-      Parameter { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;$Integer&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;a&quot; } },
-      Parameter { &quot;type&quot;: ReferenceType { &quot;name&quot;: &quot;$Integer&quot; }, &quot;id&quot;: Declarator { &quot;name&quot;: &quot;b&quot; } }
-    ]
-  }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;+&quot;</pre></div></li></ul></div></p>
-                </td>
-            </tr><tr class="channel">
-            <td>
-                <header><span>File</span></header>
-                <span class="content">
-                    sample
-                </span>
-            </td>
-        
-                <td>
-                    <header><span>Source</span></header>
-                    <p>
-1 + 1
-</p>
-                </td>
-            
-                <td>
-                    <header><span>Parser</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>1 + 1<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>Module {
-  &quot;body&quot;: [
-    Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;+&quot; },
-      &quot;arguments&quot;: [
-        Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-        Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-      ]
-    }
-  ],
-  &quot;name&quot;: &quot;sample&quot;
-}</pre></div></div></p>
-                </td>
-            
-                <td>
-                    <header><span>getExternalReferences</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-array" data-key="body"><div class="jsondiffpatch-property-name">body</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-array"><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="0"><div class="jsondiffpatch-property-name">0</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Call&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="arguments"><div class="jsondiffpatch-property-name">arguments</div><div class="jsondiffpatch-value"><pre>[
-  Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-  Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-]</pre></div></li><li class="jsondiffpatch-node jsondiffpatch-child-node-type-object" data-key="callee"><div class="jsondiffpatch-property-name">callee</div><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Reference&quot;</pre></div></li><li class="jsondiffpatch-modified" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;+&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>&quot;$+&quot;</pre></div></li></ul></li></ul></li></ul></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;sample&quot;</pre></div></li></ul></div></p>
-                </td>
-            
-                <td>
-                    <header><span>identity</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key=""><div class="jsondiffpatch-property-name"></div><div class="jsondiffpatch-value"><pre>&quot;Module&quot;</pre></div></li><li class="jsondiffpatch-unchanged" data-key="body"><div class="jsondiffpatch-property-name">body</div><div class="jsondiffpatch-value"><pre>[
-  Call { &quot;callee&quot;: Reference { &quot;name&quot;: &quot;$+&quot; },
-    &quot;arguments&quot;: [
-      Literal { &quot;value&quot;: 1, &quot;integer&quot;: true },
-      Literal { &quot;value&quot;: 1, &quot;integer&quot;: true }
-    ]
-  }
-]</pre></div></li><li class="jsondiffpatch-unchanged" data-key="name"><div class="jsondiffpatch-property-name">name</div><div class="jsondiffpatch-value"><pre>&quot;sample&quot;</pre></div></li></ul></div></p>
+                    <header><span>parsing</span></header>
+                    <p>module Unkown { @Abstract class Unknown extends  {} }</p>
                 </td>
             </tr>
         </div>

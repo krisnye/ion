@@ -34,13 +34,6 @@ export class TokenType {
 
 }
 
-function parse(value: string) {
-    if (value.startsWith("+")) {
-        value = value.slice(1);
-    }
-    return JSON.parse(value);
-}
-
 //  this is linear time now on types. We can make it much faster later.
 export const tokenTypes = {
     //  Comment must come before Operator otherwise '//' interpreted as an operator
@@ -53,8 +46,8 @@ export const tokenTypes = {
     CloseBracket: new TokenType("CloseBracket", /^\]/),
     OpenBrace: new TokenType("OpenBrace", /^\{/),
     CloseBrace: new TokenType("CloseBrace", /^\}/),
-    Float: new TokenType("Float", /^[1-9][0-9]*\.[0-9]+(e[+-]?[0-9]+)?/, { value: parse }),
-    Integer: new TokenType("Integer", /^([1-9][0-9]*|0x[0-9]+)/, { value: parse }),
+    Float: new TokenType("Float", /^[1-9][0-9]*\.[0-9]+(e[+-]?[0-9]+)?/, { value: JSON.parse }),
+    Integer: new TokenType("Integer", /^([1-9][0-9]*|0x[0-9]+)/, { value: JSON.parse }),
     String: new TokenType("String", /^"([^"\\]|\\.)*"/, { value: JSON.parse }),
     // Operator has to come after Float/Integer so an adjacent - or + binds to literal.
     Operator: new TokenType("Operator", /^(void|[\=\+\-\*\&\^\%\!\~\/\.\:\;\?\,\<\>\|\&:]+)/i),
@@ -66,6 +59,7 @@ export const tokenTypes = {
     Class: new TokenType("Class", /^class\b/i),
     For: new TokenType("For", /^for\b/i),
     Id: new TokenType("Id", /^[_@a-z][_$@a-z0-9]*/i),
+    EscapedId: new TokenType("EscapedId", /^`([^`\\]|\\.)*`/, { value: source => source.slice(1, -1) }),
     Eol: new TokenType("Eol", /^\r\n|\r|\n/, { isWhitespace: true }),
     Unknown: new TokenType("Unknown", /^./, { mergeAdjacent: true }),
     //  anything after Unknown will never be matched against, they're manually inserted.

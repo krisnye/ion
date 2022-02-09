@@ -17,7 +17,7 @@ export default function watchDirectory(dirname, options: WatchOptions, listener:
         interval = 50,
         recursive = true,
         include,
-        exclude = { node_modules: true }
+        exclude = { node_modules: true },
     } = options
     let initial: WatchChange | null = options.initial ? "initial" : null
     function matches(name, filter, defaultValue) {

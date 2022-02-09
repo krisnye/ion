@@ -15,12 +15,12 @@ export class ClassParselet extends PrefixParselet {
             throw new SemanticError(`Expected identifier`, id);
         }
         // todo: maybe get extends... values.
-        let block = p.parseBlock();
+        let block = p.maybeParseBlock();
         return new Class({
-            location: SourceLocation.merge(classToken.location, block.location),
+            location: block ? SourceLocation.merge(classToken.location, block.location) : classToken.location,
             id,
             extends: [],
-            nodes: block.nodes,
+            nodes: block?.nodes ?? [],
         })
     }
 

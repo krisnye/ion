@@ -47,16 +47,14 @@ Id:a
 Operator:.
 Id:b
 Comment:// foo
-Outdent:""`
-);
+Outdent:""`);
 
 test(`"foo\\"bar"`, `String:foo"bar`);
 
 test(`foo##bar`,
 `Id:foo
 Unknown:##
-Id:bar`
-);
+Id:bar`);
 
 test(
 `
@@ -85,7 +83,7 @@ Outdent:""
 Id:z
 Eol:"\\n"
 Outdent:""
-Outdent:""`)
+Outdent:""`);
 
 test(
 `
@@ -143,11 +141,14 @@ b`,
 `Id:a
 Eol:"\\n"
 Eol:"\\n"
-Id:b`
-)
+Id:b`);
+
 test(
 `foo()`,
 `Id:foo
 OpenParen:(
-CloseParen:)`
-)
+CloseParen:)`);
+
+test(
+"`+?-*`",
+`EscapedId:+?-*`);

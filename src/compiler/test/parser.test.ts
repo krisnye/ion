@@ -38,7 +38,7 @@ function testModule(source: string, expected: string | object) {
 
 //  literals
 testExpression("1.8", `1.8`);
-// //  binary operations
+//  binary operations
 testExpression("+ - !1.8", `+ - ! 1.8`);
 testExpression("1 + 2", `1 + 2`);
 testExpression("1.0 - 2.0", `1.0 - 2.0`);
@@ -67,13 +67,13 @@ testExpression("void x", `void x`);
 testExpression("void x = y = 3", `void x = y = 3`);
 testExpression("1 * (2 + 3)", `1 * (2 + 3)`);
 testExpression("1*(2+3)", `1 * (2 + 3)`);
-//  Sequences
-testExpression("a, b", {"":"BinaryOperation","left":{"":"Identifier","name":"a"},"operator":",","right":{"":"Identifier","name":"b"}});
+//  sequences
+testExpression("a, b", {"":"BinaryOperation","left":{"":"Identifier","name":"a"},"operator":{"type":"Operator","source":","},"right":{"":"Identifier","name":"b"}});
 testExpression("a, b, c", `a , b , c`);
-//  Calls
+//  calls
 testExpression("a(1)", `a(1)`);
 testExpression("a(1, 2)", `a(1 , 2)`);
-//  Assignment Operations
+//  assignment operations
 testExpression("a += 1", `a += 1`);
 for (let op of ["+", "-", "**", "*", "/", "%", "<<", ">>", "^", "&", "|", "&&", "||"]) {
     testExpression(`a ${op}= 1`, `a ${op}= 1`);
@@ -190,3 +190,26 @@ testModule(
 `,
 `module test.ion {\n    foo\n    {\n        a\n    }\n}`
 );
+
+testModule(
+`
+
+foo = []
+`,
+`module test.ion {\n    foo = []\n}`
+);
+
+testModule(
+`
+
+\`+\` = []
+`,
+`module test.ion {\n    \`+\` = []\n}`
+);
+
+testModule(
+`
+class Foo
+`,
+`module test.ion {\n    class Foo extends  {}\n}`
+)

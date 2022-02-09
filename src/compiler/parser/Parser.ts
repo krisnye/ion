@@ -73,8 +73,8 @@ export class Parser {
         return this.tokens.length === 0;
     }
 
-    peek(tokenType?: string): Token | null {
-        let token = this.tokens[this.tokens.length - 1];
+    peek(tokenType?: string, offset = 0): Token | null {
+        let token = this.tokens[this.tokens.length - 1 - offset];
         if (token != null && (tokenType == null || tokenType === token.type)) {
             return token;
         }
@@ -109,6 +109,15 @@ export class Parser {
             name: filename,
             nodes,
         })
+    }
+
+    maybeParseBlock() : Block | null {
+        if (this.peek(tokenTypes.Eol.name, 0) && this.peek(tokenTypes.Indent.name, 1)) {
+            return this.parseBlock();
+        }
+        else {
+            return null;
+        }
     }
 
     parseBlock(indent = (this.eol(1), this.consume(tokenTypes.Indent.name))): Block {

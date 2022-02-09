@@ -27,7 +27,7 @@ export class Token extends Node {
     }
 
     toJSON() {
-        return this.source;
+        return { type: this.type, source: this.source };
     }
 
 }
