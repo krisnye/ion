@@ -1,10 +1,10 @@
-import { Options } from "../Compiler";
+import { opsToNodes } from "./opsToNodes";
 import { parsing } from "./parsing";
+import { Phase } from "./Phase";
 import { tokenization } from "./tokenization";
-
-type Phase = (moduleName: string, module: any, options: Options) => any;
 
 export const lexical: Phase[] = [
     tokenization,
     parsing,
+    opsToNodes,
 ];

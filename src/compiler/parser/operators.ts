@@ -12,14 +12,17 @@ export const prefixAmbiguous: { [op: string]: boolean | undefined } = {
     "-": true,
 };
 
+export const infixPrecedenceDefault = 15;
+
 export const infixPrecedence: { [op: string]: number | undefined } = {
-    "[": 18,    //  ]
-    ".": 18,
-    "(": 18,    //  )
-    "**": 16,
-    "*": 15,
-    "/": 15,
-    "%": 15,
+    "[": 19,    //  ]
+    ".": 19,
+    "(": 19,    //  )
+    "**": 17,
+    "*": 16,
+    "/": 16,
+    "%": 16,
+    //  default unknown operator precedence
     "+": 14,
     "-": 14,
     "<<": 13,
@@ -38,6 +41,7 @@ export const infixPrecedence: { [op: string]: number | undefined } = {
     ":": 5,
     "=>": 4,
     "=": 3,
+    ":=": 3,
     "+=": 3,
     "-=": 3,
     "**=": 3,

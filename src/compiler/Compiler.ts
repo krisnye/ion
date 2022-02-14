@@ -1,46 +1,54 @@
 import { getInputFilesRecursive } from "./common";
 import { lexical } from "./phases";
+import { Phase } from "./phases/Phase";
 
-export type Logger = (names?: string | string[] | null, ast?: any, file?: string) => void
+export type PhaseLogger = (names?: string | string[] | null, ast?: any, file?: string) => void
 
-export interface Options {
+export interface CompilerOptions {
+}
 
-    inputs: string[];
-    output: string;
-    logger: Logger;
-
+export interface DebugOptions {
+    logger?: PhaseLogger;
+    finalPhase?: Phase;
 }
 
 export class Compiler {
 
-    options: Options;
+    options: CompilerOptions;
 
-    constructor(options: Options) {
+    constructor(options: CompilerOptions = {}) {
         this.options = options;
     }
 
-    getFiles(): Map<string,string> {
-        return new Map(Object.entries(getInputFilesRecursive(this.options.inputs)))
+    static getFiles(inputs: string[]): Map<string,string> {
+        return new Map(Object.entries(getInputFilesRecursive(inputs)));
     }
 
-    compile() {
+    compile(
+        input: Map<string,string>,
+        debugOptions?: DebugOptions,
+    ) : Map<string,any> {
         let options = this.options;
-        let modules: Map<string,any> = this.getFiles();
+        let modules: Map<string,any> = input;
         let order = new Array<string>();
+        let logger = debugOptions?.logger ?? (() => {});
+        let finalPhase = debugOptions?.finalPhase;
 
         try {
             for (let [name,module] of modules.entries()) {
-                this.log("Source", module, name);
+                this.log(logger, "Source", module, name);
             }
 
             for (let phase of lexical) {
                 for (let [name,module] of modules.entries()) {
                     let newModule = phase(name, module, this.options);
                     modules.set(name, newModule);
-                    this.log(phase.name, newModule, name);
+                    this.log(logger, phase.name, newModule, name);
+                }
+                if (phase === finalPhase) {
+                    return modules;
                 }
             }
-
 
             // let modules = new Map(
             //     Array.from(sources.entries()).map(([name, source]) => {
@@ -106,8 +114,10 @@ export class Compiler {
         } catch (e) {
             this.printErrorConsole(e, modules, options)
         } finally {
-            this.options.logger(null, order.length > 0 ? order : [...modules.keys()])
+            logger(null, order.length > 0 ? order : [...modules.keys()])
         }
+
+        return modules;
     }
 
     printErrorConsole(e, sources, options) {
@@ -124,12 +134,12 @@ export class Compiler {
         // }
     }
 
-    log(phase: string, module: any, name: string) {
+    log(logger: PhaseLogger, phase: string, module: any, name: string) {
         let viewAsCode = !Array.isArray(module);
         if (viewAsCode) {
             module = module.toString();
         }
-        this.options.logger(phase, module, name);
+        logger(phase, module, name);
     }
 
 

@@ -1,40 +1,6 @@
 import { strict as assert } from "assert";
-import { createTokenizer } from "../tokenizer/createTokenizer";
-import { createParser } from "../parser/createParser";
-
-let parser = createParser();
-let tokenizer = createTokenizer();
-
-function testExpression(source: string, expected: string | object) {
-    let filename = "test.ion";
-    let tokens = tokenizer.tokenize(filename, source);
-    parser.setTokens(tokens);
-    let expression = parser.parseExpression();
-    let actual = typeof expected === "string" ? expression.toString() : JSON.stringify(expression);
-    if (typeof expected !== "string") {
-        expected = JSON.stringify(expected);
-    }
-    if (actual != expected) {
-        // console.log(tokens);
-        console.log(actual);
-    }
-    assert.equal(actual, expected, source);
-}
-
-function testModule(source: string, expected: string | object) {
-    let filename = "test.ion";
-    let tokens = tokenizer.tokenize(filename, source);
-    let module = parser.parseModule(filename, tokens);
-    let actual = typeof expected === "string" ? module.toString() : JSON.stringify(module);
-    if (typeof expected !== "string") {
-        expected = JSON.stringify(expected);
-    }
-    if (actual != expected) {
-        // console.log(tokens);
-        console.log(actual);
-    }
-     assert.equal(actual, expected, source);
-}
+import { testExpression } from "./testExpression";
+import { testModule } from "./testModule";
 
 //  literals
 testExpression("1.8", `1.8`);
@@ -78,6 +44,8 @@ testExpression("a += 1", `a += 1`);
 for (let op of ["+", "-", "**", "*", "/", "%", "<<", ">>", "^", "&", "|", "&&", "||"]) {
     testExpression(`a ${op}= 1`, `a ${op}= 1`);
 };
+//  unknown operators
+testExpression("a ?!!= 1", "a ?!!= 1");
 //  if expressions
 testExpression(
 `if x
@@ -122,7 +90,7 @@ testExpression(
     x: Number
     y: Number
 `,
-`class Vector extends  {\n    x : Number\n    y : Number\n}`
+`class Vector {\n    x : Number\n    y : Number\n}`
 );
 
 //  for loops
@@ -167,7 +135,7 @@ x y z`,
 testModule(
 `x
 y`,
-`module test.ion {\n    x\n    y\n}`
+`module test {\n    x\n    y\n}`
 );
 
 testModule(
@@ -175,20 +143,20 @@ testModule(
 @Meta(1)
 x = 10
 `,
-`module test.ion {\n    @Meta(1)\n    x = 10\n}`
+`module test {\n    @Meta(1)\n    x = 10\n}`
 );
 
 testModule(
 `foo()
 `,
-`module test.ion {\n    foo(null)\n}`
+`module test {\n    foo()\n}`
 );
 
 testModule(
 `foo
     a
 `,
-`module test.ion {\n    foo\n    {\n        a\n    }\n}`
+`module test {\n    foo\n    {\n        a\n    }\n}`
 );
 
 testModule(
@@ -196,7 +164,7 @@ testModule(
 
 foo = []
 `,
-`module test.ion {\n    foo = []\n}`
+`module test {\n    foo = []\n}`
 );
 
 testModule(
@@ -204,12 +172,12 @@ testModule(
 
 \`+\` = []
 `,
-`module test.ion {\n    \`+\` = []\n}`
+`module test {\n    + = []\n}`
 );
 
 testModule(
 `
 class Foo
 `,
-`module test.ion {\n    class Foo extends  {}\n}`
+`module test {\n    class Foo {}\n}`
 )

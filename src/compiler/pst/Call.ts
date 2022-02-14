@@ -6,7 +6,7 @@ type Props = NonFunctionProperties<Call>;
 export class Call extends Node {
 
     callee!: Node;
-    args!: Node | null;
+    args!: Node | Node[];
 
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }

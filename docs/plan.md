@@ -4,7 +4,7 @@
 ## Implement New Hand Parser
 
 - [x] Implement Tokenizer
-- [ ] Operator Precedence Parsing
+- [x] Operator Precedence Parsing
 
 ## Dramatically Simplify AST Format
 

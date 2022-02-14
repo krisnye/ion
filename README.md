@@ -63,4 +63,12 @@ Cross platform modeling language
     - [-] UnionType to left/right operation
     - [-] IntersectionType to left/right operation
     - [ ] create normalized Type so Union of ObjectType or NumberType
-  
+
+# Todo 22
+
+  - [ ] Semantic Checking for valid expressions
+    - [ ] Variable Declaration
+    - [ ] Class Declaration
+    - [ ] Function Declaration
+    - [ ] Variable Assignment
+    - [ ] Expression (Only valid within an outline expression, otherwise it's a no-op)

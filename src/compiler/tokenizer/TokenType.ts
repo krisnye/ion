@@ -57,6 +57,7 @@ export const tokenTypes = {
     Else: new TokenType("Else", /^else\b/i),
     Return: new TokenType("Return", /^return\b/i),
     Class: new TokenType("Class", /^class\b/i),
+    Extends: new TokenType("Extends", /^extends\b/i),
     For: new TokenType("For", /^for\b/i),
     Id: new TokenType("Id", /^[_@a-z][_$@a-z0-9]*/i),
     EscapedId: new TokenType("EscapedId", /^`([^`\\]|\\.)*`/, { value: source => source.slice(1, -1) }),

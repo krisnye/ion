@@ -12,7 +12,8 @@ export class Identifier extends Node {
     patch(props: Partial<Props>) { return super.patch(props); }
 
     toString() {
-        return isValidId(this.name) ? this.name : `\`${this.name}\``;
+        return this.name;
+        // return isValidId(this.name) ? this.name : `\`${this.name}\``;
     }
 
 }

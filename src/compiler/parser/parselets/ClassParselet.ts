@@ -6,6 +6,7 @@ import { SourceLocation } from "../../SourceLocation";
 import { Identifier } from "../../pst/Identifier";
 import { SemanticError } from "../../SemanticError";
 import { Class } from "../../pst/Class";
+import { tokenTypes } from "../../tokenizer/TokenType";
 
 export class ClassParselet extends PrefixParselet {
 
@@ -14,12 +15,16 @@ export class ClassParselet extends PrefixParselet {
         if (!(id instanceof Identifier)) {
             throw new SemanticError(`Expected identifier`, id);
         }
-        // todo: maybe get extends... values.
+        let _extends: Node | Node[] = [];
+        if (p.maybeConsume(tokenTypes.Extends.name)) {
+            p.whitespace();
+            _extends = p.parseExpression();
+        }
         let block = p.maybeParseBlock();
         return new Class({
             location: block ? SourceLocation.merge(classToken.location, block.location) : classToken.location,
             id,
-            extends: [],
+            extends: _extends,
             nodes: block?.nodes ?? [],
         })
     }

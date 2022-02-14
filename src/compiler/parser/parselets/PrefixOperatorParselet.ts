@@ -1,8 +1,6 @@
 import { Parser } from "../Parser";
 import { Token } from "../../Token";
 import { prefixAmbiguous, prefixPrecedence } from "../operators";
-import { Identifier } from "../../pst/Identifier";
-import { Call } from "../../pst/Call";
 import { SemanticError } from "../../SemanticError";
 import { Node } from "../../Node";
 import { PrefixParselet } from "../PrefixParselet";
