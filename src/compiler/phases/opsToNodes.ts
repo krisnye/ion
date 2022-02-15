@@ -1,15 +1,17 @@
 import { traverse, replace } from "@glas/traverse";
 import { Node } from "../Node";
-import { Assignment } from "../pst/Assignment";
+import { Assignment } from "../ast/Assignment";
 import { BinaryOperation } from "../pst/BinaryOperation";
 import { Call } from "../pst/Call";
 import { Function } from "../pst/Function";
 import { Group } from "../pst/Group";
-import { Identifier } from "../pst/Identifier";
+import { Identifier } from "../ast/Identifier";
 import { Sequence } from "../pst/Sequence";
 import { Variable } from "../pst/Variable";
 import { SemanticError } from "../SemanticError";
 import { SourceLocation } from "../SourceLocation";
+import { Reference } from "../ast/Reference";
+import { Phase } from "./Phase";
 
 function toVariable(value: Node) {
     if (value instanceof Variable) {
@@ -27,8 +29,9 @@ function toVariable(value: Node) {
     throw new SemanticError(`Expected Variable`, value);
 }
 
-export function opsToNodes(moduleName, module) {
-    return traverse(module, {
+export function opsToNodes(moduleName, module): ReturnType<Phase> {
+    let errors = new Array<Error>();
+    let result = traverse(module, {
         skip(node) {
             return node instanceof SourceLocation;
         },
@@ -76,7 +79,7 @@ export function opsToNodes(moduleName, module) {
                             console.log(left);
                             throw new SemanticError(`Invalid function parameter(s)`, left);
                         }
-
+        
                         return new Function({
                             location,
                             parameters,
@@ -84,17 +87,31 @@ export function opsToNodes(moduleName, module) {
                         })
                     default:
                         if (operator.endsWith("=")) {
+                            if (!(left instanceof Identifier)) {
+                                errors.push(new SemanticError(`Expected a variable reference`, left));
+                                return;
+                            }
+                            let value = right;
+                            if (operator !== "=") {
+                                value = new Call({
+                                    location,
+                                    callee: new Reference({
+                                        location: node.operator.location,
+                                        name: node.operator.value.slice(0, -1),
+                                    }),
+                                    args: [left, right],
+                                })
+                            }
                             return new Assignment({
                                 location,
                                 id: left,
-                                operator: node.operator,
-                                value: right,
+                                value,
                             })
                         }
                         else {
                             return new Call({
                                 location,
-                                callee: new Identifier({
+                                callee: new Reference({
                                     location: node.operator.location,
                                     name: node.operator.value,
                                 }),
@@ -105,4 +122,5 @@ export function opsToNodes(moduleName, module) {
             }
         }
     })
+    return [result, errors];
 }

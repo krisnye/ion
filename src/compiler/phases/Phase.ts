@@ -1,3 +1,3 @@
 import { CompilerOptions } from "../Compiler";
 
-export type Phase = (moduleName: string, module: any, options: CompilerOptions) => any;
+export type Phase = (moduleName: string, module: any, options: CompilerOptions) => [any, Error[]];

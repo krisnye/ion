@@ -70,5 +70,6 @@ Cross platform modeling language
     - [ ] Variable Declaration
     - [ ] Class Declaration
     - [ ] Function Declaration
-    - [ ] Variable Assignment
+    - [x] Variable Assignment
+    - [ ] Destructuring Assignment
     - [ ] Expression (Only valid within an outline expression, otherwise it's a no-op)

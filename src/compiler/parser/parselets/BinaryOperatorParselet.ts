@@ -1,6 +1,6 @@
 import { Parser } from "../Parser";
 import { Token } from "../../Token";
-import { infixPrecedence, infixPrecedenceDefault, infixRightAssociative } from "../operators";
+import { getInfixPrecedence, infixPrecedence, infixRightAssociative } from "../operators";
 import { SemanticError } from "../../SemanticError";
 import { Node } from "../../Node";
 import { SourceLocation } from "../../SourceLocation";
@@ -31,7 +31,7 @@ export class BinaryOperatorParselet extends InfixParselet {
     }
 
     getPrecedence(token: Token) {
-        return infixPrecedence[token.value] || infixPrecedenceDefault;
+        return getInfixPrecedence(token.value);
     }
 
 }

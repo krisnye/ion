@@ -27,8 +27,8 @@ export class Compiler {
     compile(
         input: Map<string,string>,
         debugOptions?: DebugOptions,
-    ) : Map<string,any> {
-        let options = this.options;
+    ) : Map<string,any> | Error[] {
+        let sources = input;
         let modules: Map<string,any> = input;
         let order = new Array<string>();
         let logger = debugOptions?.logger ?? (() => {});
@@ -41,7 +41,13 @@ export class Compiler {
 
             for (let phase of lexical) {
                 for (let [name,module] of modules.entries()) {
-                    let newModule = phase(name, module, this.options);
+                    let [newModule, errors] = phase(name, module, this.options);
+                    if (errors.length > 0) {
+                        for (let error of errors) {
+                            this.printErrorConsole(error, sources);
+                        }
+                        return errors;
+                    }
                     modules.set(name, newModule);
                     this.log(logger, phase.name, newModule, name);
                 }
@@ -112,15 +118,15 @@ export class Compiler {
             //     }
             // }
         } catch (e) {
-            this.printErrorConsole(e, modules, options)
+            this.printErrorConsole(e, sources);
         } finally {
-            logger(null, order.length > 0 ? order : [...modules.keys()])
+            logger(null, order.length > 0 ? order : [...modules.keys()]);
         }
 
         return modules;
     }
 
-    printErrorConsole(e, sources, options) {
+    printErrorConsole(e, sources) {
         let location = e.locations?.[0]
         // if (location == null || location.start == null) {
             throw e

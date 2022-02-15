@@ -1,20 +1,19 @@
 import { NonFunctionProperties } from "../../types";
 import { Node } from "../Node";
-import { Token } from "../Token";
-import { Identifier } from "./Identifier";
+import { Expression } from "./Expression";
+import { Reference } from "./Reference";
 
 type Props = NonFunctionProperties<Assignment>;
 export class Assignment extends Node {
 
-    id!: Node;
-    operator!: Token;
-    value!: Node;
+    id!: Reference;
+    value!: Expression;
 
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }
 
     toString() {
-        return `${this.id} ${this.operator} ${this.value}`;
+        return `${this.id} = ${this.value}`;
     }
 
 }

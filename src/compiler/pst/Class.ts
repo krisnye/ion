@@ -1,6 +1,6 @@
 import { NonFunctionProperties } from "../../types";
 import { Node } from "../Node";
-import { Identifier } from "./Identifier";
+import { Identifier } from "../ast/Identifier";
 import { Scope } from "./Scope";
 
 type Props = NonFunctionProperties<Class>;

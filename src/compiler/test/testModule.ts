@@ -3,7 +3,8 @@ import { Compiler } from "../Compiler";
 import { parsing } from "../phases/parsing";
 import { Phase } from "../phases/Phase";
 
-export function testModule(source: string, expected: string | object, finalPhase: Phase = parsing) {
+//  number implies error count
+export function testModule(source: string, expected: string | object | number, finalPhase: Phase = parsing) {
     let compiler = new Compiler();
     let filename = "test";
     let result = compiler.compile(
@@ -12,14 +13,24 @@ export function testModule(source: string, expected: string | object, finalPhase
         ]),
         { finalPhase },
     );
-    let module = result.get(filename);
-    let actual = typeof expected === "string" ? module.toString() : JSON.stringify(module);
-    if (typeof expected !== "string") {
-        expected = JSON.stringify(expected);
+    if (Array.isArray(result)) {
+        if (typeof expected === "number") {
+            assert.equal(result.length, expected, `Expected ${expected} errors, actual: ${result.length}`);
+        }
+        else {
+            assert.fail(`Unexpected errors: ${result}`);
+        }
     }
-    if (actual != expected) {
-        // console.log(tokens);
-        console.log(actual);
+    else {
+        let module = result.get(filename);
+        let actual = typeof expected === "string" ? module.toString() : JSON.stringify(module);
+        if (typeof expected !== "string") {
+            expected = JSON.stringify(expected);
+        }
+        if (actual != expected) {
+            // console.log(tokens);
+            console.log(actual);
+        }
+        assert.equal(actual, expected, source);
     }
-    assert.equal(actual, expected, source);
 }

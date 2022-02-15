@@ -12,7 +12,10 @@ export const prefixAmbiguous: { [op: string]: boolean | undefined } = {
     "-": true,
 };
 
-export const infixPrecedenceDefault = 15;
+export function getInfixPrecedence(op: string) {
+    let precedence = infixPrecedence[op];
+    return precedence != null ? precedence : op.endsWith("=") ? 3 : 15;
+}
 
 export const infixPrecedence: { [op: string]: number | undefined } = {
     "[": 19,    //  ]

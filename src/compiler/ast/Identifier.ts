@@ -1,5 +1,5 @@
 import { NonFunctionProperties } from "../../types";
-import { isValidId } from "../common";
+// import { isValidId } from "../common";
 import { Node } from "../Node";
 
 type Props = NonFunctionProperties<Identifier>;

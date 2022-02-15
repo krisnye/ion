@@ -1,9 +1,5 @@
 
 void x : Number = 1 + 2 * 3
 
-double = () => 2
-double = x => 2 * x
-double = (x) => 2 * x
-double = (x, y) => 2 * x
-double = x =>
-    x * 2
+x += 22 * 10
+

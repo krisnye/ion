@@ -22,3 +22,13 @@ double = x =>
 }`,
 opsToNodes,
 )
+
+testModule(
+`
+x +++= 2 * 10
+`,
+`module test {
+    x = +++(x,*(2,10))
+}`,
+opsToNodes,
+)

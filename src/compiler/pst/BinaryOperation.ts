@@ -2,7 +2,7 @@ import { NonFunctionProperties } from "../../types";
 import { Node } from "../Node";
 import { infixPrecedence } from "../parser/operators";
 import { Token } from "../Token";
-import { Identifier } from "./Identifier";
+import { Identifier } from "../ast/Identifier";
 
 type Props = NonFunctionProperties<BinaryOperation>;
 export class BinaryOperation extends Node {

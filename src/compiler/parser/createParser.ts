@@ -6,7 +6,7 @@ import { StringLiteral } from "../pst/StringLiteral";
 import { BinaryOperatorParselet } from "./parselets/BinaryOperatorParselet";
 import { MemberParselet } from "./parselets/MemberParselet";
 import { TerminalParselet } from "./parselets/TerminalParselet";
-import { Identifier } from "../pst/Identifier";
+import { Identifier } from "../ast/Identifier";
 import { GroupParselet } from "./parselets/GroupParselet";
 import { CallParselet } from "./parselets/CallParselet";
 import { IfParselet } from "./parselets/IfParselet";
