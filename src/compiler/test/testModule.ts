@@ -3,15 +3,23 @@ import { Compiler } from "../Compiler";
 import { parsing } from "../phases/parsing";
 import { Phase } from "../phases/Phase";
 
+export type Options = {
+    finalPhase?: Phase
+    log?: boolean
+}
+
 //  number implies error count
-export function testModule(source: string, expected: string | object | number, finalPhase: Phase = parsing) {
-    let compiler = new Compiler();
+export function testModule(source: string, expected: string | object | number, options: Options = { log: true }) {
+    let compiler = new Compiler({
+        log(value) {
+        }
+    });
     let filename = "test";
     let result = compiler.compile(
         new Map([
             [filename, source]
         ]),
-        { finalPhase },
+        { finalPhase: options.finalPhase },
     );
     if (Array.isArray(result)) {
         if (typeof expected === "number") {
@@ -29,7 +37,9 @@ export function testModule(source: string, expected: string | object | number, f
         }
         if (actual != expected) {
             // console.log(tokens);
-            console.log(actual);
+            if (options.log) {
+                console.log(actual);
+            }
         }
         assert.equal(actual, expected, source);
     }

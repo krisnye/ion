@@ -11,7 +11,16 @@ export class Sequence extends Scope {
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }
 
-    static merge(left: Node, right: Node) {
+    static merge(left: Node | null, right: Node | null): Node {
+        if (left == null) {
+            if (right == null) {
+                throw new Error(`At least one of the arguments must not be null`);
+            }
+            return right;
+        }
+        if (right == null) {
+            return left;
+        }
         let nodes = new Array<Node>();
         if (left instanceof Sequence) {
             nodes.push(...left.nodes);

@@ -1,4 +1,4 @@
-import { traverse, replace } from "@glas/traverse";
+import { traverse, replace } from "./traverse";
 import { Node } from "../Node";
 import { Assignment } from "../ast/Assignment";
 import { BinaryOperation } from "../pst/BinaryOperation";
@@ -12,6 +12,7 @@ import { SemanticError } from "../SemanticError";
 import { SourceLocation } from "../SourceLocation";
 import { Reference } from "../ast/Reference";
 import { Phase } from "./Phase";
+import { Member } from "../pst/Member";
 
 function toVariable(value: Node) {
     if (value instanceof Variable) {
@@ -29,13 +30,55 @@ function toVariable(value: Node) {
     throw new SemanticError(`Expected Variable`, value);
 }
 
+type IdentifierFactory = (location: SourceLocation) => { location: SourceLocation, name: string }
+export function tempFactory(name: string): IdentifierFactory {
+    let count = 0;
+    return (location: SourceLocation) => {
+        return { location, name: `_${name}_${++count}` };
+    }
+}
+
 export function opsToNodes(moduleName, module): ReturnType<Phase> {
     let errors = new Array<Error>();
+    let temp = tempFactory("opsToNodes");
+    function destructure(nodes: Array<Node>, pattern: Node | null, right: Node) {
+        if (pattern instanceof Group) {
+            let tempVar = new Identifier(temp(right.location));
+            nodes.push(new Variable({
+                location: right.location,
+                id: tempVar,
+                type: null,
+                value: right,
+                writable: false,
+            }));
+            destructure(nodes, pattern.value, new Reference(tempVar));
+        }
+        else if (pattern instanceof Sequence) {
+            for (let id of pattern.nodes) {
+                destructure(nodes, id, right);
+            }
+        }
+        else if (pattern instanceof Identifier) {
+            nodes.push(new Variable({
+                location: right.location,
+                id: pattern,
+                type: null,
+                value: new Member({
+                    location: right.location,
+                    object: right,
+                    property: pattern,
+                    computed: false,
+                }),
+                writable: false,
+            }));
+        }
+        else {
+            throw new SemanticError(`Invalid destructuring pattern`, pattern!);
+        }
+    }
     let result = traverse(module, {
-        skip(node) {
-            return node instanceof SourceLocation;
-        },
-        leave(node) {
+        leave(node, ancestors) {
+            let parent = ancestors[ancestors.length - 1];
             if (node instanceof BinaryOperation) {
                 let { location, left, right } = node;
                 let operator = node.operator.value as string;
@@ -50,6 +93,11 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                         })
                     case "=":
                         // could this be a reassignment? No, would have to be :=
+                        if (left instanceof Group && !(parent instanceof Sequence)) {
+                            let dnodes = new Array<Node>();
+                            destructure(dnodes, left, right);
+                            return replace(...dnodes);
+                        }
                         return new Variable({
                             location,
                             id: left instanceof Variable ? left.id : left,
@@ -76,7 +124,6 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                             }
                         }
                         else {
-                            console.log(left);
                             throw new SemanticError(`Invalid function parameter(s)`, left);
                         }
         

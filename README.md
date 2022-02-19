@@ -73,3 +73,4 @@ Cross platform modeling language
     - [x] Variable Assignment
     - [ ] Destructuring Assignment
     - [ ] Expression (Only valid within an outline expression, otherwise it's a no-op)
+  - [ ] Port over Semantic Error Messages.

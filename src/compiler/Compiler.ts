@@ -1,10 +1,12 @@
 import { getInputFilesRecursive } from "./common";
+import ErrorContext from "./errors/ErrorContext";
 import { lexical } from "./phases";
 import { Phase } from "./phases/Phase";
 
 export type PhaseLogger = (names?: string | string[] | null, ast?: any, file?: string) => void
 
 export interface CompilerOptions {
+    log: typeof console.log
 }
 
 export interface DebugOptions {
@@ -16,7 +18,7 @@ export class Compiler {
 
     options: CompilerOptions;
 
-    constructor(options: CompilerOptions = {}) {
+    constructor(options: CompilerOptions = { log: console.log }) {
         this.options = options;
     }
 
@@ -28,7 +30,7 @@ export class Compiler {
         input: Map<string,string>,
         debugOptions?: DebugOptions,
     ) : Map<string,any> | Error[] {
-        let sources = input;
+        let sources = new Map(input.entries());
         let modules: Map<string,any> = input;
         let order = new Array<string>();
         let logger = debugOptions?.logger ?? (() => {});
@@ -126,18 +128,22 @@ export class Compiler {
         return modules;
     }
 
-    printErrorConsole(e, sources) {
+    printErrorConsole(e, sources: Map<string,string>) {
         let location = e.locations?.[0]
-        // if (location == null || location.start == null) {
+        if (location == null || location.start == null) {
             throw e
-        // }
-        // else {
-        //     let { filename } = location
-        //     let source = sources.get(filename);
-        //     let error = options.parser.getError(e.message, e.locations, source, filename)
-        //     console.log("")
-        //     console.log(error.message)
-        // }
+        }
+        else {
+            let { filename } = location
+            let source = sources.get(filename);
+            if (source == null) {
+                throw new Error("Source not found: " + filename);
+            }
+            let errorContext = new ErrorContext(source, filename);
+            let error = errorContext.getError(e.message, ...e.locations);
+            this.options.log("")
+            this.options.log(error.message)
+        }
     }
 
     log(logger: PhaseLogger, phase: string, module: any, name: string) {

@@ -20,7 +20,7 @@ double = x =>
         *(x,2)
     }
 }`,
-opsToNodes,
+{ finalPhase: opsToNodes },
 )
 
 testModule(
@@ -30,5 +30,5 @@ x +++= 2 * 10
 `module test {
     x = +++(x,*(2,10))
 }`,
-opsToNodes,
+{ finalPhase: opsToNodes },
 )
