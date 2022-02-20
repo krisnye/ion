@@ -1,4 +1,3 @@
-import Rule from "./Rule"
 import LocationCalculator from "./LocationCalculator"
 
 export default class Context

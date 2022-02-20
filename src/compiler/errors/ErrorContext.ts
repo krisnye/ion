@@ -1,4 +1,3 @@
-import Rule from "./Rule"
 import Context from "./Context"
 import * as Colors from "./Colors"
 import { SourceLocation } from "../SourceLocation"

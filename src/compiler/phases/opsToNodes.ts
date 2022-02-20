@@ -13,6 +13,7 @@ import { SourceLocation } from "../SourceLocation";
 import { Reference } from "../ast/Reference";
 import { Phase } from "./Phase";
 import { Member } from "../pst/Member";
+import { IntegerLiteral } from "../pst/IntegerLiteral";
 
 function toVariable(value: Node) {
     if (value instanceof Variable) {
@@ -41,9 +42,10 @@ export function tempFactory(name: string): IdentifierFactory {
 export function opsToNodes(moduleName, module): ReturnType<Phase> {
     let errors = new Array<Error>();
     let temp = tempFactory("opsToNodes");
-    function destructure(nodes: Array<Node>, pattern: Node | null, right: Node, variableOrAssignment: boolean) {
+    function destructure(nodes: Array<Node>, pattern: Node | null, right: Node, variableOrAssignment: boolean, memberIndex: null | number = null) {
         if (pattern instanceof Group) {
             let tempVar = new Identifier(temp(right.location));
+            memberIndex = pattern.open.value == "[" ? 0 : null;
             nodes.push(new Variable({
                 location: right.location,
                 id: tempVar,
@@ -51,19 +53,22 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                 value: right,
                 writable: false,
             }));
-            destructure(nodes, pattern.value, new Reference(tempVar), variableOrAssignment);
+            destructure(nodes, pattern.value, new Reference(tempVar), variableOrAssignment, memberIndex);
         }
         else if (pattern instanceof Sequence) {
             for (let id of pattern.nodes) {
-                destructure(nodes, id, right, variableOrAssignment);
+                destructure(nodes, id, right, variableOrAssignment, memberIndex);
+                if (memberIndex != null) {
+                    memberIndex++;
+                }
             }
         }
         else if (pattern instanceof Identifier) {
             let value = new Member({
                 location: right.location,
                 object: right,
-                property: pattern,
-                computed: false,
+                property: memberIndex != null ? new IntegerLiteral({ location: pattern.location, value: memberIndex }) : pattern,
+                computed: memberIndex != null,
             });
             let { location } = right;
             let id = pattern;

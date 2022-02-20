@@ -9,7 +9,7 @@ export type Options = {
 }
 
 //  number implies error count
-export function testModule(source: string, expected: string | object | number, options: Options = { log: true }) {
+export function testModule(source: string, expected: string | object | number, options: Options = {}) {
     let compiler = new Compiler({
         log(value) {
         }
@@ -35,9 +35,9 @@ export function testModule(source: string, expected: string | object | number, o
         if (typeof expected !== "string") {
             expected = JSON.stringify(expected);
         }
-        if (actual != expected) {
+        if (actual != expected) {            
             // console.log(tokens);
-            if (options.log) {
+            if (options.log ?? true) {
                 console.log(actual);
             }
         }

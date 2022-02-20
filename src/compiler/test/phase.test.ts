@@ -32,3 +32,27 @@ x +++= 2 * 10
 }`,
 { finalPhase: opsToNodes },
 )
+
+testModule(
+`
+(x, y) = foo()
+`,
+`module test {
+    const _opsToNodes_1 = foo()
+    const x = _opsToNodes_1.x
+    const y = _opsToNodes_1.y
+}`,
+{ finalPhase: opsToNodes },
+)
+
+testModule(
+`
+[x, y] = foo()
+`,
+`module test {
+    const _opsToNodes_1 = foo()
+    const x = _opsToNodes_1[0]
+    const y = _opsToNodes_1[1]
+}`,
+{ finalPhase: opsToNodes },
+)

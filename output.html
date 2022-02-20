@@ -444,18 +444,17 @@ class Integer extends Number
                     <p>
 // (x, y) = foo()
 // (x, y) := bar()
-
-[x, y] = baz()</p>
+[x, y] = baz()
+</p>
                 </td>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>// (x, y) = foo()<br>// (x, y) := bar()<br><br>[x, y] = baz()&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>// (x, y) = foo()<br>// (x, y) := bar()<br>[x, y] = baz()<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Comment&quot;, &quot;source&quot;: &quot;// (x, y) = foo()&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Comment&quot;, &quot;source&quot;: &quot;// (x, y) := bar()&quot; },
-  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;OpenBracket&quot;, &quot;source&quot;: &quot;[&quot; },
   Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;x&quot; },
@@ -468,7 +467,8 @@ class Integer extends Number
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;baz&quot; },
   Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
-  Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; }
+  Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; }
 ]</pre></div></div></p>
                 </td>
             
@@ -546,7 +546,7 @@ class Integer extends Number
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const x = _opsToNodes_1.x</span>
+            <span class="d2h-code-line-ctn">    const x = _opsToNodes_1[0]</span>
         </div>
     </td>
 </tr><tr>
@@ -557,7 +557,7 @@ class Integer extends Number
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const y = _opsToNodes_1.y</span>
+            <span class="d2h-code-line-ctn">    const y = _opsToNodes_1[1]</span>
         </div>
     </td>
 </tr><tr>
