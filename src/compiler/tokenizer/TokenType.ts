@@ -1,6 +1,11 @@
 
 type ValueFunction = (source: string) => any
-type Options = { value?: ValueFunction, mergeAdjacent?: boolean, isWhitespace?: boolean }
+type Options = {
+    value?: ValueFunction,
+    mergeAdjacent?: boolean,
+    isWhitespace?: boolean,
+    discard?: boolean,
+}
 const identity = source => source;
 
 export class TokenType {
@@ -10,6 +15,7 @@ export class TokenType {
     readonly value: ValueFunction;
     readonly mergeAdjacent: boolean;
     readonly isWhitespace: boolean;
+    readonly discard: boolean;
 
     constructor(name: string, match: RegExp, options?: Options)
     constructor(name: string, match: (line: string) => number, options?: Options)
@@ -26,6 +32,7 @@ export class TokenType {
         this.value = options?.value ?? identity;
         this.mergeAdjacent = options?.mergeAdjacent ?? false;
         this.isWhitespace = options?.isWhitespace ?? false;
+        this.discard = options?.discard ?? false;
     }
 
     toString() {
@@ -37,7 +44,7 @@ export class TokenType {
 //  this is linear time now on types. We can make it much faster later.
 export const tokenTypes = {
     //  Comment must come before Operator otherwise '//' interpreted as an operator
-    Comment: new TokenType("Comment", /^\/\/.*/),
+    Comment: new TokenType("Comment", /^\/\/.*/, { isWhitespace: true }),
     Dent: new TokenType("Dent", /^(    )/, { isWhitespace: true }),
     Whitespace: new TokenType("Whitespace", /^[^\S\r\n]+/, { isWhitespace: true }),
     OpenParen: new TokenType("OpenParen", /^\(/),

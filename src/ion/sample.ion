@@ -1,3 +1,5 @@
 
-(x, (a,b) = y) = foo()
+// (x, y) = foo()
+// (x, y) := bar()
 
+[x, y] = baz()

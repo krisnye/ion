@@ -139,9 +139,11 @@ export class Parser {
     eol(min = 0) {
         let count = 0;
         this.whitespace();
+        this.maybeConsume(tokenTypes.Comment.name);
         while (this.maybeConsume(tokenTypes.Eol.name)) {
             count++;
             this.whitespace();
+            this.maybeConsume(tokenTypes.Comment.name);
         }
         if (count < min) {
             throw new SemanticError(`Expected EOL`, this.peek()!.location);

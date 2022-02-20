@@ -41,6 +41,7 @@ export class Tokenizer {
                         tokens.push(newToken);
                         if (newToken.type === tokenTypes.Eol.name) {
                             lineIndex++;
+                            columnIndex = 0;
                         }
                     }
                     columnIndex += matchLength;

@@ -14,7 +14,7 @@ export function semanticChecks(moduleName, module): ReturnType<Phase> {
         enter(node, ancestors) {
             let parent = ancestors[ancestors.length - 1];
             if (parent instanceof BinaryOperation
-                && parent.operator.value === "="
+                && (parent.operator.value === "=" || parent.operator.value === ":=")
                 && node === parent.left
             ) {
                 // left hand side of assignment must be Identifier | Group
@@ -34,6 +34,7 @@ export function semanticChecks(moduleName, module): ReturnType<Phase> {
                         else if (child instanceof Identifier) {
                             return;
                         }
+                        debugger;
                         errors.push(new SemanticError(`Invalid destructuring value`, child));
                     }
                     checkValidDestructure(node.value);

@@ -34,19 +34,10 @@ Class:class
 Else:else
 Return:return`);
 
-test("    foo: bar = () => a.b // foo",
+test("    foo // foo",
 `Indent:"    "
 Id:foo
-Operator::
-Id:bar
-Operator:=
-OpenParen:(
-CloseParen:)
-Operator:=>
-Id:a
-Operator:.
-Id:b
-Comment:// foo
+Comment:"// foo"
 Outdent:""`);
 
 test(`"foo\\"bar"`, `String:foo"bar`);

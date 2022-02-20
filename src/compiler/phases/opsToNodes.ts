@@ -41,7 +41,7 @@ export function tempFactory(name: string): IdentifierFactory {
 export function opsToNodes(moduleName, module): ReturnType<Phase> {
     let errors = new Array<Error>();
     let temp = tempFactory("opsToNodes");
-    function destructure(nodes: Array<Node>, pattern: Node | null, right: Node) {
+    function destructure(nodes: Array<Node>, pattern: Node | null, right: Node, variableOrAssignment: boolean) {
         if (pattern instanceof Group) {
             let tempVar = new Identifier(temp(right.location));
             nodes.push(new Variable({
@@ -51,29 +51,30 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                 value: right,
                 writable: false,
             }));
-            destructure(nodes, pattern.value, new Reference(tempVar));
+            destructure(nodes, pattern.value, new Reference(tempVar), variableOrAssignment);
         }
         else if (pattern instanceof Sequence) {
             for (let id of pattern.nodes) {
-                destructure(nodes, id, right);
+                destructure(nodes, id, right, variableOrAssignment);
             }
         }
         else if (pattern instanceof Identifier) {
-            nodes.push(new Variable({
+            let value = new Member({
                 location: right.location,
-                id: pattern,
-                type: null,
-                value: new Member({
-                    location: right.location,
-                    object: right,
-                    property: pattern,
-                    computed: false,
-                }),
-                writable: false,
-            }));
+                object: right,
+                property: pattern,
+                computed: false,
+            });
+            let { location } = right;
+            let id = pattern;
+            nodes.push(
+                variableOrAssignment
+                ? new Variable({ location, id, type: null, value, writable: false })
+                : new Assignment({ location, id, value })
+            );
         }
         else {
-            throw new SemanticError(`Invalid destructuring pattern`, pattern!);
+            throw new SemanticError(`(Should Be Impossible) Invalid destructuring pattern`, pattern!);
         }
     }
     let result = traverse(module, {
@@ -91,20 +92,29 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                             value: null,
                             writable: true,
                         })
+                    case ":=":
                     case "=":
                         // could this be a reassignment? No, would have to be :=
+                        let isVariable = operator === "=";
                         if (left instanceof Group && !(parent instanceof Sequence)) {
                             let dnodes = new Array<Node>();
-                            destructure(dnodes, left, right);
+                            destructure(dnodes, left, right, isVariable);
                             return replace(...dnodes);
                         }
-                        return new Variable({
-                            location,
-                            id: left instanceof Variable ? left.id : left,
-                            type: left instanceof Variable ? left.type : null,
-                            value: right,
-                            writable: left instanceof Variable ? left.writable : false,
-                        })
+                        let id = left instanceof Variable ? left.id : left;
+                        let type = left instanceof Variable ? left.type : null;
+                        let writable = left instanceof Variable ? left.writable : false;
+                        if (!(id instanceof Identifier)) {
+                            errors.push(new SemanticError(`Expected Identifier`, id));
+                            return;
+                        }
+
+                        if (isVariable) {
+                            return new Variable({ location, id, type, value: right, writable });
+                        }
+                        else {
+                            return new Assignment({ location, id, value: right });
+                        }
                     case ",":
                         return Sequence.merge(left, right)
                     case "=>":
@@ -124,7 +134,8 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                             }
                         }
                         else {
-                            throw new SemanticError(`Invalid function parameter(s)`, left);
+                            errors.push(new SemanticError(`Invalid function parameter(s)`, left));
+                            return;
                         }
         
                         return new Function({
