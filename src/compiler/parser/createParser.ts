@@ -14,6 +14,7 @@ import { ReturnParselet } from "./parselets/ReturnParselet";
 import { ClassParselet } from "./parselets/ClassParselet";
 import { ForParselet } from "./parselets/ForParselet";
 import { BlockParselet } from "./parselets/BlockParselet";
+import { OutlineStringParselet } from "./parselets/OutlineStringParselet";
 
 export function createParser() {
     return new Parser({
@@ -30,6 +31,7 @@ export function createParser() {
         OpenParen: new GroupParselet("CloseParen", true),
         OpenBracket: new GroupParselet("CloseBracket", true),
         Indent: new BlockParselet(),
+        OutlineString: new OutlineStringParselet(),
     },
     {
         Operator: new BinaryOperatorParselet(),

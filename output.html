@@ -258,7 +258,7 @@ ul.jsondiffpatch-textdiff {
                 </td>
             
                 <td>
-                    <header><span>semanticChecks</span></header>
+                    <header><span>syntacticChecks</span></header>
                     <p>module + {
     + = []
 }</p>
@@ -369,7 +369,7 @@ class Any
                 </td>
             
                 <td>
-                    <header><span>semanticChecks</span></header>
+                    <header><span>syntacticChecks</span></header>
                     <p>module Any {
     class Any {}
 }</p>
@@ -419,7 +419,7 @@ class Integer extends Number
                 </td>
             
                 <td>
-                    <header><span>semanticChecks</span></header>
+                    <header><span>syntacticChecks</span></header>
                     <p>module Integer {
     class Integer extends Number {}
 }</p>
@@ -442,45 +442,70 @@ class Integer extends Number
                 <td>
                     <header><span>Source</span></header>
                     <p>
-// (x, y) = foo()
-// (x, y) := bar()
-[x, y] = baz()
+outline = ``
+    &lt;html&gt;
+        &lt;body&gt;
+        &lt;/body&gt;
+    &lt;/html&gt;
+
+// class Vector extends Thing
+//     x: Number | String = 0
+//     y: Number
+//     z = (a, b) =&gt; a + b
 </p>
                 </td>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>// (x, y) = foo()<br>// (x, y) := bar()<br>[x, y] = baz()<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>outline = ``<br>    &lt;html&gt;<br>        &lt;body&gt;<br>        &lt;/body&gt;<br>    &lt;/html&gt;<br><br>// class Vector extends Thing<br>//     x: Number | String = 0<br>//     y: Number<br>//     z = (a, b) =&gt; a + b<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Comment&quot;, &quot;source&quot;: &quot;// (x, y) = foo()&quot; },
-  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Comment&quot;, &quot;source&quot;: &quot;// (x, y) := bar()&quot; },
-  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;OpenBracket&quot;, &quot;source&quot;: &quot;[&quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;x&quot; },
-  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;,&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;y&quot; },
-  Token { &quot;type&quot;: &quot;CloseBracket&quot;, &quot;source&quot;: &quot;]&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;outline&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;=&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;baz&quot; },
-  Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
-  Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
+  Token { &quot;type&quot;: &quot;OutlineString&quot;, &quot;source&quot;: &quot;``&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;&lt;&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;html&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;&gt;&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;&lt;&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;body&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;&gt;&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;&lt;/&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;body&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;&gt;&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Outdent&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;&lt;/&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;html&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;&gt;&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Outdent&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Comment&quot;, &quot;source&quot;: &quot;// class Vector extends Thing&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Comment&quot;, &quot;source&quot;: &quot;//     x: Number | String = 0&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Comment&quot;, &quot;source&quot;: &quot;//     y: Number&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Comment&quot;, &quot;source&quot;: &quot;//     z = (a, b) =&gt; a + b&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; }
 ]</pre></div></div></p>
                 </td>
             
                 <td>
                     <header><span>parsing</span></header>
-                    <p>module sample { [x , y] = baz() }</p>
+                    <p>module sample { outline = "<html><br>    <body><br>    </body><br></html><br>" }</p>
                 </td>
             
                 <td>
-                    <header><span>semanticChecks</span></header>
+                    <header><span>syntacticChecks</span></header>
                     <p>module sample {
-    [x , y] = baz()
+    outline = "&lt;html&gt;\n    &lt;body&gt;\n    &lt;/body&gt;\n&lt;/html&gt;\n"
 }</p>
                 </td>
             
@@ -503,7 +528,7 @@ class Integer extends Number
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,3 +1,5 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,3 +1,3 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -524,7 +549,7 @@ class Integer extends Number
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    <del>[x</del> <del>,</del> <del>y] </del>= baz()</span>
+            <span class="d2h-code-line-ctn">    outline = &quot;&lt;html&gt;<br>    &lt;body&gt;<br>    &lt;&#x2F;body&gt;<br>&lt;&#x2F;html&gt;<br>&quot;</span>
         </div>
     </td>
 </tr><tr>
@@ -535,35 +560,13 @@ class Integer extends Number
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>const</ins> <ins>_opsToNodes_1</ins> = baz()</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const x = _opsToNodes_1[0]</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const y = _opsToNodes_1[1]</span>
+            <span class="d2h-code-line-ctn">    <ins>const </ins>outline = &quot;&lt;html&gt;<br>    &lt;body&gt;<br>    &lt;&#x2F;body&gt;<br>&lt;&#x2F;html&gt;<br>&quot;</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">3</div>
-<div class="line-num2">5</div>
+<div class="line-num2">3</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">

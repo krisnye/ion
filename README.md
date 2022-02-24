@@ -67,10 +67,19 @@ Cross platform modeling language
 # Todo 22
 
   - [ ] Semantic Checking for valid expressions
-    - [ ] Variable Declaration
-    - [ ] Class Declaration
-    - [ ] Function Declaration
+    - [x] Variable Declaration
+    - [x] Class Declaration
+    - [x] Function Declaration
     - [x] Variable Assignment
-    - [ ] Destructuring Assignment
-    - [ ] Expression (Only valid within an outline expression, otherwise it's a no-op)
-  - [ ] Port over Semantic Error Messages.
+    - [x] Destructuring Assignment
+    - [-] Object Literal (Anonymous Type)
+            Object(foo = 1, bar = 2)
+    - [-] Array Literal
+            Array(Type, Value, Length1, Length2?, Length3?)
+            Syntax
+              Integer[0, length = 12]
+    - [-] For Loop
+    - [-] Expression (Only valid within an outline expression, otherwise it's a no-op)
+  - [x] Port over Semantic Error Messages.
+  - [ ] Implement Outline String expressions.
+  - [ ] Implement Meta property binding to adjacent nodes.

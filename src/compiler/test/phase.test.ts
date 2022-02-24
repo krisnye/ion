@@ -56,3 +56,42 @@ testModule(
 }`,
 { finalPhase: opsToNodes },
 )
+
+testModule(
+`
+foo = \`\`
+    <html>
+        <body>
+        </body>
+    </html>
+`,
+`module test {
+    const foo = "<html>\\n    <body>\\n    </body>\\n</html>\\n"
+}`,
+{ finalPhase: opsToNodes },
+)
+
+testModule(
+`
+foo = \`\`
+    <html>
+        <body>
+
+`,
+`module test {
+    const foo = "<html>\\n    <body>\\n"
+}`,
+{ finalPhase: opsToNodes },
+)
+
+testModule(
+`
+foo = \`\`
+    (a, b) =>
+        a + b
+`,
+`module test {
+    const foo = "(a, b) =>\\n    a + b\\n"
+}`,
+{ finalPhase: opsToNodes },
+)

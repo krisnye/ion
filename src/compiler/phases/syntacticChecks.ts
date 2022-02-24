@@ -8,7 +8,7 @@ import { SemanticError } from "../SemanticError";
 
 const parser = createParser();
 
-export function semanticChecks(moduleName, module): ReturnType<Phase> {
+export function syntacticChecks(moduleName, module): ReturnType<Phase> {
     let errors = new Array<Error>();
     module = traverse(module, {
         enter(node, ancestors) {
@@ -18,7 +18,12 @@ export function semanticChecks(moduleName, module): ReturnType<Phase> {
                 && node === parent.left
             ) {
                 // left hand side of assignment must be Identifier | Group
-                if (!(node instanceof Identifier || node instanceof Group)) {
+                if (!(
+                    node instanceof Identifier
+                    || node instanceof Group
+                    || node instanceof BinaryOperation && node.operator.value === ":"
+                )) {
+                    console.log("?????", node);
                     errors.push(new SemanticError(`Invalid left hand assignment`, node));
                 }
                 // if it's a group, make sure it only contains an Identifier or a Sequence of Identifiers

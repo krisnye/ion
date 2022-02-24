@@ -15,7 +15,7 @@ export class ClassParselet extends PrefixParselet {
         if (!(id instanceof Identifier)) {
             throw new SemanticError(`Expected identifier`, id);
         }
-        let _extends: Node | Node[] = [];
+        let _extends: Node | null = null;
         if (p.maybeConsume(tokenTypes.Extends.name)) {
             p.whitespace();
             _extends = p.parseExpression();

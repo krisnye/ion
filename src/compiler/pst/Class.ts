@@ -1,21 +1,23 @@
 import { NonFunctionProperties } from "../../types";
 import { Node } from "../Node";
 import { Identifier } from "../ast/Identifier";
-import { Scope } from "./Scope";
+import { Scope } from "../ast/Scope";
 
-type Props = NonFunctionProperties<Class>;
+type Props = NonFunctionProperties<PstClass>;
 
-export class Class extends Scope {
+class PstClass extends Scope {
 
     id!: Identifier;
-    extends!: Node | Node[];
+    extends!: Node | null;
 
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }
 
     toString() {
-        let ex = this.extends.toString();
+        let ex = this.extends?.toString() ?? "";
         return `class ${this.id}${ex.length > 0 ? " extends " + ex : ""} ${ super.toString() }`;
     }
 
 }
+
+export const Class = PstClass;

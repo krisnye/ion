@@ -14,6 +14,8 @@ import { Reference } from "../ast/Reference";
 import { Phase } from "./Phase";
 import { Member } from "../pst/Member";
 import { IntegerLiteral } from "../pst/IntegerLiteral";
+import { Class as PstClass } from "../pst/Class";
+import { Class as AstClass } from "../ast/Class";
 
 function toVariable(value: Node) {
     if (value instanceof Variable) {
@@ -85,7 +87,41 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
     let result = traverse(module, {
         leave(node, ancestors) {
             let parent = ancestors[ancestors.length - 1];
-            if (node instanceof BinaryOperation) {
+            // check classes as well
+            if (node instanceof PstClass) {
+                //  first check and extract extends
+                let _extends = new Array<Reference>();
+                function addExtends(node: Node | null) {
+                    if (node instanceof Sequence) {
+                        for (let child of node.nodes) {
+                            addExtends(child);
+                        }
+                    }
+                    else if (node instanceof Reference) {
+                        _extends.push(node);
+                    }
+                }
+                addExtends(node.extends);
+                // then check that class only contains Variables
+                for (let child of node.nodes) {
+                    if (!(child instanceof Variable)) {
+                        errors.push(new SemanticError(`Not allowed within Class`, child));
+                    }
+                }
+                if (errors.length === 0) {
+                    return new AstClass({ location: node.location, id: node.id, extends: _extends, nodes: node.nodes as Variable[] });
+                }
+            }
+            else if (node instanceof Identifier) {
+                // probably should convert most to References, but which ones NOT to?
+                let retainAsIdentifier
+                    = parent instanceof Member && !parent.computed && node === parent.property;
+                    //      parent is Object Literal and this is key.
+                if (!retainAsIdentifier) {
+                    return new Reference(node);
+                }
+            }
+            else if (node instanceof BinaryOperation) {
                 let { location, left, right } = node;
                 let operator = node.operator.value as string;
                 switch (operator) {

@@ -143,3 +143,4 @@ CloseParen:)`);
 test(
 "`+?-*`",
 `EscapedId:+?-*`);
+

@@ -1,4 +1,11 @@
 
-// (x, y) = foo()
-// (x, y) := bar()
-[x, y] = baz()
+outline = ``
+    <html>
+        <body>
+        </body>
+    </html>
+
+// class Vector extends Thing
+//     x: Number | String = 0
+//     y: Number
+//     z = (a, b) => a + b
