@@ -1,6 +1,6 @@
 import { Parser } from "../Parser";
 import { Token } from "../../Token";
-import { getInfixPrecedence, infixPrecedence, infixRightAssociative } from "../operators";
+import { getInfixPrecedence, infixRightAssociative } from "../operators";
 import { SemanticError } from "../../SemanticError";
 import { Node } from "../../Node";
 import { SourceLocation } from "../../SourceLocation";
@@ -9,13 +9,13 @@ import { BinaryOperation } from "../../pst/BinaryOperation";
 
 export class BinaryOperatorParselet extends InfixParselet {
 
-    protected parseRight(p: Parser, token: Token): Node {
+    protected parseRight(p: Parser, token: Token, allowBlock = true): Node {
         let { value, location } = token;
         let precedence = this.getPrecedence(token);
         if (precedence == null) {
             throw new SemanticError(`Infix operator not found: ${value}`, location);
         }
-        let right = p.parseExpression(precedence + (infixRightAssociative[value] ? -1 : 0));
+        let right = allowBlock && p.maybeParseBlock() || p.parseExpression(precedence + (infixRightAssociative[value] ? -1 : 0));
         return right;
     }
 

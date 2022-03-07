@@ -88,14 +88,15 @@ export class Parser {
 
     parseModule(filename: string, tokens: Token[]): Module {
         this.setTokens(tokens);
-
-        this.eol(0);
+        this.eol();
         let nodes = new Array<Node>();
         while (!this.done()) {
+            this.whitespace();
+            // if (this.peek(tokenTypes.Eol.name)) {
+            //     this.consume();
+            // }
             nodes.push(this.parseExpression());
-            if (this.eol() === 0) {
-                break;
-            }
+            this.eol();
         }
 
         if (!this.done()) {
@@ -156,9 +157,6 @@ export class Parser {
     }
 
     parseExpression(precedence: number = 0): Node {
-        if (this.peek(tokenTypes.Eol.name)) {
-            return this.parseBlock();
-        }
         let token = this.consume();
         this.whitespace();
         let prefix = this.prefixParselets[token.type as keyof typeof tokenTypes];

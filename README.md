@@ -81,5 +81,6 @@ Cross platform modeling language
     - [-] For Loop
     - [-] Expression (Only valid within an outline expression, otherwise it's a no-op)
   - [x] Port over Semantic Error Messages.
-  - [ ] Implement Outline String expressions.
+  - [x] Implement Outline String expressions.
   - [ ] Implement Meta property binding to adjacent nodes.
+  - [ ] Add Javascript Operations for Interpreting.
