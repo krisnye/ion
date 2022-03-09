@@ -1,15 +1,7 @@
+foo()
+    bar()
+        1
+        2
+        3
+    baz()
 
-@Meta()
-    1
-    2
-@Foo()
-outline = ``
-    <html>
-        <body>
-        </body>
-    </html>
-
-// class Vector extends Thing
-//     x: Number | String = 0
-//     y: Number
-//     z = (a, b) => a + b

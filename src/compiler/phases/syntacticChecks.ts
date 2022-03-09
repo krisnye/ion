@@ -23,7 +23,6 @@ export function syntacticChecks(moduleName, module): ReturnType<Phase> {
                     || node instanceof Group
                     || node instanceof BinaryOperation && node.operator.value === ":"
                 )) {
-                    console.log("?????", node);
                     errors.push(new SemanticError(`Invalid left hand assignment`, node));
                 }
                 // if it's a group, make sure it only contains an Identifier or a Sequence of Identifiers

@@ -89,12 +89,10 @@ export class Parser {
     parseModule(filename: string, tokens: Token[]): Module {
         this.setTokens(tokens);
         this.eol();
+
         let nodes = new Array<Node>();
         while (!this.done()) {
             this.whitespace();
-            // if (this.peek(tokenTypes.Eol.name)) {
-            //     this.consume();
-            // }
             nodes.push(this.parseExpression());
             this.eol();
         }
@@ -124,9 +122,12 @@ export class Parser {
     parseBlock(indent = (this.eol(1), this.consume(tokenTypes.Indent.name))): Block {
         let nodes = new Array<Node>();
         let outdent: Token | null = null;
+
         while (!this.done()) {
-            nodes.push(this.parseExpression());
-            if (this.eol() === 0 || (outdent = this.maybeConsume(tokenTypes.Outdent.name))) {
+            this.whitespace();
+            nodes.push(this.maybeParseBlock() || this.parseExpression());
+            this.eol();
+            if (outdent = this.maybeConsume(tokenTypes.Outdent.name)) {
                 break;
             }
         }

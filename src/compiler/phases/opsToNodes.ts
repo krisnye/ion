@@ -156,6 +156,8 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                         else {
                             return new Assignment({ location, id, value: right });
                         }
+                    case ".":
+                        return new Member({ location, object: left, property: right, computed: false });
                     case ",":
                         return Sequence.merge(left, right)
                     case "=>":

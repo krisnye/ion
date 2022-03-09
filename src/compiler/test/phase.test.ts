@@ -21,7 +21,7 @@ double = x =>
     }
 }`,
 { finalPhase: opsToNodes },
-)
+);
 
 testModule(
 `
@@ -31,7 +31,7 @@ x +++= 2 * 10
     x = +++(x,*(2,10))
 }`,
 { finalPhase: opsToNodes },
-)
+);
 
 testModule(
 `
@@ -43,7 +43,7 @@ testModule(
     const y = _opsToNodes_1.y
 }`,
 { finalPhase: opsToNodes },
-)
+);
 
 testModule(
 `
@@ -55,7 +55,7 @@ testModule(
     const y = _opsToNodes_1[1]
 }`,
 { finalPhase: opsToNodes },
-)
+);
 
 testModule(
 `
@@ -69,7 +69,7 @@ foo = \`\`
     const foo = "<html>\\n    <body>\\n    </body>\\n</html>\\n"
 }`,
 { finalPhase: opsToNodes },
-)
+);
 
 testModule(
 `
@@ -82,7 +82,7 @@ foo = \`\`
     const foo = "<html>\\n    <body>\\n"
 }`,
 { finalPhase: opsToNodes },
-)
+);
 
 testModule(
 `
@@ -94,4 +94,15 @@ foo = \`\`
     const foo = "(a, b) =>\\n    a + b\\n"
 }`,
 { finalPhase: opsToNodes },
-)
+);
+
+testModule(
+`
+foo()
+    1
+    bar()
+        2
+        3
+`,
+`module test {\n    foo(1,bar(2,3))\n}`
+);
