@@ -122,6 +122,7 @@ export class Parser {
     parseBlock(indent = (this.eol(1), this.consume(tokenTypes.Indent.name))): Block {
         let nodes = new Array<Node>();
         let outdent: Token | null = null;
+        this.eol();
 
         while (!this.done()) {
             this.whitespace();

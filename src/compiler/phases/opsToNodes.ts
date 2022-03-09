@@ -2,7 +2,8 @@ import { traverse, replace } from "./traverse";
 import { Node } from "../Node";
 import { Assignment } from "../ast/Assignment";
 import { BinaryOperation } from "../pst/BinaryOperation";
-import { Call } from "../pst/Call";
+import { Call  as PstCall } from "../pst/Call";
+import { Call  as AstCall } from "../ast/Call";
 import { Function } from "../pst/Function";
 import { Group } from "../pst/Group";
 import { Identifier } from "../ast/Identifier";
@@ -112,6 +113,10 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                     return new AstClass({ location: node.location, id: node.id, extends: _extends, nodes: node.nodes as Variable[] });
                 }
             }
+            else if (node instanceof PstCall) {
+                let args = node.args instanceof Sequence ? [...node.args.nodes] : node.args ? [node.args] : [];
+                return new AstCall({ location: node.location, callee: node.callee, nodes: args });
+            }
             else if (node instanceof Identifier) {
                 // probably should convert most to References, but which ones NOT to?
                 let retainAsIdentifier
@@ -194,13 +199,13 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                             }
                             let value = right;
                             if (operator !== "=") {
-                                value = new Call({
+                                value = new AstCall({
                                     location,
                                     callee: new Reference({
                                         location: node.operator.location,
                                         name: node.operator.value.slice(0, -1),
                                     }),
-                                    args: [left, right],
+                                    nodes: [left, right],
                                 })
                             }
                             return new Assignment({
@@ -210,13 +215,13 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                             })
                         }
                         else {
-                            return new Call({
+                            return new AstCall({
                                 location,
                                 callee: new Reference({
                                     location: node.operator.location,
                                     name: node.operator.value,
                                 }),
-                                args: [left, right],
+                                nodes: [left, right],
                             })
                         }
                 }

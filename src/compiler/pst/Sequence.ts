@@ -11,6 +11,19 @@ export class Sequence extends Scope {
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }
 
+    static flatten(nodes: Node[]) {
+        let flat = new Array<Node>();
+        for (let node of nodes) {
+            if (node instanceof Sequence) {
+                flat.push(...node.nodes);
+            }
+            else {
+                flat.push(node);
+            }
+        }
+        return flat;
+    }
+
     static merge(left: Node | null, right: Node | null): Node {
         if (left == null) {
             if (right == null) {

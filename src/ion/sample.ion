@@ -1,7 +1,6 @@
+a, b
+c, d
 foo()
-    bar()
-        1
-        2
-        3
-    baz()
-
+    // merge these sequences
+    1, 2
+    3, 4

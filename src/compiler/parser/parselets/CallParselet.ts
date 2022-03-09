@@ -5,6 +5,7 @@ import { SourceLocation } from "../../SourceLocation";
 import { tokenTypes } from "../../tokenizer/TokenType";
 import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
 import { Call } from "../../pst/Call";
+import { Sequence } from "../../pst/Sequence";
 
 export class CallParselet extends BinaryOperatorParselet {
 
@@ -16,7 +17,7 @@ export class CallParselet extends BinaryOperatorParselet {
     }
 
     parse(p: Parser, callee: Node, open: Token): Node {
-        let args = p.peek(this.closeTokenType) ? [] : p.parseExpression();
+        let args = p.peek(this.closeTokenType) ? null : p.parseExpression();
         let close = p.consume(this.closeTokenType);
         return new Call({
             location: SourceLocation.merge(callee.location, close.location),

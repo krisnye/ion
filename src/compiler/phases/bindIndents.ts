@@ -7,6 +7,7 @@ import { SourceLocation } from "../SourceLocation";
 import { Phase } from "./Phase";
 import { Scope } from "../ast/Scope";
 import { Block } from "../pst/Block";
+import { Sequence } from "../pst/Sequence";
 
 type IdentifierFactory = (location: SourceLocation) => { location: SourceLocation, name: string }
 export function tempFactory(name: string): IdentifierFactory {
@@ -61,7 +62,7 @@ export function bindIndents(moduleName, module): ReturnType<Phase> {
                             newNodes.push(
                                 replaceNode(current, lastNode, new Call({
                                     ...lastNode,
-                                    args: next.nodes
+                                    args: new Sequence(next),
                                 }))
                             );
                             //  skip the next
@@ -76,9 +77,10 @@ export function bindIndents(moduleName, module): ReturnType<Phase> {
                     }
                 }
                 if (newNodes.length != node.nodes.length) {
-                    return node.patch({ ...node, nodes: newNodes });
+                    node = node.patch({ ...node, nodes: newNodes });
                 }
             }
+            return node;
         }
     })
     return [result, errors];
