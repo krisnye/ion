@@ -1,3 +1,4 @@
+import { addMetaCallsToDeclarations } from "../ast/Declaration";
 import { Scope } from "../ast/Scope";
 import { Sequence } from "../pst/Sequence";
 import { Phase } from "./Phase";
@@ -9,6 +10,7 @@ export function flattenSequences(moduleName, module): ReturnType<Phase> {
         leave(node) {
             if (node instanceof Scope) {
                 let nodes = Sequence.flatten(node.nodes);
+                nodes = addMetaCallsToDeclarations(nodes, errors);
                 if (nodes.length != node.nodes.length) {
                     return node.patch({ ...node, nodes });
                 }

@@ -3,7 +3,7 @@ import { SemanticError } from "../SemanticError";
 import { Token } from "../Token";
 import { InfixParselet } from "./InfixParslet";
 import { Node } from "../Node";
-import { Block } from "../pst/Block";
+import { Block } from "../ast/Block";
 import { SourceLocation } from "../SourceLocation";
 import { Module } from "../pst/Module";
 import { SourcePosition } from "../SourcePosition";

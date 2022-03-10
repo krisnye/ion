@@ -1,3 +1,4 @@
+import { strict as assert } from "assert";
 import { opsToNodes } from "../phases/opsToNodes";
 import { testModule } from "./testModule";
 
@@ -59,7 +60,7 @@ testModule(
 
 testModule(
 `
-foo = \`\`
+foo = ""
     <html>
         <body>
         </body>
@@ -73,7 +74,7 @@ foo = \`\`
 
 testModule(
 `
-foo = \`\`
+foo = ""
     <html>
         <body>
 
@@ -86,7 +87,7 @@ foo = \`\`
 
 testModule(
 `
-foo = \`\`
+foo = ""
     (a, b) =>
         a + b
 `,
@@ -104,5 +105,28 @@ foo()
         2
         3
 `,
-`module test {\n    foo(1,bar(2,3))\n}`
+`module test {
+    foo(1,bar(2,3))
+}`
 );
+
+assert.throws(() => {
+    testModule(
+        `
+        @Foo()
+        `,
+        `module test {\n    @Foo()\n}`
+    )
+})
+
+testModule(
+`
+@Foo()
+x = 1
+`,
+`module test {
+    const x = 1 {
+        @Foo()
+    }
+}`
+)

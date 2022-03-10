@@ -6,7 +6,7 @@ import { SemanticError } from "../SemanticError";
 import { SourceLocation } from "../SourceLocation";
 import { Phase } from "./Phase";
 import { Scope } from "../ast/Scope";
-import { Block } from "../pst/Block";
+import { Block } from "../ast/Block";
 import { Sequence } from "../pst/Sequence";
 
 type IdentifierFactory = (location: SourceLocation) => { location: SourceLocation, name: string }

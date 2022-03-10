@@ -55,8 +55,8 @@ export const tokenTypes = {
     CloseBrace: new TokenType("CloseBrace", /^\}/),
     Float: new TokenType("Float", /^[1-9][0-9]*\.[0-9]+(e[+-]?[0-9]+)?/, { value: JSON.parse }),
     Integer: new TokenType("Integer", /^([1-9][0-9]*|0x[0-9]+|0\b)/, { value: JSON.parse }),
+    OutlineString: new TokenType("OutlineString", /^""/),
     String: new TokenType("String", /^"([^"\\]|\\.)*"/, { value: JSON.parse }),
-    OutlineString: new TokenType("OutlineString", /^``/),
     // Operator has to come after Float/Integer so an adjacent - or + binds to literal.
     Operator: new TokenType("Operator", /^(void|[\=\+\-\*\&\^\%\!\~\/\.\:\;\?\,\<\>\|\&:]+)/i),
     //  Id has to come after Operator because of operator 'void'

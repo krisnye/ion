@@ -4,11 +4,10 @@ import { Assignment } from "../ast/Assignment";
 import { BinaryOperation } from "../pst/BinaryOperation";
 import { Call  as PstCall } from "../pst/Call";
 import { Call  as AstCall } from "../ast/Call";
-import { Function } from "../pst/Function";
+import { Function } from "../ast/Function";
 import { Group } from "../pst/Group";
 import { Identifier } from "../ast/Identifier";
 import { Sequence } from "../pst/Sequence";
-import { Variable } from "../pst/Variable";
 import { SemanticError } from "../SemanticError";
 import { SourceLocation } from "../SourceLocation";
 import { Reference } from "../ast/Reference";
@@ -17,6 +16,7 @@ import { Member } from "../pst/Member";
 import { IntegerLiteral } from "../pst/IntegerLiteral";
 import { Class as PstClass } from "../pst/Class";
 import { Class as AstClass } from "../ast/Class";
+import { Variable } from "../ast/Variable";
 
 function toVariable(value: Node) {
     if (value instanceof Variable) {
@@ -28,6 +28,7 @@ function toVariable(value: Node) {
             id: value,
             type: null,
             value: null,
+            meta: [],
             writable: true,
         });
     }
@@ -55,6 +56,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                 type: null,
                 value: right,
                 writable: false,
+                meta: [],
             }));
             destructure(nodes, pattern.value, new Reference(tempVar), variableOrAssignment, memberIndex);
         }
@@ -77,7 +79,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
             let id = pattern;
             nodes.push(
                 variableOrAssignment
-                ? new Variable({ location, id, type: null, value, writable: false })
+                ? new Variable({ location, id, type: null, value, writable: false, meta: [] })
                 : new Assignment({ location, id, value })
             );
         }
@@ -110,7 +112,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                     }
                 }
                 if (errors.length === 0) {
-                    return new AstClass({ location: node.location, id: node.id, extends: _extends, nodes: node.nodes as Variable[] });
+                    return new AstClass({ location: node.location, id: node.id, extends: _extends, nodes: node.nodes as Variable[], meta: [] });
                 }
             }
             else if (node instanceof PstCall) {
@@ -131,12 +133,17 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                 let operator = node.operator.value as string;
                 switch (operator) {
                     case ":":
+                        if (!(left instanceof Identifier)) {
+                            errors.push(new SemanticError(`Expected identifier`, left));
+                            return;
+                        }
                         return new Variable({
                             location,
-                            id: left,
+                            id: new Identifier(left),
                             type: right,
                             value: null,
                             writable: true,
+                            meta: [],
                         })
                     case ":=":
                     case "=":
@@ -156,7 +163,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                         }
 
                         if (isVariable) {
-                            return new Variable({ location, id, type, value: right, writable });
+                            return new Variable({ location, id: new Identifier(id), type, value: right, writable, meta: [] });
                         }
                         else {
                             return new Assignment({ location, id, value: right });

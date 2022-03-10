@@ -1,8 +1,16 @@
 import { NonFunctionProperties } from "../../types";
 import { Node } from "../Node";
+import { isMetaName } from "../utility";
+import { Reference } from "./Reference";
 import { Scope } from "./Scope";
 
 type Props = NonFunctionProperties<Call>;
+
+export type MetaCall = Call & { callee: Reference }
+
+export function isMetaCall(node): node is MetaCall {
+    return node instanceof Call && node.callee instanceof Reference && isMetaName(node.callee.name);
+}
 
 export class Call extends Scope {
 

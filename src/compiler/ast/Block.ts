@@ -1,5 +1,5 @@
 import { NonFunctionProperties } from "../../types";
-import { Scope } from "../ast/Scope";
+import { Scope } from "./Scope";
 
 type Props = NonFunctionProperties<Block>;
 
