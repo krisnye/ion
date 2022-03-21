@@ -265,13 +265,6 @@ ul.jsondiffpatch-textdiff {
                 </td>
             
                 <td>
-                    <header><span>bindIndents</span></header>
-                    <p>module + {
-    + = []
-}</p>
-                </td>
-            
-                <td>
                     <header><span>opsToNodes</span></header>
                     <p><div class="d2h-wrapper">
     <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
@@ -346,6 +339,13 @@ ul.jsondiffpatch-textdiff {
                 </td>
             
                 <td>
+                    <header><span>removeSoloBlocks</span></header>
+                    <p>module + {
+    const + = []
+}</p>
+                </td>
+            
+                <td>
                     <header><span>flattenSequences</span></header>
                     <p>module + {
     const + = []
@@ -397,14 +397,14 @@ class Any
                 </td>
             
                 <td>
-                    <header><span>bindIndents</span></header>
+                    <header><span>opsToNodes</span></header>
                     <p>module Any {
     class Any {}
 }</p>
                 </td>
             
                 <td>
-                    <header><span>opsToNodes</span></header>
+                    <header><span>removeSoloBlocks</span></header>
                     <p>module Any {
     class Any {}
 }</p>
@@ -468,14 +468,14 @@ class Integer extends Number
                 </td>
             
                 <td>
-                    <header><span>bindIndents</span></header>
+                    <header><span>opsToNodes</span></header>
                     <p>module Integer {
     class Integer extends Number {}
 }</p>
                 </td>
             
                 <td>
-                    <header><span>opsToNodes</span></header>
+                    <header><span>removeSoloBlocks</span></header>
                     <p>module Integer {
     class Integer extends Number {}
 }</p>
@@ -504,221 +504,46 @@ class Integer extends Number
         
                 <td>
                     <header><span>Source</span></header>
-                    <p>@Native()
-    js = ""
-        alert("hello");
-class Number
-
-@Foo()
-@Bar()
-x = 20</p>
+                    <p>x = []
+    a
+    b
+</p>
                 </td>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;@Native()<br>    js = \&quot;\&quot;<br>        alert(\&quot;hello\&quot;);<br>class Number<br><br>@Foo()<br>@Bar()<br>x = 20&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@Native&quot; },
-  Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
-  Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
-  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;js&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;=&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;OutlineString&quot;, &quot;source&quot;: &quot;\&quot;\&quot;&quot; },
-  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;alert&quot; },
-  Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
-  Token { &quot;type&quot;: &quot;String&quot;, &quot;source&quot;: &quot;\&quot;hello\&quot;&quot; },
-  Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
-  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;;&quot; },
-  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Outdent&quot; }, Token { &quot;type&quot;: &quot;Outdent&quot; },
-  Token { &quot;type&quot;: &quot;Class&quot;, &quot;source&quot;: &quot;class&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;Number&quot; },
-  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@Foo&quot; },
-  Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
-  Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
-  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@Bar&quot; },
-  Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
-  Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
-  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;x = []<br>    a<br>    b<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
   Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;x&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;=&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Integer&quot;, &quot;source&quot;: &quot;20&quot; }
+  Token { &quot;type&quot;: &quot;OpenBracket&quot;, &quot;source&quot;: &quot;[&quot; },
+  Token { &quot;type&quot;: &quot;CloseBracket&quot;, &quot;source&quot;: &quot;]&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;a&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;b&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Outdent&quot; }
 ]</pre></div></div></p>
                 </td>
             
                 <td>
                     <header><span>parsing</span></header>
-                    <p>module sample { @Native() { js = "alert(\"hello\");<br>" }
-    class Number {}
-    @Foo()
-    @Bar()
-    x = 20
+                    <p>module sample {
+    x = [{ a b }]
 }</p>
                 </td>
             
                 <td>
                     <header><span>syntacticChecks</span></header>
                     <p>module sample {
-    @Native()
-    {
-        js = "alert(\"hello\");\n"
-    }
-    class Number {}
-    @Foo()
-    @Bar()
-    x = 20
+    x = [{
+        a
+        b
+    }]
 }</p>
-                </td>
-            
-                <td>
-                    <header><span>bindIndents</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,8 +1,7 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module sample {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">2</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    @Native<del>()</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    @Native<ins>({</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">3</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        js = &quot;alert(\&quot;hello\&quot;);<br>&quot;</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">5</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    <del>}</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>})</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    class Number {}</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    @Foo()</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    @Bar()</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
                 </td>
             
                 <td>
@@ -740,7 +565,7 @@ x = 20</p>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,9 +1,7 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,5 +1,5 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -761,7 +586,7 @@ x = 20</p>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    @Native<del>({</del></span>
+            <span class="d2h-code-line-ctn">    x = [{</span>
         </div>
     </td>
 </tr><tr>
@@ -772,95 +597,40 @@ x = 20</p>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    @Native<ins>(const js = &quot;alert(\&quot;hello\&quot;);<br>&quot;)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">3</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        js = &quot;alert(\&quot;hello\&quot;);<br>&quot;</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">4</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    })</span>
+            <span class="d2h-code-line-ctn">    <ins>const </ins>x = [{</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
+      <div class="line-num1">3</div>
 <div class="line-num2">3</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    class Number {}</span>
+            <span class="d2h-code-line-ctn">        a</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
+      <div class="line-num1">4</div>
 <div class="line-num2">4</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    @Foo()</span>
+            <span class="d2h-code-line-ctn">        b</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
+      <div class="line-num1">5</div>
 <div class="line-num2">5</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    @Bar()</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">8</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    x = 20</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>const </ins>x = 20</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">9</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
+            <span class="d2h-code-line-ctn">    }]</span>
         </div>
     </td>
 </tr>
@@ -870,6 +640,16 @@ x = 20</p>
     </div>
 </div>
 </div></p>
+                </td>
+            
+                <td>
+                    <header><span>removeSoloBlocks</span></header>
+                    <p>module sample {
+    const x = [{
+        a
+        b
+    }]
+}</p>
                 </td>
             
                 <td>
@@ -891,7 +671,7 @@ x = 20</p>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,7 +1,9 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,6 +1,6 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -912,51 +692,7 @@ x = 20</p>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    <del>@Native(const</del> <del>js</del> <del>= &quot;alert(\&quot;hello\&quot;);<br>&quot;)</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">3</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>    class</del> <del>Number</del> <del>{}</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">4</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    <del>@Foo()</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">5</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    <del>@Bar()</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>    const x = 20</del></span>
+            <span class="d2h-code-line-ctn">    const x = <del>[{</del></span>
         </div>
     </td>
 </tr><tr>
@@ -967,29 +703,40 @@ x = 20</p>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>class</ins> <ins>Number</ins> <ins>{</ins></span>
+            <span class="d2h-code-line-ctn">    const x = <ins>[</ins></span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
 <div class="line-num2">3</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>        @Native(const</ins> <ins>js</ins> <ins>= &quot;alert(\&quot;hello\&quot;);<br>&quot;)</ins></span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        a</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
 <div class="line-num2">4</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>}</ins></span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        b</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>}]</del></span>
         </div>
     </td>
 </tr><tr>
@@ -1000,46 +747,13 @@ x = 20</p>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>const x = 20 {</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>        @Foo()</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        @Bar()</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    }</span>
+            <span class="d2h-code-line-ctn">    <ins>]</ins></span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">9</div>
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1059,13 +773,10 @@ x = 20</p>
                 <td>
                     <header><span>identity</span></header>
                     <p>module sample {
-    class Number {
-        @Native(const js = "alert(\"hello\");\n")
-    }
-    const x = 20 {
-        @Foo()
-        @Bar()
-    }
+    const x = [
+        a
+        b
+    ]
 }</p>
                 </td>
             </tr>

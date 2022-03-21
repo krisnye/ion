@@ -13,10 +13,10 @@ export class Conditional extends Node {
 
     toString() {
         if (this.alternate != null) {
-            return `if ${this.test} ${this.consequent} else ${this.alternate}`
+            return `if (${this.test}) ${this.consequent} else ${this.alternate}`
         }
         else {
-            return `if ${this.test} ${this.consequent}`
+            return `if (${this.test}) ${this.consequent}`
         }
     }
 

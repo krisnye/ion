@@ -17,6 +17,21 @@ import { IntegerLiteral } from "../pst/IntegerLiteral";
 import { Class as PstClass } from "../pst/Class";
 import { Class as AstClass } from "../ast/Class";
 import { Variable } from "../ast/Variable";
+import { FunctionType } from "../ast/FunctionType";
+import { Block } from "../ast/Block";
+import { tokenTypes } from "../tokenizer/TokenType";
+import { ArrayExpression } from "../ast/ArrayExpression";
+
+function toParameters(value: Node | null) {
+    let parameters = new Array<Variable>();
+    if (value instanceof Sequence) {
+        parameters.push(...value.nodes.map(toVariable))
+    }
+    else if (value != null) {
+        parameters.push(toVariable(value));
+    }
+    return parameters;
+}
 
 function toVariable(value: Node) {
     if (value instanceof Variable) {
@@ -133,18 +148,29 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                 let operator = node.operator.value as string;
                 switch (operator) {
                     case ":":
-                        if (!(left instanceof Identifier)) {
+                        if (left instanceof Identifier) {
+                            return new Variable({
+                                location,
+                                id: new Identifier(left),
+                                type: right,
+                                value: null,
+                                writable: true,
+                                meta: [],
+                            })
+                        }
+                        else if (left instanceof Group) {
+                            let parameters = toParameters(left.value);
+                            return new FunctionType({
+                                location,
+                                parameters,
+                                returnType: right,
+                            })
+                        }
+                        else {
+                            console.log("-------", left.constructor.name);
                             errors.push(new SemanticError(`Expected identifier`, left));
                             return;
                         }
-                        return new Variable({
-                            location,
-                            id: new Identifier(left),
-                            type: right,
-                            value: null,
-                            writable: true,
-                            meta: [],
-                        })
                     case ":=":
                     case "=":
                         // could this be a reassignment? No, would have to be :=
@@ -158,6 +184,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                         let type = left instanceof Variable ? left.type : null;
                         let writable = left instanceof Variable ? left.writable : false;
                         if (!(id instanceof Identifier)) {
+                            console.log("??? ", node);
                             errors.push(new SemanticError(`Expected Identifier`, id));
                             return;
                         }
@@ -174,21 +201,26 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                         return Sequence.merge(left, right)
                     case "=>":
                         //  Function
+                        if (left instanceof FunctionType) {
+                            return new Function({
+                                ...left,
+                                location: SourceLocation.merge(left.location, right.location),
+                                body: right,
+                            })
+                        }
                         //  left should be an Identifier or a Group
                         let parameters = new Array<Variable>();
                         if (left instanceof Identifier) {
                             parameters.push(toVariable(left))
                         }
                         else if (left instanceof Group) {
-                            let { value } = left;
-                            if (value instanceof Sequence) {
-                                parameters.push(...value.nodes.map(toVariable))
-                            }
-                            else if (value != null) {
-                                parameters.push(toVariable(value));
-                            }
+                            parameters.push(...toParameters(left.value));
+                        }
+                        else if (left instanceof Block) {
+                            parameters.push(...left.nodes.map(toParameters).flat())
                         }
                         else {
+                            console.log(left);
                             errors.push(new SemanticError(`Invalid function parameter(s)`, left));
                             return;
                         }
@@ -196,6 +228,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                         return new Function({
                             location,
                             parameters,
+                            returnType: null,
                             body: right,
                         })
                     default:

@@ -1,19 +1,18 @@
 import { NonFunctionProperties } from "../../types";
 import { Node } from "../Node";
-import { Variable } from "./Variable";
+import { FunctionBase } from "./FunctionBase";
 
 type Props = NonFunctionProperties<Function>;
 
-export class Function extends Node {
+export class Function extends FunctionBase {
 
-    parameters!: Variable[];
-    body!: Node;    // should this be a block, more likely an expression.
+    body!: Node;
 
     constructor(props: Props) { super(props); }
     patch(props: Partial<Props>) { return super.patch(props); }
 
     toString() {
-        return `(${this.parameters}) => ${this.body}`
+        return `${super.toString()} => ${this.body}`;
     }
 
 }

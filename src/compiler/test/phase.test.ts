@@ -16,7 +16,7 @@ double = x =>
     const double = () => 2
     const double = (var x) => *(2,x)
     const double = (var x) => *(2,x)
-    const double = (var x,var y) => *(2,x)
+    const double = (var x, var y) => *(2,x)
     const double = (var x) => {
         *(x,2)
     }
@@ -130,3 +130,80 @@ x = 1
     }
 }`
 )
+
+testModule(
+`
+add = (a: Number, b: Number): Number => a
+`
+,
+`module test {
+    const add = (var a : Number, var b : Number): Number => a
+}`
+)
+
+testModule(
+`
+add = (a, b): Number
+`
+,
+`module test {
+    const add = (var a, var b): Number
+}`
+)
+
+testModule(
+`
+add = (a): Number
+`
+,
+`module test {
+    const add = (var a): Number
+}`
+)
+
+testModule(
+`
+x = ()
+    a
+    b
+=>
+    a + b
+`,
+`module test {
+    const x = (var a, var b) => +(a,b)
+}`
+)
+
+testModule(
+`
+x =
+    ()
+        a
+        b
+    =>
+        a + b
+`,
+`module test {
+    const x = (var a, var b) => +(a,b)
+}`
+)
+
+testModule(
+`
+x = (a, b) => a + b
+`,
+`module test {
+    const x = (var a, var b) => +(a,b)
+}`
+)
+        
+testModule(
+`
+x = (a, b) =>
+    a + b
+`,
+`module test {
+    const x = (var a, var b) => +(a,b)
+}`
+)
+    

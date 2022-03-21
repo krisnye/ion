@@ -52,7 +52,7 @@ testExpression(
 `if x
     y
 `,
-`if x {\n    y\n}`
+`if (x) {\n    y\n}`
 );
 
 testExpression(
@@ -61,7 +61,7 @@ testExpression(
 else
     z
 `,
-`if x {\n    y\n} else {\n    z\n}`);
+`if (x) {\n    y\n} else {\n    z\n}`);
 
 testExpression(
 `if x
@@ -69,7 +69,7 @@ testExpression(
 else if z
     w
 `,
-`if x {\n    y\n} else if z {\n    w\n}`);
+`if (x) {\n    y\n} else if (z) {\n    w\n}`);
 
 //  return
 testExpression(`return x`, {"":"Return","value":{"":"Identifier","name":"x"}});
