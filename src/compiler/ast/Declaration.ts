@@ -2,6 +2,7 @@ import { Identifier } from "./Identifier";
 import { isMetaCall, MetaCall } from "./Call";
 import { Node } from "../Node";
 import { SemanticError } from "../SemanticError";
+import { Scope } from "./Scope";
 
 export interface Declaration {
 
@@ -25,6 +26,10 @@ export function addMetaCallsToDeclarations<T extends Node>(nodes: Array<T | Meta
         }
     }
     return nodes as T[];
+}
+
+export function metaToString(d: Declaration) {
+    return d.meta.length ? `${Scope.toString(d.meta, "{", "}\n")}` : "";
 }
 
 export function isDeclaration(node): node is Declaration {

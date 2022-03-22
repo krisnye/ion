@@ -1,6 +1,6 @@
 import { NonFunctionProperties } from "../../types";
 import { Node } from "../Node";
-import { Declaration } from "./Declaration";
+import { Declaration, metaToString } from "./Declaration";
 import { Identifier } from "./Identifier";
 import { MetaCall } from "./Call";
 import { Scope } from "./Scope";
@@ -19,7 +19,7 @@ export class Variable extends Node implements Declaration {
     patch(props: Partial<Props>) { return super.patch(props); }
 
     toString() {
-        return `${ this.meta.length ? `${Scope.toString(this.meta, "{", "}\n")}` : "" }${this.writable ? `var` : `const`} ${this.id}${this.type != null ? ` : ${this.type}`: ``}${this.value != null ? ` = ${this.value}`: ``}`;
+        return `${metaToString(this)}${this.writable ? `var` : `const`} ${this.id}${this.type != null ? ` : ${this.type}`: ``}${this.value != null ? ` = ${this.value}`: ``}`;
     }
 
 }
