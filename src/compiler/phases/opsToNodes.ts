@@ -2,8 +2,8 @@ import { traverse, replace } from "./traverse";
 import { Node } from "../Node";
 import { Assignment } from "../ast/Assignment";
 import { BinaryOperation } from "../pst/BinaryOperation";
-import { Call  as PstCall } from "../pst/Call";
-import { Call  as AstCall } from "../ast/Call";
+import { Call as PstCall } from "../pst/Call";
+import { Call as AstCall, isMetaCall, MetaCall } from "../ast/Call";
 import { Function } from "../ast/Function";
 import { Group } from "../pst/Group";
 import { Identifier } from "../ast/Identifier";
@@ -19,22 +19,21 @@ import { Class as AstClass } from "../ast/Class";
 import { Variable } from "../ast/Variable";
 import { FunctionType } from "../ast/FunctionType";
 import { Block } from "../ast/Block";
-import { tokenTypes } from "../tokenizer/TokenType";
-import { ArrayExpression } from "../ast/ArrayExpression";
+import { addMetaCallsToDeclarations } from "../ast/Declaration";
 
-function toParameters(value: Node | null) {
-    let parameters = new Array<Variable>();
+function toParametersOrMeta(value: Node | null) {
+    let parameters = new Array<Variable | MetaCall>();
     if (value instanceof Sequence) {
-        parameters.push(...value.nodes.map(toVariable))
+        parameters.push(...value.nodes.map(toVariableOrMetaCall));
     }
     else if (value != null) {
-        parameters.push(toVariable(value));
+        parameters.push(toVariableOrMetaCall(value));
     }
     return parameters;
 }
 
-function toVariable(value: Node) {
-    if (value instanceof Variable) {
+function toVariableOrMetaCall(value: Node) {
+    if (value instanceof Variable || isMetaCall(value)) {
         return value;
     }
     if (value instanceof Identifier) {
@@ -159,7 +158,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                             })
                         }
                         else if (left instanceof Group) {
-                            let parameters = toParameters(left.value);
+                            let parameters = toParametersOrMeta(left.value) as Variable[];
                             return new FunctionType({
                                 location,
                                 parameters,
@@ -167,7 +166,6 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                             })
                         }
                         else {
-                            console.log("-------", left.constructor.name);
                             errors.push(new SemanticError(`Expected identifier`, left));
                             return;
                         }
@@ -209,15 +207,15 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                             })
                         }
                         //  left should be an Identifier or a Group
-                        let parameters = new Array<Variable>();
+                        let parameters = new Array<Variable | MetaCall>();
                         if (left instanceof Identifier) {
-                            parameters.push(toVariable(left))
+                            parameters.push(toVariableOrMetaCall(left))
                         }
                         else if (left instanceof Group) {
-                            parameters.push(...toParameters(left.value));
+                            parameters.push(...toParametersOrMeta(left.value));
                         }
                         else if (left instanceof Block) {
-                            parameters.push(...left.nodes.map(toParameters).flat())
+                            parameters.push(...left.nodes.map(toParametersOrMeta).flat())
                         }
                         else {
                             console.log(left);
@@ -227,7 +225,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
         
                         return new Function({
                             location,
-                            parameters,
+                            parameters: addMetaCallsToDeclarations(parameters, errors),
                             returnType: null,
                             body: right,
                         })
@@ -265,6 +263,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                             })
                         }
                 }
+                return node;
             }
         }
     })

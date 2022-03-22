@@ -10,21 +10,21 @@ export interface Declaration {
 
 }
 
-export function addMetaCallsToDeclarations(nodes: Node[], errors: Error[]) {
+export function addMetaCallsToDeclarations<T extends Node>(nodes: Array<T | MetaCall>, errors: Error[]): Array<T> {
     nodes = [...nodes];
     for (let i = nodes.length; i > 0; i--) {
-        let a = nodes[i - 1];
-        let b = nodes[i];
+        const a = nodes[i - 1];
+        const b = nodes[i];
         if (isMetaCall(a)) {
             if (isDeclaration(b)) {
-                nodes.splice(i - 1, 2, b.patch({ meta: [a, ...b.meta] }));
+                nodes.splice(i - 1, 2, (b as any).patch({ meta: [a, ...b.meta] }));
             }
             else {
                 errors.push(new SemanticError(`Meta only valid before Declarations`, a));
             }
         }
     }
-    return nodes;
+    return nodes as T[];
 }
 
 export function isDeclaration(node): node is Declaration {

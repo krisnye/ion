@@ -1,6 +1,7 @@
 import { NonFunctionProperties } from "../../types";
 import { Variable } from "./Variable";
 import { Node } from "../Node";
+import { Scope } from "./Scope";
 
 type Props = NonFunctionProperties<FunctionBase>;
 
@@ -14,8 +15,8 @@ export class FunctionBase extends Node {
 
     toString() {
         return this.returnType
-            ? `(${this.parameters.join(', ')}): ${this.returnType}`
-            : `(${this.parameters.join(', ')})`;
+            ? `${Scope.toString(this.parameters, "(", ")")}: ${this.returnType}`
+            : `${Scope.toString(this.parameters, "(", ")")}`;
     }
 
 }

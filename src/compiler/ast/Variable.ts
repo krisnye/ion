@@ -19,7 +19,7 @@ export class Variable extends Node implements Declaration {
     patch(props: Partial<Props>) { return super.patch(props); }
 
     toString() {
-        return `${this.writable ? `var` : `const`} ${this.id}${this.type != null ? ` : ${this.type}`: ``}${this.value != null ? ` = ${this.value}`: ``}${ this.meta.length ? " " + Scope.toString(this.meta) : "" }`;
+        return `${ this.meta.length ? `${Scope.toString(this.meta, "{", "}\n")}` : "" }${this.writable ? `var` : `const`} ${this.id}${this.type != null ? ` : ${this.type}`: ``}${this.value != null ? ` = ${this.value}`: ``}`;
     }
 
 }

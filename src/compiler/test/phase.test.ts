@@ -14,10 +14,19 @@ double = x =>
 `,
 `module test {
     const double = () => 2
-    const double = (var x) => *(2,x)
-    const double = (var x) => *(2,x)
-    const double = (var x, var y) => *(2,x)
-    const double = (var x) => {
+    const double = (
+        var x
+    ) => *(2,x)
+    const double = (
+        var x
+    ) => *(2,x)
+    const double = (
+        var x
+        var y
+    ) => *(2,x)
+    const double = (
+        var x
+    ) => {
         *(x,2)
     }
 }`,
@@ -125,9 +134,10 @@ testModule(
 x = 1
 `,
 `module test {
-    const x = 1 {
+    {
         @Foo()
     }
+    const x = 1
 }`
 )
 
@@ -137,7 +147,10 @@ add = (a: Number, b: Number): Number => a
 `
 ,
 `module test {
-    const add = (var a : Number, var b : Number): Number => a
+    const add = (
+        var a : Number
+        var b : Number
+    ): Number => a
 }`
 )
 
@@ -147,7 +160,10 @@ add = (a, b): Number
 `
 ,
 `module test {
-    const add = (var a, var b): Number
+    const add = (
+        var a
+        var b
+    ): Number
 }`
 )
 
@@ -157,11 +173,13 @@ add = (a): Number
 `
 ,
 `module test {
-    const add = (var a): Number
+    const add = (
+        var a
+    ): Number
 }`
 )
 
-testModule(
+const equivalentFunctions = [
 `
 x = ()
     a
@@ -169,12 +187,6 @@ x = ()
 =>
     a + b
 `,
-`module test {
-    const x = (var a, var b) => +(a,b)
-}`
-)
-
-testModule(
 `
 x =
     ()
@@ -183,27 +195,44 @@ x =
     =>
         a + b
 `,
-`module test {
-    const x = (var a, var b) => +(a,b)
-}`
-)
-
-testModule(
 `
 x = (a, b) => a + b
 `,
-`module test {
-    const x = (var a, var b) => +(a,b)
-}`
-)
-        
-testModule(
 `
 x = (a, b) =>
     a + b
-`,
+`
+];
+for (const func of equivalentFunctions) {
+    testModule(func,
 `module test {
-    const x = (var a, var b) => +(a,b)
+    const x = (
+        var a
+        var b
+    ) => +(a,b)
+}`)
+}
+
+testModule(
+`@Foo(bar = 20)
+x = ()
+    @Meta()
+        js = ""
+            This is Javascript
+    a
+    b
+=>
+    a + b`,
+`module test {
+    {
+        @Foo(const bar = 20)
+    }
+    const x = (
+        {
+            @Meta(const js = "This is Javascript\\n")
+        }
+        var a
+        var b
+    ) => +(a,b)
 }`
 )
-    
