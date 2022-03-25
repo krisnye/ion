@@ -1,3 +1,4 @@
+import { infixAllowOutline } from "../parser/operators";
 import { Token } from "../Token";
 import { TokenType, tokenTypes } from "./TokenType";
 
@@ -76,10 +77,37 @@ function calculateDentation(lines: Token[][]): Token[] {
 }
 
 /**
+ * Swaps Outdent's to occur before EOL's.
+ * This fixes a problem of parentheses following an outdent peer being interpreted as a call.
+ */
+function pushOutdentsToBeforeEOLs(tokens: Token[]): void {
+    for (let i = 0; i < tokens.length - 1; i++) {
+        let a = tokens[i + 0];
+        let b = tokens[i + 1];
+        if (a.type === tokenTypes.Eol.name && b.type === tokenTypes.Outdent.name) {
+            tokens[i + 0] = b;
+            tokens[i + 1] = a;
+        }
+    }
+}
+
+function removeEOLsBeforeOutlineInfixOperators(tokens: Token[]): void {
+    for (let i = tokens.length - 2; i >= 0; i--) {
+        let a = tokens[i + 0];
+        let b = tokens[i + 1];
+        if (a.type === tokenTypes.Eol.name && infixAllowOutline[b.value]) {
+            tokens.splice(i, 1);
+        }
+    }
+}
+
+/**
  * Inserts Indent and Dedent tokens and removes tabs.
  */
 export function indentation(tokens: Token[]) {
     let lines = splitIntoLines(tokens);
     tokens = calculateDentation(lines);
+    pushOutdentsToBeforeEOLs(tokens);
+    removeEOLsBeforeOutlineInfixOperators(tokens);
     return tokens;
 }

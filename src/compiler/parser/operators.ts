@@ -17,6 +17,10 @@ export function getInfixPrecedence(op: string) {
     return precedence != null ? precedence : op.endsWith("=") ? 3 : 15;
 }
 
+export const infixAllowOutline: { [op: string]: true | undefined } = {
+    "=>": true,
+}
+
 export const infixPrecedence: { [op: string]: number | undefined } = {
     "[": 19,    //  ]
     ".": 19,

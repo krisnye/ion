@@ -179,7 +179,7 @@ testModule(
 
 \`+\` = []
 `,
-`module test {\n    + = []\n}`,
+`module test {\n    \`+\` = []\n}`,
 { finalPhase: parsing },
 );
 

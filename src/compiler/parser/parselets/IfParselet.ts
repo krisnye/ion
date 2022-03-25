@@ -12,6 +12,7 @@ export class IfParselet extends PrefixParselet {
         let test = p.parseExpression();
         let consequent = p.parseBlock();
         let alternate: Node | null = null;
+        p.eol();
         if (p.maybeConsume(tokenTypes.Else.name)) {
             p.whitespace();
             let elseIfToken = p.maybeConsume(tokenTypes.If.name)

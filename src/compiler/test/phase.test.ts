@@ -16,18 +16,18 @@ double = x =>
     const double = () => 2
     const double = (
         var x
-    ) => *(2,x)
+    ) => \`*\`(2,x)
     const double = (
         var x
-    ) => *(2,x)
+    ) => \`*\`(2,x)
     const double = (
         var x
         var y
-    ) => *(2,x)
+    ) => \`*\`(2,x)
     const double = (
         var x
     ) => {
-        *(x,2)
+        \`*\`(x,2)
     }
 }`,
 { finalPhase: opsToNodes },
@@ -38,7 +38,7 @@ testModule(
 x +++= 2 * 10
 `,
 `module test {
-    x = +++(x,*(2,10))
+    x = \`+++\`(x,\`*\`(2,10))
 }`,
 { finalPhase: opsToNodes },
 );
@@ -76,7 +76,7 @@ foo = ""
     </html>
 `,
 `module test {
-    const foo = "<html>\\n    <body>\\n    </body>\\n</html>\\n"
+    const foo = "<html>\\n    <body>\\n    </body>\\n</html>"
 }`,
 { finalPhase: opsToNodes },
 );
@@ -89,7 +89,7 @@ foo = ""
 
 `,
 `module test {
-    const foo = "<html>\\n    <body>\\n"
+    const foo = "<html>\\n    <body>"
 }`,
 { finalPhase: opsToNodes },
 );
@@ -101,7 +101,7 @@ foo = ""
         a + b
 `,
 `module test {
-    const foo = "(a, b) =>\\n    a + b\\n"
+    const foo = "(a, b) =>\\n    a + b"
 }`,
 { finalPhase: opsToNodes },
 );
@@ -209,7 +209,7 @@ for (const func of equivalentFunctions) {
     const x = (
         var a
         var b
-    ) => +(a,b)
+    ) => \`+\`(a,b)
 }`)
 }
 
@@ -229,10 +229,10 @@ x = ()
     }
     const x = (
         {
-            @Meta(const js = "This is Javascript\\n")
+            @Meta(const js = "This is Javascript")
         }
         var a
         var b
-    ) => +(a,b)
+    ) => \`+\`(a,b)
 }`
 )

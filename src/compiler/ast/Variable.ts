@@ -1,9 +1,9 @@
 import { NonFunctionProperties } from "../../types";
 import { Node } from "../Node";
-import { Declaration, metaToString } from "./Declaration";
+import { Declaration } from "./Declaration";
 import { Identifier } from "./Identifier";
 import { MetaCall } from "./Call";
-import { Scope } from "./Scope";
+import { metaToString } from "./MetaContainer";
 
 type Props = NonFunctionProperties<Variable>;
 

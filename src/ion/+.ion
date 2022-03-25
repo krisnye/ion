@@ -1,2 +1,7 @@
 
+@MultiFunction()
 `+` = []
+    @Native()
+        javascript = ""
+            (a, b) => ({ value: a.value + b.value })
+    (a: Integer, b: Integer) => null

@@ -1,6 +1,5 @@
 import { strict as assert } from "assert";
 import { Compiler } from "../Compiler";
-import { parsing } from "../phases/parsing";
 import { Phase } from "../phases/Phase";
 
 export type Options = {

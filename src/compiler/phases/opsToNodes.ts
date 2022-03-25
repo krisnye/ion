@@ -19,7 +19,7 @@ import { Class as AstClass } from "../ast/Class";
 import { Variable } from "../ast/Variable";
 import { FunctionType } from "../ast/FunctionType";
 import { Block } from "../ast/Block";
-import { addMetaCallsToDeclarations } from "../ast/Declaration";
+import { addMetaCallsToContainers } from "../ast/MetaContainer";
 
 function toParametersOrMeta(value: Node | null) {
     let parameters = new Array<Variable | MetaCall>();
@@ -161,6 +161,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                             let parameters = toParametersOrMeta(left.value) as Variable[];
                             return new FunctionType({
                                 location,
+                                meta: [],
                                 parameters,
                                 returnType: right,
                             })
@@ -225,7 +226,8 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
         
                         return new Function({
                             location,
-                            parameters: addMetaCallsToDeclarations(parameters, errors),
+                            meta: [],
+                            parameters: addMetaCallsToContainers(parameters, errors),
                             returnType: null,
                             body: right,
                         })

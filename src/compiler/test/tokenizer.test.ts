@@ -69,12 +69,12 @@ Indent:"    "
 Id:a
 Eol:"\\n"
 Id:b
-Eol:"\\n"
 Outdent:""
+Eol:"\\n"
 Id:z
-Eol:"\\n"
 Outdent:""
-Outdent:""`);
+Outdent:""
+Eol:"\\n"`);
 
 test(
 `
@@ -97,11 +97,11 @@ Indent:"    "
 Id:a
 Eol:"\\n"
 Id:b
-Eol:"\\n"
 Outdent:""
-Id:z
 Eol:"\\n"
-Outdent:""`);
+Id:z
+Outdent:""
+Eol:"\\n"`);
 
 test(
 `if x
@@ -114,16 +114,16 @@ Id:x
 Eol:"\\n"
 Indent:"    "
 Id:y
-Eol:"\\n"
 Outdent:""
+Eol:"\\n"
 Else:else
 If:if
 Id:z
 Eol:"\\n"
 Indent:"    "
 Id:w
-Eol:"\\n"
-Outdent:""`);
+Outdent:""
+Eol:"\\n"`);
 
 test(
 `a

@@ -5,6 +5,7 @@ import { Expression } from "./Expression";
 import { Variable } from "./Variable";
 import { Declaration } from "./Declaration";
 import { MetaCall } from "./Call";
+import { metaToString } from "./MetaContainer";
 
 type Props = NonFunctionProperties<Class>;
 
@@ -19,7 +20,7 @@ export class Class extends Scope implements Declaration {
     patch(props: Partial<Props>) { return super.patch(props); }
 
     toString() {
-        return `class ${this.id}${this.extends.length > 0 ? " extends " + this.extends : ""} ${ Scope.toString([...this.meta, ...this.nodes]) }`;
+        return `${metaToString(this)}class ${this.id}${this.extends.length > 0 ? " extends " + this.extends : ""} ${ Scope.toString([...this.meta, ...this.nodes]) }`;
     }
 
 }

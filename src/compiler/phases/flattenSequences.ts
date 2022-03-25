@@ -1,5 +1,5 @@
 import { ArrayExpression } from "../ast/ArrayExpression";
-import { addMetaCallsToDeclarations } from "../ast/Declaration";
+import { addMetaCallsToContainers } from "../ast/MetaContainer";
 import { Scope } from "../ast/Scope";
 import { Group } from "../pst/Group";
 import { Sequence } from "../pst/Sequence";
@@ -21,7 +21,7 @@ export function flattenSequences(moduleName, module): ReturnType<Phase> {
             }
             else if (node instanceof Scope) {
                 let nodes = Sequence.flatten(...node.nodes);
-                nodes = addMetaCallsToDeclarations(nodes, errors);
+                nodes = addMetaCallsToContainers(nodes, errors);
                 if (nodes.length != node.nodes.length) {
                     return node.patch({ ...node, nodes });
                 }
