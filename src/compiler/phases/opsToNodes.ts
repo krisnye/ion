@@ -13,7 +13,7 @@ import { SourceLocation } from "../SourceLocation";
 import { Reference } from "../ast/Reference";
 import { Phase } from "./Phase";
 import { Member } from "../pst/Member";
-import { IntegerLiteral } from "../pst/IntegerLiteral";
+import { IntegerLiteral } from "../ast/IntegerLiteral";
 import { Class as PstClass } from "../pst/Class";
 import { Class as AstClass } from "../ast/Class";
 import { Variable } from "../ast/Variable";

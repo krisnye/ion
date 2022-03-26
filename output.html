@@ -238,16 +238,20 @@ ul.jsondiffpatch-textdiff {
                     <p>
 @MultiFunction()
 `+` = []
-    @Native()
-        javascript = ""
-            (a, b) =&gt; ({ value: a.value + b.value })
+    @Javascript()
+        ""
+            (a, b) =&gt; {
+                if (a.value === 0) { return b; }
+                if (b.value === 0) { return a; }
+                return ({ "": "Integer", value: a.value + b.value })
+            }
     (a: Integer, b: Integer) =&gt; null
 </p>
                 </td>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>@MultiFunction()<br>`+` = []<br>    @Native()<br>        javascript = \&quot;\&quot;<br>            (a, b) =&gt; ({ value: a.value + b.value })<br>    (a: Integer, b: Integer) =&gt; null<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>@MultiFunction()<br>`+` = []<br>    @Javascript()<br>        \&quot;\&quot;<br>            (a, b) =&gt; {<br>                if (a.value === 0) { return b; }<br>                if (b.value === 0) { return a; }<br>                return ({ \&quot;\&quot;: \&quot;Integer\&quot;, value: a.value + b.value })<br>            }<br>    (a: Integer, b: Integer) =&gt; null<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@MultiFunction&quot; },
   Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
@@ -261,15 +265,11 @@ ul.jsondiffpatch-textdiff {
   Token { &quot;type&quot;: &quot;CloseBracket&quot;, &quot;source&quot;: &quot;]&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@Native&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@Javascript&quot; },
   Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
   Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;javascript&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;=&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;OutlineString&quot;, &quot;source&quot;: &quot;\&quot;\&quot;&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
@@ -282,8 +282,61 @@ ul.jsondiffpatch-textdiff {
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;=&gt;&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;OpenBrace&quot;, &quot;source&quot;: &quot;{&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
+  Token { &quot;type&quot;: &quot;If&quot;, &quot;source&quot;: &quot;if&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;a&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;.&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;value&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;===&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Integer&quot;, &quot;source&quot;: &quot;0&quot; },
+  Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;OpenBrace&quot;, &quot;source&quot;: &quot;{&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Return&quot;, &quot;source&quot;: &quot;return&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;b&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;;&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;CloseBrace&quot;, &quot;source&quot;: &quot;}&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;If&quot;, &quot;source&quot;: &quot;if&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;b&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;.&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;value&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;===&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Integer&quot;, &quot;source&quot;: &quot;0&quot; },
+  Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;OpenBrace&quot;, &quot;source&quot;: &quot;{&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Return&quot;, &quot;source&quot;: &quot;return&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;a&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;;&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;CloseBrace&quot;, &quot;source&quot;: &quot;}&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Return&quot;, &quot;source&quot;: &quot;return&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
   Token { &quot;type&quot;: &quot;OpenBrace&quot;, &quot;source&quot;: &quot;{&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;OutlineString&quot;, &quot;source&quot;: &quot;\&quot;\&quot;&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;:&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;String&quot;, &quot;source&quot;: &quot;\&quot;Integer\&quot;&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;,&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;value&quot; },
   Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;:&quot; },
@@ -300,6 +353,9 @@ ul.jsondiffpatch-textdiff {
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;CloseBrace&quot;, &quot;source&quot;: &quot;}&quot; },
   Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
+  Token { &quot;type&quot;: &quot;Outdent&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;CloseBrace&quot;, &quot;source&quot;: &quot;}&quot; },
   Token { &quot;type&quot;: &quot;Outdent&quot; }, Token { &quot;type&quot;: &quot;Outdent&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
@@ -325,7 +381,7 @@ ul.jsondiffpatch-textdiff {
             
                 <td>
                     <header><span>parsing</span></header>
-                    <p>module + { @MultiFunction() `+` = [{ @Native(javascript = "(a, b) => ({ value: a.value + b.value })")
+                    <p>module + { @MultiFunction() `+` = [{ @Javascript("(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return ({ \"\": \"Integer\", value: a.value + b.value })<br>}")
         (a : Integer , b : Integer) => null
     }]
 }</p>
@@ -336,7 +392,7 @@ ul.jsondiffpatch-textdiff {
                     <p>module + {
     @MultiFunction()
     `+` = [{
-        @Native(javascript = "(a, b) =&gt; ({ value: a.value + b.value })")
+        @Javascript("(a, b) =&gt; {\n    if (a.value === 0) { return b; }\n    if (b.value === 0) { return a; }\n    return ({ \"\": \"Integer\", value: a.value + b.value })\n}")
         (a : Integer , b : Integer) =&gt; null
     }]
 }</p>
@@ -397,28 +453,6 @@ ul.jsondiffpatch-textdiff {
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">4</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        @Native(javascript = &quot;(a, b) =&gt; ({ value: a.value + b.value })&quot;)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">5</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        (<del>a : Integer , b : Integer) =&gt; null</del></span>
-        </div>
-    </td>
-</tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
 <div class="line-num2">3</div>
@@ -430,14 +464,25 @@ ul.jsondiffpatch-textdiff {
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
 <div class="line-num2">4</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        @Native(<ins>const </ins>javascript = &quot;(a, b) =&gt; ({ value: a.value + b.value })&quot;)</span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        @Javascript(&quot;(a, b) =&gt; {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return ({ \&quot;\&quot;: \&quot;Integer\&quot;, value: a.value + b.value })<br>}&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        (<del>a : Integer , b : Integer) =&gt; null</del></span>
         </div>
     </td>
 </tr><tr>
@@ -520,7 +565,7 @@ ul.jsondiffpatch-textdiff {
                     <p>module + {
     @MultiFunction()
     const `+` = [{
-        @Native(const javascript = "(a, b) =&gt; ({ value: a.value + b.value })")
+        @Javascript("(a, b) =&gt; {\n    if (a.value === 0) { return b; }\n    if (b.value === 0) { return a; }\n    return ({ \"\": \"Integer\", value: a.value + b.value })\n}")
         (
             var a : Integer
             var b : Integer
@@ -591,7 +636,7 @@ ul.jsondiffpatch-textdiff {
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>        @Native(const javascript = &quot;(a, b) =&gt; ({ value: a.value + b.value })&quot;)</del></span>
+            <span class="d2h-code-line-ctn"><del>        @Javascript(&quot;(a, b) =&gt; {<br></del>    <del>if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return ({ \&quot;\&quot;: \&quot;Integer\&quot;, value: a.value + b.value })<br>}&quot;)</del></span>
         </div>
     </td>
 </tr><tr>
@@ -624,7 +669,7 @@ ul.jsondiffpatch-textdiff {
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>    }</ins></span>
+            <span class="d2h-code-line-ctn">    <ins>}</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -657,7 +702,7 @@ ul.jsondiffpatch-textdiff {
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            @Native(const javascript = &quot;(a, b) =&gt; ({ value: a.value + b.value })&quot;)</span>
+            <span class="d2h-code-line-ctn">            @Javascript(&quot;(a, b) =&gt; {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return ({ \&quot;\&quot;: \&quot;Integer\&quot;, value: a.value + b.value })<br>}&quot;)</span>
         </div>
     </td>
 </tr><tr>
@@ -765,13 +810,248 @@ ul.jsondiffpatch-textdiff {
     }
     const `+` = [
         {
-            @Native(const javascript = "(a, b) =&gt; ({ value: a.value + b.value })")
+            @Javascript("(a, b) =&gt; {\n    if (a.value === 0) { return b; }\n    if (b.value === 0) { return a; }\n    return ({ \"\": \"Integer\", value: a.value + b.value })\n}")
         }
         (
             var a : Integer
             var b : Integer
         ) =&gt; null
     ]
+}</p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    @Javascript
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+class @Javascript
+    source: String
+</p>
+                </td>
+            
+                <td>
+                    <header><span>tokenization</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class @Javascript<br>    source: String<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Class&quot;, &quot;source&quot;: &quot;class&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@Javascript&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;source&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;:&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;String&quot; },
+  Token { &quot;type&quot;: &quot;Outdent&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; }
+]</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>parsing</span></header>
+                    <p>module @Javascript { class @Javascript { source : String } }</p>
+                </td>
+            
+                <td>
+                    <header><span>syntacticChecks</span></header>
+                    <p>module @Javascript {
+    class @Javascript {
+        source : String
+    }
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>opsToNodes</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,5 +1,5 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module @Javascript {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    class @Javascript {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        source : String</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        <ins>var </ins>source : String</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>removeSoloBlocks</span></header>
+                    <p>module @Javascript {
+    class @Javascript {
+        var source : String
+    }
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>flattenSequences</span></header>
+                    <p>module @Javascript {
+    class @Javascript {
+        var source : String
+    }
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
+                    <p>module @Javascript {
+    class @Javascript {
+        var source : String
+    }
+}</p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    @MultiFunction
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+class @MultiFunction
+</p>
+                </td>
+            
+                <td>
+                    <header><span>tokenization</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class @MultiFunction<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Class&quot;, &quot;source&quot;: &quot;class&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@MultiFunction&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; }
+]</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>parsing</span></header>
+                    <p>module @MultiFunction { class @MultiFunction {} }</p>
+                </td>
+            
+                <td>
+                    <header><span>syntacticChecks</span></header>
+                    <p>module @MultiFunction {
+    class @MultiFunction {}
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>opsToNodes</span></header>
+                    <p>module @MultiFunction {
+    class @MultiFunction {}
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>removeSoloBlocks</span></header>
+                    <p>module @MultiFunction {
+    class @MultiFunction {}
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>flattenSequences</span></header>
+                    <p>module @MultiFunction {
+    class @MultiFunction {}
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
+                    <p>module @MultiFunction {
+    class @MultiFunction {}
 }</p>
                 </td>
             </tr><tr class="channel">
@@ -837,6 +1117,71 @@ class Integer
                     <header><span>identity</span></header>
                     <p>module Integer {
     class Integer {}
+}</p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    String
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+class String
+</p>
+                </td>
+            
+                <td>
+                    <header><span>tokenization</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class String<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Class&quot;, &quot;source&quot;: &quot;class&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;String&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; }
+]</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>parsing</span></header>
+                    <p>module String { class String {} }</p>
+                </td>
+            
+                <td>
+                    <header><span>syntacticChecks</span></header>
+                    <p>module String {
+    class String {}
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>opsToNodes</span></header>
+                    <p>module String {
+    class String {}
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>removeSoloBlocks</span></header>
+                    <p>module String {
+    class String {}
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>flattenSequences</span></header>
+                    <p>module String {
+    class String {}
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
+                    <p>module String {
+    class String {}
 }</p>
                 </td>
             </tr><tr class="channel">

@@ -1,8 +1,8 @@
-import { FloatLiteral } from "../pst/FloatLiteral";
-import { IntegerLiteral } from "../pst/IntegerLiteral";
+import { FloatLiteral } from "../ast/FloatLiteral";
+import { IntegerLiteral } from "../ast/IntegerLiteral";
 import { Parser } from "./Parser";
 import { PrefixOperatorParselet } from "./parselets/PrefixOperatorParselet";
-import { StringLiteral } from "../pst/StringLiteral";
+import { StringLiteral } from "../ast/StringLiteral";
 import { BinaryOperatorParselet } from "./parselets/BinaryOperatorParselet";
 import { MemberParselet } from "./parselets/MemberParselet";
 import { TerminalParselet } from "./parselets/TerminalParselet";

@@ -3,7 +3,7 @@ import { Token } from "../../Token";
 import { Node } from "../../Node";
 import { PrefixParselet } from "../PrefixParselet";
 import { tokenTypes } from "../../tokenizer/TokenType";
-import { StringLiteral } from "../../pst/StringLiteral";
+import { StringLiteral } from "../../ast/StringLiteral";
 import { SourceLocation } from "../../SourceLocation";
 
 export class OutlineStringParselet extends PrefixParselet {
