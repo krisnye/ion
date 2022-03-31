@@ -131,7 +131,7 @@ assert.throws(() =>
 testModule(`
 x y z`,
 ``,
-{ log: false })
+{ log: false, finalPhase: parsing })
 );
 
 testModule(

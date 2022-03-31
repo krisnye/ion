@@ -1,4 +1,5 @@
 import { strict as assert } from "assert";
+import { flattenSequences } from "../phases/flattenSequences";
 import { opsToNodes } from "../phases/opsToNodes";
 import { testModule } from "./testModule";
 
@@ -116,7 +117,8 @@ foo()
 `,
 `module test {
     foo(1,bar(2,3))
-}`
+}`,
+{ finalPhase: flattenSequences }
 );
 
 assert.throws(() => {
@@ -124,7 +126,8 @@ assert.throws(() => {
         `
         @Foo()
         `,
-        `module test {\n    @Foo()\n}`
+        `module test {\n    @Foo()\n}`,
+        { finalPhase: flattenSequences }        
     )
 })
 
@@ -138,7 +141,8 @@ x = 1
         @Foo()
     }
     const x = 1
-}`
+}`,
+{ finalPhase: flattenSequences }
 )
 
 testModule(
@@ -151,7 +155,8 @@ add = (a: Number, b: Number): Number => a
         var a : Number
         var b : Number
     ): Number => a
-}`
+}`,
+{ finalPhase: flattenSequences }
 )
 
 testModule(
@@ -164,7 +169,8 @@ add = (a, b): Number
         var a
         var b
     ): Number
-}`
+}`,
+{ finalPhase: flattenSequences }
 )
 
 testModule(
@@ -176,7 +182,8 @@ add = (a): Number
     const add = (
         var a
     ): Number
-}`
+}`,
+{ finalPhase: flattenSequences }
 )
 
 const equivalentFunctions = [
@@ -210,7 +217,8 @@ for (const func of equivalentFunctions) {
         var a
         var b
     ) => \`+\`(a,b)
-}`)
+}`,
+{ finalPhase: flattenSequences })
 }
 
 testModule(
@@ -234,5 +242,6 @@ x = ()
         var a
         var b
     ) => \`+\`(a,b)
-}`
+}`,
+{ finalPhase: flattenSequences }
 )

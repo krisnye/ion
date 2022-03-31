@@ -6,6 +6,7 @@ import { opsToNodes } from "./opsToNodes";
 import { flattenSequences } from "./flattenSequences";
 import { identity } from "./identity";
 import { removeSoloBlocks } from "./removeSoloBlocks";
+import { resolveExternalReferences } from "./resolveExternalReferences";
 
 export const lexical: Phase[] = [
     tokenization,
@@ -14,5 +15,6 @@ export const lexical: Phase[] = [
     opsToNodes,
     removeSoloBlocks,
     flattenSequences,
+    resolveExternalReferences,
     identity,
 ];

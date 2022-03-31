@@ -43,7 +43,7 @@ export class Compiler {
 
             for (let phase of lexical) {
                 for (let [name,module] of modules.entries()) {
-                    let [newModule, errors] = phase(name, module, this.options);
+                    let [newModule, errors] = phase(name, module, modules, this.options);
                     if (errors.length > 0) {
                         console.log(phase.name);
                         for (let error of errors) {
@@ -68,20 +68,20 @@ export class Compiler {
     }
 
     printErrorConsole(e, sources: Map<string,string>) {
-        let location = e.locations?.[0]
+        let location = e.locations?.[0];
         if (location == null || location.start == null) {
-            throw e
+            throw e;
         }
         else {
-            let { filename } = location
+            let { filename } = location;
             let source = sources.get(filename);
             if (source == null) {
                 throw new Error("Source not found: " + filename);
             }
             let errorContext = new ErrorContext(source, filename);
             let error = errorContext.getError(e.message, ...e.locations);
-            this.options.log("")
-            this.options.log(error.message)
+            this.options.log("");
+            this.options.log(error.message);
         }
     }
 
@@ -92,6 +92,5 @@ export class Compiler {
         }
         logger(phase, module, name);
     }
-
 
 }
