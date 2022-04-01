@@ -1,7 +1,13 @@
+import { Assembly } from "./ast/Assembly";
 import { getInputFilesRecursive } from "./common";
 import ErrorContext from "./errors/ErrorContext";
-import { lexical } from "./phases";
+import { Node } from "./Node";
+import { groupPhases, soloPhases } from "./phases";
 import { Phase } from "./phases/Phase";
+import { Module } from "./pst/Module";
+import { SourceLocation } from "./SourceLocation";
+import { SourcePosition } from "./SourcePosition";
+import toposort from "./toposort";
 
 export type PhaseLogger = (names?: string | string[] | null, ast?: any, file?: string) => void
 
@@ -37,11 +43,13 @@ export class Compiler {
         let finalPhase = debugOptions?.finalPhase;
 
         try {
+            // log the initial source
             for (let [name,module] of modules.entries()) {
                 this.log(logger, "Source", module, name);
             }
 
-            for (let phase of lexical) {
+            //  do solo phases
+            for (let phase of soloPhases) {
                 for (let [name,module] of modules.entries()) {
                     let [newModule, errors] = phase(name, module, modules, this.options);
                     if (errors.length > 0) {
@@ -52,6 +60,46 @@ export class Compiler {
                         return errors;
                     }
                     modules.set(name, newModule);
+                    this.log(logger, phase.name, newModule, name);
+                }
+                if (phase === finalPhase) {
+                    return modules;
+                }
+            }
+            // sort the modules map based upon inter-module dependencies
+            let sortedModuleNames = toposort([...modules.values()].map((module: Module) => {
+                return [...module.dependencies.map(dep => {
+                    return [dep, module.name];
+                })]
+            }).flat() as [any,any][]);
+            modules = new Map(sortedModuleNames.map(name => [name, modules.get(name)]));
+
+            for (let phase of groupPhases) {
+                // merge all the modules into a new module
+                let name = "$";
+                let assembly = new Assembly({
+                    location: new SourceLocation(name, new SourcePosition(0, 0), new SourcePosition(0, 0)),
+                    nodes: [...modules.values()].map((module: Module) => module.nodes).flat(),
+                })
+                // combine all module entries
+                let [newAssembly, errors] = phase(name, assembly, modules, this.options);
+                if (errors.length > 0) {
+                    console.log(phase.name);
+                    for (let error of errors) {
+                        this.printErrorConsole(error, sources);
+                    }
+                    return errors;
+                }
+                // split all nodes back into modules
+                let newNodes = new Map([...modules.keys()].map(name => [name, [] as Node[]]));
+                for (let node of newAssembly.nodes) {
+                    newNodes.get(node.location.filename)!.push(node);
+                }
+                for (let name of newNodes.keys()) {
+                    let module = modules.get(name)!;
+                    let newModule = module.patch({ nodes: newNodes.get(name)})
+                    modules.set(name, newModule);
+                    // log each module individually.
                     this.log(logger, phase.name, newModule, name);
                 }
                 if (phase === finalPhase) {

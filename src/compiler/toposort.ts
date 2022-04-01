@@ -72,6 +72,6 @@ function uniqueNodes(arr){
  * @param {Array} edges
  * @returns {Array}
  */
-export default function(edges){
+export default function(edges: [any,any][]){
   return toposort(uniqueNodes(edges), edges)
 }

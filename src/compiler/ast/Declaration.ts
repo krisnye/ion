@@ -1,7 +1,8 @@
+import { Node } from "../Node";
 import { Identifier } from "./Identifier";
 import { isMetaContainer, MetaContainer } from "./MetaContainer";
 
-export interface Declaration extends MetaContainer {
+export interface Declaration extends MetaContainer, Node {
 
     id: Identifier;
 

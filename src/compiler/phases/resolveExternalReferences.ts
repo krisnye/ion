@@ -12,11 +12,12 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
     let replacements = new Map<Reference, Reference>();
     let scopes = createScopeMaps(module);
     let externalReferences = getExternalReferences(module, scopes);
+    let dependencies = new Set<string>();
 
     module = traverse(module, {
         enter(node) {
             if (node instanceof Module) {
-                replaceExternalReferencesToAbsolute(node, externalModules, replacements, errors, externalReferences);
+                replaceExternalReferencesToAbsolute(node, externalModules, replacements, errors, externalReferences, dependencies);
                 replaceInternalReferencesToAbsolute(node, externalModules, replacements, errors, scopes);
             }
         },
@@ -33,6 +34,7 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
             return replacements.get(node) ?? node;
         }
     });
+    module = module.patch({ dependencies: [...dependencies] });
     return [module, errors];
 }
 
@@ -63,11 +65,12 @@ function replaceInternalReferencesToAbsolute(module: Module, externalModules: Ma
     }
 }
 
-function replaceExternalReferencesToAbsolute(module: Module, externalModules: Map<string,Module>, replacements: Map<Reference, Reference>, errors: Error[], externalReferences: Map<string, Set<Reference>>) {
+function replaceExternalReferencesToAbsolute(module: Module, externalModules: Map<string,Module>, replacements: Map<Reference, Reference>, errors: Error[], externalReferences: Map<string, Set<Reference>>, externalModuleDependencies: Set<string>) {
     for (let external of externalReferences.keys()) {
         let resolved = resolve(join(module.name, external), externalModules);
         if (resolved) {
             let [path, externalModule] = resolved;
+            externalModuleDependencies.add(externalModule.name);
             let absolutePath = getAbsolutePath(path);
             for (let ref of externalReferences.get(external)!.keys()) {
                 replacements.set(ref, ref.patch({ name: absolutePath }));

@@ -106,7 +106,8 @@ export class Parser {
                 ? SourceLocation.merge(nodes[0].location, nodes[nodes.length - 1].location)
                 : new SourceLocation(filename, new SourcePosition(0, 0), new SourcePosition(0, 0)),
             name: filename,
-            nodes
+            nodes,
+            dependencies: []
         })
     }
 

@@ -7,8 +7,9 @@ import { flattenSequences } from "./flattenSequences";
 import { identity } from "./identity";
 import { removeSoloBlocks } from "./removeSoloBlocks";
 import { resolveExternalReferences } from "./resolveExternalReferences";
+import { groupPhase } from "./groupPhase";
 
-export const lexical: Phase[] = [
+export const soloPhases: Phase[] = [
     tokenization,
     parsing,
     syntacticChecks,
@@ -18,3 +19,7 @@ export const lexical: Phase[] = [
     resolveExternalReferences,
     identity,
 ];
+
+export const groupPhases: Phase[] = [
+    groupPhase,
+]
