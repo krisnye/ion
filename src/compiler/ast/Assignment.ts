@@ -1,16 +1,17 @@
-import { NonFunctionProperties } from "../../types";
-import { Node } from "../Node";
-import { Expression } from "./Expression";
+import { Node, NodeProps } from "../Node";
 import { Reference } from "./Reference";
 
-type Props = NonFunctionProperties<Assignment>;
+export interface AssignmentProps extends NodeProps {
+    id: Reference;
+    value: Node;
+}
 export class Assignment extends Node {
 
     id!: Reference;
     value!: Node;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: AssignmentProps) { super(props); }
+    patch(props: Partial<AssignmentProps>) { return super.patch(props); }
 
     toString() {
         return `${this.id} = ${this.value}`;

@@ -1,15 +1,16 @@
-import { NonFunctionProperties } from "../../types";
 import { Node } from "../Node";
-import { FunctionBase } from "./FunctionBase";
+import { FunctionBase, FunctionBaseProps } from "./FunctionBase";
 
-type Props = NonFunctionProperties<Function>;
+export interface FunctionProps extends FunctionBaseProps {
+    body: Node;
+}
 
 export class Function extends FunctionBase {
 
     body!: Node;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: FunctionProps) { super(props); }
+    patch(props: Partial<FunctionProps>) { return super.patch(props); }
 
     toString() {
         return `${super.toString()} => ${this.body}`;

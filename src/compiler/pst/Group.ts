@@ -1,16 +1,19 @@
-import { NonFunctionProperties } from "../../types";
-import { Node } from "../Node";
+import { Node, NodeProps } from "../Node";
 import { Token } from "../Token";
 
-type Props = NonFunctionProperties<Group>;
+export interface GroupProps extends NodeProps {
+    open: Token;
+    close: Token;
+    value: Node | null;
+}
 export class Group extends Node {
 
     open!: Token;
     close!: Token;
     value!: Node | null;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: GroupProps) { super(props); }
+    patch(props: Partial<GroupProps>) { return super.patch(props); }
 
     toString() {
         return `${this.open.value}${this.value != null ? this.value : ""}${this.close.value}`;

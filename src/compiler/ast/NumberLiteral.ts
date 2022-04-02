@@ -1,14 +1,15 @@
-import { NonFunctionProperties } from "../../types";
-import { Literal } from "./Literal";
+import { Literal, LiteralProps } from "./Literal";
 
-type Props = NonFunctionProperties<NumberLiteral>;
+export interface NumberLiteralProps extends LiteralProps {
+    value: number;
+}
 
 export class NumberLiteral extends Literal {
 
     value!: number;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: NumberLiteralProps) { super(props); }
+    patch(props: Partial<NumberLiteralProps>) { return super.patch(props); }
 
     toString() {
         let text = this.value.toString();

@@ -1,15 +1,18 @@
-import { NonFunctionProperties } from "../../types";
-import { Node } from "../Node";
+import { Node, NodeProps } from "../Node";
 
-type Props = NonFunctionProperties<Conditional>;
+export interface ConditionalProps extends NodeProps {
+    test: Node;
+    consequent: Node;
+    alternate: Node | null;    
+}
 export class Conditional extends Node {
 
     test!: Node;
     consequent!: Node;
     alternate!: Node | null;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: ConditionalProps) { super(props); }
+    patch(props: Partial<ConditionalProps>) { return super.patch(props); }
 
     toString() {
         if (this.alternate != null) {

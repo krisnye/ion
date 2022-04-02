@@ -1,11 +1,11 @@
-import { NonFunctionProperties } from "../../types";
-import { FunctionBase } from "./FunctionBase";
+import { FunctionBase, FunctionBaseProps } from "./FunctionBase";
 
-type Props = NonFunctionProperties<FunctionType>;
+export interface FunctionTypeProps extends FunctionBaseProps {
+}
 
 export class FunctionType extends FunctionBase {
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: FunctionTypeProps) { super(props); }
+    patch(props: Partial<FunctionTypeProps>) { return super.patch(props); }
 
 }

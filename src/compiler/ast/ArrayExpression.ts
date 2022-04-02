@@ -1,13 +1,13 @@
-import { NonFunctionProperties } from "../../types";
-import { Block } from "./Block";
+import { Block, BlockProps } from "./Block";
 import { Scope } from "./Scope";
 
-type Props = NonFunctionProperties<ArrayExpression>;
+export interface ArrayProps extends BlockProps {
+}
 
 export class ArrayExpression extends Block {
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: ArrayProps) { super(props); }
+    patch(props: Partial<ArrayProps>) { return super.patch(props); }
 
     toString() {
         return Scope.toString(this.nodes, "[", "]");

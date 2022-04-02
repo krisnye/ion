@@ -2,9 +2,9 @@ import { Serializable } from "./Serializable";
 
 export class Immutable extends Serializable {
 
-    constructor(props) {
+    constructor(values) {
         super();
-        Object.assign(this, props);
+        Object.assign(this, values);
     }
 
     patch(props): this {

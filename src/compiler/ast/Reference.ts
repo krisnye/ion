@@ -1,11 +1,11 @@
-import { NonFunctionProperties } from "../../types";
-import { Identifier } from "./Identifier";
+import { Identifier, IdentifierProps } from "./Identifier";
 
-type Props = NonFunctionProperties<Reference>;
+export interface ReferenceProps extends IdentifierProps  {
+}
 
-export class Reference extends Identifier {
+export class Reference extends Identifier  {
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: ReferenceProps) { super(props); }
+    patch(props: Partial<ReferenceProps>) { return super.patch(props); }
 
 }

@@ -1,10 +1,11 @@
-import { NonFunctionProperties } from "../../types";
 import { Node } from "../Node";
 import { isMetaName } from "../utility";
 import { Reference } from "./Reference";
-import { Scope } from "./Scope";
+import { Scope, ScopeProps } from "./Scope";
 
-type Props = NonFunctionProperties<Call>;
+export interface AssignmentProps extends ScopeProps {
+    callee: Node;
+}
 
 export type MetaCall = Call & { callee: Reference }
 
@@ -16,8 +17,8 @@ export class Call extends Scope {
 
     callee!: Node;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: AssignmentProps) { super(props); }
+    patch(props: Partial<AssignmentProps>) { return super.patch(props); }
 
     toString() {
         return `${this.callee}(${this.nodes})`;

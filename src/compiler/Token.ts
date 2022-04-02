@@ -1,18 +1,22 @@
-import { NonFunctionProperties } from "../types";
-import { Node } from "./Node";
+import { Immutable } from "./Immutable";
 import { SourceLocation } from "./SourceLocation";
 
-type Props = NonFunctionProperties<Token>;
+export interface TokenProps {
+    type: string;
+    source: string;
+    value: any;
+    location: SourceLocation;
+}
 
-export class Token extends Node {
+export class Token extends Immutable {
 
     readonly type!: string;
     readonly source!: string;
     readonly value!: any;
     readonly location!: SourceLocation;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: TokenProps) { super(props); }
+    patch(props: Partial<TokenProps>) { return super.patch(props); }
 
     static merge(left: Token, right: Token) {
         return left.patch({
@@ -27,7 +31,7 @@ export class Token extends Node {
     }
 
     toJSON() {
-        return { type: this.type, source: this.source };
+        return { type: this.type, source: this.source } as any;
     }
 
 }

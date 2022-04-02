@@ -1,15 +1,17 @@
-import { NonFunctionProperties } from "../../types";
-import { Node } from "../Node";
+import { Node, NodeProps } from "../Node";
 import { Token } from "../Token";
 
-type Props = NonFunctionProperties<UnaryOperation>;
+export interface UnaryOperationProps extends NodeProps {
+    operator: Token;
+    value: Node;
+}
 export class UnaryOperation extends Node {
 
     operator!: Token;
     value!: Node;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: UnaryOperationProps) { super(props); }
+    patch(props: Partial<UnaryOperationProps>) { return super.patch(props); }
 
     toString() {
         return `${this.operator} ${this.value}`;

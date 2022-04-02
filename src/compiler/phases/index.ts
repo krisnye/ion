@@ -7,7 +7,7 @@ import { flattenSequences } from "./flattenSequences";
 import { identity } from "./identity";
 import { removeSoloBlocks } from "./removeSoloBlocks";
 import { resolveExternalReferences } from "./resolveExternalReferences";
-import { groupPhase } from "./groupPhase";
+import { simplify } from "./simplify";
 
 export const soloPhases: Phase[] = [
     tokenization,
@@ -17,9 +17,11 @@ export const soloPhases: Phase[] = [
     removeSoloBlocks,
     flattenSequences,
     resolveExternalReferences,
-    identity,
+    simplify,
 ];
 
+// hmmm, maybe we can keep things in solo phases... the performance will be much higher?
+
 export const groupPhases: Phase[] = [
-    groupPhase,
+    identity,
 ]

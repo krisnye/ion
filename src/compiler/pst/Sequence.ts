@@ -1,9 +1,9 @@
-import { NonFunctionProperties } from "../../types";
 import { Node } from "../Node";
-import { Scope } from "../ast/Scope";
+import { Scope, ScopeProps } from "../ast/Scope";
 import { SourceLocation } from "../SourceLocation";
 
-type Props = NonFunctionProperties<Sequence>;
+export interface SequenceProps extends ScopeProps {
+}
 
 function merge(left: Node | null, right: Node | null): Node | null {
     if (left == null) {
@@ -34,8 +34,8 @@ function merge(left: Node | null, right: Node | null): Node | null {
 //  A group of nodes the type of which is the sequence of all nodes types
 export class Sequence extends Scope {
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: SequenceProps) { super(props); }
+    patch(props: Partial<SequenceProps>) { return super.patch(props); }
 
     static flatten(...nodes: Array<Node | null>) {
         let flat = new Array<Node>();

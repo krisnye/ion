@@ -1,12 +1,12 @@
-import { NonFunctionProperties } from "../../types";
-import { Scope } from "./Scope";
+import { Scope, ScopeProps } from "./Scope";
 
-type Props = NonFunctionProperties<Assembly>;
+export interface AssemblyProps extends ScopeProps {
+}
 
 export class Assembly extends Scope {
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: AssemblyProps) { super(props); }
+    patch(props: Partial<AssemblyProps>) { return super.patch(props); }
 
     toString() {
         return `assembly ${ super.toString() }`;

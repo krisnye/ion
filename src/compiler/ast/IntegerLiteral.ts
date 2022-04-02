@@ -1,12 +1,12 @@
-import { NonFunctionProperties } from "../../types";
-import { NumberLiteral } from "./NumberLiteral";
+import { NumberLiteral, NumberLiteralProps } from "./NumberLiteral";
 
-type Props = NonFunctionProperties<NumberLiteral>;
+export interface IntegerLiteralProps extends NumberLiteralProps {
+}
 
 export class IntegerLiteral extends NumberLiteral {
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: IntegerLiteralProps) { super(props); }
+    patch(props: Partial<IntegerLiteralProps>) { return super.patch(props); }
 
     toString() {
         return this.value.toString();

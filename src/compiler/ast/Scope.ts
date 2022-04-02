@@ -1,14 +1,15 @@
-import { NonFunctionProperties } from "../../types";
-import { Node } from "../Node";
+import { Node, NodeProps } from "../Node";
 
-type Props = NonFunctionProperties<Scope>;
+export interface ScopeProps extends NodeProps {
+    nodes: Node[];
+}
 
 export class Scope extends Node {
 
     nodes!: Node[];
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: ScopeProps) { super(props); }
+    patch(props: Partial<ScopeProps>) { return super.patch(props); }
 
     toString() {
         return Scope.toString(this.nodes);

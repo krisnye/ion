@@ -38,7 +38,6 @@ export class Compiler {
     ) : Map<string,any> | Error[] {
         let sources = new Map(input.entries());
         let modules: Map<string,any> = input;
-        let order = new Array<string>();
         let logger = debugOptions?.logger ?? (() => {});
         let finalPhase = debugOptions?.finalPhase;
 
@@ -109,7 +108,7 @@ export class Compiler {
         } catch (e) {
             this.printErrorConsole(e, sources);
         } finally {
-            logger(null, order.length > 0 ? order : [...modules.keys()]);
+            logger(null, [...modules.keys()]);
         }
 
         return modules;

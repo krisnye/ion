@@ -350,12 +350,12 @@ class Integer
                 </td>
             
                 <td>
-                    <header><span>identity</span></header>
+                    <header><span>simplify</span></header>
                     <p>module Integer { class `$.Integer` {} }</p>
                 </td>
             
                 <td>
-                    <header><span>groupPhase</span></header>
+                    <header><span>identity</span></header>
                     <p>module Integer { class `$.Integer` {} }</p>
                 </td>
             </tr><tr class="channel">
@@ -484,12 +484,12 @@ class @MultiFunction
                 </td>
             
                 <td>
-                    <header><span>identity</span></header>
+                    <header><span>simplify</span></header>
                     <p>module @MultiFunction { class `$.@MultiFunction` {} }</p>
                 </td>
             
                 <td>
-                    <header><span>groupPhase</span></header>
+                    <header><span>identity</span></header>
                     <p>module @MultiFunction { class `$.@MultiFunction` {} }</p>
                 </td>
             </tr><tr class="channel">
@@ -618,12 +618,12 @@ class String
                 </td>
             
                 <td>
-                    <header><span>identity</span></header>
+                    <header><span>simplify</span></header>
                     <p>module String { class `$.String` {} }</p>
                 </td>
             
                 <td>
-                    <header><span>groupPhase</span></header>
+                    <header><span>identity</span></header>
                     <p>module String { class `$.String` {} }</p>
                 </td>
             </tr><tr class="channel">
@@ -895,13 +895,13 @@ class @Javascript
                 </td>
             
                 <td>
-                    <header><span>identity</span></header>
+                    <header><span>simplify</span></header>
                     <p>module @Javascript { class `$.@Javascript` { var source : `$.String` } }
 // externals: String</p>
                 </td>
             
                 <td>
-                    <header><span>groupPhase</span></header>
+                    <header><span>identity</span></header>
                     <p>module @Javascript { class `$.@Javascript` { var source : `$.String` } }
 // externals: String</p>
                 </td>
@@ -1737,7 +1737,7 @@ class @Javascript
                 </td>
             
                 <td>
-                    <header><span>identity</span></header>
+                    <header><span>simplify</span></header>
                     <p>module + { { `$.@MultiFunction`() }
     const `$.+` = [
         { `$.@Javascript`("(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { \"\": \"Integer\", value: a.value + b.value };<br>}") }
@@ -1751,7 +1751,7 @@ class @Javascript
                 </td>
             
                 <td>
-                    <header><span>groupPhase</span></header>
+                    <header><span>identity</span></header>
                     <p>module + { { `$.@MultiFunction`() }
     const `$.+` = [
         { `$.@Javascript`("(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { \"\": \"Integer\", value: a.value + b.value };<br>}") }
@@ -2171,7 +2171,7 @@ x = (a, b) =>
                 </td>
             
                 <td>
-                    <header><span>identity</span></header>
+                    <header><span>simplify</span></header>
                     <p>module sample.one {
     const `$.sample.one.x` = (
         var a
@@ -2182,7 +2182,7 @@ x = (a, b) =>
                 </td>
             
                 <td>
-                    <header><span>groupPhase</span></header>
+                    <header><span>identity</span></header>
                     <p>module sample.one {
     const `$.sample.one.x` = (
         var a

@@ -1,8 +1,11 @@
-import { NonFunctionProperties } from "../../types";
 import { Block } from "../ast/Block";
-import { Node } from "../Node";
+import { Node, NodeProps } from "../Node";
 
-type Props = NonFunctionProperties<For>;
+export interface ForProps extends NodeProps {
+    id: Node;
+    value: Node;
+    body: Block;
+}
 
 export class For extends Node {
 
@@ -10,8 +13,8 @@ export class For extends Node {
     value!: Node;
     body!: Block;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: ForProps) { super(props); }
+    patch(props: Partial<ForProps>) { return super.patch(props); }
 
     toString() {
         return `for ${this.id} in ${this.value} ${this.body}`;

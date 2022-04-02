@@ -1,23 +1,27 @@
-import { NonFunctionProperties } from "../../types";
 import { Identifier } from "../ast/Identifier";
-import { Scope } from "./Scope";
-import { Expression } from "./Expression";
+import { Scope, ScopeProps } from "./Scope";
 import { Variable } from "./Variable";
 import { Declaration } from "./Declaration";
 import { MetaCall } from "./Call";
 import { metaToString } from "./MetaContainer";
+import { Node } from "../Node";
 
-type Props = NonFunctionProperties<Class>;
+export interface ClassProps extends ScopeProps {
+    id: Identifier;
+    extends: Node[];
+    nodes: Variable[];
+    meta: MetaCall[];
+}
 
 export class Class extends Scope implements Declaration {
 
     id!: Identifier;
-    extends!: Expression[];
+    extends!: Node[];
     nodes!: Variable[];
     meta!: MetaCall[];
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: ClassProps) { super(props); }
+    patch(props: Partial<ClassProps>) { return super.patch(props); }
 
     toString() {
         return `${metaToString(this)}class ${this.id}${this.extends.length > 0 ? " extends " + this.extends : ""} ${ Scope.toString([...this.meta, ...this.nodes]) }`;

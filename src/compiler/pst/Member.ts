@@ -1,7 +1,10 @@
-import { NonFunctionProperties } from "../../types";
-import { Node } from "../Node";
+import { Node, NodeProps } from "../Node";
 
-type Props = NonFunctionProperties<Member>;
+export interface MemberProps extends NodeProps {
+    object: Node;
+    property: Node;
+    computed: boolean;
+}
 
 export class Member extends Node {
 
@@ -9,8 +12,8 @@ export class Member extends Node {
     property!: Node;
     computed!: boolean;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: MemberProps) { super(props); }
+    patch(props: Partial<MemberProps>) { return super.patch(props); }
 
     toString() {
         return this.computed ? `${this.object}[${this.property}]` : `${this.object}.${this.property}`;

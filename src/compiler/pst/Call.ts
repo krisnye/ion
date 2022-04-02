@@ -1,15 +1,17 @@
-import { NonFunctionProperties } from "../../types";
-import { Node } from "../Node";
+import { Node, NodeProps } from "../Node";
 
-type Props = NonFunctionProperties<Call>;
+export interface CallProps extends NodeProps {
+    callee: Node;
+    args: Node | null;
+}
 
 export class Call extends Node {
 
     callee!: Node;
     args!: Node | null;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: CallProps) { super(props); }
+    patch(props: Partial<CallProps>) { return super.patch(props); }
 
     toString() {
         return `${this.callee}(${this.args != null ? this.args : ""})`;

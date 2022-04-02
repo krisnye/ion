@@ -1,12 +1,13 @@
-import { NonFunctionProperties } from "../../types";
-import { Literal } from "./Literal";
+import { Literal, LiteralProps } from "./Literal";
 
-type Props = NonFunctionProperties<StringLiteral>;
+export interface StringLiteralProps extends LiteralProps {
+    value: string;
+}
 
 export class StringLiteral extends Literal {
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: StringLiteralProps) { super(props); }
+    patch(props: Partial<StringLiteralProps>) { return super.patch(props); }
 
     toString() {
         return JSON.stringify(this.value);

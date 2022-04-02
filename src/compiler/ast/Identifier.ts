@@ -1,15 +1,16 @@
-import { NonFunctionProperties } from "../../types";
 import { isValidId } from "../common";
-import { Node } from "../Node";
+import { Node, NodeProps } from "../Node";
 
-type Props = NonFunctionProperties<Identifier>;
+export interface IdentifierProps extends NodeProps {
+    name: string;
+}
 
 export class Identifier extends Node {
 
     name!: string;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: IdentifierProps) { super(props); }
+    patch(props: Partial<IdentifierProps>) { return super.patch(props); }
 
     toString() {
         return isValidId(this.name) ? this.name : `\`${this.name}\``;

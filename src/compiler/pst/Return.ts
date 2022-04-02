@@ -1,14 +1,15 @@
-import { NonFunctionProperties } from "../../types";
-import { Node } from "../Node";
+import { Node, NodeProps } from "../Node";
 
-type Props = NonFunctionProperties<Return>;
+export interface ReturnProps extends NodeProps {
+    value: Node;
+}
 
 export class Return extends Node {
 
     value!: Node;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: ReturnProps) { super(props); }
+    patch(props: Partial<ReturnProps>) { return super.patch(props); }
 
     toString() {
         return `return ${this.value}`;

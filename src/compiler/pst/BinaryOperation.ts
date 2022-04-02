@@ -1,18 +1,20 @@
-import { NonFunctionProperties } from "../../types";
-import { Node } from "../Node";
+import { Node, NodeProps } from "../Node";
 import { infixPrecedence } from "../parser/operators";
 import { Token } from "../Token";
-import { Identifier } from "../ast/Identifier";
 
-type Props = NonFunctionProperties<BinaryOperation>;
+export interface BinaryOperationProps extends NodeProps {
+    left: Node;
+    operator: Token;
+    right: Node;
+}
 export class BinaryOperation extends Node {
 
     left!: Node;
     operator!: Token;
     right!: Node;
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: BinaryOperationProps) { super(props); }
+    patch(props: Partial<BinaryOperationProps>) { return super.patch(props); }
 
     getPrecedence() {
         return infixPrecedence[this.operator.value]!;

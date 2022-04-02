@@ -1,15 +1,17 @@
-import { NonFunctionProperties } from "../../types";
-import { Scope } from "../ast/Scope";
+import { Scope, ScopeProps } from "../ast/Scope";
 
-type Props = NonFunctionProperties<Module>;
+export interface ModuleProps extends ScopeProps {
+    name: string;
+    dependencies: string[];
+}
 
 export class Module extends Scope {
 
     name!: string;
     dependencies!: string[];
 
-    constructor(props: Props) { super(props); }
-    patch(props: Partial<Props>) { return super.patch(props); }
+    constructor(props: ModuleProps) { super(props); }
+    patch(props: Partial<ModuleProps>) { return super.patch(props); }
 
     toString() {
         if (this.dependencies.length > 0) {
