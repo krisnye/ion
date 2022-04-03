@@ -1891,66 +1891,47 @@ class String
         
                 <td>
                     <header><span>Source</span></header>
-                    <p>foo = 1.0
-bar = 3
-baz = foo + bar
+                    <p>alpha = 1
+beta = 2
+charlie = alpha + beta
 
-x = (a, b) =>
-    a + b
-    x()
+// x = (a, b) =>
+//     a + b
+//     x()
 </p>
                 </td>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;foo = 1.0<br>bar = 3<br>baz = foo + bar<br><br>x = (a, b) =&gt;<br>    a + b<br>    x()<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;foo&quot; },
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;alpha = 1<br>beta = 2<br>charlie = alpha + beta<br><br>// x = (a, b) =&gt;<br>//     a + b<br>//     x()<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;alpha&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;=&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Float&quot;, &quot;source&quot;: &quot;1.0&quot; },
+  Token { &quot;type&quot;: &quot;Integer&quot;, &quot;source&quot;: &quot;1&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;bar&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;beta&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;=&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Integer&quot;, &quot;source&quot;: &quot;3&quot; },
+  Token { &quot;type&quot;: &quot;Integer&quot;, &quot;source&quot;: &quot;2&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;baz&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;charlie&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;=&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;foo&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;alpha&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;+&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;bar&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;beta&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;x&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;=&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;a&quot; },
-  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;,&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;b&quot; },
-  Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;=&gt;&quot; },
+  Token { &quot;type&quot;: &quot;Comment&quot;, &quot;source&quot;: &quot;// x = (a, b) =&gt;&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;a&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;+&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;b&quot; },
+  Token { &quot;type&quot;: &quot;Comment&quot;, &quot;source&quot;: &quot;//     a + b&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;x&quot; },
-  Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
-  Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
-  Token { &quot;type&quot;: &quot;Outdent&quot; },
+  Token { &quot;type&quot;: &quot;Comment&quot;, &quot;source&quot;: &quot;//     x()&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; }
 ]</pre></div></div></p>
                 </td>
@@ -1958,20 +1939,18 @@ x = (a, b) =>
                 <td>
                     <header><span>parsing</span></header>
                     <p>module sample.one {
-    foo = 1.0
-    bar = 3
-    baz = foo + bar
-    x = (a , b) => { a + b x() }
+    alpha = 1
+    beta = 2
+    charlie = alpha + beta
 }</p>
                 </td>
             
                 <td>
                     <header><span>syntacticChecks</span></header>
                     <p>module sample.one {
-    foo = 1.0
-    bar = 3
-    baz = foo + bar
-    x = (a , b) => { a + b x() }
+    alpha = 1
+    beta = 2
+    charlie = alpha + beta
 }</p>
                 </td>
             
@@ -1994,7 +1973,7 @@ x = (a, b) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,9 +1,12 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,5 +1,5 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -2015,7 +1994,7 @@ x = (a, b) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    foo = 1.0</span>
+            <span class="d2h-code-line-ctn">    alpha = 1</span>
         </div>
     </td>
 </tr><tr>
@@ -2026,7 +2005,7 @@ x = (a, b) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    bar = 3</span>
+            <span class="d2h-code-line-ctn">    beta = 2</span>
         </div>
     </td>
 </tr><tr>
@@ -2037,29 +2016,7 @@ x = (a, b) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    baz = foo<del> + </del>bar</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">5</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    x = (<del>a , b) =&gt; {</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        a<del> + b</del></span>
+            <span class="d2h-code-line-ctn">    charlie = alpha<del> + </del>beta</span>
         </div>
     </td>
 </tr><tr>
@@ -2070,7 +2027,7 @@ x = (a, b) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>const </ins>foo = 1.0</span>
+            <span class="d2h-code-line-ctn">    <ins>const </ins>alpha = 1</span>
         </div>
     </td>
 </tr><tr>
@@ -2081,7 +2038,7 @@ x = (a, b) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>const </ins>bar = 3</span>
+            <span class="d2h-code-line-ctn">    <ins>const </ins>beta = 2</span>
         </div>
     </td>
 </tr><tr>
@@ -2092,90 +2049,13 @@ x = (a, b) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>const </ins>baz = <ins>`+`(</ins>foo<ins>,</ins>bar<ins>)</ins></span>
+            <span class="d2h-code-line-ctn">    <ins>const </ins>charlie = <ins>`+`(</ins>alpha<ins>,</ins>beta<ins>)</ins></span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
 <div class="line-num2">5</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>const </ins>x = (</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>var </ins>a</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        `+`(a,b)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">10</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        x()</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">9</div>
-<div class="line-num2">12</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -2195,26 +2075,18 @@ x = (a, b) =>
                 <td>
                     <header><span>removeSoloBlocks</span></header>
                     <p>module sample.one {
-    const foo = 1.0
-    const bar = 3
-    const baz = `+`(foo,bar)
-    const x = (
-        var a
-        var b
-    ) => { `+`(a,b) x() }
+    const alpha = 1
+    const beta = 2
+    const charlie = `+`(alpha,beta)
 }</p>
                 </td>
             
                 <td>
                     <header><span>flattenSequences</span></header>
                     <p>module sample.one {
-    const foo = 1.0
-    const bar = 3
-    const baz = `+`(foo,bar)
-    const x = (
-        var a
-        var b
-    ) => { `+`(a,b) x() }
+    const alpha = 1
+    const beta = 2
+    const charlie = `+`(alpha,beta)
 }</p>
                 </td>
             
@@ -2237,7 +2109,7 @@ x = (a, b) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,12 +1,13 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,5 +1,6 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -2258,7 +2130,7 @@ x = (a, b) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const foo = 1.0</span>
+            <span class="d2h-code-line-ctn">    const alpha = 1</span>
         </div>
     </td>
 </tr><tr>
@@ -2269,7 +2141,7 @@ x = (a, b) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const bar = 3</span>
+            <span class="d2h-code-line-ctn">    const beta = 2</span>
         </div>
     </td>
 </tr><tr>
@@ -2280,18 +2152,7 @@ x = (a, b) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const baz = <del>`+`(</del>foo<del>,</del>bar<del>)</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">5</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const x = (</span>
+            <span class="d2h-code-line-ctn">    const charlie = <del>`+`(</del>alpha<del>,</del>beta<del>)</del></span>
         </div>
     </td>
 </tr><tr>
@@ -2302,7 +2163,7 @@ x = (a, b) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const <ins>`$.sample.one.</ins>foo<ins>`</ins> = 1.0</span>
+            <span class="d2h-code-line-ctn">    const <ins>`$.sample.one.</ins>alpha<ins>`</ins> = 1</span>
         </div>
     </td>
 </tr><tr>
@@ -2313,7 +2174,7 @@ x = (a, b) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const <ins>`$.sample.one.</ins>bar<ins>`</ins> = 3</span>
+            <span class="d2h-code-line-ctn">    const <ins>`$.sample.one.</ins>beta<ins>`</ins> = 2</span>
         </div>
     </td>
 </tr><tr>
@@ -2324,112 +2185,13 @@ x = (a, b) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const <ins>`$.sample.one.</ins>baz<ins>`</ins> = <ins>`$.+`(`$.sample.one.</ins>foo<ins>`,`$.sample.one.</ins>bar<ins>`)</ins></span>
+            <span class="d2h-code-line-ctn">    const <ins>`$.sample.one.</ins>charlie<ins>`</ins> = <ins>`$.+`(`$.sample.one.</ins>alpha<ins>`,`$.sample.one.</ins>beta<ins>`)</ins></span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
 <div class="line-num2">5</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const <ins>`$.sample.one.</ins>x<ins>`</ins> = (</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">9</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        <del>`+`(</del>a,b)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">10</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        x<del>()</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>`$.+`(</ins>a,b)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">10</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>`$.sample.one.</ins>x<ins>`()</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -2440,7 +2202,7 @@ x = (a, b) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">13</div>
+<div class="line-num2">6</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
@@ -2497,7 +2259,7 @@ x = (a, b) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const `$.sample.one.foo` = 1.0</span>
+            <span class="d2h-code-line-ctn">    const `$.sample.one.alpha` = 1</span>
         </div>
     </td>
 </tr><tr>
@@ -2508,7 +2270,7 @@ x = (a, b) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const `$.sample.one.bar` = 3</span>
+            <span class="d2h-code-line-ctn">    const `$.sample.one.beta` = 2</span>
         </div>
     </td>
 </tr><tr>
@@ -2519,7 +2281,7 @@ x = (a, b) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const `$.sample.one.foo` = 1.0<ins> : `$.float`</ins></span>
+            <span class="d2h-code-line-ctn">    const `$.sample.one.alpha` = 1<ins> : `$.integer`</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -2530,7 +2292,7 @@ x = (a, b) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const `$.sample.one.bar` = 3<ins> : `$.integer`</ins></span>
+            <span class="d2h-code-line-ctn">    const `$.sample.one.beta` = 2<ins> : `$.integer`</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -2541,7 +2303,7 @@ x = (a, b) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    const `$.sample.one.baz` = `$.+`(`$.sample.one.foo`,`$.sample.one.bar`)</span>
+            <span class="d2h-code-line-ctn">    const `$.sample.one.charlie` = `$.+`(`$.sample.one.alpha`,`$.sample.one.beta`)</span>
         </div>
     </td>
 </tr><tr>
@@ -2552,7 +2314,7 @@ x = (a, b) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    const `$.sample.one.x` = (</span>
+            <span class="d2h-code-line-ctn">}</span>
         </div>
     </td>
 </tr><tr>
@@ -2563,7 +2325,7 @@ x = (a, b) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: +</span>
         </div>
     </td>
 </tr>
@@ -2578,13 +2340,9 @@ x = (a, b) =>
                 <td>
                     <header><span>simplify (2)</span></header>
                     <p>module sample.one {
-    const `$.sample.one.foo` = 1.0 : `$.float`
-    const `$.sample.one.bar` = 3 : `$.integer`
-    const `$.sample.one.baz` = `$.+`(`$.sample.one.foo`,`$.sample.one.bar`)
-    const `$.sample.one.x` = (
-        var a
-        var b
-    ) => { `$.+`(a,b) `$.sample.one.x`() }
+    const `$.sample.one.alpha` = 1 : `$.integer`
+    const `$.sample.one.beta` = 2 : `$.integer`
+    const `$.sample.one.charlie` = `$.+`(`$.sample.one.alpha`,`$.sample.one.beta`)
 }
 // externals: +</p>
                 </td>
@@ -2592,13 +2350,9 @@ x = (a, b) =>
                 <td>
                     <header><span>identity</span></header>
                     <p>module sample.one {
-    const `$.sample.one.foo` = 1.0 : `$.float`
-    const `$.sample.one.bar` = 3 : `$.integer`
-    const `$.sample.one.baz` = `$.+`(`$.sample.one.foo`,`$.sample.one.bar`)
-    const `$.sample.one.x` = (
-        var a
-        var b
-    ) => { `$.+`(a,b) `$.sample.one.x`() }
+    const `$.sample.one.alpha` = 1 : `$.integer`
+    const `$.sample.one.beta` = 2 : `$.integer`
+    const `$.sample.one.charlie` = `$.+`(`$.sample.one.alpha`,`$.sample.one.beta`)
 }
 // externals: +</p>
                 </td>

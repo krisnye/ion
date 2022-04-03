@@ -7,7 +7,7 @@ import { Phase } from "./phases/Phase";
 import { Module } from "./pst/Module";
 import { SourceLocation } from "./SourceLocation";
 import { SourcePosition } from "./SourcePosition";
-import toposort from "./toposort";
+import { toposort } from "./toposort";
 
 export type PhaseLogger = (names?: string | string[] | null, ast?: any, file?: string) => void
 
@@ -78,14 +78,11 @@ export class Compiler {
             }
             
             // sort the modules map based upon inter-module dependencies
-            let sentinel = {}
-            let sortedModuleNames = toposort([...modules.values()].map((module: Module) => {
-                return module.dependencies.length ? [...module.dependencies.map(dep => {
+            let sortedModuleNames = toposort([...modules.keys()], [...modules.values()].map((module: Module) => {
+                return [...module.dependencies.map(dep => {
                     return [dep, module.name];
-                })] : [[sentinel, module.name]];
+                })];
             }).flat() as [any,any][]);
-            // remove the sentinel
-            sortedModuleNames = sortedModuleNames.filter(a => typeof a === "string");
             modules = new Map(sortedModuleNames.map(name => [name, modules.get(name)]));
 
             for (let phase of groupPhases) {

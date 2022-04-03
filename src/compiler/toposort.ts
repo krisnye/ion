@@ -1,7 +1,7 @@
 
 // copied from https://github.com/marcelklehr/toposort/blob/master/index.js
 
-function toposort(nodes, edges) {
+function toposortInternal(nodes, edges) {
   var cursor = nodes.length;
   var sorted = new Array(cursor);
   var visited = {};
@@ -72,6 +72,9 @@ function uniqueNodes(arr){
  * @param {Array} edges
  * @returns {Array}
  */
-export default function(edges: [any,any][]){
-  return toposort(uniqueNodes(edges), edges)
+export function toposort(nodes: any[], edges: [any,any][]){
+  let sentinel = {};
+  edges = [...nodes.map(node => [sentinel, node] as [any,any], ...edges)];
+  let result = toposortInternal(uniqueNodes(edges), edges);
+  return result.filter(node => node !== sentinel);
 }
