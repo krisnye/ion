@@ -17,6 +17,8 @@ export const soloPhases: Phase[] = [
     removeSoloBlocks,
     flattenSequences,
     resolveExternalReferences,
+    //  MUST be solo up to this point so we can get external dependencies.
+
     simplify,
 ];
 

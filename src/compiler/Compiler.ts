@@ -48,9 +48,11 @@ export class Compiler {
             }
 
             //  do solo phases
-            for (let phase of soloPhases) {
-                for (let [name,module] of modules.entries()) {
-                    let [newModule, errors] = phase(name, module, modules, this.options);
+            for (let [name,module] of modules.entries()) {
+                let phaseRepeatCount = 0;
+                for (let i = 0; i < soloPhases.length; i++) {
+                    let phase = soloPhases[i];
+                    let [newModule, errors, runPhaseAgain] = phase(name, module, modules, this.options);
                     if (errors.length > 0) {
                         console.log(phase.name);
                         for (let error of errors) {
@@ -58,19 +60,32 @@ export class Compiler {
                         }
                         return errors;
                     }
-                    modules.set(name, newModule);
-                    this.log(logger, phase.name, newModule, name);
-                }
-                if (phase === finalPhase) {
-                    return modules;
+                    modules.set(name, module = newModule);
+                    this.log(logger, (phaseRepeatCount || runPhaseAgain) ? `${phase.name} (${phaseRepeatCount + 1})` : phase.name, newModule, name);
+                    if (runPhaseAgain) {
+                        i--;
+                        phaseRepeatCount++;
+                    } else {
+                        phaseRepeatCount = 0;
+                        if (phase === finalPhase) {
+                            i = soloPhases.length;
+                        }
+                    }
                 }
             }
+            if (finalPhase != null) {
+                return modules;
+            }
+            
             // sort the modules map based upon inter-module dependencies
+            let sentinel = {}
             let sortedModuleNames = toposort([...modules.values()].map((module: Module) => {
-                return [...module.dependencies.map(dep => {
+                return module.dependencies.length ? [...module.dependencies.map(dep => {
                     return [dep, module.name];
-                })]
+                })] : [[sentinel, module.name]];
             }).flat() as [any,any][]);
+            // remove the sentinel
+            sortedModuleNames = sortedModuleNames.filter(a => typeof a === "string");
             modules = new Map(sortedModuleNames.map(name => [name, modules.get(name)]));
 
             for (let phase of groupPhases) {
@@ -108,6 +123,9 @@ export class Compiler {
         } catch (e) {
             this.printErrorConsole(e, sources);
         } finally {
+            if (modules.size === 0) {
+                throw new Error("Expected modules");
+            }
             logger(null, [...modules.keys()]);
         }
 
@@ -133,6 +151,7 @@ export class Compiler {
     }
 
     log(logger: PhaseLogger, phase: string, module: any, name: string) {
+        // console.log("LOGGER", phase, name);
         let viewAsCode = !Array.isArray(module);
         if (viewAsCode) {
             module = module.toString();

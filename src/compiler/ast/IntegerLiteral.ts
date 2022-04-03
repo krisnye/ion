@@ -9,7 +9,8 @@ export class IntegerLiteral extends NumberLiteral {
     patch(props: Partial<IntegerLiteralProps>) { return super.patch(props); }
 
     toString() {
-        return this.value.toString();
+        let text = this.value.toString();
+        return this.type ? `${text} : ${this.type}` : text;
     }
 
 }
