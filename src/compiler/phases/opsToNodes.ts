@@ -1,4 +1,4 @@
-import { traverse, replace } from "./traverse";
+import { traverse, replace } from "../traverse";
 import { Node } from "../Node";
 import { Assignment } from "../ast/Assignment";
 import { BinaryOperation } from "../pst/BinaryOperation";
@@ -43,7 +43,7 @@ function toVariableOrMetaCall(value: Node) {
             type: null,
             value: null,
             meta: [],
-            writable: true,
+            constant: false,
         });
     }
     throw new SemanticError(`Expected Variable`, value);
@@ -69,7 +69,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                 id: tempVar,
                 type: null,
                 value: right,
-                writable: false,
+                constant: true,
                 meta: [],
             }));
             destructure(nodes, pattern.value, new Reference(tempVar), variableOrAssignment, memberIndex);
@@ -93,7 +93,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
             let id = pattern;
             nodes.push(
                 variableOrAssignment
-                ? new Variable({ location, id, type: null, value, writable: false, meta: [] })
+                ? new Variable({ location, id, type: null, value, constant: true, meta: [] })
                 : new Assignment({ location, id, value })
             );
         }
@@ -153,7 +153,7 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                                 id: new Identifier(left),
                                 type: right,
                                 value: null,
-                                writable: true,
+                                constant: false,
                                 meta: [],
                             })
                         }
@@ -181,15 +181,14 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                         }
                         let id = left instanceof Variable ? left.id : left;
                         let type = left instanceof Variable ? left.type : null;
-                        let writable = left instanceof Variable ? left.writable : false;
+                        let constant = left instanceof Variable ? left.constant : true;
                         if (!(id instanceof Identifier)) {
-                            console.log("??? ", node);
                             errors.push(new SemanticError(`Expected Identifier`, id));
                             return;
                         }
 
                         if (isVariable) {
-                            return new Variable({ location, id: new Identifier(id), type, value: right, writable, meta: [] });
+                            return new Variable({ location, id: new Identifier(id), type, value: right, constant, meta: [] });
                         }
                         else {
                             return new Assignment({ location, id, value: right });

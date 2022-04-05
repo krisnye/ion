@@ -235,19 +235,22 @@ ul.jsondiffpatch-textdiff {
                 <td>
                     <header><span>Source</span></header>
                     <p>
+//  TODO: allow javascript definition to be moved up to a constant and reused across implementations
 @MultiFunction()
 `+` = []
-    @Javascript()
+    @Native()
         ""
             (a, b) => { if (a.value === 0) { return b; } if (b.value === 0) { return a; }
-                return { "": "Integer", value: a.value + b.value }; }
+                return { ...a, value: a.value + b.value }; }
     (a: Integer, b: Integer): Integer => 0
 </p>
                 </td>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>@MultiFunction()<br>`+` = []<br>    @Javascript()<br>        \&quot;\&quot;<br>            (a, b) =&gt; {<br>                if (a.value === 0) { return b; }<br>                if (b.value === 0) { return a; }<br>                return { \&quot;\&quot;: \&quot;Integer\&quot;, value: a.value + b.value };<br>            }<br>    (a: Integer, b: Integer): Integer =&gt; 0<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>//  TODO: allow javascript definition to be moved up to a constant and reused across implementations<br>@MultiFunction()<br>`+` = []<br>    @Native()<br>        \&quot;\&quot;<br>            (a, b) =&gt; {<br>                if (a.value === 0) { return b; }<br>                if (b.value === 0) { return a; }<br>                return { ...a, value: a.value + b.value };<br>            }<br>    (a: Integer, b: Integer): Integer =&gt; 0<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Comment&quot;, &quot;source&quot;: &quot;//  TODO: allow javascript definition to be moved up to a constant and reused across implementations&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@MultiFunction&quot; },
   Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
@@ -261,7 +264,7 @@ ul.jsondiffpatch-textdiff {
   Token { &quot;type&quot;: &quot;CloseBracket&quot;, &quot;source&quot;: &quot;]&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@Javascript&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@Native&quot; },
   Token { &quot;type&quot;: &quot;OpenParen&quot;, &quot;source&quot;: &quot;(&quot; },
   Token { &quot;type&quot;: &quot;CloseParen&quot;, &quot;source&quot;: &quot;)&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
@@ -327,10 +330,8 @@ ul.jsondiffpatch-textdiff {
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;OpenBrace&quot;, &quot;source&quot;: &quot;{&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;OutlineString&quot;, &quot;source&quot;: &quot;\&quot;\&quot;&quot; },
-  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;:&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;String&quot;, &quot;source&quot;: &quot;\&quot;Integer\&quot;&quot; },
+  Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;...&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;a&quot; },
   Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;,&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;value&quot; },
@@ -379,7 +380,7 @@ ul.jsondiffpatch-textdiff {
             
                 <td>
                     <header><span>parsing</span></header>
-                    <p>module + { @MultiFunction() `+` = [{ @Javascript("(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { \"\": \"Integer\", value: a.value + b.value };<br>}")
+                    <p>module + { @MultiFunction() `+` = [{ @Native("(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { ...a, value: a.value + b.value };<br>}")
         (a : Integer , b : Integer) : Integer => 0
     }]
 }</p>
@@ -387,7 +388,7 @@ ul.jsondiffpatch-textdiff {
             
                 <td>
                     <header><span>syntacticChecks</span></header>
-                    <p>module + { @MultiFunction() `+` = [{ @Javascript("(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { \"\": \"Integer\", value: a.value + b.value };<br>}")
+                    <p>module + { @MultiFunction() `+` = [{ @Native("(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { ...a, value: a.value + b.value };<br>}")
         (a : Integer , b : Integer) : Integer => 0
     }]
 }</p>
@@ -466,7 +467,7 @@ ul.jsondiffpatch-textdiff {
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        @Javascript(&quot;(a, b) =&gt; {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { \&quot;\&quot;: \&quot;Integer\&quot;, value: a.value + b.value };<br>}&quot;)</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { ...a, value: a.value + b.value };<br>}&quot;)</span>
         </div>
     </td>
 </tr><tr>
@@ -557,7 +558,7 @@ ul.jsondiffpatch-textdiff {
             
                 <td>
                     <header><span>removeSoloBlocks</span></header>
-                    <p>module + { @MultiFunction() const `+` = [{ @Javascript("(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { \"\": \"Integer\", value: a.value + b.value };<br>}")
+                    <p>module + { @MultiFunction() const `+` = [{ @Native("(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { ...a, value: a.value + b.value };<br>}")
         (
             var a : Integer
             var b : Integer
@@ -628,7 +629,7 @@ ul.jsondiffpatch-textdiff {
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>        @Javascript(&quot;(a, b) =&gt; {<br></del>    <del>if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { \&quot;\&quot;: \&quot;Integer\&quot;, value: a.value + b.value };<br>}&quot;)</del></span>
+            <span class="d2h-code-line-ctn"><del>        @Native(&quot;(a, b) =&gt; {<br></del>    <del>if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { ...a, value: a.value + b.value };<br>}&quot;)</del></span>
         </div>
     </td>
 </tr><tr>
@@ -694,7 +695,7 @@ ul.jsondiffpatch-textdiff {
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            @Javascript(&quot;(a, b) =&gt; {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { \&quot;\&quot;: \&quot;Integer\&quot;, value: a.value + b.value };<br>}&quot;)</span>
+            <span class="d2h-code-line-ctn">            @Native(&quot;(a, b) =&gt; {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { ...a, value: a.value + b.value };<br>}&quot;)</span>
         </div>
     </td>
 </tr><tr>
@@ -911,7 +912,7 @@ ul.jsondiffpatch-textdiff {
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">            <del>@</del>Javascript<del>(&quot;(</del>a, b) =&gt; {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { \&quot;\&quot;: \&quot;Integer\&quot;, value: a.value + b.value };<br>}&quot;)</span>
+            <span class="d2h-code-line-ctn">            <del>@</del>Native<del>(&quot;(</del>a, b) =&gt; {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { ...a, value: a.value + b.value };<br>}&quot;)</span>
         </div>
     </td>
 </tr><tr>
@@ -922,7 +923,7 @@ ul.jsondiffpatch-textdiff {
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            <ins>`$.@</ins>Javascript<ins>`(&quot;(</ins>a, b) =&gt; {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { \&quot;\&quot;: \&quot;Integer\&quot;, value: a.value + b.value };<br>}&quot;)</span>
+            <span class="d2h-code-line-ctn">            <ins>`$.@</ins>Native<ins>`(&quot;(</ins>a, b) =&gt; {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { ...a, value: a.value + b.value };<br>}&quot;)</span>
         </div>
     </td>
 </tr><tr>
@@ -1074,12 +1075,144 @@ ul.jsondiffpatch-textdiff {
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -9,7 +9,7 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,15 +1,17 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module + {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        `$.@MultiFunction<del>`()</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        <ins>instance </ins>`$.@MultiFunction<ins>`())</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    const `$.+` = [</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">            `$.@Native<del>`(&quot;(a, b) =&gt; {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { ...a, value: a.value + b.value };<br>}&quot;)</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            <ins>instance </ins>`$.@Native<ins>`(</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">                const javascript : `$.String` = &quot;(a, b) =&gt; {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { ...a, value: a.value + b.value };<br>}&quot;</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            ))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        }</span>
+        </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">9</div>
-<div class="line-num2">9</div>
+<div class="line-num2">11</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1090,7 +1223,7 @@ ul.jsondiffpatch-textdiff {
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">10</div>
-<div class="line-num2">10</div>
+<div class="line-num2">12</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1101,7 +1234,7 @@ ul.jsondiffpatch-textdiff {
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">11</div>
-<div class="line-num2">11</div>
+<div class="line-num2">13</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1123,18 +1256,18 @@ ul.jsondiffpatch-textdiff {
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">12</div>
+<div class="line-num2">14</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        ): `$.Integer` =&gt; 0<ins> : `$.integer`</ins></span>
+            <span class="d2h-code-line-ctn">        ): `$.Integer` =&gt; 0<ins> : `$.Integer`</ins></span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">13</div>
-<div class="line-num2">13</div>
+<div class="line-num2">15</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1145,7 +1278,7 @@ ul.jsondiffpatch-textdiff {
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">14</div>
-<div class="line-num2">14</div>
+<div class="line-num2">16</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1156,7 +1289,7 @@ ul.jsondiffpatch-textdiff {
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">15</div>
-<div class="line-num2">15</div>
+<div class="line-num2">17</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1175,13 +1308,15 @@ ul.jsondiffpatch-textdiff {
             
                 <td>
                     <header><span>simplify (2)</span></header>
-                    <p>module + { { `$.@MultiFunction`() }
+                    <p>module + { { instance `$.@MultiFunction`()) }
     const `$.+` = [
-        { `$.@Javascript`("(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { \"\": \"Integer\", value: a.value + b.value };<br>}") }
+        { instance `$.@Native`( const javascript : `$.String` = "(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { ...a, value: a.value + b.value };<br>}"
+            ))
+        }
         (
             var a : `$.Integer`
             var b : `$.Integer`
-        ): `$.Integer` => 0 : `$.integer`
+        ): `$.Integer` => 0 : `$.Integer`
     ]
 }
 // externals: </p>
@@ -1189,13 +1324,15 @@ ul.jsondiffpatch-textdiff {
             
                 <td>
                     <header><span>identity</span></header>
-                    <p>module + { { `$.@MultiFunction`() }
+                    <p>module + { { instance `$.@MultiFunction`()) }
     const `$.+` = [
-        { `$.@Javascript`("(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { \"\": \"Integer\", value: a.value + b.value };<br>}") }
+        { instance `$.@Native`( const javascript : `$.String` = "(a, b) => {<br>    if (a.value === 0) { return b; }<br>    if (b.value === 0) { return a; }<br>    return { ...a, value: a.value + b.value };<br>}"
+            ))
+        }
         (
             var a : `$.Integer`
             var b : `$.Integer`
-        ): `$.Integer` => 0 : `$.integer`
+        ): `$.Integer` => 0 : `$.Integer`
     ]
 }
 // externals: </p>
@@ -1204,28 +1341,167 @@ ul.jsondiffpatch-textdiff {
             <td>
                 <header><span>File</span></header>
                 <span class="content">
-                    @Javascript
+                    @MultiFunction
                 </span>
             </td>
         
                 <td>
                     <header><span>Source</span></header>
                     <p>
-class @Javascript
-    source: String
+class @MultiFunction
 </p>
                 </td>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class @Javascript<br>    source: String<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class @MultiFunction<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Class&quot;, &quot;source&quot;: &quot;class&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@Javascript&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@MultiFunction&quot; },
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; }
+]</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>parsing</span></header>
+                    <p>module @MultiFunction { const @MultiFunction = class @MultiFunction {} }</p>
+                </td>
+            
+                <td>
+                    <header><span>syntacticChecks</span></header>
+                    <p>module @MultiFunction { const @MultiFunction = class @MultiFunction {} }</p>
+                </td>
+            
+                <td>
+                    <header><span>opsToNodes</span></header>
+                    <p>module @MultiFunction { const @MultiFunction = class @MultiFunction {} }</p>
+                </td>
+            
+                <td>
+                    <header><span>removeSoloBlocks</span></header>
+                    <p>module @MultiFunction { const @MultiFunction = class @MultiFunction {} }</p>
+                </td>
+            
+                <td>
+                    <header><span>flattenSequences</span></header>
+                    <p>module @MultiFunction { const @MultiFunction = class @MultiFunction {} }</p>
+                </td>
+            
+                <td>
+                    <header><span>resolveExternalReferences</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,3 +1,3 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module @MultiFunction {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const <del>@</del>MultiFunction = class <del>@</del>MultiFunction {}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const <ins>`$.@</ins>MultiFunction<ins>`</ins> = class <ins>`$.@</ins>MultiFunction<ins>`</ins> {}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>simplify (1)</span></header>
+                    <p>module @MultiFunction { const `$.@MultiFunction` = class `$.@MultiFunction` {} }</p>
+                </td>
+            
+                <td>
+                    <header><span>simplify (2)</span></header>
+                    <p>module @MultiFunction { const `$.@MultiFunction` = class `$.@MultiFunction` {} }</p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
+                    <p>module @MultiFunction { const `$.@MultiFunction` = class `$.@MultiFunction` {} }</p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
+                    @Native
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+class @Native
+    javascript: String
+</p>
+                </td>
+            
+                <td>
+                    <header><span>tokenization</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class @Native<br>    javascript: String<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
+  Token { &quot;type&quot;: &quot;Class&quot;, &quot;source&quot;: &quot;class&quot; },
+  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@Native&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Indent&quot;, &quot;source&quot;: &quot;    &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;source&quot; },
+  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;javascript&quot; },
   Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;:&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;String&quot; },
@@ -1236,12 +1512,12 @@ class @Javascript
             
                 <td>
                     <header><span>parsing</span></header>
-                    <p>module @Javascript { class @Javascript { source : String } }</p>
+                    <p>module @Native { const @Native = class @Native { javascript : String } }</p>
                 </td>
             
                 <td>
                     <header><span>syntacticChecks</span></header>
-                    <p>module @Javascript { class @Javascript { source : String } }</p>
+                    <p>module @Native { const @Native = class @Native { javascript : String } }</p>
                 </td>
             
                 <td>
@@ -1273,7 +1549,7 @@ class @Javascript
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module @Javascript {</span>
+            <span class="d2h-code-line-ctn">module @Native {</span>
         </div>
     </td>
 </tr><tr>
@@ -1284,7 +1560,7 @@ class @Javascript
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    class @Javascript {</span>
+            <span class="d2h-code-line-ctn">    const @Native = class @Native {</span>
         </div>
     </td>
 </tr><tr>
@@ -1295,7 +1571,7 @@ class @Javascript
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        source : String</span>
+            <span class="d2h-code-line-ctn">        javascript : String</span>
         </div>
     </td>
 </tr><tr>
@@ -1306,7 +1582,7 @@ class @Javascript
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>var </ins>source : String</span>
+            <span class="d2h-code-line-ctn">        <ins>var </ins>javascript : String</span>
         </div>
     </td>
 </tr><tr>
@@ -1342,12 +1618,12 @@ class @Javascript
             
                 <td>
                     <header><span>removeSoloBlocks</span></header>
-                    <p>module @Javascript { class @Javascript { var source : String } }</p>
+                    <p>module @Native { const @Native = class @Native { var javascript : String } }</p>
                 </td>
             
                 <td>
                     <header><span>flattenSequences</span></header>
-                    <p>module @Javascript { class @Javascript { var source : String } }</p>
+                    <p>module @Native { const @Native = class @Native { var javascript : String } }</p>
                 </td>
             
                 <td>
@@ -1379,7 +1655,7 @@ class @Javascript
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module @Javascript {</span>
+            <span class="d2h-code-line-ctn">module @Native {</span>
         </div>
     </td>
 </tr><tr>
@@ -1390,7 +1666,7 @@ class @Javascript
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    class <del>@</del>Javascript {</span>
+            <span class="d2h-code-line-ctn">    const <del>@</del>Native = class <del>@</del>Native {</span>
         </div>
     </td>
 </tr><tr>
@@ -1401,7 +1677,7 @@ class @Javascript
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var source : String</span>
+            <span class="d2h-code-line-ctn">        var javascript : String</span>
         </div>
     </td>
 </tr><tr>
@@ -1412,7 +1688,7 @@ class @Javascript
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    class <ins>`$.@</ins>Javascript<ins>`</ins> {</span>
+            <span class="d2h-code-line-ctn">    const <ins>`$.@</ins>Native<ins>`</ins> = class <ins>`$.@</ins>Native<ins>`</ins> {</span>
         </div>
     </td>
 </tr><tr>
@@ -1423,7 +1699,7 @@ class @Javascript
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var source : <ins>`$.</ins>String<ins>`</ins></span>
+            <span class="d2h-code-line-ctn">        var javascript : <ins>`$.</ins>String<ins>`</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1469,149 +1745,21 @@ class @Javascript
                 </td>
             
                 <td>
-                    <header><span>simplify</span></header>
-                    <p>module @Javascript { class `$.@Javascript` { var source : `$.String` } }
+                    <header><span>simplify (1)</span></header>
+                    <p>module @Native { const `$.@Native` = class `$.@Native` { var javascript : `$.String` } }
+// externals: </p>
+                </td>
+            
+                <td>
+                    <header><span>simplify (2)</span></header>
+                    <p>module @Native { const `$.@Native` = class `$.@Native` { var javascript : `$.String` } }
 // externals: </p>
                 </td>
             
                 <td>
                     <header><span>identity</span></header>
-                    <p>module @Javascript { class `$.@Javascript` { var source : `$.String` } }
+                    <p>module @Native { const `$.@Native` = class `$.@Native` { var javascript : `$.String` } }
 // externals: </p>
-                </td>
-            </tr><tr class="channel">
-            <td>
-                <header><span>File</span></header>
-                <span class="content">
-                    @MultiFunction
-                </span>
-            </td>
-        
-                <td>
-                    <header><span>Source</span></header>
-                    <p>
-class @MultiFunction
-</p>
-                </td>
-            
-                <td>
-                    <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class @MultiFunction<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
-  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
-  Token { &quot;type&quot;: &quot;Class&quot;, &quot;source&quot;: &quot;class&quot; },
-  Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;@MultiFunction&quot; },
-  Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; }
-]</pre></div></div></p>
-                </td>
-            
-                <td>
-                    <header><span>parsing</span></header>
-                    <p>module @MultiFunction { class @MultiFunction {} }</p>
-                </td>
-            
-                <td>
-                    <header><span>syntacticChecks</span></header>
-                    <p>module @MultiFunction { class @MultiFunction {} }</p>
-                </td>
-            
-                <td>
-                    <header><span>opsToNodes</span></header>
-                    <p>module @MultiFunction { class @MultiFunction {} }</p>
-                </td>
-            
-                <td>
-                    <header><span>removeSoloBlocks</span></header>
-                    <p>module @MultiFunction { class @MultiFunction {} }</p>
-                </td>
-            
-                <td>
-                    <header><span>flattenSequences</span></header>
-                    <p>module @MultiFunction { class @MultiFunction {} }</p>
-                </td>
-            
-                <td>
-                    <header><span>resolveExternalReferences</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,3 +1,3 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module @MultiFunction {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">2</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    class <del>@</del>MultiFunction {}</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    class <ins>`$.@</ins>MultiFunction<ins>`</ins> {}</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
-                </td>
-            
-                <td>
-                    <header><span>simplify</span></header>
-                    <p>module @MultiFunction { class `$.@MultiFunction` {} }</p>
-                </td>
-            
-                <td>
-                    <header><span>identity</span></header>
-                    <p>module @MultiFunction { class `$.@MultiFunction` {} }</p>
                 </td>
             </tr><tr class="channel">
             <td>
@@ -1641,27 +1789,27 @@ class Integer
             
                 <td>
                     <header><span>parsing</span></header>
-                    <p>module Integer { class Integer {} }</p>
+                    <p>module Integer { const Integer = class Integer {} }</p>
                 </td>
             
                 <td>
                     <header><span>syntacticChecks</span></header>
-                    <p>module Integer { class Integer {} }</p>
+                    <p>module Integer { const Integer = class Integer {} }</p>
                 </td>
             
                 <td>
                     <header><span>opsToNodes</span></header>
-                    <p>module Integer { class Integer {} }</p>
+                    <p>module Integer { const Integer = class Integer {} }</p>
                 </td>
             
                 <td>
                     <header><span>removeSoloBlocks</span></header>
-                    <p>module Integer { class Integer {} }</p>
+                    <p>module Integer { const Integer = class Integer {} }</p>
                 </td>
             
                 <td>
                     <header><span>flattenSequences</span></header>
-                    <p>module Integer { class Integer {} }</p>
+                    <p>module Integer { const Integer = class Integer {} }</p>
                 </td>
             
                 <td>
@@ -1704,7 +1852,7 @@ class Integer
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    class Integer {}</span>
+            <span class="d2h-code-line-ctn">    const Integer = class Integer {}</span>
         </div>
     </td>
 </tr><tr>
@@ -1715,7 +1863,7 @@ class Integer
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    class <ins>`$.</ins>Integer<ins>`</ins> {}</span>
+            <span class="d2h-code-line-ctn">    const <ins>`$.</ins>Integer<ins>`</ins> = class <ins>`$.</ins>Integer<ins>`</ins> {}</span>
         </div>
     </td>
 </tr><tr>
@@ -1739,13 +1887,18 @@ class Integer
                 </td>
             
                 <td>
-                    <header><span>simplify</span></header>
-                    <p>module Integer { class `$.Integer` {} }</p>
+                    <header><span>simplify (1)</span></header>
+                    <p>module Integer { const `$.Integer` = class `$.Integer` {} }</p>
+                </td>
+            
+                <td>
+                    <header><span>simplify (2)</span></header>
+                    <p>module Integer { const `$.Integer` = class `$.Integer` {} }</p>
                 </td>
             
                 <td>
                     <header><span>identity</span></header>
-                    <p>module Integer { class `$.Integer` {} }</p>
+                    <p>module Integer { const `$.Integer` = class `$.Integer` {} }</p>
                 </td>
             </tr><tr class="channel">
             <td>
@@ -1775,27 +1928,27 @@ class String
             
                 <td>
                     <header><span>parsing</span></header>
-                    <p>module String { class String {} }</p>
+                    <p>module String { const String = class String {} }</p>
                 </td>
             
                 <td>
                     <header><span>syntacticChecks</span></header>
-                    <p>module String { class String {} }</p>
+                    <p>module String { const String = class String {} }</p>
                 </td>
             
                 <td>
                     <header><span>opsToNodes</span></header>
-                    <p>module String { class String {} }</p>
+                    <p>module String { const String = class String {} }</p>
                 </td>
             
                 <td>
                     <header><span>removeSoloBlocks</span></header>
-                    <p>module String { class String {} }</p>
+                    <p>module String { const String = class String {} }</p>
                 </td>
             
                 <td>
                     <header><span>flattenSequences</span></header>
-                    <p>module String { class String {} }</p>
+                    <p>module String { const String = class String {} }</p>
                 </td>
             
                 <td>
@@ -1838,7 +1991,7 @@ class String
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    class String {}</span>
+            <span class="d2h-code-line-ctn">    const String = class String {}</span>
         </div>
     </td>
 </tr><tr>
@@ -1849,7 +2002,7 @@ class String
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    class <ins>`$.</ins>String<ins>`</ins> {}</span>
+            <span class="d2h-code-line-ctn">    const <ins>`$.</ins>String<ins>`</ins> = class <ins>`$.</ins>String<ins>`</ins> {}</span>
         </div>
     </td>
 </tr><tr>
@@ -1873,13 +2026,18 @@ class String
                 </td>
             
                 <td>
-                    <header><span>simplify</span></header>
-                    <p>module String { class `$.String` {} }</p>
+                    <header><span>simplify (1)</span></header>
+                    <p>module String { const `$.String` = class `$.String` {} }</p>
+                </td>
+            
+                <td>
+                    <header><span>simplify (2)</span></header>
+                    <p>module String { const `$.String` = class `$.String` {} }</p>
                 </td>
             
                 <td>
                     <header><span>identity</span></header>
-                    <p>module String { class `$.String` {} }</p>
+                    <p>module String { const `$.String` = class `$.String` {} }</p>
                 </td>
             </tr><tr class="channel">
             <td>
@@ -1891,7 +2049,7 @@ class String
         
                 <td>
                     <header><span>Source</span></header>
-                    <p>alpha = 1
+                    <p>alpha = 10
 beta = 2
 charlie = alpha + beta
 
@@ -1903,12 +2061,12 @@ charlie = alpha + beta
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;alpha = 1<br>beta = 2<br>charlie = alpha + beta<br><br>// x = (a, b) =&gt;<br>//     a + b<br>//     x()<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;alpha = 10<br>beta = 2<br>charlie = alpha + beta<br><br>// x = (a, b) =&gt;<br>//     a + b<br>//     x()<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
   Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;alpha&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
   Token { &quot;type&quot;: &quot;Operator&quot;, &quot;source&quot;: &quot;=&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
-  Token { &quot;type&quot;: &quot;Integer&quot;, &quot;source&quot;: &quot;1&quot; },
+  Token { &quot;type&quot;: &quot;Integer&quot;, &quot;source&quot;: &quot;10&quot; },
   Token { &quot;type&quot;: &quot;Eol&quot;, &quot;source&quot;: &quot;<br>&quot; },
   Token { &quot;type&quot;: &quot;Id&quot;, &quot;source&quot;: &quot;beta&quot; },
   Token { &quot;type&quot;: &quot;Whitespace&quot;, &quot;source&quot;: &quot; &quot; },
@@ -1939,7 +2097,7 @@ charlie = alpha + beta
                 <td>
                     <header><span>parsing</span></header>
                     <p>module sample.one {
-    alpha = 1
+    alpha = 10
     beta = 2
     charlie = alpha + beta
 }</p>
@@ -1948,7 +2106,7 @@ charlie = alpha + beta
                 <td>
                     <header><span>syntacticChecks</span></header>
                     <p>module sample.one {
-    alpha = 1
+    alpha = 10
     beta = 2
     charlie = alpha + beta
 }</p>
@@ -1994,7 +2152,7 @@ charlie = alpha + beta
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    alpha = 1</span>
+            <span class="d2h-code-line-ctn">    alpha = 10</span>
         </div>
     </td>
 </tr><tr>
@@ -2027,7 +2185,7 @@ charlie = alpha + beta
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>const </ins>alpha = 1</span>
+            <span class="d2h-code-line-ctn">    <ins>const </ins>alpha = 10</span>
         </div>
     </td>
 </tr><tr>
@@ -2075,7 +2233,7 @@ charlie = alpha + beta
                 <td>
                     <header><span>removeSoloBlocks</span></header>
                     <p>module sample.one {
-    const alpha = 1
+    const alpha = 10
     const beta = 2
     const charlie = `+`(alpha,beta)
 }</p>
@@ -2084,7 +2242,7 @@ charlie = alpha + beta
                 <td>
                     <header><span>flattenSequences</span></header>
                     <p>module sample.one {
-    const alpha = 1
+    const alpha = 10
     const beta = 2
     const charlie = `+`(alpha,beta)
 }</p>
@@ -2130,7 +2288,7 @@ charlie = alpha + beta
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const alpha = 1</span>
+            <span class="d2h-code-line-ctn">    const alpha = 10</span>
         </div>
     </td>
 </tr><tr>
@@ -2163,7 +2321,7 @@ charlie = alpha + beta
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const <ins>`$.sample.one.</ins>alpha<ins>`</ins> = 1</span>
+            <span class="d2h-code-line-ctn">    const <ins>`$.sample.one.</ins>alpha<ins>`</ins> = 10</span>
         </div>
     </td>
 </tr><tr>
@@ -2259,7 +2417,7 @@ charlie = alpha + beta
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const `$.sample.one.alpha` = 1</span>
+            <span class="d2h-code-line-ctn">    const `$.sample.one.alpha` = 10</span>
         </div>
     </td>
 </tr><tr>
@@ -2274,6 +2432,17 @@ charlie = alpha + beta
         </div>
     </td>
 </tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const `$.sample.one.charlie` = <del>`$.+`(`$.sample.one.alpha`,`$.sample.one.beta`)</del></span>
+        </div>
+    </td>
+</tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
 <div class="line-num2">2</div>
@@ -2281,7 +2450,7 @@ charlie = alpha + beta
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const `$.sample.one.alpha` = 1<ins> : `$.integer`</ins></span>
+            <span class="d2h-code-line-ctn">    const `$.sample.one.alpha` = 10<ins> : `$.Integer`</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -2292,18 +2461,18 @@ charlie = alpha + beta
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const `$.sample.one.beta` = 2<ins> : `$.integer`</ins></span>
+            <span class="d2h-code-line-ctn">    const `$.sample.one.beta` = 2<ins> : `$.Integer`</ins></span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
 <div class="line-num2">4</div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    const `$.sample.one.charlie` = `$.+`(`$.sample.one.alpha`,`$.sample.one.beta`)</span>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const `$.sample.one.charlie` = <ins>12 : `$.Integer`</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -2340,9 +2509,9 @@ charlie = alpha + beta
                 <td>
                     <header><span>simplify (2)</span></header>
                     <p>module sample.one {
-    const `$.sample.one.alpha` = 1 : `$.integer`
-    const `$.sample.one.beta` = 2 : `$.integer`
-    const `$.sample.one.charlie` = `$.+`(`$.sample.one.alpha`,`$.sample.one.beta`)
+    const `$.sample.one.alpha` = 10 : `$.Integer`
+    const `$.sample.one.beta` = 2 : `$.Integer`
+    const `$.sample.one.charlie` = 12 : `$.Integer`
 }
 // externals: +</p>
                 </td>
@@ -2350,9 +2519,9 @@ charlie = alpha + beta
                 <td>
                     <header><span>identity</span></header>
                     <p>module sample.one {
-    const `$.sample.one.alpha` = 1 : `$.integer`
-    const `$.sample.one.beta` = 2 : `$.integer`
-    const `$.sample.one.charlie` = `$.+`(`$.sample.one.alpha`,`$.sample.one.beta`)
+    const `$.sample.one.alpha` = 10 : `$.Integer`
+    const `$.sample.one.beta` = 2 : `$.Integer`
+    const `$.sample.one.charlie` = 12 : `$.Integer`
 }
 // externals: +</p>
                 </td>

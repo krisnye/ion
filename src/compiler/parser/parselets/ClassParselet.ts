@@ -7,6 +7,7 @@ import { Identifier } from "../../ast/Identifier";
 import { SemanticError } from "../../SemanticError";
 import { Class } from "../../pst/Class";
 import { tokenTypes } from "../../tokenizer/TokenType";
+import { Variable } from "../../ast/Variable";
 
 export class ClassParselet extends PrefixParselet {
 
@@ -21,12 +22,20 @@ export class ClassParselet extends PrefixParselet {
             _extends = p.parseExpression();
         }
         let block = p.maybeParseBlock();
-        return new Class({
-            location: block ? SourceLocation.merge(classToken.location, block.location) : classToken.location,
+        let location = block ? SourceLocation.merge(classToken.location, block.location) : classToken.location;
+        return new Variable({
+            location,
+            meta: [],
+            constant: true,
             id,
-            extends: _extends,
-            nodes: block?.nodes ?? [],
-        })
+            value: new Class({
+                location: block ? SourceLocation.merge(classToken.location, block.location) : classToken.location,
+                id,
+                constant: true,
+                extends: _extends,
+                nodes: block?.nodes ?? [],
+            })
+        });
     }
 
 }

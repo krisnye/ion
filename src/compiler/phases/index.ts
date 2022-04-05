@@ -9,7 +9,7 @@ import { removeSoloBlocks } from "./removeSoloBlocks";
 import { resolveExternalReferences } from "./resolveExternalReferences";
 import { simplify } from "./simplify";
 
-export const soloPhases: Phase[] = [
+export const parsingPhases: Phase[] = [
     tokenization,
     parsing,
     syntacticChecks,
@@ -18,12 +18,12 @@ export const soloPhases: Phase[] = [
     flattenSequences,
     resolveExternalReferences,
     //  MUST be solo up to this point so we can get external dependencies.
-
-    simplify,
 ];
 
-// hmmm, maybe we can keep things in solo phases... the performance will be much higher?
+export const intermediatePhases: Phase[] = [
+    simplify,
+]
 
-export const groupPhases: Phase[] = [
+export const assemblyPhases: Phase[] = [
     identity,
 ]

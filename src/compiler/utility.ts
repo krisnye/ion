@@ -1,4 +1,4 @@
 
 export function isMetaName(name: string) {
-    return name.startsWith("@");
+    return name[name.lastIndexOf(".") + 1] === "@";
 }

@@ -1,4 +1,4 @@
-import { traverse } from "./traverse";
+import { traverse } from "../traverse";
 import { Phase } from "./Phase";
 import { Block } from "../ast/Block";
 

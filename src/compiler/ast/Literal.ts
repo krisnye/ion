@@ -1,4 +1,6 @@
+import { coreTypes } from "../coreTypes";
 import { Node, NodeProps } from "../Node";
+import { GetVariableFunction } from "../phases/createScopeMaps";
 
 export interface LiteralProps extends NodeProps {
     value: any;

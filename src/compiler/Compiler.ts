@@ -2,7 +2,8 @@ import { Assembly } from "./ast/Assembly";
 import { getInputFilesRecursive } from "./common";
 import ErrorContext from "./errors/ErrorContext";
 import { Node } from "./Node";
-import { groupPhases, soloPhases } from "./phases";
+import { globalNamespace } from "./pathFunctions";
+import { assemblyPhases, intermediatePhases, parsingPhases } from "./phases";
 import { Phase } from "./phases/Phase";
 import { Module } from "./pst/Module";
 import { SourceLocation } from "./SourceLocation";
@@ -12,7 +13,7 @@ import { toposort } from "./toposort";
 export type PhaseLogger = (names?: string | string[] | null, ast?: any, file?: string) => void
 
 export interface CompilerOptions {
-    log: typeof console.log
+    log: typeof console.log;
 }
 
 export interface DebugOptions {
@@ -32,62 +33,12 @@ export class Compiler {
         return new Map(Object.entries(getInputFilesRecursive(inputs)));
     }
 
-    compile(
-        input: Map<string,string>,
-        debugOptions?: DebugOptions,
-    ) : Map<string,any> | Error[] {
-        let sources = new Map(input.entries());
-        let modules: Map<string,any> = input;
-        let logger = debugOptions?.logger ?? (() => {});
-        let finalPhase = debugOptions?.finalPhase;
-
-        try {
-            // log the initial source
-            for (let [name,module] of modules.entries()) {
-                this.log(logger, "Source", module, name);
-            }
-
-            //  do solo phases
-            for (let [name,module] of modules.entries()) {
-                let phaseRepeatCount = 0;
-                for (let i = 0; i < soloPhases.length; i++) {
-                    let phase = soloPhases[i];
-                    let [newModule, errors, runPhaseAgain] = phase(name, module, modules, this.options);
-                    if (errors.length > 0) {
-                        console.log(phase.name);
-                        for (let error of errors) {
-                            this.printErrorConsole(error, sources);
-                        }
-                        return errors;
-                    }
-                    modules.set(name, module = newModule);
-                    this.log(logger, (phaseRepeatCount || runPhaseAgain) ? `${phase.name} (${phaseRepeatCount + 1})` : phase.name, newModule, name);
-                    if (runPhaseAgain) {
-                        i--;
-                        phaseRepeatCount++;
-                    } else {
-                        phaseRepeatCount = 0;
-                        if (phase === finalPhase) {
-                            i = soloPhases.length;
-                        }
-                    }
-                }
-            }
-            if (finalPhase != null) {
-                return modules;
-            }
-            
-            // sort the modules map based upon inter-module dependencies
-            let sortedModuleNames = toposort([...modules.keys()], [...modules.values()].map((module: Module) => {
-                return [...module.dependencies.map(dep => {
-                    return [dep, module.name];
-                })];
-            }).flat() as [any,any][]);
-            modules = new Map(sortedModuleNames.map(name => [name, modules.get(name)]));
-
-            for (let phase of groupPhases) {
+    runPhases(sources: Map<string,string>, modules: Map<string,any>, phases: Phase[], group: boolean, options?: DebugOptions): Error[] | void {
+        let logger = options?.logger ?? (() => {});
+        if (group) {
+            for (let phase of phases) {
                 // merge all the modules into a new module
-                let name = "$";
+                let name = globalNamespace;
                 let assembly = new Assembly({
                     location: new SourceLocation(name, new SourcePosition(0, 0), new SourcePosition(0, 0)),
                     nodes: [...modules.values()].map((module: Module) => module.nodes).flat(),
@@ -113,10 +64,69 @@ export class Compiler {
                     // log each module individually.
                     this.log(logger, phase.name, newModule, name);
                 }
-                if (phase === finalPhase) {
-                    return modules;
+            }
+        }
+        else {
+            for (let [name,modul] of modules.entries()) {
+                let phaseRepeatCount = 0;
+                for (let i = 0; i < phases.length; i++) {
+                    let phase = phases[i];
+                    let [newModule, errors, runPhaseAgain] = phase(name, modul, modules, this.options);
+                    if (errors.length > 0) {
+                        console.log(phase.name);
+                        for (let error of errors) {
+                            this.printErrorConsole(error, sources);
+                        }
+                        return errors;
+                    }
+                    modules.set(name, modul = newModule);
+                    this.log(logger, (phaseRepeatCount || runPhaseAgain) ? `${phase.name} (${phaseRepeatCount + 1})` : phase.name, newModule, name);
+                    if (runPhaseAgain) {
+                        i--;
+                        phaseRepeatCount++;
+                    } else {
+                        phaseRepeatCount = 0;
+                        if (phase === options?.finalPhase) {
+                            i = parsingPhases.length;
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    compile(
+        input: Map<string,string>,
+        debugOptions?: DebugOptions,
+    ) : Map<string,any> | Error[] {
+        let sources = new Map(input.entries());
+        let modules: Map<string,any> = input;
+        let logger = debugOptions?.logger ?? (() => {});
+        let finalPhase = debugOptions?.finalPhase;
+
+        try {
+            // log the initial source
+            for (let [name,module] of modules.entries()) {
+                this.log(logger, "Source", module, name);
+            }
+
+            //  do solo phases
+            let errors = this.runPhases(sources, modules, parsingPhases, false, debugOptions);
+            if (errors) { return errors; }
+            if (finalPhase != null) { return modules; }
+            errors = this.runPhases(sources, modules, intermediatePhases, false, debugOptions);
+            if (errors) { return errors; }
+            errors = this.runPhases(sources, modules, assemblyPhases, true, debugOptions);
+            if (errors) { return errors; }
+
+            // sort the modules map based upon inter-module dependencies
+            let sortedModuleNames = toposort([...modules.keys()], [...modules.values()].map((module: Module) => {
+                return [...module.dependencies.map(dep => {
+                    return [dep, module.name];
+                })];
+            }).flat() as [any,any][]);
+            modules = new Map(sortedModuleNames.map(name => [name, modules.get(name)]));
+
         } catch (e) {
             this.printErrorConsole(e, sources);
         } finally {

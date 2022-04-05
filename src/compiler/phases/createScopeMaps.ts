@@ -1,27 +1,39 @@
-import { Declaration, isDeclaration } from "../ast/Declaration";
+import { Visitor } from "@glas/traverse";
+import { Reference } from "../ast/Reference";
 import { Scope } from "../ast/Scope";
+import { Variable } from "../ast/Variable";
 import { Node } from "../Node";
-import { traverse, skip, Lookup } from "./traverse";
+import { traverse, skip, Lookup } from "../traverse";
 
 export type NodeMap<T> = {
     get(node: Node | null): T
     set(node: Node | null, t: T)
 }
 
-export type ScopeMap = { [id: string]: Declaration }
+export type ScopeMap = { [id: string]: Variable }
 export type ScopeMaps = NodeMap<ScopeMap>
 
 /**
  * Returns a Map which will contain a scope object with variable names returning Declarations.
  * @param root the ast
  */
-export default function createScopeMaps(root): ScopeMaps {
+export default function createScopeMaps(root, externals?: Map<string,Scope>): ScopeMaps {
     let globalScope: ScopeMap = {};
+    if (externals != null) {
+        for (let { nodes } of externals.values()) {
+            for (let node of nodes) {
+                if (node instanceof Variable) {
+                    globalScope[node.id.name] = node;
+                }
+            }
+        }
+    }
     let map = new Map<Node | null, ScopeMap>();
     map.set(null, globalScope);
     let scopes: ScopeMap[] = [globalScope];
 
     traverse(root, {
+        // lookup,
         enter(node) {
             //  get the current scope
             let scope = scopes[scopes.length - 1];
@@ -35,7 +47,7 @@ export default function createScopeMaps(root): ScopeMaps {
                 pushScope();
             }
 
-            if (isDeclaration(node)) {
+            if (node instanceof Variable) {
                 scope[node.id.name] = node;
             }
         },
@@ -47,4 +59,31 @@ export default function createScopeMaps(root): ScopeMaps {
     })
 
     return map as NodeMap<ScopeMap>;
+}
+
+export type GetVariableFunction = (ref: Reference) => Variable;
+
+export function traverseWithScope(
+    node: Readonly<any>,
+    callback: (args: { getVariable: GetVariableFunction }) => Visitor,
+    externals?: Map<string,Scope>,
+): any {
+    let lookup = new Lookup();
+    let scopeMaps = createScopeMaps(node, externals);
+    function getVariable(ref: Reference): Variable {
+        let original = lookup.getOriginal(ref);
+        let scope = scopeMaps.get(original);
+        return scope[ref.name];
+    }
+    let visitor = callback({ getVariable });
+    return traverse(node, {...visitor, lookup });
+}
+
+export function getValue(ref: Node, getVariable: GetVariableFunction) {
+    let value = ref;
+    while (value instanceof Reference) {
+        let variable = getVariable(value);
+        value = variable.value!;
+    }
+    return value;
 }

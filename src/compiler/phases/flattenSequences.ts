@@ -5,7 +5,7 @@ import { Group } from "../pst/Group";
 import { Sequence } from "../pst/Sequence";
 import { tokenTypes } from "../tokenizer/TokenType";
 import { Phase } from "./Phase";
-import { traverse } from "./traverse";
+import { traverse } from "../traverse";
 
 export function flattenSequences(moduleName, module): ReturnType<Phase> {
     let errors = [];

@@ -5,7 +5,7 @@ import { Module } from "../pst/Module";
 import { SemanticError } from "../SemanticError";
 import createScopeMaps, { NodeMap, ScopeMap } from "./createScopeMaps";
 import { Phase } from "./Phase";
-import { traverse } from "./traverse";
+import { traverse } from "../traverse";
 
 export function resolveExternalReferences(moduleName, module, externalModules: Map<string,Module>): ReturnType<Phase> {
     let errors: Error[] = [];
@@ -60,7 +60,7 @@ function getExternalReferences(module: any, scopes: NodeMap<ScopeMap>): Map<stri
 function replaceInternalReferencesToAbsolute(module: Module, externalModules: Map<string,Module>, replacements, errors, scopes: NodeMap<ScopeMap>) {
     for (let node of module.nodes) {
         if (isDeclaration(node)) {
-            replacements.set(node.id, node.id.patch({ name: getAbsolutePath(module.name, node.id.name) }));
+            replacements.set(node.id, node.id.patch({ name: getAbsolutePath(module.name, node.id.name), constant: true }));
         }
     }
 }
@@ -73,7 +73,7 @@ function replaceExternalReferencesToAbsolute(module: Module, externalModules: Ma
             externalModuleDependencies.add(externalModule.name);
             let absolutePath = getAbsolutePath(path);
             for (let ref of externalReferences.get(external)!.keys()) {
-                replacements.set(ref, ref.patch({ name: absolutePath }));
+                replacements.set(ref, ref.patch({ name: absolutePath, constant: true }));
             }
         }
         else {

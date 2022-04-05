@@ -1,23 +1,31 @@
-import { traverse } from "./traverse";
 import { Phase } from "./Phase";
 import { createConverter } from "../converters/Converter";
 import { simplifyConverters } from "./simplify/index";
+import { traverseWithScope } from "./createScopeMaps";
+import { Scope } from "../ast/Scope";
 
 const simplifyFunction = createConverter(simplifyConverters);
 
-export function simplify(moduleName, module): ReturnType<Phase> {
+export function simplify(moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> {
     let errors = new Array<Error>();
     let modifications = 0;
-    let result = traverse(module, {
-        leave(node) {
-            let _original = node;
-            node = simplifyFunction(node);
-            if (node !== _original) {
-                modifications++;
+    let result = traverseWithScope(module, ({ getVariable }) => {
+        return {
+            leave(node) {
+                let _original = node;
+                node = simplifyFunction(node, getVariable);
+                if (Array.isArray(node)) {
+                    errors.push(...node);
+                    return;
+                }
+                if (node !== _original) {
+                    modifications++;
+                }
+                return node;
             }
-            return node;
         }
-    })
+    }, externals);
+
     let runPhaseAgain = modifications > 0;
     return [result, errors, runPhaseAgain];
 }

@@ -2,9 +2,27 @@ import { isMetaCall, MetaCall } from "./Call";
 import { Node } from "../Node";
 import { SemanticError } from "../SemanticError";
 import { Scope } from "./Scope";
+import { GetVariableFunction } from "../phases/createScopeMaps";
+import { ObjectExpression } from "./ObjectExpression";
 
 export interface MetaContainer {
-    meta: MetaCall[];
+    meta: Node[];
+}
+
+export function getMetaCall(container: MetaContainer, globalPath: string): ObjectExpression | null {
+    let calls = getMetaCalls(container, globalPath);
+    return calls[0] ?? null;
+}
+
+export function getMetaCalls(container: MetaContainer, globalPath: string) {
+    let calls = new Array<ObjectExpression>();
+    for (let meta of container.meta as ObjectExpression[]) {
+        // this only works once the MetaCalls are converted into ObjectExpressions
+        if (meta.class.name  === globalPath) {
+            calls.push(meta);
+        }
+    }
+    return calls;
 }
 
 export function addMetaCallsToContainers<T extends Node>(nodes: Array<T | MetaCall>, errors: Error[]): Array<T> {

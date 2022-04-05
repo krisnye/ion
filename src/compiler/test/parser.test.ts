@@ -29,13 +29,13 @@ testExpression("-(1 ** 2)", `- (1 ** 2)`);
 testExpression("+(1 ** 2)", `+ (1 ** 2)`);
 testExpression("(- 1) ** 2", `(- 1) ** 2`);
 //  various
-testExpression("x", {"":"Identifier","type":null,"name":"x"});
+testExpression("x", {"":"Identifier","name":"x"});
 testExpression("void x", `void x`);
 testExpression("void x = y = 3", `void x = y = 3`);
 testExpression("1 * (2 + 3)", `1 * (2 + 3)`);
 testExpression("1*(2+3)", `1 * (2 + 3)`);
 //  sequences
-testExpression("a, b", {"":"BinaryOperation","type":null,"left":{"":"Identifier","type":null,"name":"a"},"operator":{"type":"Operator","source":","},"right":{"":"Identifier","type":null,"name":"b"}});
+testExpression("a, b", {"":"BinaryOperation","left":{"":"Identifier","name":"a"},"operator":{"type":"Operator","source":","},"right":{"":"Identifier","name":"b"}});
 testExpression("a, b, c", `a , b , c`);
 //  calls
 testExpression("a(1)", `a(1)`);
@@ -72,7 +72,7 @@ else if z
 `if (x) {\n    y\n} else if (z) {\n    w\n}`);
 
 //  return
-testExpression(`return x`, {"":"Return","type":null,"value":{"":"Identifier","type":null,"name":"x"}});
+testExpression(`return x`, {"":"Return","value":{"":"Identifier","name":"x"}});
 
 //  variables
 testExpression(
@@ -91,7 +91,7 @@ testExpression(
     x: Number
     y: Number
 `,
-`class Vector {\n    x : Number\n    y : Number\n}`
+`const Vector = class Vector {\n    x : Number\n    y : Number\n}`
 );
 
 //  for loops
@@ -187,6 +187,6 @@ testModule(
 `
 class Foo
 `,
-`module test {\n    class Foo {}\n}`,
+`module test {\n    const Foo = class Foo {}\n}`,
 { finalPhase: parsing },
 )

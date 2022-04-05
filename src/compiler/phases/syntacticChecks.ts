@@ -1,4 +1,4 @@
-import { traverse, skip } from "./traverse";
+import { traverse, skip } from "../traverse";
 import { createParser } from "../parser/createParser";
 import { Phase } from "./Phase";
 import { BinaryOperation } from "../pst/BinaryOperation";

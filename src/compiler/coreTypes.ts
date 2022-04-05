@@ -1,8 +1,10 @@
 import { getAbsolutePath } from "./pathFunctions";
 
 export const coreTypes = {
-    array: getAbsolutePath("array"),
-    float: getAbsolutePath("float"),
-    integer: getAbsolutePath("integer"),
-    string: getAbsolutePath("string"),
+    Array: getAbsolutePath("Array"),
+    Float: getAbsolutePath("Float"),
+    Integer: getAbsolutePath("Integer"),
+    String: getAbsolutePath("String"),
+    MultiFunction: getAbsolutePath("@MultiFunction"),
+    Native: getAbsolutePath("@Native"),
 }

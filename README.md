@@ -84,3 +84,4 @@ Cross platform modeling language
   - [x] Implement Outline String expressions.
   - [ ] Implement Meta property binding to adjacent nodes.
   - [ ] Add Javascript Operations for Interpreting.
+

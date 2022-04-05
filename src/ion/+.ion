@@ -1,11 +1,12 @@
 
+//  TODO: allow javascript definition to be moved up to a constant and reused across implementations
 @MultiFunction()
 `+` = []
-    @Javascript()
+    @Native()
         ""
             (a, b) => {
                 if (a.value === 0) { return b; }
                 if (b.value === 0) { return a; }
-                return { "": "Integer", value: a.value + b.value };
+                return { ...a, value: a.value + b.value };
             }
     (a: Integer, b: Integer): Integer => 0
