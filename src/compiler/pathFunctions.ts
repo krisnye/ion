@@ -32,17 +32,17 @@ export function join(...steps: string[]) {
 //  will successively test to find a path that exists
 //  for instance, for path foo.bar.baz
 //  will test "foo.bar.baz", "foo.baz", "baz"
-export function resolve<T>(path: string, map: Map<string,T>): [string,T] | null {
-    let steps = split(path)
+export function resolve<T>(path: string, map: Map<string,T>): string | null {
+    let steps = split(path);
     while (true) {
-        let check = join(...steps)
-        let value = map.get(check)
+        let check = join(...steps);
+        let value = map.get(check);
         if (value != null) {
-            return [check,value]
+            return check;
         }
         if (steps.length <= 1) {
-            return null
+            return null;
         }
-        steps.splice(steps.length - 2, 1)
+        steps.splice(steps.length - 2, 1);
     }
 }

@@ -2,6 +2,10 @@ alpha = 10
 beta = 2
 charlie = alpha + beta
 
+foo = "foo"
+bar = "bar"
+baz = foo + bar
+
 // x = (a, b) =>
 //     a + b
 //     x()

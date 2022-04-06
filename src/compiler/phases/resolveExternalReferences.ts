@@ -69,9 +69,8 @@ function replaceExternalReferencesToAbsolute(module: Module, externalModules: Ma
     for (let external of externalReferences.keys()) {
         let resolved = resolve(join(module.name, external), externalModules);
         if (resolved) {
-            let [path, externalModule] = resolved;
-            externalModuleDependencies.add(externalModule.name);
-            let absolutePath = getAbsolutePath(path);
+            externalModuleDependencies.add(resolved);
+            let absolutePath = getAbsolutePath(resolved);
             for (let ref of externalReferences.get(external)!.keys()) {
                 replacements.set(ref, ref.patch({ name: absolutePath, constant: true }));
             }

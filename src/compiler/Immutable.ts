@@ -8,7 +8,15 @@ export class Immutable extends Serializable {
     }
 
     patch(props): this {
-        return new (this as any).constructor({ ...this, ...props })
+        let changed = false;
+        for (let name in props) {
+            let value = props[name];
+            if (this[name] !== value) {
+                changed = true;
+                break;
+            }
+        }
+        return changed ? new (this as any).constructor({ ...this, ...props }) : this;
     }
 
 }

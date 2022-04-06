@@ -82,6 +82,8 @@ Cross platform modeling language
     - [-] Expression (Only valid within an outline expression, otherwise it's a no-op)
   - [x] Port over Semantic Error Messages.
   - [x] Implement Outline String expressions.
-  - [ ] Implement Meta property binding to adjacent nodes.
-  - [ ] Add Javascript Operations for Interpreting.
-
+  - [x] Implement Meta property binding to adjacent nodes.
+  - [ ] Do initial type inference WITHOUT constraints yet.
+  - [/] Add Javascript Operations for Interpreting.
+  - [ ] Then do semantic analysis and checking of valid function calls etc.
+  - [ ] Then return to the ability to interpret.

@@ -1,5 +1,5 @@
 import { coreTypes } from "../coreTypes";
-import { GetVariableFunction } from "../phases/createScopeMaps";
+import { getValue, GetVariableFunction } from "../phases/createScopeMaps";
 import { Literal, LiteralProps } from "./Literal";
 
 export interface StringLiteralProps extends LiteralProps {
@@ -16,7 +16,8 @@ export class StringLiteral extends Literal {
     }
 
     toString() {
-        return JSON.stringify(this.value);
+        let text = JSON.stringify(this.value);
+        return this.type ? `${text} : ${this.type}` : text;
     }
 
 }

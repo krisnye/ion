@@ -7,7 +7,9 @@ import { flattenSequences } from "./flattenSequences";
 import { identity } from "./identity";
 import { removeSoloBlocks } from "./removeSoloBlocks";
 import { resolveExternalReferences } from "./resolveExternalReferences";
+import { typeInference } from "./typeInference";
 import { simplify } from "./simplify";
+import { constantEvaluation } from "./constantEvaluation";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -21,7 +23,9 @@ export const parsingPhases: Phase[] = [
 ];
 
 export const intermediatePhases: Phase[] = [
+    typeInference,
     simplify,
+    constantEvaluation,
 ]
 
 export const assemblyPhases: Phase[] = [

@@ -15,7 +15,7 @@ export class Module extends Scope {
 
     toString() {
         if (this.dependencies.length > 0) {
-            return `module ${this.name} ${ super.toString() }\n// externals: ${this.dependencies}`;
+            return `module ${this.name} ${ super.toString() }\n// externals: ${JSON.stringify(this.dependencies)}`;
         }
         else {
             return `module ${this.name} ${ super.toString() }`;

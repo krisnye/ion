@@ -21,7 +21,7 @@ export class Function extends FunctionBase {
     patch(props: Partial<FunctionProps>) { return super.patch(props); }
 
     evaluate(call: Call, getVariable: GetVariableFunction): Node | Error[] {
-        let properties = checkParameters(this, this.parameters, call.nodes);
+        let properties = checkParameters(this, this.parameters, call.nodes, getVariable);
         if (properties[0] instanceof Error) {
             return properties as Error[];
         }

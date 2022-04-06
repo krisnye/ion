@@ -1,31 +1,49 @@
 import { Phase } from "./Phase";
-import { createConverter } from "../converters/Converter";
-import { simplifyConverters } from "./simplify/index";
-import { traverseWithScope } from "./createScopeMaps";
+import { createConverterPhase } from "../converters/Converter";
 import { Scope } from "../ast/Scope";
+import { Reference } from "../ast/Reference";
+import { NumberLiteral } from "../ast/NumberLiteral";
+import { GetVariableFunction } from "./createScopeMaps";
+import { isAbsolutePath } from "../pathFunctions";
 
-const simplifyFunction = createConverter(simplifyConverters);
+/**
+ * Gets the original variable traversing references if the variables containing the reference are constant.
+ */
+export function getSourceVariable(ref: Reference, getVariable: GetVariableFunction) {
+    let variable = getVariable(ref);
+    while (variable.constant && variable.value instanceof Reference) {
+        variable = getVariable(variable.value);
+    }
+    return variable;
+}
 
-export function simplify(moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> {
-    let errors = new Array<Error>();
-    let modifications = 0;
-    let result = traverseWithScope(module, ({ getVariable }) => {
-        return {
-            leave(node) {
-                let _original = node;
-                node = simplifyFunction(node, getVariable);
-                if (Array.isArray(node)) {
-                    errors.push(...node);
-                    return;
+const converterPhase = createConverterPhase([
+    [Reference, (ref: Reference, getVariable) => {
+        if (ref.constant === null) {
+            // get original variable
+            let variable = getSourceVariable(ref, getVariable);
+            let constant = variable.constant;
+            if (constant != null) {
+                if (constant) {
+                    if (variable.value instanceof NumberLiteral) {
+                        // just propagate numeric literals completely.
+                        return variable.value;
+                    }
+                    else {
+                        // constant value, use a reference to the original variable
+                        if (ref.name !== variable.id.name && isAbsolutePath(variable.id.name)) {
+                            return ref.patch({ name: variable.id.name });
+                        }
+                    }
                 }
-                if (node !== _original) {
-                    modifications++;
-                }
-                return node;
+                return ref.patch({ constant });
             }
         }
-    }, externals);
+        return ref;
+    }]
+] as any);
 
-    let runPhaseAgain = modifications > 0;
-    return [result, errors, runPhaseAgain];
+export function simplify(moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> {
+    debugger;
+    return converterPhase(moduleName, module, externals);
 }

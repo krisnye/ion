@@ -72,7 +72,7 @@ export function traverseWithScope(
     let scopeMaps = createScopeMaps(node, externals);
     function getVariable(ref: Reference): Variable {
         let original = lookup.getOriginal(ref);
-        let scope = scopeMaps.get(original);
+        let scope = scopeMaps.get(original) ?? scopeMaps.get(null);
         return scope[ref.name];
     }
     let visitor = callback({ getVariable });
@@ -81,9 +81,9 @@ export function traverseWithScope(
 
 export function getValue(ref: Node, getVariable: GetVariableFunction) {
     let value = ref;
-    while (value instanceof Reference) {
-        let variable = getVariable(value);
-        value = variable.value!;
+    while (value instanceof Reference || value instanceof Variable) {
+        let variable = value instanceof Variable ? value : getVariable(value);
+        value = getValue(variable.value!, getVariable);
     }
     return value;
 }

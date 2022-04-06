@@ -1,8 +1,10 @@
+import { Scope } from "../ast/Scope";
 import { Node } from "../Node";
-import { GetVariableFunction } from "../phases/createScopeMaps";
+import { GetVariableFunction, traverseWithScope } from "../phases/createScopeMaps";
+import { Phase } from "../phases/Phase";
 
 type ConverterType<A extends Node> = new (props: any) => A;
-type ConverterFunction<A extends Node> = (a: A, getVariable: GetVariableFunction) => Node | Error[];
+type ConverterFunction<A extends Node> = (a: A, getVariable: GetVariableFunction) => Node | null | boolean | void | Error[];
 export type Converter<A extends Node> = [ConverterType<A> | null, ConverterFunction<A>];
 
 export function createConverter<A extends Node>(allConverters: Converter<A>[]) {
@@ -25,7 +27,7 @@ export function createConverter<A extends Node>(allConverters: Converter<A>[]) {
         let runAgain = false;
         function runConverter(converter: ConverterFunction<A>) {
             let newA = converter(a, getVariable);
-            if (newA !== a) {
+            if (newA != null && newA !== false && newA !== a) {
                 runAgain = true;
                 a = newA as any;
                 return true;
@@ -57,4 +59,30 @@ export function createConverter<A extends Node>(allConverters: Converter<A>[]) {
         return a;
     }
     return convert;
+}
+
+export function createConverterPhase<A extends Node>(allConverters: Converter<A>[]) {
+    const converter = createConverter(allConverters);
+    return (moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> => {
+        let errors = new Array<Error>();
+        let modifications = 0;
+        let result = traverseWithScope(module, ({ getVariable }) => {
+            return {
+                leave(node) {
+                    let _original = node;
+                    node = converter(node, getVariable);
+                    if (Array.isArray(node)) {
+                        errors.push(...node);
+                        return;
+                    }
+                    if (node !== _original) {
+                        modifications++;
+                    }
+                    return node;
+                }
+            }
+        }, externals);
+        let runPhaseAgain = modifications > 0;
+        return [result, errors, runPhaseAgain];
+    }
 }

@@ -13,9 +13,10 @@ export class Node extends Immutable implements Required<NodeProps> {
     location!: SourceLocation;
     type!: null | Node;
     constant!: null | boolean;
+    typeChecked!: boolean;
 
     constructor(props) {
-        super({ type: null, constant: null, ...props });
+        super({ type: null, constant: null, typeChecked: false, ...props });
     }
 
     toInterpreterInstance(getVariable: GetVariableFunction) {
@@ -26,8 +27,12 @@ export class Node extends Immutable implements Required<NodeProps> {
         return {
             ...super.toJSON(),
             location: void 0,
-            type: this.type ?? void 0,          //  prevent type from being written if null
-            constant: this.constant ?? void 0   //  prevent constant from being written if null
+            //  prevent type from being written if null
+            type: this.type ?? void 0,
+            //  prevent constant from being written if null
+            constant: this.constant ?? void 0,
+            //  prevent typeChecked from being written if false
+            typeChecked: this.typeChecked || void 0,
         };
     }
 

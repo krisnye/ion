@@ -158,7 +158,6 @@ export class Compiler {
     }
 
     log(logger: PhaseLogger, phase: string, module: any, name: string) {
-        // console.log("LOGGER", phase, name);
         let viewAsCode = !Array.isArray(module);
         if (viewAsCode) {
             module = module.toString();

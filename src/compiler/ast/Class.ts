@@ -28,7 +28,7 @@ export class Class extends Scope implements Declaration {
     patch(props: Partial<ClassProps>) { return super.patch(props); }
 
     evaluate(call: Call, getVariable: GetVariableFunction): ObjectExpression | Error[] {
-        let properties = checkParameters(this, this.nodes, call.nodes);
+        let properties = checkParameters(this, this.nodes, call.nodes, getVariable);
         if (properties[0] instanceof Error) {
             return properties as Error[];
         }

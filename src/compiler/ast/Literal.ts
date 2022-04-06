@@ -13,4 +13,8 @@ export abstract class Literal extends Node {
 
     value!: any;
 
+    toString() {
+        throw new Error("not implemented");
+    }
+
 }

@@ -1,4 +1,5 @@
 import { Node } from "../Node";
+import { getValue, GetVariableFunction } from "../phases/createScopeMaps";
 import { SemanticError } from "../SemanticError";
 import { isMetaName } from "../utility";
 import { Reference } from "./Reference";
@@ -24,10 +25,11 @@ function checkParameter(call: Node, param: Variable | undefined, arg: Node | und
     if (param == null) {
         return new SemanticError(`Unexpected argument`, arg!);
     }
+    // TODO: We need to be checking against the Function TYPE not the Function directly.
     // for now, a variable argument name must match param name
     if (arg instanceof Variable) {
         if (arg.id.name !== param.id.name) {
-            return new SemanticError(`Wrong argument name '${arg.id.name}', expected '${param.id.name}`, arg);
+            return new SemanticError(`Wrong argument name '${arg.id.name}', expected '${param.id.name}`, arg.id);
         }
         arg = arg.value!;
     }
@@ -50,7 +52,7 @@ function checkParameter(call: Node, param: Variable | undefined, arg: Node | und
     );
 }
 
-export function checkParameters(call: Node, params: Variable[], args: Node[]): Node[] | Error[] {
+export function checkParameters(call: Node, params: Variable[], args: Node[], getVariable: GetVariableFunction): Node[] | Error[] {
     //  1. [x] check parameters
     //  2. [x] implement Class.Call => ObjectExpression
     //  3. [ ] implement MultiFunction.call =>
@@ -61,7 +63,7 @@ export function checkParameters(call: Node, params: Variable[], args: Node[]): N
     let errors = new Array<Error>();
     for (let i = 0; i < Math.max(params.length, args.length); i++) {
         let param = params[i];
-        let arg = args[i];
+        let arg = getValue(args[i], getVariable);
         let value = checkParameter(call, param, arg);
         if (value instanceof Error) {
             errors.push(value);

@@ -38,7 +38,6 @@ export function syntacticChecks(moduleName, module): ReturnType<Phase> {
                         else if (child instanceof Identifier) {
                             return;
                         }
-                        debugger;
                         errors.push(new SemanticError(`Invalid destructuring value`, child));
                     }
                     checkValidDestructure(node.value);

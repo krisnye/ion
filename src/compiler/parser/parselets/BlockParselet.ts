@@ -6,7 +6,6 @@ import { PrefixParselet } from "../PrefixParselet";
 export class BlockParselet extends PrefixParselet {
 
     parse(p: Parser, indentToken: Token): Node {
-        debugger;
         return p.parseBlock(indentToken);
     }
 
