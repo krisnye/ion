@@ -1,10 +1,11 @@
 import { Phase } from "./Phase";
-import { createConverterPhase } from "../converters/Converter";
+import { Converter, createConverterPhase } from "../converters/Converter";
 import { Scope } from "../ast/Scope";
 import { Reference } from "../ast/Reference";
 import { NumberLiteral } from "../ast/NumberLiteral";
 import { GetVariableFunction } from "./createScopeMaps";
 import { isAbsolutePath } from "../pathFunctions";
+import { Node } from "../Node";
 
 /**
  * Gets the original variable traversing references if the variables containing the reference are constant.
@@ -17,7 +18,7 @@ export function getSourceVariable(ref: Reference, getVariable: GetVariableFuncti
     return variable;
 }
 
-const converterPhase = createConverterPhase([
+export const simplifyConverters = [
     [Reference, (ref: Reference, getVariable) => {
         if (ref.constant === null) {
             // get original variable
@@ -41,9 +42,10 @@ const converterPhase = createConverterPhase([
         }
         return ref;
     }]
-] as any);
+] as any as Converter<Node>[];
+
+const converterPhase = createConverterPhase(simplifyConverters);
 
 export function simplify(moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> {
-    debugger;
     return converterPhase(moduleName, module, externals);
 }

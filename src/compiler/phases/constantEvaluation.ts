@@ -1,5 +1,5 @@
 import { Phase } from "./Phase";
-import { createConverterPhase } from "../converters/Converter";
+import { Converter, createConverterPhase } from "../converters/Converter";
 import { Scope } from "../ast/Scope";
 import { Reference } from "../ast/Reference";
 import { getValue, GetVariableFunction } from "./createScopeMaps";
@@ -50,11 +50,11 @@ function getMultiFunctionToCall(callee: ArrayExpression, args: Node[], getVariab
     return null;
 }
 
-const converterPhase = createConverterPhase([
+export const constantEvaluationConverters = [
     [
         Call,
         (call: Call, getVariable) => {
-            if (call.callee.constant && call.nodes.every(node => node.constant)) {
+            if (call.callee.constant && call.nodes.every(node => node.constant && node.type)) {
                 // for now no meta evaluate
                 let callee = getValue(call.callee, getVariable);
                 if (callee instanceof Class) {
@@ -83,7 +83,9 @@ const converterPhase = createConverterPhase([
             return call;
         }
     ]
-] as any);
+] as any as Converter<Node>[];
+
+const converterPhase = createConverterPhase(constantEvaluationConverters);
 
 export function constantEvaluation(moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> {
     return converterPhase(moduleName, module, externals);

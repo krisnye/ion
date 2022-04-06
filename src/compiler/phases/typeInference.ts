@@ -8,6 +8,8 @@ import { Variable } from "../ast/Variable";
 import { Reference } from "../ast/Reference";
 import { coreTypes } from "../coreTypes";
 import { GetVariableFunction } from "./createScopeMaps";
+import { simplifyConverters } from "./simplify";
+import { constantEvaluationConverters } from "./constantEvaluation";
 
 const converterPhase = createConverterPhase([
     //  IntegerLiteral.type = Integer
@@ -27,6 +29,8 @@ const converterPhase = createConverterPhase([
             }
         }
     }],
+    ...simplifyConverters,
+    ...constantEvaluationConverters,
 ] as any);
 
 export function typeInference(moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> {
