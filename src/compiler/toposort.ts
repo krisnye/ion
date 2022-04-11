@@ -1,7 +1,7 @@
 
 // copied from https://github.com/marcelklehr/toposort/blob/master/index.js
 
-function toposortInternal(nodes, edges) {
+function toposort(nodes, edges) {
   var cursor = nodes.length;
   var sorted = new Array(cursor);
   var visited = {};
@@ -52,16 +52,11 @@ function toposortInternal(nodes, edges) {
   }
 }
 
-function uniqueNodes(arr){
-  var res: any[] = [];
-  for (var i = 0, len = arr.length; i < len; i++) {
-    var edge = arr[i];
-    if (res.indexOf(edge[0]) < 0) { 
-      res.push(edge[0]);
-    }
-    if (res.indexOf(edge[1]) < 0) {
-      res.push(edge[1]);
-    }
+function uniqueNodes(edges): Set<any> {
+  var res = new Set();
+  for (const [a,b] of edges) {
+    res.add(a);
+    res.add(b);
   }
   return res;
 }
@@ -72,9 +67,18 @@ function uniqueNodes(arr){
  * @param {Array} edges
  * @returns {Array}
  */
-export function toposort(nodes: any[], edges: [any,any][]){
+export default function(nodes: any[], edges: [any,any][]){
   let sentinel = {};
-  edges = [...nodes.map(node => [sentinel, node] as [any,any], ...edges)];
-  let result = toposortInternal(uniqueNodes(edges), edges);
-  return result.filter(node => node !== sentinel);
+  let unique = uniqueNodes(edges);
+  for (let node of nodes) {
+    if (!unique.has(node)) {
+      unique.add(node);
+      edges.push([sentinel, node]);
+    }
+  }
+  let result = toposort([...unique], edges)
+  if (result[0] === sentinel) {
+    result.splice(0, 1);
+  }
+  return result;
 }

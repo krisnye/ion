@@ -65,7 +65,7 @@ export type GetVariableFunction = (ref: Reference) => Variable;
 
 export function traverseWithScope(
     node: Readonly<any>,
-    callback: (args: { getVariable: GetVariableFunction }) => Visitor,
+    callback: (args: { getVariable: GetVariableFunction, lookup: Lookup }) => Visitor,
     externals?: Map<string,Scope>,
 ): any {
     let lookup = new Lookup();
@@ -75,7 +75,7 @@ export function traverseWithScope(
         let scope = scopeMaps.get(original) ?? scopeMaps.get(null);
         return scope[ref.name];
     }
-    let visitor = callback({ getVariable });
+    let visitor = callback({ getVariable, lookup });
     return traverse(node, {...visitor, lookup });
 }
 

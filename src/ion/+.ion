@@ -1,16 +1,9 @@
-js_add = ""
-    (a, b) => {
-        if (a.value === 0) { return b; }
-        if (b.value === 0) { return a; }
-        return { ...a, value: a.value + b.value };
-    }
 
-//  TODO: allow javascript definition to be moved up to a constant and reused across implementations
 @MultiFunction()
 `+` = []
-    @Native(javascript = js_add)
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
     (a: Integer, b: Integer): Integer => 0
-    @Native(javascript = js_add)
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
     (a: Float, b: Float): Float => 0.0
-    @Native(javascript = js_add)
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
     (a: String, b: String): String => ""

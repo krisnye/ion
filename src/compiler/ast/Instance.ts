@@ -8,7 +8,7 @@ export interface ObjectExpressionProps extends BlockProps {
     class: Reference;
 }
 
-export class ObjectExpression extends Block {
+export class Instance extends Block {
 
     class!: Reference;
     nodes!: Variable[];
@@ -31,7 +31,7 @@ export class ObjectExpression extends Block {
 
     toString() {
         // this is virtually indistinguishable from a call...
-        return `instance ${this.class}${Scope.toString(this.nodes, "(", ")")})`;
+        return `${this.class}${Scope.toString(this.nodes, "{{", "}}")}`;
     }
 
 }

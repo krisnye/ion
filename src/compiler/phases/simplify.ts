@@ -12,8 +12,16 @@ import { Node } from "../Node";
  */
 export function getSourceVariable(ref: Reference, getVariable: GetVariableFunction) {
     let variable = getVariable(ref);
+    if (variable == null) {
+        debugger;
+        getVariable(ref);
+    }
     while (variable.constant && variable.value instanceof Reference) {
         variable = getVariable(variable.value);
+        if (variable == null) {
+            debugger;
+            getVariable(ref);
+        }
     }
     return variable;
 }

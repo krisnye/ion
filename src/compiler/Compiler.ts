@@ -8,7 +8,7 @@ import { Phase } from "./phases/Phase";
 import { Module } from "./pst/Module";
 import { SourceLocation } from "./SourceLocation";
 import { SourcePosition } from "./SourcePosition";
-import { toposort } from "./toposort";
+import toposort from "./toposort";
 
 export type PhaseLogger = (names?: string | string[] | null, ast?: any, file?: string) => void
 
@@ -73,7 +73,7 @@ export class Compiler {
                     let phase = phases[i];
                     let [newModule, errors, runPhaseAgain] = phase(name, modul, modules, this.options);
                     if (errors.length > 0) {
-                        console.log(phase.name);
+                        console.log(`${name} : ${phase.name}`);
                         for (let error of errors) {
                             this.printErrorConsole(error, sources);
                         }
@@ -114,10 +114,6 @@ export class Compiler {
             let errors = this.runPhases(sources, modules, parsingPhases, false, debugOptions);
             if (errors) { return errors; }
             if (finalPhase != null) { return modules; }
-            errors = this.runPhases(sources, modules, intermediatePhases, false, debugOptions);
-            if (errors) { return errors; }
-            errors = this.runPhases(sources, modules, assemblyPhases, true, debugOptions);
-            if (errors) { return errors; }
 
             // sort the modules map based upon inter-module dependencies
             let sortedModuleNames = toposort([...modules.keys()], [...modules.values()].map((module: Module) => {
@@ -126,6 +122,11 @@ export class Compiler {
                 })];
             }).flat() as [any,any][]);
             modules = new Map(sortedModuleNames.map(name => [name, modules.get(name)]));
+
+            errors = this.runPhases(sources, modules, intermediatePhases, false, debugOptions);
+            if (errors) { return errors; }
+            errors = this.runPhases(sources, modules, assemblyPhases, true, debugOptions);
+            if (errors) { return errors; }
 
         } catch (e) {
             this.printErrorConsole(e, sources);

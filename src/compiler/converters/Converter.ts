@@ -2,6 +2,7 @@ import { Scope } from "../ast/Scope";
 import { Node } from "../Node";
 import { GetVariableFunction, traverseWithScope } from "../phases/createScopeMaps";
 import { Phase } from "../phases/Phase";
+import { Lookup } from "../traverse";
 
 type ConverterType<A extends Node> = new (props: any) => A;
 type ConverterFunction<A extends Node> = (a: A, getVariable: GetVariableFunction) => Node | null | boolean | void | Error[];
@@ -23,12 +24,13 @@ export function createConverter<A extends Node>(allConverters: Converter<A>[]) {
             value.push(converter[1]);
         }
     }
-    let convert = (a: A, getVariable: GetVariableFunction) => {
+    let convert = (a: A, getVariable: GetVariableFunction, lookup: Lookup) => {
         let runAgain = false;
         function runConverter(converter: ConverterFunction<A>) {
             let newA = converter(a, getVariable);
             if (newA != null && newA !== false && newA !== a) {
                 runAgain = true;
+                lookup.setCurrent(a, newA);
                 a = newA as any;
                 return true;
             }
@@ -66,11 +68,11 @@ export function createConverterPhase<A extends Node>(allConverters: Converter<A>
     return (moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> => {
         let errors = new Array<Error>();
         let modifications = 0;
-        let result = traverseWithScope(module, ({ getVariable }) => {
+        let result = traverseWithScope(module, ({ getVariable, lookup }) => {
             return {
                 leave(node) {
                     let _original = node;
-                    node = converter(node, getVariable);
+                    node = converter(node, getVariable, lookup);
                     if (Array.isArray(node)) {
                         errors.push(...node);
                         return;

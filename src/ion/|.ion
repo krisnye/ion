@@ -1,0 +1,6 @@
+
+@MultiFunction()
+`|` = []
+    @Native("(a, b) => ({ ...a, value: a.value | b.value })")
+    (a: Integer, b: Integer): Integer => 0
+    (a: Type, b: Type): Type => UnionType(a, b)

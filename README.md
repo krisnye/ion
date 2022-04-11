@@ -87,3 +87,6 @@ Cross platform modeling language
   - [/] Add Javascript Operations for Interpreting.
   - [ ] Then do semantic analysis and checking of valid function calls etc.
   - [ ] Then return to the ability to interpret.
+  - [ ] Type Inference can be done exclusively in single files.
+  - [ ] Evaluation / simplification can be done in single file as well.
+
