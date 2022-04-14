@@ -85,8 +85,9 @@ Cross platform modeling language
   - [x] Implement Meta property binding to adjacent nodes.
   - [ ] Do initial type inference WITHOUT constraints yet.
   - [/] Add Javascript Operations for Interpreting.
-  - [ ] Then do semantic analysis and checking of valid function calls etc.
-  - [ ] Then return to the ability to interpret.
+  - [ ] Semantic analysis.
   - [ ] Type Inference can be done exclusively in single files.
+
+  - [ ] Then return to the ability to interpret.
   - [ ] Evaluation / simplification can be done in single file as well.
 

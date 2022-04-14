@@ -1,0 +1,4 @@
+
+@MultiFunction()
+is = []
+    (a: UnionType, b: Type) => 1

@@ -1,0 +1,13 @@
+
+@MultiFunction()
+min = []
+    (a: Integer, b: Integer) =>
+        if a >= b
+            a
+        else
+            b
+    (a: Float, b: Float) =>
+        if a >= b
+            a
+        else
+            b

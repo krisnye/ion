@@ -1,5 +1,6 @@
-alpha = 10
-beta = 2
-charlie = alpha | beta
-add = (a: Integer, b: Integer) => a + b
-foo = add(1, 2)
+Whole = >= 0
+alpha: 1 .. < 10 = 10
+// beta = 2
+// charlie = alpha | beta
+// add = (a: Integer, b: Integer) => a + b
+// foo = add(1, 2)

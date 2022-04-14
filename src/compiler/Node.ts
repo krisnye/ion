@@ -23,6 +23,10 @@ export class Node extends Immutable implements Required<NodeProps> {
         throw new Error(`${this.constructor.name}.toInterpreterInstance not implemented.`);
     }
 
+    simplify(): Node {
+        return this;
+    }
+
     toJSON(): any {
         return {
             ...super.toJSON(),

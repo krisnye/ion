@@ -2,12 +2,14 @@ import { Phase } from "./Phase";
 import { tokenization } from "./tokenization";
 import { parsing } from "./parsing";
 import { syntacticChecks } from "./syntacticChecks";
-import { opsToNodes } from "./opsToNodes";
+import { opsToValueNodes as opsToValueNodes } from "./opsToValueNodes";
 import { flattenSequences } from "./flattenSequences";
 import { identity } from "./identity";
 import { removeSoloBlocks } from "./removeSoloBlocks";
 import { resolveExternalReferences } from "./resolveExternalReferences";
 import { typeInference } from "./typeInference";
+import { opsToTypeNodes } from "./opsToTypeNodes";
+import { pstModulesToAst } from "./pstModulesToAst";
 // import { simplify } from "./simplify";
 // import { constantEvaluation } from "./constantEvaluation";
 
@@ -15,7 +17,8 @@ export const parsingPhases: Phase[] = [
     tokenization,
     parsing,
     syntacticChecks,
-    opsToNodes,
+    opsToTypeNodes,
+    opsToValueNodes,
     removeSoloBlocks,
     flattenSequences,
     resolveExternalReferences,
@@ -23,9 +26,8 @@ export const parsingPhases: Phase[] = [
 ];
 
 export const intermediatePhases: Phase[] = [
+    pstModulesToAst,
     typeInference,
-    // simplify,
-    // constantEvaluation,
 ]
 
 export const assemblyPhases: Phase[] = [

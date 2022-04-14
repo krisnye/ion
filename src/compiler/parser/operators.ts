@@ -5,6 +5,10 @@ export const prefixPrecedence: { [op: string]: number | undefined } = {
     "-": 14,
     "!": 14,
     "~": 14,
+    "<": 14,    //  used for numeric types: < 10
+    "<=": 14,   //  used for numeric types: <= 10
+    ">": 14,    //  used for numeric types: > 10
+    ">=": 14,   //  used for numeric types: >= 10
     "void": 2,
 } as const;
 
@@ -40,6 +44,7 @@ export const infixPrecedence: { [op: string]: number | undefined } = {
     ">=": 12,
     "==": 11,
     "!=": 11,
+    "..": 11,
     "&": 10,
     "^": 9,
     "|": 8,

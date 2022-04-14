@@ -20,6 +20,7 @@ import { Variable } from "../ast/Variable";
 import { FunctionType } from "../ast/FunctionType";
 import { Block } from "../ast/Block";
 import { addMetaCallsToContainers } from "../ast/MetaContainer";
+import { UnaryOperation } from "../pst/UnaryOperation";
 
 function toParametersOrMeta(value: Node | null) {
     let parameters = new Array<Variable | MetaCall>();
@@ -57,7 +58,7 @@ export function tempFactory(name: string): IdentifierFactory {
     }
 }
 
-export function opsToNodes(moduleName, module): ReturnType<Phase> {
+export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
     let errors = new Array<Error>();
     let temp = tempFactory("opsToNodes");
     function destructure(nodes: Array<Node>, pattern: Node | null, right: Node, variableOrAssignment: boolean, memberIndex: null | number = null) {
@@ -102,7 +103,9 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
         }
     }
     let result = traverse(module, {
-        leave(node, ancestors) {
+        enter(node, ancestors, path) {
+        },
+        leave(node, ancestors, path) {
             let parent = ancestors[ancestors.length - 1];
             // check classes as well
             if (node instanceof PstClass) {
@@ -141,6 +144,17 @@ export function opsToNodes(moduleName, module): ReturnType<Phase> {
                 if (!retainAsIdentifier) {
                     return new Reference(node);
                 }
+            }
+            else if (node instanceof UnaryOperation) {
+                let { location } = node;
+                return new AstCall({
+                    location,
+                    callee: new Reference({
+                        location: node.operator.location,
+                        name: node.operator.value,
+                    }),
+                    nodes: [node.value],
+                })
             }
             else if (node instanceof BinaryOperation) {
                 let { location, left, right } = node;
