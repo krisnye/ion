@@ -1,6 +1,7 @@
 import { coreTypes } from "../coreTypes";
 import { Node, NodeProps } from "../Node";
 import { SourceLocation } from "../SourceLocation";
+import { Expression } from "./Expression";
 import { IntegerLiteral } from "./IntegerLiteral";
 import { NumberLiteral } from "./NumberLiteral";
 import { Type } from "./Type";
@@ -49,8 +50,8 @@ function isIntegerType(node) {
 
 export class NumberType extends Node implements Type {
 
-    min?: Node;
-    max?: Node;
+    min?: Expression;
+    max?: Expression;
     minExclusive!: boolean;
     maxExclusive!: boolean;
     integer?: boolean;

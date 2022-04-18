@@ -1,7 +1,7 @@
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
-import { instanceToNode } from "../interpreter/instanceToNode";
 import { Node } from "../Node";
+import { nativeTypeFunctions } from "../phases/nativeTypeFunctions";
 import { Call } from "./Call";
 import { Callable } from "./Callable";
 import { FunctionBase, FunctionBaseProps } from "./FunctionBase";
@@ -26,14 +26,15 @@ export class Function extends FunctionBase implements Callable {
         throw new Error();
     }
 
-    getReturnType(args: Type[]): Type {
+    getReturnType(argTypes: Type[]): Type {
         let native = getMetaCall(this, coreTypes.Native);
         if (native) {
-            //  how do we find the native return type for this shit?
-            //  we don't even know the name of the function at this point?
             const types = this.parameters.map(node => node.type);
-            // console.log(native.toString());
-            console.log(`${this.id}(${types.join(`,`)})`);
+            const nativeName = `${this.id!.name}(${types.join(`,`)})`
+            const nativeTypeFunction = nativeTypeFunctions[nativeName];
+            if (nativeTypeFunction) {
+                return nativeTypeFunction(this, argTypes);
+            }
         }
         if (isType(this.returnType)) {
             return this.returnType;

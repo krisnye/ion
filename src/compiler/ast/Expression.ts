@@ -9,6 +9,7 @@ export interface ExpressionProps {
     location: SourceLocation;
     type?: null | Node;
     constant?: null | boolean;
+    resolved?: boolean;
 }
 
 export class Expression extends Node implements Required<ExpressionProps> {
