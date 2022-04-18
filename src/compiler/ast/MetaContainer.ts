@@ -1,23 +1,29 @@
-import { isMetaCall, MetaCall } from "./Call";
+import { Call, isMetaCall, MetaCall } from "./Call";
 import { Node } from "../Node";
 import { SemanticError } from "../SemanticError";
 import { Scope } from "./Scope";
 import { Instance } from "./Instance";
+import { Reference } from "./Reference";
 
-export interface MetaContainer {
+export interface MetaContainer extends Node {
     meta: Node[];
 }
 
-export function getMetaCall(container: MetaContainer, globalPath: string): Instance | null {
+export function getMetaCall(container: MetaContainer, globalPath: string): Instance | Call | null {
     let calls = getMetaCalls(container, globalPath);
     return calls[0] ?? null;
 }
 
 export function getMetaCalls(container: MetaContainer, globalPath: string) {
-    let calls = new Array<Instance>();
-    for (let meta of container.meta as Instance[]) {
+    let calls = new Array<Instance | Call>();
+    for (let meta of container.meta) {
+        // handle both right now
+        //  TODO: Fix this later.
+        if (meta instanceof Call && meta.callee instanceof Reference && meta.callee.name === globalPath) {
+            calls.push(meta);
+        } 
         // this only works once the MetaCalls are converted into Instance
-        if (meta.class.name  === globalPath) {
+        if (meta instanceof Instance && meta.class.name  === globalPath) {
             calls.push(meta);
         }
     }
@@ -41,7 +47,7 @@ export function addMetaCallsToContainers<T extends Node>(nodes: Array<T | MetaCa
     return nodes as T[];
 }
 
-export function metaToString(d: MetaContainer) {
+export function toMetaString(d: MetaContainer) {
     return d.meta.length ? `${Scope.toString(d.meta, "{", "}\n")}` : "";
 }
 

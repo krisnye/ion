@@ -1,14 +1,14 @@
-import { Node, NodeProps } from "../Node";
+import { Expression, ExpressionProps } from "../ast/Expression";
 import { Token } from "../Token";
 
-export interface UnaryOperationProps extends NodeProps {
+export interface UnaryOperationProps extends ExpressionProps {
     operator: Token;
-    value: Node;
+    value: Expression;
 }
-export class UnaryOperation extends Node {
+export class UnaryOperation extends Expression {
 
     operator!: Token;
-    value!: Node;
+    value!: Expression;
 
     constructor(props: UnaryOperationProps) { super(props); }
     patch(props: Partial<UnaryOperationProps>) { return super.patch(props); }

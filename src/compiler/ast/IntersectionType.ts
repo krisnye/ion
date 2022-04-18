@@ -1,16 +1,10 @@
-import { Node, NodeProps } from "../Node";
-import { NumberType } from "./NumberType";
+import { CompoundType, CompoundTypeProps } from "./CompoundType";
 import { Type } from "./Type";
 
-export interface IntersectionTypeProps extends NodeProps {
-    left: Node;
-    right: Node;
+export interface IntersectionTypeProps extends CompoundTypeProps {
 }
 
-export class IntersectionType extends Node implements Type {
-
-    left!: Node;
-    right!: Node;
+export class IntersectionType extends CompoundType implements Type {
 
     constructor(props: IntersectionTypeProps) { super(props); }
     patch(props: Partial<IntersectionTypeProps>) {
@@ -18,16 +12,25 @@ export class IntersectionType extends Node implements Type {
     }
 
     simplify() {
-        if (this.left.toString() === this.right.toString()) {
-            return this.left;
+        return this.simplifyInternal(false);
+    }
+
+    isSubtypeOf(b: Type): boolean | null {
+        const left = this.left.isSubtypeOf(b);
+        const right = this.right.isSubtypeOf(b);
+        //  1 1 => 1
+        if (left === true && right === true) {
+            return true;
         }
-        if (this.left instanceof NumberType && this.right instanceof NumberType) {
-            const combined = NumberType.intersection(this.left, this.right);
-            if (combined != null) {
-                return combined;
-            }
+        //  1 0 => n
+        //  0 0 => 0
+        //  0 n => n
+        if (left === false || right === false) {
+            return false;
         }
-        return this;
+        //  1 n => n
+        //  n n => n
+        return null;
     }
 
     toString() {

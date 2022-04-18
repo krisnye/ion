@@ -1,16 +1,11 @@
-import { Node, NodeProps } from "../Node";
-import { NumberType } from "./NumberType";
+import { SourceLocation } from "../SourceLocation";
+import { CompoundType, CompoundTypeProps } from "./CompoundType";
 import { Type } from "./Type";
 
-export interface UnionTypeProps extends NodeProps {
-    left: Node;
-    right: Node;
+export interface UnionTypeProps extends CompoundTypeProps {
 }
 
-export class UnionType extends Node implements Type {
-
-    left!: Node;
-    right!: Node;
+export class UnionType extends CompoundType implements Type {
 
     constructor(props: UnionTypeProps) { super(props); }
     patch(props: Partial<UnionTypeProps>) {
@@ -18,16 +13,38 @@ export class UnionType extends Node implements Type {
     }
 
     simplify() {
-        if (this.left.toString() === this.right.toString()) {
-            return this.left;
+        return this.simplifyInternal(true);
+    }
+
+    isSubtypeOf(b: Type): boolean | null {
+        const left = this.left.isSubtypeOf(b);
+        const right = this.right.isSubtypeOf(b);
+        //  1 1 => 1
+        if (left === true && right === true) {
+            return true;
         }
-        if (this.left instanceof NumberType && this.right instanceof NumberType) {
-            const combined = NumberType.union(this.left, this.right);
-            if (combined != null) {
-                return combined;
-            }
+        //  0 0 => 0
+        if (left === false && right === false) {
+            return false;
         }
-        return this;
+        //  1 0 => n
+        //  1 n => n
+        //  0 n => n
+        //  n n => n
+        return null;
+    }
+
+    static join(types: Type[]) {
+        let left = types[0];
+        for (let i = 1; i < types.length; i++) {
+            let right = types[i];
+            left = new UnionType({
+                location: SourceLocation.merge(left.location, right.location),
+                left,
+                right
+            });
+        }
+        return left;
     }
 
     toString() {

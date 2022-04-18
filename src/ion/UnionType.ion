@@ -1,4 +1,0 @@
-
-class UnionType
-    a: Type
-    b: Type

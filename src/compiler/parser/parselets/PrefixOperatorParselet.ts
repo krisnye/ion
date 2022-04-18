@@ -7,6 +7,7 @@ import { PrefixParselet } from "../PrefixParselet";
 import { SourceLocation } from "../../SourceLocation";
 import { UnaryOperation } from "../../pst/UnaryOperation";
 import { BinaryOperation } from "../../pst/BinaryOperation";
+import { Expression } from "../../ast/Expression";
 
 export function getBinaryOperationPrecedence(node) {
     if (node instanceof BinaryOperation) {
@@ -56,7 +57,7 @@ export class PrefixOperatorParselet extends PrefixParselet {
         return new UnaryOperation({
             location: SourceLocation.merge(location, argument.location),
             operator,
-            value: argument,
+            value: argument as Expression,
         })
     }
 

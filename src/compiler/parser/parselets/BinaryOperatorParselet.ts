@@ -3,6 +3,7 @@ import { Token } from "../../Token";
 import { getInfixPrecedence, infixRightAssociative } from "../operators";
 import { SemanticError } from "../../SemanticError";
 import { Node } from "../../Node";
+import { Expression } from "../../ast/Expression";
 import { SourceLocation } from "../../SourceLocation";
 import { InfixParselet } from "../InfixParslet";
 import { BinaryOperation } from "../../pst/BinaryOperation";
@@ -24,9 +25,9 @@ export class BinaryOperatorParselet extends InfixParselet {
         
         return new BinaryOperation({
             location: SourceLocation.merge(left.location, right.location),
-            left,
+            left: left as Expression,
             operator,
-            right,
+            right: right as Expression,
         });
     }
 

@@ -6,10 +6,14 @@ import { SemanticError } from "../SemanticError";
 import createScopeMaps, { NodeMap, ScopeMap } from "./createScopeMaps";
 import { Phase } from "./Phase";
 import { traverse } from "../traverse";
+import { Identifier } from "../ast/Identifier";
+import { coreTypes } from "../coreTypes";
+import { NumberType } from "../ast/NumberType";
+import { TypeReference } from "../ast/TypeReference";
 
 export function resolveExternalReferences(moduleName, module, externalModules: Map<string,Module>): ReturnType<Phase> {
     let errors: Error[] = [];
-    let replacements = new Map<Reference, Reference>();
+    let replacements = new Map<Identifier, Reference>();
     let scopes = createScopeMaps(module);
     let externalReferences = getExternalReferences(module, scopes);
     let dependencies = new Set<string>();
@@ -23,6 +27,16 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
         },
         leave(node) {
             if (node instanceof Reference) {
+                if (node instanceof TypeReference) {
+                    // convert References to Float or Integer to NumberTypes
+                    if (node.name === coreTypes.Float) {
+                        return new NumberType({ location: node.location, integer: false }) as any
+                    }
+                    if (node.name === coreTypes.Integer) {
+                        return new NumberType({ location: node.location, integer: true }) as any
+                    }
+                }
+
                 let declaration = scopes.get(node)[node.name];
                 if (declaration != null) {
                     let rootId = replacements.get(declaration.id);
@@ -65,12 +79,12 @@ function replaceInternalReferencesToAbsolute(module: Module, externalModules: Ma
     }
 }
 
-function replaceExternalReferencesToAbsolute(module: Module, externalModules: Map<string,Module>, replacements: Map<Reference, Reference>, errors: Error[], externalReferences: Map<string, Set<Reference>>, externalModuleDependencies: Set<string>) {
+function replaceExternalReferencesToAbsolute(module: Module, externalModules: Map<string,Module>, replacements: Map<Identifier, Reference>, errors: Error[], externalReferences: Map<string, Set<Reference>>, externalModuleDependencies: Set<string>) {
     for (let external of externalReferences.keys()) {
-        let resolved = resolve(join(module.name, external), externalModules);
-        if (resolved) {
-            externalModuleDependencies.add(resolved);
-            let absolutePath = getAbsolutePath(resolved);
+        let resolvedPath = resolve(join(module.name, external), externalModules);
+        if (resolvedPath) {
+            externalModuleDependencies.add(resolvedPath);
+            let absolutePath = getAbsolutePath(resolvedPath);
             for (let ref of externalReferences.get(external)!.keys()) {
                 replacements.set(ref, ref.patch({ name: absolutePath, constant: true }));
             }

@@ -1,14 +1,15 @@
 import { Scope } from "../ast/Scope";
+import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
 import { GetVariableFunction, traverseWithScope } from "../phases/createScopeMaps";
 import { Phase } from "../phases/Phase";
 import { Lookup } from "../traverse";
 
 type ConverterType<A extends Node> = new (props: any) => A;
-type ConverterFunction<A extends Node> = (a: A, getVariable: GetVariableFunction) => Node | null | boolean | void | Error[];
+type ConverterFunction<A extends Node> = (a: A, c: EvaluationContext) => Node | null | boolean | void | Error[];
 export type Converter<A extends Node> = [ConverterType<A> | null, ConverterFunction<A>];
 
-export function createConverter<A extends Node>(allConverters: Converter<A>[]) {
+export function createConverter<A extends Node>(predicate: (node) => boolean, allConverters: Converter<A>[]) {
     let map = new Map<ConverterType<A>, Array<ConverterFunction<A>>>();
     let runOnAll = new Array<ConverterFunction<A>>();
     for (let converter of allConverters) {
@@ -24,15 +25,17 @@ export function createConverter<A extends Node>(allConverters: Converter<A>[]) {
             value.push(converter[1]);
         }
     }
-    let convert = (a: A, getVariable: GetVariableFunction, lookup: Lookup) => {
+    let convert = (a: A, c: EvaluationContext) => {
         let runAgain = false;
         function runConverter(converter: ConverterFunction<A>) {
-            let newA = converter(a, getVariable);
-            if (newA != null && newA !== false && newA !== a) {
-                runAgain = true;
-                lookup.setCurrent(a, newA);
-                a = newA as any;
-                return true;
+            if (predicate(a)) {
+                let newA = converter(a, c);
+                if (newA != null && newA !== false && newA !== a) {
+                    runAgain = true;
+                    c.lookup.setCurrent(a, newA);
+                    a = newA as any;
+                    return true;
+                }
             }
             return false;
         }
@@ -63,16 +66,19 @@ export function createConverter<A extends Node>(allConverters: Converter<A>[]) {
     return convert;
 }
 
-export function createConverterPhase<A extends Node>(allConverters: Converter<A>[]) {
-    const converter = createConverter(allConverters);
+export function createConverterPhase<A extends Node>(
+    predicate: (node) => boolean,
+    allConverters: Converter<A>[]
+) {
+    const converter = createConverter(predicate, allConverters);
     return (moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> => {
         let errors = new Array<Error>();
         let modifications = 0;
-        let result = traverseWithScope(module, ({ getVariable, lookup }) => {
+        let result = traverseWithScope(module, (c) => {
             return {
                 leave(node) {
                     let _original = node;
-                    node = converter(node, getVariable, lookup);
+                    node = converter(node, c);
                     if (Array.isArray(node)) {
                         errors.push(...node);
                         return;

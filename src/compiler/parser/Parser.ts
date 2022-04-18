@@ -8,6 +8,7 @@ import { SourceLocation } from "../SourceLocation";
 import { Module } from "../pst/Module";
 import { SourcePosition } from "../SourcePosition";
 import { tokenTypes } from "../tokenizer/TokenType";
+import { Expression } from "../ast/Expression";
 
 export class Parser {
 
@@ -106,7 +107,7 @@ export class Parser {
                 ? SourceLocation.merge(nodes[0].location, nodes[nodes.length - 1].location)
                 : new SourceLocation(filename, new SourcePosition(0, 0), new SourcePosition(0, 0)),
             name: filename,
-            nodes,
+            nodes: nodes as Expression[],
             dependencies: []
         })
     }
@@ -136,7 +137,7 @@ export class Parser {
 
         return new Block({
             location: SourceLocation.merge(indent.location, outdent!.location),
-            nodes,
+            nodes: nodes as Expression[],
         })
     }
 

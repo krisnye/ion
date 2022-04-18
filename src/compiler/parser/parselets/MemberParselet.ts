@@ -6,6 +6,7 @@ import { tokenTypes } from "../../tokenizer/TokenType";
 import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
 import { Member } from "../../pst/Member";
 import { infixPrecedence } from "../operators";
+import { Expression } from "../../ast/Expression";
 
 export class MemberParselet extends BinaryOperatorParselet {
 
@@ -16,7 +17,7 @@ export class MemberParselet extends BinaryOperatorParselet {
         this.closeTokenType = closeToken;
     }
 
-    parse(p: Parser, object: Node, open: Token): Node {
+    parse(p: Parser, object: Expression, open: Token): Node {
         let computed = this.closeTokenType != null;
         let property = p.parseExpression(computed ? 0 : infixPrecedence[open.value]!);
         //  if it's computed we consume the closing operator "]" otherwise
@@ -25,7 +26,7 @@ export class MemberParselet extends BinaryOperatorParselet {
         return new Member({
             location: SourceLocation.merge(object.location, close.location),
             object,
-            property,
+            property: property as Expression,
             computed,
         });
     }

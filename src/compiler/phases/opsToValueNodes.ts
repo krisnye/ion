@@ -21,6 +21,10 @@ import { FunctionType } from "../ast/FunctionType";
 import { Block } from "../ast/Block";
 import { addMetaCallsToContainers } from "../ast/MetaContainer";
 import { UnaryOperation } from "../pst/UnaryOperation";
+import { isTypeName } from "../utility";
+import { TypeReference } from "../ast/TypeReference";
+import { Type } from "../ast/Type";
+import { Expression } from "../ast/Expression";
 
 function toParametersOrMeta(value: Node | null) {
     let parameters = new Array<Variable | MetaCall>();
@@ -40,7 +44,7 @@ function toVariableOrMetaCall(value: Node) {
     if (value instanceof Identifier) {
         return new Variable({
             location: value.location,
-            id: value,
+            id: new Identifier(value),
             type: null,
             value: null,
             meta: [],
@@ -61,7 +65,7 @@ export function tempFactory(name: string): IdentifierFactory {
 export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
     let errors = new Array<Error>();
     let temp = tempFactory("opsToNodes");
-    function destructure(nodes: Array<Node>, pattern: Node | null, right: Node, variableOrAssignment: boolean, memberIndex: null | number = null) {
+    function destructure(nodes: Array<Node>, pattern: Node | null, right: Expression, variableOrAssignment: boolean, memberIndex: null | number = null) {
         if (pattern instanceof Group) {
             let tempVar = new Identifier(temp(right.location));
             memberIndex = pattern.open.value == "[" ? 0 : null;
@@ -94,8 +98,8 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
             let id = pattern;
             nodes.push(
                 variableOrAssignment
-                ? new Variable({ location, id, type: null, value, constant: true, meta: [] })
-                : new Assignment({ location, id, value })
+                ? new Variable({ location, id: new Identifier(id), type: null, value, constant: true, meta: [] })
+                : new Assignment({ location, id: new Reference(id), value })
             );
         }
         else {
@@ -142,7 +146,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                     = parent instanceof Member && !parent.computed && node === parent.property;
                     //      parent is Object Literal and this is key.
                 if (!retainAsIdentifier) {
-                    return new Reference(node);
+                    return isTypeName(node.name) ? new TypeReference(node) : new Reference(node);
                 }
             }
             else if (node instanceof UnaryOperation) {
@@ -177,7 +181,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                                 location,
                                 meta: [],
                                 parameters,
-                                returnType: right,
+                                returnType: right as any as Type,
                             })
                         }
                         else {
@@ -205,7 +209,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                             return new Variable({ location, id: new Identifier(id), type, value: right, constant, meta: [] });
                         }
                         else {
-                            return new Assignment({ location, id, value: right });
+                            return new Assignment({ location, id: new Reference(id), value: right });
                         }
                     case ".":
                         return new Member({ location, object: left, property: right, computed: false });
@@ -232,7 +236,6 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                             parameters.push(...left.nodes.map(toParametersOrMeta).flat())
                         }
                         else {
-                            console.log(left);
                             errors.push(new SemanticError(`Invalid function parameter(s)`, left));
                             return;
                         }
@@ -263,7 +266,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                             }
                             return new Assignment({
                                 location,
-                                id: left,
+                                id: new Reference(left),
                                 value,
                             })
                         }

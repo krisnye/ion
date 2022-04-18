@@ -1,28 +1,46 @@
 import { Variable } from "./Variable";
-import { Node, NodeProps } from "../Node";
 import { Scope } from "./Scope";
-import { MetaContainer, metaToString } from "./MetaContainer";
+import { MetaContainer, toMetaString } from "./MetaContainer";
 import { MetaCall } from "./Call";
+import { isType, Type } from "./Type";
+import { Expression, ExpressionProps } from "./Expression";
 
-export interface FunctionBaseProps extends NodeProps {
+export interface FunctionBaseProps extends ExpressionProps {
     parameters: Variable[];
-    returnType: Node | null;
+    returnType: Type | null;
     meta: MetaCall[];
 }
 
-export class FunctionBase extends Node implements MetaContainer {
+export class FunctionBase extends Expression implements MetaContainer {
 
     parameters!: Variable[];
-    returnType!: Node | null;
+    returnType!: Type | null;
     meta!: MetaCall[];
 
     constructor(props: FunctionBaseProps) { super(props); }
     patch(props: Partial<FunctionBaseProps>) { return super.patch(props); }
 
+    areArgumentsValid(argTypes: Type[]) : boolean {
+        if (argTypes.length === this.parameters.length) {
+            for (let i = 0; i < argTypes.length; i++) {
+                let argType = argTypes[i];
+                let paramType = this.parameters[i].type;
+                if (!isType(paramType)) {
+                    throw new Error("ParamType not known yet");
+                }
+                if (!argType.isSubtypeOf(paramType)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     toString() {
         return this.returnType
-            ? `${metaToString(this)}${Scope.toString(this.parameters, "(", ")")}: ${this.returnType}`
-            : `${metaToString(this)}${Scope.toString(this.parameters, "(", ")")}`;
+            ? `${Scope.toString(this.parameters, "(", ")")}: ${this.returnType}`
+            : `${Scope.toString(this.parameters, "(", ")")}`;
     }
 
 }

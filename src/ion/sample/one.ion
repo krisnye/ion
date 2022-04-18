@@ -1,6 +1,5 @@
-Whole = >= 0
-alpha: 1 .. < 10 = 10
-// beta = 2
-// charlie = alpha | beta
-// add = (a: Integer, b: Integer) => a + b
-// foo = add(1, 2)
+x : 1 .. 10 = 10
+y : -10 .. -1 = -10
+x2 = x
+y2 = y
+z = x2 + y2

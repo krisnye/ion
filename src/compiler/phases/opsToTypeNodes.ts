@@ -7,9 +7,9 @@ import { traverse } from "../traverse";
 import { Phase } from "./Phase";
 import { UnaryOperation } from "../pst/UnaryOperation";
 import { Node } from "../Node";
-import { Identifier } from "../ast/Identifier";
 import { isTypeName } from "../utility";
 import { Lookup } from "@glas/traverse";
+import { Identifier } from "../ast/Identifier";
 
 export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
     let errors = new Array<Error>();
@@ -62,6 +62,13 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
                             break;
                         case "<=":
                             node = new NumberType({ location, max: node.value, maxExclusive: false });
+                            break;
+                        case "!=":
+                            node = new UnionType({
+                                location,
+                                left: new NumberType({ location, max: node.value, maxExclusive: true }),
+                                right: new NumberType({ location, min: node.value, minExclusive: true })
+                            })
                             break;
                         }
                 }

@@ -3,12 +3,14 @@ import { createParser } from "../parser/createParser";
 import { Phase } from "./Phase";
 import { BinaryOperation } from "../pst/BinaryOperation";
 import { Group } from "../pst/Group";
-import { Identifier } from "../ast/Identifier";
 import { SemanticError } from "../SemanticError";
+import { UnaryOperation } from "../pst/UnaryOperation";
+import { NumberLiteral } from "../ast/NumberLiteral";
+import { Identifier } from "../ast/Identifier";
 
 const parser = createParser();
 
-export function syntacticChecks(moduleName, module): ReturnType<Phase> {
+export function destructuringAndUnaryNumberLiterals(moduleName, module): ReturnType<Phase> {
     let errors = new Array<Error>();
     module = traverse(module, {
         enter(node, ancestors) {
@@ -25,7 +27,6 @@ export function syntacticChecks(moduleName, module): ReturnType<Phase> {
                 )) {
                     errors.push(new SemanticError(`Invalid left hand assignment`, node));
                 }
-                // if it's a group, make sure it only contains an Identifier or a Sequence of Identifiers
                 if (node instanceof Group) {
                     function checkValidDestructure(child) {
                         if (child instanceof BinaryOperation) {
@@ -42,10 +43,20 @@ export function syntacticChecks(moduleName, module): ReturnType<Phase> {
                     }
                     checkValidDestructure(node.value);
                 }
-                return skip;
             }
         },
         leave(node) {
+            if (node instanceof UnaryOperation && node.value instanceof NumberLiteral) {
+                switch (node.operator.value) {
+                    case "+":
+                        node = node.value;
+                        break;
+                    case "-":
+                        node = node.value.patch({ value: - node.value.value });
+                        break;
+                }
+            }
+            return node;
         }
     })
     return [module, errors];

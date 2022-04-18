@@ -3,11 +3,11 @@ import { Token } from "../../Token";
 import { Node } from "../../Node";
 import { PrefixParselet } from "../PrefixParselet";
 import { SourceLocation } from "../../SourceLocation";
-import { Identifier } from "../../ast/Identifier";
 import { SemanticError } from "../../SemanticError";
 import { Class } from "../../pst/Class";
 import { tokenTypes } from "../../tokenizer/TokenType";
 import { Variable } from "../../ast/Variable";
+import { Identifier } from "../../ast/Identifier";
 
 export class ClassParselet extends PrefixParselet {
 

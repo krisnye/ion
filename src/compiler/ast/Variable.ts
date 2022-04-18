@@ -1,31 +1,42 @@
-import { Node, NodeProps } from "../Node";
 import { Declaration } from "./Declaration";
 import { Identifier } from "./Identifier";
 import { MetaCall } from "./Call";
-import { metaToString } from "./MetaContainer";
+import { toMetaString } from "./MetaContainer";
 import { isTypeName } from "../utility";
+import { Expression, ExpressionProps } from "./Expression";
+import { EvaluationContext } from "../EvaluationContext";
 
-export interface VariableProps extends NodeProps {
+export interface VariableProps extends ExpressionProps {
     id: Identifier
-    value: Node | null;
+    value: Expression | null;
     meta: MetaCall[];
 }
 
-export class Variable extends Node implements Declaration {
+export class Variable extends Expression implements Declaration {
 
     id!: Identifier
-    value!: Node | null;
+    value!: Expression | null;
     meta!: MetaCall[];
 
     constructor(props: VariableProps) { super(props); }
     patch(props: Partial<VariableProps>) { return super.patch(props); }
+
+    *getDependencies(c: EvaluationContext) {
+        if (this.value) {
+            yield this.value;
+        }
+    }
+
+    resolveType(c: EvaluationContext) {
+        return this.type ?? this.value?.type ?? null;
+    }
 
     isType() {
         return isTypeName(this.id.name);
     }
 
     toString() {
-        return `${metaToString(this)}${this.isType() ? `type` : this.constant ? `const` : `var`} ${this.id}${this.type != null ? ` : ${this.type}`: ``}${this.value != null ? ` = ${this.value}`: ``}`;
+        return `${toMetaString(this)}${this.isType() ? `type` : this.constant ? `const` : `var`} ${this.id}${this.toTypeString()}${this.value != null ? ` = ${this.value}`: ``}`;
     }
 
 }

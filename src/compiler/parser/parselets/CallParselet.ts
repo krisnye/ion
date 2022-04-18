@@ -6,6 +6,7 @@ import { tokenTypes } from "../../tokenizer/TokenType";
 import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
 import { Call } from "../../pst/Call";
 import { GroupParselet } from "./GroupParselet";
+import { Expression } from "../../ast/Expression";
 
 export class CallParselet extends BinaryOperatorParselet {
 
@@ -17,7 +18,7 @@ export class CallParselet extends BinaryOperatorParselet {
         this.closeTokenType = closeToken;
     }
 
-    parse(p: Parser, callee: Node, open: Token): Node {
+    parse(p: Parser, callee: Expression, open: Token): Node {
         let group = this.groupParselet.parse(p, open);
         return new Call({
             location: SourceLocation.merge(callee.location, group.location),

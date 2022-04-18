@@ -1,3 +1,4 @@
+import { EvaluationContext } from "../EvaluationContext";
 import { GetVariableFunction } from "../phases/createScopeMaps";
 import { Block, BlockProps } from "./Block";
 import { Reference } from "./Reference";
@@ -25,7 +26,7 @@ export class Instance extends Block {
         return null;
     }
 
-    toInterpreterInstance(getVariable: GetVariableFunction) {
+    toInterpreterInstance(c: EvaluationContext) {
         return { "" : this.class.name, ...Object.fromEntries(this.nodes.map((node: Variable) => [node.id.name, node.value])) };
     }
 

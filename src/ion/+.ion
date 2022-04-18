@@ -1,9 +1,9 @@
 
-@MultiFunction()
-`+` = []
-    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
-    (a: Integer, b: Integer): Integer => 0
-    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
-    (a: Float, b: Float): Float => 0.0
-    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
-    (a: String, b: String): String => ""
+@Native("(a, b) => ({ ...a, value: a.value + integer b.value })")
+`+` = (a: Integer, b: Integer): Integer => 0
+
+@Native("(a, b) => ({ ...a, value: a.value + float b.value })")
+`+` = (a: Float, b: Float): Float => 0.0
+
+@Native("(a, b) => ({ ...a, value: a.value + string b.value })")
+`+` = (a: String, b: String): String => ""

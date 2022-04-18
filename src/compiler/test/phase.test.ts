@@ -1,5 +1,6 @@
 import { strict as assert } from "assert";
-import { flattenSequences } from "../phases/flattenSequences";
+import { createMultiFunctions } from "../phases/createMultiFunctions";
+import { flattenSequencesAddMeta } from "../phases/flattenSequencesAddMeta";
 import { opsToValueNodes } from "../phases/opsToValueNodes";
 import { testModule } from "./testModule";
 
@@ -118,7 +119,7 @@ foo()
 `module test {
     foo(1,bar(2,3))
 }`,
-{ finalPhase: flattenSequences }
+{ finalPhase: flattenSequencesAddMeta }
 );
 
 assert.throws(() => {
@@ -127,7 +128,7 @@ assert.throws(() => {
         @Foo()
         `,
         `module test {\n    @Foo()\n}`,
-        { finalPhase: flattenSequences }        
+        { finalPhase: flattenSequencesAddMeta }        
     )
 })
 
@@ -142,7 +143,7 @@ x = 1
     }
     const x = 1
 }`,
-{ finalPhase: flattenSequences }
+{ finalPhase: flattenSequencesAddMeta }
 )
 
 testModule(
@@ -151,39 +152,12 @@ add = (a: Number, b: Number): Number => a
 `
 ,
 `module test {
-    const add = (
+    const add = add(
         var a : Number
         var b : Number
     ): Number => a
 }`,
-{ finalPhase: flattenSequences }
-)
-
-testModule(
-`
-add = (a, b): Number
-`
-,
-`module test {
-    const add = (
-        var a
-        var b
-    ): Number
-}`,
-{ finalPhase: flattenSequences }
-)
-
-testModule(
-`
-add = (a): Number
-`
-,
-`module test {
-    const add = (
-        var a
-    ): Number
-}`,
-{ finalPhase: flattenSequences }
+{ finalPhase: flattenSequencesAddMeta }
 )
 
 const equivalentFunctions = [
@@ -194,54 +168,54 @@ x = ()
 =>
     a + b
 `,
-`
-x =
-    ()
-        a
-        b
-    =>
-        a + b
-`,
-`
-x = (a, b) => a + b
-`,
-`
-x = (a, b) =>
-    a + b
-`
+// `
+// x =
+//     ()
+//         a
+//         b
+//     =>
+//         a + b
+// `,
+// `
+// x = (a, b) => a + b
+// `,
+// `
+// x = (a, b) =>
+//     a + b
+// `
 ];
 for (const func of equivalentFunctions) {
     testModule(func,
 `module test {
-    const x = (
+    const x = x(
         var a
         var b
     ) => \`+\`(a,b)
 }`,
-{ finalPhase: flattenSequences })
+{ finalPhase: createMultiFunctions })
 }
 
-testModule(
-`@Foo(bar = 20)
-x = ()
-    @Meta()
-        js = ""
-            This is Javascript
-    a
-    b
-=>
-    a + b`,
-`module test {
-    {
-        @Foo(const bar = 20)
-    }
-    const x = (
-        {
-            @Meta(const js = "This is Javascript")
-        }
-        var a
-        var b
-    ) => \`+\`(a,b)
-}`,
-{ finalPhase: flattenSequences }
-)
+// testModule(
+// `@Foo(bar = 20)
+// x = ()
+//     @Meta()
+//         js = ""
+//             This is Javascript
+//     a
+//     b
+// =>
+//     a + b`,
+// `module test {
+//     {
+//         @Foo(const bar = 20)
+//     }
+//     const x = x(
+//         {
+//             @Meta(const js = "This is Javascript")
+//         }
+//         var a
+//         var b
+//     ) => \`+\`(a,b)
+// }`,
+// { finalPhase: flattenSequencesAddMeta }
+// )

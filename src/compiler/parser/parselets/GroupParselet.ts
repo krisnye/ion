@@ -5,6 +5,7 @@ import { PrefixOperatorParselet } from "./PrefixOperatorParselet";
 import { SourceLocation } from "../../SourceLocation";
 import { Group } from "../../pst/Group";
 import { Sequence } from "../../pst/Sequence";
+import { Expression } from "../../ast/Expression";
 
 export class GroupParselet extends PrefixOperatorParselet {
 
@@ -18,9 +19,9 @@ export class GroupParselet extends PrefixOperatorParselet {
     }
 
     parse(p: Parser, open: Token): Group {
-        let value: Node | null = null;
+        let value: Expression | null = null;
         if (!this.canBeEmpty || p.peek(this.closeToken) == null) {
-            value = this.parseArgument(p, open, 0);
+            value = this.parseArgument(p, open, 0) as Expression;
         }
         let close = p.consume(this.closeToken);
         let last = close.location;

@@ -4,7 +4,7 @@ export interface NumberLiteralProps extends LiteralProps {
     value: number;
 }
 
-export class NumberLiteral extends Literal {
+export abstract class NumberLiteral extends Literal {
 
     value!: number;
 

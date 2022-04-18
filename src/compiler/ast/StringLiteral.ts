@@ -1,5 +1,5 @@
 import { coreTypes } from "../coreTypes";
-import { getValue, GetVariableFunction } from "../phases/createScopeMaps";
+import { EvaluationContext } from "../EvaluationContext";
 import { Literal, LiteralProps } from "./Literal";
 
 export interface StringLiteralProps extends LiteralProps {
@@ -11,13 +11,12 @@ export class StringLiteral extends Literal {
     constructor(props: StringLiteralProps) { super(props); }
     patch(props: Partial<StringLiteralProps>) { return super.patch(props); }
 
-    toInterpreterInstance(getVariable: GetVariableFunction) {
+    toInterpreterInstance(c: EvaluationContext) {
         return { "" : coreTypes.String, value: this.value };
     }
 
     toString() {
-        let text = JSON.stringify(this.value);
-        return this.type ? `${text} : ${this.type}` : text;
+        return `${JSON.stringify(this.value)}${this.toTypeString()}`;
     }
 
 }

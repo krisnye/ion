@@ -1,8 +1,10 @@
 import { coreTypes } from "../coreTypes";
 import { Node, NodeProps } from "../Node";
 import { SourceLocation } from "../SourceLocation";
+import { IntegerLiteral } from "./IntegerLiteral";
 import { NumberLiteral } from "./NumberLiteral";
 import { Type } from "./Type";
+import { TypeReference } from "./TypeReference";
 
 type LiteralNumberType = NumberType & { min: NumberLiteral | null, max: NumberLiteral | null}
 
@@ -12,7 +14,7 @@ export function isLiteralNumberType(type: Type): type is LiteralNumberType {
         && (type.max == null || type.max instanceof NumberLiteral)
 }
 
-export function overlaps(max: Node | null, min: Node | null, exclusive: boolean): boolean | null {
+export function overlaps(max: Node | undefined, min: Node | undefined, exclusive: boolean): boolean | null {
     if (max != null && min != null) {
         if (max.toString() === min.toString()) {
             return !exclusive
@@ -29,6 +31,20 @@ export interface NumberTypeProps extends NodeProps {
     max?: Node;
     minExclusive?: boolean;
     maxExclusive?: boolean;
+    integer?: boolean;
+}
+
+function isIntegerType(node) {
+    if (node instanceof TypeReference && node.name === coreTypes.Integer) {
+        return true;
+    }
+    if (node instanceof IntegerLiteral) {
+        return true;
+    }
+    if (node instanceof NumberType) {
+        return node.isInteger();
+    }
+    return false;
 }
 
 export class NumberType extends Node implements Type {
@@ -37,12 +53,20 @@ export class NumberType extends Node implements Type {
     max?: Node;
     minExclusive!: boolean;
     maxExclusive!: boolean;
+    integer?: boolean;
 
     constructor(props: NumberTypeProps) {
         super({ minExclusive: false, maxExclusive: false,  ...props});
     }
     patch(props: Partial<NumberTypeProps>) {
         return super.patch(props);
+    }
+
+    merge(b: Type, union: boolean): Type | null {
+        if (b instanceof NumberType) {
+            return union ? NumberType.union(this, b) : NumberType.intersection(this, b);
+        }
+        return null;
     }
 
     simplify(): Node {
@@ -64,9 +88,31 @@ export class NumberType extends Node implements Type {
         return this;
     }
 
+    isInteger() {
+        return this.integer ?? (isIntegerType(this.min) || isIntegerType(this.max));
+    }
+
+    isSubtypeOf(b: Type): boolean | null {
+        const a = this;
+        if (b instanceof NumberType) {
+            if (this.isInteger() !== b.isInteger()) {
+                return false;
+            }
+            if ((b.min == null || overlaps(a.min, b.min, a.minExclusive < b.minExclusive) === true) &&
+                (b.max == null || overlaps(b.max, a.max, a.maxExclusive < b.maxExclusive) === true)
+            ) {
+                return true
+            }
+            if (overlaps(a.max, b.min, b.minExclusive || a.maxExclusive) === false || overlaps(b.max, a.min, a.minExclusive || b.maxExclusive) === false) {
+                return false
+            }
+        }
+        return null
+    }
+
     toString() {
         if (this.min == null && this.max == null) {
-            return coreTypes.Number;
+            return `(${this.isInteger() ? coreTypes.Integer : coreTypes.Float})`;
         }
         if (this.min && this.max && this.min.toString() === this.max.toString()) {
             return `(${this.min})`;

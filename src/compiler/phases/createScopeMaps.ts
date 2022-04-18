@@ -2,6 +2,7 @@ import { Visitor } from "@glas/traverse";
 import { Reference } from "../ast/Reference";
 import { Scope } from "../ast/Scope";
 import { Variable } from "../ast/Variable";
+import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
 import { traverse, skip, Lookup } from "../traverse";
 
@@ -65,7 +66,7 @@ export type GetVariableFunction = (ref: Reference) => Variable;
 
 export function traverseWithScope(
     node: Readonly<any>,
-    callback: (args: { getVariable: GetVariableFunction, lookup: Lookup }) => Visitor,
+    callback: (c: EvaluationContext) => Visitor,
     externals?: Map<string,Scope>,
 ): any {
     let lookup = new Lookup();
@@ -75,15 +76,7 @@ export function traverseWithScope(
         let scope = scopeMaps.get(original) ?? scopeMaps.get(null);
         return scope[ref.name];
     }
-    let visitor = callback({ getVariable, lookup });
+    let c = new EvaluationContext(getVariable, lookup);
+    let visitor = callback(c);
     return traverse(node, {...visitor, lookup });
-}
-
-export function getValue(ref: Node, getVariable: GetVariableFunction) {
-    let value = ref;
-    while (value instanceof Reference || value instanceof Variable) {
-        let variable = value instanceof Variable ? value : getVariable(value);
-        value = getValue(variable.value!, getVariable);
-    }
-    return value;
 }

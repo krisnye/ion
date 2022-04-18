@@ -1,11 +1,11 @@
 
-export const globalNamespace = "$"
+// export const globalNamespace = "$"
 const pathSeparator = "."
-export function isAbsolutePath(path: string) {
-    return path.startsWith(globalNamespace);
-}
+// export function isAbsolutePath(path: string) {
+//     return path.startsWith(globalNamespace);
+// }
 export function getAbsolutePath(moduleName: string, exportName?: string) {
-    let path = isAbsolutePath(moduleName) ? moduleName : `${globalNamespace}.${moduleName}`
+    let path = moduleName;
     if (exportName != null && exportName != getLastName(moduleName)) {
         path += `${pathSeparator}${exportName}`
     }
@@ -15,10 +15,11 @@ export function getLastName(path: string): string {
     return path.slice(path.lastIndexOf(pathSeparator) + 1);
 }
 export function getParent(path: string): string | null {
-    if (path == globalNamespace) {
-        return null
+    const lastIndex = path.lastIndexOf(pathSeparator);
+    if (lastIndex < 0) {
+        return null;
     }
-    return path.slice(0, path.lastIndexOf(pathSeparator));
+    return path.slice(0, lastIndex);
 }
 
 export function split(path: string) {

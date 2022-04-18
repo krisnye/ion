@@ -1,18 +1,18 @@
-import { Node } from "../Node";
 import { Scope, ScopeProps } from "../ast/Scope";
 import { SourceLocation } from "../SourceLocation";
+import { Expression } from "../ast/Expression";
 
 export interface SequenceProps extends ScopeProps {
 }
 
-function merge(left: Node | null, right: Node | null): Node | null {
+function merge(left: Expression | null, right: Expression | null): Expression | null {
     if (left == null) {
         return right;
     }
     if (right == null) {
         return left;
     }
-    let nodes = new Array<Node>();
+    let nodes = new Array<Expression>();
     if (left instanceof Sequence) {
         nodes.push(...left.nodes);
     }
@@ -37,8 +37,8 @@ export class Sequence extends Scope {
     constructor(props: SequenceProps) { super(props); }
     patch(props: Partial<SequenceProps>) { return super.patch(props); }
 
-    static flatten(...nodes: Array<Node | null>) {
-        let flat = new Array<Node>();
+    static flatten(...nodes: Array<Expression | null>) {
+        let flat = new Array<Expression>();
         for (let node of nodes) {
             if (node instanceof Sequence) {
                 flat.push(...node.nodes);
@@ -50,10 +50,10 @@ export class Sequence extends Scope {
         return flat;
     }
 
-    static merge(left: Node, right: Node | null): Node
-    static merge(left: Node | null, right: Node): Node
-    static merge(...nodes: Array<Node | null>): Node | null
-    static merge(...nodes: Array<Node | null>): Node | null {
+    static merge(left: Expression, right: Expression | null): Expression
+    static merge(left: Expression | null, right: Expression): Expression
+    static merge(...nodes: Array<Expression | null>): Expression | null
+    static merge(...nodes: Array<Expression | null>): Expression | null {
         return nodes.reduce(merge, null);
     }
 

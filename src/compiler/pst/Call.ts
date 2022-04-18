@@ -1,14 +1,14 @@
-import { Node, NodeProps } from "../Node";
+import { Expression, ExpressionProps } from "../ast/Expression";
 
-export interface CallProps extends NodeProps {
-    callee: Node;
-    args: Node | null;
+export interface CallProps extends ExpressionProps {
+    callee: Expression;
+    args: Expression | null;
 }
 
-export class Call extends Node {
+export class Call extends Expression {
 
-    callee!: Node;
-    args!: Node | null;
+    callee!: Expression;
+    args!: Expression | null;
 
     constructor(props: CallProps) { super(props); }
     patch(props: Partial<CallProps>) { return super.patch(props); }

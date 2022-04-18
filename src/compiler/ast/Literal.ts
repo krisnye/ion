@@ -1,15 +1,14 @@
 import { coreTypes } from "../coreTypes";
-import { Node, NodeProps } from "../Node";
-import { GetVariableFunction } from "../phases/createScopeMaps";
+import { Expression, ExpressionProps } from "./Expression";
 
-export interface LiteralProps extends NodeProps {
+export interface LiteralProps extends ExpressionProps {
     value: any;
 }
 
-export abstract class Literal extends Node {
+export abstract class Literal extends Expression {
 
-    constructor(props: LiteralProps) { super(props); }
-    patch(props: Partial<LiteralProps>) { return super.patch(props); }
+    constructor(props: ExpressionProps) { super(props); }
+    patch(props: Partial<ExpressionProps>) { return super.patch(props); }
 
     value!: any;
 

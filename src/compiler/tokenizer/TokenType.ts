@@ -53,7 +53,7 @@ export const tokenTypes = {
     CloseBracket: new TokenType("CloseBracket", /^\]/),
     OpenBrace: new TokenType("OpenBrace", /^\{/),
     CloseBrace: new TokenType("CloseBrace", /^\}/),
-    Float: new TokenType("Float", /^[1-9][0-9]*\.[0-9]+(e[+-]?[0-9]+)?/, { value: JSON.parse }),
+    Float: new TokenType("Float", /^[0-9]*\.[0-9]+(e[+-]?[0-9]+)?/, { value: JSON.parse }),
     Integer: new TokenType("Integer", /^([1-9][0-9]*|0x[0-9]+|0\b)/, { value: JSON.parse }),
     OutlineString: new TokenType("OutlineString", /^""/),
     String: new TokenType("String", /^"([^"\\]|\\.)*"/, { value: JSON.parse }),

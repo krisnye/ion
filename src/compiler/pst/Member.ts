@@ -1,15 +1,15 @@
-import { Node, NodeProps } from "../Node";
+import { Expression, ExpressionProps } from "../ast/Expression";
 
-export interface MemberProps extends NodeProps {
-    object: Node;
-    property: Node;
+export interface MemberProps extends ExpressionProps {
+    object: Expression;
+    property: Expression;
     computed: boolean;
 }
 
-export class Member extends Node {
+export class Member extends Expression {
 
-    object!: Node;
-    property!: Node;
+    object!: Expression;
+    property!: Expression;
     computed!: boolean;
 
     constructor(props: MemberProps) { super(props); }

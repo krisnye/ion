@@ -1,17 +1,17 @@
-import { Node, NodeProps } from "../Node";
+import { Expression, ExpressionProps } from "../ast/Expression";
 import { infixPrecedence } from "../parser/operators";
 import { Token } from "../Token";
 
-export interface BinaryOperationProps extends NodeProps {
-    left: Node;
+export interface BinaryOperationProps extends ExpressionProps {
+    left: Expression;
     operator: Token;
-    right: Node;
+    right: Expression;
 }
-export class BinaryOperation extends Node {
+export class BinaryOperation extends Expression {
 
-    left!: Node;
+    left!: Expression;
     operator!: Token;
-    right!: Node;
+    right!: Expression;
 
     constructor(props: BinaryOperationProps) { super(props); }
     patch(props: Partial<BinaryOperationProps>) { return super.patch(props); }
@@ -20,14 +20,8 @@ export class BinaryOperation extends Node {
         return infixPrecedence[this.operator.value]!;
     }
 
-    toString(parentPrecedence = 0) {
+    toString() {
         return `${this.left} ${this.operator} ${this.right}`;
-        // let precedence = this.getPrecedence();
-        // let text = `${(this.left.toString as any)(precedence)} ${this.operator} ${(this.right.toString as any)(precedence)}`;
-        // if (precedence < parentPrecedence) {
-        //     text = `(${text})`;
-        // }
-        // return text;
     }
 
 }

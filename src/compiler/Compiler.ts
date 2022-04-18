@@ -2,7 +2,7 @@ import { Assembly } from "./ast/Assembly";
 import { getInputFilesRecursive } from "./common";
 import ErrorContext from "./errors/ErrorContext";
 import { Node } from "./Node";
-import { globalNamespace } from "./pathFunctions";
+// import { globalNamespace } from "./pathFunctions";
 import { assemblyPhases, intermediatePhases, parsingPhases } from "./phases";
 import { Phase } from "./phases/Phase";
 import { Module } from "./pst/Module";
@@ -38,13 +38,13 @@ export class Compiler {
         if (group) {
             for (let phase of phases) {
                 // merge all the modules into a new module
-                let name = globalNamespace;
+                let globalName = "global";
                 let assembly = new Assembly({
-                    location: new SourceLocation(name, new SourcePosition(0, 0), new SourcePosition(0, 0)),
+                    location: new SourceLocation(globalName, new SourcePosition(0, 0), new SourcePosition(0, 0)),
                     nodes: [...modules.values()].map((module: Module) => module.nodes).flat(),
                 })
                 // combine all module entries
-                let [newAssembly, errors] = phase(name, assembly, modules, this.options);
+                let [newAssembly, errors] = phase(globalName, assembly, modules, this.options);
                 if (errors.length > 0) {
                     console.log(phase.name);
                     for (let error of errors) {

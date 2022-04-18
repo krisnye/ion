@@ -1,3 +1,4 @@
+import { Expression } from "../ast/Expression";
 import { Node, NodeProps } from "../Node";
 import { Token } from "../Token";
 
@@ -10,7 +11,7 @@ export class Group extends Node {
 
     open!: Token;
     close!: Token;
-    value!: Node | null;
+    value!: Expression | null;
 
     constructor(props: GroupProps) { super(props); }
     patch(props: Partial<GroupProps>) { return super.patch(props); }

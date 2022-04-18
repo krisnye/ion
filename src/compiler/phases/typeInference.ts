@@ -1,38 +1,63 @@
 import { Phase } from "./Phase";
-import { createConverterPhase } from "../converters/Converter";
 import { Scope } from "../ast/Scope";
-import { IntegerLiteral } from "../ast/IntegerLiteral";
-import { FloatLiteral } from "../ast/FloatLiteral";
-import { StringLiteral } from "../ast/StringLiteral";
-import { Variable } from "../ast/Variable";
-import { Reference } from "../ast/Reference";
-import { coreTypes } from "../coreTypes";
-import { GetVariableFunction } from "./createScopeMaps";
-import { simplifyConverters } from "./simplify";
-import { constantEvaluationConverters } from "./constantEvaluation";
+import { traverseWithScope } from "./createScopeMaps";
+import { Expression } from "../ast/Expression";
 
-const converterPhase = createConverterPhase([
-    //  IntegerLiteral.type = Integer
-    [IntegerLiteral, (a: IntegerLiteral) => a.type == null && a.patch({ type: new Reference({ location: a.location, name: coreTypes.Integer, constant: true }), constant: true })],
-    //  FloatLiteral.type = Float
-    [FloatLiteral, (a: FloatLiteral) => a.type == null && a.patch({ type: new Reference({ location: a.location, name: coreTypes.Float, constant: true }), constant: true })],
-    //  StringLiteral.type = String
-    [StringLiteral, (a: StringLiteral) => a.type == null && a.patch({ type: new Reference({ location: a.location, name: coreTypes.String, constant: true }), constant: true })],
-    //  Variable.type = value.type
-    [Variable, (a: Variable) => a.type == null && a.value?.type && a.patch({ type: a.value.type }) ],
-    //  Reference.type = referenced Variable.type
-    [Reference, (a: Reference, getVariable: GetVariableFunction) =>  {
-        if (a.type == null) {
-            let variable = getVariable(a);
-            if (variable.type) {
-                return a.patch({ type: variable.type });
-            }
-        }
-    }],
-    ...simplifyConverters,
-    ...constantEvaluationConverters,
-] as any);
+//     [Call, (call: Call, c: EvaluationContext) => {
+//         if (call.type == null && call.callee instanceof Reference && call.nodes.every(node => node.type != null)) {
+//             const argTypes = call.nodes.map(arg => arg.type!);
+//             const callee = c.getValue(call.callee);
+//             if (!isCallable(callee)) {
+//                 throw new SemanticError(`Value is not callable`, call.callee);
+//             }
+//             const type = callee.getReturnType(argTypes);
+//             const result = call.patch({ type });
+//             return result;
+
+//             // const native = getMetaCall(callee, coreTypes.Native);
+//             // if (call.nodes.length === 2) {
+//             //     switch (call.callee.name) {
+//             //         case "+":
+//             //             const a = call.nodes[0].type;
+//             //             const b = call.nodes[1].type;
+//             //             // let min = a.min && b.min ? new BinaryExpression({ left: a.min, operator, right: b.min }) : null
+//             //             // let max = a.max && b.max ? new BinaryExpression({ left: a.max, operator, right: b.max }) : null
+//             //             // let minExclusive = a.minExclusive || b.minExclusive
+//             //             // let maxExclusive = a.maxExclusive || b.maxExclusive
+//             //             // return new NumberType({
+//             //             //     min: min ? evaluate(min, c) : null,
+//             //             //     max: max ? evaluate(max, c) : null,
+//             //             //     minExclusive,
+//             //             //     maxExclusive,
+//             //             // })
+//             //     }
+//             // }
+//         }
+//     }],
+//     // ...simplifyConverters,
+//     // ...constantEvaluationConverters,
+// ] as any);
 
 export function typeInference(moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> {
-    return converterPhase(moduleName, module, externals);
+    // return converterPhase(moduleName, module, externals);
+    let errors!: Error[];
+    let modifications = 0;
+    let result = traverseWithScope(module, (c) => {
+        errors = c.errors;
+        return {
+            leave(node) {
+                if (node instanceof Expression && !node.resolved) {
+                    let _original = node;
+                    node = node.maybeResolve(c);
+                    if (node !== _original) {
+                        modifications++;
+                    }
+                }
+                return node;
+            }
+        }
+    }, externals);
+    let runPhaseAgain = modifications > 0;
+    return [result, errors, runPhaseAgain];
+
 }

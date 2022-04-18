@@ -9,6 +9,7 @@ export const prefixPrecedence: { [op: string]: number | undefined } = {
     "<=": 14,   //  used for numeric types: <= 10
     ">": 14,    //  used for numeric types: > 10
     ">=": 14,   //  used for numeric types: >= 10
+    "!=": 14,   //  used for numeric types: != 10
     "void": 2,
 } as const;
 

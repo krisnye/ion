@@ -1,26 +1,26 @@
 import { Phase } from "./Phase";
 import { tokenization } from "./tokenization";
 import { parsing } from "./parsing";
-import { syntacticChecks } from "./syntacticChecks";
+import { destructuringAndUnaryNumberLiterals } from "./destructuringAndUnaryNumberLiterals";
 import { opsToValueNodes as opsToValueNodes } from "./opsToValueNodes";
-import { flattenSequences } from "./flattenSequences";
+import { flattenSequencesAddMeta } from "./flattenSequencesAddMeta";
 import { identity } from "./identity";
-import { removeSoloBlocks } from "./removeSoloBlocks";
 import { resolveExternalReferences } from "./resolveExternalReferences";
 import { typeInference } from "./typeInference";
 import { opsToTypeNodes } from "./opsToTypeNodes";
 import { pstModulesToAst } from "./pstModulesToAst";
-// import { simplify } from "./simplify";
-// import { constantEvaluation } from "./constantEvaluation";
+import { createMultiFunctions } from "./createMultiFunctions";
+import { removeSoloBlocks } from "./removeSoloBlocks";
 
 export const parsingPhases: Phase[] = [
     tokenization,
     parsing,
-    syntacticChecks,
+    destructuringAndUnaryNumberLiterals,
     opsToTypeNodes,
     opsToValueNodes,
+    flattenSequencesAddMeta,
     removeSoloBlocks,
-    flattenSequences,
+    createMultiFunctions,
     resolveExternalReferences,
     //  MUST be solo up to this point so we can get external dependencies.
 ];

@@ -1,4 +1,0 @@
-
-class IntersectionType
-    a: Type
-    b: Type
