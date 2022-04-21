@@ -2,10 +2,8 @@ import { coreTypes } from "../coreTypes";
 import { Node, NodeProps } from "../Node";
 import { SourceLocation } from "../SourceLocation";
 import { Expression } from "./Expression";
-import { IntegerLiteral } from "./IntegerLiteral";
 import { NumberLiteral } from "./NumberLiteral";
 import { Type } from "./Type";
-import { TypeReference } from "./TypeReference";
 
 type LiteralNumberType = NumberType & { min: NumberLiteral | null, max: NumberLiteral | null}
 
@@ -35,19 +33,6 @@ export interface NumberTypeProps extends NodeProps {
     integer?: boolean;
 }
 
-function isIntegerType(node) {
-    if (node instanceof TypeReference && node.name === coreTypes.Integer) {
-        return true;
-    }
-    if (node instanceof IntegerLiteral) {
-        return true;
-    }
-    if (node instanceof NumberType) {
-        return node.isInteger();
-    }
-    return false;
-}
-
 export class NumberType extends Node implements Type {
 
     min?: Expression;
@@ -57,7 +42,17 @@ export class NumberType extends Node implements Type {
     integer?: boolean;
 
     constructor(props: NumberTypeProps) {
-        super({ minExclusive: false, maxExclusive: false,  ...props});
+        let integer: boolean | undefined;
+        if (props.min instanceof NumberLiteral) {
+            integer = props.min.integer;
+        }
+        if (integer == null && props.max instanceof NumberLiteral) {
+            integer = props.max.integer;
+        }
+        if (integer) {
+            props.integer = integer;
+        }
+        super({ minExclusive: false, maxExclusive: false, ...props});
     }
     patch(props: Partial<NumberTypeProps>) {
         return super.patch(props);
@@ -89,14 +84,10 @@ export class NumberType extends Node implements Type {
         return this;
     }
 
-    isInteger() {
-        return this.integer ?? (isIntegerType(this.min) || isIntegerType(this.max));
-    }
-
     isSubtypeOf(b: Type): boolean | null {
         const a = this;
         if (b instanceof NumberType) {
-            if (this.isInteger() !== b.isInteger()) {
+            if (this.integer !== b.integer) {
                 return false;
             }
             if ((b.min == null || overlaps(a.min, b.min, a.minExclusive < b.minExclusive) === true) &&
@@ -113,7 +104,7 @@ export class NumberType extends Node implements Type {
 
     toString() {
         if (this.min == null && this.max == null) {
-            return `(${this.isInteger() ? coreTypes.Integer : coreTypes.Float})`;
+            return `(${this.integer ? coreTypes.Integer : coreTypes.Float})`;
         }
         if (this.min && this.max && this.min.toString() === this.max.toString()) {
             return `(${this.min})`;
@@ -185,7 +176,8 @@ export class NumberType extends Node implements Type {
             min: min as Node,
             max: max as Node,
             minExclusive,
-            maxExclusive
+            maxExclusive,
+            integer: a.integer
         })
     }
 
@@ -195,10 +187,10 @@ export class NumberType extends Node implements Type {
             // if one has min but no max and the other has no min then combine them.
             if (a != null && b != null) {
                 if (a.min != null && a.max == null && b.min == null) {
-                    return new NumberType({ location, min: a.min, minExclusive: a.minExclusive, max: b.max, maxExclusive: b.maxExclusive })
+                    return new NumberType({ location, min: a.min, minExclusive: a.minExclusive, max: b.max, maxExclusive: b.maxExclusive, integer: a.integer });
                 }
                 if (b.min != null && b.max == null && a.min == null) {
-                    return new NumberType({ location, min: b.min, minExclusive: b.minExclusive, max: a.max, maxExclusive: a.maxExclusive })
+                    return new NumberType({ location, min: b.min, minExclusive: b.minExclusive, max: a.max, maxExclusive: a.maxExclusive, integer: a.integer });
                 }
             }
             return null
@@ -224,7 +216,7 @@ export class NumberType extends Node implements Type {
         if (min && max && (min.value > max.value || min.value == max.value && (minExclusive || maxExclusive))) {
             return null
         }
-        let result = new NumberType({ location, min, max, minExclusive, maxExclusive }) as LiteralNumberType
+        let result = new NumberType({ location, min, max, minExclusive, maxExclusive, integer: a.integer }) as LiteralNumberType
         return result
     }
 

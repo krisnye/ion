@@ -13,7 +13,6 @@ import { SourceLocation } from "../SourceLocation";
 import { Reference } from "../ast/Reference";
 import { Phase } from "./Phase";
 import { Member } from "../pst/Member";
-import { IntegerLiteral } from "../ast/IntegerLiteral";
 import { Class as PstClass } from "../pst/Class";
 import { Class as AstClass } from "../ast/Class";
 import { Variable } from "../ast/Variable";
@@ -25,6 +24,7 @@ import { isTypeName } from "../utility";
 import { TypeReference } from "../ast/TypeReference";
 import { Type } from "../ast/Type";
 import { Expression } from "../ast/Expression";
+import { IntegerLiteral } from "../ast/NumberLiteral";
 
 function toParametersOrMeta(value: Node | null) {
     let parameters = new Array<Variable | MetaCall>();
@@ -91,7 +91,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
             let value = new Member({
                 location: right.location,
                 object: right,
-                property: memberIndex != null ? new IntegerLiteral({ location: pattern.location, value: memberIndex }) : pattern,
+                property: memberIndex != null ? IntegerLiteral({ location: pattern.location, value: memberIndex }) : pattern,
                 computed: memberIndex != null,
             });
             let { location } = right;

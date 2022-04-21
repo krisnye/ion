@@ -5,6 +5,7 @@ import { toMetaString } from "./MetaContainer";
 import { isTypeName } from "../utility";
 import { Expression, ExpressionProps } from "./Expression";
 import { EvaluationContext } from "../EvaluationContext";
+import { AnyType } from "./AnyType";
 
 export interface VariableProps extends ExpressionProps {
     id: Identifier
@@ -28,7 +29,7 @@ export class Variable extends Expression implements Declaration {
     }
 
     resolveType(c: EvaluationContext) {
-        return this.type ?? this.value?.type ?? null;
+        return this.type ?? this.value?.type ?? new AnyType({ location: this.location });
     }
 
     isType() {

@@ -18,8 +18,8 @@ export const parsingPhases: Phase[] = [
     destructuringAndUnaryNumberLiterals,
     opsToTypeNodes,
     opsToValueNodes,
-    flattenSequencesAddMeta,
     removeSoloBlocks,
+    flattenSequencesAddMeta,
     createMultiFunctions,
     resolveExternalReferences,
     //  MUST be solo up to this point so we can get external dependencies.

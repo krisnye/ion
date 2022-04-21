@@ -4,6 +4,8 @@ import { MetaContainer, toMetaString } from "./MetaContainer";
 import { MetaCall } from "./Call";
 import { isType, Type } from "./Type";
 import { Expression, ExpressionProps } from "./Expression";
+import { isConsequent } from "../analysis/isConsequent";
+import { EvaluationContext } from "../EvaluationContext";
 
 export interface FunctionBaseProps extends ExpressionProps {
     parameters: Variable[];
@@ -20,7 +22,7 @@ export class FunctionBase extends Expression implements MetaContainer {
     constructor(props: FunctionBaseProps) { super(props); }
     patch(props: Partial<FunctionBaseProps>) { return super.patch(props); }
 
-    areArgumentsValid(argTypes: Type[]) : boolean {
+    areArgumentsValid(argTypes: Type[], c: EvaluationContext) : boolean {
         if (argTypes.length === this.parameters.length) {
             for (let i = 0; i < argTypes.length; i++) {
                 let argType = argTypes[i];
@@ -28,7 +30,7 @@ export class FunctionBase extends Expression implements MetaContainer {
                 if (!isType(paramType)) {
                     throw new Error("ParamType not known yet");
                 }
-                if (!argType.isSubtypeOf(paramType)) {
+                if (!isConsequent(argType, paramType, c)) {
                     return false;
                 }
             }

@@ -3,9 +3,13 @@ import { Token } from "../../Token";
 import { PrefixParselet } from "../PrefixParselet";
 import { Node } from "../../Node";
 
-export class TerminalParselet<T extends typeof Node> extends PrefixParselet {
+function isNodeClass(node): node is typeof Node {
+    return node.prototype instanceof Node;
+}
 
-    expressionClass: typeof Node;
+export class TerminalParselet<T extends typeof Node | ((props) => Node)> extends PrefixParselet {
+
+    expressionClass: typeof Node | ((props) => Node);
     valueProperty: string;
 
     constructor(literalClass: T, valueProperty: string) {
@@ -16,7 +20,12 @@ export class TerminalParselet<T extends typeof Node> extends PrefixParselet {
 
     parse(p: Parser, token: Token) {
         let { value, location } = token;
-        return new this.expressionClass({ location, [this.valueProperty]: value });
+        if (isNodeClass(this.expressionClass)) {
+            return new this.expressionClass({ location, [this.valueProperty]: value });
+        }
+        else {
+            return this.expressionClass({ location, [this.valueProperty]: value });
+        }
     }
 
 }

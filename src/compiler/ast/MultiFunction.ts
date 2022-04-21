@@ -1,3 +1,4 @@
+import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
 import { Callable } from "./Callable";
 import { Function } from "./Function";
@@ -20,16 +21,16 @@ export class MultiFunction extends Scope implements Callable {
         throw new Error();
     }
 
-    getReturnType(argTypes: Type[]): Type {
-        let possibleFunctionCalls = this.getPossibleFunctionCalls(argTypes);
+    getReturnType(argTypes: Type[], c: EvaluationContext): Type | null {
+        let possibleFunctionCalls = this.getPossibleFunctionCalls(argTypes, c);
         let returnTypes = possibleFunctionCalls.map(func => func.getReturnType(argTypes));
-        return UnionType.join(returnTypes);
+        return UnionType.join(...returnTypes);
     }
 
-    getPossibleFunctionCalls(argTypes: Type[]): Function[] {
+    getPossibleFunctionCalls(argTypes: Type[], c: EvaluationContext): Function[] {
         let functions = new Array<Function>();
         for (let func of this.nodes) {
-            if (func.areArgumentsValid(argTypes)) {
+            if (func.areArgumentsValid(argTypes, c)) {
                 functions.push(func);
             }
         }

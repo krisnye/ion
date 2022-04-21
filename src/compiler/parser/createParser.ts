@@ -1,5 +1,3 @@
-import { FloatLiteral } from "../ast/FloatLiteral";
-import { IntegerLiteral } from "../ast/IntegerLiteral";
 import { Parser } from "./Parser";
 import { PrefixOperatorParselet } from "./parselets/PrefixOperatorParselet";
 import { StringLiteral } from "../ast/StringLiteral";
@@ -15,6 +13,7 @@ import { ClassParselet } from "./parselets/ClassParselet";
 import { ForParselet } from "./parselets/ForParselet";
 import { BlockParselet } from "./parselets/BlockParselet";
 import { OutlineStringParselet } from "./parselets/OutlineStringParselet";
+import { FloatLiteral, IntegerLiteral } from "../ast/NumberLiteral";
 
 export function createParser() {
     return new Parser({

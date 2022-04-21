@@ -20,7 +20,9 @@ export abstract class CompoundType extends Node implements Type {
         return null;
     }
 
-    abstract isSubtypeOf(b: Type): boolean | null;
+    isSubtypeOf(b: Type): boolean | null {
+        throw new Error("Compound Types Cannot check directly, that logic is handled by isConsequent");
+    }
 
     protected simplifyInternal(union: boolean) {
         let left = this.left.simplify();

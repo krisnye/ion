@@ -12,5 +12,5 @@ export interface Type extends Node {
 }
 
 export function isType(node): node is Type {
-    return typeof node.merge === "function";
+    return typeof node?.merge === "function";
 }

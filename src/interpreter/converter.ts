@@ -1,17 +1,18 @@
 import { Node } from "../compiler/Node";
-import { FloatLiteral } from "../compiler/ast/FloatLiteral";
-import { IntegerLiteral } from "../compiler/ast/IntegerLiteral";
 import { StringLiteral } from "../compiler/ast/StringLiteral";
 import { SourceLocation } from "../compiler/SourceLocation";
 import { classIds } from "./classIds";
 import { Instance, isFloatInstance, isIntegerInstance, isStringInstance } from "./model";
+import { FloatLiteral, IntegerLiteral, NumberLiteral } from "../compiler/ast/NumberLiteral";
 
 export function convertAstNodeToInterpreterInstance(node: Node): Instance {
-    if (node instanceof IntegerLiteral) {
-        return { type: classIds.Integer, value: node.value }
-    }
-    if (node instanceof FloatLiteral) {
-        return { type: classIds.Float, value: node.value }
+    if (node instanceof NumberLiteral) {
+        if (node.integer) {
+            return { type: classIds.Integer, value: node.value }
+        }
+        else {
+            return { type: classIds.Float, value: node.value }
+        }
     }
     if (node instanceof StringLiteral) {
         return { type: classIds.String, value: node.value }
@@ -21,10 +22,10 @@ export function convertAstNodeToInterpreterInstance(node: Node): Instance {
 
 export function convertInterpreterInstanceToAstNode(instance: Instance, location: SourceLocation) {
     if (isIntegerInstance(instance)) {
-        return new IntegerLiteral({ location, value: instance.value });
+        return IntegerLiteral({ location, value: instance.value });
     }
     if (isFloatInstance(instance)) {
-        return new FloatLiteral({ location, value: instance.value });
+        return FloatLiteral({ location, value: instance.value });
     }
     if (isStringInstance(instance)) {
         return new StringLiteral({ location, value: instance.value });

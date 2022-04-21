@@ -1,7 +1,8 @@
 import { strict as assert } from "assert";
 import { createMultiFunctions } from "../phases/createMultiFunctions";
-import { flattenSequencesAddMeta } from "../phases/flattenSequencesAddMeta";
+import { identity } from "../phases/identity";
 import { opsToValueNodes } from "../phases/opsToValueNodes";
+import { typeInference } from "../phases/typeInference";
 import { testModule } from "./testModule";
 
 // test opsToNodes phase handling of functions and binary operators
@@ -42,7 +43,7 @@ x +++= 2 * 10
 `module test {
     x = \`+++\`(x,\`*\`(2,10))
 }`,
-{ finalPhase: opsToValueNodes },
+{ finalPhase: createMultiFunctions },
 );
 
 testModule(
@@ -54,7 +55,7 @@ testModule(
     const x = _opsToNodes_1.x
     const y = _opsToNodes_1.y
 }`,
-{ finalPhase: opsToValueNodes },
+{ finalPhase: createMultiFunctions },
 );
 
 testModule(
@@ -66,7 +67,7 @@ testModule(
     const x = _opsToNodes_1[0]
     const y = _opsToNodes_1[1]
 }`,
-{ finalPhase: opsToValueNodes },
+{ finalPhase: createMultiFunctions },
 );
 
 testModule(
@@ -80,7 +81,7 @@ foo = ""
 `module test {
     const foo = "<html>\\n    <body>\\n    </body>\\n</html>"
 }`,
-{ finalPhase: opsToValueNodes },
+{ finalPhase: createMultiFunctions },
 );
 
 testModule(
@@ -93,7 +94,7 @@ foo = ""
 `module test {
     const foo = "<html>\\n    <body>"
 }`,
-{ finalPhase: opsToValueNodes },
+{ finalPhase: createMultiFunctions },
 );
 
 testModule(
@@ -105,7 +106,7 @@ foo = ""
 `module test {
     const foo = "(a, b) =>\\n    a + b"
 }`,
-{ finalPhase: opsToValueNodes },
+{ finalPhase: createMultiFunctions },
 );
 
 testModule(
@@ -119,7 +120,7 @@ foo()
 `module test {
     foo(1,bar(2,3))
 }`,
-{ finalPhase: flattenSequencesAddMeta }
+{ finalPhase: createMultiFunctions }
 );
 
 assert.throws(() => {
@@ -128,7 +129,7 @@ assert.throws(() => {
         @Foo()
         `,
         `module test {\n    @Foo()\n}`,
-        { finalPhase: flattenSequencesAddMeta }        
+        { finalPhase: createMultiFunctions }        
     )
 })
 
@@ -143,7 +144,7 @@ x = 1
     }
     const x = 1
 }`,
-{ finalPhase: flattenSequencesAddMeta }
+{ finalPhase: createMultiFunctions }
 )
 
 testModule(
@@ -157,7 +158,7 @@ add = (a: Number, b: Number): Number => a
         var b : Number
     ): Number => a
 }`,
-{ finalPhase: flattenSequencesAddMeta }
+{ finalPhase: createMultiFunctions }
 )
 
 const equivalentFunctions = [
@@ -168,21 +169,21 @@ x = ()
 =>
     a + b
 `,
-// `
-// x =
-//     ()
-//         a
-//         b
-//     =>
-//         a + b
-// `,
-// `
-// x = (a, b) => a + b
-// `,
-// `
-// x = (a, b) =>
-//     a + b
-// `
+`
+x =
+    ()
+        a
+        b
+    =>
+        a + b
+`,
+`
+x = (a, b) => a + b
+`,
+`
+x = (a, b) =>
+    a + b
+`
 ];
 for (const func of equivalentFunctions) {
     testModule(func,
@@ -195,27 +196,27 @@ for (const func of equivalentFunctions) {
 { finalPhase: createMultiFunctions })
 }
 
-// testModule(
-// `@Foo(bar = 20)
-// x = ()
-//     @Meta()
-//         js = ""
-//             This is Javascript
-//     a
-//     b
-// =>
-//     a + b`,
-// `module test {
-//     {
-//         @Foo(const bar = 20)
-//     }
-//     const x = x(
-//         {
-//             @Meta(const js = "This is Javascript")
-//         }
-//         var a
-//         var b
-//     ) => \`+\`(a,b)
-// }`,
-// { finalPhase: flattenSequencesAddMeta }
-// )
+testModule(
+`@Foo(bar = 20)
+x = ()
+    @Meta()
+        js = ""
+            This is Javascript
+    a
+    b
+=>
+    a + b`,
+`module test {
+    {
+        @Foo(const bar = 20)
+    }
+    const x = x(
+        {
+            @Meta(const js = "This is Javascript")
+        }
+        var a
+        var b
+    ) => \`+\`(a,b)
+}`,
+{ finalPhase: createMultiFunctions }
+)

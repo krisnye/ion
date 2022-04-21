@@ -7,6 +7,7 @@ import { isCallable } from "./Callable";
 import { SemanticError } from "../SemanticError";
 import { getMetaCall, isMetaContainer } from "./MetaContainer";
 import { coreTypes } from "../coreTypes";
+import { MultiFunction } from "./MultiFunction";
 
 export interface AssignmentProps extends ScopeProps {
     callee: Expression;
@@ -94,7 +95,16 @@ export class Call extends Scope {
         let callable = c.getValue(this.callee);
         if (isCallable(callable)) {
             let types = this.nodes.map(arg => arg.type!);
-            return callable.getReturnType(types);
+            let returnType = callable.getReturnType(types, c);
+            if (returnType === null) {
+                if (callable instanceof MultiFunction) {
+                    throw new SemanticError(`No function ${this.callee} with matching parameter types found`, this.location);
+                }
+                else {
+                    throw new SemanticError(`Arguments do not match function parameter types`, this.location);
+                }
+            }
+            return returnType;
         }
         else {
             c.errors.push(new SemanticError(`${this.callee} is not callable`, this.callee));

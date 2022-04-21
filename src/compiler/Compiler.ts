@@ -21,6 +21,11 @@ export interface DebugOptions {
     finalPhase?: Phase;
 }
 
+const fileNameMappings = {
+    // work around for some operator file names not supported by file system
+    "_slash": "/"
+}
+
 export class Compiler {
 
     options: CompilerOptions;
@@ -30,7 +35,10 @@ export class Compiler {
     }
 
     static getFiles(inputs: string[]): Map<string,string> {
-        return new Map(Object.entries(getInputFilesRecursive(inputs)));
+        let entries = Object.entries(getInputFilesRecursive(inputs));
+        // remap some names
+        entries = entries.map(([name, content]) => [fileNameMappings[name] ?? name, content]);
+        return new Map(entries);
     }
 
     runPhases(sources: Map<string,string>, modules: Map<string,any>, phases: Phase[], group: boolean, options?: DebugOptions): Error[] | void {

@@ -47,7 +47,7 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
             if (isTypeMode) {
                 // perform type mode conversions here.
                 if (node instanceof NumberLiteral) {
-                    node = new NumberType({ location, min: node, max: node });
+                    node = new NumberType({ location, min: node, max: node, integer: node.integer });
                 }
                 if (node instanceof UnaryOperation) {
                     switch (node.operator.value) {

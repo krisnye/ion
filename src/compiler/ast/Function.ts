@@ -31,6 +31,7 @@ export class Function extends FunctionBase implements Callable {
         if (native) {
             const types = this.parameters.map(node => node.type);
             const nativeName = `${this.id!.name}(${types.join(`,`)})`
+            // console.log("Check Native Name: " + nativeName);
             const nativeTypeFunction = nativeTypeFunctions[nativeName];
             if (nativeTypeFunction) {
                 return nativeTypeFunction(this, argTypes);

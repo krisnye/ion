@@ -85,9 +85,20 @@ Cross platform modeling language
   - [x] Implement Meta property binding to adjacent nodes.
   - [ ] Do initial type inference WITHOUT constraints yet.
   - [/] Add Javascript Operations for Interpreting.
+  - [x] Handle _slash as encoding for `/`
+  - [x] Figure out why Division result is yielding Float from Integer math
+  - [x] Figure out why Float Division is being called
+
+  - [x] Remove IntegerLiteral/FloatLiteral, use NumberLiteral with integer property.
   - [ ] Semantic analysis.
   - [ ] Type Inference can be done exclusively in single files.
 
   - [ ] Then return to the ability to interpret.
   - [ ] Evaluation / simplification can be done in single file as well.
 
+  - [ ] TypeInference
+    - [x] - a
+    - [x] a / b
+    - [ ] a % b
+
+  
