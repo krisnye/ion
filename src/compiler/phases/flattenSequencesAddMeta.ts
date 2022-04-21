@@ -16,14 +16,14 @@ export function flattenSequencesAddMeta(moduleName, module): ReturnType<Phase> {
             
             const parent = ancestors[ancestors.length - 1];
             if (node instanceof Function && node.id == null && parent instanceof Variable) {
-                node = node.patch({ id: parent.id, meta: parent.meta });
+                node = node.patch({ id: parent.id });
             }
 
-            if (node instanceof Variable && node.value instanceof Function) {
-                if (node.meta === node.value.meta) {
-                    node = node.patch({ meta: [] });
-                }
-            }
+            // if (node instanceof Variable && node.value instanceof Function) {
+            //     if (node.meta === node.value.meta) {
+            //         node = node.patch({ meta: [] });
+            //     }
+            // }
 
             if (node instanceof Group) {
                 if (node.open.type === tokenTypes.OpenBracket.name) {

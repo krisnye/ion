@@ -1,3 +1,4 @@
+import { isConsequent } from "../analysis/isConsequent";
 import { Call } from "../ast/Call";
 import { Expression } from "../ast/Expression";
 import { Function } from "../ast/Function";
@@ -7,10 +8,11 @@ import { Reference } from "../ast/Reference";
 import { Type } from "../ast/Type";
 import { UnionType } from "../ast/UnionType";
 import { isValidId } from "../common";
+import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
 import { SourceLocation } from "../SourceLocation";
 
-type TypeFunction = (node: Function, types: Type[]) => Type;
+type TypeFunction = (node: Function, types: Type[], c: EvaluationContext) => Type;
 
 function BinaryOperation(location: SourceLocation, operator: string, left: Expression, right: Expression) {
     if (left instanceof NumberLiteral && right instanceof NumberLiteral) {
@@ -50,6 +52,8 @@ function UnaryOperation(location: SourceLocation, operator: string, right: Expre
 }
 
 function calculateAbsType(node: Node, a: NumberType) {
+    debugger;
+
     const { location } = node;
     const { integer } = a;
     if (a.min == null || a.max == null) {
@@ -116,6 +120,45 @@ function calculateDivision(node: Node, [a, b]: NumberType[]) {
         maybeToInteger(calculateMultiplicativeType(node, [a, inverseB.left as NumberType], "*"), b.integer),
         maybeToInteger(calculateMultiplicativeType(node, [a, inverseB.right as NumberType], "*"), b.integer),
     )!
+}
+
+function calculateRemainder(node: Node, [a, b]: NumberType[], c: EvaluationContext) {
+    const { location } = node;
+    const { integer } = a;
+    if (a.isConstant(0)) {
+        return NumberType.fromConstant(0, location, integer);
+    }
+
+    if (b.min == null || b.max == null) {
+        return new NumberType({ location, integer });
+    }
+
+    const positiveOrZero = new NumberType({ location, min: NumberLiteral.fromConstant(0, location, integer) })
+    const negativeOrZero = new NumberType({ location, max: NumberLiteral.fromConstant(0, location, integer) })
+
+    const a_alwaysPositiveOrZero = isConsequent(a, positiveOrZero, c);
+    const a_alwaysNegativeOrZero = !a_alwaysPositiveOrZero && isConsequent(a, negativeOrZero, c);
+
+    let zeroLiteral = new NumberLiteral({ value: 0, location, integer });
+    let absMax = UnaryOperation(location, "abs", b.max);
+    if (a_alwaysPositiveOrZero) {
+        // if a > 0 then a % b is [0, < b1]
+        return new NumberType({ location, min: zeroLiteral, max: absMax, maxExclusive: true, integer });
+    }
+    let negativeAbsMax = UnaryOperation(location, "-", absMax);
+    if (a_alwaysNegativeOrZero) {
+        // if a < 0 then a % b is [-b1,0]
+        return new NumberType({ location, min: negativeAbsMax, max: zeroLiteral, integer });
+    }
+    // a % b is [-b1,b1]
+    return new NumberType({ location, min: negativeAbsMax, max: absMax, minExclusive: true, maxExclusive: true, integer });
+}
+
+function calculateMonotonic(node: Node, a: NumberType, operator: string) {
+    const { location } = node;
+    let min = a.min ? UnaryOperation(location, operator, a.min) : undefined;
+    let max = a.max ? UnaryOperation(location, operator, a.max) : undefined;
+    return a.patch({ min, max });
 }
 
 function calculateNegation(node: Node, a: NumberType) {
@@ -188,15 +231,13 @@ export const nativeTypeFunctions: { [key: string]: TypeFunction | undefined } = 
     "**((Integer),(Integer))": (node, types) => calculateMultiplicativeType(node, types as NumberType[], "**"),
     "**((Float),(Float))": (node, types) => calculateMultiplicativeType(node, types as NumberType[], "**"),
 
-    "/((Integer),(< 0) | (> 0))": (node, types) => {
-        console.log("Integer Division: " + types.join(", "));
-        debugger;
-        return calculateDivision(node, types as NumberType[])
-    },
-    "/((Float),(Float))": (node, types) => {
-        console.log("Float Division" + types.join(", "));
-        return calculateDivision(node, types as NumberType[]);
-    },
+    "/((Integer),(< 0) | (> 0))": (node, types) => { return calculateDivision(node, types as NumberType[]) },
+    "/((Float),(Float))": (node, types) => { return calculateDivision(node, types as NumberType[]); },
+
+    "%((Integer),(< 0) | (> 0))": (node, types, c) => { return calculateRemainder(node, types as NumberType[], c) },
+    "%((Float),(Float))": (node, types, c) => { return calculateRemainder(node, types as NumberType[], c); },
+
+    "sqrt((>= 0.0))": (node, types, c) => { return calculateMonotonic(node, types[0] as NumberType, "sqrt") },
 
     "-((Float))": (node, types) => calculateNegation(node, types[0] as NumberType),
     "-((Integer))": (node, types) => calculateNegation(node, types[0] as NumberType),

@@ -26,15 +26,15 @@ export class Function extends FunctionBase implements Callable {
         throw new Error();
     }
 
-    getReturnType(argTypes: Type[]): Type {
+    getReturnType(argTypes: Type[], c: EvaluationContext): Type {
         let native = getMetaCall(this, coreTypes.Native);
         if (native) {
             const types = this.parameters.map(node => node.type);
-            const nativeName = `${this.id!.name}(${types.join(`,`)})`
+            const nativeName = `${this.id!.name}(${types.join(`,`)})`;
             // console.log("Check Native Name: " + nativeName);
             const nativeTypeFunction = nativeTypeFunctions[nativeName];
             if (nativeTypeFunction) {
-                return nativeTypeFunction(this, argTypes);
+                return nativeTypeFunction(this, argTypes, c);
             }
         }
         if (isType(this.returnType)) {

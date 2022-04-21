@@ -1,0 +1,3 @@
+
+@Native("(a) => ({ ...a, value: Math.tan(a.value) })")
+tan = (a: Float): Float => 0.0

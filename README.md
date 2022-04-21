@@ -96,9 +96,14 @@ Cross platform modeling language
   - [ ] Then return to the ability to interpret.
   - [ ] Evaluation / simplification can be done in single file as well.
 
-  - [ ] TypeInference
+  - [x] Number TypeInference
     - [x] - a
     - [x] a / b
-    - [ ] a % b
+    - [x] a % b
+    - [x] sqrt
+    - [x] sin
+    - [x] cos
+    - [x] tan
 
-  
+  - [ ] Add NaN class to represent Not A Number.
+  - [ ] Overload Float division to explicitly return NaN if necessary.

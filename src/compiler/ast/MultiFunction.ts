@@ -22,8 +22,9 @@ export class MultiFunction extends Scope implements Callable {
     }
 
     getReturnType(argTypes: Type[], c: EvaluationContext): Type | null {
+        // console.log("------> " + argTypes.join(", "));
         let possibleFunctionCalls = this.getPossibleFunctionCalls(argTypes, c);
-        let returnTypes = possibleFunctionCalls.map(func => func.getReturnType(argTypes));
+        let returnTypes = possibleFunctionCalls.map(func => func.getReturnType(argTypes, c));
         return UnionType.join(...returnTypes);
     }
 

@@ -1,8 +1,6 @@
 import { strict as assert } from "assert";
 import { createMultiFunctions } from "../phases/createMultiFunctions";
-import { identity } from "../phases/identity";
 import { opsToValueNodes } from "../phases/opsToValueNodes";
-import { typeInference } from "../phases/typeInference";
 import { testModule } from "./testModule";
 
 // test opsToNodes phase handling of functions and binary operators
@@ -196,27 +194,27 @@ for (const func of equivalentFunctions) {
 { finalPhase: createMultiFunctions })
 }
 
-testModule(
-`@Foo(bar = 20)
-x = ()
-    @Meta()
-        js = ""
-            This is Javascript
-    a
-    b
-=>
-    a + b`,
-`module test {
-    {
-        @Foo(const bar = 20)
-    }
-    const x = x(
-        {
-            @Meta(const js = "This is Javascript")
-        }
-        var a
-        var b
-    ) => \`+\`(a,b)
-}`,
-{ finalPhase: createMultiFunctions }
-)
+// testModule(
+// `@Foo(bar = 20)
+// x = ()
+//     @Meta()
+//         js = ""
+//             This is Javascript
+//     a
+//     b
+// =>
+//     a + b`,
+// `module test {
+//     const x = {
+//         @Foo(const bar = 20)
+//     }
+//     x(
+//         {
+//             @Meta(const js = "This is Javascript")
+//         }
+//         var a
+//         var b
+//     ) => `+`(a,b)
+// }`,
+// { finalPhase: createMultiFunctions }
+// )

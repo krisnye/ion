@@ -42,18 +42,31 @@ export class NumberType extends Node implements Type {
     integer?: boolean;
 
     constructor(props: NumberTypeProps) {
-        let integer: boolean | undefined;
-        if (props.min instanceof NumberLiteral) {
-            integer = props.min.integer;
-        }
-        if (integer == null && props.max instanceof NumberLiteral) {
-            integer = props.max.integer;
-        }
-        if (integer) {
-            props.integer = integer;
+        if (props.integer == null) {
+            let integer: boolean | undefined;
+            if (props.min instanceof NumberLiteral) {
+                integer = props.min.integer;
+            }
+            if (integer == null && props.max instanceof NumberLiteral) {
+                integer = props.max.integer;
+            }
+            props.integer = integer ?? false;
         }
         super({ minExclusive: false, maxExclusive: false, ...props});
     }
+
+    static fromConstant(value: number, location: SourceLocation, integer = value === Math.trunc(value)) {
+        let literalValue = NumberLiteral.fromConstant(value, location, integer);
+        return new NumberType({ location, min: literalValue, max: literalValue, integer });
+    }
+
+    isConstant(value: number) {
+        return this.min instanceof NumberLiteral
+            && this.min.value === value
+            && this.max instanceof NumberLiteral
+            && this.max.value === value;
+    }
+
     patch(props: Partial<NumberTypeProps>) {
         return super.patch(props);
     }

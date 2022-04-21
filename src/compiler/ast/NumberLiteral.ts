@@ -1,4 +1,5 @@
 import { EvaluationContext } from "../EvaluationContext";
+import { SourceLocation } from "../SourceLocation";
 import { Literal, LiteralProps } from "./Literal";
 import { NumberType } from "./NumberType";
 
@@ -22,6 +23,10 @@ export class NumberLiteral extends Literal {
 
     constructor(props: NumberLiteralProps) { super(props); }
     patch(props: Partial<NumberLiteralProps>) { return super.patch(props); }
+
+    static fromConstant(value: number, location: SourceLocation, integer = value === Math.trunc(value)) {
+        return new NumberLiteral({ location, value, integer });
+    }
 
     resolveType(c: EvaluationContext) {
         const value = new NumberLiteral({ ...this, resolved: true });

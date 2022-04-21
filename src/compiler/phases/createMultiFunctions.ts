@@ -45,7 +45,7 @@ export function createMultiFunctions(moduleName, module): ReturnType<Phase> {
                                     parent.patch({
                                         value: new MultiFunction({
                                             location: SourceLocation.merge(functions[0].location, functions[functions.length - 1].location),
-                                            nodes: functions.map(func => func.patch({ meta: lookup.getParent(func).meta })),
+                                            nodes: functions,
                                         })
                                     })
                                 )

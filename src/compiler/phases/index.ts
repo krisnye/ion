@@ -11,6 +11,7 @@ import { opsToTypeNodes } from "./opsToTypeNodes";
 import { pstModulesToAst } from "./pstModulesToAst";
 import { createMultiFunctions } from "./createMultiFunctions";
 import { removeSoloBlocks } from "./removeSoloBlocks";
+import { moveMetaToFunctions } from "./moveMetaToFunctions";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -20,6 +21,7 @@ export const parsingPhases: Phase[] = [
     opsToValueNodes,
     removeSoloBlocks,
     flattenSequencesAddMeta,
+    moveMetaToFunctions,
     createMultiFunctions,
     resolveExternalReferences,
     //  MUST be solo up to this point so we can get external dependencies.
