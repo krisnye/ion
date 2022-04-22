@@ -167,10 +167,10 @@ export class Compiler {
     }
 
     log(logger: PhaseLogger, phase: string, module: any, name: string) {
-        let viewAsCode = !Array.isArray(module);
-        if (viewAsCode) {
-            module = module.toString();
-        }
+        // let viewAsCode = !Array.isArray(module);
+        // if (viewAsCode) {
+        //     module = module.toString();
+        // }
         logger(phase, module, name);
     }
 

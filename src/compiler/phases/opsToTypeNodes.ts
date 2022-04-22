@@ -40,7 +40,7 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
                 pushedTypeMode.add(node);
             }
         },
-        leave(node, ancestors, path) {
+        leave(node: Node, ancestors, path) {
             const { location } = node;
             const pushedNewTypeMode = pushedTypeMode.has(lookup.getOriginal(node));
             const isTypeMode = isTypeModeStack[isTypeModeStack.length - 1]

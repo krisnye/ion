@@ -1,15 +1,16 @@
 import { Node, NodeProps } from "../Node";
+import { Expression } from "./Expression";
 
 export interface ConditionalProps extends NodeProps {
-    test: Node;
-    consequent: Node;
-    alternate: Node | null;    
+    test: Expression;
+    consequent: Expression;
+    alternate: Expression | null;    
 }
 export class Conditional extends Node {
 
-    test!: Node;
-    consequent!: Node;
-    alternate!: Node | null;
+    test!: Expression;
+    consequent!: Expression;
+    alternate!: Expression | null;
 
     constructor(props: ConditionalProps) { super(props); }
     patch(props: Partial<ConditionalProps>) { return super.patch(props); }

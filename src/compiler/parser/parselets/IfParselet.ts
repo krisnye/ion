@@ -2,9 +2,10 @@ import { Parser } from "../Parser";
 import { Token } from "../../Token";
 import { Node } from "../../Node";
 import { PrefixParselet } from "../PrefixParselet";
-import { Conditional } from "../../pst/Conditional";
+import { Conditional } from "../../ast/Conditional";
 import { SourceLocation } from "../../SourceLocation";
 import { tokenTypes } from "../../tokenizer/TokenType";
+import { Expression } from "../../ast/Expression";
 
 export class IfParselet extends PrefixParselet {
 
@@ -26,9 +27,9 @@ export class IfParselet extends PrefixParselet {
         }
         return new Conditional({
             location: SourceLocation.merge(ifToken.location, test.location),
-            test,
+            test: test as Expression,
             consequent,
-            alternate,
+            alternate: alternate as Expression,
         })
     }
 

@@ -52,8 +52,6 @@ function UnaryOperation(location: SourceLocation, operator: string, right: Expre
 }
 
 function calculateAbsType(node: Node, a: NumberType) {
-    debugger;
-
     const { location } = node;
     const { integer } = a;
     if (a.min == null || a.max == null) {

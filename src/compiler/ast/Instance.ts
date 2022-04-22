@@ -1,11 +1,10 @@
 import { EvaluationContext } from "../EvaluationContext";
-import { GetVariableFunction } from "../phases/createScopeMaps";
 import { Block, BlockProps } from "./Block";
 import { Reference } from "./Reference";
 import { Scope } from "./Scope";
 import { Variable } from "./Variable";
 
-export interface ObjectExpressionProps extends BlockProps {
+export interface InstanceProps extends BlockProps {
     class: Reference;
 }
 
@@ -14,8 +13,8 @@ export class Instance extends Block {
     class!: Reference;
     nodes!: Variable[];
 
-    constructor(props: ObjectExpressionProps) { super(props); }
-    patch(props: Partial<ObjectExpressionProps>) { return super.patch(props); }
+    constructor(props: InstanceProps) { super(props); }
+    patch(props: Partial<InstanceProps>) { return super.patch(props); }
 
     getValue(name: string) {
         for (let node of this.nodes) {

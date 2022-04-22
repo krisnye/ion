@@ -5,16 +5,11 @@ import { Declaration } from "./Declaration";
 import { MetaCall } from "./Call";
 import { toMetaString } from "./MetaContainer";
 import { Node } from "../Node";
-import { Instance } from "./Instance";
-import { Reference } from "./Reference";
-import { Call } from "../ast/Call";
-import { GetVariableFunction } from "../phases/createScopeMaps";
 import { Callable } from "./Callable";
 import { Type } from "./Type";
-import { SemanticError } from "../SemanticError";
 import { TypeReference } from "./TypeReference";
 import { EvaluationContext } from "../EvaluationContext";
-import { Expression } from "./Expression";
+import { FunctionType } from "./FunctionType";
 
 export interface ClassProps extends ScopeProps {
     id: Identifier;
@@ -39,6 +34,18 @@ export class Class extends Scope implements Declaration, Callable {
 
     getReturnType(args: Type[]): Type {
         return new TypeReference(this.id);
+    }
+
+    protected resolveType(c: EvaluationContext): Type | null {
+        const { location } = this;
+        // Function Type
+        return new FunctionType({
+            location,
+            meta: [],
+            parameters: this.nodes,
+            returnType: new TypeReference({ ...this.id, resolved: true }),
+            resolved: true,
+        })
     }
 
     // evaluate(call: Call, c: EvaluationContext): Instance | Error[] {

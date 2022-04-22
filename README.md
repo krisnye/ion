@@ -34,15 +34,6 @@ Cross platform modeling language
     - [x] Implemented a good string diff library
   - [x] Don't execute or optimize while compiling.
   - [ ] Finish Type Inference
-    - [x] Function return type
-    - [x] min operator
-    - [x] max operator
-    - [x] * operator
-    - [x] / operator
-    - [x] % operator
-    - [x] abs operator
-    - [x] inv operator
-    - [x] ** operator
     - [ ] Conditional
       - [-] Scalar Conditionals
       - [-] Vector Conditionals (within Array)
@@ -56,13 +47,6 @@ Cross platform modeling language
   - [?] it seems that Variable type is being set on changes AFTER other inference
   - [x] We need a map { key -> value } format that is not ambiguous with array destructuring
   - [-] Maybe... we should see if we need pattern matching and how that works with above
-  - [ ] class instance functions to static functions
-  - [ ] class inheritance
-  - [ ] uniform function call syntax
-  - [ ] refactoring
-    - [-] UnionType to left/right operation
-    - [-] IntersectionType to left/right operation
-    - [ ] create normalized Type so Union of ObjectType or NumberType
 
 # Todo 22
 
@@ -90,12 +74,6 @@ Cross platform modeling language
   - [x] Figure out why Float Division is being called
 
   - [x] Remove IntegerLiteral/FloatLiteral, use NumberLiteral with integer property.
-  - [ ] Semantic analysis.
-  - [ ] Type Inference can be done exclusively in single files.
-
-  - [ ] Then return to the ability to interpret.
-  - [ ] Evaluation / simplification can be done in single file as well.
-
   - [x] Number TypeInference
     - [x] - a
     - [x] a / b
@@ -105,5 +83,12 @@ Cross platform modeling language
     - [x] cos
     - [x] tan
 
+  - [x] Type Inference can be done exclusively in single files + dependents.
+  - [ ] Evaluation / Simplification can be done in single file as well.
+  - [ ] Semantic analysis.
+  - [ ] Then return to the ability to interpret.
   - [ ] Add NaN class to represent Not A Number.
   - [ ] Overload Float division to explicitly return NaN if necessary.
+  - [ ] class instance functions to static functions
+  - [ ] class inheritance
+  - [ ] uniform function call syntax

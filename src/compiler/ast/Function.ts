@@ -1,13 +1,20 @@
+import getFinalExpressions from "../analysis/getFinalExpressions";
+import { isConsequent } from "../analysis/isConsequent";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
 import { nativeTypeFunctions } from "../phases/nativeTypeFunctions";
+import { SemanticError } from "../SemanticError";
+import { AnyType } from "./AnyType";
 import { Call } from "./Call";
 import { Callable } from "./Callable";
+import { Expression } from "./Expression";
 import { FunctionBase, FunctionBaseProps } from "./FunctionBase";
+import { FunctionType } from "./FunctionType";
 import { Identifier } from "./Identifier";
 import { getMetaCall, toMetaString } from "./MetaContainer";
 import { isType, Type } from "./Type";
+import { UnionType } from "./UnionType";
 
 export interface FunctionProps extends FunctionBaseProps {
     id?: Identifier
@@ -17,7 +24,7 @@ export interface FunctionProps extends FunctionBaseProps {
 export class Function extends FunctionBase implements Callable {
 
     id?: Identifier
-    body!: Node;
+    body!: Expression;
 
     constructor(props: FunctionProps) { super(props); }
     patch(props: Partial<FunctionProps>) { return super.patch(props); }
@@ -41,6 +48,27 @@ export class Function extends FunctionBase implements Callable {
             return this.returnType;
         }
         throw new Error("Function.getReturnType not implemented");
+    }
+
+    *getDependencies(c: EvaluationContext) {
+        yield* this.parameters;
+        yield* getFinalExpressions(this.body);
+    }
+
+    protected resolveType(c: EvaluationContext): Type | null {
+        const finalTypes = [...getFinalExpressions(this.body)].map(node => node.type!);
+        const inferredType = UnionType.join(...finalTypes)!;
+        if (this.returnType != null) {
+            if (!isConsequent(inferredType, this.returnType, c)) {
+                c.errors.push(new SemanticError(`Return type doesn't match function declaration`, this.returnType, inferredType));
+            }
+        }
+        //  Check that the return type is valid
+        const returnType = this.returnType ?? inferredType;
+        return new FunctionType({ ...this,
+            returnType,
+            resolved: true,
+        });
     }
 
     evaluate(call: Call, c: EvaluationContext): Node | Error[] {

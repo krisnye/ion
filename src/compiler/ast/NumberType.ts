@@ -42,15 +42,15 @@ export class NumberType extends Node implements Type {
     integer?: boolean;
 
     constructor(props: NumberTypeProps) {
-        if (props.integer == null) {
-            let integer: boolean | undefined;
-            if (props.min instanceof NumberLiteral) {
-                integer = props.min.integer;
-            }
-            if (integer == null && props.max instanceof NumberLiteral) {
-                integer = props.max.integer;
-            }
-            props.integer = integer ?? false;
+        // we need to get rid of the fucking integer property.
+        if (props.min instanceof NumberLiteral) {
+            props.integer = props.min.integer;
+        }
+        else if (props.max instanceof NumberLiteral) {
+            props.integer = props.max.integer;
+        }
+        else if (props.integer == null) {
+            props.integer = false;
         }
         super({ minExclusive: false, maxExclusive: false, ...props});
     }

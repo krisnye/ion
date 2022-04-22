@@ -1,0 +1,4 @@
+
+class Pair
+    key: Any
+    value: Any
