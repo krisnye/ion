@@ -24,5 +24,7 @@ export function logOnce(message: string) {
     if (!logged.has(message)) {
         console.log(message);
         logged.add(message);
+        return true;
     }
+    return false;
 }

@@ -83,8 +83,10 @@ Cross platform modeling language
     - [x] cos
     - [x] tan
 
-  - [x] Type Inference can be done exclusively in single files + dependents.
-  - [ ] Evaluation / Simplification can be done in single file as well.
+  - [x] Most Type Inference can be done exclusively in single files + dependents.
+  - [ ] Some Type Inference must be done in assembled phase.
+  - [ ] Simplification can be done in single file as well.
+  - [ ] Evaluation if involving UFCS must happen in assembly phase.
   - [ ] Semantic analysis.
   - [ ] Then return to the ability to interpret.
   - [ ] Add NaN class to represent Not A Number.

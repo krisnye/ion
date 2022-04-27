@@ -12,6 +12,7 @@ import { pstModulesToAst } from "./pstModulesToAst";
 import { createMultiFunctions } from "./createMultiFunctions";
 import { removeSoloBlocks } from "./removeSoloBlocks";
 import { moveMetaToFunctions } from "./moveMetaToFunctions";
+import { checkForUnresolvedExpressions } from "./checkForUnresolvedExpressions";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -30,8 +31,12 @@ export const parsingPhases: Phase[] = [
 export const intermediatePhases: Phase[] = [
     pstModulesToAst,
     typeInference,
+    checkForUnresolvedExpressions,
 ]
 
+//  move all module root functions to shared multifunctions
+//  the perform more typeInference with all phases merged up
+//  evaluation must happen in an assembled phase.
 export const assemblyPhases: Phase[] = [
     identity,
 ]

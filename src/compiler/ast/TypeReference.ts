@@ -1,8 +1,7 @@
-import { IdentifierProps } from "./Identifier";
-import { Reference } from "./Reference";
+import { Reference, ReferenceProps } from "./Reference";
 import { Type } from "./Type";
 
-export interface TypeReferenceProps extends IdentifierProps  {
+export interface TypeReferenceProps extends ReferenceProps  {
 }
 
 export class TypeReference extends Reference implements Type  {

@@ -1,17 +1,18 @@
 import { Expression, ExpressionProps } from "../ast/Expression";
+import { Identifier } from "../ast/Identifier";
 import { infixPrecedence } from "../parser/operators";
 import { Token } from "../Token";
 
 export interface BinaryOperationProps extends ExpressionProps {
-    left: Expression;
+    left: Expression | Identifier;
     operator: Token;
-    right: Expression;
+    right: Expression | Identifier;
 }
 export class BinaryOperation extends Expression {
 
-    left!: Expression;
+    left!: Expression | Identifier;
     operator!: Token;
-    right!: Expression;
+    right!: Expression | Identifier;
 
     constructor(props: BinaryOperationProps) { super(props); }
     patch(props: Partial<BinaryOperationProps>) { return super.patch(props); }

@@ -10,6 +10,8 @@ import { Identifier } from "../ast/Identifier";
 import { coreTypes } from "../coreTypes";
 import { NumberType } from "../ast/NumberType";
 import { TypeReference } from "../ast/TypeReference";
+import { ArrayExpression } from "../ast/ArrayExpression";
+import { NumberLiteral } from "../ast/NumberLiteral";
 
 export function resolveExternalReferences(moduleName, module, externalModules: Map<string,Module>): ReturnType<Phase> {
     let errors: Error[] = [];
@@ -26,6 +28,12 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
             }
         },
         leave(node) {
+            if (node instanceof ArrayExpression) {
+                dependencies.add(coreTypes.Array);
+            }
+            if (node instanceof NumberLiteral) {
+                dependencies.add(node.integer ? coreTypes.Integer : coreTypes.Float);
+            }
             if (node instanceof Reference) {
                 if (node instanceof TypeReference) {
                     // convert References to Float or Integer to NumberTypes
@@ -74,7 +82,7 @@ function getExternalReferences(module: any, scopes: NodeMap<ScopeMap>): Map<stri
 function replaceInternalReferencesToAbsolute(module: Module, externalModules: Map<string,Module>, replacements, errors, scopes: NodeMap<ScopeMap>) {
     for (let node of module.nodes) {
         if (isDeclaration(node)) {
-            replacements.set(node.id, node.id.patch({ name: getAbsolutePath(module.name, node.id.name), constant: true }));
+            replacements.set(node.id, node.id.patch({ name: getAbsolutePath(module.name, node.id.name) }));
         }
     }
 }
@@ -86,7 +94,7 @@ function replaceExternalReferencesToAbsolute(module: Module, externalModules: Ma
             externalModuleDependencies.add(resolvedPath);
             let absolutePath = getAbsolutePath(resolvedPath);
             for (let ref of externalReferences.get(external)!.keys()) {
-                replacements.set(ref, ref.patch({ name: absolutePath, constant: true }));
+                replacements.set(ref, ref.patch({ name: absolutePath }));
             }
         }
         else {

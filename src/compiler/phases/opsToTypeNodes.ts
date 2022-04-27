@@ -21,6 +21,7 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
         if (parent instanceof BinaryOperation && node === parent.right) {
             switch (parent.operator.value) {
                 case ":": return true;
+                case "=>":
                 case "=":
                     if (parent.left instanceof Identifier) {
                         return isTypeName(parent.left.name);

@@ -30,7 +30,7 @@ export interface NumberTypeProps extends NodeProps {
     max?: Node;
     minExclusive?: boolean;
     maxExclusive?: boolean;
-    integer?: boolean;
+    integer?: boolean | null;
 }
 
 export class NumberType extends Node implements Type {
@@ -39,7 +39,7 @@ export class NumberType extends Node implements Type {
     max?: Expression;
     minExclusive!: boolean;
     maxExclusive!: boolean;
-    integer?: boolean;
+    integer!: boolean | null;
 
     constructor(props: NumberTypeProps) {
         // we need to get rid of the fucking integer property.
@@ -49,14 +49,20 @@ export class NumberType extends Node implements Type {
         else if (props.max instanceof NumberLiteral) {
             props.integer = props.max.integer;
         }
-        else if (props.integer == null) {
-            props.integer = false;
+        else if (props.integer === undefined) {
+            props.integer = null;
         }
-        super({ minExclusive: false, maxExclusive: false, ...props});
+        if (props.min instanceof NumberLiteral) {
+            props.min = props.min.patch({ resolved: true });
+        }
+        if (props.max instanceof NumberLiteral) {
+            props.max = props.max.patch({ resolved: true });
+        }
+        super({ minExclusive: false, maxExclusive: false, ...props });
     }
 
-    static fromConstant(value: number, location: SourceLocation, integer = value === Math.trunc(value)) {
-        let literalValue = NumberLiteral.fromConstant(value, location, integer);
+    static fromConstant(value: number, location: SourceLocation, integer: boolean | null | undefined = value === Math.trunc(value)) {
+        let literalValue = NumberLiteral.fromConstant(value, location, integer).patch({ resolved: true });
         return new NumberType({ location, min: literalValue, max: literalValue, integer });
     }
 

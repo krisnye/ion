@@ -11,10 +11,13 @@ export interface MetaContainer extends Node {
 
 export function getMetaCall(container: MetaContainer, globalPath: string): Instance | Call | null {
     let calls = getMetaCalls(container, globalPath);
+    if (calls.length > 1) {
+        throw new SemanticError(`Can only have a Meta attribute of each type`, ...calls);
+    }
     return calls[0] ?? null;
 }
 
-export function getMetaCalls(container: MetaContainer, globalPath: string) {
+function getMetaCalls(container: MetaContainer, globalPath: string) {
     let calls = new Array<Instance | Call>();
     for (let meta of container.meta) {
         // handle both right now

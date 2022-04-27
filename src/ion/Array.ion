@@ -1,0 +1,3 @@
+
+class Array
+    length: >= 0

@@ -9,4 +9,9 @@
 // z7 = cos(36.8)
 // z8 = tan(28.3)
 
-pair = Pair(1, 10)
+array = [1, 2, 3]
+length = array.length
+
+// index = 11
+// safeIndex = index % array.length
+// pair = Pair(1, 10)

@@ -12,7 +12,7 @@ import { SemanticError } from "../SemanticError";
 import { SourceLocation } from "../SourceLocation";
 import { Reference } from "../ast/Reference";
 import { Phase } from "./Phase";
-import { Member } from "../pst/Member";
+import { Member } from "../ast/Member";
 import { Class as PstClass } from "../pst/Class";
 import { Class as AstClass } from "../ast/Class";
 import { Variable } from "../ast/Variable";
@@ -41,7 +41,7 @@ function toVariableOrMetaCall(value: Node) {
     if (value instanceof Variable || isMetaCall(value)) {
         return value;
     }
-    if (value instanceof Identifier) {
+    if (value instanceof Identifier || value instanceof Reference) {
         return new Variable({
             location: value.location,
             id: new Identifier(value),
@@ -51,6 +51,7 @@ function toVariableOrMetaCall(value: Node) {
             constant: false,
         });
     }
+    debugger;
     throw new SemanticError(`Expected Variable`, value);
 }
 
@@ -65,7 +66,7 @@ export function tempFactory(name: string): IdentifierFactory {
 export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
     let errors = new Array<Error>();
     let temp = tempFactory("opsToNodes");
-    function destructure(nodes: Array<Node>, pattern: Node | null, right: Expression, variableOrAssignment: boolean, memberIndex: null | number = null) {
+    function destructure(nodes: Array<Node>, pattern: Node | null, right: Expression | Identifier, variableOrAssignment: boolean, memberIndex: null | number = null) {
         if (pattern instanceof Group) {
             let tempVar = new Identifier(temp(right.location));
             memberIndex = pattern.open.value == "[" ? 0 : null;
@@ -73,7 +74,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                 location: right.location,
                 id: tempVar,
                 type: null,
-                value: right,
+                value: right as Expression,
                 constant: true,
                 meta: [],
             }));
@@ -87,12 +88,12 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                 }
             }
         }
-        else if (pattern instanceof Identifier) {
+        else if (pattern instanceof Identifier || pattern instanceof Reference) {
+            let computed = memberIndex != null;
             let value = new Member({
                 location: right.location,
-                object: right,
-                property: memberIndex != null ? IntegerLiteral({ location: pattern.location, value: memberIndex }) : pattern,
-                computed: memberIndex != null,
+                object: right as Expression,
+                property: memberIndex != null ? IntegerLiteral({ location: pattern.location, value: memberIndex }) : (computed ? pattern : new Identifier(pattern))
             });
             let { location } = right;
             let id = pattern;
@@ -103,6 +104,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
             );
         }
         else {
+            console.log({ impossible: true, pattern });
             throw new SemanticError(`(Should Be Impossible) Invalid destructuring pattern`, pattern!);
         }
     }
@@ -143,7 +145,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
             else if (node instanceof Identifier) {
                 // probably should convert most to References, but which ones NOT to?
                 let retainAsIdentifier
-                    = parent instanceof Member && !parent.computed && node === parent.property;
+                    = parent instanceof BinaryOperation && node === parent.right && parent.operator.value === ".";
                     //      parent is Object Literal and this is key.
                 if (!retainAsIdentifier) {
                     return isTypeName(node.name) ? new TypeReference(node) : new Reference(node);
@@ -161,11 +163,13 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                 })
             }
             else if (node instanceof BinaryOperation) {
-                let { location, left, right } = node;
+                let { location } = node;
+                let left = node.left as Expression;
+                let right = node.right as Expression;
                 let operator = node.operator.value as string;
                 switch (operator) {
                     case ":":
-                        if (left instanceof Identifier) {
+                        if (left instanceof Identifier || left instanceof Reference) {
                             return new Variable({
                                 location,
                                 id: new Identifier(left),
@@ -185,6 +189,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                             })
                         }
                         else {
+                            console.log({ left });
                             errors.push(new SemanticError(`Expected identifier`, left));
                             return;
                         }
@@ -200,7 +205,8 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                         let id = left instanceof Variable ? left.id : left;
                         let type = left instanceof Variable ? left.type : null;
                         let constant = left instanceof Variable ? left.constant : true;
-                        if (!(id instanceof Identifier)) {
+                        if (!(id instanceof Identifier || id instanceof Reference)) {
+                            console.log({ id });
                             errors.push(new SemanticError(`Expected Identifier`, id));
                             return;
                         }
@@ -212,7 +218,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                             return new Assignment({ location, id: new Reference(id), value: right });
                         }
                     case ".":
-                        return new Member({ location, object: left, property: right, computed: false });
+                        return new Member({ location, object: left as Expression, property: right });
                     case ",":
                         return Sequence.merge(left, right)
                     case "=>":
@@ -226,7 +232,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                         }
                         //  left should be an Identifier or a Group
                         let parameters = new Array<Variable | MetaCall>();
-                        if (left instanceof Identifier) {
+                        if (left instanceof Identifier || left instanceof Reference) {
                             parameters.push(toVariableOrMetaCall(left))
                         }
                         else if (left instanceof Group) {
@@ -249,7 +255,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                         })
                     default:
                         if (operator.endsWith("=")) {
-                            if (!(left instanceof Identifier)) {
+                            if (!(left instanceof Identifier || left instanceof Reference)) {
                                 errors.push(new SemanticError(`Expected a variable reference`, left));
                                 return;
                             }

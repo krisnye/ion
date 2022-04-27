@@ -1,5 +1,6 @@
 import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
+import { AnyType } from "./AnyType";
 import { Callable } from "./Callable";
 import { Function } from "./Function";
 import { Scope, ScopeProps } from "./Scope";
@@ -22,7 +23,6 @@ export class MultiFunction extends Scope implements Callable {
     }
 
     getReturnType(argTypes: Type[], c: EvaluationContext): Type | null {
-        // console.log("------> " + argTypes.join(", "));
         let possibleFunctionCalls = this.getPossibleFunctionCalls(argTypes, c);
         let returnTypes = possibleFunctionCalls.map(func => func.getReturnType(argTypes, c));
         return UnionType.join(...returnTypes);
@@ -36,6 +36,10 @@ export class MultiFunction extends Scope implements Callable {
             }
         }
         return functions;
+    }
+
+    resolveType(c: EvaluationContext) {
+        return new AnyType({ location: this.location });
     }
 
     toString() {

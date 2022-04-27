@@ -10,6 +10,8 @@ import { Type } from "./Type";
 import { TypeReference } from "./TypeReference";
 import { EvaluationContext } from "../EvaluationContext";
 import { FunctionType } from "./FunctionType";
+import { ObjectType } from "./ObjectType";
+import { StringType } from "./StringType";
 
 export interface ClassProps extends ScopeProps {
     id: Identifier;
@@ -32,8 +34,23 @@ export class Class extends Scope implements Declaration, Callable {
         throw new Error();
     }
 
+    get parameters() {
+        return this.nodes;
+    }
+
     getReturnType(args: Type[]): Type {
-        return new TypeReference(this.id);
+        return new ObjectType({
+            location: this.location,
+            types: [new TypeReference(this.id), ...this.extends as TypeReference[]],
+            properties: args.map(
+                (arg, index) => {
+                    return [
+                        new StringType({ location: arg.location, value: this.nodes[index].id.name }),
+                        arg
+                    ]
+                }
+            )
+        });
     }
 
     protected resolveType(c: EvaluationContext): Type | null {

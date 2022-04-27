@@ -1,11 +1,15 @@
 import { EvaluationContext } from "../EvaluationContext";
-import { Identifier, IdentifierProps } from "./Identifier";
+import { Expression, ExpressionProps } from "./Expression";
+import { Identifier } from "./Identifier";
 import { Type } from "./Type";
 
-export interface ReferenceProps extends IdentifierProps  {
+export interface ReferenceProps extends ExpressionProps  {
+
+    name: string;
+
 }
 
-export class Reference extends  Identifier  {
+export class Reference extends Expression  {
 
     name!: string;
 
@@ -27,6 +31,10 @@ export class Reference extends  Identifier  {
     toInterpreterInstance(c: EvaluationContext) {
         let value = c.getValue(this);
         return value.toInterpreterInstance(c);
+    }
+    
+    toString() {
+        return `${Identifier.prototype.toString.call(this)}`;
     }
 
 }

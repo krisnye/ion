@@ -97,7 +97,7 @@ function calculateInverse(node: Node, a: NumberType): NumberType | UnionType {
     }
 }
 
-function maybeToInteger(type: NumberType, integer?: boolean) {
+function maybeToInteger(type: NumberType, integer?: boolean | null) {
     if (integer) {
         if (type.min instanceof NumberLiteral) {
             type = type.patch({ min: type.min.patch({ value: Math.trunc(type.min.value), integer: true }) });

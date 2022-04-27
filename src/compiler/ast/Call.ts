@@ -36,7 +36,8 @@ export class Call extends Scope {
             let returnType = callable.getReturnType(types, c);
             if (returnType === null) {
                 if (callable instanceof MultiFunction) {
-                    throw new SemanticError(`No function ${this.callee} with matching parameter types found`, this.location);
+                    console.log({ callee: this.callee });
+                    throw new SemanticError(`No function ${this.callee.toString()} with matching parameter types found`, this.location);
                 }
                 else {
                     throw new SemanticError(`Arguments do not match function parameter types`, this.location);

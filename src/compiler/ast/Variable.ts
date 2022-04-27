@@ -23,7 +23,7 @@ export class Variable extends Expression implements Declaration {
     patch(props: Partial<VariableProps>) { return super.patch(props); }
 
     *getDependencies(c: EvaluationContext) {
-        if (this.value) {
+        if (!this.isType() && this.value) {
             yield this.value;
         }
     }

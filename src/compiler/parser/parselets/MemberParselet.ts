@@ -4,7 +4,7 @@ import { Node } from "../../Node";
 import { SourceLocation } from "../../SourceLocation";
 import { tokenTypes } from "../../tokenizer/TokenType";
 import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
-import { Member } from "../../pst/Member";
+import { Member } from "../../ast/Member";
 import { infixPrecedence } from "../operators";
 import { Expression } from "../../ast/Expression";
 
@@ -27,7 +27,6 @@ export class MemberParselet extends BinaryOperatorParselet {
             location: SourceLocation.merge(object.location, close.location),
             object,
             property: property as Expression,
-            computed,
         });
     }
 
