@@ -1,4 +1,7 @@
+import { EvaluationContext } from "../EvaluationContext";
 import { Node, NodeProps } from "../Node";
+import { BinaryExpression } from "./BinaryExpression";
+import { Expression } from "./Expression";
 import { isType, Type } from "./Type";
 
 export interface VoidTypeProps extends NodeProps {
@@ -13,6 +16,10 @@ export class VoidType extends Node implements Type {
 
     merge(b: Type, union: boolean) {
         return null;
+    }
+
+    toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
+        throw new Error("Not implemented");
     }
 
     isSubtypeOf(b: Type): boolean | null {

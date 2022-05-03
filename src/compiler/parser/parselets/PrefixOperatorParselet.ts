@@ -6,11 +6,11 @@ import { Node } from "../../Node";
 import { PrefixParselet } from "../PrefixParselet";
 import { SourceLocation } from "../../SourceLocation";
 import { UnaryOperation } from "../../pst/UnaryOperation";
-import { BinaryOperation } from "../../pst/BinaryOperation";
+import { BinaryExpression } from "../../pst/BinaryExpression";
 import { Expression } from "../../ast/Expression";
 
-export function getBinaryOperationPrecedence(node) {
-    if (node instanceof BinaryOperation) {
+export function getBinaryExpressionPrecedence(node) {
+    if (node instanceof BinaryExpression) {
         return node.getPrecedence();
     }
 }
@@ -34,23 +34,17 @@ export class PrefixOperatorParselet extends PrefixParselet {
         let { value, location } = operator;
         let argument = this.parseArgument(p, operator);
 
-        let argumentBinaryOperationPrecedence = getBinaryOperationPrecedence(argument);
+        let argumentBinaryExpressionPrecedence = getBinaryExpressionPrecedence(argument);
         let precedence = this.getPrecedence(operator);
-        if (argumentBinaryOperationPrecedence != null
+        if (argumentBinaryExpressionPrecedence != null
             && precedence != null
-            && argumentBinaryOperationPrecedence > precedence
+            && argumentBinaryExpressionPrecedence > precedence
             && prefixAmbiguous[operator.value]
         ) {
             //  only exponentiation operator ** has higher precedence than unary operators
             //  we need a grouping construct because
             //  otherwise we don't know if -1 ** 2 is (-1) ** 2 or -(1 ** 2)
-            let name = (argument as BinaryOperation).operator.value;
-            // console.log({
-            //     name,
-            //     precedence,
-            //     token: token.value,
-            //     argumentBinaryOperationPrecedence,
-            // })
+            let name = (argument as BinaryExpression).operator.value;
             throw new SemanticError(`Unary operator '${operator.source}' used before '${name}'. Use parentheses to disambiguate operator precedence.`, location);
         }
 

@@ -1,7 +1,7 @@
 import { traverse, replace } from "../traverse";
 import { Node } from "../Node";
 import { Assignment } from "../ast/Assignment";
-import { BinaryOperation } from "../pst/BinaryOperation";
+import { BinaryExpression } from "../pst/BinaryExpression";
 import { Call as PstCall } from "../pst/Call";
 import { Call as AstCall, isMetaCall, MetaCall } from "../ast/Call";
 import { Function } from "../ast/Function";
@@ -25,6 +25,7 @@ import { TypeReference } from "../ast/TypeReference";
 import { Type } from "../ast/Type";
 import { Expression } from "../ast/Expression";
 import { IntegerLiteral } from "../ast/NumberLiteral";
+import { Pair } from "../ast/Pair";
 
 function toParametersOrMeta(value: Node | null) {
     let parameters = new Array<Variable | MetaCall>();
@@ -145,7 +146,10 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
             else if (node instanceof Identifier) {
                 // probably should convert most to References, but which ones NOT to?
                 let retainAsIdentifier
-                    = parent instanceof BinaryOperation && node === parent.right && parent.operator.value === ".";
+                    = parent instanceof Pair
+                    || parent instanceof AstClass || parent instanceof PstClass
+                    || parent instanceof Variable && parent.id === node
+                    || parent instanceof BinaryExpression && node === parent.right && parent.operator.value === ".";
                     //      parent is Object Literal and this is key.
                 if (!retainAsIdentifier) {
                     return isTypeName(node.name) ? new TypeReference(node) : new Reference(node);
@@ -162,7 +166,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                     nodes: [node.value],
                 })
             }
-            else if (node instanceof BinaryOperation) {
+            else if (node instanceof BinaryExpression) {
                 let { location } = node;
                 let left = node.left as Expression;
                 let right = node.right as Expression;

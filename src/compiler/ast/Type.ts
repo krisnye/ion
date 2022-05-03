@@ -1,5 +1,7 @@
+import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
-import { NumberType } from "./NumberType";
+import { BinaryExpression } from "./BinaryExpression";
+import { Expression } from "./Expression";
 
 /**
  * Interface for identifying Type nodes.
@@ -8,6 +10,7 @@ export interface Type extends Node {
 
     merge(b: Type, union: boolean): Type | null;
     isSubtypeOf(b: Type): boolean | null;
+    toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression;
 
 }
 

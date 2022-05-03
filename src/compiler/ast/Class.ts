@@ -12,6 +12,12 @@ import { EvaluationContext } from "../EvaluationContext";
 import { FunctionType } from "./FunctionType";
 import { ObjectType } from "./ObjectType";
 import { StringType } from "./StringType";
+import { Pair } from "./Pair";
+import { UnionType } from "./UnionType";
+import { BinaryExpression } from "./BinaryExpression";
+import { Reference } from "./Reference";
+import { TypeOperators } from "../analysis/TypeOperators";
+import { Expression } from "./Expression";
 
 export interface ClassProps extends ScopeProps {
     id: Identifier;
@@ -27,7 +33,9 @@ export class Class extends Scope implements Declaration, Callable {
     nodes!: Variable[];
     meta!: MetaCall[];
 
-    constructor(props: ClassProps) { super(props); }
+    constructor(props: ClassProps) {
+        super(props);
+    }
     patch(props: Partial<ClassProps>) { return super.patch(props); }
 
     call(args: Node[]): Node {
@@ -38,20 +46,46 @@ export class Class extends Scope implements Declaration, Callable {
         return this.nodes;
     }
 
-    getReturnType(args: Type[]): Type {
-        return new ObjectType({
+    toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
+        const { location } = this;
+        return BinaryExpression.join(TypeOperators.and,
+            new BinaryExpression({
+                location,
+                left: dot,
+                operator: TypeOperators.is,
+                right: new Reference(this.id)
+            }),
+            ...this.extends.map(ref => new BinaryExpression({
+                location,
+                left: dot,
+                operator: TypeOperators.is,
+                right: ref as Expression
+            }))
+        )
+    }
+
+    getReturnType(args: Type[]) {
+        return new UnionType({
             location: this.location,
-            types: [new TypeReference(this.id), ...this.extends as TypeReference[]],
-            properties: args.map(
-                (arg, index) => {
-                    return [
-                        new StringType({ location: arg.location, value: this.nodes[index].id.name }),
-                        arg
-                    ]
-                }
-            )
+            left: new TypeReference(this.id),
+            right: new ObjectType({
+                location: this.location,
+                properties: args.map(
+                    (arg, index) => {
+                        return new Pair({
+                            location: arg.location,
+                            key: this.nodes[index].id,
+                            value: arg
+                        });
+                    }
+                )
+            })
         });
     }
+
+    // getInstanceType(c: EvaluationContext): SimpleObjectType {
+    //     return this.getReturnType(this.nodes.map(node => c.lookup.getCurrent(node).type)).patch({ });
+    // }
 
     protected resolveType(c: EvaluationContext): Type | null {
         const { location } = this;

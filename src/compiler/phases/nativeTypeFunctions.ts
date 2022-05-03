@@ -14,7 +14,7 @@ import { SourceLocation } from "../SourceLocation";
 
 type TypeFunction = (node: Function, types: Type[], c: EvaluationContext) => Type;
 
-function BinaryOperation(location: SourceLocation, operator: string, left: Expression, right: Expression) {
+function BinaryExpression(location: SourceLocation, operator: string, left: Expression, right: Expression) {
     if (left instanceof NumberLiteral && right instanceof NumberLiteral) {
         let code = isValidId(operator[0])
             ? `Math.${operator}(${left.value} , ${right.value})`
@@ -61,8 +61,8 @@ function calculateAbsType(node: Node, a: NumberType) {
     let sameSign = a.min instanceof NumberLiteral && a.max instanceof NumberLiteral && Math.sign(a.min.value as number) === Math.sign(a.max.value as number);
     let absMin = UnaryOperation(location, "abs", a.min);
     let absMax = UnaryOperation(location, "abs", a.max);
-    let min = sameSign ? BinaryOperation(location, "min", absMin, absMax) : new NumberLiteral({ location, integer: a.integer, value: 0, resolved: true });
-    let max = BinaryOperation(location, "max", absMin, absMax);
+    let min = sameSign ? BinaryExpression(location, "min", absMin, absMax) : new NumberLiteral({ location, integer: a.integer, value: 0, resolved: true });
+    let max = BinaryExpression(location, "max", absMin, absMax);
     let minExclusive = sameSign ? a.minExclusive || a.maxExclusive : false;
     let maxExclusive = a.minExclusive || a.maxExclusive;
     return new NumberType({ location, min, max, minExclusive, maxExclusive, integer });
@@ -70,8 +70,8 @@ function calculateAbsType(node: Node, a: NumberType) {
 
 function calculateAdditiveType(node: Node, [a, b]: NumberType[], operator: "+" | "min" | "max") {
     const { location } = node;
-    let min = a.min && b.min ? BinaryOperation(location, operator, a.min, b.min) : undefined;
-    let max = a.max && b.max ? BinaryOperation(location, operator, a.max, b.max) : undefined;
+    let min = a.min && b.min ? BinaryExpression(location, operator, a.min, b.min) : undefined;
+    let max = a.max && b.max ? BinaryExpression(location, operator, a.max, b.max) : undefined;
     let minExclusive = a.minExclusive || b.minExclusive;
     let maxExclusive = a.maxExclusive || b.maxExclusive;
     return new NumberType({ location, min, max, minExclusive, maxExclusive, integer: a.integer });
@@ -82,8 +82,8 @@ function calculateInverse(node: Node, a: NumberType): NumberType | UnionType {
     let sameSign = a.min instanceof NumberLiteral && a.max instanceof NumberLiteral && Math.sign(a.min.value as number) === Math.sign(a.max.value as number);
     let hasZero = !sameSign;
     let one = new NumberLiteral({ location, value: 1, resolved: true });
-    let min = a.max ? BinaryOperation(location, "/", one, a.max) : undefined;
-    let max = a.min ? BinaryOperation(location, "/", one, a.min) : undefined;
+    let min = a.max ? BinaryExpression(location, "/", one, a.max) : undefined;
+    let max = a.min ? BinaryExpression(location, "/", one, a.min) : undefined;
     let minExclusive = a.maxExclusive;
     let maxExclusive = a.minExclusive;
     if (hasZero) {
@@ -168,8 +168,8 @@ function calculateNegation(node: Node, a: NumberType) {
 
 function calculateSubtractiveType(node: Node, [a, b]: NumberType[], operator: "-") {
     const { location } = node;
-    let min = a.min && b.max ? BinaryOperation(location, operator, a.min, b.max) : undefined;
-    let max = a.max && b.min ? BinaryOperation(location, operator, a.max, b.min) : undefined;
+    let min = a.min && b.max ? BinaryExpression(location, operator, a.min, b.max) : undefined;
+    let max = a.max && b.min ? BinaryExpression(location, operator, a.max, b.min) : undefined;
     let minExclusive = a.minExclusive || b.minExclusive;
     let maxExclusive = a.maxExclusive || b.maxExclusive;
     return new NumberType({ location, min, max, minExclusive, maxExclusive, integer: a.integer });
@@ -177,10 +177,10 @@ function calculateSubtractiveType(node: Node, [a, b]: NumberType[], operator: "-
 
 function calculateMultiplicativeType(node: Node, [a, b]: NumberType[], operator: "*" | "**") {
     const { location } = node;
-    let a1b1 = a.min && b.min ? BinaryOperation(location, operator, a.min, b.min) : undefined;
-    let a1b2 = a.min && b.max ? BinaryOperation(location, operator, a.min, b.max) : undefined;
-    let a2b1 = a.max && b.min ? BinaryOperation(location, operator, a.max, b.min) : undefined;
-    let a2b2 = a.max && b.max ? BinaryOperation(location, operator, a.max, b.max) : undefined;
+    let a1b1 = a.min && b.min ? BinaryExpression(location, operator, a.min, b.min) : undefined;
+    let a1b2 = a.min && b.max ? BinaryExpression(location, operator, a.min, b.max) : undefined;
+    let a2b1 = a.max && b.min ? BinaryExpression(location, operator, a.max, b.min) : undefined;
+    let a2b2 = a.max && b.max ? BinaryExpression(location, operator, a.max, b.max) : undefined;
     let a1b1value = a1b1 instanceof NumberLiteral ? a1b1.value : undefined;
     let a1b2value = a1b2 instanceof NumberLiteral ? a1b2.value : undefined;
     let a2b1value = a2b1 instanceof NumberLiteral ? a2b1.value : undefined;

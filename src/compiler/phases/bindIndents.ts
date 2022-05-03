@@ -1,6 +1,6 @@
 // import { traverse, replace } from "./traverse";
 // import { Node } from "../Node";
-// import { BinaryOperation } from "../pst/BinaryOperation";
+// import { BinaryExpression } from "../pst/BinaryExpression";
 // import { Call } from "../pst/Call";
 // import { SemanticError } from "../SemanticError";
 // import { SourceLocation } from "../SourceLocation";
@@ -19,7 +19,7 @@
 // }
 
 // function getLastNode(node: Node) {
-//     if (node instanceof BinaryOperation) {
+//     if (node instanceof BinaryExpression) {
 //         return getLastNode(node.right);
 //     }
 //     else {

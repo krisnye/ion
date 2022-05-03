@@ -31,7 +31,7 @@ export const parsingPhases: Phase[] = [
 export const intermediatePhases: Phase[] = [
     pstModulesToAst,
     typeInference,
-    checkForUnresolvedExpressions,
+    // checkForUnresolvedExpressions,
 ]
 
 //  move all module root functions to shared multifunctions

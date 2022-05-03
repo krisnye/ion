@@ -1,18 +1,20 @@
-import { TypeReference } from "./TypeReference";
 import { Node, NodeProps } from "../Node";
 import { isType, Type } from "./Type";
+import { Identifier } from "./Identifier";
+import { Pair } from "./Pair";
+import { BinaryExpression } from "./BinaryExpression";
+import { EvaluationContext } from "../EvaluationContext";
+import { Expression } from "./Expression";
 
-type TypePair = [key: Type, value: Type];
+export type SimpleObjectType = ObjectType & { types: [] };
 
 export interface ObjectTypeProps extends NodeProps {
-    types: TypeReference[];
-    properties: TypePair[];
+    properties: Pair<Type|Identifier,Type>[];
 }
 
 export class ObjectType extends Node implements Type {
 
-    types!: TypeReference[];
-    properties!: TypePair[];
+    properties!: Pair<Type|Identifier,Type>[];
 
     constructor(props: ObjectTypeProps) { super(props); }
     patch(props: Partial<ObjectTypeProps>) {
@@ -28,7 +30,28 @@ export class ObjectType extends Node implements Type {
     }
 
     toString() {
-        return `${this.types.join("|")}(${this.properties.map(pair => pair.join("=")).join(",")})`;
+        return `(${this.properties.map(({ key, value }) => `${key} : ${value}`).join(", ")})`;
     }
+
+    toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
+        throw new Error("Not implemented");
+    }
+
+    // toSimpleObjectType(c: EvaluationContext) {
+    //     for (let type of this.types) {
+    //         type = c.lookup.getCurrent(type);
+    //         let variable = c.getVariable(type);
+    //         if (isCallable(variable.value)) {
+    //             if (variable.value.getInstanceType != null) {
+    //                 let instance = variable.value.getInstanceType(c);
+    //                 console.log("FOUND Instance", instance);
+    //             }
+    //             else {
+    //                 throw new SemanticError(`Expected class or type`, type);
+    //             }
+    //         }
+    //         console.log("EXPANDED", { variable });
+    //     }
+    // }
 
 }

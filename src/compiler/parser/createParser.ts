@@ -1,7 +1,7 @@
 import { Parser } from "./Parser";
 import { PrefixOperatorParselet } from "./parselets/PrefixOperatorParselet";
 import { StringLiteral } from "../ast/StringLiteral";
-import { BinaryOperatorParselet } from "./parselets/BinaryOperatorParselet";
+import { BinaryExpressionParselet } from "./parselets/BinaryExpressionParselet";
 import { MemberParselet } from "./parselets/MemberParselet";
 import { TerminalParselet } from "./parselets/TerminalParselet";
 import { Identifier } from "../ast/Identifier";
@@ -29,11 +29,12 @@ export function createParser() {
         Return: new ReturnParselet(),
         OpenParen: new GroupParselet("CloseParen", true),
         OpenBracket: new GroupParselet("CloseBracket", true),
+        OpenBrace: new GroupParselet("CloseBrace", true),
         Indent: new BlockParselet(),
         OutlineString: new OutlineStringParselet(),
     },
     {
-        Operator: new BinaryOperatorParselet(),
+        Operator: new BinaryExpressionParselet(),
         OpenParen: new CallParselet("CloseParen"),
         OpenBracket: new MemberParselet("CloseBracket"),
     })

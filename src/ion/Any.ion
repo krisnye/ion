@@ -1,2 +1,2 @@
 
-Any = (value) => 1
+class Any

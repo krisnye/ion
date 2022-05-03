@@ -26,10 +26,11 @@ export class Member extends Expression {
         }    
     }    
 
-    resolveType(c: EvaluationContext) {
-        let objectType = this.object.type;
-        console.log({ memberObjectType: objectType });
-        console.log("================= TODO: Member Resolve Type: " + this);
+    protected resolveType(c: EvaluationContext) {
+        // let objectType = this.object.type as ObjectType;
+        // let expandedType = objectType.toSimpleObjectType(c);
+        // console.log("================= TODO: Member Resolve Type: " + this);
+        // console.log(JSON.stringify(expandedType, null, 2));
         return super.resolveType(c);
     }
 

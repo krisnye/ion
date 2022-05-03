@@ -9,9 +9,21 @@
 // z7 = cos(36.8)
 // z8 = tan(28.3)
 
-array = [1, 2, 3]
-length = array.length
+// array = [1, 2, 3]
+// length = array.length
 
 // index = 11
 // safeIndex = index % array.length
 // pair = Pair(1, 10)
+
+class Vector
+    x: Float
+    y: Float
+
+UnitVector = Vector( x : 1 .. 2, y: 1 .. 2 )
+
+// VectorPair = [Vector, Vector]
+
+// CustomArrayType = [ 0 .. 10 : String, 11 .. 20: Number ]
+
+// MapType = { Number: String, String: Number }

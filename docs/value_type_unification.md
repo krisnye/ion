@@ -18,6 +18,9 @@
 ### Object Types
 
     ( x: Number, y: Number )
+    Vector
+    Vector(x: > 0, y: < 0, length: 0.99 .. 1.01)
+    // where length is a function (Vector) => > 0
 
 ### Map Values
 

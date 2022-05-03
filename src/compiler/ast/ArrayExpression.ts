@@ -14,13 +14,14 @@ export class ArrayExpression extends Block {
     constructor(props: ArrayExpressionProps) { super(props); }
     patch(props: Partial<ArrayExpressionProps>) { return super.patch(props); }
 
-    resolveType(c: EvaluationContext) {
+    protected resolveType(c: EvaluationContext) {
         const { location } = this;
-        return new ObjectType({
-            location: this.location,
-            types: [new TypeReference({ location, name: coreTypes.Array })],
-            properties: []
-        });
+        return new TypeReference({ location, name: coreTypes.Array })
+        // return new ObjectType({
+        //     location: this.location,
+        //     types: [],
+        //     properties: []
+        // });
     }
 
     toString() {

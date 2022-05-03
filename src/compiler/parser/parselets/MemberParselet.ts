@@ -3,12 +3,12 @@ import { Token } from "../../Token";
 import { Node } from "../../Node";
 import { SourceLocation } from "../../SourceLocation";
 import { tokenTypes } from "../../tokenizer/TokenType";
-import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
+import { BinaryExpressionParselet } from "./BinaryExpressionParselet";
 import { Member } from "../../ast/Member";
 import { infixPrecedence } from "../operators";
 import { Expression } from "../../ast/Expression";
 
-export class MemberParselet extends BinaryOperatorParselet {
+export class MemberParselet extends BinaryExpressionParselet {
 
     closeTokenType: keyof typeof tokenTypes | undefined;
 

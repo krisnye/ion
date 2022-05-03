@@ -1,4 +1,9 @@
+import { TypeOperators } from "../analysis/TypeOperators";
+import { EvaluationContext } from "../EvaluationContext";
+import { BinaryExpression } from "./BinaryExpression";
+import { Expression } from "./Expression";
 import { FunctionBase, FunctionBaseProps } from "./FunctionBase";
+import { Reference } from "./Reference";
 import { Type } from "./Type";
 
 export interface FunctionTypeProps extends FunctionBaseProps {
@@ -15,6 +20,16 @@ export class FunctionType extends FunctionBase implements Type {
     isSubtypeOf(b: Type): boolean | null {
         // TODO: Maybe figure this out.
         return null;
+    }
+
+    toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
+        const { location } = this;
+        return new BinaryExpression({
+            location,
+            left: dot,
+            operator: TypeOperators.is,
+            right: this
+        });
     }
 
 }

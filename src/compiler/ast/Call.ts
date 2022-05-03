@@ -29,7 +29,7 @@ export class Call extends Scope {
         yield* super.getDependencies(c);
     }
 
-    resolveType(c: EvaluationContext) {
+    protected resolveType(c: EvaluationContext) {
         let callable = c.getValue(this.callee);
         if (isCallable(callable)) {
             let types = this.nodes.map(arg => arg.type!);

@@ -2,7 +2,7 @@ import { NumberLiteral } from "../ast/NumberLiteral";
 import { NumberType } from "../ast/NumberType";
 import { UnionType } from "../ast/UnionType";
 import { IntersectionType } from "../ast/IntersectionType";
-import { BinaryOperation } from "../pst/BinaryOperation";
+import { BinaryExpression } from "../pst/BinaryExpression";
 import { traverse } from "../traverse";
 import { Phase } from "./Phase";
 import { UnaryOperation } from "../pst/UnaryOperation";
@@ -10,6 +10,15 @@ import { Node } from "../Node";
 import { isTypeName } from "../utility";
 import { Lookup } from "@glas/traverse";
 import { Identifier } from "../ast/Identifier";
+import { Group } from "../pst/Group";
+import { isType, Type } from "../ast/Type";
+import { SemanticError } from "../SemanticError";
+import { ObjectType } from "../ast/ObjectType";
+import { Pair } from "../ast/Pair";
+import { Expression } from "../ast/Expression";
+import { TypeReference } from "../ast/TypeReference";
+import { SourceLocation } from "../SourceLocation";
+import { Call as PstCall } from "../pst/Call";
 
 export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
     let errors = new Array<Error>();
@@ -18,14 +27,16 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
     let isTypeModeStack = [false];
     function getTypeMode(node, ancestors): boolean | null {
         let parent = ancestors[ancestors.length - 1];
-        if (parent instanceof BinaryOperation && node === parent.right) {
+        if (parent instanceof BinaryExpression && node === parent.right) {
             switch (parent.operator.value) {
-                case ":": return true;
-                case "=>":
+                case ":":
+                    return true;
                 case "=":
                     if (parent.left instanceof Identifier) {
                         return isTypeName(parent.left.name);
                     }
+                    return false;
+                case "=>":
                     return false;
             }
         }
@@ -73,7 +84,7 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
                             break;
                         }
                 }
-                if (node instanceof BinaryOperation) {
+                if (node instanceof BinaryExpression) {
                     switch (node.operator.value) {
                         case "..":
                             node = new NumberType({ location, min: node.left, max: node.right });
@@ -85,6 +96,20 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
                             node = new IntersectionType({ location, left: node.left, right: node.right });
                             break;
                     }
+                }
+                if (node instanceof PstCall) {
+                    let { callee } = node;
+                    if (!(callee instanceof Identifier) || !isTypeName(callee.name)) {
+                        throw new SemanticError(`Expected type name`, callee);
+                    }
+                    node = new IntersectionType({
+                        location,
+                        left: new TypeReference(callee),
+                        right: buildObjectType(node.args, location, "(")
+                    });
+                }
+                if (node instanceof Group) {
+                    node = buildObjectType(node.value, location, node.open.value);
                 }
                 //  simplify type nodes right away
                 if (node instanceof Node) {
@@ -98,4 +123,105 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
         }
     })
     return [result, errors];
+}
+
+function buildObjectType(values: Expression | null, location: SourceLocation, openToken: string) {
+    if (values == null) {
+        throw new SemanticError(`Expected Object Type`, location);
+    }
+    const isArray = openToken === "[";
+    const isMap = openToken === "{";
+    const children = [...BinaryExpression.split(values, ",")];
+    let pairs = children.map(
+        (pair, index) => {
+            if (isArray && !(pair instanceof BinaryExpression)) {
+                const indexValue = NumberLiteral.fromConstant(index, pair.location, true);
+                return new Pair({
+                    location: pair.location,
+                    key: new NumberType({
+                        location: pair.location,
+                        min: indexValue,
+                        max: indexValue,
+                    }),
+                    value: pair as any as Type
+                });
+            }
+            if (!(pair instanceof BinaryExpression)) {
+                throw new SemanticError(`Expected Object Type Pair`, pair);
+            }
+            let { left, right, operator } = pair;
+            if (operator.value !== ":") {
+                throw new SemanticError(`Expected :`, operator.location);
+            }
+            if (!(isType(right) || right instanceof Identifier)) {
+                throw new SemanticError(`Expected Type`, right);
+            }
+            if (!(left instanceof Identifier || isType(left))) {
+                throw new SemanticError(`Expected Identifier or Type`);
+            }
+            return new Pair({ location: pair.location, key: left as Type | Identifier, value: right as Type });
+        }
+    );
+    if (isArray) {
+        let length = inferArrayLength(children, location);
+        if (length != null) {
+            pairs.push(
+                new Pair({
+                    location,
+                    key: new Identifier({ location, name: "length" }),
+                    value: length
+                })
+            );
+        }
+    }
+    let result: Type = new ObjectType({ location, properties: pairs });
+    if (isArray || isMap) {
+        result = new IntersectionType({
+            location,
+            left: new TypeReference({ location, name: isArray ? "Array" : "Map" }),
+            right: result
+        });
+    }
+    return result;
+}
+
+function inferArrayLength(items: Expression[], location: SourceLocation): NumberType | null {
+    let minLength = 0;
+    let maxLength : number | null = null;
+    for (let item of items) {
+        if (item instanceof BinaryExpression) {
+            let { left } = item;
+            if (left instanceof NumberType) {
+                let { min, max, integer } = left;
+                if (!integer) {
+                    throw new SemanticError(`Arrays can only have integer indices`, left);
+                }
+                if (min instanceof NumberLiteral) {
+                    if (min.value < 0) {
+                        throw new SemanticError(`Array indices must be >= 0`, min);
+                    }
+                }
+                if (max instanceof NumberLiteral) {
+                    let actualMax = max.value + (left.maxExclusive ? -1 : 0);
+                    maxLength = maxLength != null ? Math.max(maxLength, actualMax) : actualMax;
+                }
+            }
+        }
+        else {
+            minLength++;
+        }
+    }
+    if (maxLength != null) {
+        return new NumberType({
+            location,
+            min: new NumberLiteral({ location, value: maxLength, integer: true }),
+            max: new NumberLiteral({ location, value: maxLength, integer: true }),
+            integer: true
+        });
+    }
+    if (minLength === items.length) {
+        return NumberType.fromConstant(minLength, location, true);
+    }
+
+    return null;
 }

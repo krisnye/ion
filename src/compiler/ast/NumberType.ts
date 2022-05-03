@@ -1,8 +1,12 @@
+import { TypeOperators } from "../analysis/TypeOperators";
 import { coreTypes } from "../coreTypes";
+import { EvaluationContext } from "../EvaluationContext";
 import { Node, NodeProps } from "../Node";
 import { SourceLocation } from "../SourceLocation";
+import { BinaryExpression } from "./BinaryExpression";
 import { Expression } from "./Expression";
 import { NumberLiteral } from "./NumberLiteral";
+import { Reference } from "./Reference";
 import { Type } from "./Type";
 
 type LiteralNumberType = NumberType & { min: NumberLiteral | null, max: NumberLiteral | null}
@@ -75,6 +79,35 @@ export class NumberType extends Node implements Type {
 
     patch(props: Partial<NumberTypeProps>) {
         return super.patch(props);
+    }
+
+    toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
+        const { location } = this;
+        return BinaryExpression.join(
+            TypeOperators.and,
+            new BinaryExpression({
+                location,
+                left: dot,
+                operator: TypeOperators.is,
+                right: new Reference({ location, name: this.integer ? coreTypes.Integer : coreTypes.Float})
+            }),
+            this.min == null
+                ? null
+                : new BinaryExpression({
+                    location,
+                    left: dot,
+                    operator: this.minExclusive ? ">" : ">=",
+                    right: this.min
+                }),
+            this.max == null
+                ? null
+                : new BinaryExpression({
+                    location,
+                    left: dot,
+                    operator: this.maxExclusive ? "<" : "<=",
+                    right: this.max
+                }),
+        )
     }
 
     merge(b: Type, union: boolean): Type | null {

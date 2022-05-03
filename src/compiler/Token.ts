@@ -27,7 +27,7 @@ export class Token extends Immutable {
     }
 
     toString() {
-        return this.source;
+        return this.value;
     }
 
     toJSON() {

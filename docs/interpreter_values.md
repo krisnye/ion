@@ -10,7 +10,7 @@
 
 ## Instance
 
-    { type: ClassId, value }
+    { type: ClassId, value: number | string | Array | Object | Map | Set }
 
 ## Object Value
 

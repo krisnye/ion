@@ -3,12 +3,12 @@ import { Token } from "../../Token";
 import { Node } from "../../Node";
 import { SourceLocation } from "../../SourceLocation";
 import { tokenTypes } from "../../tokenizer/TokenType";
-import { BinaryOperatorParselet } from "./BinaryOperatorParselet";
+import { BinaryExpressionParselet } from "./BinaryExpressionParselet";
 import { Call } from "../../pst/Call";
 import { GroupParselet } from "./GroupParselet";
 import { Expression } from "../../ast/Expression";
 
-export class CallParselet extends BinaryOperatorParselet {
+export class CallParselet extends BinaryExpressionParselet {
 
     closeTokenType: keyof typeof tokenTypes;
     groupParselet = new GroupParselet("CloseParen", true);

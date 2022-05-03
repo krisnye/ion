@@ -6,9 +6,9 @@ import { Node } from "../../Node";
 import { Expression } from "../../ast/Expression";
 import { SourceLocation } from "../../SourceLocation";
 import { InfixParselet } from "../InfixParslet";
-import { BinaryOperation } from "../../pst/BinaryOperation";
+import { BinaryExpression } from "../../pst/BinaryExpression";
 
-export class BinaryOperatorParselet extends InfixParselet {
+export class BinaryExpressionParselet extends InfixParselet {
 
     protected parseRight(p: Parser, token: Token, allowBlock = true): Node {
         let { value, location } = token;
@@ -23,7 +23,7 @@ export class BinaryOperatorParselet extends InfixParselet {
     parse(p: Parser, left: Node, operator: Token): Node {
         let right = this.parseRight(p, operator);
         
-        return new BinaryOperation({
+        return new BinaryExpression({
             location: SourceLocation.merge(left.location, right.location),
             left: left as Expression,
             operator,

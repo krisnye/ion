@@ -1,7 +1,7 @@
 import { traverse, skip } from "../traverse";
 import { createParser } from "../parser/createParser";
 import { Phase } from "./Phase";
-import { BinaryOperation } from "../pst/BinaryOperation";
+import { BinaryExpression } from "../pst/BinaryExpression";
 import { Group } from "../pst/Group";
 import { SemanticError } from "../SemanticError";
 import { UnaryOperation } from "../pst/UnaryOperation";
@@ -15,7 +15,7 @@ export function destructuringAndUnaryNumberLiterals(moduleName, module): ReturnT
     module = traverse(module, {
         enter(node, ancestors) {
             let parent = ancestors[ancestors.length - 1];
-            if (parent instanceof BinaryOperation
+            if (parent instanceof BinaryExpression
                 && (parent.operator.value === "=" || parent.operator.value === ":=")
                 && node === parent.left
             ) {
@@ -23,13 +23,13 @@ export function destructuringAndUnaryNumberLiterals(moduleName, module): ReturnT
                 if (!(
                     node instanceof Identifier
                     || node instanceof Group
-                    || node instanceof BinaryOperation && node.operator.value === ":"
+                    || node instanceof BinaryExpression && node.operator.value === ":"
                 )) {
                     errors.push(new SemanticError(`Invalid left hand assignment`, node));
                 }
                 if (node instanceof Group) {
                     function checkValidDestructure(child) {
-                        if (child instanceof BinaryOperation) {
+                        if (child instanceof BinaryExpression) {
                             if (child.operator.value === ",") {
                                 checkValidDestructure(child.left);
                                 checkValidDestructure(child.right);

@@ -35,7 +35,7 @@ testExpression("void x = y = 3", `void x = y = 3`);
 testExpression("1 * (2 + 3)", `1 * (2 + 3)`);
 testExpression("1*(2+3)", `1 * (2 + 3)`);
 //  sequences
-testExpression("a, b", {"":"BinaryOperation","left":{"":"Identifier","name":"a"},"operator":{"type":"Operator","source":","},"right":{"":"Identifier","name":"b"}});
+testExpression("a, b", {"":"BinaryExpression","left":{"":"Identifier","name":"a"},"operator":{"type":"Operator","source":","},"right":{"":"Identifier","name":"b"}});
 testExpression("a, b, c", `a , b , c`);
 //  calls
 testExpression("a(1)", `a(1)`);

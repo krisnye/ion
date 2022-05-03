@@ -1,10 +1,11 @@
+import { isValidId } from "./common";
 
 function firstLetterOfLastName(name: string) {
     return name[name.lastIndexOf(".") + 1];
 }
 
 export function isTypeName(name?: string) {
-    if (name == null) {
+    if (name == null || !isValidId(name)) {
         return false;
     }
     const first = firstLetterOfLastName(name);

@@ -94,3 +94,13 @@ Cross platform modeling language
   - [ ] class instance functions to static functions
   - [ ] class inheritance
   - [ ] uniform function call syntax
+
+
+  A reference to a Class is both a "Type" and a "value".
+    Variable
+      value:
+        TypeReference -> class Vector
+          .objectType => { properties: { [] } }
+      type:
+        TypeReference -> class Class
+      

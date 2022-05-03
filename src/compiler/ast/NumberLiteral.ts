@@ -29,7 +29,7 @@ export class NumberLiteral extends Literal {
         return new NumberLiteral({ location, value, integer });
     }
 
-    resolveType(c: EvaluationContext) {
+    protected resolveType(c: EvaluationContext) {
         const value = new NumberLiteral({ ...this, resolved: true });
         return new NumberType({
             location: this.location,

@@ -1,5 +1,9 @@
+import { TypeOperators } from "../analysis/TypeOperators";
+import { EvaluationContext } from "../EvaluationContext";
 import { SourceLocation } from "../SourceLocation";
+import { BinaryExpression } from "./BinaryExpression";
 import { CompoundType, CompoundTypeProps } from "./CompoundType";
+import { Expression } from "./Expression";
 import { Type } from "./Type";
 
 export interface UnionTypeProps extends CompoundTypeProps {
@@ -14,6 +18,13 @@ export class UnionType extends CompoundType implements Type {
 
     simplify() {
         return this.simplifyInternal(true);
+    }
+
+    toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
+        return BinaryExpression.join(TypeOperators.or,
+            this.left.toDotExpression(c, dot),
+            this.right.toDotExpression(c, dot)
+        )
     }
 
     static join(...types: Type[]): Type | null
