@@ -1,5 +1,6 @@
 import { TypeOperators } from "../analysis/TypeOperators";
 import { EvaluationContext } from "../EvaluationContext";
+import { SemanticError } from "../SemanticError";
 import { SourceLocation } from "../SourceLocation";
 import { BinaryExpression } from "./BinaryExpression";
 import { CompoundType, CompoundTypeProps } from "./CompoundType";
@@ -39,6 +40,12 @@ export class UnionType extends CompoundType {
         else {
             yield type;
         }
+    }
+
+    toComparisonType(c: EvaluationContext) {
+        const left = c.getComparisonType(this.left);
+        const right = c.getComparisonType(this.right);
+        return this.patch({ left, right });
     }
 
     static join(...types: Type[]): Type | null

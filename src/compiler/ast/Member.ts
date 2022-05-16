@@ -1,7 +1,11 @@
 import { EvaluationContext } from "../EvaluationContext";
+import { SemanticError } from "../SemanticError";
 import { Expression, ExpressionProps } from "./Expression";
 import { Identifier } from "./Identifier";
-import { Type } from "./Type";
+import { IntersectionType } from "./IntersectionType";
+import { ObjectType } from "./ObjectType";
+import { isType, Type } from "./Type";
+import { UnionType } from "./UnionType";
 
 export interface MemberProps extends ExpressionProps {
     object: typeof Member.prototype.object;
@@ -25,14 +29,37 @@ export class Member extends Expression {
         if (this.property instanceof Expression) {
             yield this.property;
         }    
-    }    
+    }
+
+    getPropertyKey(): Identifier | Type {
+        if (this.property instanceof Identifier) {
+            return this.property;
+        }
+        if (this.property instanceof Expression) {
+            return this.property.type!;
+        }
+        if (isType(this.property)) {
+            return this.property;
+        }
+        throw new SemanticError(`Invalid key`, this.property);
+    }
 
     protected resolveType(c: EvaluationContext) {
-        // let objectType = this.object.type as ObjectType;
-        // let expandedType = objectType.toSimpleObjectType(c);
-        // console.log("================= TODO: Member Resolve Type: " + this);
-        // console.log(JSON.stringify(expandedType, null, 2));
-        return super.resolveType(c);
+        debugger;
+        let objectType = c.getComparisonType(this.object.type!);
+        let types = new Array<Type>();
+        for (const option of UnionType.split(objectType)) {
+            if (!(option instanceof ObjectType)) {
+                throw new SemanticError(`Not an Object Type`, this.object);
+            }
+            const key = this.getPropertyKey();
+            const type = option.getPropertyType(key, c);
+            if (type == null) {
+                throw new SemanticError(`Cannot read property ${this.property} from type ${this.object.type}`, this.property, option);
+            }
+            types.push(type);
+        }
+        return UnionType.join(...types);
     }
 
     toString() {

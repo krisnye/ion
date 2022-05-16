@@ -85,18 +85,20 @@ Cross platform modeling language
 
   - [x] Most Type Inference can be done exclusively in single files + dependents.
   - [x] Object Type to use Map
-  - [ ] toComparisonType to simplify all objects to an ObjectType.
+  - [x] toComparisonType to simplify all objects to an ObjectType.
+  - [ ] Static Single Assignment?
+    - [ ] How to infer the PHI functions of re-merging variable type after block?
+  - [ ] Conditional Declarations => inferred Types
+  - [ ] Semantic checks.
   - [ ] Some Type Inference must be done in assembled phase.
   - [ ] Simplification can be done in single file as well.
   - [ ] Evaluation if involving UFCS must happen in assembly phase.
-  - [ ] Semantic analysis.
   - [ ] Then return to the ability to interpret.
   - [ ] Add NaN class to represent Not A Number.
   - [ ] Overload Float division to explicitly return NaN if necessary.
   - [ ] class instance functions to static functions
-  - [ ] class inheritance
+  - [x] class inheritance for type checking
   - [ ] uniform function call syntax
-
 
   A reference to a Class is both a "Type" and a "value".
     Variable

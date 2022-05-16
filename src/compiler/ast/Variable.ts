@@ -7,6 +7,8 @@ import { Expression, ExpressionProps } from "./Expression";
 import { EvaluationContext } from "../EvaluationContext";
 import { isSubtype } from "../analysis/isSubtype";
 import { SemanticError } from "../SemanticError";
+import { Type } from "./Type";
+import { Node } from "../Node";
 
 export interface VariableProps extends ExpressionProps {
     id: Identifier
@@ -29,22 +31,25 @@ export class Variable extends Expression implements Declaration {
         }
     }
 
-    resolveType(c: EvaluationContext) {
-        if (this.type && this.value) {
+    ensureAssignmentValid(c: EvaluationContext, value: Expression, isInitial = false) {
+        if (this.constant && !isInitial) {
+            throw new SemanticError(`Cannot reassign constant ${this.id.name}`, this.id, value);
+        }
+        if (this.type && value.type) {
             // check if value type is assignable to this.
-            let isAssignable = isSubtype(this.value.type, this.type, c);
-            if (isAssignable === false) {
-                throw new SemanticError(`Type ${this.value.type} cannot be assigned to variable of type ${this.type}`, this);
+            let isValueASubtype = isSubtype(value.type, this.type, c);
+            if (isValueASubtype === false) {
+                throw new SemanticError(`Type ${value.type} cannot be assigned to variable of type ${this.type}`, this);
             }
-            if (isAssignable === null) {
-                debugger;
-                isSubtype(this.value.type, this.type, c);
-                throw new SemanticError(`Type ${this.value.type} may not be assignable to variable of type ${this.type}`, this);
+            if (isValueASubtype === null) {
+                throw new SemanticError(`Type ${value.type} may not be assignable to variable of type ${this.type}`, this);
             }
-            if (this.id.name === "sample.one.value") {
-                console.log("RESOLVE TYPE " + this + " isAssignable: " + isAssignable);
-                // check that the assignment is valid
-            }
+        }
+    }
+
+    resolveType(c: EvaluationContext) {
+        if (this.type && this.value?.type) {
+            this.ensureAssignmentValid(c, this.value, true);
         }
         return this.type ?? this.value?.type ?? null;
     }

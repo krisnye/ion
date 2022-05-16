@@ -21,9 +21,9 @@ export class EvaluationContext {
         let check = this.comparisonTypes.get(type);
         if (check == null) {
             this.comparisonTypes.set(type, check = (type.toComparisonType?.(this) ?? type));
-            if (!(type instanceof NumberType)) {
-                console.log(type + "\n    =>   " + check);
-            }
+            // if (!(type instanceof NumberType)) {
+            //     console.log(type + "\n    ==>   " + check);
+            // }
         }
         return check;
     }

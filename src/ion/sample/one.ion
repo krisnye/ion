@@ -22,10 +22,15 @@ class Beta
     b: 1 .. 20
 A = Alpha
 B = Beta
-c: Delta
 class Delta extends A, B
+c: Delta
 
-foo: Alpha | Beta = c
+foo: Alpha & Beta = c
+
+d = foo.a
+
+// x: < 0
+// x *= 10
 
 // class Vector extends Structure
 //     x: Float

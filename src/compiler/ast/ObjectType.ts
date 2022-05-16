@@ -10,6 +10,7 @@ import { BaseType } from "./BaseType";
 import { isSubtype } from "../analysis/isSubtype";
 import { SemanticError } from "../SemanticError";
 import { IntersectionType } from "./IntersectionType";
+import { UnionType } from "./UnionType";
 
 export type SimpleObjectType = ObjectType & { types: [] };
 
@@ -51,11 +52,17 @@ export class ObjectType extends BaseType {
                     // make sure they combine.
                     let aType = aPair.value;
                     let bType = bPair.value;
-                    if (isSubtype(aType, bType, c) === false) {
-                        throw new SemanticError(`Property ${aPair.key} on types is incompatible`, a, b);
+                    if (!union) {
+                        if (isSubtype(aType, bType, c) === false) {
+                            throw new SemanticError(`Property ${aPair.key} on types is incompatible`, a, b);
+                        }
                     }
                     mergedPairs.set(bPair.key.toString(), aPair.patch({
-                        value: c.getComparisonType(new IntersectionType({ location: aPair.value.location, left: aType, right: bType }))
+                        value: c.getComparisonType(
+                            union
+                            ? new UnionType({ location: aPair.value.location, left: aType, right: bType })
+                            : new IntersectionType({ location: aPair.value.location, left: aType, right: bType })
+                        )
                     }));
                 }
                 else {
