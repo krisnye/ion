@@ -1,5 +1,4 @@
 import { EvaluationContext } from "../EvaluationContext";
-import { BinaryExpression } from "./BinaryExpression";
 import { Expression, ExpressionProps } from "./Expression";
 import { Identifier } from "./Identifier";
 import { Type } from "./Type";
@@ -31,10 +30,6 @@ export class Reference extends Expression  {
         return value.toInterpreterInstance(c);
     }
     
-    toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
-        throw new Error("Not implemented");
-    }
-
     toString() {
         return `${Identifier.prototype.toString.call(this)}`;
     }

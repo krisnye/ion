@@ -1,16 +1,17 @@
 import { EvaluationContext } from "../EvaluationContext";
 import { Expression, ExpressionProps } from "./Expression";
 import { Identifier } from "./Identifier";
+import { Type } from "./Type";
 
 export interface MemberProps extends ExpressionProps {
-    object: Expression;
-    property: Expression | Identifier;
+    object: typeof Member.prototype.object;
+    property: typeof Member.prototype.property;
 }
 
 export class Member extends Expression {
 
     object!: Expression;
-    property!: Expression | Identifier;
+    property!: Expression | Identifier | Type;
 
     constructor(props: MemberProps) { super(props); }
     patch(props: Partial<MemberProps>) { return super.patch(props); }

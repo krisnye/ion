@@ -74,7 +74,7 @@ export function createConverterPhase<A extends Node>(
     return (moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> => {
         let errors = new Array<Error>();
         let modifications = 0;
-        let result = traverseWithScope(module, (c) => {
+        let result = traverseWithScope(externals, module, (c) => {
             return {
                 leave(node) {
                     let _original = node;
@@ -89,7 +89,7 @@ export function createConverterPhase<A extends Node>(
                     return node;
                 }
             }
-        }, externals);
+        });
         let runPhaseAgain = modifications > 0;
         return [result, errors, runPhaseAgain];
     }

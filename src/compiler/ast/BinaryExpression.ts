@@ -1,10 +1,11 @@
 import { Expression, ExpressionProps } from "../ast/Expression";
 import { SourceLocation } from "../SourceLocation";
+import { Type } from "./Type";
 
 export interface BinaryExpressionProps extends ExpressionProps {
-    left: Expression;
-    operator: string;
-    right: Expression;
+    left: typeof BinaryExpression.prototype.left;
+    operator: typeof BinaryExpression.prototype.operator;
+    right: typeof BinaryExpression.prototype.right;
 }
 /**
  * This is only used for type inference.
@@ -13,7 +14,7 @@ export class BinaryExpression extends Expression {
 
     left!: Expression;
     operator!: string;
-    right!: Expression;
+    right!: Expression | Type;
 
     constructor(props: BinaryExpressionProps) { super(props); }
     patch(props: Partial<BinaryExpressionProps>) { return super.patch(props); }

@@ -4,7 +4,7 @@ import { BinaryExpression } from "./BinaryExpression";
 import { Expression } from "./Expression";
 import { FunctionBase, FunctionBaseProps } from "./FunctionBase";
 import { Reference } from "./Reference";
-import { Type } from "./Type";
+import { BasicType, Type } from "./Type";
 
 export interface FunctionTypeProps extends FunctionBaseProps {
 }
@@ -17,9 +17,9 @@ export class FunctionType extends FunctionBase implements Type {
     merge(b: Type, union: boolean): Type | null {
         return null;
     }
-    isSubtypeOf(b: Type): boolean | null {
-        // TODO: Maybe figure this out.
-        return null;
+
+    getBasicTypes(c: EvaluationContext) {
+        return BasicType.Function;
     }
 
     toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {

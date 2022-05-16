@@ -3,6 +3,7 @@ import { Serializable } from "../Serializable";
 import { SourceLocation } from "../SourceLocation";
 import { Literal, LiteralProps } from "./Literal";
 import { NumberType } from "./NumberType";
+import { Type } from "./Type";
 
 export function FloatLiteral(props: Omit<NumberLiteralProps,"integer">) {
     return new NumberLiteral({ integer: false, ...props });
@@ -29,7 +30,7 @@ export class NumberLiteral extends Literal {
         return new NumberLiteral({ location, value, integer });
     }
 
-    protected resolveType(c: EvaluationContext) {
+    protected resolveType(c: EvaluationContext): Type {
         const value = new NumberLiteral({ ...this, resolved: true });
         return new NumberType({
             location: this.location,

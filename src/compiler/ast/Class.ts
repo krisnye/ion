@@ -6,7 +6,7 @@ import { MetaCall } from "./Call";
 import { toMetaString } from "./MetaContainer";
 import { Node } from "../Node";
 import { Callable } from "./Callable";
-import { Type } from "./Type";
+import { BasicType, Type } from "./Type";
 import { TypeReference } from "./TypeReference";
 import { EvaluationContext } from "../EvaluationContext";
 import { FunctionType } from "./FunctionType";
@@ -18,23 +18,29 @@ import { BinaryExpression } from "./BinaryExpression";
 import { Reference } from "./Reference";
 import { TypeOperators } from "../analysis/TypeOperators";
 import { Expression } from "./Expression";
+import { coreTypes } from "../coreTypes";
+import { IntersectionType } from "./IntersectionType";
+import { NumberType } from "./NumberType";
+import { SemanticError } from "../SemanticError";
 
 export interface ClassProps extends ScopeProps {
     id: Identifier;
     extends: Node[];
     nodes: Variable[];
     meta: MetaCall[];
+    structure?: boolean;
 }
 
-export class Class extends Scope implements Declaration, Callable {
+export class Class extends Scope implements Type, Declaration, Callable {
 
     id!: Identifier;
     extends!: Node[];
     nodes!: Variable[];
     meta!: MetaCall[];
+    structure!: boolean;
 
     constructor(props: ClassProps) {
-        super(props);
+        super({ structure: false,  ...props });
     }
     patch(props: Partial<ClassProps>) { return super.patch(props); }
 
@@ -44,6 +50,37 @@ export class Class extends Scope implements Declaration, Callable {
 
     get parameters() {
         return this.nodes;
+    }
+
+    getBasicTypes(c: EvaluationContext) {
+        switch (this.id.name) {
+            case coreTypes.Array:
+                return BasicType.Array;
+            case coreTypes.String:
+                return BasicType.String;
+            case coreTypes.Float:
+                return BasicType.Float;
+            case coreTypes.Integer:
+                return BasicType.Integer;
+            default:
+                return this.structure ? BasicType.Structure : BasicType.Object;
+        }
+    }
+
+    merge(b: Type, union: boolean): Type | null {
+        return null;
+    }
+
+    toComparisonType(c: EvaluationContext) {
+        let type = this.getReturnType();
+        for (let extendType of this.extends as Type[]) {
+            let extendClass = c.getValue(extendType);
+            if (!(extendClass instanceof Class)) {
+                throw new SemanticError(`Can only extend classes`, extendType);
+            }
+            type = type.merge(extendClass.getReturnType(), false, c)!;
+        }
+        return type;
     }
 
     toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
@@ -64,13 +101,12 @@ export class Class extends Scope implements Declaration, Callable {
         )
     }
 
-    getReturnType(args: Type[]) {
-        return new UnionType({
+    getReturnType(args: Type[] = this.nodes.map(node => node.type!)) {
+        return new ObjectType({
             location: this.location,
-            left: new TypeReference(this.id),
-            right: new ObjectType({
-                location: this.location,
-                properties: args.map(
+            properties: [
+                new Pair({ location: this.id.location, key: this.id, value: NumberType.fromConstant(1, this.id.location) }),
+                ...args.map(
                     (arg, index) => {
                         return new Pair({
                             location: arg.location,
@@ -79,13 +115,9 @@ export class Class extends Scope implements Declaration, Callable {
                         });
                     }
                 )
-            })
+            ]
         });
     }
-
-    // getInstanceType(c: EvaluationContext): SimpleObjectType {
-    //     return this.getReturnType(this.nodes.map(node => c.lookup.getCurrent(node).type)).patch({ });
-    // }
 
     protected resolveType(c: EvaluationContext): Type | null {
         const { location } = this;

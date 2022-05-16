@@ -4,12 +4,12 @@ import { SourceLocation } from "../SourceLocation";
 import { BinaryExpression } from "./BinaryExpression";
 import { CompoundType, CompoundTypeProps } from "./CompoundType";
 import { Expression } from "./Expression";
-import { Type } from "./Type";
+import { BasicType, isType, Type } from "./Type";
 
 export interface UnionTypeProps extends CompoundTypeProps {
 }
 
-export class UnionType extends CompoundType implements Type {
+export class UnionType extends CompoundType {
 
     constructor(props: UnionTypeProps) { super(props); }
     patch(props: Partial<UnionTypeProps>) {
@@ -20,11 +20,25 @@ export class UnionType extends CompoundType implements Type {
         return this.simplifyInternal(true);
     }
 
+    getBasicTypes(c: EvaluationContext) {
+        return this.left.getBasicTypes(c) | this.right.getBasicTypes(c);
+    }
+
     toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
         return BinaryExpression.join(TypeOperators.or,
             this.left.toDotExpression(c, dot),
             this.right.toDotExpression(c, dot)
         )
+    }
+
+    static *split(type: Type): Generator<Type> {
+        if (type instanceof UnionType) {
+            yield* UnionType.split(type.left);
+            yield* UnionType.split(type.right);
+        }
+        else {
+            yield type;
+        }
     }
 
     static join(...types: Type[]): Type | null

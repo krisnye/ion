@@ -65,9 +65,9 @@ export default function createScopeMaps(root, externals?: Map<string,Scope>): Sc
 export type GetVariableFunction = (ref: Reference) => Variable;
 
 export function traverseWithScope(
+    externals: Map<string,Scope>,
     node: Readonly<any>,
     callback: (c: EvaluationContext) => Visitor,
-    externals?: Map<string,Scope>,
 ): any {
     let lookup = new Lookup();
     let scopeMaps = createScopeMaps(node, externals);

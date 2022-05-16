@@ -3,11 +3,12 @@ import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node, NodeProps } from "../Node";
 import { SourceLocation } from "../SourceLocation";
+import { BaseType, BaseTypeProps } from "./BaseType";
 import { BinaryExpression } from "./BinaryExpression";
-import { Expression } from "./Expression";
+import { Expression, ExpressionProps } from "./Expression";
 import { NumberLiteral } from "./NumberLiteral";
 import { Reference } from "./Reference";
-import { Type } from "./Type";
+import { BasicType, Type } from "./Type";
 
 type LiteralNumberType = NumberType & { min: NumberLiteral | null, max: NumberLiteral | null}
 
@@ -29,7 +30,7 @@ export function overlaps(max: Node | undefined, min: Node | undefined, exclusive
     return null
 }
 
-export interface NumberTypeProps extends NodeProps {
+export interface NumberTypeProps extends BaseTypeProps {
     min?: Node;
     max?: Node;
     minExclusive?: boolean;
@@ -37,7 +38,7 @@ export interface NumberTypeProps extends NodeProps {
     integer?: boolean | null;
 }
 
-export class NumberType extends Node implements Type {
+export class NumberType extends BaseType {
 
     min?: Expression;
     max?: Expression;
@@ -63,6 +64,10 @@ export class NumberType extends Node implements Type {
             props.max = props.max.patch({ resolved: true });
         }
         super({ minExclusive: false, maxExclusive: false, ...props });
+    }
+
+    getBasicTypes() {
+        return this.integer ? BasicType.Integer : BasicType.Float;
     }
 
     static fromConstant(value: number, location: SourceLocation, integer: boolean | null | undefined = value === Math.trunc(value)) {
@@ -134,24 +139,6 @@ export class NumberType extends Node implements Type {
             return this.patch({ min, max, minExclusive, maxExclusive });
         }
         return this;
-    }
-
-    isSubtypeOf(b: Type): boolean | null {
-        const a = this;
-        if (b instanceof NumberType) {
-            if (this.integer !== b.integer) {
-                return false;
-            }
-            if ((b.min == null || overlaps(a.min, b.min, a.minExclusive < b.minExclusive) === true) &&
-                (b.max == null || overlaps(b.max, a.max, a.maxExclusive < b.maxExclusive) === true)
-            ) {
-                return true
-            }
-            if (overlaps(a.max, b.min, b.minExclusive || a.maxExclusive) === false || overlaps(b.max, a.min, a.minExclusive || b.maxExclusive) === false) {
-                return false
-            }
-        }
-        return null
     }
 
     toString() {

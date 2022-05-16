@@ -1,15 +1,16 @@
 import { EvaluationContext } from "../EvaluationContext";
-import { Node, NodeProps } from "../Node";
+import { Node } from "../Node";
+import { BaseType, BaseTypeProps } from "./BaseType";
 import { BinaryExpression } from "./BinaryExpression";
-import { Expression } from "./Expression";
+import { Expression, ExpressionProps } from "./Expression";
 import { isType, Type } from "./Type";
 
-export interface CompoundTypeProps extends NodeProps {
+export interface CompoundTypeProps extends BaseTypeProps {
     left: Node;
     right: Node;
 }
 
-export abstract class CompoundType extends Node implements Type {
+export abstract class CompoundType extends BaseType {
 
     left!: Type;
     right!: Type;
@@ -23,13 +24,7 @@ export abstract class CompoundType extends Node implements Type {
         return null;
     }
 
-    isSubtypeOf(b: Type): boolean | null {
-        throw new Error("Compound Types Cannot check directly, that logic is handled by isConsequent");
-    }
-
-    toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
-        throw new Error("Not implemented");
-    }
+    abstract toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression;
 
     protected simplifyInternal(union: boolean) {
         let left = this.left.simplify();

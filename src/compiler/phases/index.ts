@@ -13,6 +13,7 @@ import { createMultiFunctions } from "./createMultiFunctions";
 import { removeSoloBlocks } from "./removeSoloBlocks";
 import { moveMetaToFunctions } from "./moveMetaToFunctions";
 import { checkForUnresolvedExpressions } from "./checkForUnresolvedExpressions";
+import { validateTypeDeclarations } from "./validateTypeDeclarations";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -30,6 +31,7 @@ export const parsingPhases: Phase[] = [
 
 export const intermediatePhases: Phase[] = [
     pstModulesToAst,
+    validateTypeDeclarations,
     typeInference,
     // checkForUnresolvedExpressions,
 ]

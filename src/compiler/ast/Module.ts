@@ -14,7 +14,7 @@ export class Module extends Scope {
     constructor(props: ModuleProps) { super(props); }
     patch(props: Partial<ModuleProps>) { return super.patch(props); }
 
-    protected resolveType(c: EvaluationContext) {
+    resolveType(c: EvaluationContext) {
         return new VoidType({ location: this.location });
     }
 

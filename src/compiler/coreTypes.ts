@@ -8,4 +8,5 @@ export const coreTypes = {
     String: getAbsolutePath("String"),
     MultiFunction: getAbsolutePath("@MultiFunction"),
     Native: getAbsolutePath("@Native"),
+    Type: getAbsolutePath("@Type"),
 }

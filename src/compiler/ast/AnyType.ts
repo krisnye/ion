@@ -1,13 +1,15 @@
+import { timeStamp } from "console";
+import { TypeOperators } from "../analysis/TypeOperators";
 import { EvaluationContext } from "../EvaluationContext";
-import { Node, NodeProps } from "../Node";
+import { BaseType, BaseTypeProps } from "./BaseType";
 import { BinaryExpression } from "./BinaryExpression";
-import { Expression } from "./Expression";
-import { isType, Type } from "./Type";
+import { Expression, ExpressionProps } from "./Expression";
+import { BasicType, isType, Type } from "./Type";
 
-export interface AnyTypeProps extends NodeProps {
+export interface AnyTypeProps extends BaseTypeProps {
 }
 
-export class AnyType extends Node implements Type {
+export class AnyType extends BaseType {
 
     constructor(props: AnyTypeProps) { super(props); }
     patch(props: Partial<AnyTypeProps>) {
@@ -18,12 +20,17 @@ export class AnyType extends Node implements Type {
         return union ? this : b;
     }
 
-    isSubtypeOf(b: Type): boolean | null {
-        return null;
+    getBasicTypes() {
+        return BasicType.All;
     }
 
     toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
-        throw new Error("Not implemented");
+        return new BinaryExpression({
+            location: this.location,
+            left: dot,
+            operator: TypeOperators.equals,
+            right: dot
+        });
     }
 
     toString() {

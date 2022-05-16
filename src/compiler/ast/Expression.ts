@@ -1,4 +1,3 @@
-import { AnyType } from "./AnyType";
 import { Type } from "./Type";
 import { Node } from "../Node";
 import { EvaluationContext } from "../EvaluationContext";
@@ -54,7 +53,7 @@ export class Expression extends Node implements Required<ExpressionProps> {
 
     protected resolveType(c: EvaluationContext): Type | null {
         logOnce(`${this.constructor.name}.resolveType() not implemented`);
-        return new AnyType({ location: this.location });
+        return null;
     }
 
     protected toTypeString() {

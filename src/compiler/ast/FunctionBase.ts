@@ -4,8 +4,8 @@ import { MetaContainer, toMetaString } from "./MetaContainer";
 import { MetaCall } from "./Call";
 import { isType, Type } from "./Type";
 import { Expression, ExpressionProps } from "./Expression";
-import { isConsequent } from "../analysis/isConsequent";
 import { EvaluationContext } from "../EvaluationContext";
+import { isSubtype } from "../analysis/isSubtype";
 
 export interface FunctionBaseProps extends ExpressionProps {
     parameters: Variable[];
@@ -30,7 +30,7 @@ export class FunctionBase extends Expression implements MetaContainer {
                 if (!isType(paramType)) {
                     throw new Error("ParamType not known yet");
                 }
-                if (!isConsequent(argType, paramType, c)) {
+                if (!isSubtype(argType, paramType, c)) {
                     return false;
                 }
             }

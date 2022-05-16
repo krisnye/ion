@@ -1,6 +1,12 @@
 
 @Native("(a, b) => ({ ...a, value: a.value > b.value })")
-`>` = (a: Integer, b: Integer): Integer => 0
+`>` = (a: Integer, b: Integer): Boolean => 0
 
 @Native("(a, b) => ({ ...a, value: a.value > b.value })")
-`>` = (a: Float, b: Float): Float => 0.0
+`>` = (a: Float, b: Float): Boolean => 0
+
+@Native("(a, b) => ({ ...a, value: a.value > b.value })")
+`>` = (a: Integer, b: Float): Boolean => 0
+
+@Native("(a, b) => ({ ...a, value: a.value > b.value })")
+`>` = (a: Float, b: Integer): Boolean => 0

@@ -16,14 +16,27 @@
 // safeIndex = index % array.length
 // pair = Pair(1, 10)
 
-class Vector
-    x: Float
-    y: Float
+class Alpha
+    a: 0 .. 10
+class Beta
+    b: 1 .. 20
+A = Alpha
+B = Beta
+c: Delta
+class Delta extends A, B
 
-UnitVector = Vector( x : 1 .. 2, y: 1 .. 2 )
+foo: Alpha | Beta = c
 
-// VectorPair = [Vector, Vector]
+// class Vector extends Structure
+//     x: Float
+//     y: Float
+
+// test = (x: Float, y: Float) =>
+//     z: Float = x
+//     if x > y
+//         z += 10
+//     else
+//         z += 10
 
 // CustomArrayType = [ 0 .. 10 : String, 11 .. 20: Number ]
-
 // MapType = { Number: String, String: Number }

@@ -1,33 +1,48 @@
+import { EvaluationContext } from "../EvaluationContext";
+import { SemanticError } from "../SemanticError";
+import { BinaryExpression } from "./BinaryExpression";
+import { Class } from "./Class";
+import { Expression } from "./Expression";
 import { Reference, ReferenceProps } from "./Reference";
-import { Type } from "./Type";
+import { BasicType, isType, Type } from "./Type";
 
 export interface TypeReferenceProps extends ReferenceProps  {
+    typeArguments?: Type[];
 }
 
 export class TypeReference extends Reference implements Type  {
 
-    constructor(props: TypeReferenceProps) { super(props); }
+    typeArguments!: Type[];
+
+    constructor(props: TypeReferenceProps) {
+        super({ typeArguments: [], ...props });
+    }
     patch(props: Partial<TypeReferenceProps>) { return super.patch(props); }
 
     merge(b: Type) {
         return null;
     }
 
-    // protected resolve(c: EvaluationContext): Expression {
-    //     if (this.name === coreTypes.Float) {
-    //         return new NumberType({ location: this.location, integer: false }) as any
-    //     }
-    //     if (this.name === coreTypes.Float) {
-    //         return new NumberType({ location: this.location, integer: true }) as any
-    //     }
-    //     return super.resolve(c);
-    // }
-
-    isSubtypeOf(b: Type): boolean | null {
-        if (b instanceof TypeReference) {
-            return this.name === b.name;
+    getBasicTypes(c: EvaluationContext) {
+        let value = c.getValue(this);
+        if (isType(value)) {
+            return value.getBasicTypes(c);
         }
-        return false;
+        return BasicType.Object;
+    }
+
+    toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
+        // at this point... a TypeReference should ONLY be referencing a class.
+        let value = c.getValue(this);
+        if (!isType(value)) {
+            throw new SemanticError(`Expected Type`, this);
+        }
+        return value.toDotExpression(c, dot);
+    }
+
+    toComparisonType(c: EvaluationContext) {
+        const value = c.getValue(this) as Type;
+        return c.getComparisonType(value);
     }
 
 }

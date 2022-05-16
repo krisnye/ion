@@ -84,6 +84,8 @@ Cross platform modeling language
     - [x] tan
 
   - [x] Most Type Inference can be done exclusively in single files + dependents.
+  - [x] Object Type to use Map
+  - [ ] toComparisonType to simplify all objects to an ObjectType.
   - [ ] Some Type Inference must be done in assembled phase.
   - [ ] Simplification can be done in single file as well.
   - [ ] Evaluation if involving UFCS must happen in assembly phase.

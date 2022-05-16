@@ -6,7 +6,7 @@ import { Expression } from "../ast/Expression";
 export function typeInference(moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> {
     let errors!: Error[];
     let modifications = 0;
-    let result = traverseWithScope(module, (c) => {
+    let result = traverseWithScope(externals, module, (c) => {
         errors = c.errors;
         return {
             leave(node) {
@@ -20,7 +20,7 @@ export function typeInference(moduleName, module, externals: Map<string, Scope>)
                 return node;
             }
         }
-    }, externals);
+    });
     let runPhaseAgain = modifications > 0;
     return [result, errors, runPhaseAgain];
 

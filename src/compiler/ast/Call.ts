@@ -25,8 +25,9 @@ export class Call extends Scope {
     patch(props: Partial<AssignmentProps>) { return super.patch(props); }
 
     *getDependencies(c: EvaluationContext) {
-        yield this.callee;
         yield* super.getDependencies(c);
+        // can't resolve the callee type if it's a multi-method until the arguments are known.
+        yield this.callee;
     }
 
     protected resolveType(c: EvaluationContext) {
@@ -37,7 +38,7 @@ export class Call extends Scope {
             if (returnType === null) {
                 if (callable instanceof MultiFunction) {
                     console.log({ callee: this.callee });
-                    throw new SemanticError(`No function ${this.callee.toString()} with matching parameter types found`, this.location);
+                    throw new SemanticError(`No function ${this.callee.toString()} found with arg types ${types.join(`, `)}`, this.location);
                 }
                 else {
                     throw new SemanticError(`Arguments do not match function parameter types`, this.location);

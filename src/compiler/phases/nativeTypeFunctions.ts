@@ -1,4 +1,4 @@
-import { isConsequent } from "../analysis/isConsequent";
+import { isSubtype } from "../analysis/isSubtype";
 import { Call } from "../ast/Call";
 import { Expression } from "../ast/Expression";
 import { Function } from "../ast/Function";
@@ -134,8 +134,8 @@ function calculateRemainder(node: Node, [a, b]: NumberType[], c: EvaluationConte
     const positiveOrZero = new NumberType({ location, min: NumberLiteral.fromConstant(0, location, integer) })
     const negativeOrZero = new NumberType({ location, max: NumberLiteral.fromConstant(0, location, integer) })
 
-    const a_alwaysPositiveOrZero = isConsequent(a, positiveOrZero, c);
-    const a_alwaysNegativeOrZero = !a_alwaysPositiveOrZero && isConsequent(a, negativeOrZero, c);
+    const a_alwaysPositiveOrZero = isSubtype(a, positiveOrZero, c);
+    const a_alwaysNegativeOrZero = !a_alwaysPositiveOrZero && isSubtype(a, negativeOrZero, c);
 
     let zeroLiteral = new NumberLiteral({ value: 0, location, integer });
     let absMax = UnaryOperation(location, "abs", b.max);

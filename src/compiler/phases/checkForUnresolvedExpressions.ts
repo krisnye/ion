@@ -12,9 +12,9 @@ function *getUnresolvedDependencies(node: Expression, c: EvaluationContext) {
     }
 }
 
-export function checkForUnresolvedExpressions(moduleName, module): ReturnType<Phase> {
+export function checkForUnresolvedExpressions(moduleName, module, externals): ReturnType<Phase> {
     let errors = new Array<Error>();
-    module = traverseWithScope(module, (c) => {
+    module = traverseWithScope(externals, module, (c) => {
         return {
             leave(node) {
                 if (node instanceof Expression && !node.resolved) {

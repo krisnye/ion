@@ -125,7 +125,13 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                         }
                     }
                     else if (node instanceof Reference) {
-                        _extends.push(node);
+                        if (!isTypeName(node.name)) {
+                            throw new SemanticError(`Expected Type name`, node);
+                        }
+                        _extends.push(new TypeReference(node));
+                    }
+                    else if (node != null) {
+                        throw new SemanticError(`Expected class reference`, node);
                     }
                 }
                 addExtends(node.extends);

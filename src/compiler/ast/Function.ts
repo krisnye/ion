@@ -1,5 +1,5 @@
 import getFinalExpressions from "../analysis/getFinalExpressions";
-import { isConsequent } from "../analysis/isConsequent";
+import { isSubtype } from "../analysis/isSubtype";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
@@ -62,7 +62,7 @@ export class Function extends FunctionBase implements Callable {
         const finalTypes = [...getFinalExpressions(this.body)].map(node => node.type!);
         const inferredType = UnionType.join(...finalTypes)!;
         if (this.returnType != null) {
-            if (!isConsequent(inferredType, this.returnType, c)) {
+            if (!isSubtype(inferredType, this.returnType, c)) {
                 c.errors.push(new SemanticError(`Return type doesn't match function declaration`, this.returnType, inferredType));
             }
         }
