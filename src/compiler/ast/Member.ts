@@ -45,7 +45,6 @@ export class Member extends Expression {
     }
 
     protected resolveType(c: EvaluationContext) {
-        debugger;
         let objectType = c.getComparisonType(this.object.type!);
         let types = new Array<Type>();
         for (const option of UnionType.split(objectType)) {

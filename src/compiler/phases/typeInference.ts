@@ -1,9 +1,9 @@
 import { Phase } from "./Phase";
-import { Scope } from "../ast/Scope";
+import { Container } from "../ast/Container";
 import { traverseWithScope } from "./createScopeMaps";
 import { Expression } from "../ast/Expression";
 
-export function typeInference(moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> {
+export function typeInference(moduleName, module, externals: Map<string, Container>): ReturnType<Phase> {
     let errors!: Error[];
     let modifications = 0;
     let result = traverseWithScope(externals, module, (c) => {

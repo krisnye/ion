@@ -6,6 +6,7 @@ import { Node } from "./Node";
 import { assemblyPhases, intermediatePhases, parsingPhases } from "./phases";
 import { Phase } from "./phases/Phase";
 import { Module } from "./pst/Module";
+import { SemanticError } from "./SemanticError";
 import { SourceLocation } from "./SourceLocation";
 import { SourcePosition } from "./SourcePosition";
 import toposort from "./toposort";
@@ -14,6 +15,7 @@ export type PhaseLogger = (names?: string | string[] | null, ast?: any, file?: s
 
 export interface CompilerOptions {
     log: typeof console.log;
+    test?: boolean
 }
 
 export interface DebugOptions {
@@ -26,22 +28,64 @@ const fileNameMappings = {
     "_slash": "/"
 }
 
+function isTestFile(name: string) {
+    return /\btest\b/.test(name);
+}
+
+function isTestFailFile(name: string) {
+    return isTestFile(name) && /\bfail\b/.test(name);
+}
+
 export class Compiler {
 
     options: CompilerOptions;
 
-    constructor(options: CompilerOptions = { log: console.log }) {
+    constructor(options: CompilerOptions = { log: console.log, test: false }) {
         this.options = options;
     }
 
-    static getFiles(inputs: string[]): Map<string,string> {
+    static getFiles(inputs: string[], options: CompilerOptions): Map<string,string> {
         let entries = Object.entries(getInputFilesRecursive(inputs));
         // remap some names
-        entries = entries.map(([name, content]) => [fileNameMappings[name] ?? name, content]);
+        entries = entries.map(([name, content]) => [fileNameMappings[name] ?? name, content || "\n"]);
+        // remove test files if not test mode
+        if (!options.test) {
+            entries = entries.filter(([name, value]) => { return !/\btest\b/.test(name); });
+        }
         return new Map(entries);
     }
 
+    runPhase(phase: Phase, moduleName: string, module: any, externals: Map<string,any>, options: CompilerOptions): ReturnType<Phase> {
+        try {
+            let result = phase(moduleName, module, externals, options);
+            if (result[1].length > 0) {
+                result[2] = false;
+            }
+            return result;
+        }
+        catch (e) {
+            return [module, [e as Error], false];
+        }
+    }
+
     runPhases(sources: Map<string,string>, modules: Map<string,any>, phases: Phase[], group: boolean, options?: DebugOptions): Error[] | void {
+        let removedModules = new Set<string>();
+        let removeExpectedErrors = (errors: Error[]): Error[] => {
+            for (let i = errors.length - 1; i >= 0; i--) {
+                let error = errors[i];
+                if (error instanceof SemanticError) {
+                    let { filename } = error.locations[0];
+                    let isExpectedToFail = filename.indexOf("test.fail.") === 0;
+                    if (isExpectedToFail) {
+                        modules.delete(filename);
+                        removedModules.add(filename);
+                        errors.splice(i, 1);
+                    }
+                }
+            }
+            return errors;
+        }
+
         let logger = options?.logger ?? (() => {});
         if (group) {
             for (let phase of phases) {
@@ -52,7 +96,8 @@ export class Compiler {
                     nodes: [...modules.values()].map((module: Module) => module.nodes).flat(),
                 })
                 // combine all module entries
-                let [newAssembly, errors] = phase(globalName, assembly, modules, this.options);
+                let [newAssembly, errors] = this.runPhase(phase, globalName, assembly, modules, this.options);
+                errors = removeExpectedErrors(errors);
                 if (errors.length > 0) {
                     console.log(phase.name);
                     for (let error of errors) {
@@ -66,11 +111,13 @@ export class Compiler {
                     newNodes.get(node.location.filename)!.push(node);
                 }
                 for (let name of newNodes.keys()) {
-                    let module = modules.get(name)!;
-                    let newModule = module.patch({ nodes: newNodes.get(name)})
-                    modules.set(name, newModule);
-                    // log each module individually.
-                    this.log(logger, phase.name, newModule, name);
+                    if (!removedModules.has(name)) {
+                        let module = modules.get(name)!;
+                        let newModule = module.patch({ nodes: newNodes.get(name)})
+                        modules.set(name, newModule);
+                        // log each module individually.
+                        this.log(logger, phase.name, newModule, name);
+                    }
                 }
             }
         }
@@ -79,7 +126,8 @@ export class Compiler {
                 let phaseRepeatCount = 0;
                 for (let i = 0; i < phases.length; i++) {
                     let phase = phases[i];
-                    let [newModule, errors, runPhaseAgain] = phase(name, modul, modules, this.options);
+                    let [newModule, errors, runPhaseAgain] = this.runPhase(phase, name, modul, modules, this.options);
+                    errors = removeExpectedErrors(errors);
                     if (errors.length > 0) {
                         console.log(`${name} : ${phase.name}`);
                         for (let error of errors) {
@@ -87,7 +135,9 @@ export class Compiler {
                         }
                         return errors;
                     }
-                    modules.set(name, modul = newModule);
+                    if (!removedModules.has(name)) {
+                        modules.set(name, modul = newModule);
+                    }
                     this.log(logger, (phaseRepeatCount || runPhaseAgain) ? `${phase.name} (${phaseRepeatCount + 1})` : phase.name, newModule, name);
                     if (runPhaseAgain) {
                         i--;
@@ -136,8 +186,18 @@ export class Compiler {
             errors = this.runPhases(sources, modules, assemblyPhases, true, debugOptions);
             if (errors) { return errors; }
 
+            // finally check that any expected fail files failed to compile.
+            if (this.options.test) {
+                for (let [name, module] of modules) {
+                    if (isTestFailFile(name)) {
+                        this.printErrorConsole(new SemanticError(`Expected '${name}' to fail`, module), sources);
+                    }
+                }
+            }
+    
         } catch (e) {
             this.printErrorConsole(e, sources);
+            return Array.isArray(e) ? e : [e];
         } finally {
             if (modules.size === 0) {
                 throw new Error("Expected modules");
@@ -167,10 +227,10 @@ export class Compiler {
     }
 
     log(logger: PhaseLogger, phase: string, module: any, name: string) {
-        // let viewAsCode = !Array.isArray(module);
-        // if (viewAsCode) {
-        //     module = module.toString();
-        // }
+        let viewAsCode = !Array.isArray(module);
+        if (viewAsCode) {
+            module = module.toString();
+        }
         logger(phase, module, name);
     }
 

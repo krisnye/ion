@@ -1,11 +1,11 @@
-import { Scope, ScopeProps } from "../ast/Scope";
+import { Container, ContainerProps } from "../ast/Container";
 
-export interface ModuleProps extends ScopeProps {
+export interface ModuleProps extends ContainerProps {
     name: string;
     dependencies: string[];
 }
 
-export class Module extends Scope {
+export class Module extends Container {
 
     name!: string;
     dependencies!: string[];

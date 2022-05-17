@@ -1,9 +1,9 @@
-import { Scope, ScopeProps } from "./Scope";
+import { Container, ContainerProps } from "./Container";
 
-export interface AssemblyProps extends ScopeProps {
+export interface AssemblyProps extends ContainerProps {
 }
 
-export class Assembly extends Scope {
+export class Assembly extends Container {
 
     constructor(props: AssemblyProps) { super(props); }
     patch(props: Partial<AssemblyProps>) { return super.patch(props); }

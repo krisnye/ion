@@ -1,13 +1,13 @@
 import { EvaluationContext } from "../EvaluationContext";
-import { Scope, ScopeProps } from "./Scope";
+import { Container, ContainerProps } from "./Container";
 import { VoidType } from "./VoidType";
 
-export interface ModuleProps extends ScopeProps {
+export interface ModuleProps extends ContainerProps {
     name: string;
     dependencies: string[];
 }
 
-export class Module extends Scope {
+export class Module extends Container {
 
     name!: string;
 

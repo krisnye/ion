@@ -11,7 +11,8 @@ export type Options = {
 export function testModule(source: string, expected: string | object | number, options: Options = {}) {
     let compiler = new Compiler({
         log(value) {
-        }
+        },
+        test: true
     });
     let filename = "test";
     let result = compiler.compile(

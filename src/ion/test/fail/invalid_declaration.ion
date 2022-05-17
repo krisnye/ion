@@ -1,0 +1,3 @@
+
+//  initial value is not subtype of variable declared type
+x: < 0 = 0

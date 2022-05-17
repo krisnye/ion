@@ -1,11 +1,12 @@
 import { Variable } from "./Variable";
-import { Scope } from "./Scope";
+import { Container } from "./Container";
 import { MetaContainer, toMetaString } from "./MetaContainer";
 import { MetaCall } from "./Call";
 import { isType, Type } from "./Type";
 import { Expression, ExpressionProps } from "./Expression";
 import { EvaluationContext } from "../EvaluationContext";
 import { isSubtype } from "../analysis/isSubtype";
+import { Scope } from "./Scope";
 
 export interface FunctionBaseProps extends ExpressionProps {
     parameters: Variable[];
@@ -13,7 +14,7 @@ export interface FunctionBaseProps extends ExpressionProps {
     meta: MetaCall[];
 }
 
-export class FunctionBase extends Expression implements MetaContainer {
+export class FunctionBase extends Expression implements MetaContainer, Scope {
 
     parameters!: Variable[];
     returnType!: Type | null;
@@ -21,6 +22,10 @@ export class FunctionBase extends Expression implements MetaContainer {
 
     constructor(props: FunctionBaseProps) { super(props); }
     patch(props: Partial<FunctionBaseProps>) { return super.patch(props); }
+
+    get isScope() {
+        return true;
+    }
 
     areArgumentsValid(argTypes: Type[], c: EvaluationContext) : boolean {
         if (argTypes.length === this.parameters.length) {
@@ -41,8 +46,8 @@ export class FunctionBase extends Expression implements MetaContainer {
 
     toString() {
         return this.returnType
-            ? `${Scope.toString(this.parameters, "(", ")")}: ${this.returnType}`
-            : `${Scope.toString(this.parameters, "(", ")")}`;
+            ? `${Container.toString(this.parameters, "(", ")")}: ${this.returnType}`
+            : `${Container.toString(this.parameters, "(", ")")}`;
     }
 
 }

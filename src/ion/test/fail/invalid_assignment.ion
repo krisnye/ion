@@ -1,0 +1,4 @@
+
+x: < 0 = -10
+//  assigned value is not subtype of variable type
+x := 0

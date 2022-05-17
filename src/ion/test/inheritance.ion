@@ -1,0 +1,10 @@
+class Alpha
+    a: 0 .. 10
+class Beta
+    b: 1 .. 20
+A = Alpha
+B = Beta
+class Delta extends A,B
+c: Delta( a: 5 .. 20 )
+
+foo: Alpha & Beta( a: 5 .. 10 ) = c

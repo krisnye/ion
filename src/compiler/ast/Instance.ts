@@ -1,7 +1,7 @@
 import { EvaluationContext } from "../EvaluationContext";
 import { Block, BlockProps } from "./Block";
 import { Reference } from "./Reference";
-import { Scope } from "./Scope";
+import { Container } from "./Container";
 import { Variable } from "./Variable";
 
 export interface InstanceProps extends BlockProps {
@@ -31,7 +31,7 @@ export class Instance extends Block {
 
     toString() {
         // this is virtually indistinguishable from a call...
-        return `${this.class}${Scope.toString(this.nodes, "{{", "}}")}`;
+        return `${this.class}${Container.toString(this.nodes, "{{", "}}")}`;
     }
 
 }

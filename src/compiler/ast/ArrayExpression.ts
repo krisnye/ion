@@ -2,7 +2,7 @@ import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { Block, BlockProps } from "./Block";
 import { ObjectType } from "./ObjectType";
-import { Scope } from "./Scope";
+import { Container } from "./Container";
 import { StringType } from "./StringType";
 import { TypeReference } from "./TypeReference";
 
@@ -25,7 +25,7 @@ export class ArrayExpression extends Block {
     }
 
     toString() {
-        return Scope.toString(this.nodes, "[", "]");
+        return Container.toString(this.nodes, "[", "]");
     }
     
 }

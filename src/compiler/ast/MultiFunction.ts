@@ -3,15 +3,15 @@ import { Node } from "../Node";
 import { AnyType } from "./AnyType";
 import { Callable } from "./Callable";
 import { Function } from "./Function";
-import { Scope, ScopeProps } from "./Scope";
+import { Container, ContainerProps } from "./Container";
 import { Type } from "./Type";
 import { UnionType } from "./UnionType";
 
-export interface MultiFunctionProps extends ScopeProps {
+export interface MultiFunctionProps extends ContainerProps {
     nodes: Function[];
 }
 
-export class MultiFunction extends Scope implements Callable {
+export class MultiFunction extends Container implements Callable {
 
     nodes!: Function[];
 
@@ -43,7 +43,7 @@ export class MultiFunction extends Scope implements Callable {
     }
 
     toString() {
-        return Scope.toString(this.nodes, "MultiFunction[", "]");
+        return Container.toString(this.nodes, "MultiFunction[", "]");
     }
 
 }

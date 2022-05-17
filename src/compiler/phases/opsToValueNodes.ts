@@ -124,7 +124,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                             addExtends(child);
                         }
                     }
-                    else if (node instanceof Reference) {
+                    else if (node instanceof Reference || node instanceof Identifier) {
                         if (!isTypeName(node.name)) {
                             throw new SemanticError(`Expected Type name`, node);
                         }

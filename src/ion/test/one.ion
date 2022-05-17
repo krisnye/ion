@@ -1,14 +1,3 @@
-// x : 2.0 .. 50.0 = 10
-// y : 1.0 .. 4.0 = 2
-// z = abs( - 20 )
-// z2 = - x
-// z3 = x / y
-// z4 = x % y
-// z5 = sqrt(x)
-// z6 = sin(12.5)
-// z7 = cos(36.8)
-// z8 = tan(28.3)
-
 // array = [1, 2, 3]
 // length = array.length
 
@@ -16,21 +5,12 @@
 // safeIndex = index % array.length
 // pair = Pair(1, 10)
 
-class Alpha
-    a: 0 .. 10
-class Beta
-    b: 1 .. 20
-A = Alpha
-B = Beta
-class Delta extends A, B
-c: Delta
+// d = foo.a
 
-foo: Alpha & Beta = c
-
-d = foo.a
-
-// x: < 0
-// x *= 10
+fn = () =>
+    x: <= 0.0 = -1.0
+    x := min(0.0, x + 20.0)
+    return x
 
 // class Vector extends Structure
 //     x: Float

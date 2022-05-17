@@ -1,12 +1,12 @@
-import { Scope, ScopeProps } from "./Scope";
+import { Container, ContainerProps } from "./Container";
 
-export interface BlockProps extends ScopeProps {
+export interface BlockProps extends ContainerProps {
 
 }
 
-export class Block extends Scope {
+export class Block extends Container {
 
-    constructor(props: ScopeProps) { super(props); }
-    patch(props: Partial<ScopeProps>) { return super.patch(props); }
+    constructor(props: ContainerProps) { super(props); }
+    patch(props: Partial<ContainerProps>) { return super.patch(props); }
     
 }

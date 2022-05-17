@@ -26,7 +26,7 @@ export class NumberLiteral extends Literal {
     constructor(props: NumberLiteralProps) { super(props); }
     patch(props: Partial<NumberLiteralProps>) { return super.patch(props); }
 
-    static fromConstant(value: number, location: SourceLocation, integer: boolean | null | undefined = value === Math.trunc(value)) {
+    static fromConstant(value: number, location: SourceLocation, integer: boolean | null) {
         return new NumberLiteral({ location, value, integer });
     }
 

@@ -3,7 +3,8 @@ import { Token } from "../../Token";
 import { Node } from "../../Node";
 import { PrefixParselet } from "../PrefixParselet";
 import { SourceLocation } from "../../SourceLocation";
-import { Return } from "../../pst/Return";
+import { Return } from "../../ast/Return";
+import { Expression } from "../../ast/Expression";
 
 export class ReturnParselet extends PrefixParselet {
 
@@ -11,7 +12,7 @@ export class ReturnParselet extends PrefixParselet {
         let value = p.parseExpression();
         return new Return({
             location: SourceLocation.merge(returnToken.location, value.location),
-            value,
+            value: value as Expression
         })
     }
 

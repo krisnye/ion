@@ -1,0 +1,27 @@
+neg: < 0.0 = -1.0
+pos: > 0.0 = +1.0
+float: Float = 10.0
+zeroToOne: 0.0 .. 1.0 = 0.5
+oneToTwo: 1.0 .. 2.0 = 1.5
+
+negTimesNeg: > 0.0 = neg * neg
+posTimesPos: > 0.0 = pos * pos
+negTimesPos: < 0.0 = neg * pos
+posTimesNeg: < 0.0 = pos * neg
+
+testSin: 0.0 .. 1.0 = sin(float)
+testCos: 0.0 .. 1.0 = cos(float)
+
+testMin: < 0.0 = min(neg, pos)
+testMax: > 0.0 = max(neg, pos)
+
+testAbs: > 0.0 = abs(neg)
+
+testNegPos: < 0.0 = - pos
+testNegNeg: > 0.0 = - neg
+
+testDivide: 0.5 .. 2.0 = oneToTwo / oneToTwo
+
+testPosMod: 0.0 .. 2.0 = pos % oneToTwo
+testNegMod: -2.0 .. 0.0 = neg % oneToTwo
+testFloatMod: -2.0 .. 2.0 = float % oneToTwo

@@ -1,0 +1,3 @@
+
+//  cannot assign to an undeclared variable
+x := 0

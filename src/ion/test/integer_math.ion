@@ -1,0 +1,24 @@
+neg: < 0 = -1
+pos: > 0 = +1
+integer: Integer = 10
+zeroToOne: 0 .. 1 = 0
+oneToTwo: 1 .. 2 = 1
+
+negTimesNeg: > 0 = neg * neg
+posTimesPos: > 0 = pos * pos
+negTimesPos: < 0 = neg * pos
+posTimesNeg: < 0 = pos * neg
+
+testMin: < 0 = min(neg, pos)
+testMax: > 0 = max(neg, pos)
+
+testAbs: > 0 = abs(neg)
+
+testNegPos: < 0 = - pos
+testNegNeg: > 0 = - neg
+
+testDivide: 0 .. 2 = oneToTwo / oneToTwo
+
+testPosMod: 0 .. 2 = pos % oneToTwo
+testNegMod: -2 .. 0 = neg % oneToTwo
+testFloatMod: -2 .. 2 = integer % oneToTwo

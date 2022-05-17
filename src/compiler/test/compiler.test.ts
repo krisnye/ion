@@ -4,12 +4,12 @@ import { create } from "@glas/diff-logger";
 import path from "path";
 
 const perfTest = false;
-let compiler = new Compiler();
+let compiler = new Compiler({ log: console.log, test: true });
 let start = Date.now();
 let count = perfTest ? 1000 : 1;
 for (let i = 0; i < count; i++) {
     let result = compiler.compile(
-        Compiler.getFiles([path.join(__dirname, "../../../src/ion")]),
+        Compiler.getFiles([path.join(__dirname, "../../../src/ion")], compiler.options),
         {
             logger: perfTest ? (() => {}) : create("./output.html") as PhaseLogger
         }

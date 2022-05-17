@@ -1,5 +1,5 @@
 import { Identifier } from "../ast/Identifier";
-import { Scope, ScopeProps } from "./Scope";
+import { Container, ContainerProps } from "./Container";
 import { Variable } from "./Variable";
 import { Declaration } from "./Declaration";
 import { MetaCall } from "./Call";
@@ -23,7 +23,7 @@ import { IntersectionType } from "./IntersectionType";
 import { NumberType } from "./NumberType";
 import { SemanticError } from "../SemanticError";
 
-export interface ClassProps extends ScopeProps {
+export interface ClassProps extends ContainerProps {
     id: Identifier;
     extends: Node[];
     nodes: Variable[];
@@ -31,7 +31,7 @@ export interface ClassProps extends ScopeProps {
     structure?: boolean;
 }
 
-export class Class extends Scope implements Type, Declaration, Callable {
+export class Class extends Container implements Type, Declaration, Callable {
 
     id!: Identifier;
     extends!: Node[];
@@ -145,7 +145,7 @@ export class Class extends Scope implements Type, Declaration, Callable {
     // }
 
     toString() {
-        return `${toMetaString(this)}class ${this.id}${this.extends.length > 0 ? " extends " + this.extends : ""} ${ Scope.toString([...this.meta, ...this.nodes]) }`;
+        return `${toMetaString(this)}class ${this.id}${this.extends.length > 0 ? " extends " + this.extends : ""} ${ Container.toString([...this.meta, ...this.nodes]) }`;
     }
 
 }

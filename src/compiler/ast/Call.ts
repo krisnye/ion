@@ -2,12 +2,12 @@ import { EvaluationContext } from "../EvaluationContext";
 import { Expression } from "./Expression";
 import { isMetaName } from "../utility";
 import { Reference } from "./Reference";
-import { Scope, ScopeProps } from "./Scope";
+import { Container, ContainerProps } from "./Container";
 import { isCallable } from "./Callable";
 import { SemanticError } from "../SemanticError";
 import { MultiFunction } from "./MultiFunction";
 
-export interface AssignmentProps extends ScopeProps {
+export interface AssignmentProps extends ContainerProps {
     callee: Expression;
 }
 
@@ -17,7 +17,7 @@ export function isMetaCall(node): node is MetaCall {
     return node instanceof Call && node.callee instanceof Reference && isMetaName(node.callee.name);
 }
 
-export class Call extends Scope {
+export class Call extends Container {
 
     callee!: Expression;
 

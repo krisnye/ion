@@ -1,4 +1,4 @@
-import { Scope } from "../ast/Scope";
+import { Container } from "../ast/Container";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
 import { GetVariableFunction, traverseWithScope } from "../phases/createScopeMaps";
@@ -71,7 +71,7 @@ export function createConverterPhase<A extends Node>(
     allConverters: Converter<A>[]
 ) {
     const converter = createConverter(predicate, allConverters);
-    return (moduleName, module, externals: Map<string, Scope>): ReturnType<Phase> => {
+    return (moduleName, module, externals: Map<string, Container>): ReturnType<Phase> => {
         let errors = new Array<Error>();
         let modifications = 0;
         let result = traverseWithScope(externals, module, (c) => {

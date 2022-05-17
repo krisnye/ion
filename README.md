@@ -86,6 +86,7 @@ Cross platform modeling language
   - [x] Most Type Inference can be done exclusively in single files + dependents.
   - [x] Object Type to use Map
   - [x] toComparisonType to simplify all objects to an ObjectType.
+  - [-] NumberType needs min/max to use POSITIVE_INFINITY or NEGATIVE_INFINITY.
   - [ ] Static Single Assignment?
     - [ ] How to infer the PHI functions of re-merging variable type after block?
   - [ ] Conditional Declarations => inferred Types

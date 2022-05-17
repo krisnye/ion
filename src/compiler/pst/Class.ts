@@ -1,13 +1,13 @@
 import { Node } from "../Node";
 import { Identifier } from "../ast/Identifier";
-import { Scope, ScopeProps } from "../ast/Scope";
+import { Container, ContainerProps } from "../ast/Container";
 
-export interface PstClassProps extends ScopeProps {
+export interface PstClassProps extends ContainerProps {
     id: Identifier;
     extends: Node | null;
 }
 
-class PstClass extends Scope {
+class PstClass extends Container {
 
     id!: Identifier;
     extends!: Node | null;

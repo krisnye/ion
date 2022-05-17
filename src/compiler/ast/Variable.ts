@@ -33,16 +33,16 @@ export class Variable extends Expression implements Declaration {
 
     ensureAssignmentValid(c: EvaluationContext, value: Expression, isInitial = false) {
         if (this.constant && !isInitial) {
-            throw new SemanticError(`Cannot reassign constant ${this.id.name}`, this.id, value);
+            throw new SemanticError(`Cannot reassign constant ${this.id.name}`, value);
         }
         if (this.type && value.type) {
             // check if value type is assignable to this.
             let isValueASubtype = isSubtype(value.type, this.type, c);
             if (isValueASubtype === false) {
-                throw new SemanticError(`Type ${value.type} cannot be assigned to variable of type ${this.type}`, this);
+                throw new SemanticError(`Type ${value.type} cannot be assigned to variable of type ${this.type}`, value);
             }
             if (isValueASubtype === null) {
-                throw new SemanticError(`Type ${value.type} may not be assignable to variable of type ${this.type}`, this);
+                throw new SemanticError(`Type ${value.type} may not be assignable to variable of type ${this.type}`, value);
             }
         }
     }

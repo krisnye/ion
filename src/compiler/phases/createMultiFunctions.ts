@@ -1,7 +1,7 @@
 import { Phase } from "./Phase";
 import { Node } from "../Node";
 import { traverse, replace } from "../traverse";
-import { Scope } from "../ast/Scope";
+import { Container } from "../ast/Container";
 import { Function } from "../ast/Function";
 import { Variable } from "../ast/Variable";
 import { MultiFunction } from "../ast/MultiFunction";
@@ -15,7 +15,7 @@ export function createMultiFunctions(moduleName, module): ReturnType<Phase> {
     const result = traverse(module, {
         lookup,
         leave(node) {
-            if (node instanceof Scope) {
+            if (node instanceof Container) {
                 // traverse and join any multiple
                 const namedFunctions = new Map<string,Function[]>();
                 for (const child of node.nodes) {

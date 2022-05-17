@@ -1,10 +1,12 @@
 import { Visitor } from "@glas/traverse";
 import { Reference } from "../ast/Reference";
-import { Scope } from "../ast/Scope";
+import { Container } from "../ast/Container";
 import { Variable } from "../ast/Variable";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
+import { SemanticError } from "../SemanticError";
 import { traverse, skip, Lookup } from "../traverse";
+import { isScope } from "../ast/Scope";
 
 export type NodeMap<T> = {
     get(node: Node | null): T
@@ -18,7 +20,7 @@ export type ScopeMaps = NodeMap<ScopeMap>
  * Returns a Map which will contain a scope object with variable names returning Declarations.
  * @param root the ast
  */
-export default function createScopeMaps(root, externals?: Map<string,Scope>): ScopeMaps {
+export default function createScopeMaps(root, externals?: Map<string,Container>): ScopeMaps {
     let globalScope: ScopeMap = {};
     if (externals != null) {
         for (let { nodes } of externals.values()) {
@@ -44,16 +46,20 @@ export default function createScopeMaps(root, externals?: Map<string,Scope>): Sc
                 scopes.push(scope = Object.create(scope));
             }
 
-            if (node instanceof Scope) {
+            if (isScope(node)) {
                 pushScope();
             }
 
             if (node instanceof Variable) {
+                let current = scope[node.id.name];
+                if (current != null && current != node) {
+                    throw new SemanticError(`Cannot redeclare '${node.id.name}'. Did you mean to reassign with ':='?`, node);
+                }
                 scope[node.id.name] = node;
             }
         },
         leave(node) {
-            if (node instanceof Scope) {
+            if (isScope(node)) {
                 scopes.pop();
             }
         }
@@ -65,7 +71,7 @@ export default function createScopeMaps(root, externals?: Map<string,Scope>): Sc
 export type GetVariableFunction = (ref: Reference) => Variable;
 
 export function traverseWithScope(
-    externals: Map<string,Scope>,
+    externals: Map<string,Container>,
     node: Readonly<any>,
     callback: (c: EvaluationContext) => Visitor,
 ): any {

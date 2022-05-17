@@ -1,8 +1,8 @@
-import { Scope, ScopeProps } from "../ast/Scope";
+import { Container, ContainerProps } from "../ast/Container";
 import { SourceLocation } from "../SourceLocation";
 import { Expression } from "../ast/Expression";
 
-export interface SequenceProps extends ScopeProps {
+export interface SequenceProps extends ContainerProps {
 }
 
 function merge(left: Expression | null, right: Expression | null): Expression | null {
@@ -32,7 +32,7 @@ function merge(left: Expression | null, right: Expression | null): Expression | 
 }
 
 //  A group of nodes the type of which is the sequence of all nodes types
-export class Sequence extends Scope {
+export class Sequence extends Container {
 
     constructor(props: SequenceProps) { super(props); }
     patch(props: Partial<SequenceProps>) { return super.patch(props); }

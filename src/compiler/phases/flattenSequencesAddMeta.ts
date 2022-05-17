@@ -1,6 +1,6 @@
 import { ArrayExpression } from "../ast/ArrayExpression";
 import { addMetaCallsToContainers } from "../ast/MetaContainer";
-import { Scope } from "../ast/Scope";
+import { Container } from "../ast/Container";
 import { Group } from "../pst/Group";
 import { Sequence } from "../pst/Sequence";
 import { tokenTypes } from "../tokenizer/TokenType";
@@ -33,7 +33,7 @@ export function flattenSequencesAddMeta(moduleName, module): ReturnType<Phase> {
                     })
                 }
             }
-            else if (node instanceof Scope) {
+            else if (node instanceof Container) {
                 let nodes = Sequence.flatten(...node.nodes);
                 nodes = addMetaCallsToContainers(nodes, errors);
                 if (nodes.length != node.nodes.length) {

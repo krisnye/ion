@@ -57,6 +57,12 @@ export class NumberType extends BaseType {
         else if (props.integer === undefined) {
             props.integer = null;
         }
+        if (props.min instanceof NumberLiteral && props.min.value === Number.POSITIVE_INFINITY) {
+            props.min = undefined;
+        }
+        if (props.max instanceof NumberLiteral && props.max.value === Number.NEGATIVE_INFINITY) {
+            props.max = undefined;
+        }    
         if (props.min instanceof NumberLiteral) {
             props.min = props.min.patch({ resolved: true });
         }

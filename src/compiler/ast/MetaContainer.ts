@@ -1,7 +1,7 @@
 import { Call, isMetaCall, MetaCall } from "./Call";
 import { Node } from "../Node";
 import { SemanticError } from "../SemanticError";
-import { Scope } from "./Scope";
+import { Container } from "./Container";
 import { Instance } from "./Instance";
 import { Reference } from "./Reference";
 
@@ -51,7 +51,7 @@ export function addMetaCallsToContainers<T extends Node>(nodes: Array<T | MetaCa
 }
 
 export function toMetaString(d: MetaContainer) {
-    return d.meta.length ? `${Scope.toString(d.meta, "{", "}\n")}` : "";
+    return d.meta.length ? `${Container.toString(d.meta, "{", "}\n")}` : "";
 }
 
 export function isMetaContainer(node): node is MetaContainer {
