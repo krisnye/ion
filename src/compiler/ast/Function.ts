@@ -46,6 +46,8 @@ export class Function extends FunctionBase implements Callable {
         if (isType(this.returnType)) {
             return this.returnType;
         }
+        // calculate the return type of the function.
+
         throw new Error("Function.getReturnType not implemented");
     }
 
@@ -58,20 +60,22 @@ export class Function extends FunctionBase implements Callable {
         yield* getFinalExpressions(this.body);
     }
 
-    protected resolveType(c: EvaluationContext): Type | null {
+    protected resolve(c: EvaluationContext): Expression {
         const finalTypes = [...getFinalExpressions(this.body)].map(node => node.type!);
         const inferredType = UnionType.join(...finalTypes)!;
         if (this.returnType != null) {
-            if (!isSubtype(inferredType, this.returnType, c)) {
-                c.errors.push(new SemanticError(`Return type doesn't match function declaration`, this.returnType, inferredType));
+            const result = isSubtype(inferredType, this.returnType, c);
+            if (result !== true) {
+                c.errors.push(new SemanticError(`Actual return type ${inferredType} ${result == false ? `does` : `may`} not match declared type`, this.returnType));
             }
         }
-        //  Check that the return type is valid
         const returnType = this.returnType ?? inferredType;
-        return new FunctionType({ ...this,
+        const type = new FunctionType({
+            ...this,
             returnType,
             resolved: true,
         });
+        return this.patch({ returnType, type });
     }
 
     evaluate(call: Call, c: EvaluationContext): Node | Error[] {

@@ -264,7 +264,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                             body: right,
                         })
                     default:
-                        if (operator.endsWith("=")) {
+                        if (operator.endsWith("=") && operator !== "==") {
                             if (!(left instanceof Identifier || left instanceof Reference)) {
                                 errors.push(new SemanticError(`Expected a variable reference`, left));
                                 return;

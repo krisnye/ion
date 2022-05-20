@@ -1,0 +1,4 @@
+
+//  inferred type of (0 .. 20) is not assignable to declared type of (1 .. 20)
+add = (a: 0 .. 10, b: 0 .. 10): 1 .. 20 => a + b
+

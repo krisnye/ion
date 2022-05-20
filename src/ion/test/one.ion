@@ -5,16 +5,10 @@
 // safeIndex = index % array.length
 // pair = Pair(1, 10)
 
-// d = foo.a
-
 fn = () =>
     x: <= 0.0 = -1.0
     x := min(0.0, x + 20.0)
     return x
-
-// class Vector extends Structure
-//     x: Float
-//     y: Float
 
 // test = (x: Float, y: Float) =>
 //     z: Float = x

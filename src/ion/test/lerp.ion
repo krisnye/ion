@@ -1,0 +1,33 @@
+
+// lerp = (from, to, alpha: Float) =>
+//     if alpha == 0.0
+//         return from
+//     if alpha == 1.0
+//         return to
+//     return from * ( 1.0 - alpha ) + to * alpha
+
+//  this should work for any types of `from` and `to`
+//  provided the following functions exist
+//      *(typeof from, Float): FromProduct
+//      *(typeof to, Float): ToProduct
+//      +(FromProduct, ToProduct)
+
+//  Vector2 = Float[ length: 2 ]
+//  Vector3 = Float[ length: 3 ]
+//  Vector4 = Float[ length: 4 ]
+
+//  x = a = (this: Float[ length: >= 1 ]) => this[0]
+//  y = r = (this: Float[ length: >= 2 ]) => this[1]
+//  z = g = (this: Float[ length: >= 3 ]) => this[2]
+//  w = b = (this: Float[ length: >= 4 ]) => this[3]
+
+//  reduce = (c, accumulator = (a, b): Infer, initial) =>
+//      result = initial
+//      for item in c
+//          result = accumulator(result, item)
+//      return result
+
+//  sum = (c, initial) => reduce(c, `+`, initial)
+
+//  distance = (c, initial) => reduce(c, (a, b) => a + b ** 2.0, initial) ** 0.5
+
