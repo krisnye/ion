@@ -21,7 +21,9 @@
             next = & this.pool.slots[0]
             this.nextSlot = this.pool.getNextSlot(next)
             return next
-
+        release(pointer: ObjectLayout<T>) =>
+            pointer.refCountOrNextFree = this.released
+            this.released = pointer
     const PAGE_SIZE = 2 ** 16   //  64kb
     class ObjectPool<T>
         class: classof T
