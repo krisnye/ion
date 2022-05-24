@@ -6,7 +6,7 @@ import { Call as PstCall } from "../pst/Call";
 import { Call as AstCall, isMetaCall, MetaCall } from "../ast/Call";
 import { Function } from "../ast/Function";
 import { Group } from "../pst/Group";
-import { Identifier } from "../ast/Identifier";
+import { Identifier, IdentifierProps } from "../ast/Identifier";
 import { Sequence } from "../pst/Sequence";
 import { SemanticError } from "../SemanticError";
 import { SourceLocation } from "../SourceLocation";
@@ -15,6 +15,8 @@ import { Phase } from "./Phase";
 import { Member } from "../ast/Member";
 import { Class as PstClass } from "../pst/Class";
 import { Class as AstClass } from "../ast/Class";
+import { For as PstFor } from "../pst/For";
+import { For as AstFor } from "../ast/For";
 import { Variable } from "../ast/Variable";
 import { FunctionType } from "../ast/FunctionType";
 import { Block } from "../ast/Block";
@@ -26,6 +28,8 @@ import { Type } from "../ast/Type";
 import { Expression } from "../ast/Expression";
 import { IntegerLiteral } from "../ast/NumberLiteral";
 import { Pair } from "../ast/Pair";
+import { coreTypes } from "../coreTypes";
+import { ForItem } from "../ast/ForItem";
 
 function toParametersOrMeta(value: Node | null) {
     let parameters = new Array<Variable | MetaCall>();
@@ -52,7 +56,6 @@ function toVariableOrMetaCall(value: Node) {
             constant: false,
         });
     }
-    debugger;
     throw new SemanticError(`Expected Variable`, value);
 }
 
@@ -64,11 +67,13 @@ export function tempFactory(name: string): IdentifierFactory {
     }
 }
 
-export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
-    let errors = new Array<Error>();
-    let temp = tempFactory("opsToNodes");
-    function destructure(nodes: Array<Node>, pattern: Node | null, right: Expression | Identifier, variableOrAssignment: boolean, memberIndex: null | number = null) {
-        if (pattern instanceof Group) {
+function destructure(temp: IdentifierFactory, nodes: Array<Node>, pattern: Node | null, right: Expression | Identifier, variableOrAssignment: boolean, memberIndex: null | number = null) {
+    if (pattern instanceof Group) {
+        if (right instanceof Reference) {
+            destructure(temp, nodes, pattern.value, right, variableOrAssignment, memberIndex);
+        }
+        else {
+            // make temp variable IF the right is not a reference.
             let tempVar = new Identifier(temp(right.location));
             memberIndex = pattern.open.value == "[" ? 0 : null;
             nodes.push(new Variable({
@@ -79,42 +84,73 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                 constant: true,
                 meta: [],
             }));
-            destructure(nodes, pattern.value, new Reference(tempVar), variableOrAssignment, memberIndex);
-        }
-        else if (pattern instanceof Sequence) {
-            for (let id of pattern.nodes) {
-                destructure(nodes, id, right, variableOrAssignment, memberIndex);
-                if (memberIndex != null) {
-                    memberIndex++;
-                }
-            }
-        }
-        else if (pattern instanceof Identifier || pattern instanceof Reference) {
-            let computed = memberIndex != null;
-            let value = new Member({
-                location: right.location,
-                object: right as Expression,
-                property: memberIndex != null ? IntegerLiteral({ location: pattern.location, value: memberIndex }) : (computed ? pattern : new Identifier(pattern))
-            });
-            let { location } = right;
-            let id = pattern;
-            nodes.push(
-                variableOrAssignment
-                ? new Variable({ location, id: new Identifier(id), type: null, value, constant: true, meta: [] })
-                : new Assignment({ location, id: new Reference(id), value })
-            );
-        }
-        else {
-            console.log({ impossible: true, pattern });
-            throw new SemanticError(`(Should Be Impossible) Invalid destructuring pattern`, pattern!);
+            destructure(temp, nodes, pattern.value, new Reference(tempVar), variableOrAssignment, memberIndex);
         }
     }
+    else if (pattern instanceof Sequence) {
+        for (let id of pattern.nodes) {
+            destructure(temp, nodes, id, right, variableOrAssignment, memberIndex);
+            if (memberIndex != null) {
+                memberIndex++;
+            }
+        }
+    }
+    else if (pattern instanceof Identifier || pattern instanceof Reference) {
+        let computed = memberIndex != null;
+        let value = new Member({
+            location: right.location,
+            object: right as Expression,
+            property: memberIndex != null ? IntegerLiteral({ location: pattern.location, value: memberIndex }) : (computed ? pattern : new Identifier(pattern))
+        });
+        let { location } = right;
+        let id = pattern;
+        nodes.push(
+            variableOrAssignment
+            ? new Variable({ location, id: new Identifier(id), type: null, value, constant: true, meta: [] })
+            : new Assignment({ location, id: new Reference(id), value })
+        );
+    }
+    else {
+        console.log({ impossible: true, pattern });
+        throw new SemanticError(`(Should Be Impossible) Invalid destructuring pattern`, pattern!);
+    }
+}
+export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
+    let errors = new Array<Error>();
+    let temp = tempFactory("opsToNodes");
     let result = traverse(module, {
         enter(node, ancestors, path) {
         },
         leave(node, ancestors, path) {
             let parent = ancestors[ancestors.length - 1];
             // check classes as well
+            if (node instanceof PstFor) {
+                let { id, value, body } = node;
+                let dnodes = new Array<Node>();
+                let _leftId: IdentifierProps;
+                if (id instanceof Reference) {
+                    _leftId = new Identifier(id);
+                }
+                else {
+                    _leftId = temp(id.location);
+                    destructure(temp, dnodes, id, new Reference(_leftId), true, null);
+                }
+                return new AstFor({
+                    location: node.location,
+                    left: new ForItem({
+                        location: node.id.location,
+                        meta: [],
+                        id: new Identifier(_leftId),
+                        // TEMPORARY HACK. FIXME
+                        type: new TypeReference({ location: value.location, name: coreTypes.Float }),
+                        value: null
+                    }),
+                    right: value as Expression,
+                    body: body.patch({
+                        nodes: [...dnodes, ...body.nodes] as Expression[]
+                    })
+                })
+            }
             if (node instanceof PstClass) {
                 //  first check and extract extends
                 let _extends = new Array<Reference>();
@@ -209,7 +245,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                         let isVariable = operator === "=";
                         if (left instanceof Group && !(parent instanceof Sequence)) {
                             let dnodes = new Array<Node>();
-                            destructure(dnodes, left, right, isVariable);
+                            destructure(temp, dnodes, left, right, isVariable);
                             return replace(...dnodes);
                         }
                         let id = left instanceof Variable ? left.id : left;
@@ -232,6 +268,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                     case ",":
                         return Sequence.merge(left, right)
                     case "=>":
+                        let returnType = null;
                         //  Function
                         if (left instanceof FunctionType) {
                             return new Function({
@@ -251,16 +288,24 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                         else if (left instanceof Block) {
                             parameters.push(...left.nodes.map(toParametersOrMeta).flat())
                         }
+                        else if (left instanceof Variable && left.value instanceof FunctionType) {
+                            return left.patch({
+                                value: new Function({
+                                    ...left.value,
+                                    body: right,
+                                })
+                            })
+                        }
                         else {
                             errors.push(new SemanticError(`Invalid function parameter(s)`, left));
                             return;
                         }
-        
+
                         return new Function({
                             location,
                             meta: [],
                             parameters: addMetaCallsToContainers(parameters, errors),
-                            returnType: null,
+                            returnType,
                             body: right,
                         })
                     default:
@@ -297,7 +342,6 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                             })
                         }
                 }
-                return node;
             }
         }
     })

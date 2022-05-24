@@ -19,12 +19,6 @@ export function flattenSequencesAddMeta(moduleName, module): ReturnType<Phase> {
                 node = node.patch({ id: parent.id });
             }
 
-            // if (node instanceof Variable && node.value instanceof Function) {
-            //     if (node.meta === node.value.meta) {
-            //         node = node.patch({ meta: [] });
-            //     }
-            // }
-
             if (node instanceof Group) {
                 if (node.open.type === tokenTypes.OpenBracket.name) {
                     node = new ArrayExpression({

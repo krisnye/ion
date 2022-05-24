@@ -3,6 +3,7 @@ import { NumberType } from "./ast/NumberType";
 import { Reference } from "./ast/Reference";
 import { Type } from "./ast/Type";
 import { Variable } from "./ast/Variable";
+import { coreTypes } from "./coreTypes";
 import { GetVariableFunction } from "./phases/createScopeMaps";
 import { Lookup } from "./traverse";
 
@@ -21,9 +22,6 @@ export class EvaluationContext {
         let check = this.comparisonTypes.get(type);
         if (check == null) {
             this.comparisonTypes.set(type, check = (type.toComparisonType?.(this) ?? type));
-            // if (!(type instanceof NumberType)) {
-            //     console.log(type + "\n    ==>   " + check);
-            // }
         }
         return check;
     }

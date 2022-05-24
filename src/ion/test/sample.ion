@@ -1,0 +1,15 @@
+
+total: Float = 0.0
+array = [9.0, 7.0, 5.0]
+
+//  TODO: Fix this to correctly type the item type
+for value in array
+    total += value
+
+// i: 0 .. < 8
+// j = (8 + i) / 2
+// k = i + j
+
+// x: 0 .. < 10
+// y = 10 - x
+// z = x + y

@@ -13,18 +13,18 @@ import { EvaluationContext } from "../EvaluationContext"
  * Returns false if all instances of type 'a' are not instances of type 'b'
  * Returns null if some instances of type 'a' could be instances of type 'b'
  */
- export function isSubtype(aa: Type | null, bb: Type | null, c: EvaluationContext): boolean | null {
-    if (aa === bb || aa?.toString() === bb?.toString()) {
+ export function isSubtype(a: Type | null, b: Type | null, c: EvaluationContext): boolean | null {
+    if (a === b || a?.toString() === b?.toString()) {
         return true
     }
-    if (bb == null) {
+    if (b == null) {
         return true
     }
-    if (aa == null) {
+    if (a == null) {
         return null
     }
-    let a = c.getComparisonType(aa);
-    let b = c.getComparisonType(bb);
+    a = c.getComparisonType(a);
+    b = c.getComparisonType(b);
     if (a instanceof VoidType || b instanceof VoidType) {
         return false;
     }

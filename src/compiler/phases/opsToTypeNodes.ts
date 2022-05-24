@@ -19,6 +19,8 @@ import { Expression } from "../ast/Expression";
 import { TypeReference } from "../ast/TypeReference";
 import { SourceLocation } from "../SourceLocation";
 import { Call as PstCall } from "../pst/Call";
+import { Member } from "../ast/Member";
+import { coreTypes } from "../coreTypes";
 
 export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
     let errors = new Array<Error>();
@@ -97,6 +99,7 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
                             break;
                     }
                 }
+                //  Type( prop: Type )
                 if (node instanceof PstCall) {
                     let { callee } = node;
                     if (!(callee instanceof Identifier) || !isTypeName(callee.name)) {
@@ -107,6 +110,27 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
                         left: new TypeReference(callee),
                         right: buildObjectType(node.args, location, "(")
                     });
+                }
+                if (node instanceof Member) {
+                    let { object } = node;
+                    if (!(object instanceof Identifier) || !isTypeName(object.name)) {
+                        throw new SemanticError(`Expected type name`, object);
+                    }
+                    node = buildObjectType(
+                        [
+                            new Pair({
+                                location,
+                                key: new TypeReference({
+                                    location,
+                                    name: coreTypes.Integer
+                                }),
+                                value: node.object
+                            }),
+                            node.property as Expression,
+                        ],
+                        location,
+                        "["
+                    );
                 }
                 if (node instanceof Group) {
                     node = buildObjectType(node.value, location, node.open.value);
@@ -125,15 +149,21 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
     return [result, errors];
 }
 
-function buildObjectType(values: Expression | null, location: SourceLocation, openToken: string) {
+function buildObjectType(values: Expression | (Expression | Pair)[] | null, location: SourceLocation, openToken: string) {
     if (values == null) {
         throw new SemanticError(`Expected Object Type`, location);
     }
+    if (!Array.isArray(values)) {
+        values = [values];
+    }
     const isArray = openToken === "[";
     const isMap = openToken === "{";
-    const children = [...BinaryExpression.split(values, ",")];
+    const children: (Expression | Pair<Type|Identifier,Type>)[] = [...values.filter(v => v != null).map(value => [...BinaryExpression.split(value, ",")])].flat();
     let pairs = children.map(
         (pair, index) => {
+            if (pair instanceof Pair) {
+                return pair;
+            } 
             if (isArray && !(pair instanceof BinaryExpression)) {
                 const indexValue = NumberLiteral.fromConstant(index, pair.location, true);
                 return new Pair({
@@ -185,10 +215,15 @@ function buildObjectType(values: Expression | null, location: SourceLocation, op
     return result;
 }
 
-function inferArrayLength(items: Expression[], location: SourceLocation): NumberType | null {
+function inferArrayLength(items: (Expression | Pair)[], location: SourceLocation): NumberType | null {
     let minLength = 0;
     let maxLength : number | null = null;
     for (let item of items) {
+        if (item instanceof Pair) {
+            //  with any pair, we cannot determine length.
+            //  only when all are expressions can we
+            return null;
+        }
         if (item instanceof BinaryExpression) {
             let { left } = item;
             if (left instanceof NumberType) {

@@ -10,19 +10,20 @@ import { Expression } from "../../ast/Expression";
 
 export class MemberParselet extends BinaryExpressionParselet {
 
-    closeTokenType: keyof typeof tokenTypes | undefined;
+    closeTokenType: keyof typeof tokenTypes;
 
-    constructor(closeToken?: keyof typeof tokenTypes | undefined) {
+    constructor(closeToken: keyof typeof tokenTypes) {
         super();
         this.closeTokenType = closeToken;
     }
 
     parse(p: Parser, object: Expression, open: Token): Node {
-        let computed = this.closeTokenType != null;
-        let property = p.parseExpression(computed ? 0 : infixPrecedence[open.value]!);
+        p.whitespace();
+        let hasProperty = !p.peek(this.closeTokenType);
+        let property = hasProperty ? p.parseExpression(0) : null;
         //  if it's computed we consume the closing operator "]" otherwise
         //  otherwise this is just implicitly closed by the property
-        let close = computed ? p.consume(this.closeTokenType) : property;
+        let close = p.consume(this.closeTokenType);
         return new Member({
             location: SourceLocation.merge(object.location, close.location),
             object,

@@ -1,10 +1,10 @@
 
-// lerp = (from, to, alpha: Float) =>
-//     if alpha == 0.0
-//         return from
-//     if alpha == 1.0
-//         return to
-//     return from * ( 1.0 - alpha ) + to * alpha
+lerp(from, to, alpha: Float) =>
+    if alpha == 0.0
+        return from
+    if alpha == 1.0
+        return to
+    return from * ( 1.0 - alpha ) + to * alpha
 
 //  this should work for any types of `from` and `to`
 //  provided the following functions exist
@@ -12,20 +12,25 @@
 //      *(typeof to, Float): ToProduct
 //      +(FromProduct, ToProduct)
 
-//  Vector2 = Float[ length: 2 ]
-//  Vector3 = Float[ length: 3 ]
-//  Vector4 = Float[ length: 4 ]
+Vector2 = [Float, Float]
+Vector3 = [Float, Float, Float]
+Vector4 = [Float, Float, Float, Float]
+Color = Vector4
 
-//  x = a = (this: Float[ length: >= 1 ]) => this[0]
-//  y = r = (this: Float[ length: >= 2 ]) => this[1]
-//  z = g = (this: Float[ length: >= 3 ]) => this[2]
-//  w = b = (this: Float[ length: >= 4 ]) => this[3]
+x(this: Float[ length: 2 .. 4 ]) => this[0]
+y(this: Float[ length: 2 .. 4 ]) => this[1]
+z(this: Float[ length: 3 .. 4 ]) => this[2]
+w(this: Float[ length: 4 .. 4 ]) => this[3]
+r(this: Color) => this[0]
+g(this: Color) => this[1]
+b(this: Color) => this[2]
+a(this: Color) => this[3]
 
-//  reduce = (c, accumulator = (a, b): Infer, initial) =>
-//      result = initial
-//      for item in c
-//          result = accumulator(result, item)
-//      return result
+// reduce = (c, accumulator = (left, right): Infer, initial) =>
+//     result = initial
+//     for item in c
+//         result := accumulator(result, item)
+//     return result
 
 //  sum = (c, initial) => reduce(c, `+`, initial)
 

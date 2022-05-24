@@ -2,6 +2,12 @@ import { Phase } from "./Phase";
 import { Container } from "../ast/Container";
 import { traverseWithScope } from "./createScopeMaps";
 import { Expression } from "../ast/Expression";
+import { Function } from "../ast/Function";
+import { skip } from "../traverse";
+
+export function isInferFunction(node): node is Function {
+    return node.parameters.some(p => p.type == null);
+}
 
 export function typeInference(moduleName, module, externals: Map<string, Container>): ReturnType<Phase> {
     let errors!: Error[];
@@ -9,6 +15,15 @@ export function typeInference(moduleName, module, externals: Map<string, Contain
     let result = traverseWithScope(externals, module, (c) => {
         errors = c.errors;
         return {
+            enter(node) {
+                if (node instanceof Function) {
+                    if (isInferFunction(node)) {
+                        //  we don't type analyze infer functions.
+                        //  they have to be instantiated per type before analysis
+                        return skip;
+                    }
+                }
+            },
             leave(node) {
                 if (node instanceof Expression && !node.resolved) {
                     let _original = node;

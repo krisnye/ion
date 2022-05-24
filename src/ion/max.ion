@@ -1,6 +1,6 @@
 
 @Native("(a, b) => ({ ...a, value: Math.max(a.value, b.value) })")
-max = (a: Integer, b: Integer) => 0
+max(a: Integer, b: Integer) => 0
 
 @Native("(a, b) => ({ ...a, value: Math.max(a.value, b.value) })")
-max = (a: Float, b: Float) => 0
+max(a: Float, b: Float) => 0

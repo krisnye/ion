@@ -1,3 +1,3 @@
 
 @Native("(a) => ({ ...a, value: Math.sqrt(a.value) })")
-sqrt = (a: >= 0.0): Float => 0.0
+sqrt(a: >= 0.0): Float => 0.0

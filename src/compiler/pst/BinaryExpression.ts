@@ -25,7 +25,7 @@ export class BinaryExpression extends Expression {
         return `${this.left} ${this.operator} ${this.right}`;
     }
 
-    static *split(e: Expression, operator: string): Iterable<Expression> {
+    static *split(e, operator: string): Iterable<Expression> {
         if (e instanceof BinaryExpression && e.operator.value === operator) {
             yield* BinaryExpression.split(e.left as Expression, operator)
             yield* BinaryExpression.split(e.right as Expression, operator)

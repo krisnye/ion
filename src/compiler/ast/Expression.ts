@@ -28,7 +28,7 @@ export class Expression extends Node implements Required<ExpressionProps> {
     *getDependencies(c: EvaluationContext): Generator<Expression> {
     }
 
-    private areAllDependenciesResolved(c: EvaluationContext) {
+    protected areAllDependenciesResolved(c: EvaluationContext) {
         for (const dep of this.getDependencies(c)) {
             if (!dep.resolved) {
                 return false;

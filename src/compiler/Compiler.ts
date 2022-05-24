@@ -74,7 +74,7 @@ export class Compiler {
             for (let i = errors.length - 1; i >= 0; i--) {
                 let error = errors[i];
                 if (error instanceof SemanticError) {
-                    let { filename } = error.locations[0];
+                    let { filename } = error.locations?.[0] ?? { filename: "" };
                     let isExpectedToFail = filename.indexOf("test.fail.") === 0;
                     if (isExpectedToFail) {
                         modules.delete(filename);
