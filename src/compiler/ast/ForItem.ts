@@ -1,8 +1,4 @@
-import { toMetaString } from "./MetaContainer";
-import { isTypeName } from "../utility";
-import { Expression, ExpressionProps } from "./Expression";
 import { EvaluationContext } from "../EvaluationContext";
-import { isSubtype } from "../analysis/isSubtype";
 import { SemanticError } from "../SemanticError";
 import { Variable, VariableProps } from "./Variable";
 import { For } from "./For";

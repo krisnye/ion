@@ -38,10 +38,10 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
                 if (node instanceof TypeReference) {
                     // convert References to Float or Integer to NumberTypes
                     if (node.name === coreTypes.Float) {
-                        return new NumberType({ location: node.location, integer: false }) as any
+                        return new NumberType({ location: node.location, step: false }) as any
                     }
                     if (node.name === coreTypes.Integer) {
-                        return new NumberType({ location: node.location, integer: true }) as any
+                        return new NumberType({ location: node.location, step: true }) as any
                     }
                 }
 

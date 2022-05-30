@@ -1,14 +1,10 @@
 import { Phase } from "./Phase";
-import { traverse, skip } from "../traverse";
 import { isType } from "../ast/Type";
 import { traverseWithScope } from "./createScopeMaps";
 import { TypeReference } from "../ast/TypeReference";
 import { Class } from "../ast/Class";
 import { SemanticError } from "../SemanticError";
 import { IntersectionType } from "../ast/IntersectionType";
-import { Reference } from "../ast/Reference";
-import { BinaryExpression } from "../ast/BinaryExpression";
-import { TypeOperators } from "../analysis/TypeOperators";
 import { UnionType } from "../ast/UnionType";
 import { isSubtype } from "../analysis/isSubtype";
 

@@ -7,6 +7,8 @@ import { Node } from "../Node";
 import { SemanticError } from "../SemanticError";
 import { traverse, skip, Lookup } from "../traverse";
 import { isScope } from "../ast/Scope";
+import { Function } from "../ast/Function";
+import { isSSAVersionName } from "./ssaForm";
 
 export type NodeMap<T> = {
     get(node: Node | null): T
@@ -34,20 +36,23 @@ export default function createScopeMaps(root, externals?: Map<string,Container>)
     let map = new Map<Node | null, ScopeMap>();
     map.set(null, globalScope);
     let scopes: ScopeMap[] = [globalScope];
+    let functionScopes: ScopeMap[] = [globalScope];
 
     traverse(root, {
         // lookup,
         enter(node) {
             //  get the current scope
             let scope = scopes[scopes.length - 1];
+            let functionScope = functionScopes[functionScopes.length - 1];
             //  save a map from this nodes location to it's scope
             map.set(node, scope);
-            function pushScope() {
-                scopes.push(scope = Object.create(scope));
-            }
 
             if (isScope(node)) {
-                pushScope();
+                let newScope = scope = Object.create(scope);
+                scopes.push(newScope);
+                if (node instanceof Function) {
+                    functionScopes.push(newScope);
+                }
             }
 
             if (node instanceof Variable) {
@@ -56,6 +61,11 @@ export default function createScopeMaps(root, externals?: Map<string,Container>)
                     throw new SemanticError(`Cannot redeclare '${node.id.name}'. Did you mean to reassign with ':='?`, node);
                 }
                 scope[node.id.name] = node;
+                if (isSSAVersionName(node.id.name)) {
+                    //  SSA variables must be put in function scope so they can be used by
+                    //  PHI functions that reference the variables from previous conditionals
+                    functionScope[node.id.name] = node;
+                }
             }
         },
         leave(node) {
@@ -68,7 +78,10 @@ export default function createScopeMaps(root, externals?: Map<string,Container>)
     return map as NodeMap<ScopeMap>;
 }
 
-export type GetVariableFunction = (ref: Reference) => Variable;
+export type GetVariableFunction = {
+    (ref: Reference): Variable;
+    (node: Node, name?: string): Variable;
+}
 
 export function traverseWithScope(
     externals: Map<string,Container>,
@@ -77,10 +90,13 @@ export function traverseWithScope(
 ): any {
     let lookup = new Lookup();
     let scopeMaps = createScopeMaps(node, externals);
-    function getVariable(ref: Reference): Variable {
+    function getVariable(ref: Reference | Node, name?: string): Variable {
+        if (name == null) {
+            name = (ref as Reference).name;
+        }
         let original = lookup.getOriginal(ref);
         let scope = scopeMaps.get(original) ?? scopeMaps.get(null);
-        return scope[ref.name];
+        return scope[name];
     }
     let c = new EvaluationContext(getVariable, lookup);
     let visitor = callback(c);

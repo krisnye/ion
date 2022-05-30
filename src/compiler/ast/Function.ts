@@ -33,6 +33,11 @@ export class Function extends FunctionBase implements Callable {
         throw new Error();
     }
 
+    //  Scope.nodes
+    get nodes() {
+        return [...this.parameters, this.body];
+    }
+
     getReturnType(argTypes: Type[], c: EvaluationContext): Type {
         let native = getMetaCall(this, coreTypes.Native);
         if (native) {
@@ -61,12 +66,13 @@ export class Function extends FunctionBase implements Callable {
     }
 
     protected resolve(c: EvaluationContext): Expression {
-        const finalTypes = [...getFinalExpressions(this.body)].map(node => node.type!);
+        let finalExpressions = [...getFinalExpressions(this.body)];
+        const finalTypes = finalExpressions.map(node => node.type!);
         const inferredType = UnionType.join(...finalTypes)!;
         if (this.returnType != null) {
             const result = isSubtype(inferredType, this.returnType, c);
             if (result !== true) {
-                c.errors.push(new SemanticError(`Actual return type ${inferredType} ${result == false ? `does` : `may`} not match declared type`, this.returnType));
+                c.errors.push(new SemanticError(`Actual return type ${inferredType} ${result == false ? `does` : `may`} not match declared type ${this.returnType}`, this.returnType));
             }
         }
         const returnType = this.returnType ?? inferredType;
@@ -78,20 +84,11 @@ export class Function extends FunctionBase implements Callable {
         return this.patch({ returnType, type });
     }
 
-    evaluate(call: Call, c: EvaluationContext): Node | Error[] {
-        throw new Error("Function.evaluate not implemented");
-        // let properties = checkParameters(this, this.parameters, call.nodes, getVariable);
-        // if (properties[0] instanceof Error) {
-        //     return properties as Error[];
-        // }
+    evaluate(c: EvaluationContext, call: Call): Expression {
+        // is a native javascript function
+        let native = getMetaCall(this, coreTypes.Native);
+        let args = call.nodes.map(arg => arg.toInterpreterInstance(c));
 
-        // // is a native javascript function
-        // let native = getMetaCall(this, coreTypes.Native);
-        // if (!native) {
-        //     return [new SemanticError(`Interpreting not implemented yet`, call)];
-        // }
-
-        // let args = call.nodes.map(arg => arg.toInterpreterInstance(getVariable));
         // let source = native.getValue("javascript");
         // if (!(source instanceof StringLiteral)) {
         //     return [new SemanticError(`Native function missing javascript source`, call)];
@@ -100,6 +97,7 @@ export class Function extends FunctionBase implements Callable {
         // let interpreterResult = javascriptFunction(...args);
 
         // return instanceToNode(interpreterResult, call.location);
+        throw new SemanticError("No Evaluate Yet", this);
     }
 
     toString() {

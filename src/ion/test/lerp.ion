@@ -27,12 +27,10 @@ b(this: Color) => this[2]
 a(this: Color) => this[3]
 
 // reduce = (c, accumulator = (left, right): Infer, initial) =>
-//     result = initial
 //     for item in c
-//         result := accumulator(result, item)
-//     return result
+//         initial := accumulator(initial, item)
+//     return initial
 
-//  sum = (c, initial) => reduce(c, `+`, initial)
+// sum = (c, initial) => reduce(c, `+`, initial)
 
-//  distance = (c, initial) => reduce(c, (a, b) => a + b ** 2.0, initial) ** 0.5
-
+// distance = (c, initial) => reduce(c, (left, right) => left + right ** 2.0, initial) ** 0.5

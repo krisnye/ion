@@ -1,3 +1,4 @@
+import { AnyType } from "../ast/AnyType"
 import { CompoundType } from "../ast/CompoundType"
 import { IntersectionType } from "../ast/IntersectionType"
 import { NumberType, overlaps } from "../ast/NumberType"
@@ -14,10 +15,7 @@ import { EvaluationContext } from "../EvaluationContext"
  * Returns null if some instances of type 'a' could be instances of type 'b'
  */
  export function isSubtype(a: Type | null, b: Type | null, c: EvaluationContext): boolean | null {
-    if (a === b || a?.toString() === b?.toString()) {
-        return true
-    }
-    if (b == null) {
+    if (a === b || a?.toString() === b?.toString() || b == null || a instanceof AnyType) {
         return true
     }
     if (a == null) {
@@ -63,7 +61,7 @@ import { EvaluationContext } from "../EvaluationContext"
     // number type comparison
     if (a instanceof NumberType) {
         if (b instanceof NumberType) {
-            if (a.integer !== b.integer) {
+            if (a.step !== b.step) {
                 return false;
             }
             if ((b.min == null || overlaps(a.min, b.min, a.minExclusive < b.minExclusive) === true) &&

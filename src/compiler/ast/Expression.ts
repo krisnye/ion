@@ -30,6 +30,9 @@ export class Expression extends Node implements Required<ExpressionProps> {
 
     protected areAllDependenciesResolved(c: EvaluationContext) {
         for (const dep of this.getDependencies(c)) {
+            if (dep == null) {
+                console.log("ERROR, undefined dep: " + this.constructor.name);
+            }
             if (!dep.resolved) {
                 return false;
             }

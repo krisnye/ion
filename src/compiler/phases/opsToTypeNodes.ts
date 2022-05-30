@@ -21,6 +21,8 @@ import { SourceLocation } from "../SourceLocation";
 import { Call as PstCall } from "../pst/Call";
 import { Member } from "../ast/Member";
 import { coreTypes } from "../coreTypes";
+import { Reference } from "../ast/Reference";
+import { TypeofExpression } from "../ast/TypeofExpression";
 
 export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
     let errors = new Array<Error>();
@@ -61,7 +63,7 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
             if (isTypeMode) {
                 // perform type mode conversions here.
                 if (node instanceof NumberLiteral) {
-                    node = new NumberType({ location, min: node, max: node, integer: node.integer });
+                    node = new NumberType({ location, min: node, max: node, step: node.integer });
                 }
                 if (node instanceof UnaryOperation) {
                     switch (node.operator.value) {
@@ -77,6 +79,9 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
                         case "<=":
                             node = new NumberType({ location, max: node.value, maxExclusive: false });
                             break;
+                        case "typeof":
+                            node = new TypeofExpression({ location, value: node.value });
+                            break;    
                         case "!=":
                             node = new UnionType({
                                 location,
@@ -112,9 +117,12 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
                     });
                 }
                 if (node instanceof Member) {
-                    let { object } = node;
+                    let { object, property } = node;
                     if (!(object instanceof Identifier) || !isTypeName(object.name)) {
                         throw new SemanticError(`Expected type name`, object);
+                    }
+                    if (object instanceof Identifier) {
+                        object = new TypeReference(object);
                     }
                     node = buildObjectType(
                         [
@@ -124,9 +132,9 @@ export function opsToTypeNodes(moduleName, module): ReturnType<Phase> {
                                     location,
                                     name: coreTypes.Integer
                                 }),
-                                value: node.object
+                                value: object
                             }),
-                            node.property as Expression,
+                            property as Expression,
                         ],
                         location,
                         "["
@@ -227,7 +235,7 @@ function inferArrayLength(items: (Expression | Pair)[], location: SourceLocation
         if (item instanceof BinaryExpression) {
             let { left } = item;
             if (left instanceof NumberType) {
-                let { min, max, integer } = left;
+                let { min, max, step: integer } = left;
                 if (!integer) {
                     throw new SemanticError(`Arrays can only have integer indices`, left);
                 }
@@ -251,7 +259,7 @@ function inferArrayLength(items: (Expression | Pair)[], location: SourceLocation
             location,
             min: new NumberLiteral({ location, value: maxLength, integer: true }),
             max: new NumberLiteral({ location, value: maxLength, integer: true }),
-            integer: true
+            step: true
         });
     }
     if (minLength === items.length) {

@@ -12,6 +12,7 @@ export enum BasicType {
     Array       = 1 << 5,
     Map         = 1 << 6,
     Function    = 1 << 7,
+    Type        = 1 << 8,
     All         = 0xFF,
 }
 

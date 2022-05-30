@@ -15,6 +15,7 @@ export class Parser {
     private tokens: Token[] = [];
     private prefixParselets: { [key in keyof typeof tokenTypes]?: PrefixParselet };
     private infixParselets: { [key in keyof typeof tokenTypes]?: InfixParselet };
+    private parseOutline = true;
 
     constructor(
         prefixParselets: { [key in keyof typeof tokenTypes]?: PrefixParselet },
@@ -113,7 +114,7 @@ export class Parser {
     }
 
     maybeParseBlock() : Block | null {
-        if (this.peek(tokenTypes.Eol.name, 0) && this.peek(tokenTypes.Indent.name, 1)) {
+        if (this.parseOutline && this.peek(tokenTypes.Eol.name, 0) && this.peek(tokenTypes.Indent.name, 1)) {
             return this.parseBlock();
         }
         else {
@@ -158,6 +159,14 @@ export class Parser {
 
     whitespace() {
         return this.maybeConsume(tokenTypes.Whitespace.name);
+    }
+
+    parseInlineExpression(precedence: number = 0): Node {
+        let save = this.parseOutline;
+        this.parseOutline = false;
+        let result = this.parseExpression(precedence);
+        this.parseOutline = save;
+        return result;
     }
 
     parseExpression(precedence: number = 0): Node {

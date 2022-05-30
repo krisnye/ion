@@ -48,8 +48,8 @@ export class UnionType extends CompoundType {
         return this.patch({ left, right });
     }
 
-    static join(...types: Type[]): Type | null
-    static join(type: Type, ...types: Type[]): Type
+    static join(...types: (Type | null)[]): Type | null
+    static join(type: Type, ...types: (Type | null)[]): Type
     static join(...types: Type[]): Type | null {
         let left = types[0] ?? null;
         for (let i = 1; i < types.length; i++) {

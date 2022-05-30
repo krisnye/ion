@@ -194,7 +194,6 @@ export class Compiler {
                     }
                 }
             }
-    
         } catch (e) {
             this.printErrorConsole(e, sources);
             return Array.isArray(e) ? e : [e];
@@ -202,7 +201,7 @@ export class Compiler {
             if (modules.size === 0) {
                 throw new Error("Expected modules");
             }
-            logger(null, [...modules.keys()]);
+            logger(null, [...modules.keys()].filter(name => this.logModule(name)));
         }
 
         return modules;
@@ -226,7 +225,14 @@ export class Compiler {
         }
     }
 
+    logFilter = new Set([ "test.sample" ])
+    logModule(name: string) {
+        return this.logFilter && this.logFilter.has(name);
+    }
     log(logger: PhaseLogger, phase: string, module: any, name: string) {
+        if (!this.logModule(name)) {
+            return;
+        }
         let viewAsCode = !Array.isArray(module);
         if (viewAsCode) {
             module = module.toString();

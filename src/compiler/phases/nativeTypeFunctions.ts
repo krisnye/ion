@@ -83,7 +83,7 @@ function calculateAbsType(node: Node, a: NumberType) {
     let max = BinaryExpression(location, "max", absMin, absMax);
     let minExclusive = sameSign ? a.minExclusive || a.maxExclusive : false;
     let maxExclusive = a.minExclusive || a.maxExclusive;
-    return new NumberType({ location, min, max, minExclusive, maxExclusive, integer });
+    return new NumberType({ location, min, max, minExclusive, maxExclusive, step: integer });
 }
 
 function calculateAdditiveType(node: Node, [a, b]: NumberType[], operator: "+" | "min" | "max") {
@@ -98,7 +98,7 @@ function calculateAdditiveType(node: Node, [a, b]: NumberType[], operator: "+" |
     }
     let minExclusive = a.minExclusive || b.minExclusive;
     let maxExclusive = a.maxExclusive || b.maxExclusive;
-    return new NumberType({ location, min, max, minExclusive, maxExclusive, integer: a.integer });
+    return new NumberType({ location, min, max, minExclusive, maxExclusive, step: a.step });
 }
 
 function calculateInverse(node: Node, a: NumberType): NumberType | UnionType {
@@ -112,12 +112,12 @@ function calculateInverse(node: Node, a: NumberType): NumberType | UnionType {
     let maxExclusive = a.minExclusive;
     if (hasZero) {
         return UnionType.join(
-            new NumberType({ location, max, minExclusive: false, maxExclusive, integer: a.integer }),
-            new NumberType({ location, min, minExclusive, maxExclusive: false, integer: a.integer }),
+            new NumberType({ location, max, minExclusive: false, maxExclusive, step: a.step }),
+            new NumberType({ location, min, minExclusive, maxExclusive: false, step: a.step }),
         ) as UnionType;
     }
     else {
-        return new NumberType({ location, min, max, minExclusive, maxExclusive, integer: a.integer });
+        return new NumberType({ location, min, max, minExclusive, maxExclusive, step: a.step });
     }
 }
 
@@ -152,7 +152,7 @@ function calculateRemainder(node: Node, [a, b]: NumberType[], c: EvaluationConte
     }
 
     if (b.min == null || b.max == null) {
-        return new NumberType({ location, integer });
+        return new NumberType({ location, step: integer });
     }
 
     const positiveOrZero = new NumberType({ location, min: NumberLiteral.fromConstant(0, location, integer) })
@@ -165,15 +165,15 @@ function calculateRemainder(node: Node, [a, b]: NumberType[], c: EvaluationConte
     let absMax = UnaryOperation(location, "abs", b.max);
     if (a_alwaysPositiveOrZero) {
         // if a > 0 then a % b is [0, < b1]
-        return new NumberType({ location, min: zeroLiteral, max: absMax, maxExclusive: true, integer });
+        return new NumberType({ location, min: zeroLiteral, max: absMax, maxExclusive: true, step: integer });
     }
     let negativeAbsMax = UnaryOperation(location, "-", absMax);
     if (a_alwaysNegativeOrZero) {
         // if a < 0 then a % b is [-b1,0]
-        return new NumberType({ location, min: negativeAbsMax, max: zeroLiteral, integer });
+        return new NumberType({ location, min: negativeAbsMax, max: zeroLiteral, step: integer });
     }
     // a % b is [-b1,b1]
-    return new NumberType({ location, min: negativeAbsMax, max: absMax, minExclusive: true, maxExclusive: true, integer });
+    return new NumberType({ location, min: negativeAbsMax, max: absMax, minExclusive: true, maxExclusive: true, step: integer });
 }
 
 function calculateMonotonic(node: Node, a: NumberType, operator: string) {
@@ -187,7 +187,7 @@ function calculateNegation(node: Node, a: NumberType) {
     const { location } = node;
     const { integer } = a;
     const zero = new NumberLiteral({ location, integer, value: 0, resolved: true });
-    return calculateSubtractiveType(node, [new NumberType({ location, integer, min: zero, max: zero }), a], "-");
+    return calculateSubtractiveType(node, [new NumberType({ location, step: integer, min: zero, max: zero }), a], "-");
 }
 
 function calculateSubtractiveType(node: Node, [a, b]: NumberType[], operator: "-") {
@@ -196,7 +196,7 @@ function calculateSubtractiveType(node: Node, [a, b]: NumberType[], operator: "-
     let max = a.max && b.min ? BinaryExpression(location, operator, a.max, b.min) : undefined;
     let minExclusive = a.minExclusive || b.maxExclusive;
     let maxExclusive = a.maxExclusive || b.minExclusive;
-    return new NumberType({ location, min, max, minExclusive, maxExclusive, integer: a.integer });
+    return new NumberType({ location, min, max, minExclusive, maxExclusive, step: a.step });
 }
 
 function calculateMultiplicativeType(node: Node, [a, b]: NumberType[], operator: "*" | "**", integer: boolean | null) {
@@ -234,7 +234,7 @@ function calculateMultiplicativeType(node: Node, [a, b]: NumberType[], operator:
         max: max != Number.POSITIVE_INFINITY ? new NumberLiteral({ location, integer: a.integer, value: max, resolved: true  }) : undefined,
         minExclusive,
         maxExclusive,
-        integer: a.integer,
+        step: a.step,
     });
 }
 

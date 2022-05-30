@@ -9,6 +9,7 @@ import { isSubtype } from "../analysis/isSubtype";
 import { SemanticError } from "../SemanticError";
 import { Type } from "./Type";
 import { Node } from "../Node";
+import { getSSAOriginalName } from "../phases/ssaForm";
 
 export interface VariableProps extends ExpressionProps {
     id: Identifier
@@ -26,30 +27,48 @@ export class Variable extends Expression implements Declaration {
     patch(props: Partial<VariableProps>) { return super.patch(props); }
 
     *getDependencies(c: EvaluationContext) {
+        if (this.type) {
+            yield this.type;
+        }
         if (this.value instanceof Expression) {
             yield this.value;
         }
+        let originalName = getSSAOriginalName(this.id.name);
+        if (originalName !== this.id.name) {
+            let originalVariable = c.getVariable(this, originalName);
+            yield originalVariable;
+        }
     }
 
-    ensureAssignmentValid(c: EvaluationContext, value: Expression, isInitial = false) {
-        if (this.constant && !isInitial) {
-            throw new SemanticError(`Cannot reassign constant ${this.id.name}`, value);
-        }
-        if (this.type && value.type) {
-            // check if value type is assignable to this.
-            let isValueASubtype = isSubtype(value.type, this.type, c);
-            if (isValueASubtype === false) {
-                throw new SemanticError(`Type ${value.type} cannot be assigned to variable of type ${this.type}`, value);
-            }
-            if (isValueASubtype === null) {
-                throw new SemanticError(`Type ${value.type} may not be assignable to variable of type ${this.type}`, value);
-            }
-        }
-    }
+    // ensureAssignmentValid(c: EvaluationContext, value: Expression, isInitial = false) {
+    // }
 
     resolveType(c: EvaluationContext) {
-        if (this.type && this.value?.type) {
-            this.ensureAssignmentValid(c, this.value, true);
+        const { value, type } = this;
+        let isInitial = true;
+        let checkVariable: Variable = this;
+        let originalName = getSSAOriginalName(this.id.name);
+        if (originalName !== this.id.name) {
+            checkVariable = c.getVariable(this, originalName);
+            isInitial = false;
+        }
+        if (checkVariable.type && value?.type) {
+            if (checkVariable.constant && !isInitial) {
+                throw new SemanticError(`Cannot reassign constant ${this.id.name}`, value);
+            }
+            if (checkVariable.type && value.type) {
+                // check if value type is assignable to this.
+                let isValueASubtype = isSubtype(value.type, checkVariable.type, c);
+                if (isValueASubtype === false) {
+                    if (this.id.name === "test.sample.y#1") {
+                        debugger;
+                    }
+                    throw new SemanticError(`Type ${value.type} cannot be assigned to variable of type ${checkVariable.type}`, value);
+                }
+                if (isValueASubtype === null) {
+                    throw new SemanticError(`Type ${value.type} may not be assignable to variable of type ${checkVariable.type}`, value);
+                }
+            }
         }
         return this.type ?? this.value?.type ?? null;
     }

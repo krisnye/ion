@@ -1,5 +1,4 @@
-import { SourceLocation } from "../compiler/SourceLocation";
-import { classIds } from "./classIds";
+import { coreTypes } from "../compiler/coreTypes";
 
 export type TypeId = string;
 export type ClassId = string;
@@ -12,17 +11,17 @@ export interface BaseInstance {
 }
 
 export interface IntegerInstance extends BaseInstance {
-    type: classIds.Integer
+    type: typeof coreTypes.Integer
     value: IntegerValue
 }
 
 export interface FloatInstance extends BaseInstance {
-    type: classIds.Float
+    type: typeof coreTypes.Float
     value: FloatValue
 }
 
 export interface StringInstance extends BaseInstance {
-    type: classIds.String
+    type: typeof coreTypes.String
     value: StringValue
 }
 
@@ -31,7 +30,7 @@ export interface ObjectInstance extends BaseInstance {
 }
 
 export interface ArrayInstance extends BaseInstance {
-    type: classIds.Array
+    type: typeof coreTypes.Array
     value: ArrayValue
 }
 
@@ -48,13 +47,13 @@ export type ArrayValue = Instance[];
 export type Value = IntegerValue | FloatValue | StringValue | ObjectValue | ArrayValue;
 
 export function isIntegerInstance(instance: Instance): instance is IntegerInstance {
-    return instance.type === classIds.Integer;
+    return instance.type === coreTypes.Integer;
 }
 
 export function isFloatInstance(instance: Instance): instance is FloatInstance {
-    return instance.type === classIds.Float;
+    return instance.type === coreTypes.Float;
 }
 
 export function isStringInstance(instance: Instance): instance is StringInstance {
-    return instance.type === classIds.String;
+    return instance.type === coreTypes.String;
 }

@@ -7,6 +7,7 @@ import { Expression, ExpressionProps } from "./Expression";
 import { EvaluationContext } from "../EvaluationContext";
 import { isSubtype } from "../analysis/isSubtype";
 import { Scope } from "./Scope";
+import { Node } from "../Node";
 
 export interface FunctionBaseProps extends ExpressionProps {
     parameters: Variable[];
@@ -14,7 +15,7 @@ export interface FunctionBaseProps extends ExpressionProps {
     meta: MetaCall[];
 }
 
-export class FunctionBase extends Expression implements MetaContainer, Scope {
+export abstract class FunctionBase extends Expression implements MetaContainer, Scope {
 
     parameters!: Variable[];
     returnType!: Type | null;
@@ -25,6 +26,10 @@ export class FunctionBase extends Expression implements MetaContainer, Scope {
 
     get isScope() {
         return true;
+    }
+
+    get nodes(): Node[] {
+        return this.parameters;
     }
 
     areArgumentsValid(argTypes: Type[], c: EvaluationContext) : boolean {

@@ -35,7 +35,8 @@ export interface NumberTypeProps extends BaseTypeProps {
     max?: Node;
     minExclusive?: boolean;
     maxExclusive?: boolean;
-    integer?: boolean | null;
+    step?: boolean | number | null;
+    offset?: number;
 }
 
 export class NumberType extends BaseType {
@@ -44,25 +45,22 @@ export class NumberType extends BaseType {
     max?: Expression;
     minExclusive!: boolean;
     maxExclusive!: boolean;
-    integer!: boolean | null;
+    step!: number;
 
     constructor(props: NumberTypeProps) {
-        // we need to get rid of the fucking integer property.
         if (props.min instanceof NumberLiteral) {
-            props.integer = props.min.integer;
+            props.step = props.min.integer;
         }
         else if (props.max instanceof NumberLiteral) {
-            props.integer = props.max.integer;
+            props.step = props.max.integer;
         }
-        else if (props.integer === undefined) {
-            props.integer = null;
-        }
+        props.step = Boolean(props.step);
         if (props.min instanceof NumberLiteral && props.min.value === Number.POSITIVE_INFINITY) {
             props.min = undefined;
         }
         if (props.max instanceof NumberLiteral && props.max.value === Number.NEGATIVE_INFINITY) {
             props.max = undefined;
-        }    
+        }
         if (props.min instanceof NumberLiteral) {
             props.min = props.min.patch({ resolved: true });
         }
@@ -73,12 +71,16 @@ export class NumberType extends BaseType {
     }
 
     getBasicTypes() {
-        return this.integer ? BasicType.Integer : BasicType.Float;
+        return this.step ? BasicType.Integer : BasicType.Float;
+    }
+
+    get integer() {
+        return this.step > 0;
     }
 
     static fromConstant(value: number, location: SourceLocation, integer: boolean | null | undefined = value === Math.trunc(value)) {
         let literalValue = NumberLiteral.fromConstant(value, location, integer).patch({ resolved: true });
-        return new NumberType({ location, min: literalValue, max: literalValue, integer });
+        return new NumberType({ location, min: literalValue, max: literalValue, step: integer });
     }
 
     isConstant(value: number) {
@@ -100,7 +102,7 @@ export class NumberType extends BaseType {
                 location,
                 left: dot,
                 operator: TypeOperators.is,
-                right: new Reference({ location, name: this.integer ? coreTypes.Integer : coreTypes.Float})
+                right: new Reference({ location, name: this.step ? coreTypes.Integer : coreTypes.Float})
             }),
             this.min == null
                 ? null
@@ -149,7 +151,7 @@ export class NumberType extends BaseType {
 
     toString() {
         if (this.min == null && this.max == null) {
-            return `(${this.integer ? coreTypes.Integer : coreTypes.Float})`;
+            return `(${this.step ? coreTypes.Integer : coreTypes.Float})`;
         }
         if (this.min && this.max && this.min.toString() === this.max.toString()) {
             return `(${this.min})`;
@@ -222,7 +224,7 @@ export class NumberType extends BaseType {
             max: max as Node,
             minExclusive,
             maxExclusive,
-            integer: a.integer
+            step: a.step
         })
     }
 
@@ -232,10 +234,10 @@ export class NumberType extends BaseType {
             // if one has min but no max and the other has no min then combine them.
             if (a != null && b != null) {
                 if (a.min != null && a.max == null && b.min == null) {
-                    return new NumberType({ location, min: a.min, minExclusive: a.minExclusive, max: b.max, maxExclusive: b.maxExclusive, integer: a.integer });
+                    return new NumberType({ location, min: a.min, minExclusive: a.minExclusive, max: b.max, maxExclusive: b.maxExclusive, step: a.step });
                 }
                 if (b.min != null && b.max == null && a.min == null) {
-                    return new NumberType({ location, min: b.min, minExclusive: b.minExclusive, max: a.max, maxExclusive: a.maxExclusive, integer: a.integer });
+                    return new NumberType({ location, min: b.min, minExclusive: b.minExclusive, max: a.max, maxExclusive: a.maxExclusive, step: a.step });
                 }
             }
             return null
@@ -261,7 +263,7 @@ export class NumberType extends BaseType {
         if (min && max && (min.value > max.value || min.value == max.value && (minExclusive || maxExclusive))) {
             return null
         }
-        let result = new NumberType({ location, min, max, minExclusive, maxExclusive, integer: a.integer }) as LiteralNumberType
+        let result = new NumberType({ location, min, max, minExclusive, maxExclusive, step: a.step }) as LiteralNumberType
         return result
     }
 

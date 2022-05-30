@@ -87,8 +87,10 @@ Cross platform modeling language
   - [x] Object Type to use Map
   - [x] toComparisonType to simplify all objects to an ObjectType.
   - [-] NumberType needs min/max to use POSITIVE_INFINITY or NEGATIVE_INFINITY.
-  - [ ] Static Single Assignment?
-    - [ ] How to infer the PHI functions of re-merging variable type after block?
+  - [x] Static Single Assignment?
+    - [x] How to infer the PHI functions of re-merging variable type after block?
+  - [ ] Need separate DeclaredType and InferredType on Variables.
+  - [ ] Test that semantic analysis is providing better type checking.
   - [ ] Conditional Declarations => inferred Types
   - [ ] Semantic checks.
   - [ ] Some Type Inference must be done in assembled phase.
@@ -100,7 +102,7 @@ Cross platform modeling language
   - [ ] class instance functions to static functions
   - [x] class inheritance for type checking
   - [ ] uniform function call syntax
-
+2015737048
   A reference to a Class is both a "Type" and a "value".
     Variable
       value:

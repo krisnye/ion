@@ -12,8 +12,8 @@ import { pstModulesToAst } from "./pstModulesToAst";
 import { createMultiFunctions } from "./createMultiFunctions";
 import { removeSoloBlocks } from "./removeSoloBlocks";
 import { moveMetaToFunctions } from "./moveMetaToFunctions";
-import { checkForUnresolvedExpressions } from "./checkForUnresolvedExpressions";
 import { validateTypeDeclarations } from "./validateTypeDeclarations";
+import { ssaForm } from "./ssaForm";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -26,6 +26,7 @@ export const parsingPhases: Phase[] = [
     moveMetaToFunctions,
     createMultiFunctions,
     resolveExternalReferences,
+    ssaForm,
     //  MUST be solo up to this point so we can get external dependencies.
 ];
 

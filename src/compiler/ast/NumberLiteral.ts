@@ -1,3 +1,4 @@
+import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { Serializable } from "../Serializable";
 import { SourceLocation } from "../SourceLocation";
@@ -30,11 +31,15 @@ export class NumberLiteral extends Literal {
         return new NumberLiteral({ location, value, integer });
     }
 
+    toInterpreterInstance(c: EvaluationContext) {
+        return { "" : this.integer ? coreTypes.Integer : coreTypes.Float, value: this.value };
+    }
+
     protected resolveType(c: EvaluationContext): Type {
         const value = new NumberLiteral({ ...this, resolved: true });
         return new NumberType({
             location: this.location,
-            integer: this.integer,
+            step: this.integer,
             min: value,
             max: value,
         });

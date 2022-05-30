@@ -13,7 +13,7 @@ export class ForParselet extends PrefixParselet {
         p.whitespace();
         p.consume(tokenTypes.In.name);
         p.whitespace();
-        let value = p.parseExpression();
+        let value = p.parseInlineExpression();
         p.whitespace();
         let body = p.parseBlock();
         return new For({

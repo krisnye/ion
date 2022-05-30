@@ -10,3 +10,8 @@
 
 @Native("(a, b) => ({ ...a, value: a.value * b.value })")
 `*`(a: Float, b: Integer): Float => 0.0
+
+@Native("(a, b) => ({ ...a, value: a.map(e => e * b) })")
+`*`(a: Float[], b: Float): Float[] => []
+
+`*`(a: Float, b: Float[]) => b * a 

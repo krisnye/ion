@@ -6,7 +6,9 @@ import { Expression } from "../ast/Expression"
 export default function *getFinalExpressions(node: Expression): Generator<Expression> {
     if (node instanceof Block) {
         let last = node.nodes[node.nodes.length - 1];
-        yield* getFinalExpressions(last);
+        if (last) {
+            yield* getFinalExpressions(last);
+        }
     }
     else if (node instanceof Conditional) {
         yield* getFinalExpressions(node.consequent)

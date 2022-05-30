@@ -1,5 +1,6 @@
 import { Block } from "../ast/Block";
 import { EvaluationContext } from "../EvaluationContext";
+import { Node } from "../Node";
 import { Expression, ExpressionProps } from "./Expression";
 import { ForItem } from "./ForItem";
 import { Scope } from "./Scope";
@@ -23,8 +24,11 @@ export class For extends Expression implements Scope {
     protected areAllDependenciesResolved(c: EvaluationContext) {
         return false;
     }
-    
+
     get isScope() { return true; }
+    get nodes(): Node[] {
+        return [this.left, this.right, this.body];
+    }
 
     toString() {
         return `for ${this.left} in ${this.right} ${this.body}`;

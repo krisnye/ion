@@ -26,6 +26,16 @@ export abstract class CompoundType extends BaseType {
 
     abstract toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression;
 
+    *getDependencies(c: EvaluationContext): Generator<Expression> {
+        yield this.left;
+        yield this.right;
+    }
+
+    protected resolve(c: EvaluationContext): Expression {
+        let resolved = super.resolve(c);
+        return resolved.simplify() as Type;
+    }
+
     protected simplifyInternal(union: boolean) {
         let left = this.left.simplify();
         let right = this.right.simplify();

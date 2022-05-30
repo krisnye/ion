@@ -1,15 +1,23 @@
 
-total: Float = 0.0
-array = [9.0, 7.0, 5.0]
-
-//  TODO: Fix this to correctly type the item type
-for value in array
-    total += value
-
-// i: 0 .. < 8
-// j = (8 + i) / 2
-// k = i + j
-
-// x: 0 .. < 10
-// y = 10 - x
-// z = x + y
+ssafunc(x: Float) =>
+    total: Float = 0.0
+    if x < 0
+        total += 10.0
+        //  look up ancestor chain to previous assignments/variables
+        //  find last named one. read from that. assign new number.
+        //  total#1 = total + 10.0
+        total += 50.0
+        //  total#2
+    else
+        total += 20.0
+        //  look up ancestor chain to previous assignments/variables
+        //  find last named one. read from that. assign new number.
+        //  total#3 = total + 10.0
+        total += 100.0
+        //  total#4
+    //  total#5: typeof total#3 | typeof total#4
+    //  if previous was a block then read both branches (and previous name if only 1 branch)
+    //  for each named variable found
+    //      add a new PHI variable with new name with type from both
+    total += 5.0
+    return total
