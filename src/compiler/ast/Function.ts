@@ -3,15 +3,17 @@ import { isSubtype } from "../analysis/isSubtype";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
-import { nativeTypeFunctions } from "../phases/nativeTypeFunctions";
+import { nativeTypeFunctions, TypeFunction } from "../phases/nativeTypeFunctions";
 import { SemanticError } from "../SemanticError";
 import { AnyType } from "./AnyType";
 import { Call } from "./Call";
 import { Callable } from "./Callable";
+import { CompoundType } from "./CompoundType";
 import { Expression } from "./Expression";
 import { FunctionBase, FunctionBaseProps } from "./FunctionBase";
 import { FunctionType } from "./FunctionType";
 import { Identifier } from "./Identifier";
+import { IntersectionType } from "./IntersectionType";
 import { getMetaCall, toMetaString } from "./MetaContainer";
 import { isType, Type } from "./Type";
 import { UnionType } from "./UnionType";
@@ -38,6 +40,22 @@ export class Function extends FunctionBase implements Callable {
         return [...this.parameters, this.body];
     }
 
+    getNativeReturnType(argTypes: Type[], nativeTypeFunction: TypeFunction, c: EvaluationContext) {
+        let compoundIndex = argTypes.findIndex(type => type instanceof CompoundType);
+        if (compoundIndex >= 0) {
+            let cArg = argTypes[compoundIndex];
+            let cType: typeof UnionType | typeof IntersectionType = cArg instanceof UnionType ? UnionType : IntersectionType;
+            let splitArgs = [...cType.split(cArg)];
+            let splitTypes = splitArgs.map(splitArgType => {
+                return this.getNativeReturnType(Object.assign(argTypes.slice(0), { [compoundIndex]: splitArgType }), nativeTypeFunction, c);
+            });
+            return cType.join(...splitTypes) as Type;
+        }
+        else {
+            return nativeTypeFunction(this, argTypes, c);
+        }
+    }
+
     getReturnType(argTypes: Type[], c: EvaluationContext): Type {
         let native = getMetaCall(this, coreTypes.Native);
         if (native) {
@@ -45,7 +63,7 @@ export class Function extends FunctionBase implements Callable {
             const nativeName = `${this.id!.name}(${types.join(`,`)})`;
             const nativeTypeFunction = nativeTypeFunctions[nativeName];
             if (nativeTypeFunction) {
-                return nativeTypeFunction(this, argTypes, c);
+                return this.getNativeReturnType(argTypes, nativeTypeFunction, c);
             }
         }
         if (isType(this.returnType)) {
@@ -57,11 +75,10 @@ export class Function extends FunctionBase implements Callable {
     }
 
     *getDependencies(c: EvaluationContext) {
-        for (const param of this.parameters) {
-            if (!param.type && param.value) {
-                yield param.value;
-            }
+        if (this.id?.name === "test.sample.ssafunc") {
+            console.log("ssafunc", [...this.parameters, ...getFinalExpressions(this.body)].filter(e => !e.resolved).join(", "));
         }
+        yield* this.parameters;
         yield* getFinalExpressions(this.body);
     }
 

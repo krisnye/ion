@@ -37,7 +37,7 @@ export class Call extends Container {
             let returnType = callable.getReturnType(types, c);
             if (returnType === null) {
                 if (callable instanceof MultiFunction) {
-                    console.log({ callee: this.callee });
+                    returnType = callable.getReturnType(types, c);
                     throw new SemanticError(`No function ${this.callee.toString()} found with arg types ${types.join(`, `)}`, this.location);
                 }
                 else {

@@ -12,7 +12,7 @@ export interface ExpressionProps {
 }
 
 export class Expression extends Node implements Required<ExpressionProps> {
-
+    
     type!: Type | null;
     resolved!: boolean;
     constant!: null | boolean;
@@ -63,7 +63,7 @@ export class Expression extends Node implements Required<ExpressionProps> {
         if (this.type == null) {
             return ``;
         }
-        return ` :${this.resolved ? `!` : ``} ${this.type}`;
+        return ` ${this.resolved ? `::` : `:`} ${this.type}`;
     }
 
     toJSON(): any {

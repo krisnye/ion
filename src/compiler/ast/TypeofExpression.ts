@@ -31,6 +31,9 @@ export class TypeofExpression extends BaseType {
         return BasicType.Type;
     }
 
+    // toComparisonType(c: EvaluationContext) {
+    // }
+
     toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
         throw new Error("Not implemented");
     }

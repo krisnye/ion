@@ -18,6 +18,9 @@ export class Reference extends Expression  {
 
     *getDependencies(c: EvaluationContext) {
         yield c.getVariable(this);
+        if (this.type) {
+            yield this.type;
+        }
     }
 
     protected resolveType(c: EvaluationContext): Type | null {

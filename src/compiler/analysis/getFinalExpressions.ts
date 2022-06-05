@@ -1,6 +1,7 @@
 import { Block } from "../ast/Block"
 import { Conditional } from "../ast/Conditional";
 import { Expression } from "../ast/Expression"
+import { Return } from "../ast/Return";
 
 //  TODO: Add Return Types, will need traverse with skipping Functions.
 export default function *getFinalExpressions(node: Expression): Generator<Expression> {
@@ -17,6 +18,10 @@ export default function *getFinalExpressions(node: Expression): Generator<Expres
         }
     }
     else {
+        if (node instanceof Return) {
+            //  either this or we could make
+            node = node.value;
+        }
         yield node
     }
 }

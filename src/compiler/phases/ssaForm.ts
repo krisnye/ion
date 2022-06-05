@@ -42,7 +42,7 @@ function findPreviousVariableOrAssignment(c: EvaluationContext, originalNode: No
 }
 
 
-const ssaVersionSeparator = "#";
+const ssaVersionSeparator = ":";
 
 export function isSSAVersionName(name: string) {
     return name.lastIndexOf(ssaVersionSeparator) >= 0;

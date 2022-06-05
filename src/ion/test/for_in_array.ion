@@ -1,4 +1,0 @@
-
-total: Float = 0.0
-for value in [9.0, 7.0, 5.0]
-    total += value

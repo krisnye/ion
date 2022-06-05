@@ -12,7 +12,7 @@ import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
 import { SourceLocation } from "../SourceLocation";
 
-type TypeFunction = (node: Function, types: Type[], c: EvaluationContext) => Type;
+export type TypeFunction = (node: Function, types: Type[], c: EvaluationContext) => Type;
 
 function BinaryExpression(location: SourceLocation, operator: string, left: Expression, right: Expression): Expression | undefined {
     if (left instanceof NumberLiteral && right instanceof NumberLiteral) {

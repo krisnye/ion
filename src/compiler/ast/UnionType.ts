@@ -45,7 +45,12 @@ export class UnionType extends CompoundType {
     toComparisonType(c: EvaluationContext) {
         const left = c.getComparisonType(this.left);
         const right = c.getComparisonType(this.right);
-        return this.patch({ left, right });
+
+        let type = this.patch({ left, right }).simplify() as Type;
+        if (!(type instanceof UnionType)) {
+            type = type.toComparisonType?.(c) ?? type;
+        }
+        return type;
     }
 
     static join(...types: (Type | null)[]): Type | null
@@ -54,11 +59,11 @@ export class UnionType extends CompoundType {
         let left = types[0] ?? null;
         for (let i = 1; i < types.length; i++) {
             let right = types[i];
-            left = new UnionType({
+            left = left && right ? new UnionType({
                 location: SourceLocation.merge(left.location, right.location),
                 left,
                 right
-            });
+            }) : (left ?? right);
         }
         return left;
     }

@@ -101,7 +101,7 @@ export class Class extends Container implements Type, Declaration, Callable {
         )
     }
 
-    getReturnType(args: Type[] = this.nodes.map(node => node.type!)) {
+    getReturnType(args: Type[] = this.nodes.map(node => node.declaredType!)) {
         return new ObjectType({
             location: this.location,
             properties: [

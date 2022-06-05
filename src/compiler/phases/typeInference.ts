@@ -6,7 +6,7 @@ import { Function } from "../ast/Function";
 import { skip } from "../traverse";
 
 export function isInferFunction(node): node is Function {
-    return node.parameters.some(p => p.type == null);
+    return node.parameters.some(p => p.declaredType == null);
 }
 
 export function typeInference(moduleName, module, externals: Map<string, Container>): ReturnType<Phase> {

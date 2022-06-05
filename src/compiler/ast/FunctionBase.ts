@@ -36,7 +36,7 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
         if (argTypes.length === this.parameters.length) {
             for (let i = 0; i < argTypes.length; i++) {
                 let argType = argTypes[i];
-                let paramType = this.parameters[i].type;
+                let paramType = this.parameters[i].declaredType;
                 if (!isType(paramType)) {
                     throw new Error("ParamType not known yet");
                 }

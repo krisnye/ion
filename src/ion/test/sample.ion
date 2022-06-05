@@ -1,23 +1,70 @@
 
 ssafunc(x: Float) =>
     total: Float = 0.0
-    if x < 0
+    if x < 0.0
         total += 10.0
-        //  look up ancestor chain to previous assignments/variables
-        //  find last named one. read from that. assign new number.
-        //  total#1 = total + 10.0
-        total += 50.0
-        //  total#2
-    else
+        total += 15.0
+    else if x > 0.0
         total += 20.0
-        //  look up ancestor chain to previous assignments/variables
-        //  find last named one. read from that. assign new number.
-        //  total#3 = total + 10.0
-        total += 100.0
-        //  total#4
-    //  total#5: typeof total#3 | typeof total#4
-    //  if previous was a block then read both branches (and previous name if only 1 branch)
-    //  for each named variable found
-    //      add a new PHI variable with new name with type from both
+    else
+        total += 30.0
     total += 5.0
+    total += 1.0
     return total
+
+// //  state: Variable => {
+// //      { node: Node, name: string }
+// //  }
+// //  first build this structure
+// // Variable => [
+// //    [
+// //        [
+// //            Assignment,
+// //            Assignment,
+// //        ],
+// //        [
+// //            Assignment,
+// //            Assignment
+// //        ],
+// //    ]
+// //     Conditional
+// //     Assignment,
+// //     Assignment,
+// // ]
+//
+// ssafunc(x: Float) =>
+//     //  [Block, "total.1.0"]
+//     total: Float = 0.0
+//     //  [Block, "total.1.0", Conditional]
+//     //  [Block, "total.1.0", Conditional, Block]
+//     if x < 0
+//         //  [Block, "total.1.0", Conditional, Block, "total.1.1"]
+//         total += 10.0
+//         //  [Block, "total.1.0", Conditional, Block, "total.1.2"]
+//         total += 15.0
+//         //  [Block, "total.1.0", Conditional, ["total.1.2"]]
+//     else if x > 0
+//         //  [Block, "total.1.0", Conditional, ["total.1.2"], Block]
+//         //  [Block, "total.1.0", Conditional, ["total.1.2"], Block, "total.1.3"]
+//         total += 20.0
+//         //  [Block, "total.1.0", Conditional, ["total.1.2"], ["total.1.3"]]
+//     else
+//         //  [Block, "total.1.0", Conditional, ["total.1.2"], ["total.1.3"], Block]
+//         //  [Block, "total.1.0", Conditional, ["total.1.2"], ["total.1.3"], Block, "total.1.4"]
+//         total += 30.0
+//         //  [Block, "total.1.0", Conditional, ["total.1.2"], ["total.1.3"], ["total.1.4"]]
+//     //  [Block, "total.1.5"]
+//     //  emit phi total.1.5: typeof total.1.2 | typeof total.1.3 | typeof total.1.4
+//     //  [Block, "total.1.6"]
+//     total += 5.0
+//     //  [Block, "total.1.7"]
+//     total += 1.0
+//     return total
+//     //  delete as creation Block finished.
+
+// //  FOLLOWING NOT WORKING. OUR ALGORITHM IS SHITE.
+// // if x > 0
+// //     total += 3.0
+// // else
+// //     total += 2.0
+// // total += 1.0

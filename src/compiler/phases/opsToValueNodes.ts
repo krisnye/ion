@@ -30,6 +30,7 @@ import { IntegerLiteral } from "../ast/NumberLiteral";
 import { Pair } from "../ast/Pair";
 import { coreTypes } from "../coreTypes";
 import { ForItem } from "../ast/ForItem";
+import { Conditional } from "../ast/Conditional";
 
 function toParametersOrMeta(value: Node | null) {
     let parameters = new Array<Variable | MetaCall>();
@@ -123,6 +124,14 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
         },
         leave(node, ancestors, path) {
             let parent = ancestors[ancestors.length - 1];
+            if (parent instanceof Conditional) {
+                // console.log({ parent, node });
+                if (!(node instanceof Block) && (node === parent.consequent || node === parent.alternate)) {
+                    // convert conditional branches to always be Blocks.
+                    console.log("------!!!!!!!!");
+                    return new Block({ location: node.location, nodes: [ node ]});
+                }
+            }
             // check classes as well
             if (node instanceof PstFor) {
                 let { id, value, body } = node;
@@ -219,7 +228,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                             return new Variable({
                                 location,
                                 id: new Identifier(left),
-                                type: right,
+                                declaredType: right as Type,
                                 value: null,
                                 constant: false,
                                 meta: [],
@@ -249,7 +258,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                             return replace(...dnodes);
                         }
                         let id = left instanceof Variable ? left.id : left;
-                        let type = left instanceof Variable ? left.type : null;
+                        let declaredType = left instanceof Variable ? left.declaredType : null;
                         let constant = left instanceof Variable ? left.constant : true;
                         if (!(id instanceof Identifier || id instanceof Reference)) {
                             console.log({ id });
@@ -258,7 +267,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                         }
 
                         if (isVariable) {
-                            return new Variable({ location, id: new Identifier(id), type, value: right, constant, meta: [] });
+                            return new Variable({ location, id: new Identifier(id), declaredType, value: right, constant, meta: [] });
                         }
                         else {
                             return new Assignment({ location, id: new Reference(id), value: right });

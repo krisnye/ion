@@ -1,14 +1,13 @@
 import { EvaluationContext } from "../EvaluationContext";
-import { Block, BlockProps } from "./Block";
 import { Reference } from "./Reference";
-import { Container } from "./Container";
+import { Container, ContainerProps } from "./Container";
 import { Variable } from "./Variable";
 
-export interface InstanceProps extends BlockProps {
+export interface InstanceProps extends ContainerProps {
     class: Reference;
 }
 
-export class Instance extends Block {
+export class Instance extends Container {
 
     class!: Reference;
     nodes!: Variable[];

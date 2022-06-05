@@ -227,6 +227,7 @@ export class Compiler {
 
     logFilter = new Set([ "test.sample" ])
     logModule(name: string) {
+        // return true;
         return this.logFilter && this.logFilter.has(name);
     }
     log(logger: PhaseLogger, phase: string, module: any, name: string) {
