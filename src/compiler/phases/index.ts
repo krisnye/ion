@@ -14,7 +14,6 @@ import { removeSoloBlocks } from "./removeSoloBlocks";
 import { moveMetaToFunctions } from "./moveMetaToFunctions";
 import { validateTypeDeclarations } from "./validateTypeDeclarations";
 import { ssaForm } from "./ssaForm";
-import { ssaForm3 } from "./ssaForm3";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -28,7 +27,7 @@ export const parsingPhases: Phase[] = [
     createMultiFunctions,
     resolveExternalReferences,
     // ssaForm2,
-    ssaForm3,
+    ssaForm,
     // ssaForm,
     //  MUST be solo up to this point so we can get external dependencies.
 ];

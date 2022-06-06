@@ -235,87 +235,24 @@ ul.jsondiffpatch-textdiff {
                 <td>
                     <header><span>Source</span></header>
                     <p>
-ssafunc(x: Float) =>
-    total: Float = 0.0
-    if x < 0.0
-        total += 10.0
-        total += 15.0
-    else if x > 0.0
-        total += 20.0
-    else
-        total += 30.0
-    total += 5.0
-    total += 1.0
-    return total
-
-// //  state: Variable => {
-// //      { node: Node, name: string }
-// //  }
-// //  first build this structure
-// // Variable => [
-// //    [
-// //        [
-// //            Assignment,
-// //            Assignment,
-// //        ],
-// //        [
-// //            Assignment,
-// //            Assignment
-// //        ],
-// //    ]
-// //     Conditional
-// //     Assignment,
-// //     Assignment,
-// // ]
-//
-// ssafunc(x: Float) =>
-//     //  [Block, "total.1.0"]
-//     total: Float = 0.0
-//     //  [Block, "total.1.0", Conditional]
-//     //  [Block, "total.1.0", Conditional, Block]
-//     if x < 0
-//         //  [Block, "total.1.0", Conditional, Block, "total.1.1"]
-//         total += 10.0
-//         //  [Block, "total.1.0", Conditional, Block, "total.1.2"]
-//         total += 15.0
-//         //  [Block, "total.1.0", Conditional, ["total.1.2"]]
-//     else if x > 0
-//         //  [Block, "total.1.0", Conditional, ["total.1.2"], Block]
-//         //  [Block, "total.1.0", Conditional, ["total.1.2"], Block, "total.1.3"]
-//         total += 20.0
-//         //  [Block, "total.1.0", Conditional, ["total.1.2"], ["total.1.3"]]
-//     else
-//         //  [Block, "total.1.0", Conditional, ["total.1.2"], ["total.1.3"], Block]
-//         //  [Block, "total.1.0", Conditional, ["total.1.2"], ["total.1.3"], Block, "total.1.4"]
-//         total += 30.0
-//         //  [Block, "total.1.0", Conditional, ["total.1.2"], ["total.1.3"], ["total.1.4"]]
-//     //  [Block, "total.1.5"]
-//     //  emit phi total.1.5: typeof total.1.2 | typeof total.1.3 | typeof total.1.4
-//     //  [Block, "total.1.6"]
-//     total += 5.0
-//     //  [Block, "total.1.7"]
-//     total += 1.0
-//     return total
-//     //  delete as creation Block finished.
-
-// //  FOLLOWING NOT WORKING. OUR ALGORITHM IS SHITE.
-// // if x > 0
-// //     total += 3.0
-// // else
-// //     total += 2.0
-// // total += 1.0</p>
+sample(x: Float) =>
+    foo: >= -1.0 = 1.0
+    for i in [0, 1, 2]
+        foo += 1.0
+    return foo
+</p>
                 </td>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>ssafunc(x: Float) =&gt;<br>    total: Float = 0.0<br>    if x &lt; 0.0<br>        total += 10.0<br>        total += 15.0<br>    else if x &gt; 0.0<br>        total += 20.0<br>    else<br>        total += 30.0<br>    total += 5.0<br>    total += 1.0<br>    return total<br><br>// //  state: Variable =&gt; {<br>// //      { node: Node, name: string }<br>// //  }<br>// //  first build this structure<br>// // Variable =&gt; [<br>// //    [<br>// //        [<br>// //            Assignment,<br>// //            Assignment,<br>// //        ],<br>// //        [<br>// //            Assignment,<br>// //            Assignment<br>// //        ],<br>// //    ]<br>// //     Conditional<br>// //     Assignment,<br>// //     Assignment,<br>// // ]<br>//<br>// ssafunc(x: Float) =&gt;<br>//     //  [Block, \&quot;total.1.0\&quot;]<br>//     total: Float = 0.0<br>//     //  [Block, \&quot;total.1.0\&quot;, Conditional]<br>//     //  [Block, \&quot;total.1.0\&quot;, Conditional, Block]<br>//     if x &lt; 0<br>//         //  [Block, \&quot;total.1.0\&quot;, Conditional, Block, \&quot;total.1.1\&quot;]<br>//         total += 10.0<br>//         //  [Block, \&quot;total.1.0\&quot;, Conditional, Block, \&quot;total.1.2\&quot;]<br>//         total += 15.0<br>//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;]]<br>//     else if x &gt; 0<br>//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;], Block]<br>//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;], Block, \&quot;total.1.3\&quot;]<br>//         total += 20.0<br>//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;], [\&quot;total.1.3\&quot;]]<br>//     else<br>//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;], [\&quot;total.1.3\&quot;], Block]<br>//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;], [\&quot;total.1.3\&quot;], Block, \&quot;total.1.4\&quot;]<br>//         total += 30.0<br>//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;], [\&quot;total.1.3\&quot;], [\&quot;total.1.4\&quot;]]<br>//     //  [Block, \&quot;total.1.5\&quot;]<br>//     //  emit phi total.1.5: typeof total.1.2 | typeof total.1.3 | typeof total.1.4<br>//     //  [Block, \&quot;total.1.6\&quot;]<br>//     total += 5.0<br>//     //  [Block, \&quot;total.1.7\&quot;]<br>//     total += 1.0<br>//     return total<br>//     //  delete as creation Block finished.<br><br>// //  FOLLOWING NOT WORKING. OUR ALGORITHM IS SHITE.<br>// // if x &gt; 0<br>// //     total += 3.0<br>// // else<br>// //     total += 2.0<br>// // total += 1.0&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>sample(x: Float) =&gt;<br>    foo: &gt;= -1.0 = 1.0<br>    for i in [0, 1, 2]<br>        foo += 1.0<br>    return foo<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;ssafunc&quot;
+    &quot;source&quot;: &quot;sample&quot;
   },
   Token {
     &quot;type&quot;: &quot;OpenParen&quot;,
@@ -359,7 +296,7 @@ ssafunc(x: Float) =>
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;total&quot;
+    &quot;source&quot;: &quot;foo&quot;
   },
   Token {
     &quot;type&quot;: &quot;Operator&quot;,
@@ -370,8 +307,20 @@ ssafunc(x: Float) =>
     &quot;source&quot;: &quot; &quot;
   },
   Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Float&quot;
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;&gt;=&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;-&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Float&quot;,
+    &quot;source&quot;: &quot;1.0&quot;
   },
   Token {
     &quot;type&quot;: &quot;Whitespace&quot;,
@@ -387,15 +336,15 @@ ssafunc(x: Float) =>
   },
   Token {
     &quot;type&quot;: &quot;Float&quot;,
-    &quot;source&quot;: &quot;0.0&quot;
+    &quot;source&quot;: &quot;1.0&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;If&quot;,
-    &quot;source&quot;: &quot;if&quot;
+    &quot;type&quot;: &quot;For&quot;,
+    &quot;source&quot;: &quot;for&quot;
   },
   Token {
     &quot;type&quot;: &quot;Whitespace&quot;,
@@ -403,23 +352,55 @@ ssafunc(x: Float) =>
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;x&quot;
+    &quot;source&quot;: &quot;i&quot;
   },
   Token {
     &quot;type&quot;: &quot;Whitespace&quot;,
     &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;In&quot;,
+    &quot;source&quot;: &quot;in&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;OpenBracket&quot;,
+    &quot;source&quot;: &quot;[&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Integer&quot;,
+    &quot;source&quot;: &quot;0&quot;
   },
   Token {
     &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;&lt;&quot;
+    &quot;source&quot;: &quot;,&quot;
   },
   Token {
     &quot;type&quot;: &quot;Whitespace&quot;,
     &quot;source&quot;: &quot; &quot;
   },
   Token {
-    &quot;type&quot;: &quot;Float&quot;,
-    &quot;source&quot;: &quot;0.0&quot;
+    &quot;type&quot;: &quot;Integer&quot;,
+    &quot;source&quot;: &quot;1&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;,&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Integer&quot;,
+    &quot;source&quot;: &quot;2&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;CloseBracket&quot;,
+    &quot;source&quot;: &quot;]&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
@@ -431,192 +412,7 @@ ssafunc(x: Float) =>
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;total&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;+=&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Float&quot;,
-    &quot;source&quot;: &quot;10.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;total&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;+=&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Float&quot;,
-    &quot;source&quot;: &quot;15.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Outdent&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Else&quot;,
-    &quot;source&quot;: &quot;else&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;If&quot;,
-    &quot;source&quot;: &quot;if&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;x&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;&gt;&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Float&quot;,
-    &quot;source&quot;: &quot;0.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Indent&quot;,
-    &quot;source&quot;: &quot;    &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;total&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;+=&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Float&quot;,
-    &quot;source&quot;: &quot;20.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Outdent&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Else&quot;,
-    &quot;source&quot;: &quot;else&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Indent&quot;,
-    &quot;source&quot;: &quot;    &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;total&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;+=&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Float&quot;,
-    &quot;source&quot;: &quot;30.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Outdent&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;total&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;+=&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Float&quot;,
-    &quot;source&quot;: &quot;5.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;total&quot;
+    &quot;source&quot;: &quot;foo&quot;
   },
   Token {
     &quot;type&quot;: &quot;Whitespace&quot;,
@@ -635,6 +431,9 @@ ssafunc(x: Float) =>
     &quot;source&quot;: &quot;1.0&quot;
   },
   Token {
+    &quot;type&quot;: &quot;Outdent&quot;
+  },
+  Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
@@ -648,7 +447,7 @@ ssafunc(x: Float) =>
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;total&quot;
+    &quot;source&quot;: &quot;foo&quot;
   },
   Token {
     &quot;type&quot;: &quot;Outdent&quot;
@@ -656,450 +455,6 @@ ssafunc(x: Float) =>
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //  state: Variable =&gt; {&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //      { node: Node, name: string }&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //  }&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //  first build this structure&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// // Variable =&gt; [&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //    [&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //        [&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //            Assignment,&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //            Assignment,&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //        ],&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //        [&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //            Assignment,&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //            Assignment&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //        ],&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //    ]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //     Conditional&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //     Assignment,&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //     Assignment,&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// // ]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// ssafunc(x: Float) =&gt;&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     //  [Block, \&quot;total.1.0\&quot;]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     total: Float = 0.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     //  [Block, \&quot;total.1.0\&quot;, Conditional]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     //  [Block, \&quot;total.1.0\&quot;, Conditional, Block]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     if x &lt; 0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         //  [Block, \&quot;total.1.0\&quot;, Conditional, Block, \&quot;total.1.1\&quot;]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         total += 10.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         //  [Block, \&quot;total.1.0\&quot;, Conditional, Block, \&quot;total.1.2\&quot;]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         total += 15.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;]]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     else if x &gt; 0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;], Block]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;], Block, \&quot;total.1.3\&quot;]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         total += 20.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;], [\&quot;total.1.3\&quot;]]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     else&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;], [\&quot;total.1.3\&quot;], Block]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;], [\&quot;total.1.3\&quot;], Block, \&quot;total.1.4\&quot;]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         total += 30.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         //  [Block, \&quot;total.1.0\&quot;, Conditional, [\&quot;total.1.2\&quot;], [\&quot;total.1.3\&quot;], [\&quot;total.1.4\&quot;]]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     //  [Block, \&quot;total.1.5\&quot;]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     //  emit phi total.1.5: typeof total.1.2 | typeof total.1.3 | typeof total.1.4&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     //  [Block, \&quot;total.1.6\&quot;]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     total += 5.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     //  [Block, \&quot;total.1.7\&quot;]&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     total += 1.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     return total&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     //  delete as creation Block finished.&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //  FOLLOWING NOT WORKING. OUR ALGORITHM IS SHITE.&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// // if x &gt; 0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //     total += 3.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// // else&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// //     total += 2.0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// // total += 1.0&quot;
   }
 ]</pre></div></div></p>
                 </td>
@@ -1107,19 +462,12 @@ ssafunc(x: Float) =>
                 <td>
                     <header><span>parsing</span></header>
                     <p>module test.sample {
-    ssafunc(x : Float) => {
-        total : Float = 0.0
-        if (x < 0.0) {
-            total += 10.0
-            total += 15.0
-        } else if (x > 0.0) {
-            total += 20.0
-        } else {
-            total += 30.0
+    sample(x : Float) => {
+        foo : >= - 1.0 = 1.0
+        for i in [0 , 1 , 2] {
+            foo += 1.0
         }
-        total += 5.0
-        total += 1.0
-        return total
+        return foo
     }
 }</p>
                 </td>
@@ -1143,7 +491,7 @@ ssafunc(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,5 +1,5 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,6 +1,6 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1164,7 +512,18 @@ ssafunc(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    ssafunc(x : Float) =&gt; {</span>
+            <span class="d2h-code-line-ctn">    sample(x : Float) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        foo : &gt;= -<del> </del>1.0 = 1.0</span>
         </div>
     </td>
 </tr><tr>
@@ -1175,18 +534,18 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ssafunc<ins> = </ins>(x : Float) =&gt; {</span>
+            <span class="d2h-code-line-ctn">    sample<ins> = </ins>(x : Float) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
 <div class="line-num2">3</div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        total : Float = 0.0</span>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        foo : &gt;= -1.0 = 1.0</span>
         </div>
     </td>
 </tr><tr>
@@ -1197,7 +556,7 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        if (x &lt; 0.0) {</span>
+            <span class="d2h-code-line-ctn">        for i in [0 , 1 , 2] {</span>
         </div>
     </td>
 </tr><tr>
@@ -1208,7 +567,18 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            total += 10.0</span>
+            <span class="d2h-code-line-ctn">            foo += 1.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        }</span>
         </div>
     </td>
 </tr>
@@ -1222,22 +592,109 @@ ssafunc(x: Float) =>
             
                 <td>
                     <header><span>opsToTypeNodes</span></header>
-                    <p>module test.sample {
-    ssafunc = (x : Float) => {
-        total : Float = 0.0
-        if (x < 0.0) {
-            total += 10.0
-            total += 15.0
-        } else if (x > 0.0) {
-            total += 20.0
-        } else {
-            total += 30.0
-        }
-        total += 5.0
-        total += 1.0
-        return total
-    }
-}</p>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,6 +1,6 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module test.sample {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    sample = (x : Float) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        foo : <del>&gt;=</del> -1.0 = 1.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        foo : <ins>(&gt;=</ins> -1.0<ins>)</ins> = 1.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        for i in [0 , 1 , 2] {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            foo += 1.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        }</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
                 </td>
             
                 <td>
@@ -1259,7 +716,7 @@ ssafunc(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,16 +1,18 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,8 +1,14 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1280,7 +737,7 @@ ssafunc(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    ssafunc = (<del>x : Float) =&gt; {</del></span>
+            <span class="d2h-code-line-ctn">    sample = (<del>x : Float) =&gt; {</del></span>
         </div>
     </td>
 </tr><tr>
@@ -1291,7 +748,7 @@ ssafunc(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        <del>total</del> : Float<del> = 0.0</del></span>
+            <span class="d2h-code-line-ctn">        <del>foo</del> : <del>(&gt;= -1.0) = 1.0</del></span>
         </div>
     </td>
 </tr><tr>
@@ -1302,7 +759,7 @@ ssafunc(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>        if</del> <del>(x</del> <del>&lt; 0.0) </del>{</span>
+            <span class="d2h-code-line-ctn"><del>        for</del> <del>i</del> <del>in [0 , 1 , 2] </del>{</span>
         </div>
     </td>
 </tr><tr>
@@ -1313,40 +770,7 @@ ssafunc(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>            </del>total <del>+=</del> <del>10</del>.0</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>            total</del> <del>+= 15</del>.0</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">7</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>        }</del> <del>else</del> <del>if (x &gt; 0</del>.0)<del> {</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">8</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">            total <del>+=</del> <del>20</del>.0</span>
+            <span class="d2h-code-line-ctn"><del>            </del>foo <del>+=</del> 1.0</span>
         </div>
     </td>
 </tr><tr>
@@ -1357,7 +781,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>const </ins>ssafunc = (</span>
+            <span class="d2h-code-line-ctn">    <ins>const </ins>sample = (</span>
         </div>
     </td>
 </tr><tr>
@@ -1368,7 +792,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>var</ins> <ins>x </ins>: Float</span>
+            <span class="d2h-code-line-ctn">        <ins>var</ins> <ins>x </ins>: <ins>Float</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1390,7 +814,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>        var </ins>total <ins>:</ins> <ins>Float = 0</ins>.0</span>
+            <span class="d2h-code-line-ctn"><ins>        var </ins>foo <ins>:</ins> <ins>(&gt;= -</ins>1.0<ins>) = 1.0</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1401,7 +825,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>        if</ins> <ins>(`&lt;`(x,0</ins>.0<ins>)) {</ins></span>
+            <span class="d2h-code-line-ctn">        for var i : Float in [{</span>
         </div>
     </td>
 </tr><tr>
@@ -1412,7 +836,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>            total</ins> <ins>=</ins> <ins>`+`(total,10</ins>.0)</span>
+            <span class="d2h-code-line-ctn">            0</span>
         </div>
     </td>
 </tr><tr>
@@ -1423,7 +847,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            total <ins>=</ins> <ins>`+`(total,15</ins>.0<ins>)</ins></span>
+            <span class="d2h-code-line-ctn">            1</span>
         </div>
     </td>
 </tr><tr>
@@ -1434,7 +858,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        } else if (`&gt;`(x,0.0)) {</span>
+            <span class="d2h-code-line-ctn">            2</span>
         </div>
     </td>
 </tr><tr>
@@ -1445,18 +869,114 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            total = `+`(total,20.0)</span>
+            <span class="d2h-code-line-ctn">        }] {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            foo = `+`(foo,1.0)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        return foo</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">14</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>removeSoloBlocks</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -7,9 +7,7 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            1</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">9</div>
-<div class="line-num2">11</div>
+<div class="line-num2">9</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        } else {</span>
+            <span class="d2h-code-line-ctn">            2</span>
         </div>
     </td>
 </tr><tr>
@@ -1467,29 +987,29 @@ ssafunc(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">            total <del>+=</del> 30.0</span>
+            <span class="d2h-code-line-ctn">        }] <del>{</del></span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">12</div>
+<div class="line-num2">10</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            total <ins>=</ins> <ins>`+`(total,</ins>30.0<ins>)</ins></span>
+            <span class="d2h-code-line-ctn">        }] <ins>foo = `+`(foo,1.0)</ins></span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
+    <td class="d2h-code-linenumber d2h-del">
       <div class="line-num1">11</div>
-<div class="line-num2">13</div>
+<div class="line-num2"></div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        }</span>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">            foo = `+`(foo,1.0)</span>
         </div>
     </td>
 </tr><tr>
@@ -1500,57 +1020,24 @@ ssafunc(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        total <del>+=</del> 5.0</span>
+            <span class="d2h-code-line-ctn">        }</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
+    <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">13</div>
-<div class="line-num2"></div>
+<div class="line-num2">11</div>
     </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        total <del>+=</del> 1.0</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">14</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        total <ins>=</ins> <ins>`+`(total,</ins>5.0<ins>)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">15</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        total <ins>=</ins> <ins>`+`(total,</ins>1.0<ins>)</ins></span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        return foo</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">14</div>
-<div class="line-num2">16</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        return total</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">15</div>
-<div class="line-num2">17</div>
+<div class="line-num2">12</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1560,8 +1047,8 @@ ssafunc(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">16</div>
-<div class="line-num2">18</div>
+      <div class="line-num1">15</div>
+<div class="line-num2">13</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1576,28 +1063,6 @@ ssafunc(x: Float) =>
     </div>
 </div>
 </div></p>
-                </td>
-            
-                <td>
-                    <header><span>removeSoloBlocks</span></header>
-                    <p>module test.sample {
-    const ssafunc = (
-        var x : Float
-    ) => {
-        var total : Float = 0.0
-        if (`<`(x,0.0)) {
-            total = `+`(total,10.0)
-            total = `+`(total,15.0)
-        } else if (`>`(x,0.0)) {
-            total = `+`(total,20.0)
-        } else {
-            total = `+`(total,30.0)
-        }
-        total = `+`(total,5.0)
-        total = `+`(total,1.0)
-        return total
-    }
-}</p>
                 </td>
             
                 <td>
@@ -1619,7 +1084,7 @@ ssafunc(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,5 +1,5 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,13 +1,13 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1640,7 +1105,7 @@ ssafunc(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const ssafunc = (</span>
+            <span class="d2h-code-line-ctn">    const sample = (</span>
         </div>
     </td>
 </tr><tr>
@@ -1651,7 +1116,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const ssafunc = <ins>ssafunc</ins>(</span>
+            <span class="d2h-code-line-ctn">    const sample = <ins>sample</ins>(</span>
         </div>
     </td>
 </tr><tr>
@@ -1684,7 +1149,117 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var total : Float = 0.0</span>
+            <span class="d2h-code-line-ctn">        var foo : (&gt;= -1.0) = 1.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        for var i : Float in <del>[{</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        for var i : Float in <ins>[</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            2</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">10</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        <del>}]</del> foo = `+`(foo,1.0)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        <ins>]</ins> foo = `+`(foo,1.0)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        return foo</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">12</div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">13</div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
         </div>
     </td>
 </tr>
@@ -1699,21 +1274,16 @@ ssafunc(x: Float) =>
                 <td>
                     <header><span>moveMetaToFunctions</span></header>
                     <p>module test.sample {
-    const ssafunc = ssafunc(
+    const sample = sample(
         var x : Float
     ) => {
-        var total : Float = 0.0
-        if (`<`(x,0.0)) {
-            total = `+`(total,10.0)
-            total = `+`(total,15.0)
-        } else if (`>`(x,0.0)) {
-            total = `+`(total,20.0)
-        } else {
-            total = `+`(total,30.0)
-        }
-        total = `+`(total,5.0)
-        total = `+`(total,1.0)
-        return total
+        var foo : (>= -1.0) = 1.0
+        for var i : Float in [
+            0
+            1
+            2
+        ] foo = `+`(foo,1.0)
+        return foo
     }
 }</p>
                 </td>
@@ -1721,21 +1291,16 @@ ssafunc(x: Float) =>
                 <td>
                     <header><span>createMultiFunctions</span></header>
                     <p>module test.sample {
-    const ssafunc = ssafunc(
+    const sample = sample(
         var x : Float
     ) => {
-        var total : Float = 0.0
-        if (`<`(x,0.0)) {
-            total = `+`(total,10.0)
-            total = `+`(total,15.0)
-        } else if (`>`(x,0.0)) {
-            total = `+`(total,20.0)
-        } else {
-            total = `+`(total,30.0)
-        }
-        total = `+`(total,5.0)
-        total = `+`(total,1.0)
-        return total
+        var foo : (>= -1.0) = 1.0
+        for var i : Float in [
+            0
+            1
+            2
+        ] foo = `+`(foo,1.0)
+        return foo
     }
 }</p>
                 </td>
@@ -1759,7 +1324,7 @@ ssafunc(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,8 +1,8 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,9 +1,9 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1780,7 +1345,7 @@ ssafunc(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const ssafunc = ssafunc<del>(</del></span>
+            <span class="d2h-code-line-ctn">    const sample = sample<del>(</del></span>
         </div>
     </td>
 </tr><tr>
@@ -1802,7 +1367,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const <ins>`test.sample.</ins>ssafunc<ins>`</ins> = <ins>`test.sample.</ins>ssafunc<ins>`(</ins></span>
+            <span class="d2h-code-line-ctn">    const <ins>`test.</ins>sample<ins>`</ins> = <ins>`test.</ins>sample<ins>`(</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1828,36 +1393,36 @@ ssafunc(x: Float) =>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
+    <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var foo : (&gt;= -1.0) = 1.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var total : Float = 0.0</span>
+            <span class="d2h-code-line-ctn">        for var i : Float in [</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">5</div>
+<div class="line-num2">6</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var total : <ins>(</ins>Float<ins>)</ins> = 0.0</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        if (`&lt;`(x,0.0)) {</span>
+            <span class="d2h-code-line-ctn">        for var i : <ins>(</ins>Float<ins>)</ins> in [</span>
         </div>
     </td>
 </tr><tr>
@@ -1868,7 +1433,7 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            total = `+`(total,10.0)</span>
+            <span class="d2h-code-line-ctn">            0</span>
         </div>
     </td>
 </tr><tr>
@@ -1879,30 +1444,41 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            total = `+`(total,15.0)</span>
+            <span class="d2h-code-line-ctn">            1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            2</span>
         </div>
     </td>
 </tr>
 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -16,3 +16,4 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -11,3 +11,4 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">16</div>
-<div class="line-num2">16</div>
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        return total</span>
+            <span class="d2h-code-line-ctn">        return foo</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">17</div>
-<div class="line-num2">17</div>
+      <div class="line-num1">12</div>
+<div class="line-num2">12</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1912,8 +1488,8 @@ ssafunc(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">18</div>
-<div class="line-num2">18</div>
+      <div class="line-num1">13</div>
+<div class="line-num2">13</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1924,12 +1500,12 @@ ssafunc(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">19</div>
+<div class="line-num2">14</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Float&quot;,&quot;&lt;&quot;,&quot;+&quot;,&quot;&gt;&quot;]</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Float&quot;,&quot;+&quot;,&quot;Integer&quot;,&quot;Array&quot;]</span>
         </div>
     </td>
 </tr>
@@ -1942,7 +1518,7 @@ ssafunc(x: Float) =>
                 </td>
             
                 <td>
-                    <header><span>ssaForm3</span></header>
+                    <header><span>ssaForm</span></header>
                     <p><div class="d2h-wrapper">
     <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
     <div class="d2h-file-header">
@@ -1960,7 +1536,7 @@ ssafunc(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -2,18 +2,24 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -2,13 +2,13 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1970,7 +1546,7 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    const `test.sample.ssafunc` = `test.sample.ssafunc`(</span>
+            <span class="d2h-code-line-ctn">    const `test.sample` = `test.sample`(</span>
         </div>
     </td>
 </tr><tr>
@@ -2003,84 +1579,7 @@ ssafunc(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var total : (Float) = 0.0</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        <del>if (`&lt;`(x,0.0)) </del>{</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">7</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">            <del>total</del> <del>= `+`(total</del>,<del>10</del>.0<del>)</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">8</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>            </del>total = <del>`+`(</del>total<del>,15</del>.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">9</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>        }</del> <del>else</del> <del>if</del> <del>(`&gt;`(x,0</del>.0<del>)) {</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">10</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">            <del>total</del> <del>=</del> <del>`+`(total,20.0)</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">11</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>        }</del> <del>else</del> {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">12</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>            </del>total = <del>`+`(</del>total<del>,30</del>.0)</span>
+            <span class="d2h-code-line-ctn">        var foo<del> </del>: (&gt;= -1.0) = 1.0</span>
         </div>
     </td>
 </tr><tr>
@@ -2091,51 +1590,73 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var <ins>`</ins>total<ins>:1:0`</ins> : (Float) = 0.0</span>
+            <span class="d2h-code-line-ctn">        var <ins>`</ins>foo:<ins>1:0`</ins> <ins>::: </ins>(&gt;= -1.0) = 1.0</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
 <div class="line-num2">6</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        {</span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        for var i : (Float) in [</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
 <div class="line-num2">7</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            <ins>if</ins> <ins>(`&lt;`(x</ins>,<ins>0</ins>.0<ins>)) {</ins></span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            0</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
 <div class="line-num2">8</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>                var `</ins>total<ins>:1:1`</ins> <ins>: (Float) </ins>= <ins>`+`(`</ins>total<ins>:1:0`,10</ins>.0)</span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            1</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
 <div class="line-num2">9</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>                var</ins> <ins>`total:1:2`</ins> <ins>:</ins> <ins>(Float) = `+`(`total:1:1`,15</ins>.0<ins>)</ins></span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            2</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">10</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        ] foo = <del>`+`(</del>foo<del>,</del>1.0)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">11</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        return foo</span>
         </div>
     </td>
 </tr><tr>
@@ -2146,7 +1667,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            <ins>}</ins> <ins>else</ins> <ins>{</ins></span>
+            <span class="d2h-code-line-ctn">        ] <ins>var `</ins>foo<ins>:1:1`</ins> <ins>::: (&gt;= -1.0) </ins>= <ins>`+`(`</ins>foo<ins>:</ins>1<ins>:0`,1</ins>.0)</span>
         </div>
     </td>
 </tr><tr>
@@ -2157,167 +1678,13 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>                if</ins> <ins>(`&gt;`(x,0.0))</ins> {</span>
+            <span class="d2h-code-line-ctn">        return <ins>`</ins>foo<ins>:1:1`</ins></span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">12</div>
 <div class="line-num2">12</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>                    var `</ins>total<ins>:1:3`</ins> <ins>: (Float) </ins>= <ins>`+`(`</ins>total<ins>:1:0`,20</ins>.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">13</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">                } else {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">14</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">                    var `total:1:4` : (Float) = `+`(`total:1:0`,30.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">15</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">                }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">16</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">                var `total:1:5` : typeof `total:1:3` | typeof `total:1:4`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">17</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">18</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            var `total:1:6` : typeof `total:1:2` | typeof `total:1:5`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
-<div class="line-num2">19</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">14</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        total = <del>`+`(</del>total<del>,</del>5.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">15</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        total = <del>`+`(</del>total<del>,</del>1.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">16</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        return total</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">20</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>var `</ins>total<ins>:1:7`</ins> <ins>: (Float) </ins>= <ins>`+`(`</ins>total<ins>:1:6`,</ins>5.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">21</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>var `</ins>total<ins>:1:8`</ins> <ins>: (Float) </ins>= <ins>`+`(`</ins>total<ins>:</ins>1<ins>:7`,1</ins>.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">22</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        return <ins>`</ins>total<ins>:1:8`</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">17</div>
-<div class="line-num2">23</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -2327,8 +1694,8 @@ ssafunc(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">18</div>
-<div class="line-num2">24</div>
+      <div class="line-num1">13</div>
+<div class="line-num2">13</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -2338,13 +1705,13 @@ ssafunc(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">19</div>
-<div class="line-num2">25</div>
+      <div class="line-num1">14</div>
+<div class="line-num2">14</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Float&quot;,&quot;&lt;&quot;,&quot;+&quot;,&quot;&gt;&quot;]</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Float&quot;,&quot;+&quot;,&quot;Integer&quot;,&quot;Array&quot;]</span>
         </div>
     </td>
 </tr>
@@ -2375,23 +1742,23 @@ ssafunc(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -22,4 +22,3 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -11,4 +11,3 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">22</div>
-<div class="line-num2">22</div>
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        return `total:1:8`</span>
+            <span class="d2h-code-line-ctn">        return `foo:1:1`</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">23</div>
-<div class="line-num2">23</div>
+      <div class="line-num1">12</div>
+<div class="line-num2">12</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -2401,8 +1768,8 @@ ssafunc(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">24</div>
-<div class="line-num2">24</div>
+      <div class="line-num1">13</div>
+<div class="line-num2">13</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -2412,13 +1779,13 @@ ssafunc(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">25</div>
+      <div class="line-num1">14</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Float&quot;,&quot;&lt;&quot;,&quot;+&quot;,&quot;&gt;&quot;]</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Float&quot;,&quot;+&quot;,&quot;Integer&quot;,&quot;Array&quot;]</span>
         </div>
     </td>
 </tr>
@@ -2433,27 +1800,16 @@ ssafunc(x: Float) =>
                 <td>
                     <header><span>validateTypeDeclarations</span></header>
                     <p>module test.sample {
-    const `test.sample.ssafunc` = `test.sample.ssafunc`(
+    const `test.sample` = `test.sample`(
         var x : (Float)
     ) => {
-        var `total:1:0` : (Float) = 0.0
-        {
-            if (`<`(x,0.0)) {
-                var `total:1:1` : (Float) = `+`(`total:1:0`,10.0)
-                var `total:1:2` : (Float) = `+`(`total:1:1`,15.0)
-            } else {
-                if (`>`(x,0.0)) {
-                    var `total:1:3` : (Float) = `+`(`total:1:0`,20.0)
-                } else {
-                    var `total:1:4` : (Float) = `+`(`total:1:0`,30.0)
-                }
-                var `total:1:5` : typeof `total:1:3` | typeof `total:1:4`
-            }
-            var `total:1:6` : typeof `total:1:2` | typeof `total:1:5`
-        }
-        var `total:1:7` : (Float) = `+`(`total:1:6`,5.0)
-        var `total:1:8` : (Float) = `+`(`total:1:7`,1.0)
-        return `total:1:8`
+        var `foo:1:0` ::: (>= -1.0) = 1.0
+        for var i : (Float) in [
+            0
+            1
+            2
+        ] var `foo:1:1` ::: (>= -1.0) = `+`(`foo:1:0`,1.0)
+        return `foo:1:1`
     }
 }</p>
                 </td>
@@ -2477,7 +1833,7 @@ ssafunc(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,8 +1,8 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,6 +1,6 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -2498,7 +1854,7 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    const `test.sample.ssafunc` = `test.sample.ssafunc`(</span>
+            <span class="d2h-code-line-ctn">    const `test.sample` = `test.sample`(</span>
         </div>
     </td>
 </tr><tr>
@@ -2535,25 +1891,14 @@ ssafunc(x: Float) =>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
+    <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">5</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var `total:1:0` : (Float) = 0.0</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
 <div class="line-num2">5</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var `total:1:0` : (Float) <ins>:: (0.0) </ins>= 0.0</span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var `foo:1:0` ::: (&gt;= -1.0) = 1.0</span>
         </div>
     </td>
 </tr><tr>
@@ -2564,29 +1909,7 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            if (`&lt;`(x,0.0)) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                var `total:1:1` : (Float) = `+`(`total:1:0`,10.0)</span>
+            <span class="d2h-code-line-ctn">        for var i : (Float) in [</span>
         </div>
     </td>
 </tr>
@@ -2617,7 +1940,18 @@ ssafunc(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -4,14 +4,14 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -3,11 +3,11 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var x ::: (Float)</span>
+        </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -2638,62 +1972,51 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var `total:1:0` : (Float) :: (0.0) = 0.0</span>
+            <span class="d2h-code-line-ctn">        var `foo:1:0` ::: (&gt;= -1.0) = 1.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        for var i <del>:</del> (<del>Float</del>) in [</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        for var i <ins>::</ins> (<ins>0</ins>) <ins>| (1) | (2) | (0) | (1) | (2) </ins>in [</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        {</span>
+            <span class="d2h-code-line-ctn">            0</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">7</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">            if (`&lt;`(x,0.0)) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
+    <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">8</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">                var `total:1:1` : (Float) = `+`(`total:1:0`,10.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            if (`&lt;`(x,0.0<ins>) :: (0 .. 1</ins>)) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
 <div class="line-num2">8</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">                var `total:1:1` : (Float) <ins>:: (10.0) </ins>= `+`(`total:1:0`,10.0)<ins> :: (10.0)</ins></span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            1</span>
         </div>
     </td>
 </tr><tr>
@@ -2704,62 +2027,51 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                var `total:1:2` : (Float) = `+`(`total:1:1`,15.0)</span>
+            <span class="d2h-code-line-ctn">            2</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">10</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        ] var `foo:1:1` ::: (&gt;= -1.0) = `+`(`foo:1:0`,1.0)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        ] var `foo:1:1` ::: (&gt;= -1.0) = `+`(`foo:1:0`,1.0)<ins> :: (&gt;= 0.0)</ins></span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">10</div>
-<div class="line-num2">10</div>
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            } else {</span>
+            <span class="d2h-code-line-ctn">        return `foo:1:1`</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">11</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">                if (`&gt;`(x,0.0)) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
+    <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">12</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">                    var `total:1:3` : (Float) = `+`(`total:1:0`,20.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">                if (`&gt;`(x,0.0<ins>) :: (0 .. 1</ins>)) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
 <div class="line-num2">12</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">                    var `total:1:3` : (Float) <ins>:: (20.0) </ins>= `+`(`total:1:0`,20.0)<ins> :: (20.0)</ins></span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
         </div>
     </td>
 </tr><tr>
@@ -2770,62 +2082,7 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                } else {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">14</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">                    var `total:1:4` : (Float) = `+`(`total:1:0`,30.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">14</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">                    var `total:1:4` : (Float) <ins>:: (30.0) </ins>= `+`(`total:1:0`,30.0)<ins> :: (30.0)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">15</div>
-<div class="line-num2">15</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">16</div>
-<div class="line-num2">16</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                var `total:1:5` : typeof `total:1:3` | typeof `total:1:4`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">17</div>
-<div class="line-num2">17</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            }</span>
+            <span class="d2h-code-line-ctn">}</span>
         </div>
     </td>
 </tr>
@@ -2856,567 +2113,7 @@ ssafunc(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -6,14 +6,14 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            if (`&lt;`(x,0.0) :: (0 .. 1)) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                var `total:1:1` : (Float) :: (10.0) = `+`(`total:1:0`,10.0) :: (10.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">9</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">                var `total:1:2` : (Float) = `+`(`total:1:1`,15.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">                var `total:1:2` : (Float) <ins>:: (25.0) </ins>= `+`(`total:1:1`,15.0)<ins> :: (25.0)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">10</div>
-<div class="line-num2">10</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            } else {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                if (`&gt;`(x,0.0) :: (0 .. 1)) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                    var `total:1:3` : (Float) :: (20.0) = `+`(`total:1:0`,20.0) :: (20.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
-<div class="line-num2">13</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                } else {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">14</div>
-<div class="line-num2">14</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                    var `total:1:4` : (Float) :: (30.0) = `+`(`total:1:0`,30.0) :: (30.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">15</div>
-<div class="line-num2">15</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">16</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">                var `total:1:5` <del>:</del> <del>typeof</del> <del>`total:1:3` </del>| <del>typeof `total:1:4`</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">16</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">                var `total:1:5` <ins>::</ins> <ins>(20.0)</ins> | <ins>(30.0)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">17</div>
-<div class="line-num2">17</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">18</div>
-<div class="line-num2">18</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            var `total:1:6` : typeof `total:1:2` | typeof `total:1:5`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">19</div>
-<div class="line-num2">19</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        }</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
-                </td>
-            
-                <td>
-                    <header><span>typeInference (4)</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -15,7 +15,7 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">15</div>
-<div class="line-num2">15</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">16</div>
-<div class="line-num2">16</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">                var `total:1:5` :: (20.0) | (30.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">17</div>
-<div class="line-num2">17</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">18</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">            var `total:1:6` <del>:</del> <del>typeof</del> <del>`total:1:2`</del> | <del>typeof `total:1:5`</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">18</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            var `total:1:6` <ins>::</ins> <ins>(25.0)</ins> <ins>|</ins> <ins>(20.0) </ins>| <ins>(30.0)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">19</div>
-<div class="line-num2">19</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">20</div>
-<div class="line-num2">20</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var `total:1:7` : (Float) = `+`(`total:1:6`,5.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">21</div>
-<div class="line-num2">21</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var `total:1:8` : (Float) = `+`(`total:1:7`,1.0)</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
-                </td>
-            
-                <td>
-                    <header><span>typeInference (5)</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -17,7 +17,7 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">17</div>
-<div class="line-num2">17</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">18</div>
-<div class="line-num2">18</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            var `total:1:6` :: (25.0) | (20.0) | (30.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">19</div>
-<div class="line-num2">19</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">20</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var `total:1:7` : (Float) = `+`(`total:1:6`,5.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">20</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var `total:1:7` : (Float) <ins>:: (30.0) | (25.0) | (35.0) </ins>= `+`(`total:1:6`,5.0)<ins> :: (30.0) | (25.0) | (35.0)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">21</div>
-<div class="line-num2">21</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var `total:1:8` : (Float) = `+`(`total:1:7`,1.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">22</div>
-<div class="line-num2">22</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        return `total:1:8`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">23</div>
-<div class="line-num2">23</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
-                </td>
-            
-                <td>
-                    <header><span>typeInference (6)</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -18,7 +18,7 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">18</div>
-<div class="line-num2">18</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            var `total:1:6` :: (25.0) | (20.0) | (30.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">19</div>
-<div class="line-num2">19</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">20</div>
-<div class="line-num2">20</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var `total:1:7` : (Float) :: (30.0) | (25.0) | (35.0) = `+`(`total:1:6`,5.0) :: (30.0) | (25.0) | (35.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">21</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var `total:1:8` : (Float) = `+`(`total:1:7`,1.0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">21</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var `total:1:8` : (Float) <ins>:: (31.0) | (26.0) | (36.0) </ins>= `+`(`total:1:7`,1.0)<ins> :: (31.0) | (26.0) | (36.0)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">22</div>
-<div class="line-num2">22</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        return `total:1:8`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">23</div>
-<div class="line-num2">23</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">24</div>
-<div class="line-num2">24</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
-                </td>
-            
-                <td>
-                    <header><span>typeInference (7)</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,7 +1,9 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,9 +1,11 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -3437,7 +2134,7 @@ ssafunc(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const `test.sample.ssafunc` <del>=</del> <del>`test.sample.ssafunc`(</del></span>
+            <span class="d2h-code-line-ctn">    const `test.sample` <del>=</del> <del>`test.sample`(</del></span>
         </div>
     </td>
 </tr><tr>
@@ -3448,7 +2145,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const `test.sample.ssafunc` <ins>::</ins> <ins>(</ins></span>
+            <span class="d2h-code-line-ctn">    const `test.sample` <ins>::</ins> <ins>(</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -3481,7 +2178,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>): (31.0</ins>) <ins>|</ins> <ins>(26.0) | (36.0) = `test.sample.ssafunc`(</ins></span>
+            <span class="d2h-code-line-ctn">    <ins>): (&gt;= -1.0</ins>) <ins>=</ins> <ins>`test.sample`(</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -3503,7 +2200,7 @@ ssafunc(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ): (31.0) | (26.0) | (36.0) =&gt; {</span>
+            <span class="d2h-code-line-ctn">    ): (&gt;= -1.0) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
@@ -3514,18 +2211,29 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var `total:1:0` : (Float) :: (0.0) = 0.0</span>
+            <span class="d2h-code-line-ctn">        var `foo:1:0` ::: (&gt;= -1.0) = 1.0</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
+    <td class="d2h-code-linenumber d2h-del">
       <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        for var i :: (0) | (1) | (2) <del>| (0) | (1) | (2) </del>in [</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
 <div class="line-num2">8</div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        {</span>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        for var i :: (0) | (1) | (2) in [</span>
         </div>
     </td>
 </tr><tr>
@@ -3536,7 +2244,29 @@ ssafunc(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            if (`&lt;`(x,0.0) :: (0 .. 1)) {</span>
+            <span class="d2h-code-line-ctn">            0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            2</span>
         </div>
     </td>
 </tr>
@@ -3549,61 +2279,39 @@ ssafunc(x: Float) =>
                 </td>
             
                 <td>
-                    <header><span>typeInference (8)</span></header>
+                    <header><span>typeInference (4)</span></header>
                     <p>module test.sample {
-    const `test.sample.ssafunc` :: (
+    const `test.sample` :: (
         var x ::: (Float)
-    ): (31.0) | (26.0) | (36.0) = `test.sample.ssafunc`(
+    ): (>= -1.0) = `test.sample`(
         var x ::: (Float)
-    ): (31.0) | (26.0) | (36.0) => {
-        var `total:1:0` : (Float) :: (0.0) = 0.0
-        {
-            if (`<`(x,0.0) :: (0 .. 1)) {
-                var `total:1:1` : (Float) :: (10.0) = `+`(`total:1:0`,10.0) :: (10.0)
-                var `total:1:2` : (Float) :: (25.0) = `+`(`total:1:1`,15.0) :: (25.0)
-            } else {
-                if (`>`(x,0.0) :: (0 .. 1)) {
-                    var `total:1:3` : (Float) :: (20.0) = `+`(`total:1:0`,20.0) :: (20.0)
-                } else {
-                    var `total:1:4` : (Float) :: (30.0) = `+`(`total:1:0`,30.0) :: (30.0)
-                }
-                var `total:1:5` :: (20.0) | (30.0)
-            }
-            var `total:1:6` :: (25.0) | (20.0) | (30.0)
-        }
-        var `total:1:7` : (Float) :: (30.0) | (25.0) | (35.0) = `+`(`total:1:6`,5.0) :: (30.0) | (25.0) | (35.0)
-        var `total:1:8` : (Float) :: (31.0) | (26.0) | (36.0) = `+`(`total:1:7`,1.0) :: (31.0) | (26.0) | (36.0)
-        return `total:1:8`
+    ): (>= -1.0) => {
+        var `foo:1:0` ::: (>= -1.0) = 1.0
+        for var i :: (0) | (1) | (2) in [
+            0
+            1
+            2
+        ] var `foo:1:1` ::: (>= -1.0) = `+`(`foo:1:0`,1.0) :: (>= 0.0)
+        return `foo:1:1`
     }
 }</p>
                 </td>
             
                 <td>
-                    <header><span>typeInference (9)</span></header>
+                    <header><span>typeInference (5)</span></header>
                     <p>module test.sample {
-    const `test.sample.ssafunc` :: (
+    const `test.sample` :: (
         var x ::: (Float)
-    ): (31.0) | (26.0) | (36.0) = `test.sample.ssafunc`(
+    ): (>= -1.0) = `test.sample`(
         var x ::: (Float)
-    ): (31.0) | (26.0) | (36.0) => {
-        var `total:1:0` : (Float) :: (0.0) = 0.0
-        {
-            if (`<`(x,0.0) :: (0 .. 1)) {
-                var `total:1:1` : (Float) :: (10.0) = `+`(`total:1:0`,10.0) :: (10.0)
-                var `total:1:2` : (Float) :: (25.0) = `+`(`total:1:1`,15.0) :: (25.0)
-            } else {
-                if (`>`(x,0.0) :: (0 .. 1)) {
-                    var `total:1:3` : (Float) :: (20.0) = `+`(`total:1:0`,20.0) :: (20.0)
-                } else {
-                    var `total:1:4` : (Float) :: (30.0) = `+`(`total:1:0`,30.0) :: (30.0)
-                }
-                var `total:1:5` :: (20.0) | (30.0)
-            }
-            var `total:1:6` :: (25.0) | (20.0) | (30.0)
-        }
-        var `total:1:7` : (Float) :: (30.0) | (25.0) | (35.0) = `+`(`total:1:6`,5.0) :: (30.0) | (25.0) | (35.0)
-        var `total:1:8` : (Float) :: (31.0) | (26.0) | (36.0) = `+`(`total:1:7`,1.0) :: (31.0) | (26.0) | (36.0)
-        return `total:1:8`
+    ): (>= -1.0) => {
+        var `foo:1:0` ::: (>= -1.0) = 1.0
+        for var i :: (0) | (1) | (2) in [
+            0
+            1
+            2
+        ] var `foo:1:1` ::: (>= -1.0) = `+`(`foo:1:0`,1.0) :: (>= 0.0)
+        return `foo:1:1`
     }
 }</p>
                 </td>
@@ -3611,29 +2319,18 @@ ssafunc(x: Float) =>
                 <td>
                     <header><span>identity</span></header>
                     <p>module test.sample {
-    const `test.sample.ssafunc` :: (
+    const `test.sample` :: (
         var x ::: (Float)
-    ): (31.0) | (26.0) | (36.0) = `test.sample.ssafunc`(
+    ): (>= -1.0) = `test.sample`(
         var x ::: (Float)
-    ): (31.0) | (26.0) | (36.0) => {
-        var `total:1:0` : (Float) :: (0.0) = 0.0
-        {
-            if (`<`(x,0.0) :: (0 .. 1)) {
-                var `total:1:1` : (Float) :: (10.0) = `+`(`total:1:0`,10.0) :: (10.0)
-                var `total:1:2` : (Float) :: (25.0) = `+`(`total:1:1`,15.0) :: (25.0)
-            } else {
-                if (`>`(x,0.0) :: (0 .. 1)) {
-                    var `total:1:3` : (Float) :: (20.0) = `+`(`total:1:0`,20.0) :: (20.0)
-                } else {
-                    var `total:1:4` : (Float) :: (30.0) = `+`(`total:1:0`,30.0) :: (30.0)
-                }
-                var `total:1:5` :: (20.0) | (30.0)
-            }
-            var `total:1:6` :: (25.0) | (20.0) | (30.0)
-        }
-        var `total:1:7` : (Float) :: (30.0) | (25.0) | (35.0) = `+`(`total:1:6`,5.0) :: (30.0) | (25.0) | (35.0)
-        var `total:1:8` : (Float) :: (31.0) | (26.0) | (36.0) = `+`(`total:1:7`,1.0) :: (31.0) | (26.0) | (36.0)
-        return `total:1:8`
+    ): (>= -1.0) => {
+        var `foo:1:0` ::: (>= -1.0) = 1.0
+        for var i :: (0) | (1) | (2) in [
+            0
+            1
+            2
+        ] var `foo:1:1` ::: (>= -1.0) = `+`(`foo:1:0`,1.0) :: (>= 0.0)
+        return `foo:1:1`
     }
 }</p>
                 </td>

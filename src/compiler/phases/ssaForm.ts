@@ -1,46 +1,19 @@
 import { Phase } from "./Phase";
-import { traverse, replace, Lookup } from "../traverse";
-import { Assignment } from "../ast/Assignment";
-import { Reference } from "../ast/Reference";
-import { Node } from "../Node";
+import { traverseWithScope } from "./createScopeMaps";
 import { Variable } from "../ast/Variable";
-import { isScope } from "../ast/Scope";
-import { TypeReference } from "../ast/TypeReference";
+import { Node } from "../Node";
+import { isScope, Scope } from "../ast/Scope";
 import { Conditional } from "../ast/Conditional";
+import { Assignment } from "../ast/Assignment";
+import { EvaluationContext } from "../EvaluationContext";
 import { Block } from "../ast/Block";
+import { traverse } from "@glas/traverse";
+import { Reference } from "../ast/Reference";
 import { Identifier } from "../ast/Identifier";
-import { Expression } from "../ast/Expression";
 import { TypeofExpression } from "../ast/TypeofExpression";
 import { UnionType } from "../ast/UnionType";
-import { traverseWithScope } from "./createScopeMaps";
-import { EvaluationContext } from "../EvaluationContext";
-
-function findPreviousVariableOrAssignment(c: EvaluationContext, originalNode: Node, ancestors: object[], name: string): Variable | Assignment | null {
-    originalNode = c.lookup.getOriginal(originalNode);
-    ancestors = ancestors.filter(a => !Array.isArray(a));
-    for (let ancestorIndex = ancestors.length - 1; ancestorIndex >= 0; ancestorIndex--) {
-        let ancestor = ancestors[ancestorIndex];
-        let node = ancestors[ancestorIndex + 1] ?? originalNode;
-        if (isScope(ancestor)) {
-            // traverse backwards from this nodes index
-            let nodes = ancestor.nodes as object[];
-            let index = nodes.indexOf(node);
-            if (index < 0) {
-                continue;
-            }
-            for (let i = index - 1; i >= 0; i--) {
-                let check = nodes[i];
-                if (check instanceof Variable || check instanceof Assignment) {
-                    if (check.id.name === name) {
-                        return c.lookup.getOriginal(check);
-                    }
-                }
-            }
-        }
-    }
-    return null;
-}
-
+import { Loop } from "../ast/Loop";
+import { resourceLimits } from "worker_threads";
 
 const ssaVersionSeparator = ":";
 
@@ -65,128 +38,178 @@ export function getSSAOriginalName(name: string) {
     return lastIndex >= 0 ? name.slice(0, lastIndex) : name;
 }
 
-function getVariables(block: Block, result = new Set<Variable>() ) {
-    for (let node of block.nodes) {
-        if (node instanceof Variable) {
-            result.add(node);
-        }
-        else if (node instanceof Block) {
-            getVariables(node, result);
-        }
-    }
-    return result;
+export function getSSANextVersion(name: string) {
+    return getSSAVersionName(getSSAOriginalName(name), getSSAVersionNumber(name) + 1);
 }
 
-function getFinalSSAVersionVariables(block: Block | Expression | null): Map<string,Variable> {
-    if (!(block instanceof Block)) {
-        return new Map();
+export function getScope(ancestors: object[]): Scope {
+    for (let i = ancestors.length - 1; i >= 0; i--) {
+        let ancestor = ancestors[i];
+        if (isScope(ancestor)) {
+            return ancestor;
+        }
     }
-    let highest = new Map<string,Variable>();
-    for (let variable of getVariables(block)) {
-        let originalName = getSSAOriginalName(variable.id.name);
-        if (originalName !== variable.id.name) {
-            let best = highest.get(originalName);
-            let replace = best == null || getSSAVersionNumber(variable.id.name) > getSSAVersionNumber(best.id.name);
-            if (replace) {
-                highest.set(originalName, variable);
+    throw new Error("No Scope found");
+}
+
+function getFinalSSAVersionVariable(block: Node | null | undefined, originalName: string): Variable | null {
+    let prefix = originalName + ssaVersionSeparator;
+    if (block instanceof Block) {
+        let { nodes } = block;
+        for (let i = nodes.length - 1; i >= 0; i--) {
+            let node = nodes[i];
+            if (node instanceof Variable && node.id.name.startsWith(prefix)) {
+                return node;
             }
         }
     }
-    return highest;
+    return null;
+}
+
+export function getAncestorsUpToFirstCommon(c: EvaluationContext, childAncestors: object[], relative) {
+    let relativeAncestors = [...c.lookup.getAncestors(relative)];
+    while (childAncestors.length > 1 && childAncestors[childAncestors.length - 2] === relativeAncestors[relativeAncestors.length - 2]) {
+        childAncestors.pop();
+        relativeAncestors.pop();
+    }
+    return childAncestors;
+}
+
+export function getVariableIfWithinLoop(c: EvaluationContext, ref: Reference, ancestors: object[]) {
+    let variable = c.getVariable(ref);
+    let commonAncestors = getAncestorsUpToFirstCommon(c, ancestors, variable);
+    let withinLoop = commonAncestors.find(ancestor => ancestor instanceof Loop) != null;
+    return withinLoop ? variable : null;
+}
+
+class Converter {
+
+    originalName: string;
+    currentName: string;
+    lastName: string;
+
+    constructor(originalName: string, currentName: string) {
+        this.originalName = originalName;
+        this.currentName = currentName;
+        this.lastName = currentName;
+    }
+
+    getNextName() {
+        return this.currentName = this.lastName = getSSANextVersion(this.lastName);
+    }
+
+    convert(c: EvaluationContext, block: Block): Block {
+        let stack = new Array<string>();
+        let originalVariable!: Variable;
+        let isOriginalVariableAssignedWithinLoops = false;
+        let variablesAndReferences = new Set<Variable | Reference>();
+        let track = (varOrRef: Variable | Reference): typeof varOrRef => {
+            variablesAndReferences.add(varOrRef);
+            return varOrRef;
+        } 
+        let result = traverse(block, {
+            enter: (node, ancestors) => {
+                if (node instanceof Block) {
+                    stack.push(this.currentName);
+                }
+            },
+            leave: (node, ancestors) => {
+                let parent = ancestors[ancestors.length - 1];
+                if (node instanceof Variable && node.id.name === this.originalName) {
+                    return track(originalVariable = node.patch({
+                        id: node.id.patch({ name: this.currentName })
+                    }));
+                }
+                if (node instanceof Assignment && node.id.name === this.originalName) {
+                    let { location, id, value } = node;
+                    let declaredType = originalVariable.declaredType;
+                    let withinLoop = getVariableIfWithinLoop(c, node.id, ancestors);
+                    if (withinLoop) {
+                        isOriginalVariableAssignedWithinLoops = true;
+                    }
+                    //  if we are within a loop, our type must remain the declared type
+                    //  otherwise we can infer a much more specific type
+                    let type = withinLoop ? declaredType : undefined;
+                    return track(new Variable({
+                        meta: [],
+                        location,
+                        declaredType,
+                        type,
+                        id: new Identifier({ location: id.location, name: this.getNextName() }),
+                        value
+                    }));
+                }
+                if (node instanceof Reference && node.name === this.originalName && !(parent instanceof Assignment && parent.id === node)) {
+                    return track(node.patch({ name: this.currentName }));
+                }
+                if (node instanceof Conditional) {
+                    let consequent = getFinalSSAVersionVariable(node.consequent, this.originalName);
+                    let alternate = getFinalSSAVersionVariable(node.alternate, this.originalName);
+                    let vars = [consequent, alternate].filter(Boolean) as Variable[];
+                    if (vars.length > 0) {
+                        if (vars.length < 2) {
+                            vars.push(originalVariable);
+                        }
+                        let types = vars.map(v => new TypeofExpression({ location: v.location, value: new Reference(v.id) }));
+                        let type = UnionType.join(...types);
+                        let phi = new Variable({
+                            meta: [],
+                            location: originalVariable.location,
+                            id: originalVariable.id.patch({ name: this.getNextName() }),
+                            type,
+                            value: null
+                        });
+
+                        return new Block({
+                            location: originalVariable.location,
+                            nodes: [node as any, phi]
+                        });
+                    }
+                }
+                if (node instanceof Block) {
+                    this.currentName = stack.pop()!;
+                }
+                return node;
+            }
+        });
+        if (isOriginalVariableAssignedWithinLoops) {
+            result = traverse(result, {
+                leave: (node, ancestors) => {
+                    if (variablesAndReferences.has(node)) {
+                        let varOrRef = node as Variable | Reference;
+                        // we must convert ALL variable references and SSA declarations to use
+                        return varOrRef.patch({ type: originalVariable.declaredType });
+                    }
+                }
+            });
+        }
+        return result;
+    }
+
 }
 
 export function ssaForm(moduleName, module): ReturnType<Phase> {
     let errors = [];
-    let ssaCounts = new Map<string, number>();
-    function getNextSSAName(name: string): string {
-        name = getSSAOriginalName(name);
-        let count = ssaCounts.get(name) ?? 0;
-        count++;
-        ssaCounts.set(name, count);
-        return getSSAVersionName(name, count);
-    }
-    function toSSAPhiVariables(consequent: Map<string,Variable>, alternate?: Map<string,Variable>): Variable[] {
-        const variables = new Array<Variable>();
-        let names = [...consequent.keys()];
-        if (alternate) {
-            names.push(...alternate.keys());
-        }
-        names = [...new Set(names)];
-        for (let name of names) {
-            let a = consequent.get(name);
-            let b = alternate?.get(name) ?? null;
-            let aType = a ? new TypeofExpression({ location: a.location, value: new Reference(a.id) }) : null;
-            let bType = b ? new TypeofExpression({ location: b.location, value: new Reference(b.id) }) : null;
-            let type = UnionType.join(aType, bType)!;
-            let variable: Variable = a ?? b!;
-
-            variables.push(new Variable({
-                meta: [],
-                location: variable.location,
-                id: variable.id.patch({ name: getNextSSAName(variable.id.name) }),
-                type,
-                value: null
-            }));
-        }
-        return variables;
-    }
-    let ssaVersions = new Map<Variable | Assignment, Variable>();
-    let newSsaVariables = new Map<object,Variable[]>();
-    function addNewSssaVariable(ancestors: object[], variable: Variable) {
-        let parent = ancestors[ancestors.length - 1];
-        let vars = newSsaVariables.get(parent);
-        if (vars == null) {
-            newSsaVariables.set(parent, vars = []);
-        }
-        vars.push(variable);
+    let varNumbers = new Map<string,number>();
+    function getNewVarName(name: string) {
+        let count = varNumbers.get(name) ?? 1;
+        varNumbers.set(name, count + 1);
+        return getSSAVersionName(`${name}${ssaVersionSeparator}${count}`, 0);
     }
     let result = traverseWithScope(new Map(), module, (c) => {
         return {
-            leave(node, ancestors) {
-                let parent = ancestors[ancestors.length - 1];
-                if (node instanceof Assignment) {
-                    //  replace node with a new version
-                    let { location, id, value } = node;
-                    let newVar = new Variable({
-                        meta: [],
-                        location,
-                        id: new Identifier({ location: id.location, name: getNextSSAName(id.name)}),
-                        value
-                    });
-                    ssaVersions.set(c.lookup.getOriginal(node), newVar);
-                    return newVar;
-                }
-                if (node instanceof Reference && !(node instanceof TypeReference)) {
-                    if (parent instanceof Assignment && node === parent.id) {
-                        // we don't care about fixing reference id's.
-                        return;
-                    }
-                    let original = c.getVariable(node);
-                    let previous = findPreviousVariableOrAssignment(c, node, ancestors, node.name);
-                    if (previous) {
-                        let ssaVersion = ssaVersions.get(previous);
-                        if (ssaVersion != null) {
-                            // throw new SemanticError(`SSA FORM NOT FOUND`, node);
-                            return node.patch({ name: ssaVersion.id.name });
+            leave(node) {
+                if (node instanceof Block) {
+                    let variables = node.nodes.filter(n => n instanceof Variable) as Variable[];
+                    if (variables.length > 0) {
+                        for (let variable of variables) {
+                            let name = getNewVarName(variable.id.name);
+                            let converter = new Converter(variable.id.name, name);
+                            node = converter.convert(c, node);
                         }
                     }
                 }
-                if (node instanceof Conditional) {
-                    let finalCondVariables = getFinalSSAVersionVariables(node.consequent);
-                    let finalAltVariables = getFinalSSAVersionVariables(node.alternate);
-                    let finalVariables = toSSAPhiVariables(finalCondVariables, finalAltVariables);
-                    for (let variable of finalVariables) {
-                        let previousVariable = findPreviousVariableOrAssignment(c, node, ancestors, getSSAOriginalName(variable.id.name));
-                        if (previousVariable) {
-                            ssaVersions.set(previousVariable, variable);
-                        }
-                    }
-                    if (finalVariables.length > 0) {
-                        return replace(
-                            node, ...finalVariables
-                        )
-                    }
-                }
+                return node;
             }
         };
     });

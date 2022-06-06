@@ -1,0 +1,5 @@
+typeofTest() =>
+    x: > 0
+    //  right now this gets the actual typeof the variable and not the declared type
+    y: typeof x
+    y := 1

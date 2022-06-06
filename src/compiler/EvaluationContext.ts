@@ -1,9 +1,7 @@
 import { Expression } from "./ast/Expression";
-import { NumberType } from "./ast/NumberType";
 import { Reference } from "./ast/Reference";
 import { Type } from "./ast/Type";
 import { Variable } from "./ast/Variable";
-import { coreTypes } from "./coreTypes";
 import { GetVariableFunction } from "./phases/createScopeMaps";
 import { Lookup } from "./traverse";
 

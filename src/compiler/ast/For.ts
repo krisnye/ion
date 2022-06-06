@@ -1,18 +1,19 @@
 import { Block } from "../ast/Block";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
-import { Expression, ExpressionProps } from "./Expression";
+import { Expression } from "./Expression";
 import { ForItem } from "./ForItem";
+import { Loop, LoopProps } from "./Loop";
 import { Scope } from "./Scope";
 import { Variable } from "./Variable";
 
-export interface ForProps extends ExpressionProps {
+export interface ForProps extends LoopProps {
     left: Variable;
     right: Expression;
     body: Block;
 }
 
-export class For extends Expression implements Scope {
+export class For extends Loop implements Scope {
 
     left!: ForItem;
     right!: Expression;

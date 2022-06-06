@@ -4,6 +4,7 @@ import { EvaluationContext } from "../EvaluationContext";
 import { BaseType, BaseTypeProps } from "./BaseType";
 import { BinaryExpression } from "./BinaryExpression";
 import { Expression, ExpressionProps } from "./Expression";
+import { Reference } from "./Reference";
 import { BasicType, isType, Type } from "./Type";
 
 export interface TypeofExpressionProps extends BaseTypeProps {
@@ -24,6 +25,15 @@ export class TypeofExpression extends BaseType {
     }
 
     protected resolve(c: EvaluationContext): Expression {
+        // Variables have a declared type and an actual type
+        //  when we use typeof variable
+        //      do we mean declared type
+        //      or do we mean the actual type?
+        // if (this.value instanceof Reference) {
+        //     let variable = c.getVariable(this.value);
+        //     console.log("Variable")
+        //     return variable.declaredType!;
+        // }
         return this.value.type!;
     }
 

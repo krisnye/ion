@@ -89,9 +89,11 @@ Cross platform modeling language
   - [-] NumberType needs min/max to use POSITIVE_INFINITY or NEGATIVE_INFINITY.
   - [x] Static Single Assignment?
     - [x] How to infer the PHI functions of re-merging variable type after block?
-  - [ ] Need separate DeclaredType and InferredType on Variables.
+  - [x] Need separate DeclaredType and InferredType on Variables.
+  - [x] Restore unit tests.
+  - [x] Conditional Declarations => Inferred Types
+  - [x] For loop SSA Form.
   - [ ] Test that semantic analysis is providing better type checking.
-  - [ ] Conditional Declarations => inferred Types
   - [ ] Semantic checks.
   - [ ] Some Type Inference must be done in assembled phase.
   - [ ] Simplification can be done in single file as well.
@@ -101,7 +103,7 @@ Cross platform modeling language
   - [ ] Overload Float division to explicitly return NaN if necessary.
   - [ ] class instance functions to static functions
   - [x] class inheritance for type checking
-  - [ ] uniform function call syntax
+  - [ ] Uniform Function Call Syntax
 2015737048
   A reference to a Class is both a "Type" and a "value".
     Variable

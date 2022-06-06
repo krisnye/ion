@@ -75,9 +75,6 @@ export class Function extends FunctionBase implements Callable {
     }
 
     *getDependencies(c: EvaluationContext) {
-        if (this.id?.name === "test.sample.ssafunc") {
-            console.log("ssafunc", [...this.parameters, ...getFinalExpressions(this.body)].filter(e => !e.resolved).join(", "));
-        }
         yield* this.parameters;
         yield* getFinalExpressions(this.body);
     }

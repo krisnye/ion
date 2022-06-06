@@ -1,0 +1,15 @@
+
+ssafunc(x: Float) =>
+    total: Float = 0.0
+    if x < 0.0
+        total += 10.0
+        total += 15.0
+    else if x > 0.0
+        total += 20.0
+    else
+        total += 30.0
+    total += 5.0
+    total += 1.0
+    return total
+
+value: 26.0 | 31.0 | 36.0 = ssafunc(10)

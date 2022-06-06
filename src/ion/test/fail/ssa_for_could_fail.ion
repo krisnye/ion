@@ -1,0 +1,7 @@
+
+forSubtract(x: Float) =>
+    foo: >= -1.0 = 1.0
+    for i in [0, 1, 2]
+        //  this should fail!
+        foo -= 1.0
+    return foo
