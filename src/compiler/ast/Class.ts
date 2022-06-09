@@ -52,6 +52,10 @@ export class Class extends Container implements Type, Declaration, Callable {
         return this.nodes;
     }
 
+    get value() {
+        return this;
+    }
+
     getBasicTypes(c: EvaluationContext) {
         switch (this.id.name) {
             case coreTypes.Array:

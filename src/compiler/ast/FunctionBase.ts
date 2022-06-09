@@ -1,6 +1,6 @@
 import { Variable } from "./Variable";
 import { Container } from "./Container";
-import { MetaContainer, toMetaString } from "./MetaContainer";
+import { MetaContainer } from "./MetaContainer";
 import { MetaCall } from "./Call";
 import { isType, Type } from "./Type";
 import { Expression, ExpressionProps } from "./Expression";

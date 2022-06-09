@@ -8,8 +8,6 @@ import { EvaluationContext } from "../EvaluationContext";
 import { isSubtype } from "../analysis/isSubtype";
 import { SemanticError } from "../SemanticError";
 import { Type } from "./Type";
-import { Node } from "../Node";
-import { getSSAOriginalName } from "../phases/ssaForm";
 
 export interface VariableProps extends ExpressionProps {
     id: Identifier;

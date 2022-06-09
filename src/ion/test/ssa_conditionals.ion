@@ -1,5 +1,5 @@
 
-ssafunc(x: Float) =>
+ssaconditionals(x: Float) =>
     total: Float = 0.0
     if x < 0.0
         total += 10.0
@@ -12,4 +12,4 @@ ssafunc(x: Float) =>
     total += 1.0
     return total
 
-value: 26.0 | 31.0 | 36.0 = ssafunc(10)
+value: 26.0 | 31.0 | 36.0 = ssaconditionals(10)
