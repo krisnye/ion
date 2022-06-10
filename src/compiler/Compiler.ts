@@ -91,32 +91,37 @@ export class Compiler {
             for (let phase of phases) {
                 // merge all the modules into a new module
                 let globalName = "global";
-                let assembly = new Assembly({
-                    location: new SourceLocation(globalName, new SourcePosition(0, 0), new SourcePosition(0, 0)),
-                    nodes: [...modules.values()].map((module: Module) => module.nodes).flat(),
-                })
                 // combine all module entries
-                let [newAssembly, errors] = this.runPhase(phase, globalName, assembly, modules, this.options);
-                errors = removeExpectedErrors(errors);
-                if (errors.length > 0) {
-                    console.log(phase.name);
-                    for (let error of errors) {
-                        this.printErrorConsole(error, sources);
+                for (let phaseRepeatCount = 0; phaseRepeatCount < 100; phaseRepeatCount++) {
+                    let assembly = new Assembly({
+                        location: new SourceLocation(globalName, new SourcePosition(0, 0), new SourcePosition(0, 0)),
+                        nodes: [...modules.values()].map((module: Module) => module.nodes).flat(),
+                    })
+                    let [newAssembly, errors, runPhaseAgain] = this.runPhase(phase, globalName, assembly, modules, this.options);
+                    errors = removeExpectedErrors(errors);
+                    if (errors.length > 0) {
+                        console.log(phase.name);
+                        for (let error of errors) {
+                            this.printErrorConsole(error, sources);
+                        }
+                        return errors;
                     }
-                    return errors;
-                }
-                // split all nodes back into modules
-                let newNodes = new Map([...modules.keys()].map(name => [name, [] as Node[]]));
-                for (let node of newAssembly.nodes) {
-                    newNodes.get(node.location.filename)!.push(node);
-                }
-                for (let name of newNodes.keys()) {
-                    if (!removedModules.has(name)) {
-                        let module = modules.get(name)!;
-                        let newModule = module.patch({ nodes: newNodes.get(name)})
-                        modules.set(name, newModule);
-                        // log each module individually.
-                        this.log(logger, phase.name, newModule, name);
+                    // split all nodes back into modules
+                    let newNodes = new Map([...modules.keys()].map(name => [name, [] as Node[]]));
+                    for (let node of newAssembly.nodes) {
+                        newNodes.get(node.location.filename)!.push(node);
+                    }
+                    for (let name of newNodes.keys()) {
+                        if (!removedModules.has(name)) {
+                            let module = modules.get(name)!;
+                            let newModule = module.patch({ nodes: newNodes.get(name)})
+                            modules.set(name, newModule);
+                            // log each module individually.
+                            this.log(logger, (phaseRepeatCount || runPhaseAgain) ? `${phase.name} (${phaseRepeatCount + 1})` : phase.name, newModule, name);
+                        }
+                    }
+                    if (!runPhaseAgain) {
+                        return;
                     }
                 }
             }
@@ -186,14 +191,14 @@ export class Compiler {
             errors = this.runPhases(sources, modules, assemblyPhases, true, debugOptions);
             if (errors) { return errors; }
 
-            // finally check that any expected fail files failed to compile.
-            if (this.options.test) {
-                for (let [name, module] of modules) {
-                    if (isTestFailFile(name)) {
-                        this.printErrorConsole(new SemanticError(`Expected '${name}' to fail`, module), sources);
-                    }
-                }
-            }
+            // // finally check that any expected fail files failed to compile.
+            // if (this.options.test) {
+            //     for (let [name, module] of modules) {
+            //         if (isTestFailFile(name)) {
+            //             this.printErrorConsole(new SemanticError(`Expected '${name}' to fail`, module), sources);
+            //         }
+            //     }
+            // }
         } catch (e) {
             this.printErrorConsole(e, sources);
             return Array.isArray(e) ? e : [e];
@@ -225,7 +230,7 @@ export class Compiler {
         }
     }
 
-    logFilter = new Set([ "test.sample" ])
+    logFilter = new Set([ "test.sample", "+" ])
     logModule(name: string) {
         // return true;
         return this.logFilter && this.logFilter.has(name);

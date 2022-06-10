@@ -1,5 +1,7 @@
 
-sample(x: Float) =>
+class Foo
+x = 12
+bazzle(x: Float) =>
     foo: >= -1.0 = 1.0
     for i in [0, 1, 2]
         foo += 1.0

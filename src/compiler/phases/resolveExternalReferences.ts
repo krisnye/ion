@@ -17,12 +17,16 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
     let errors: Error[] = [];
     let replacements = new Map<Identifier, Reference>();
     let scopes = createScopeMaps(module);
+    if (moduleName === "test.class") {
+        debugger;
+    }
     let externalReferences = getExternalReferences(module, scopes);
     let dependencies = new Set<string>();
 
     module = traverse(module, {
         enter(node) {
             if (node instanceof Module) {
+                // why are we replacing things here?
                 replaceExternalReferencesToAbsolute(node, externalModules, replacements, errors, externalReferences, dependencies);
                 replaceInternalReferencesToAbsolute(node, externalModules, replacements, errors, scopes);
             }
@@ -45,8 +49,9 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
                     }
                 }
 
-                let declaration = scopes.get(node)[node.name];
-                if (declaration != null) {
+                let declarations = scopes.get(node)[node.name];
+                if (declarations != null) {
+                    let declaration = declarations[0];
                     let rootId = replacements.get(declaration.id);
                     if (rootId != null) {
                         node = node.patch({ name: rootId.name });
@@ -81,7 +86,7 @@ function getExternalReferences(module: any, scopes: NodeMap<ScopeMap>): Map<stri
 
 function replaceInternalReferencesToAbsolute(module: Module, externalModules: Map<string,Module>, replacements, errors, scopes: NodeMap<ScopeMap>) {
     for (let node of module.nodes) {
-        if (isDeclaration(node)) {
+        if (isDeclaration(node) && !node.isGlobalScoped) {
             replacements.set(node.id, node.id.patch({ name: getAbsolutePath(module.name, node.id.name) }));
         }
     }

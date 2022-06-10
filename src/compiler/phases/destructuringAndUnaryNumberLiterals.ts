@@ -12,6 +12,7 @@ import { Variable } from "../ast/Variable";
 import { Token } from "../Token";
 import { tokenTypes } from "../tokenizer/TokenType";
 import { For } from "../pst/For";
+import { FunctionDeclaration } from "../ast/FunctionDeclaration";
 
 const parser = createParser();
 
@@ -65,12 +66,12 @@ export function destructuringAndUnaryNumberLiterals(moduleName, module): ReturnT
                         break;
                 }
             }
-            if (node instanceof BinaryExpression && (node.operator.value === "=>" || node.operator.value === ":")&& node.left instanceof PstCall) {
+            if (node instanceof BinaryExpression && (node.operator.value === "=>" || node.operator.value === ":") && node.left instanceof PstCall) {
                 const { location } = node;
                 return new BinaryExpression({
                     location,
                     left: node.left.callee,
-                    operator: node.operator.patch({ source: "=", value: "=" }),
+                    operator: node.operator.patch({ source: FunctionDeclarationHackOperatorSource, value: "=" }),
                     right: node.patch({
                         left: new Group({
                             location: node.left.location,
@@ -87,3 +88,5 @@ export function destructuringAndUnaryNumberLiterals(moduleName, module): ReturnT
     })
     return [module, errors];
 }
+
+export const FunctionDeclarationHackOperatorSource = "FunctionDeclarationHackOperatorSource";

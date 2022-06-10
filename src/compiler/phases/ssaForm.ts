@@ -76,7 +76,7 @@ export function getAncestorsUpToFirstCommon(c: EvaluationContext, childAncestors
 }
 
 export function getVariableIfWithinLoop(c: EvaluationContext, ref: Reference, ancestors: object[]) {
-    let variable = c.getVariable(ref);
+    let variable = c.getDeclaration(ref);
     let commonAncestors = getAncestorsUpToFirstCommon(c, ancestors, variable);
     let withinLoop = commonAncestors.find(ancestor => ancestor instanceof Loop) != null;
     return withinLoop ? variable : null;

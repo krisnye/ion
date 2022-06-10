@@ -91,7 +91,7 @@ testExpression(
     x: Number
     y: Number
 `,
-`type Vector = class Vector {\n    x : Number\n    y : Number\n}`
+`class Vector {\n    x : Number\n    y : Number\n}`
 );
 
 //  for loops
@@ -187,6 +187,6 @@ testModule(
 `
 class Foo
 `,
-`module test {\n    type Foo = class Foo {}\n}`,
+`module test {\n    class Foo {}\n}`,
 { finalPhase: parsing },
 )

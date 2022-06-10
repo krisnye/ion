@@ -17,15 +17,16 @@ export class Reference extends Expression  {
     patch(props: Partial<ReferenceProps>) { return super.patch(props); }
 
     *getDependencies(c: EvaluationContext) {
-        yield c.getVariable(this);
+        yield* c.getDeclarations(this);
         if (this.type) {
             yield this.type;
         }
     }
 
     protected resolveType(c: EvaluationContext): Type | null {
-        let variable = c.getVariable(this);
-        return variable.type!;
+        let declarations = c.getDeclarations(this);
+        // just return the first
+        return declarations[0].type!;
     }
 
     toInterpreterInstance(c: EvaluationContext) {

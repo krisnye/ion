@@ -1,12 +1,12 @@
 
 @Native("(a, b) => ({ ...a, value: a.value / b.value })")
-`/` = (a: Integer, b: != 0): Integer => 0
+`/`(a: Integer, b: != 0): Integer => 0
 
 @Native("(a, b) => ({ ...a, value: a.value / b.value })")
-`/` = (a: Float, b: Float): Float => 0.0
+`/`(a: Float, b: Float): Float => 0.0
 
 @Native("(a, b) => ({ ...a, value: a.value / b.value })")
-`/` = (a: Integer, b: Float): Float => 0.0
+`/`(a: Integer, b: Float): Float => 0.0
 
 @Native("(a, b) => ({ ...a, value: a.value / b.value })")
-`/` = (a: Float, b: Integer): Float => 0.0
+`/`(a: Float, b: Integer): Float => 0.0

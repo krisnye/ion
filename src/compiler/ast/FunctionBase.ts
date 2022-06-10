@@ -51,7 +51,7 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
 
     toString() {
         return this.returnType
-            ? `${Container.toString(this.parameters, "(", ")")}: ${this.returnType}`
+            ? `${Container.toString(this.parameters, "(", ")")} ${this.resolved ? '::' : ':'} ${this.returnType}`
             : `${Container.toString(this.parameters, "(", ")")}`;
     }
 

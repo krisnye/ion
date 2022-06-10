@@ -11,6 +11,8 @@ export interface FunctionDeclarationProps extends FunctionProps {
 export class FunctionDeclaration extends Function implements Declaration {
 
     id!: Identifier;
+    // function declarations are scoped globally to allow overloading multimethods from anywhere
+    isGlobalScoped = true;
 
     constructor(props: FunctionProps) { super(props); }
     patch(props: Partial<FunctionProps>) { return super.patch(props); }

@@ -31,6 +31,8 @@ import { Pair } from "../ast/Pair";
 import { coreTypes } from "../coreTypes";
 import { ForItem } from "../ast/ForItem";
 import { Conditional } from "../ast/Conditional";
+import { FunctionDeclarationHackOperatorSource } from "./destructuringAndUnaryNumberLiterals";
+import { FunctionDeclaration } from "../ast/FunctionDeclaration";
 
 function toParametersOrMeta(value: Node | null) {
     let parameters = new Array<Variable | MetaCall>();
@@ -128,7 +130,6 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                 // console.log({ parent, node });
                 if (!(node instanceof Block) && (node === parent.consequent || node === parent.alternate)) {
                     // convert conditional branches to always be Blocks.
-                    console.log("------!!!!!!!!");
                     return new Block({ location: node.location, nodes: [ node ]});
                 }
             }
@@ -244,7 +245,6 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                             })
                         }
                         else {
-                            console.log({ left });
                             errors.push(new SemanticError(`Expected identifier`, left));
                             return;
                         }
@@ -267,6 +267,15 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                         }
 
                         if (isVariable) {
+                            if (node.operator.source === FunctionDeclarationHackOperatorSource) {
+                                return new FunctionDeclaration({
+                                    ...right as Function,
+                                    location,
+                                    id: new Identifier(id)
+                                });
+                                // return new Variable({ location, id: new Identifier(id), declaredType, value: right, constant, meta: [] });
+                            }
+    
                             return new Variable({ location, id: new Identifier(id), declaredType, value: right, constant, meta: [] });
                         }
                         else {
@@ -304,6 +313,11 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                                     body: right,
                                 })
                             })
+                        }
+                        else if (left instanceof Function) {
+                            return left.patch({
+                                body: right
+                            });
                         }
                         else {
                             errors.push(new SemanticError(`Invalid function parameter(s)`, left));

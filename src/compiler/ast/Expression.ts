@@ -34,6 +34,9 @@ export class Expression extends Node implements Required<ExpressionProps> {
                 console.log("ERROR, undefined dep: " + this.constructor.name);
             }
             if (!dep.resolved) {
+                if ((this as any).id?.name === "bazzle") {
+                    console.log("Bazzle waiting for : " + dep);
+                }
                 return false;
             }
         }

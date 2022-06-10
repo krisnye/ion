@@ -1,7 +1,6 @@
 import { EvaluationContext } from "../EvaluationContext";
 import { SemanticError } from "../SemanticError";
 import { BinaryExpression } from "./BinaryExpression";
-import { Class } from "./Class";
 import { Expression } from "./Expression";
 import { Reference, ReferenceProps } from "./Reference";
 import { BasicType, isType, Type } from "./Type";
@@ -24,7 +23,7 @@ export class TypeReference extends Reference implements Type  {
     }
 
     getBasicTypes(c: EvaluationContext) {
-        let value = c.getValue(this);
+        const value = c.getValue(this);
         if (isType(value)) {
             return value.getBasicTypes(c);
         }
@@ -33,7 +32,7 @@ export class TypeReference extends Reference implements Type  {
 
     toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
         // at this point... a TypeReference should ONLY be referencing a class.
-        let value = c.getValue(this);
+        const value = c.getValue(this);
         if (!isType(value)) {
             throw new SemanticError(`Expected Type`, this);
         }

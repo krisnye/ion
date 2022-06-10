@@ -5,7 +5,7 @@
 // safeIndex = index % array.length
 // pair = Pair(1, 10)
 
-fn = () =>
+myfunction() =>
     x: <= 0.0 = -1.0
     x := min(0.0, x + 20.0)
     return x

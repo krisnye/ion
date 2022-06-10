@@ -23,18 +23,12 @@ export class ClassParselet extends PrefixParselet {
         }
         let block = p.maybeParseBlock();
         let location = block ? SourceLocation.merge(classToken.location, block.location) : classToken.location;
-        return new Variable({
+        return new Class({
             location,
-            meta: [],
-            constant: true,
             id,
-            value: new Class({
-                location: block ? SourceLocation.merge(classToken.location, block.location) : classToken.location,
-                id,
-                constant: true,
-                extends: _extends,
-                nodes: block?.nodes ?? [],
-            })
+            constant: true,
+            extends: _extends,
+            nodes: block?.nodes ?? [],
         });
     }
 

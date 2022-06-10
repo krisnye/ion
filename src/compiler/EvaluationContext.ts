@@ -1,8 +1,10 @@
+import { Declaration, isDeclaration } from "./ast/Declaration";
 import { Expression } from "./ast/Expression";
 import { Reference } from "./ast/Reference";
 import { Type } from "./ast/Type";
 import { Variable } from "./ast/Variable";
-import { GetVariableFunction } from "./phases/createScopeMaps";
+import { GetVariableFunction as GetDeclarationsFunction } from "./phases/createScopeMaps";
+import { SemanticError } from "./SemanticError";
 import { Lookup } from "./traverse";
 
 export class EvaluationContext {
@@ -10,9 +12,18 @@ export class EvaluationContext {
     public readonly errors = new Array<Error>();
 
     constructor(
-        public readonly getVariable: GetVariableFunction,
+        public readonly getDeclarations: GetDeclarationsFunction,
         public readonly lookup: Lookup,
     ) {
+    }
+
+    getDeclaration(ref: Reference): Declaration {
+        let declarations = this.getDeclarations(ref);
+        if (declarations.length != 1) {
+            debugger;
+            throw new SemanticError(`Multiple declarations found`, ref);
+        }
+        return declarations[0];
     }
 
     private comparisonTypes = new Map<Type,Type>();
@@ -24,13 +35,31 @@ export class EvaluationContext {
         return check;
     }
 
-    getValue(ref: Expression): Expression {
+    getValues(ref: Expression): Expression[] {
         let value = ref;
         while (value instanceof Reference || value instanceof Variable) {
-            let variable = value instanceof Variable ? value : this.getVariable(value);
+            let variable: Declaration | Declaration[] = value instanceof Variable ? value : this.getDeclarations(value);
+            if (Array.isArray(variable)) {
+                if (variable.length > 1) {
+                    return variable.map(v => v.value!);
+                }
+                variable = variable[0]!;
+            }
             value = this.getValue(variable.value!);
         }
-        return value;
+        if (isDeclaration(value)) {
+            value = value.value!;
+        }
+        return [value];
+    }
+
+    getValue(ref: Expression): Expression {
+        let values = this.getValues(ref);
+        if (values.length !== 1) {
+            debugger;
+            throw new SemanticError(`Multiple values found`, ref);
+        }
+        return values[0];
     }
 
 }

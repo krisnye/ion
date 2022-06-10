@@ -91,8 +91,10 @@ export class Function extends FunctionBase implements Callable {
         }
         const returnType = this.returnType ?? inferredType;
         const type = new FunctionType({
-            ...this,
+            location: this.location,
+            parameters: this.parameters,
             returnType,
+            meta: [],
             resolved: true,
         });
         return this.patch({ returnType, type });

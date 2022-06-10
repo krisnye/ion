@@ -8,11 +8,9 @@ import { identity } from "./identity";
 import { resolveExternalReferences } from "./resolveExternalReferences";
 import { typeInference } from "./typeInference";
 import { opsToTypeNodes } from "./opsToTypeNodes";
-import { pstModulesToAst } from "./pstModulesToAst";
-import { createMultiFunctions } from "./createMultiFunctions";
+// import { createMultiFunctions } from "./createMultiFunctions";
 import { removeSoloBlocks } from "./removeSoloBlocks";
 import { moveMetaToFunctions } from "./moveMetaToFunctions";
-import { validateTypeDeclarations } from "./validateTypeDeclarations";
 import { ssaForm } from "./ssaForm";
 
 export const parsingPhases: Phase[] = [
@@ -24,24 +22,22 @@ export const parsingPhases: Phase[] = [
     removeSoloBlocks,
     flattenSequencesAddMeta,
     moveMetaToFunctions,
-    createMultiFunctions,
+    // createMultiFunctions,
     resolveExternalReferences,
-    // ssaForm2,
     ssaForm,
-    // ssaForm,
     //  MUST be solo up to this point so we can get external dependencies.
 ];
 
 export const intermediatePhases: Phase[] = [
-    pstModulesToAst,
-    validateTypeDeclarations,
-    typeInference,
+    // pstModulesToAst,
+    // validateTypeDeclarations,
     // checkForUnresolvedExpressions,
-]
+];
 
 //  move all module root functions to shared multifunctions
 //  the perform more typeInference with all phases merged up
 //  evaluation must happen in an assembled phase.
 export const assemblyPhases: Phase[] = [
+    typeInference,
     identity,
-]
+];

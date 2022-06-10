@@ -228,6 +228,3152 @@ ul.jsondiffpatch-textdiff {
             <td>
                 <header><span>File</span></header>
                 <span class="content">
+                    +
+                </span>
+            </td>
+        
+                <td>
+                    <header><span>Source</span></header>
+                    <p>
+@Native("(a, b) => ({ ...a, value: a.value + b.value })")
+`+`(a: Integer, b: Integer): Integer => 0
+
+@Native("(a, b) => ({ ...a, value: a.value + b.value })")
+`+`(a: Float, b: Float): Float => 0.0
+
+@Native("(a, b) => ({ ...a, value: a.value + b.value })")
+`+`(a: Integer, b: Float): Float => 0.0
+
+@Native("(a, b) => ({ ...a, value: a.value + b.value })")
+`+`(a: Float, b: Integer): Float => 0.0
+</p>
+                </td>
+            
+                <td>
+                    <header><span>tokenization</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>@Native(\&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })\&quot;)<br>`+`(a: Integer, b: Integer): Integer =&gt; 0<br><br>@Native(\&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })\&quot;)<br>`+`(a: Float, b: Float): Float =&gt; 0.0<br><br>@Native(\&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })\&quot;)<br>`+`(a: Integer, b: Float): Float =&gt; 0.0<br><br>@Native(\&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })\&quot;)<br>`+`(a: Float, b: Integer): Float =&gt; 0.0<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;@Native&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;OpenParen&quot;,
+    &quot;source&quot;: &quot;(&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;String&quot;,
+    &quot;source&quot;: &quot;\&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })\&quot;&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;CloseParen&quot;,
+    &quot;source&quot;: &quot;)&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;EscapedId&quot;,
+    &quot;source&quot;: &quot;`+`&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;OpenParen&quot;,
+    &quot;source&quot;: &quot;(&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;a&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Integer&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;,&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;b&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Integer&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;CloseParen&quot;,
+    &quot;source&quot;: &quot;)&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Integer&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;=&gt;&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Integer&quot;,
+    &quot;source&quot;: &quot;0&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;@Native&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;OpenParen&quot;,
+    &quot;source&quot;: &quot;(&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;String&quot;,
+    &quot;source&quot;: &quot;\&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })\&quot;&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;CloseParen&quot;,
+    &quot;source&quot;: &quot;)&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;EscapedId&quot;,
+    &quot;source&quot;: &quot;`+`&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;OpenParen&quot;,
+    &quot;source&quot;: &quot;(&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;a&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Float&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;,&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;b&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Float&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;CloseParen&quot;,
+    &quot;source&quot;: &quot;)&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Float&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;=&gt;&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Float&quot;,
+    &quot;source&quot;: &quot;0.0&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;@Native&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;OpenParen&quot;,
+    &quot;source&quot;: &quot;(&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;String&quot;,
+    &quot;source&quot;: &quot;\&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })\&quot;&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;CloseParen&quot;,
+    &quot;source&quot;: &quot;)&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;EscapedId&quot;,
+    &quot;source&quot;: &quot;`+`&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;OpenParen&quot;,
+    &quot;source&quot;: &quot;(&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;a&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Integer&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;,&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;b&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Float&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;CloseParen&quot;,
+    &quot;source&quot;: &quot;)&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Float&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;=&gt;&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Float&quot;,
+    &quot;source&quot;: &quot;0.0&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;@Native&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;OpenParen&quot;,
+    &quot;source&quot;: &quot;(&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;String&quot;,
+    &quot;source&quot;: &quot;\&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })\&quot;&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;CloseParen&quot;,
+    &quot;source&quot;: &quot;)&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;EscapedId&quot;,
+    &quot;source&quot;: &quot;`+`&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;OpenParen&quot;,
+    &quot;source&quot;: &quot;(&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;a&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Float&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;,&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;b&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Integer&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;CloseParen&quot;,
+    &quot;source&quot;: &quot;)&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Float&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;=&gt;&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Float&quot;,
+    &quot;source&quot;: &quot;0.0&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  }
+]</pre></div></div></p>
+                </td>
+            
+                <td>
+                    <header><span>parsing</span></header>
+                    <p>module + {
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    `+`(a : Integer , b : Integer) : Integer => 0
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    `+`(a : Float , b : Float) : Float => 0.0
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    `+`(a : Integer , b : Float) : Float => 0.0
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    `+`(a : Float , b : Integer) : Float => 0.0
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>destructuringAndUnaryNumberLiterals</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,10 +1,10 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module + {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>`+`(</del>a : Integer , b : Integer) : Integer =&gt; 0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>`+` = (</ins>a : Integer , b : Integer) : Integer =&gt; 0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>`+`(</del>a : Float , b : Float) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>`+` = (</ins>a : Float , b : Float) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>`+`(</del>a : Integer , b : Float) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>`+` = (</ins>a : Integer , b : Float) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">9</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>`+`(</del>a : Float , b : Integer) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>`+` = (</ins>a : Float , b : Integer) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>opsToTypeNodes</span></header>
+                    <p>module + {
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    `+` = (a : Integer , b : Integer) : Integer => 0
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    `+` = (a : Float , b : Float) : Float => 0.0
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    `+` = (a : Integer , b : Float) : Float => 0.0
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    `+` = (a : Float , b : Integer) : Float => 0.0
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>opsToValueNodes</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,10 +1,22 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module + {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>`+` = (a : Integer , b : Integer) : Integer =&gt; 0</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>`+`(</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) : Integer =&gt; 0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>`+` = (a : Float , b : Float) : Float =&gt; 0.0</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>`+`(</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>`+` = (a : Integer , b : Float) : Float =&gt; 0.0</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>`+`(</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">14</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">15</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">16</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">17</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">9</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>`+` = (a : Float , b : Integer) : Float =&gt; 0.0</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">18</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>`+`(</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">19</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">20</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">21</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">22</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>removeSoloBlocks</span></header>
+                    <p>module + {
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    `+`(
+        var a : Integer
+        var b : Integer
+    ) : Integer => 0
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    `+`(
+        var a : Float
+        var b : Float
+    ) : Float => 0.0
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    `+`(
+        var a : Integer
+        var b : Float
+    ) : Float => 0.0
+    @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    `+`(
+        var a : Float
+        var b : Integer
+    ) : Float => 0.0
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>flattenSequencesAddMeta</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,20 +1,28 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module + {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>@Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>{</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var a : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var b : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) : Integer =&gt; 0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>@Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>{</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var a : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">14</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var b : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">15</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">12</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>@Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">16</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>{</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">17</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">18</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">13</div>
+<div class="line-num2">19</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">14</div>
+<div class="line-num2">20</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var a : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">15</div>
+<div class="line-num2">21</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var b : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">16</div>
+<div class="line-num2">22</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">17</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    <del>@Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">23</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>{</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">24</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">25</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">18</div>
+<div class="line-num2">26</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">19</div>
+<div class="line-num2">27</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var a : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">20</div>
+<div class="line-num2">28</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var b : Integer</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>moveMetaToFunctions</span></header>
+                    <p>module + {
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    }
+    `+`(
+        var a : Integer
+        var b : Integer
+    ) : Integer => 0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    }
+    `+`(
+        var a : Float
+        var b : Float
+    ) : Float => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    }
+    `+`(
+        var a : Integer
+        var b : Float
+    ) : Float => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    }
+    `+`(
+        var a : Float
+        var b : Integer
+    ) : Float => 0.0
+}</p>
+                </td>
+            
+                <td>
+                    <header><span>resolveExternalReferences</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -3,28 +3,29 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var a : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var b : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">8</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) : Integer =&gt; 0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a : <ins>(</ins>Integer<ins>)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b : <ins>(</ins>Integer<ins>)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) : <ins>(</ins>Integer<ins>)</ins> =&gt; 0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">12</div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">13</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var a : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">14</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var b : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">15</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a : <ins>(</ins>Float<ins>)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">14</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b : <ins>(</ins>Float<ins>)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">15</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) : <ins>(</ins>Float<ins>)</ins> =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">16</div>
+<div class="line-num2">16</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">17</div>
+<div class="line-num2">17</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">18</div>
+<div class="line-num2">18</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">19</div>
+<div class="line-num2">19</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">20</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var a : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">21</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var b : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">22</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">20</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a : <ins>(</ins>Integer<ins>)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">21</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b : <ins>(</ins>Float<ins>)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">22</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) : <ins>(</ins>Float<ins>)</ins> =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">23</div>
+<div class="line-num2">23</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">24</div>
+<div class="line-num2">24</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot;)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">25</div>
+<div class="line-num2">25</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">26</div>
+<div class="line-num2">26</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">27</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var a : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">28</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var b : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">29</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) : Float =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">27</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a : <ins>(</ins>Float<ins>)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">28</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b : <ins>(</ins>Integer<ins>)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">29</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) : <ins>(</ins>Float<ins>)</ins> =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">30</div>
+<div class="line-num2">30</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">31</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;@Native&quot;,&quot;Integer&quot;,&quot;Float&quot;]</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>ssaForm</span></header>
+                    <p>module + {
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    }
+    `+`(
+        var a : (Integer)
+        var b : (Integer)
+    ) : (Integer) => 0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    }
+    `+`(
+        var a : (Float)
+        var b : (Float)
+    ) : (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    }
+    `+`(
+        var a : (Integer)
+        var b : (Float)
+    ) : (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })")
+    }
+    `+`(
+        var a : (Float)
+        var b : (Integer)
+    ) : (Float) => 0.0
+}
+// externals: ["@Native","Integer","Float"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (1)</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,31 +1,31 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module + {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value <del>})&quot;)</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value <ins>})&quot; :: (String))</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var a <del>:</del> (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var b <del>:</del> (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">8</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) <del>:</del> (Integer) =&gt; 0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) <ins>::</ins> (Integer) =&gt; 0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">10</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value <del>})&quot;)</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value <ins>})&quot; :: (String))</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">12</div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">13</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var a <del>:</del> (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">14</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var b <del>:</del> (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">15</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) <del>:</del> (Float) =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">14</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">15</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) <ins>::</ins> (Float) =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">16</div>
+<div class="line-num2">16</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">17</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value <del>})&quot;)</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">17</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value <ins>})&quot; :: (String))</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">18</div>
+<div class="line-num2">18</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">19</div>
+<div class="line-num2">19</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">20</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var a <del>:</del> (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">21</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var b <del>:</del> (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">22</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) <del>:</del> (Float) =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">20</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">21</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">22</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) <ins>::</ins> (Float) =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">23</div>
+<div class="line-num2">23</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">24</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value <del>})&quot;)</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">24</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value <ins>})&quot; :: (String))</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">25</div>
+<div class="line-num2">25</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">26</div>
+<div class="line-num2">26</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">27</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var a <del>:</del> (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">28</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var b <del>:</del> (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">29</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) <del>:</del> (Float) =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">27</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">28</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">29</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) <ins>::</ins> (Float) =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">30</div>
+<div class="line-num2">30</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">31</div>
+<div class="line-num2">31</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;@Native&quot;,&quot;Integer&quot;,&quot;Float&quot;]</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (2)</span></header>
+                    <p>module + {
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Integer)
+    ) :: (Integer) => 0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Integer)
+    ) :: (Float) => 0.0
+}
+// externals: ["@Native","Integer","Float"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (3)</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,27 +1,27 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module + {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot; :: (String))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot; :: (String))<ins> :: (@Native : (1), javascript : (String))</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var a ::: (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var b ::: (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) :: (Integer) =&gt; 0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">10</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot; :: (String))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot; :: (String))<ins> :: (@Native : (1), javascript : (String))</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">12</div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">13</div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var a ::: (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">14</div>
+<div class="line-num2">14</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">15</div>
+<div class="line-num2">15</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) :: (Float) =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">16</div>
+<div class="line-num2">16</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">17</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot; :: (String))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">17</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot; :: (String))<ins> :: (@Native : (1), javascript : (String))</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">18</div>
+<div class="line-num2">18</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">19</div>
+<div class="line-num2">19</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">20</div>
+<div class="line-num2">20</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var a ::: (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">21</div>
+<div class="line-num2">21</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">22</div>
+<div class="line-num2">22</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) :: (Float) =&gt; 0.0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">23</div>
+<div class="line-num2">23</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">24</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot; :: (String))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">24</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        @Native(&quot;(a, b) =&gt; ({ ...a, value: a.value + b.value })&quot; :: (String))<ins> :: (@Native : (1), javascript : (String))</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">25</div>
+<div class="line-num2">25</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">26</div>
+<div class="line-num2">26</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    `+`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">27</div>
+<div class="line-num2">27</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var a ::: (Float)</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (4)</span></header>
+                    <p>module + {
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Integer)
+    ) :: (Integer) => 0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Integer)
+    ) :: (Float) => 0.0
+}
+// externals: ["@Native","Integer","Float"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (5)</span></header>
+                    <p>module + {
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Integer)
+    ) :: (Integer) => 0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Integer)
+    ) :: (Float) => 0.0
+}
+// externals: ["@Native","Integer","Float"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (6)</span></header>
+                    <p>module + {
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Integer)
+    ) :: (Integer) => 0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Integer)
+    ) :: (Float) => 0.0
+}
+// externals: ["@Native","Integer","Float"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (7)</span></header>
+                    <p>module + {
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Integer)
+    ) :: (Integer) => 0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Integer)
+    ) :: (Float) => 0.0
+}
+// externals: ["@Native","Integer","Float"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (8)</span></header>
+                    <p>module + {
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Integer)
+    ) :: (Integer) => 0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Integer)
+    ) :: (Float) => 0.0
+}
+// externals: ["@Native","Integer","Float"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (9)</span></header>
+                    <p>module + {
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Integer)
+    ) :: (Integer) => 0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Integer)
+    ) :: (Float) => 0.0
+}
+// externals: ["@Native","Integer","Float"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (10)</span></header>
+                    <p>module + {
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Integer)
+    ) :: (Integer) => 0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Integer)
+        var b ::: (Float)
+    ) :: (Float) => 0.0
+    {
+        @Native("(a, b) => ({ ...a, value: a.value + b.value })" :: (String)) :: (@Native : (1), javascript : (String))
+    }
+    `+`(
+        var a ::: (Float)
+        var b ::: (Integer)
+    ) :: (Float) => 0.0
+}
+// externals: ["@Native","Integer","Float"]</p>
+                </td>
+            </tr><tr class="channel">
+            <td>
+                <header><span>File</span></header>
+                <span class="content">
                     test.sample
                 </span>
             </td>
@@ -235,7 +3381,9 @@ ul.jsondiffpatch-textdiff {
                 <td>
                     <header><span>Source</span></header>
                     <p>
-sample(x: Float) =>
+class Foo
+x = 12
+bazzle(x: Float) =>
     foo: >= -1.0 = 1.0
     for i in [0, 1, 2]
         foo += 1.0
@@ -245,14 +3393,54 @@ sample(x: Float) =>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>sample(x: Float) =&gt;<br>    foo: &gt;= -1.0 = 1.0<br>    for i in [0, 1, 2]<br>        foo += 1.0<br>    return foo<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class Foo<br>x = 12<br>bazzle(x: Float) =&gt;<br>    foo: &gt;= -1.0 = 1.0<br>    for i in [0, 1, 2]<br>        foo += 1.0<br>    return foo<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Class&quot;,
+    &quot;source&quot;: &quot;class&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Foo&quot;
+  },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;sample&quot;
+    &quot;source&quot;: &quot;x&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;=&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Integer&quot;,
+    &quot;source&quot;: &quot;12&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;bazzle&quot;
   },
   Token {
     &quot;type&quot;: &quot;OpenParen&quot;,
@@ -462,7 +3650,9 @@ sample(x: Float) =>
                 <td>
                     <header><span>parsing</span></header>
                     <p>module test.sample {
-    sample(x : Float) => {
+    class Foo {}
+    x = 12
+    bazzle(x : Float) => {
         foo : >= - 1.0 = 1.0
         for i in [0 , 1 , 2] {
             foo += 1.0
@@ -491,7 +3681,7 @@ sample(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,6 +1,6 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,8 +1,8 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -505,19 +3695,41 @@ sample(x: Float) =>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
+    <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    class Foo {}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    x = 12</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    sample(x : Float) =&gt; {</span>
+            <span class="d2h-code-line-ctn">    bazzle(x : Float) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">3</div>
+      <div class="line-num1">5</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -529,18 +3741,18 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">2</div>
+<div class="line-num2">4</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    sample<ins> = </ins>(x : Float) =&gt; {</span>
+            <span class="d2h-code-line-ctn">    bazzle<ins> = </ins>(x : Float) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">3</div>
+<div class="line-num2">5</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
@@ -550,8 +3762,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -561,8 +3773,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">5</div>
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -572,8 +3784,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
+      <div class="line-num1">8</div>
+<div class="line-num2">8</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -609,18 +3821,7 @@ sample(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,6 +1,6 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module test.sample {</span>
-        </div>
+        <div class="d2h-code-line d2h-info">@@ -2,7 +2,7 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -630,12 +3831,34 @@ sample(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    sample = (x : Float) =&gt; {</span>
+            <span class="d2h-code-line-ctn">    class Foo {}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    x = 12</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    bazzle = (x : Float) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">3</div>
+      <div class="line-num1">5</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -647,7 +3870,7 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">3</div>
+<div class="line-num2">5</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
@@ -657,8 +3880,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -668,8 +3891,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">5</div>
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -679,8 +3902,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
+      <div class="line-num1">8</div>
+<div class="line-num2">8</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -716,7 +3939,7 @@ sample(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,8 +1,14 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,10 +1,16 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -730,14 +3953,14 @@ sample(x: Float) =>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
+    <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">2</div>
-<div class="line-num2"></div>
+<div class="line-num2">2</div>
     </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    sample = (<del>x : Float) =&gt; {</del></span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    class Foo {}</span>
         </div>
     </td>
 </tr><tr>
@@ -748,7 +3971,7 @@ sample(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        <del>foo</del> : <del>(&gt;= -1.0) = 1.0</del></span>
+            <span class="d2h-code-line-ctn">    x = 12</span>
         </div>
     </td>
 </tr><tr>
@@ -759,12 +3982,34 @@ sample(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>        for</del> <del>i</del> <del>in [0 , 1 , 2] </del>{</span>
+            <span class="d2h-code-line-ctn">    bazzle<del> = </del>(<del>x : Float) =&gt; {</del></span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
       <div class="line-num1">5</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        <del>foo</del> : <del>(&gt;= -1.0) = 1.0</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>        for</del> <del>i</del> <del>in [0 , 1 , 2] </del>{</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -776,23 +4021,12 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>const </ins>sample = (</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
 <div class="line-num2">3</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>var</ins> <ins>x </ins>: <ins>Float</ins></span>
+            <span class="d2h-code-line-ctn">    <ins>const </ins>x = 12</span>
         </div>
     </td>
 </tr><tr>
@@ -803,7 +4037,7 @@ sample(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>    )</ins> <ins>=&gt;</ins> {</span>
+            <span class="d2h-code-line-ctn">    bazzle(</span>
         </div>
     </td>
 </tr><tr>
@@ -814,7 +4048,7 @@ sample(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>        var </ins>foo <ins>:</ins> <ins>(&gt;= -</ins>1.0<ins>) = 1.0</ins></span>
+            <span class="d2h-code-line-ctn">        <ins>var</ins> <ins>x </ins>: <ins>Float</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -825,7 +4059,7 @@ sample(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        for var i : Float in [{</span>
+            <span class="d2h-code-line-ctn"><ins>    )</ins> <ins>=&gt;</ins> {</span>
         </div>
     </td>
 </tr><tr>
@@ -836,7 +4070,7 @@ sample(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            0</span>
+            <span class="d2h-code-line-ctn"><ins>        var </ins>foo <ins>:</ins> <ins>(&gt;= -</ins>1.0<ins>) = 1.0</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -847,7 +4081,7 @@ sample(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            1</span>
+            <span class="d2h-code-line-ctn">        for var i : Float in [{</span>
         </div>
     </td>
 </tr><tr>
@@ -858,7 +4092,7 @@ sample(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            2</span>
+            <span class="d2h-code-line-ctn">            0</span>
         </div>
     </td>
 </tr><tr>
@@ -869,7 +4103,7 @@ sample(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        }] {</span>
+            <span class="d2h-code-line-ctn">            1</span>
         </div>
     </td>
 </tr><tr>
@@ -880,13 +4114,35 @@ sample(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            2</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        }] {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
             <span class="d2h-code-line-ctn">            foo = `+`(foo,1.0)</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">12</div>
+      <div class="line-num1">8</div>
+<div class="line-num2">14</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -896,8 +4152,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">13</div>
+      <div class="line-num1">9</div>
+<div class="line-num2">15</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -907,8 +4163,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">14</div>
+      <div class="line-num1">10</div>
+<div class="line-num2">16</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -944,29 +4200,7 @@ sample(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -7,9 +7,7 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            0</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            1</span>
-        </div>
+        <div class="d2h-code-line d2h-info">@@ -9,9 +9,7 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -976,12 +4210,34 @@ sample(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
             <span class="d2h-code-line-ctn">            2</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">10</div>
+      <div class="line-num1">12</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -993,7 +4249,7 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">10</div>
+<div class="line-num2">12</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
@@ -1003,7 +4259,7 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">11</div>
+      <div class="line-num1">13</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -1014,7 +4270,7 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">12</div>
+      <div class="line-num1">14</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -1025,8 +4281,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
-<div class="line-num2">11</div>
+      <div class="line-num1">15</div>
+<div class="line-num2">13</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1036,8 +4292,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">14</div>
-<div class="line-num2">12</div>
+      <div class="line-num1">16</div>
+<div class="line-num2">14</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1047,8 +4303,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">15</div>
-<div class="line-num2">13</div>
+      <div class="line-num1">17</div>
+<div class="line-num2">15</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1084,62 +4340,7 @@ sample(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,13 +1,13 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module test.sample {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">2</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const sample = (</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const sample = <ins>sample</ins>(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var x : Float</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
-        </div>
+        <div class="d2h-code-line d2h-info">@@ -5,11 +5,11 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1149,12 +4350,34 @@ sample(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var x : Float</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
             <span class="d2h-code-line-ctn">        var foo : (&gt;= -1.0) = 1.0</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
+      <div class="line-num1">8</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -1166,34 +4389,12 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">6</div>
+<div class="line-num2">8</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
             <span class="d2h-code-line-ctn">        for var i : Float in <ins>[</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            0</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            1</span>
         </div>
     </td>
 </tr><tr>
@@ -1204,12 +4405,34 @@ sample(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
             <span class="d2h-code-line-ctn">            2</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">10</div>
+      <div class="line-num1">12</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -1221,7 +4444,7 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">10</div>
+<div class="line-num2">12</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
@@ -1231,8 +4454,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
-<div class="line-num2">11</div>
+      <div class="line-num1">13</div>
+<div class="line-num2">13</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1242,8 +4465,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
+      <div class="line-num1">14</div>
+<div class="line-num2">14</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1253,8 +4476,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
-<div class="line-num2">13</div>
+      <div class="line-num1">15</div>
+<div class="line-num2">15</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1274,24 +4497,9 @@ sample(x: Float) =>
                 <td>
                     <header><span>moveMetaToFunctions</span></header>
                     <p>module test.sample {
-    const sample = sample(
-        var x : Float
-    ) => {
-        var foo : (>= -1.0) = 1.0
-        for var i : Float in [
-            0
-            1
-            2
-        ] foo = `+`(foo,1.0)
-        return foo
-    }
-}</p>
-                </td>
-            
-                <td>
-                    <header><span>createMultiFunctions</span></header>
-                    <p>module test.sample {
-    const sample = sample(
+    class Foo {}
+    const x = 12
+    bazzle(
         var x : Float
     ) => {
         var foo : (>= -1.0) = 1.0
@@ -1324,7 +4532,7 @@ sample(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,9 +1,9 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,11 +1,11 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1345,12 +4553,56 @@ sample(x: Float) =>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const sample = sample<del>(</del></span>
+            <span class="d2h-code-line-ctn">    class Foo {}</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
       <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const x = 12</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    class <ins>`test.sample.</ins>Foo<ins>`</ins> {}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const <ins>`test.sample.</ins>x<ins>`</ins> = 12</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    bazzle(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -1362,18 +4614,7 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const <ins>`test.</ins>sample<ins>`</ins> = <ins>`test.</ins>sample<ins>`(</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">3</div>
+<div class="line-num2">5</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
@@ -1383,8 +4624,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1394,8 +4635,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">5</div>
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1405,7 +4646,7 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
+      <div class="line-num1">8</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -1417,7 +4658,7 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">6</div>
+<div class="line-num2">8</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
@@ -1427,8 +4668,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
+      <div class="line-num1">9</div>
+<div class="line-num2">9</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1438,8 +4679,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
+      <div class="line-num1">10</div>
+<div class="line-num2">10</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1449,8 +4690,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">9</div>
-<div class="line-num2">9</div>
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1462,12 +4703,12 @@ sample(x: Float) =>
 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -11,3 +11,4 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -13,3 +13,4 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
-<div class="line-num2">11</div>
+      <div class="line-num1">13</div>
+<div class="line-num2">13</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1477,8 +4718,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
+      <div class="line-num1">14</div>
+<div class="line-num2">14</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1488,8 +4729,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
-<div class="line-num2">13</div>
+      <div class="line-num1">15</div>
+<div class="line-num2">15</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1500,7 +4741,7 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">14</div>
+<div class="line-num2">16</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
@@ -1536,29 +4777,7 @@ sample(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -2,13 +2,13 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">2</div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    const `test.sample` = `test.sample`(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var x : (Float)</span>
-        </div>
+        <div class="d2h-code-line d2h-info">@@ -4,13 +4,13 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1568,12 +4787,34 @@ sample(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    bazzle(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var x : (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
             <span class="d2h-code-line-ctn">    ) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">5</div>
+      <div class="line-num1">7</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -1585,34 +4826,12 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">5</div>
+<div class="line-num2">7</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
             <span class="d2h-code-line-ctn">        var <ins>`</ins>foo:<ins>1:0`</ins> <ins>::: </ins>(&gt;= -1.0) = 1.0</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        for var i : (Float) in [</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            0</span>
         </div>
     </td>
 </tr><tr>
@@ -1623,7 +4842,7 @@ sample(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            1</span>
+            <span class="d2h-code-line-ctn">        for var i : (Float) in [</span>
         </div>
     </td>
 </tr><tr>
@@ -1634,12 +4853,34 @@ sample(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
             <span class="d2h-code-line-ctn">            2</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">10</div>
+      <div class="line-num1">12</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -1650,7 +4891,7 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">11</div>
+      <div class="line-num1">13</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -1662,7 +4903,7 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">10</div>
+<div class="line-num2">12</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
@@ -1673,34 +4914,12 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">11</div>
+<div class="line-num2">13</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
             <span class="d2h-code-line-ctn">        return <ins>`</ins>foo<ins>:1:1`</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
-<div class="line-num2">13</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
         </div>
     </td>
 </tr><tr>
@@ -1711,65 +4930,13 @@ sample(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Float&quot;,&quot;+&quot;,&quot;Integer&quot;,&quot;Array&quot;]</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
-                </td>
-            
-                <td>
-                    <header><span>pstModulesToAst</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -11,4 +11,3 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        return `foo:1:1`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
             <span class="d2h-code-line-ctn">    }</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
-<div class="line-num2">13</div>
+      <div class="line-num1">15</div>
+<div class="line-num2">15</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1778,13 +4945,13 @@ sample(x: Float) =>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">14</div>
-<div class="line-num2"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">16</div>
+<div class="line-num2">16</div>
     </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
             <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Float&quot;,&quot;+&quot;,&quot;Integer&quot;,&quot;Array&quot;]</span>
         </div>
     </td>
@@ -1795,23 +4962,6 @@ sample(x: Float) =>
     </div>
 </div>
 </div></p>
-                </td>
-            
-                <td>
-                    <header><span>validateTypeDeclarations</span></header>
-                    <p>module test.sample {
-    const `test.sample` = `test.sample`(
-        var x : (Float)
-    ) => {
-        var `foo:1:0` ::: (>= -1.0) = 1.0
-        for var i : (Float) in [
-            0
-            1
-            2
-        ] var `foo:1:1` ::: (>= -1.0) = `+`(`foo:1:0`,1.0)
-        return `foo:1:1`
-    }
-}</p>
                 </td>
             
                 <td>
@@ -1833,7 +4983,7 @@ sample(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,6 +1,6 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,8 +1,8 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1854,12 +5004,45 @@ sample(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    const `test.sample` = `test.sample`(</span>
+            <span class="d2h-code-line-ctn">    class `test.sample.Foo` {}</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
       <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.x` = 12</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.x` <ins>:: (12) </ins>= 12</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    bazzle(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -1871,7 +5054,7 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">3</div>
+<div class="line-num2">5</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
@@ -1881,8 +5064,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1892,8 +5075,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">5</div>
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1903,8 +5086,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
+      <div class="line-num1">8</div>
+<div class="line-num2">8</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1940,29 +5123,7 @@ sample(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -3,11 +3,11 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var x ::: (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
-        </div>
+        <div class="d2h-code-line d2h-info">@@ -5,11 +5,11 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1972,12 +5133,34 @@ sample(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var x ::: (Float)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
             <span class="d2h-code-line-ctn">        var `foo:1:0` ::: (&gt;= -1.0) = 1.0</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
+      <div class="line-num1">8</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -1989,34 +5172,12 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">6</div>
+<div class="line-num2">8</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
             <span class="d2h-code-line-ctn">        for var i <ins>::</ins> (<ins>0</ins>) <ins>| (1) | (2) | (0) | (1) | (2) </ins>in [</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            0</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            1</span>
         </div>
     </td>
 </tr><tr>
@@ -2027,12 +5188,34 @@ sample(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            0</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
             <span class="d2h-code-line-ctn">            2</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">10</div>
+      <div class="line-num1">12</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -2044,7 +5227,7 @@ sample(x: Float) =>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">10</div>
+<div class="line-num2">12</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
@@ -2054,8 +5237,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
-<div class="line-num2">11</div>
+      <div class="line-num1">13</div>
+<div class="line-num2">13</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -2065,8 +5248,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
+      <div class="line-num1">14</div>
+<div class="line-num2">14</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -2076,8 +5259,8 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
-<div class="line-num2">13</div>
+      <div class="line-num1">15</div>
+<div class="line-num2">15</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -2113,40 +5296,7 @@ sample(x: Float) =>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,9 +1,11 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module test.sample {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">2</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    const `test.sample` <del>=</del> <del>`test.sample`(</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    const `test.sample` <ins>::</ins> <ins>(</ins></span>
-        </div>
+        <div class="d2h-code-line d2h-info">@@ -3,9 +3,9 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -2156,40 +5306,40 @@ sample(x: Float) =>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    const `test.sample.x` :: (12) = 12</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    bazzle(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
             <span class="d2h-code-line-ctn">        var x ::: (Float)</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">4</div>
+      <div class="line-num1">6</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    ) <del>=&gt;</del> <del>{</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>): (&gt;= -1.0</ins>) <ins>=</ins> <ins>`test.sample`(</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var x ::: (Float)</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
@@ -2200,12 +5350,12 @@ sample(x: Float) =>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ): (&gt;= -1.0) =&gt; {</span>
+            <span class="d2h-code-line-ctn">    ) <ins>:: (&gt;= -1.0) </ins>=&gt; {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
+      <div class="line-num1">7</div>
 <div class="line-num2">7</div>
     </td>
     <td class="d2h-cntx">
@@ -2216,7 +5366,7 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
+      <div class="line-num1">8</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
@@ -2238,7 +5388,7 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
+      <div class="line-num1">9</div>
 <div class="line-num2">9</div>
     </td>
     <td class="d2h-cntx">
@@ -2249,7 +5399,7 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
+      <div class="line-num1">10</div>
 <div class="line-num2">10</div>
     </td>
     <td class="d2h-cntx">
@@ -2260,7 +5410,7 @@ sample(x: Float) =>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">9</div>
+      <div class="line-num1">11</div>
 <div class="line-num2">11</div>
     </td>
     <td class="d2h-cntx">
@@ -2281,11 +5431,11 @@ sample(x: Float) =>
                 <td>
                     <header><span>typeInference (4)</span></header>
                     <p>module test.sample {
-    const `test.sample` :: (
+    class `test.sample.Foo` {}
+    const `test.sample.x` :: (12) = 12
+    bazzle(
         var x ::: (Float)
-    ): (>= -1.0) = `test.sample`(
-        var x ::: (Float)
-    ): (>= -1.0) => {
+    ) :: (>= -1.0) => {
         var `foo:1:0` ::: (>= -1.0) = 1.0
         for var i :: (0) | (1) | (2) in [
             0
@@ -2294,17 +5444,18 @@ sample(x: Float) =>
         ] var `foo:1:1` ::: (>= -1.0) = `+`(`foo:1:0`,1.0) :: (>= 0.0)
         return `foo:1:1`
     }
-}</p>
+}
+// externals: ["Float","+","Integer","Array"]</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (5)</span></header>
                     <p>module test.sample {
-    const `test.sample` :: (
+    class `test.sample.Foo` {}
+    const `test.sample.x` :: (12) = 12
+    bazzle(
         var x ::: (Float)
-    ): (>= -1.0) = `test.sample`(
-        var x ::: (Float)
-    ): (>= -1.0) => {
+    ) :: (>= -1.0) => {
         var `foo:1:0` ::: (>= -1.0) = 1.0
         for var i :: (0) | (1) | (2) in [
             0
@@ -2313,17 +5464,18 @@ sample(x: Float) =>
         ] var `foo:1:1` ::: (>= -1.0) = `+`(`foo:1:0`,1.0) :: (>= 0.0)
         return `foo:1:1`
     }
-}</p>
+}
+// externals: ["Float","+","Integer","Array"]</p>
                 </td>
             
                 <td>
-                    <header><span>identity</span></header>
+                    <header><span>typeInference (6)</span></header>
                     <p>module test.sample {
-    const `test.sample` :: (
+    class `test.sample.Foo` {}
+    const `test.sample.x` :: (12) = 12
+    bazzle(
         var x ::: (Float)
-    ): (>= -1.0) = `test.sample`(
-        var x ::: (Float)
-    ): (>= -1.0) => {
+    ) :: (>= -1.0) => {
         var `foo:1:0` ::: (>= -1.0) = 1.0
         for var i :: (0) | (1) | (2) in [
             0
@@ -2332,7 +5484,88 @@ sample(x: Float) =>
         ] var `foo:1:1` ::: (>= -1.0) = `+`(`foo:1:0`,1.0) :: (>= 0.0)
         return `foo:1:1`
     }
-}</p>
+}
+// externals: ["Float","+","Integer","Array"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (7)</span></header>
+                    <p>module test.sample {
+    class `test.sample.Foo` {}
+    const `test.sample.x` :: (12) = 12
+    bazzle(
+        var x ::: (Float)
+    ) :: (>= -1.0) => {
+        var `foo:1:0` ::: (>= -1.0) = 1.0
+        for var i :: (0) | (1) | (2) in [
+            0
+            1
+            2
+        ] var `foo:1:1` ::: (>= -1.0) = `+`(`foo:1:0`,1.0) :: (>= 0.0)
+        return `foo:1:1`
+    }
+}
+// externals: ["Float","+","Integer","Array"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (8)</span></header>
+                    <p>module test.sample {
+    class `test.sample.Foo` {}
+    const `test.sample.x` :: (12) = 12
+    bazzle(
+        var x ::: (Float)
+    ) :: (>= -1.0) => {
+        var `foo:1:0` ::: (>= -1.0) = 1.0
+        for var i :: (0) | (1) | (2) in [
+            0
+            1
+            2
+        ] var `foo:1:1` ::: (>= -1.0) = `+`(`foo:1:0`,1.0) :: (>= 0.0)
+        return `foo:1:1`
+    }
+}
+// externals: ["Float","+","Integer","Array"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (9)</span></header>
+                    <p>module test.sample {
+    class `test.sample.Foo` {}
+    const `test.sample.x` :: (12) = 12
+    bazzle(
+        var x ::: (Float)
+    ) :: (>= -1.0) => {
+        var `foo:1:0` ::: (>= -1.0) = 1.0
+        for var i :: (0) | (1) | (2) in [
+            0
+            1
+            2
+        ] var `foo:1:1` ::: (>= -1.0) = `+`(`foo:1:0`,1.0) :: (>= 0.0)
+        return `foo:1:1`
+    }
+}
+// externals: ["Float","+","Integer","Array"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (10)</span></header>
+                    <p>module test.sample {
+    class `test.sample.Foo` {}
+    const `test.sample.x` :: (12) = 12
+    bazzle(
+        var x ::: (Float)
+    ) :: (>= -1.0) => {
+        var `foo:1:0` ::: (>= -1.0) = 1.0
+        for var i :: (0) | (1) | (2) in [
+            0
+            1
+            2
+        ] var `foo:1:1` ::: (>= -1.0) = `+`(`foo:1:0`,1.0) :: (>= 0.0)
+        return `foo:1:1`
+    }
+}
+// externals: ["Float","+","Integer","Array"]</p>
                 </td>
             </tr>
         </div>
