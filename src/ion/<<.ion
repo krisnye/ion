@@ -1,0 +1,3 @@
+
+@Native("(a, b) => ({ ...a, value: a.value << b.value })")
+`<<`(a: Integer, b: Integer): Integer => 0

@@ -57,7 +57,6 @@ export function getReturnType(funcs: Function[], argTypes: Type[], c: Evaluation
 export function getPossibleFunctionCalls(funcs: Function[], argTypes: Type[], c: EvaluationContext): Function[] {
     let functions = new Array<Function>();
     for (let func of funcs) {
-        // console.log("Functions", func);
         if (func.areArgumentsValid(argTypes, c)) {
             functions.push(func);
         }

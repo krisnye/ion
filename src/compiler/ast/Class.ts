@@ -123,6 +123,10 @@ export class Class extends Container implements Type, Declaration, Callable {
         });
     }
 
+    areArgumentsValid(argTypes: Type[], c: EvaluationContext) : boolean {
+        return (this.resolveType(c) as FunctionType).areArgumentsValid(argTypes, c);
+    }
+
     protected resolveType(c: EvaluationContext): Type | null {
         const { location } = this;
         // Function Type

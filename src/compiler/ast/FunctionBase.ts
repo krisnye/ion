@@ -33,20 +33,20 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
     }
 
     areArgumentsValid(argTypes: Type[], c: EvaluationContext) : boolean {
-        if (argTypes.length === this.parameters.length) {
-            for (let i = 0; i < argTypes.length; i++) {
-                let argType = argTypes[i];
-                let paramType = this.parameters[i].declaredType;
-                if (!isType(paramType)) {
-                    throw new Error("ParamType not known yet");
-                }
-                if (!isSubtype(argType, paramType, c)) {
-                    return false;
-                }
-            }
-            return true;
+        if (argTypes.length !== this.parameters.length) {
+            return false;
         }
-        return false;
+        for (let i = 0; i < argTypes.length; i++) {
+            let argType = argTypes[i];
+            let paramType = this.parameters[i].declaredType;
+            // if (!isType(paramType)) {
+            //     throw new Error("ParamType not known yet");
+            // }
+            if (paramType != null && !isSubtype(argType, paramType, c)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     toString() {

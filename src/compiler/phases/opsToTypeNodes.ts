@@ -191,7 +191,12 @@ function buildObjectType(values: Expression | (Expression | Pair)[] | null, loca
             if (operator.value !== ":") {
                 throw new SemanticError(`Expected :`, operator.location);
             }
+            if (right instanceof BinaryExpression) {
+                // then we assume that this is a NumberType == to right expression
+                right = new NumberType({ location: right.location, min: right, max: right.patch({}) });
+            }
             if (!(isType(right) || right instanceof Identifier)) {
+                console.log(right);
                 throw new SemanticError(`Expected Type`, right);
             }
             if (!(left instanceof Identifier || isType(left))) {

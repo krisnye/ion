@@ -34,18 +34,15 @@ export class Expression extends Node implements Required<ExpressionProps> {
                 console.log("ERROR, undefined dep: " + this.constructor.name);
             }
             if (!dep.resolved) {
-                if ((this as any).id?.name === "bazzle") {
-                    console.log("Bazzle waiting for : " + dep);
-                }
                 return false;
             }
         }
         return true;
     }
 
-    maybeResolve(c: EvaluationContext): Expression {
+    maybeResolve(c: EvaluationContext): Expression | null {
         if (!this.areAllDependenciesResolved(c)) {
-            return this;
+            return null;
         }
         let resolved = this.resolve(c);
         resolved = resolved.patch({ resolved: true });

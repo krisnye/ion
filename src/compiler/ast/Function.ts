@@ -4,6 +4,7 @@ import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
 import { nativeTypeFunctions, TypeFunction } from "../phases/nativeTypeFunctions";
+import { isInferFunction } from "../phases/typeInference";
 import { SemanticError } from "../SemanticError";
 import { AnyType } from "./AnyType";
 import { Call } from "./Call";
@@ -56,7 +57,7 @@ export class Function extends FunctionBase implements Callable {
         }
     }
 
-    getReturnType(argTypes: Type[], c: EvaluationContext): Type {
+    getReturnType(argTypes: Type[], c: EvaluationContext): Type | null {
         let native = getMetaCall(this, coreTypes.Native);
         if (native) {
             const types = this.parameters.map(node => node.type);
@@ -69,9 +70,7 @@ export class Function extends FunctionBase implements Callable {
         if (isType(this.returnType)) {
             return this.returnType;
         }
-        // calculate the return type of the function.
-
-        throw new Error("Function.getReturnType not implemented");
+        return null;
     }
 
     *getDependencies(c: EvaluationContext) {

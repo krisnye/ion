@@ -1,8 +1,14 @@
 
-class Foo
-x = 12
-bazzle(x: Float) =>
-    foo: >= -1.0 = 1.0
-    for i in [0, 1, 2]
-        foo += 1.0
-    return foo
+add(a, b) => a + b
+
+combineFloat(a: Float, b: Float) => add(a, b)
+
+combineInteger(a: Integer, b: Integer) => add(a, b)
+
+// class Foo
+// bar(x: >= 0) => x % 10
+// bazzle(x: Float) =>
+//     foo: >= -1.0 = 1.0
+//     for i in [0, 1, 2]
+//         foo += 1.0
+//     return foo

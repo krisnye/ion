@@ -49,21 +49,21 @@ export const infixPrecedence: { [op: string]: number | undefined } = {
     "*": 16,
     "/": 16,
     "%": 16,
+    "<<": 15,
+    ">>": 15,
     //  default unknown operator precedence
     "+": 14,
     "-": 14,
-    "<<": 13,
-    ">>": 13,
-    "<": 12,    //  not overridable
-    "<=": 12,   //  not overridable
-    ">": 12,    //  not overridable
-    ">=": 12,   //  not overridable
-    "==": 11,   //  not overridable
-    "!=": 11,   //  not overridable
-    "..": 11,   //  not overridable
-    "&": 10,
-    "^": 9,
-    "|": 8,
+    "&": 12,
+    "^": 11,
+    "|": 10,
+    "<": 9,    //  not overridable
+    "<=": 9,   //  not overridable
+    ">": 9,    //  not overridable
+    ">=": 9,   //  not overridable
+    "==": 8,   //  not overridable
+    "!=": 8,   //  not overridable
+    "..": 8,   //  not overridable
     "&&": 7,    //  not overridable
     "||": 6,    //  not overridable
     ":": 5,     //  not overridable

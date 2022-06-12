@@ -105,13 +105,15 @@ Cross platform modeling language
   - [x] class inheritance for type checking
   - [ ] Uniform Function Call Syntax
 
-  - [ ] Scope functions globally in Assembly phase.
-    - [ ] Need to separate named multi functions from local variables.
-    - [ ] Must convert everything into assembly space.
-    - [ ] Remember to favor simplest possible approach!
-    - [ ] Maybe consider removing MultiFunction and just returning Array??
-    - [ ] Named functions names should NOT be renamed to global scope.
-  - [ ] Create specific function types from inferred functions.
+  - [x] Scope functions globally in Assembly phase.
+    - [x] Need to separate named multi functions from local variables.
+    - [x] Must convert everything into assembly space.
+    - [x] Remember to favor simplest possible approach!
+    - [x] Maybe consider removing MultiFunction and just returning Array??
+    - [x] Named functions names should NOT be renamed to global scope.
+  - [x] Create specific function types from inferred functions.
+    - [x] Create Concrete Functions
+    - [x] Resolve calls correctly. Next step.
   - [ ] UFCS conversion to static call.
   - [ ] MultiFunction to static functions.
 
