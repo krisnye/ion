@@ -9,6 +9,7 @@ import { Module } from "../pst/Module";
 import { SourcePosition } from "../SourcePosition";
 import { tokenTypes } from "../tokenizer/TokenType";
 import { Expression } from "../ast/Expression";
+import { resourceLimits } from "worker_threads";
 
 export class Parser {
 
@@ -27,7 +28,7 @@ export class Parser {
 
     maybeConsume(tokenType?: string, value?: any)
     maybeConsume(tokenType?: string[], value?: any)
-    maybeConsume(tokenType?: string | string[], value?: any) {
+    maybeConsume(tokenType?: string | string[], value?: any): Token | null {
         for (let type of Array.isArray(tokenType) ? tokenType : [tokenType]) {
             let result = this.consumeInternal(type, value, false);
             if (result != null) {
@@ -158,7 +159,17 @@ export class Parser {
     }
 
     whitespace() {
-        return this.maybeConsume(tokenTypes.Whitespace.name);
+        let result: Token | undefined = undefined;
+        while (true) {
+            let whitespace = this.maybeConsume(tokenTypes.Whitespace.name);
+            if (whitespace) {
+                result = whitespace;
+            }
+            else {
+                break;
+            }
+        }
+        return result;
     }
 
     parseInlineExpression(precedence: number = 0): Node {
@@ -172,7 +183,7 @@ export class Parser {
     parseExpression(precedence: number = 0): Node {
         let token = this.consume();
         this.whitespace();
-        let prefix = this.prefixParselets[token.type as keyof typeof tokenTypes];
+        let prefix = this.prefixParselets[token.type as any];
         if (prefix == null) {
             throw new SemanticError(`Could not parse: ${token.type}(${token.source})`)
         }
@@ -182,7 +193,7 @@ export class Parser {
             this.whitespace();
             let next = this.peek();
             if (next != null) {
-                let infix = this.infixParselets[next.type as keyof typeof tokenTypes];
+                let infix = this.infixParselets[next.type as any];
                 if (infix != null && precedence < (infix.getPrecedence(next) ?? 0)) {
                     this.consume();
                     this.whitespace();

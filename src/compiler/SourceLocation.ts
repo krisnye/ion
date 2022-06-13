@@ -14,6 +14,11 @@ export class SourceLocation extends Serializable {
         this.finish = finish;
     }
 
+    // this one never needs to be cloned.
+    clone(): this {
+        return this;
+    }
+
     static merge(left: SourceLocation, right: SourceLocation) {
         return new SourceLocation(
             left.filename,

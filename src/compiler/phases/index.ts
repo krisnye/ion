@@ -12,9 +12,11 @@ import { opsToTypeNodes } from "./opsToTypeNodes";
 import { removeSoloBlocks } from "./removeSoloBlocks";
 import { moveMetaToFunctions } from "./moveMetaToFunctions";
 import { ssaForm } from "./ssaForm";
+import { removeInlineDents } from "./removeInlineDents";
 
 export const parsingPhases: Phase[] = [
     tokenization,
+    removeInlineDents,
     parsing,
     destructuringAndUnaryNumberLiterals,
     opsToTypeNodes,

@@ -1,9 +1,8 @@
 
 add(a, b) => a + b
 
-combineFloat(a: Float, b: Float) => add(a, b)
-
 combineInteger(a: Integer, b: Integer) => add(a, b)
+combineFloat(a: Float, b: Float) => add(a, b)
 
 // class Foo
 // bar(x: >= 0) => x % 10

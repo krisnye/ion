@@ -23,6 +23,12 @@ export class Tokenizer {
                 let tokenType = this.types[type];
                 let matchLength = tokenType.match(remainingSource);
                 if (matchLength > 0) {
+                    if (tokenType.previousPredicate != null) {
+                        debugger;
+                    }
+                    if (tokenType.previousPredicate && !tokenType.previousPredicate(tokens[tokens.length - 1])) {
+                        continue;
+                    }
                     let source = remainingSource.slice(0, matchLength);
                     let value = tokenType.value?.(source);
                     let line = lineIndex + 1;

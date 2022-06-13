@@ -1,3 +1,4 @@
+import { Token } from "../Token";
 
 type ValueFunction = (source: string) => any
 type Options = {
@@ -5,6 +6,7 @@ type Options = {
     mergeAdjacent?: boolean,
     isWhitespace?: boolean,
     discard?: boolean,
+    previousPredicate?: (previous: Token | undefined) => boolean
 }
 const identity = source => source;
 
@@ -16,6 +18,7 @@ export class TokenType {
     readonly mergeAdjacent: boolean;
     readonly isWhitespace: boolean;
     readonly discard: boolean;
+    readonly previousPredicate!: (previous: Token | undefined) => boolean
 
     constructor(name: string, match: RegExp, options?: Options)
     constructor(name: string, match: (line: string) => number, options?: Options)
@@ -45,7 +48,12 @@ export class TokenType {
 export const tokenTypes = {
     //  Comment must come before Operator otherwise '//' interpreted as an operator
     Comment: new TokenType("Comment", /^\/\/.*/, { isWhitespace: true }),
-    Dent: new TokenType("Dent", /^(    )/, { isWhitespace: true }),
+    Dent: new TokenType("Dent", /^(    )/, {
+        isWhitespace: true,
+        previousPredicate(token: Token | undefined) {
+            return token == null || token.type === tokenTypes.Dent.name || token.type === tokenTypes.Eol.name;
+        }
+    }),
     Whitespace: new TokenType("Whitespace", /^[^\S\r\n]+/, { isWhitespace: true }),
     OpenParen: new TokenType("OpenParen", /^\(/),
     CloseParen: new TokenType("CloseParen", /^\)/),

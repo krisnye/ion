@@ -3,9 +3,11 @@ import { Container } from "../ast/Container";
 import { traverseWithScope } from "./createScopeMaps";
 import { Expression } from "../ast/Expression";
 import { Function } from "../ast/Function";
-import { skip } from "../traverse";
+import { skip, traverse } from "../traverse";
 import { Call } from "../ast/Call";
 import { FunctionDeclaration } from "../ast/FunctionDeclaration";
+import { clone } from "../common";
+import { Node } from "../Node";
 
 export function isInferFunction(node): node is Function {
     return node.parameters.some(p => p.declaredType == null);
@@ -55,7 +57,30 @@ export function typeInference(moduleName, module: Container, externals: Map<stri
                                     throw new Error("Missing inferKey");
                                 }
                                 if (!existingInferFunctions.has(inferKey)) {
-                                    createInferFunctions.set(inferKey, maybeCreateConcreteFunction);
+                                    //  TODO: this clone is NOT working.
+                                    //  hmmm, clone may be necessary because otherwise the scopes may be wrong.
+                                    debugger;
+                                    let cloned = clone(maybeCreateConcreteFunction, true);
+                                    // let's test that there are no longer any shared nodes
+                                    // let nodes = new Set<Node>();
+                                    // traverse(maybeCreateConcreteFunction, {
+                                    //     enter(node) {
+                                    //         if (node instanceof Node) {
+                                    //             nodes.add(node);
+                                    //         }
+                                    //     }
+                                    // })
+                                    // traverse(cloned, {
+                                    //     enter(node) {
+                                    //         if (node instanceof Node) {
+                                    //             if (nodes.has(node)) {
+                                    //                 debugger;
+                                    //                 throw new Error("WTF man?");
+                                    //             }
+                                    //         }
+                                    //     }
+                                    // })
+                                    createInferFunctions.set(inferKey, cloned);
                                 }
                             }
                         }

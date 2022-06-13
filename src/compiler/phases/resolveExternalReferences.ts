@@ -17,9 +17,6 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
     let errors: Error[] = [];
     let replacements = new Map<Identifier, Reference>();
     let scopes = createScopeMaps(module);
-    if (moduleName === "test.class") {
-        debugger;
-    }
     let externalReferences = getExternalReferences(module, scopes);
     let dependencies = new Set<string>();
 

@@ -10,9 +10,9 @@ import { Expression } from "../../ast/Expression";
 
 export class MemberParselet extends BinaryExpressionParselet {
 
-    closeTokenType: keyof typeof tokenTypes;
+    closeTokenType: string & keyof typeof tokenTypes;
 
-    constructor(closeToken: keyof typeof tokenTypes) {
+    constructor(closeToken: string & keyof typeof tokenTypes) {
         super();
         this.closeTokenType = closeToken;
     }

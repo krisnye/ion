@@ -237,9 +237,8 @@ ul.jsondiffpatch-textdiff {
                     <p>
 add(a, b) => a + b
 
-combineFloat(a: Float, b: Float) => add(a, b)
-
 combineInteger(a: Integer, b: Integer) => add(a, b)
+combineFloat(a: Float, b: Float) => add(a, b)
 
 // class Foo
 // bar(x: >= 0) => x % 10
@@ -253,7 +252,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>add(a, b) =&gt; a + b<br><br>combineFloat(a: Float, b: Float) =&gt; add(a, b)<br><br>combineInteger(a: Integer, b: Integer) =&gt; add(a, b)<br><br>// class Foo<br>// bar(x: &gt;= 0) =&gt; x % 10<br>// bazzle(x: Float) =&gt;<br>//     foo: &gt;= -1.0 = 1.0<br>//     for i in [0, 1, 2]<br>//         foo += 1.0<br>//     return foo<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>add(a, b) =&gt; a + b<br><br>combineInteger(a: Integer, b: Integer) =&gt; add(a, b)<br>combineFloat(a: Float, b: Float) =&gt; add(a, b)<br><br>// class Foo<br>// bar(x: &gt;= 0) =&gt; x % 10<br>// bazzle(x: Float) =&gt;<br>//     foo: &gt;= -1.0 = 1.0<br>//     for i in [0, 1, 2]<br>//         foo += 1.0<br>//     return foo<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
@@ -328,7 +327,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;combineFloat&quot;
+    &quot;source&quot;: &quot;combineInteger&quot;
   },
   Token {
     &quot;type&quot;: &quot;OpenParen&quot;,
@@ -348,7 +347,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Float&quot;
+    &quot;source&quot;: &quot;Integer&quot;
   },
   Token {
     &quot;type&quot;: &quot;Operator&quot;,
@@ -372,7 +371,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Float&quot;
+    &quot;source&quot;: &quot;Integer&quot;
   },
   Token {
     &quot;type&quot;: &quot;CloseParen&quot;,
@@ -423,12 +422,8 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;combineInteger&quot;
+    &quot;source&quot;: &quot;combineFloat&quot;
   },
   Token {
     &quot;type&quot;: &quot;OpenParen&quot;,
@@ -448,7 +443,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Integer&quot;
+    &quot;source&quot;: &quot;Float&quot;
   },
   Token {
     &quot;type&quot;: &quot;Operator&quot;,
@@ -472,7 +467,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Integer&quot;
+    &quot;source&quot;: &quot;Float&quot;
   },
   Token {
     &quot;type&quot;: &quot;CloseParen&quot;,
@@ -586,11 +581,259 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
                 </td>
             
                 <td>
+                    <header><span>removeInlineDents</span></header>
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-node jsondiffpatch-child-node-type-object"><ul class="jsondiffpatch-node jsondiffpatch-node-type-object"><li class="jsondiffpatch-unchanged" data-key="0"><div class="jsondiffpatch-property-name">0</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="1"><div class="jsondiffpatch-property-name">1</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;add&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="10"><div class="jsondiffpatch-property-name">10</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="11"><div class="jsondiffpatch-property-name">11</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;a&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="12"><div class="jsondiffpatch-property-name">12</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="13"><div class="jsondiffpatch-property-name">13</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;+&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="14"><div class="jsondiffpatch-property-name">14</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="15"><div class="jsondiffpatch-property-name">15</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;b&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="16"><div class="jsondiffpatch-property-name">16</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="17"><div class="jsondiffpatch-property-name">17</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="18"><div class="jsondiffpatch-property-name">18</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;combineInteger&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="19"><div class="jsondiffpatch-property-name">19</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;OpenParen&quot;,
+  &quot;source&quot;: &quot;(&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="2"><div class="jsondiffpatch-property-name">2</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;OpenParen&quot;,
+  &quot;source&quot;: &quot;(&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="20"><div class="jsondiffpatch-property-name">20</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;a&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="21"><div class="jsondiffpatch-property-name">21</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;:&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="22"><div class="jsondiffpatch-property-name">22</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="23"><div class="jsondiffpatch-property-name">23</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;Integer&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="24"><div class="jsondiffpatch-property-name">24</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;,&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="25"><div class="jsondiffpatch-property-name">25</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="26"><div class="jsondiffpatch-property-name">26</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;b&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="27"><div class="jsondiffpatch-property-name">27</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;:&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="28"><div class="jsondiffpatch-property-name">28</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="29"><div class="jsondiffpatch-property-name">29</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;Integer&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="3"><div class="jsondiffpatch-property-name">3</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;a&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="30"><div class="jsondiffpatch-property-name">30</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;CloseParen&quot;,
+  &quot;source&quot;: &quot;)&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="31"><div class="jsondiffpatch-property-name">31</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="32"><div class="jsondiffpatch-property-name">32</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;=&gt;&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="33"><div class="jsondiffpatch-property-name">33</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="34"><div class="jsondiffpatch-property-name">34</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;add&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="35"><div class="jsondiffpatch-property-name">35</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;OpenParen&quot;,
+  &quot;source&quot;: &quot;(&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="36"><div class="jsondiffpatch-property-name">36</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;a&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="37"><div class="jsondiffpatch-property-name">37</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;,&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="38"><div class="jsondiffpatch-property-name">38</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="39"><div class="jsondiffpatch-property-name">39</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;b&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="4"><div class="jsondiffpatch-property-name">4</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;,&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="40"><div class="jsondiffpatch-property-name">40</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;CloseParen&quot;,
+  &quot;source&quot;: &quot;)&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="41"><div class="jsondiffpatch-property-name">41</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="42"><div class="jsondiffpatch-property-name">42</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;combineFloat&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="43"><div class="jsondiffpatch-property-name">43</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;OpenParen&quot;,
+  &quot;source&quot;: &quot;(&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="44"><div class="jsondiffpatch-property-name">44</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;a&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="45"><div class="jsondiffpatch-property-name">45</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;:&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="46"><div class="jsondiffpatch-property-name">46</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="47"><div class="jsondiffpatch-property-name">47</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;Float&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="48"><div class="jsondiffpatch-property-name">48</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;,&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="49"><div class="jsondiffpatch-property-name">49</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="5"><div class="jsondiffpatch-property-name">5</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="50"><div class="jsondiffpatch-property-name">50</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;b&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="51"><div class="jsondiffpatch-property-name">51</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;:&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="52"><div class="jsondiffpatch-property-name">52</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="53"><div class="jsondiffpatch-property-name">53</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;Float&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="54"><div class="jsondiffpatch-property-name">54</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;CloseParen&quot;,
+  &quot;source&quot;: &quot;)&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="55"><div class="jsondiffpatch-property-name">55</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="56"><div class="jsondiffpatch-property-name">56</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;=&gt;&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="57"><div class="jsondiffpatch-property-name">57</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="58"><div class="jsondiffpatch-property-name">58</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;add&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="59"><div class="jsondiffpatch-property-name">59</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;OpenParen&quot;,
+  &quot;source&quot;: &quot;(&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="6"><div class="jsondiffpatch-property-name">6</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;b&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="60"><div class="jsondiffpatch-property-name">60</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;a&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="61"><div class="jsondiffpatch-property-name">61</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;,&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="62"><div class="jsondiffpatch-property-name">62</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="63"><div class="jsondiffpatch-property-name">63</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;b&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="64"><div class="jsondiffpatch-property-name">64</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;CloseParen&quot;,
+  &quot;source&quot;: &quot;)&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="65"><div class="jsondiffpatch-property-name">65</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="66"><div class="jsondiffpatch-property-name">66</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="67"><div class="jsondiffpatch-property-name">67</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;// class Foo&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="68"><div class="jsondiffpatch-property-name">68</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="69"><div class="jsondiffpatch-property-name">69</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;// bar(x: &gt;= 0) =&gt; x % 10&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="7"><div class="jsondiffpatch-property-name">7</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;CloseParen&quot;,
+  &quot;source&quot;: &quot;)&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="70"><div class="jsondiffpatch-property-name">70</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="71"><div class="jsondiffpatch-property-name">71</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;// bazzle(x: Float) =&gt;&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="72"><div class="jsondiffpatch-property-name">72</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="73"><div class="jsondiffpatch-property-name">73</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//     foo: &gt;= -1.0 = 1.0&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="74"><div class="jsondiffpatch-property-name">74</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="75"><div class="jsondiffpatch-property-name">75</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//     for i in [0, 1, 2]&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="76"><div class="jsondiffpatch-property-name">76</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="77"><div class="jsondiffpatch-property-name">77</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//         foo += 1.0&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="78"><div class="jsondiffpatch-property-name">78</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="79"><div class="jsondiffpatch-property-name">79</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//     return foo&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="8"><div class="jsondiffpatch-property-name">8</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="80"><div class="jsondiffpatch-property-name">80</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="9"><div class="jsondiffpatch-property-name">9</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;=&gt;&quot;
+}</pre></div></li></ul></div></p>
+                </td>
+            
+                <td>
                     <header><span>parsing</span></header>
                     <p>module test.sample {
     add(a , b) => a + b
-    combineFloat(a : Float , b : Float) => add(a , b)
     combineInteger(a : Integer , b : Integer) => add(a , b)
+    combineFloat(a : Float , b : Float) => add(a , b)
 }</p>
                 </td>
             
@@ -645,7 +888,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    combineFloat(a : Float , b : Float) =&gt; add(a , b)</span>
+            <span class="d2h-code-line-ctn">    combineInteger(a : Integer , b : Integer) =&gt; add(a , b)</span>
         </div>
     </td>
 </tr><tr>
@@ -656,7 +899,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    combineInteger(a : Integer , b : Integer) =&gt; add(a , b)</span>
+            <span class="d2h-code-line-ctn">    combineFloat(a : Float , b : Float) =&gt; add(a , b)</span>
         </div>
     </td>
 </tr><tr>
@@ -678,7 +921,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    combineFloat<ins> = </ins>(a : Float , b : Float) =&gt; add(a , b)</span>
+            <span class="d2h-code-line-ctn">    combineInteger<ins> = </ins>(a : Integer , b : Integer) =&gt; add(a , b)</span>
         </div>
     </td>
 </tr><tr>
@@ -689,7 +932,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    combineInteger<ins> = </ins>(a : Integer , b : Integer) =&gt; add(a , b)</span>
+            <span class="d2h-code-line-ctn">    combineFloat<ins> = </ins>(a : Float , b : Float) =&gt; add(a , b)</span>
         </div>
     </td>
 </tr><tr>
@@ -716,8 +959,8 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
                     <header><span>opsToTypeNodes</span></header>
                     <p>module test.sample {
     add = (a , b) => a + b
-    combineFloat = (a : Float , b : Float) => add(a , b)
     combineInteger = (a : Integer , b : Integer) => add(a , b)
+    combineFloat = (a : Float , b : Float) => add(a , b)
 }</p>
                 </td>
             
@@ -772,7 +1015,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>    combineFloat</del> <del>= (</del>a<del> : Float , b : Float) =&gt; add(a , b)</del></span>
+            <span class="d2h-code-line-ctn"><del>    combineInteger</del> <del>= (</del>a<del> : Integer , b : Integer) =&gt; add(a , b)</del></span>
         </div>
     </td>
 </tr><tr>
@@ -783,7 +1026,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>    combineInteger</del> <del>= (a : Integer , </del>b<del> : Integer) =&gt; add(a , b)</del></span>
+            <span class="d2h-code-line-ctn"><del>    combineFloat</del> <del>= (a : Float , </del>b<del> : Float) =&gt; add(a , b)</del></span>
         </div>
     </td>
 </tr><tr>
@@ -838,7 +1081,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    combineFloat(</span>
+            <span class="d2h-code-line-ctn">    combineInteger(</span>
         </div>
     </td>
 </tr><tr>
@@ -849,7 +1092,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a : Float</span>
+            <span class="d2h-code-line-ctn">        var a : Integer</span>
         </div>
     </td>
 </tr><tr>
@@ -860,7 +1103,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b : Float</span>
+            <span class="d2h-code-line-ctn">        var b : Integer</span>
         </div>
     </td>
 </tr><tr>
@@ -882,7 +1125,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    combineInteger(</span>
+            <span class="d2h-code-line-ctn">    combineFloat(</span>
         </div>
     </td>
 </tr><tr>
@@ -893,7 +1136,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a : Integer</span>
+            <span class="d2h-code-line-ctn">        var a : Float</span>
         </div>
     </td>
 </tr><tr>
@@ -904,7 +1147,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b : Integer</span>
+            <span class="d2h-code-line-ctn">        var b : Float</span>
         </div>
     </td>
 </tr><tr>
@@ -945,13 +1188,13 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
         var a
         var b
     ) => `+`(a,b)
-    combineFloat(
-        var a : Float
-        var b : Float
-    ) => add(a,b)
     combineInteger(
         var a : Integer
         var b : Integer
+    ) => add(a,b)
+    combineFloat(
+        var a : Float
+        var b : Float
     ) => add(a,b)
 }</p>
                 </td>
@@ -963,13 +1206,13 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
         var a
         var b
     ) => `+`(a,b)
-    combineFloat(
-        var a : Float
-        var b : Float
-    ) => add(a,b)
     combineInteger(
         var a : Integer
         var b : Integer
+    ) => add(a,b)
+    combineFloat(
+        var a : Float
+        var b : Float
     ) => add(a,b)
 }</p>
                 </td>
@@ -981,13 +1224,13 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
         var a
         var b
     ) => `+`(a,b)
-    combineFloat(
-        var a : Float
-        var b : Float
-    ) => add(a,b)
     combineInteger(
         var a : Integer
         var b : Integer
+    ) => add(a,b)
+    combineFloat(
+        var a : Float
+        var b : Float
     ) => add(a,b)
 }</p>
                 </td>
@@ -1043,7 +1286,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    combineFloat(</span>
+            <span class="d2h-code-line-ctn">    combineInteger(</span>
         </div>
     </td>
 </tr><tr>
@@ -1054,7 +1297,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var a : Float</span>
+            <span class="d2h-code-line-ctn">        var a : Integer</span>
         </div>
     </td>
 </tr><tr>
@@ -1065,7 +1308,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var b : Float</span>
+            <span class="d2h-code-line-ctn">        var b : Integer</span>
         </div>
     </td>
 </tr><tr>
@@ -1076,7 +1319,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a : <ins>(</ins>Float<ins>)</ins></span>
+            <span class="d2h-code-line-ctn">        var a : <ins>(</ins>Integer<ins>)</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1087,7 +1330,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b : <ins>(</ins>Float<ins>)</ins></span>
+            <span class="d2h-code-line-ctn">        var b : <ins>(</ins>Integer<ins>)</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1109,7 +1352,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    combineInteger(</span>
+            <span class="d2h-code-line-ctn">    combineFloat(</span>
         </div>
     </td>
 </tr><tr>
@@ -1120,7 +1363,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var a : Integer</span>
+            <span class="d2h-code-line-ctn">        var a : Float</span>
         </div>
     </td>
 </tr><tr>
@@ -1131,7 +1374,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var b : Integer</span>
+            <span class="d2h-code-line-ctn">        var b : Float</span>
         </div>
     </td>
 </tr><tr>
@@ -1142,7 +1385,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a : <ins>(</ins>Integer<ins>)</ins></span>
+            <span class="d2h-code-line-ctn">        var a : <ins>(</ins>Float<ins>)</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1153,7 +1396,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b : <ins>(</ins>Integer<ins>)</ins></span>
+            <span class="d2h-code-line-ctn">        var b : <ins>(</ins>Float<ins>)</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1186,7 +1429,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Float&quot;,&quot;Integer&quot;]</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Integer&quot;,&quot;Float&quot;]</span>
         </div>
     </td>
 </tr>
@@ -1205,16 +1448,16 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
         var a
         var b
     ) => `+`(a,b)
-    combineFloat(
-        var a : (Float)
-        var b : (Float)
-    ) => add(a,b)
     combineInteger(
         var a : (Integer)
         var b : (Integer)
     ) => add(a,b)
+    combineFloat(
+        var a : (Float)
+        var b : (Float)
+    ) => add(a,b)
 }
-// externals: ["+","Float","Integer"]</p>
+// externals: ["+","Integer","Float"]</p>
                 </td>
             
                 <td>
@@ -1268,7 +1511,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    combineFloat(</span>
+            <span class="d2h-code-line-ctn">    combineInteger(</span>
         </div>
     </td>
 </tr><tr>
@@ -1279,7 +1522,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var a <del>:</del> (Float)</span>
+            <span class="d2h-code-line-ctn">        var a <del>:</del> (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -1290,7 +1533,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var b <del>:</del> (Float)</span>
+            <span class="d2h-code-line-ctn">        var b <del>:</del> (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -1301,7 +1544,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Float)</span>
+            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -1312,7 +1555,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Float)</span>
+            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -1334,7 +1577,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    combineInteger(</span>
+            <span class="d2h-code-line-ctn">    combineFloat(</span>
         </div>
     </td>
 </tr><tr>
@@ -1345,7 +1588,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var a <del>:</del> (Integer)</span>
+            <span class="d2h-code-line-ctn">        var a <del>:</del> (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1356,7 +1599,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var b <del>:</del> (Integer)</span>
+            <span class="d2h-code-line-ctn">        var b <del>:</del> (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1367,7 +1610,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Integer)</span>
+            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1378,7 +1621,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Integer)</span>
+            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1411,7 +1654,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Float&quot;,&quot;Integer&quot;]</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Integer&quot;,&quot;Float&quot;]</span>
         </div>
     </td>
 </tr>
@@ -1452,7 +1695,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a ::: (Integer)</span>
+            <span class="d2h-code-line-ctn">        var a ::: (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1463,7 +1706,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Integer)</span>
+            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1496,7 +1739,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a : (Float)</span>
+            <span class="d2h-code-line-ctn">        var a : (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -1507,7 +1750,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b : (Float)</span>
+            <span class="d2h-code-line-ctn">        var b : (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -1540,7 +1783,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a : (Integer)</span>
+            <span class="d2h-code-line-ctn">        var a : (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1551,7 +1794,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b : (Integer)</span>
+            <span class="d2h-code-line-ctn">        var b : (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1584,7 +1827,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Float&quot;,&quot;Integer&quot;]</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Integer&quot;,&quot;Float&quot;]</span>
         </div>
     </td>
 </tr>
@@ -1625,7 +1868,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Integer)</span>
+            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1658,7 +1901,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var a <del>:</del> (Float)</span>
+            <span class="d2h-code-line-ctn">        var a <del>:</del> (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -1669,7 +1912,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var b <del>:</del> (Float)</span>
+            <span class="d2h-code-line-ctn">        var b <del>:</del> (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -1680,7 +1923,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Float)</span>
+            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -1691,7 +1934,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Float)</span>
+            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -1724,7 +1967,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var a <del>:</del> (Integer)</span>
+            <span class="d2h-code-line-ctn">        var a <del>:</del> (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1735,7 +1978,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var b <del>:</del> (Integer)</span>
+            <span class="d2h-code-line-ctn">        var b <del>:</del> (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1746,7 +1989,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Integer)</span>
+            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1757,7 +2000,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Integer)</span>
+            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1790,7 +2033,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Float&quot;,&quot;Integer&quot;]</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Integer&quot;,&quot;Float&quot;]</span>
         </div>
     </td>
 </tr>
@@ -1842,7 +2085,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a ::: (Float)</span>
+            <span class="d2h-code-line-ctn">        var a ::: (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -1853,7 +2096,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
+            <span class="d2h-code-line-ctn">        var b ::: (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -1897,7 +2140,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a ::: (Integer)</span>
+            <span class="d2h-code-line-ctn">        var a ::: (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1908,7 +2151,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Integer)</span>
+            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -1930,7 +2173,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) <ins>:: (Integer) </ins>=&gt; `+`(a,b)<ins> :: (Integer)</ins></span>
+            <span class="d2h-code-line-ctn">    ) <ins>:: (Float) </ins>=&gt; `+`(a,b)<ins> :: (Float)</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1952,7 +2195,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Float&quot;,&quot;Integer&quot;]</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Integer&quot;,&quot;Float&quot;]</span>
         </div>
     </td>
 </tr>
@@ -1993,7 +2236,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    combineFloat(</span>
+            <span class="d2h-code-line-ctn">    combineInteger(</span>
         </div>
     </td>
 </tr><tr>
@@ -2004,7 +2247,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a ::: (Float)</span>
+            <span class="d2h-code-line-ctn">        var a ::: (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -2015,7 +2258,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
+            <span class="d2h-code-line-ctn">        var b ::: (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -2048,7 +2291,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    combineInteger(</span>
+            <span class="d2h-code-line-ctn">    combineFloat(</span>
         </div>
     </td>
 </tr><tr>
@@ -2059,7 +2302,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a ::: (Integer)</span>
+            <span class="d2h-code-line-ctn">        var a ::: (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -2070,7 +2313,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Integer)</span>
+            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
         </div>
     </td>
 </tr><tr>
@@ -2092,7 +2335,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) <ins>:: (Integer) </ins>=&gt; add(a,b)<ins> :: (Integer)</ins></span>
+            <span class="d2h-code-line-ctn">    ) <ins>:: (Float) </ins>=&gt; add(a,b)<ins> :: (Float)</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -2114,7 +2357,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a ::: (Float)</span>
+            <span class="d2h-code-line-ctn">        var a ::: (Integer)</span>
         </div>
     </td>
 </tr><tr>
@@ -2125,7 +2368,7 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
+            <span class="d2h-code-line-ctn">        var b ::: (Integer)</span>
         </div>
     </td>
 </tr>
@@ -2144,24 +2387,24 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
         var a
         var b
     ) => `+`(a,b)
-    combineFloat(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Integer) => add(a,b) :: (Integer)
     combineInteger(
         var a ::: (Integer)
         var b ::: (Integer)
     ) :: (Integer) => add(a,b) :: (Integer)
-    add(
+    combineFloat(
         var a ::: (Float)
         var b ::: (Float)
-    ) :: (Integer) => `+`(a,b) :: (Integer)
+    ) :: (Float) => add(a,b) :: (Float)
     add(
         var a ::: (Integer)
         var b ::: (Integer)
     ) :: (Integer) => `+`(a,b) :: (Integer)
+    add(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => `+`(a,b) :: (Float)
 }
-// externals: ["+","Float","Integer"]</p>
+// externals: ["+","Integer","Float"]</p>
                 </td>
             
                 <td>
@@ -2171,24 +2414,24 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
         var a
         var b
     ) => `+`(a,b)
-    combineFloat(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Integer) => add(a,b) :: (Integer)
     combineInteger(
         var a ::: (Integer)
         var b ::: (Integer)
     ) :: (Integer) => add(a,b) :: (Integer)
-    add(
+    combineFloat(
         var a ::: (Float)
         var b ::: (Float)
-    ) :: (Integer) => `+`(a,b) :: (Integer)
+    ) :: (Float) => add(a,b) :: (Float)
     add(
         var a ::: (Integer)
         var b ::: (Integer)
     ) :: (Integer) => `+`(a,b) :: (Integer)
+    add(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => `+`(a,b) :: (Float)
 }
-// externals: ["+","Float","Integer"]</p>
+// externals: ["+","Integer","Float"]</p>
                 </td>
             
                 <td>
@@ -2198,24 +2441,24 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
         var a
         var b
     ) => `+`(a,b)
-    combineFloat(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Integer) => add(a,b) :: (Integer)
     combineInteger(
         var a ::: (Integer)
         var b ::: (Integer)
     ) :: (Integer) => add(a,b) :: (Integer)
-    add(
+    combineFloat(
         var a ::: (Float)
         var b ::: (Float)
-    ) :: (Integer) => `+`(a,b) :: (Integer)
+    ) :: (Float) => add(a,b) :: (Float)
     add(
         var a ::: (Integer)
         var b ::: (Integer)
     ) :: (Integer) => `+`(a,b) :: (Integer)
+    add(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => `+`(a,b) :: (Float)
 }
-// externals: ["+","Float","Integer"]</p>
+// externals: ["+","Integer","Float"]</p>
                 </td>
             
                 <td>
@@ -2225,24 +2468,24 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
         var a
         var b
     ) => `+`(a,b)
-    combineFloat(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Integer) => add(a,b) :: (Integer)
     combineInteger(
         var a ::: (Integer)
         var b ::: (Integer)
     ) :: (Integer) => add(a,b) :: (Integer)
-    add(
+    combineFloat(
         var a ::: (Float)
         var b ::: (Float)
-    ) :: (Integer) => `+`(a,b) :: (Integer)
+    ) :: (Float) => add(a,b) :: (Float)
     add(
         var a ::: (Integer)
         var b ::: (Integer)
     ) :: (Integer) => `+`(a,b) :: (Integer)
+    add(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => `+`(a,b) :: (Float)
 }
-// externals: ["+","Float","Integer"]</p>
+// externals: ["+","Integer","Float"]</p>
                 </td>
             
                 <td>
@@ -2252,24 +2495,24 @@ combineInteger(a: Integer, b: Integer) => add(a, b)
         var a
         var b
     ) => `+`(a,b)
-    combineFloat(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Integer) => add(a,b) :: (Integer)
     combineInteger(
         var a ::: (Integer)
         var b ::: (Integer)
     ) :: (Integer) => add(a,b) :: (Integer)
-    add(
+    combineFloat(
         var a ::: (Float)
         var b ::: (Float)
-    ) :: (Integer) => `+`(a,b) :: (Integer)
+    ) :: (Float) => add(a,b) :: (Float)
     add(
         var a ::: (Integer)
         var b ::: (Integer)
     ) :: (Integer) => `+`(a,b) :: (Integer)
+    add(
+        var a ::: (Float)
+        var b ::: (Float)
+    ) :: (Float) => `+`(a,b) :: (Float)
 }
-// externals: ["+","Float","Integer"]</p>
+// externals: ["+","Integer","Float"]</p>
                 </td>
             </tr>
         </div>

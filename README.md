@@ -93,17 +93,11 @@ Cross platform modeling language
   - [x] Restore unit tests.
   - [x] Conditional Declarations => Inferred Types
   - [x] For loop SSA Form.
-  - [ ] Test that semantic analysis is providing better type checking.
   - [ ] Semantic checks.
-  - [ ] Some Type Inference must be done in assembled phase.
-  - [ ] Simplification can be done in single file as well.
-  - [ ] Evaluation if involving UFCS must happen in assembly phase.
-  - [ ] Then return to the ability to interpret.
   - [ ] Add NaN class to represent Not A Number.
   - [ ] Overload Float division to explicitly return NaN if necessary.
-  - [ ] class instance functions to static functions
   - [x] class inheritance for type checking
-  - [ ] Uniform Function Call Syntax
+  - [ ] class instance functions to static functions
 
   - [x] Scope functions globally in Assembly phase.
     - [x] Need to separate named multi functions from local variables.
@@ -114,8 +108,12 @@ Cross platform modeling language
   - [x] Create specific function types from inferred functions.
     - [x] Create Concrete Functions
     - [x] Resolve calls correctly. Next step.
+    - [x] Fix DAG sharing nodes.
+  - [ ] Conditional Type Assertions
+    - [ ] Array bounds checking
+    - [ ] Chained Conditional Type, check property
   - [ ] UFCS conversion to static call.
-  - [ ] MultiFunction to static functions.
+  - [ ] MultiFunction runtime dispatch algorithm.
 
   A reference to a Class is both a "Type" and a "value".
     Variable

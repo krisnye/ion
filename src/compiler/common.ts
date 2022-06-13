@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as np from "path";
 import { Node } from "./Node";
+import { SourceLocation } from "./SourceLocation";
 
 const validIdRegex = /^[@a-z_][@a-z0-9_]*$/i
 export function isValidId(name: string) {
@@ -30,7 +31,7 @@ export function getAncestor<T>(node: Node, ancestors: Map<Node, Node>, predicate
     return null
 }
 
-export function clone(value) {
+export function clone(value, recursive = false) {
     if (value == null || typeof value !== "object") {
         return value
     }
@@ -38,20 +39,17 @@ export function clone(value) {
         return value.clone()
     }
     if (value instanceof Set) {
-        return new Set(Array.from(value.values()).map(clone))
+        return new Set(Array.from(value.values()).map(n => clone(n, recursive)))
     }
     if (value instanceof Map) {
-        return new Map(Array.from(value.entries()).map(clone))
+        return new Map(Array.from(value.entries()).map(n => clone(n, recursive)))
     }
     if (Array.isArray(value)) {
-        return value.map(clone)
-    }
-    if (value instanceof Node) {
-        return new (value.constructor as any)(value)
+        return value.map(n => clone(n, recursive))
     }
     let newValues = {}
     for (let name in value) {
-        newValues[name] = clone(value[name])
+        newValues[name] = clone(value[name], recursive)
     }
     let copy = new value.constructor(newValues)
     return copy
