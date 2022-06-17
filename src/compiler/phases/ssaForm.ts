@@ -13,7 +13,7 @@ import { Identifier } from "../ast/Identifier";
 import { TypeofExpression } from "../ast/TypeofExpression";
 import { UnionType } from "../ast/UnionType";
 import { Loop } from "../ast/Loop";
-import { resourceLimits } from "worker_threads";
+import { Function } from "../ast/Function";
 
 const ssaVersionSeparator = ":";
 
@@ -54,12 +54,16 @@ export function getScope(ancestors: object[]): Scope {
 
 function getFinalSSAVersionVariable(block: Node | null | undefined, originalName: string): Variable | null {
     let prefix = originalName + ssaVersionSeparator;
+    if (block instanceof Variable && block.id.name.startsWith(prefix)) {
+        return block;
+    }
     if (block instanceof Block) {
         let { nodes } = block;
         for (let i = nodes.length - 1; i >= 0; i--) {
             let node = nodes[i];
-            if (node instanceof Variable && node.id.name.startsWith(prefix)) {
-                return node;
+            let found = getFinalSSAVersionVariable(node, originalName);
+            if (found) {
+                return found;
             }
         }
     }
@@ -199,8 +203,9 @@ export function ssaForm(moduleName, module): ReturnType<Phase> {
     let result = traverseWithScope(new Map(), module, (c) => {
         return {
             leave(node) {
-                if (node instanceof Block) {
-                    let variables = node.nodes.filter(n => n instanceof Variable) as Variable[];
+                if (node instanceof Block || node instanceof Function) {
+                    let variables = [...node.nodes]
+                        .filter(n => n instanceof Variable) as Variable[];
                     if (variables.length > 0) {
                         for (let variable of variables) {
                             let name = getNewVarName(variable.id.name);

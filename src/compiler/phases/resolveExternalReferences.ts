@@ -33,12 +33,12 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
                 dependencies.add(coreTypes.Array);
             }
             if (node instanceof NumberLiteral) {
-                dependencies.add(node.integer ? coreTypes.Integer : coreTypes.Float);
+                dependencies.add(node.integer ? coreTypes.Integer : coreTypes.Number);
             }
             if (node instanceof Reference) {
                 if (node instanceof TypeReference) {
-                    // convert References to Float or Integer to NumberTypes
-                    if (node.name === coreTypes.Float) {
+                    // convert References to Number or Integer to NumberTypes
+                    if (node.name === coreTypes.Number) {
                         return new NumberType({ location: node.location, step: false }) as any
                     }
                     if (node.name === coreTypes.Integer) {

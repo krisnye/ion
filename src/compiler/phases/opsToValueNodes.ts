@@ -70,6 +70,21 @@ export function tempFactory(name: string): IdentifierFactory {
     }
 }
 
+const assignmentOperators = {
+    ":=": true,
+    "+=": true,
+    "-=": true,
+    "*=": true,
+    "/=": true,
+    "**=": true,
+    "<<=": true,
+    ">>=": true,
+    "|=": true,
+    "&=": true,
+    "||=": true,
+    "&&=": true,
+};
+
 function destructure(temp: IdentifierFactory, nodes: Array<Node>, pattern: Node | null, right: Expression | Identifier, variableOrAssignment: boolean, memberIndex: null | number = null) {
     if (pattern instanceof Group) {
         if (right instanceof Reference) {
@@ -152,7 +167,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                         meta: [],
                         id: new Identifier(_leftId),
                         // TEMPORARY HACK. FIXME
-                        type: new TypeReference({ location: value.location, name: coreTypes.Float }),
+                        type: new TypeReference({ location: value.location, name: coreTypes.Number }),
                         value: null
                     }),
                     right: value as Expression,
@@ -332,7 +347,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                             body: right,
                         })
                     default:
-                        if (operator.endsWith("=") && operator !== "==") {
+                        if (assignmentOperators[operator] && operator !== "==") {
                             if (!(left instanceof Identifier || left instanceof Reference)) {
                                 errors.push(new SemanticError(`Expected a variable reference`, left));
                                 return;

@@ -4,15 +4,14 @@ import { Expression } from "./Expression";
 
 export enum BasicType {
     None        = 0,
-    Integer     = 1 << 0,
-    Float       = 1 << 1,
-    String      = 1 << 2,
-    Object      = 1 << 3,
-    Structure   = 1 << 4,
-    Array       = 1 << 5,
-    Map         = 1 << 6,
-    Function    = 1 << 7,
-    Type        = 1 << 8,
+    Number      = 1 << 0,
+    String      = 1 << 1,
+    Object      = 1 << 2,
+    Structure   = 1 << 3,
+    Array       = 1 << 4,
+    Map         = 1 << 5,
+    Function    = 1 << 6,
+    Type        = 1 << 7,
     All         = 0xFF,
 }
 

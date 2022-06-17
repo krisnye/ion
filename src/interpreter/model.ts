@@ -16,7 +16,7 @@ export interface IntegerInstance extends BaseInstance {
 }
 
 export interface FloatInstance extends BaseInstance {
-    type: typeof coreTypes.Float
+    type: typeof coreTypes.Number
     value: FloatValue
 }
 
@@ -51,7 +51,7 @@ export function isIntegerInstance(instance: Instance): instance is IntegerInstan
 }
 
 export function isFloatInstance(instance: Instance): instance is FloatInstance {
-    return instance.type === coreTypes.Float;
+    return instance.type === coreTypes.Number;
 }
 
 export function isStringInstance(instance: Instance): instance is StringInstance {

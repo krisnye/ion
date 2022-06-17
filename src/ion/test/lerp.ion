@@ -1,5 +1,5 @@
 
-lerp(from, to, alpha: Float) =>
+lerp(from, to, alpha: Number) =>
     if alpha == 0.0
         return from
     if alpha == 1.0
@@ -8,29 +8,27 @@ lerp(from, to, alpha: Float) =>
 
 //  this should work for any types of `from` and `to`
 //  provided the following functions exist
-//      *(typeof from, Float): FromProduct
-//      *(typeof to, Float): ToProduct
+//      *(typeof from, Number): FromProduct
+//      *(typeof to, Number): ToProduct
 //      +(FromProduct, ToProduct)
 
-Vector2 = [Float, Float]
-Vector3 = [Float, Float, Float]
-Vector4 = [Float, Float, Float, Float]
+Vector2 = [Number, Number]
+Vector3 = [Number, Number, Number]
+Vector4 = [Number, Number, Number, Number]
 Color = Vector4
 
-x(this: Float[ length: 2 .. 4 ]) => this[0]
-y(this: Float[ length: 2 .. 4 ]) => this[1]
-z(this: Float[ length: 3 .. 4 ]) => this[2]
-w(this: Float[ length:      4 ]) => this[3]
+x(this: Number[ length: 2 .. 4 ]) => this[0]
+y(this: Number[ length: 2 .. 4 ]) => this[1]
+z(this: Number[ length: 3 .. 4 ]) => this[2]
+w(this: Number[ length:      4 ]) => this[3]
 r(this: Color) => this[0]
 g(this: Color) => this[1]
 b(this: Color) => this[2]
 a(this: Color) => this[3]
 
-// reduce = (c, accumulator = (left, right): Infer, initial) =>
-//     for item in c
-//         initial := accumulator(initial, item)
-//     return initial
-
-// sum = (c, initial) => reduce(c, `+`, initial)
-
-// distance = (c, initial) => reduce(c, (left, right) => left + right ** 2.0, initial) ** 0.5
+// sum = (array) =>
+//     total: array = 0
+//     if a.length > 0
+//         for value in array
+//             total += value
+//     return total

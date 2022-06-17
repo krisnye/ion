@@ -54,10 +54,10 @@ export function getReturnType(funcs: Function[], argTypes: Type[], c: Evaluation
     return UnionType.join(...returnTypes);
 }
 
-export function getPossibleFunctionCalls(funcs: Function[], argTypes: Type[], c: EvaluationContext): Function[] {
+export function getPossibleFunctionCalls(funcs: (Function | null)[], argTypes: Type[], c: EvaluationContext): Function[] {
     let functions = new Array<Function>();
     for (let func of funcs) {
-        if (func.areArgumentsValid(argTypes, c)) {
+        if (func?.areArgumentsValid(argTypes, c)) {
             functions.push(func);
         }
     }

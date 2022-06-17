@@ -11,7 +11,7 @@ import { FloatLiteral, IntegerLiteral, NumberLiteral } from "../compiler/ast/Num
 //             return { type: classIds.Integer, value: node.value }
 //         }
 //         else {
-//             return { type: classIds.Float, value: node.value }
+//             return { type: classIds.Number, value: node.value }
 //         }
 //     }
 //     if (node instanceof StringLiteral) {

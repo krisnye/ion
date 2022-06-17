@@ -50,8 +50,11 @@ export class Expression extends Node implements Required<ExpressionProps> {
     }
 
     protected resolve(c: EvaluationContext): Expression {
-        const type = this.resolveType(c);
-        return this.patch({ type: this.resolveType(c) });
+        let type = this.resolveType(c);
+        if (type?.simplify) {
+            type = type.simplify() as Type;
+        }
+        return this.patch({ type });
     }
 
     protected resolveType(c: EvaluationContext): Type | null {

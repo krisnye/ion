@@ -3,9 +3,10 @@ import { EvaluationContext } from "../EvaluationContext";
 import { SemanticError } from "../SemanticError";
 import { SourceLocation } from "../SourceLocation";
 import { BinaryExpression } from "./BinaryExpression";
+import { Call } from "./Call";
 import { CompoundType, CompoundTypeProps } from "./CompoundType";
 import { Expression } from "./Expression";
-import { Type } from "./Type";
+import { isType, Type } from "./Type";
 
 export interface IntersectionTypeProps extends CompoundTypeProps {
 }
@@ -30,6 +31,8 @@ export class IntersectionType extends CompoundType {
         const right = c.getComparisonType(this.right);
         const merged = left.merge(right, false, c);
         if (merged == null) {
+            debugger;
+            left.merge(right, false, c);
             throw new SemanticError(`Types are incompatible`, this.left, this.right);
         }
         return merged;
@@ -45,12 +48,15 @@ export class IntersectionType extends CompoundType {
         }
     }
 
-    static join(...types: Type[]): Type | null
+    static join(...types: (Type | null)[]): Type | null
     static join(type: Type, ...types: Type[]): Type
     static join(...types: Type[]): Type | null {
         let left = types[0] ?? null;
         for (let i = 1; i < types.length; i++) {
             let right = types[i];
+            if (right instanceof Call) {
+                debugger;
+            }
             left = new IntersectionType({
                 location: SourceLocation.merge(left.location, right.location),
                 left,

@@ -42,15 +42,13 @@ export class Variable extends Expression implements Declaration {
         // console.log("------ " + this);
         const { value, declaredType } = this;
         if (declaredType && value?.type) {
-            if (declaredType && value.type) {
-                // check if value type is assignable to this.
-                let isValueASubtype = isSubtype(value.type, declaredType, c);
-                if (isValueASubtype === false) {
-                    throw new SemanticError(`Type ${value.type} cannot be assigned to variable of type ${declaredType}`, value);
-                }
-                if (isValueASubtype === null) {
-                    throw new SemanticError(`Type ${value.type} may not be assignable to variable of type ${declaredType}`, value);
-                }
+            // check if value type is assignable to this.
+            let isValueASubtype = isSubtype(value.type, declaredType, c);
+            if (isValueASubtype === false) {
+                throw new SemanticError(`Type ${value.type} cannot be assigned to variable of type ${declaredType}`, value);
+            }
+            if (isValueASubtype === null) {
+                throw new SemanticError(`Type ${value.type} may not be assignable to variable of type ${declaredType}`, value);
             }
         }
         return this.type ?? this.value?.type ?? this.declaredType ?? null;

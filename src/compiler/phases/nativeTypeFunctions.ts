@@ -242,33 +242,33 @@ function calculateMultiplicativeType(node: Node, [a, b]: NumberType[], operator:
 export const nativeTypeFunctions: { [key: string]: TypeFunction | undefined } = {
     //  [a0,a1] + [b0, b1]  ->  [a0 + b0, a1 + b1]
     "+((Integer),(Integer))": (node, types) => calculateAdditiveType(node, types as NumberType[], "+"),
-    "+((Float),(Float))": (node, types) => calculateAdditiveType(node, types as NumberType[], "+"),
+    "+((Number),(Number))": (node, types) => calculateAdditiveType(node, types as NumberType[], "+"),
     //  [a0,a1] - [b0, b1]  ->  [a0 - b0, a1 - b1]
     "-((Integer),(Integer))": (node, types) => calculateSubtractiveType(node, types as NumberType[], "-"),
-    "-((Float),(Float))": (node, types) => calculateSubtractiveType(node, types as NumberType[], "-"),
+    "-((Number),(Number))": (node, types) => calculateSubtractiveType(node, types as NumberType[], "-"),
     //  [a0,a1] min [b0, b1]  ->  [a0 min b0, a1 min b1]
     "min((Integer),(Integer))": (node, types) => calculateAdditiveType(node, types as NumberType[], "min"),
-    "min((Float),(Float))": (node, types) => calculateAdditiveType(node, types as NumberType[], "min"),
+    "min((Number),(Number))": (node, types) => calculateAdditiveType(node, types as NumberType[], "min"),
     //  [a0,a1] max [b0, b1]  ->  [a0 max b0, a1 max b1]
     "max((Integer),(Integer))": (node, types) => calculateAdditiveType(node, types as NumberType[], "max"),
-    "max((Float),(Float))": (node, types) => calculateAdditiveType(node, types as NumberType[], "max"),
+    "max((Number),(Number))": (node, types) => calculateAdditiveType(node, types as NumberType[], "max"),
     //  [a0,a1] * [b0,b1]  ->  [min(a0*b0,a0*b1,a1*b0,a1*b1), max((a0*b0,a0*b1,a1*b0,a1*b1))]
     "*((Integer),(Integer))": (node, types) => calculateMultiplicativeType(node, types as NumberType[], "*", true),
-    "*((Float),(Float))": (node, types) => calculateMultiplicativeType(node, types as NumberType[], "*", false),
+    "*((Number),(Number))": (node, types) => calculateMultiplicativeType(node, types as NumberType[], "*", false),
     //  [a0,a1] ** [b0,b1]  ->  [min(a0**b0,a0**b1,a1**b0,a1**b1), max((a0**b0,a0**b1,a1**b0,a1**b1))]
     "**((Integer),(Integer))": (node, types) => calculateMultiplicativeType(node, types as NumberType[], "**", true),
-    "**((Float),(Float))": (node, types) => calculateMultiplicativeType(node, types as NumberType[], "**", false),
+    "**((Number),(Number))": (node, types) => calculateMultiplicativeType(node, types as NumberType[], "**", false),
 
     "/((Integer),(< 0) | (> 0))": (node, types) => { return calculateDivision(node, types as NumberType[]) },
-    "/((Float),(Float))": (node, types) => { return calculateDivision(node, types as NumberType[]); },
+    "/((Number),(Number))": (node, types) => { return calculateDivision(node, types as NumberType[]); },
 
     "%((Integer),(< 0) | (> 0))": (node, types, c) => { return calculateRemainder(node, types as NumberType[], c) },
-    "%((Float),(Float))": (node, types, c) => { return calculateRemainder(node, types as NumberType[], c); },
+    "%((Number),(Number))": (node, types, c) => { return calculateRemainder(node, types as NumberType[], c); },
 
     "sqrt((>= 0.0))": (node, types, c) => { return calculateMonotonic(node, types[0] as NumberType, "sqrt") },
 
-    "-((Float))": (node, types) => calculateNegation(node, types[0] as NumberType),
+    "-((Number))": (node, types) => calculateNegation(node, types[0] as NumberType),
     "-((Integer))": (node, types) => calculateNegation(node, types[0] as NumberType),
-    "abs((Float))": (node, types) => calculateAbsType(node, types[0] as NumberType),
+    "abs((Number))": (node, types) => calculateAbsType(node, types[0] as NumberType),
     "abs((Integer))": (node, types) => calculateAbsType(node, types[0] as NumberType),
 };

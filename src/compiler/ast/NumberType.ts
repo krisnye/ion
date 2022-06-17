@@ -9,6 +9,7 @@ import { Expression, ExpressionProps } from "./Expression";
 import { NumberLiteral } from "./NumberLiteral";
 import { Reference } from "./Reference";
 import { BasicType, Type } from "./Type";
+import { leastCommonMultiple } from "../analysis/math";
 
 type LiteralNumberType = NumberType & { min: NumberLiteral | null, max: NumberLiteral | null}
 
@@ -71,7 +72,7 @@ export class NumberType extends BaseType {
     }
 
     getBasicTypes() {
-        return this.step ? BasicType.Integer : BasicType.Float;
+        return BasicType.Number;
     }
 
     get integer() {
@@ -102,7 +103,7 @@ export class NumberType extends BaseType {
                 location,
                 left: dot,
                 operator: TypeOperators.is,
-                right: new Reference({ location, name: this.step ? coreTypes.Integer : coreTypes.Float})
+                right: new Reference({ location, name: this.step ? coreTypes.Integer : coreTypes.Number})
             }),
             this.min == null
                 ? null
@@ -149,9 +150,17 @@ export class NumberType extends BaseType {
         return this;
     }
 
+    isAnyNumber() {
+        return this.min == null && this.max == null && !this.step;
+    }
+
+    isAnyInteger() {
+        return this.min == null && this.max == null && !!this.step;
+    }
+
     toString() {
         if (this.min == null && this.max == null) {
-            return `(${this.step ? coreTypes.Integer : coreTypes.Float})`;
+            return `(${this.step ? coreTypes.Integer : coreTypes.Number})`;
         }
         if (this.min && this.max && this.min.toString() === this.max.toString()) {
             return `(${this.min})`;
@@ -178,10 +187,10 @@ export class NumberType extends BaseType {
     
 
     static union(a: NumberType, b: NumberType): NumberType | null {
-        if (a.min == null && a.max == null) {
+        if (a.isAnyNumber()) {
             return b
         }
-        if (b.min == null && b.max == null) {
+        if (b.isAnyNumber()) {
             return a
         }
         if (!isLiteralNumberType(a) || !isLiteralNumberType(b)) {
@@ -229,15 +238,34 @@ export class NumberType extends BaseType {
     }
 
     static intersection(a: NumberType, b: NumberType): NumberType | null {
+        if (a.isAnyNumber()) {
+            return b
+        }
+        if (b.isAnyNumber()) {
+            return a
+        }
+        if (a.isAnyInteger() && b.integer) {
+            return b;
+        }
+        if (b.isAnyInteger() && a.integer) {
+            return a;
+        }
         const location = SourceLocation.merge(a.location, b.location);
         if (!isLiteralNumberType(a) || !isLiteralNumberType(b)) {
             // if one has min but no max and the other has no min then combine them.
             if (a != null && b != null) {
+                let step = mergeStep(a.step, b.step);
                 if (a.min != null && a.max == null && b.min == null) {
-                    return new NumberType({ location, min: a.min, minExclusive: a.minExclusive, max: b.max, maxExclusive: b.maxExclusive, step: a.step });
+                    return new NumberType({ location, min: a.min, minExclusive: a.minExclusive, max: b.max, maxExclusive: b.maxExclusive, step });
                 }
                 if (b.min != null && b.max == null && a.min == null) {
-                    return new NumberType({ location, min: b.min, minExclusive: b.minExclusive, max: a.max, maxExclusive: a.maxExclusive, step: a.step });
+                    return new NumberType({ location, min: b.min, minExclusive: b.minExclusive, max: a.max, maxExclusive: a.maxExclusive, step });
+                }
+                if (a.max != null && a.min == null && b.max == null) {
+                    return new NumberType({ location, max: a.max, maxExclusive: a.minExclusive, min: b.min, minExclusive: b.minExclusive, step });
+                }
+                if (b.max != null && b.min == null && a.max == null) {
+                    return new NumberType({ location, max: b.max, maxExclusive: b.minExclusive, min: a.min, minExclusive: a.minExclusive, step });
                 }
             }
             return null
@@ -267,4 +295,14 @@ export class NumberType extends BaseType {
         return result
     }
 
+}
+
+function mergeStep(a: number, b: number) {
+    if (a == 0) {
+        return b;
+    }
+    if (b == 0) {
+        return a;
+    }
+    return leastCommonMultiple(a, b);
 }

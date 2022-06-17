@@ -9,7 +9,7 @@ export function instanceToNode(instance, location: SourceLocation): Node {
     if (type === coreTypes.Integer) {
         return IntegerLiteral({ location, value: instance.value });
     }
-    if (type === coreTypes.Float) {
+    if (type === coreTypes.Number) {
         return FloatLiteral({ location, value: instance.value });
     }
     if (type === coreTypes.String) {

@@ -10,8 +10,8 @@ myfunction() =>
     x := min(0.0, x + 20.0)
     return x
 
-// test = (x: Float, y: Float) =>
-//     z: Float = x
+// test = (x: Number, y: Number) =>
+//     z: Number = x
 //     if x > y
 //         z += 10
 //     else

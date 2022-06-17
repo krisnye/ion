@@ -10,7 +10,7 @@ import { getPossibleFunctionCalls, getReturnType } from "./MultiFunction";
 import { FunctionDeclaration } from "./FunctionDeclaration";
 import { isInferFunction } from "../phases/typeInference";
 
-export interface AssignmentProps extends ContainerProps {
+export interface CallProps extends ContainerProps {
     callee: Expression;
 }
 
@@ -24,8 +24,8 @@ export class Call extends Container {
 
     callee!: Expression;
 
-    constructor(props: AssignmentProps) { super(props); }
-    patch(props: Partial<AssignmentProps>) { return super.patch(props); }
+    constructor(props: CallProps) { super(props); }
+    patch(props: Partial<CallProps>) { return super.patch(props); }
 
     *getDependencies(c: EvaluationContext) {
         yield* super.getDependencies(c);

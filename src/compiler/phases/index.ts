@@ -13,6 +13,7 @@ import { removeSoloBlocks } from "./removeSoloBlocks";
 import { moveMetaToFunctions } from "./moveMetaToFunctions";
 import { ssaForm } from "./ssaForm";
 import { removeInlineDents } from "./removeInlineDents";
+import { insertConditionalAssignments } from "./insertConditionalAssignments";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -26,7 +27,9 @@ export const parsingPhases: Phase[] = [
     moveMetaToFunctions,
     // createMultiFunctions,
     resolveExternalReferences,
+    insertConditionalAssignments,
     ssaForm,
+    identity,
     //  MUST be solo up to this point so we can get external dependencies.
 ];
 

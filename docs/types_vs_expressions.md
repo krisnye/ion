@@ -11,6 +11,8 @@ Dot Expressions
 + More generally useful beyond just type analysis
 + Ability to represent any expression
 - How do we represent numeric ranges?
+    - Convert to a `. in x .. y` "in range" expression?
+    - We only need numeric ranges for operation type inference.
 
 Options
 

@@ -62,10 +62,9 @@ export class Class extends Container implements Type, Declaration, Callable {
                 return BasicType.Array;
             case coreTypes.String:
                 return BasicType.String;
-            case coreTypes.Float:
-                return BasicType.Float;
+            case coreTypes.Number:
             case coreTypes.Integer:
-                return BasicType.Integer;
+                return BasicType.Number;
             default:
                 return this.structure ? BasicType.Structure : BasicType.Object;
         }

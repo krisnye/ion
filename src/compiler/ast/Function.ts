@@ -16,6 +16,8 @@ import { FunctionType } from "./FunctionType";
 import { Identifier } from "./Identifier";
 import { IntersectionType } from "./IntersectionType";
 import { getMetaCall, toMetaString } from "./MetaContainer";
+import { NumberType } from "./NumberType";
+import { Reference } from "./Reference";
 import { isType, Type } from "./Type";
 import { UnionType } from "./UnionType";
 
@@ -81,14 +83,21 @@ export class Function extends FunctionBase implements Callable {
     protected resolve(c: EvaluationContext): Expression {
         let finalExpressions = [...getFinalExpressions(this.body)];
         const finalTypes = finalExpressions.map(node => node.type!);
-        const inferredType = UnionType.join(...finalTypes)!;
+        const inferredType = UnionType.join(...finalTypes)!.simplify() as Type;
         if (this.returnType != null) {
             const result = isSubtype(inferredType, this.returnType, c);
             if (result !== true) {
                 c.errors.push(new SemanticError(`Actual return type ${inferredType} ${result == false ? `does` : `may`} not match declared type ${this.returnType}`, this.returnType));
             }
         }
-        const returnType = this.returnType ?? inferredType;
+        let returnType = this.returnType ?? inferredType;
+        //  may not need...
+        // if (returnType instanceof Reference) {
+        //     let returnTypeValue = c.getValue(returnType);
+        //     if (returnTypeValue instanceof NumberType) {
+        //         returnType = returnTypeValue;
+        //     }
+        // }
         const type = new FunctionType({
             location: this.location,
             parameters: this.parameters,

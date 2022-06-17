@@ -32,7 +32,7 @@ export class NumberLiteral extends Literal {
     }
 
     toInterpreterInstance(c: EvaluationContext) {
-        return { "" : this.integer ? coreTypes.Integer : coreTypes.Float, value: this.value };
+        return { "" : this.integer ? coreTypes.Integer : coreTypes.Number, value: this.value };
     }
 
     protected resolveType(c: EvaluationContext): Type {

@@ -3,4 +3,4 @@
 min(a: Integer, b: Integer): Integer => 0
 
 @Native("(a, b) => ({ ...a, value: Math.min(a.value, b.value) })")
-min(a: Float, b: Float): Float => 0.0
+min(a: Number, b: Number): Number => 0.0

@@ -19,10 +19,6 @@ export class EvaluationContext {
 
     getDeclaration(ref: Reference): Declaration {
         let declarations = this.getDeclarations(ref);
-        if (declarations.length != 1) {
-            debugger;
-            throw new SemanticError(`Multiple declarations found`, ref);
-        }
         return declarations[0];
     }
 
@@ -55,10 +51,6 @@ export class EvaluationContext {
 
     getValue(ref: Expression): Expression {
         let values = this.getValues(ref);
-        if (values.length !== 1) {
-            debugger;
-            throw new SemanticError(`Multiple values found`, ref);
-        }
         return values[0];
     }
 

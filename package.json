@@ -19,7 +19,7 @@
     "setup": "yarn install",
     "build": "tsc",
     "test": "gtest lib",
-    "debug": "node --inspect-brk node_modules/@glas/test/gtest.js lib",
+    "debug": "tsc && node --inspect-brk node_modules/@glas/test/gtest.js lib",
     "deploy": "npm version patch && npm publish",
     "watch": "run-p watch:*",
     "watch:build": "tsc -w",

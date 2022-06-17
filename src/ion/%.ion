@@ -3,10 +3,10 @@
 `%`(a: Integer, b: != 0): Integer => 0
 
 @Native("(a, b) => ({ ...a, value: a.value % b.value })")
-`%`(a: Float, b: Float): Float => 0.0
+`%`(a: Number, b: Number): Number => 0.0
 
 @Native("(a, b) => ({ ...a, value: a.value % b.value })")
-`%`(a: Integer, b: Float): Float => 0.0
+`%`(a: Integer, b: Number): Number => 0.0
 
 @Native("(a, b) => ({ ...a, value: a.value % b.value })")
-`%`(a: Float, b: != 0): Float => 0.0
+`%`(a: Number, b: != 0): Number => 0.0

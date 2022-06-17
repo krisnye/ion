@@ -3,16 +3,16 @@
 `-`(a: Integer, b: Integer): Integer => 0
 
 @Native("(a, b) => ({ ...a, value: a.value - b.value })")
-`-`(a: Float, b: Float): Float => 0.0
+`-`(a: Number, b: Number): Number => 0.0
 
 @Native("(a, b) => ({ ...a, value: a.value - b.value })")
-`-`(a: Float, b: Integer): Float => 0.0
+`-`(a: Number, b: Integer): Number => 0.0
 
 @Native("(a, b) => ({ ...a, value: a.value - b.value })")
-`-`(a: Integer, b: Float): Float => 0.0
+`-`(a: Integer, b: Number): Number => 0.0
 
 @Native("(a) => ({ ...a, value: - a.value })")
-`-`(a: Float): Float => 0.0
+`-`(a: Number): Number => 0.0
 
 @Native("(a) => ({ ...a, value: - a.value })")
 `-`(a: Integer): Integer => 0

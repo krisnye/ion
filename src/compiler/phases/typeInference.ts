@@ -57,29 +57,7 @@ export function typeInference(moduleName, module: Container, externals: Map<stri
                                     throw new Error("Missing inferKey");
                                 }
                                 if (!existingInferFunctions.has(inferKey)) {
-                                    //  TODO: this clone is NOT working.
-                                    //  hmmm, clone may be necessary because otherwise the scopes may be wrong.
-                                    debugger;
                                     let cloned = clone(maybeCreateConcreteFunction, true);
-                                    // let's test that there are no longer any shared nodes
-                                    // let nodes = new Set<Node>();
-                                    // traverse(maybeCreateConcreteFunction, {
-                                    //     enter(node) {
-                                    //         if (node instanceof Node) {
-                                    //             nodes.add(node);
-                                    //         }
-                                    //     }
-                                    // })
-                                    // traverse(cloned, {
-                                    //     enter(node) {
-                                    //         if (node instanceof Node) {
-                                    //             if (nodes.has(node)) {
-                                    //                 debugger;
-                                    //                 throw new Error("WTF man?");
-                                    //             }
-                                    //         }
-                                    //     }
-                                    // })
                                     createInferFunctions.set(inferKey, cloned);
                                 }
                             }

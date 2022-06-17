@@ -1,6 +1,6 @@
 
-ssaconditionals(x: Float) =>
-    total: Float = 0.0
+ssaconditionals(x: Number) =>
+    total: Number = 0.0
     if x < 0.0
         total += 10.0
         total += 15.0

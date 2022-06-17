@@ -88,3 +88,8 @@ Solution: Names for optional parameters are part of the signature.
 Pro: They can be provided at compile time.
 Con: Then all signatures must provide the same default value.
 Maybe: Functions that implement same signature explicitly, don't have to specify type, so will inherit same default values as type.
+
+### Should we retain custom syntax for Arrays [], Objects () and Maps {}?
+
+Pro: Concise and has precedence.
+Con: It may be better to use [] for generics?

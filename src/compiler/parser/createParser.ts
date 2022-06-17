@@ -17,7 +17,7 @@ import { FloatLiteral, IntegerLiteral } from "../ast/NumberLiteral";
 
 export function createParser() {
     return new Parser({
-        Float: new TerminalParselet(FloatLiteral, "value"),
+        Number: new TerminalParselet(FloatLiteral, "value"),
         Integer: new TerminalParselet(IntegerLiteral, "value"),
         String: new TerminalParselet(StringLiteral, "value"),
         Operator: new PrefixOperatorParselet(),

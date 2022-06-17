@@ -61,7 +61,8 @@ import { EvaluationContext } from "../EvaluationContext"
     // number type comparison
     if (a instanceof NumberType) {
         if (b instanceof NumberType) {
-            if (a.step !== b.step) {
+            if (b.step && !a.step) {
+                // TODO: check that steps actually match.
                 return false;
             }
             if ((b.min == null || overlaps(a.min, b.min, a.minExclusive < b.minExclusive) === true) &&

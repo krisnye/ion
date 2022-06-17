@@ -1,13 +1,6 @@
 
-add(a, b) => a + b
-
-combineInteger(a: Integer, b: Integer) => add(a, b)
-combineFloat(a: Float, b: Float) => add(a, b)
-
-// class Foo
-// bar(x: >= 0) => x % 10
-// bazzle(x: Float) =>
-//     foo: >= -1.0 = 1.0
-//     for i in [0, 1, 2]
-//         foo += 1.0
-//     return foo
+foo = (index: Integer, array: Number[]) =>
+    if index >= 0 && index < array.length
+        array[index]
+    else
+        -1

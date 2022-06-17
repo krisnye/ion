@@ -235,31 +235,36 @@ ul.jsondiffpatch-textdiff {
                 <td>
                     <header><span>Source</span></header>
                     <p>
-add(a, b) => a + b
-
-combineInteger(a: Integer, b: Integer) => add(a, b)
-combineFloat(a: Float, b: Float) => add(a, b)
-
-// class Foo
-// bar(x: >= 0) => x % 10
-// bazzle(x: Float) =>
-//     foo: >= -1.0 = 1.0
-//     for i in [0, 1, 2]
-//         foo += 1.0
-//     return foo
+foo = (index: Integer, array: Number[]) =>
+    if index >= 0 && index < array.length
+        array[index]
+    else
+        -1
 </p>
                 </td>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>add(a, b) =&gt; a + b<br><br>combineInteger(a: Integer, b: Integer) =&gt; add(a, b)<br>combineFloat(a: Float, b: Float) =&gt; add(a, b)<br><br>// class Foo<br>// bar(x: &gt;= 0) =&gt; x % 10<br>// bazzle(x: Float) =&gt;<br>//     foo: &gt;= -1.0 = 1.0<br>//     for i in [0, 1, 2]<br>//         foo += 1.0<br>//     return foo<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>foo = (index: Integer, array: Number[]) =&gt;<br>    if index &gt;= 0 &amp;&amp; index &lt; array.length<br>        array[index]<br>    else<br>        -1<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;add&quot;
+    &quot;source&quot;: &quot;foo&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;=&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
   },
   Token {
     &quot;type&quot;: &quot;OpenParen&quot;,
@@ -267,75 +272,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;a&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;,&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;b&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;CloseParen&quot;,
-    &quot;source&quot;: &quot;)&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;=&gt;&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;a&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;+&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;b&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;combineInteger&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;OpenParen&quot;,
-    &quot;source&quot;: &quot;(&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;a&quot;
+    &quot;source&quot;: &quot;index&quot;
   },
   Token {
     &quot;type&quot;: &quot;Operator&quot;,
@@ -359,7 +296,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;b&quot;
+    &quot;source&quot;: &quot;array&quot;
   },
   Token {
     &quot;type&quot;: &quot;Operator&quot;,
@@ -371,7 +308,15 @@ combineFloat(a: Float, b: Float) => add(a, b)
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Integer&quot;
+    &quot;source&quot;: &quot;Number&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;OpenBracket&quot;,
+    &quot;source&quot;: &quot;[&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;CloseBracket&quot;,
+    &quot;source&quot;: &quot;]&quot;
   },
   Token {
     &quot;type&quot;: &quot;CloseParen&quot;,
@@ -386,56 +331,16 @@ combineFloat(a: Float, b: Float) => add(a, b)
     &quot;source&quot;: &quot;=&gt;&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;add&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;OpenParen&quot;,
-    &quot;source&quot;: &quot;(&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;a&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;,&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;b&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;CloseParen&quot;,
-    &quot;source&quot;: &quot;)&quot;
-  },
-  Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;combineFloat&quot;
+    &quot;type&quot;: &quot;Indent&quot;,
+    &quot;source&quot;: &quot;    &quot;
   },
   Token {
-    &quot;type&quot;: &quot;OpenParen&quot;,
-    &quot;source&quot;: &quot;(&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;a&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;:&quot;
+    &quot;type&quot;: &quot;If&quot;,
+    &quot;source&quot;: &quot;if&quot;
   },
   Token {
     &quot;type&quot;: &quot;Whitespace&quot;,
@@ -443,35 +348,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Float&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;,&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;b&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;:&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Float&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;CloseParen&quot;,
-    &quot;source&quot;: &quot;)&quot;
+    &quot;source&quot;: &quot;index&quot;
   },
   Token {
     &quot;type&quot;: &quot;Whitespace&quot;,
@@ -479,27 +356,23 @@ combineFloat(a: Float, b: Float) => add(a, b)
   },
   Token {
     &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;=&gt;&quot;
+    &quot;source&quot;: &quot;&gt;=&quot;
   },
   Token {
     &quot;type&quot;: &quot;Whitespace&quot;,
     &quot;source&quot;: &quot; &quot;
   },
   Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;add&quot;
+    &quot;type&quot;: &quot;Integer&quot;,
+    &quot;source&quot;: &quot;0&quot;
   },
   Token {
-    &quot;type&quot;: &quot;OpenParen&quot;,
-    &quot;source&quot;: &quot;(&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;a&quot;
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
   },
   Token {
     &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;,&quot;
+    &quot;source&quot;: &quot;&amp;&amp;&quot;
   },
   Token {
     &quot;type&quot;: &quot;Whitespace&quot;,
@@ -507,71 +380,88 @@ combineFloat(a: Float, b: Float) => add(a, b)
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;b&quot;
+    &quot;source&quot;: &quot;index&quot;
   },
   Token {
-    &quot;type&quot;: &quot;CloseParen&quot;,
-    &quot;source&quot;: &quot;)&quot;
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
   },
   Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;&lt;&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
   },
   Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// class Foo&quot;
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;array&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;.&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// bar(x: &gt;= 0) =&gt; x % 10&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// bazzle(x: Float) =&gt;&quot;
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;length&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     foo: &gt;= -1.0 = 1.0&quot;
+    &quot;type&quot;: &quot;Indent&quot;,
+    &quot;source&quot;: &quot;    &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;array&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;OpenBracket&quot;,
+    &quot;source&quot;: &quot;[&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;index&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;CloseBracket&quot;,
+    &quot;source&quot;: &quot;]&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Outdent&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     for i in [0, 1, 2]&quot;
+    &quot;type&quot;: &quot;Else&quot;,
+    &quot;source&quot;: &quot;else&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         foo += 1.0&quot;
+    &quot;type&quot;: &quot;Indent&quot;,
+    &quot;source&quot;: &quot;    &quot;
   },
   Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;-&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//     return foo&quot;
+    &quot;type&quot;: &quot;Integer&quot;,
+    &quot;source&quot;: &quot;1&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Outdent&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Outdent&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
@@ -587,258 +477,302 @@ combineFloat(a: Float, b: Float) => add(a, b)
   &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="1"><div class="jsondiffpatch-property-name">1</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;add&quot;
+  &quot;source&quot;: &quot;foo&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="10"><div class="jsondiffpatch-property-name">10</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;,&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="11"><div class="jsondiffpatch-property-name">11</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;a&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="12"><div class="jsondiffpatch-property-name">12</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="12"><div class="jsondiffpatch-property-name">12</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;array&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="13"><div class="jsondiffpatch-property-name">13</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;+&quot;
+  &quot;source&quot;: &quot;:&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="14"><div class="jsondiffpatch-property-name">14</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="15"><div class="jsondiffpatch-property-name">15</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;b&quot;
+  &quot;source&quot;: &quot;Number&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="16"><div class="jsondiffpatch-property-name">16</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
+  &quot;type&quot;: &quot;OpenBracket&quot;,
+  &quot;source&quot;: &quot;[&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="17"><div class="jsondiffpatch-property-name">17</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;CloseBracket&quot;,
+  &quot;source&quot;: &quot;]&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="18"><div class="jsondiffpatch-property-name">18</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;CloseParen&quot;,
+  &quot;source&quot;: &quot;)&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="19"><div class="jsondiffpatch-property-name">19</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="2"><div class="jsondiffpatch-property-name">2</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="20"><div class="jsondiffpatch-property-name">20</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;=&gt;&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="21"><div class="jsondiffpatch-property-name">21</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="18"><div class="jsondiffpatch-property-name">18</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;combineInteger&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="19"><div class="jsondiffpatch-property-name">19</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;OpenParen&quot;,
-  &quot;source&quot;: &quot;(&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="2"><div class="jsondiffpatch-property-name">2</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;OpenParen&quot;,
-  &quot;source&quot;: &quot;(&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="20"><div class="jsondiffpatch-property-name">20</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;a&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="21"><div class="jsondiffpatch-property-name">21</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;:&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="22"><div class="jsondiffpatch-property-name">22</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Indent&quot;,
+  &quot;source&quot;: &quot;    &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="23"><div class="jsondiffpatch-property-name">23</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;Integer&quot;
+  &quot;type&quot;: &quot;If&quot;,
+  &quot;source&quot;: &quot;if&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="24"><div class="jsondiffpatch-property-name">24</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;,&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="25"><div class="jsondiffpatch-property-name">25</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="26"><div class="jsondiffpatch-property-name">26</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="25"><div class="jsondiffpatch-property-name">25</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;b&quot;
+  &quot;source&quot;: &quot;index&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="26"><div class="jsondiffpatch-property-name">26</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="27"><div class="jsondiffpatch-property-name">27</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;:&quot;
+  &quot;source&quot;: &quot;&gt;=&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="28"><div class="jsondiffpatch-property-name">28</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="29"><div class="jsondiffpatch-property-name">29</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;Integer&quot;
+  &quot;type&quot;: &quot;Integer&quot;,
+  &quot;source&quot;: &quot;0&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="3"><div class="jsondiffpatch-property-name">3</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;a&quot;
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;=&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="30"><div class="jsondiffpatch-property-name">30</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;CloseParen&quot;,
-  &quot;source&quot;: &quot;)&quot;
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="31"><div class="jsondiffpatch-property-name">31</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;&amp;&amp;&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="32"><div class="jsondiffpatch-property-name">32</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;=&gt;&quot;
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="33"><div class="jsondiffpatch-property-name">33</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;index&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="34"><div class="jsondiffpatch-property-name">34</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;add&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="35"><div class="jsondiffpatch-property-name">35</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;OpenParen&quot;,
-  &quot;source&quot;: &quot;(&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="36"><div class="jsondiffpatch-property-name">36</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;a&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="37"><div class="jsondiffpatch-property-name">37</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;,&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="38"><div class="jsondiffpatch-property-name">38</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="35"><div class="jsondiffpatch-property-name">35</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;&lt;&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="36"><div class="jsondiffpatch-property-name">36</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="37"><div class="jsondiffpatch-property-name">37</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;array&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="38"><div class="jsondiffpatch-property-name">38</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;.&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="39"><div class="jsondiffpatch-property-name">39</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;b&quot;
+  &quot;source&quot;: &quot;length&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="4"><div class="jsondiffpatch-property-name">4</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;,&quot;
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="40"><div class="jsondiffpatch-property-name">40</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;CloseParen&quot;,
-  &quot;source&quot;: &quot;)&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="41"><div class="jsondiffpatch-property-name">41</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="41"><div class="jsondiffpatch-property-name">41</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Indent&quot;,
+  &quot;source&quot;: &quot;    &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="42"><div class="jsondiffpatch-property-name">42</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;combineFloat&quot;
+  &quot;source&quot;: &quot;array&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="43"><div class="jsondiffpatch-property-name">43</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;OpenParen&quot;,
-  &quot;source&quot;: &quot;(&quot;
+  &quot;type&quot;: &quot;OpenBracket&quot;,
+  &quot;source&quot;: &quot;[&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="44"><div class="jsondiffpatch-property-name">44</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;a&quot;
+  &quot;source&quot;: &quot;index&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="45"><div class="jsondiffpatch-property-name">45</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;:&quot;
+  &quot;type&quot;: &quot;CloseBracket&quot;,
+  &quot;source&quot;: &quot;]&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="46"><div class="jsondiffpatch-property-name">46</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Outdent&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="47"><div class="jsondiffpatch-property-name">47</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;Float&quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="48"><div class="jsondiffpatch-property-name">48</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;,&quot;
+  &quot;type&quot;: &quot;Else&quot;,
+  &quot;source&quot;: &quot;else&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="49"><div class="jsondiffpatch-property-name">49</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="5"><div class="jsondiffpatch-property-name">5</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="50"><div class="jsondiffpatch-property-name">50</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;b&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="51"><div class="jsondiffpatch-property-name">51</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;:&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="52"><div class="jsondiffpatch-property-name">52</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="53"><div class="jsondiffpatch-property-name">53</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;Float&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="54"><div class="jsondiffpatch-property-name">54</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;CloseParen&quot;,
-  &quot;source&quot;: &quot;)&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="55"><div class="jsondiffpatch-property-name">55</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="56"><div class="jsondiffpatch-property-name">56</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;=&gt;&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="57"><div class="jsondiffpatch-property-name">57</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="58"><div class="jsondiffpatch-property-name">58</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;add&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="59"><div class="jsondiffpatch-property-name">59</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;OpenParen&quot;,
   &quot;source&quot;: &quot;(&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="50"><div class="jsondiffpatch-property-name">50</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Indent&quot;,
+  &quot;source&quot;: &quot;    &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="51"><div class="jsondiffpatch-property-name">51</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;-&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="52"><div class="jsondiffpatch-property-name">52</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Integer&quot;,
+  &quot;source&quot;: &quot;1&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="53"><div class="jsondiffpatch-property-name">53</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Outdent&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="54"><div class="jsondiffpatch-property-name">54</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Outdent&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="55"><div class="jsondiffpatch-property-name">55</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="6"><div class="jsondiffpatch-property-name">6</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;b&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="60"><div class="jsondiffpatch-property-name">60</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;a&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="61"><div class="jsondiffpatch-property-name">61</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;,&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="62"><div class="jsondiffpatch-property-name">62</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="63"><div class="jsondiffpatch-property-name">63</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;b&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="64"><div class="jsondiffpatch-property-name">64</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;CloseParen&quot;,
-  &quot;source&quot;: &quot;)&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="65"><div class="jsondiffpatch-property-name">65</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="66"><div class="jsondiffpatch-property-name">66</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="67"><div class="jsondiffpatch-property-name">67</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;// class Foo&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="68"><div class="jsondiffpatch-property-name">68</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="69"><div class="jsondiffpatch-property-name">69</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;// bar(x: &gt;= 0) =&gt; x % 10&quot;
+  &quot;source&quot;: &quot;index&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="7"><div class="jsondiffpatch-property-name">7</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;CloseParen&quot;,
-  &quot;source&quot;: &quot;)&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="70"><div class="jsondiffpatch-property-name">70</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="71"><div class="jsondiffpatch-property-name">71</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;// bazzle(x: Float) =&gt;&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="72"><div class="jsondiffpatch-property-name">72</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="73"><div class="jsondiffpatch-property-name">73</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;//     foo: &gt;= -1.0 = 1.0&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="74"><div class="jsondiffpatch-property-name">74</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="75"><div class="jsondiffpatch-property-name">75</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;//     for i in [0, 1, 2]&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="76"><div class="jsondiffpatch-property-name">76</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="77"><div class="jsondiffpatch-property-name">77</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;//         foo += 1.0&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="78"><div class="jsondiffpatch-property-name">78</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="79"><div class="jsondiffpatch-property-name">79</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;//     return foo&quot;
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;:&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="8"><div class="jsondiffpatch-property-name">8</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="80"><div class="jsondiffpatch-property-name">80</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="9"><div class="jsondiffpatch-property-name">9</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;=&gt;&quot;
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;Integer&quot;
 }</pre></div></li></ul></div></p>
                 </td>
             
                 <td>
                     <header><span>parsing</span></header>
                     <p>module test.sample {
-    add(a , b) => a + b
-    combineInteger(a : Integer , b : Integer) => add(a , b)
-    combineFloat(a : Float , b : Float) => add(a , b)
+    foo = (index : Integer , array : Number.null) => {
+        if (index >= 0 && index < array . length) {
+            array.index
+        } else {
+            - 1
+        }
+    }
 }</p>
                 </td>
             
                 <td>
                     <header><span>destructuringAndUnaryNumberLiterals</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -3,7 +3,7 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        if (index &gt;= 0 &amp;&amp; index &lt; array . length) {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            array.index</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        } else {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">            -<del> </del>1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            -1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>opsToTypeNodes</span></header>
                     <p><div class="d2h-wrapper">
     <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
     <div class="d2h-file-header">
@@ -877,29 +811,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    add(a , b) =&gt; a + b</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">3</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    combineInteger(a : Integer , b : Integer) =&gt; add(a , b)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">4</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    combineFloat(a : Float , b : Float) =&gt; add(a , b)</span>
+            <span class="d2h-code-line-ctn">    foo = (index : Integer , array : Number<del>.null)</del> =&gt; {</span>
         </div>
     </td>
 </tr><tr>
@@ -910,29 +822,29 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    add<ins> = </ins>(a , b) =&gt; a + b</span>
+            <span class="d2h-code-line-ctn">    foo = (index : Integer , array : <ins>Array &amp; (Integer : </ins>Number<ins>))</ins> =&gt; {</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
 <div class="line-num2">3</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    combineInteger<ins> = </ins>(a : Integer , b : Integer) =&gt; add(a , b)</span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        if (index &gt;= 0 &amp;&amp; index &lt; array . length) {</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
 <div class="line-num2">4</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    combineFloat<ins> = </ins>(a : Float , b : Float) =&gt; add(a , b)</span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            array.index</span>
         </div>
     </td>
 </tr><tr>
@@ -943,7 +855,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
+            <span class="d2h-code-line-ctn">        } else {</span>
         </div>
     </td>
 </tr>
@@ -953,15 +865,6 @@ combineFloat(a: Float, b: Float) => add(a, b)
     </div>
 </div>
 </div></p>
-                </td>
-            
-                <td>
-                    <header><span>opsToTypeNodes</span></header>
-                    <p>module test.sample {
-    add = (a , b) => a + b
-    combineInteger = (a : Integer , b : Integer) => add(a , b)
-    combineFloat = (a : Float , b : Float) => add(a , b)
-}</p>
                 </td>
             
                 <td>
@@ -983,7 +886,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,5 +1,14 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,7 +1,10 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1004,7 +907,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    add<del> = </del>(<del>a , b) =&gt; a + b</del></span>
+            <span class="d2h-code-line-ctn">    foo = (<del>index : Integer , array : Array &amp; (Integer : Number)) =&gt; {</del></span>
         </div>
     </td>
 </tr><tr>
@@ -1015,7 +918,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>    combineInteger</del> <del>= (</del>a<del> : Integer , b : Integer) =&gt; add(a , b)</del></span>
+            <span class="d2h-code-line-ctn">        <del>if</del> <del>(</del>index <del>&gt;=</del> <del>0 &amp;&amp; index &lt; array . length) {</del></span>
         </div>
     </td>
 </tr><tr>
@@ -1026,7 +929,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>    combineFloat</del> <del>= (a : Float , </del>b<del> : Float) =&gt; add(a , b)</del></span>
+            <span class="d2h-code-line-ctn"><del>            </del>array<del>.index</del></span>
         </div>
     </td>
 </tr><tr>
@@ -1037,7 +940,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    add(</span>
+            <span class="d2h-code-line-ctn">    <ins>const </ins>foo = (</span>
         </div>
     </td>
 </tr><tr>
@@ -1048,7 +951,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>        var</ins> a</span>
+            <span class="d2h-code-line-ctn">        <ins>var</ins> index <ins>:</ins> <ins>Integer</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1059,7 +962,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>        var</ins> b</span>
+            <span class="d2h-code-line-ctn"><ins>        var </ins>array<ins> : Array &amp; (Integer : Number)</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1070,7 +973,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; `+`(a,b)</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
@@ -1081,7 +984,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    combineInteger(</span>
+            <span class="d2h-code-line-ctn">        if (`&amp;&amp;`(`&gt;=`(index,0),`&lt;`(index,array.length))) {</span>
         </div>
     </td>
 </tr><tr>
@@ -1092,7 +995,180 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a : Integer</span>
+            <span class="d2h-code-line-ctn">            array[index]</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        } else {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            -1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        }</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>removeSoloBlocks</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -2,11 +2,9 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    const foo = (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var index : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var array : Array &amp; (Integer : Number)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        <del>if (`&amp;&amp;`(`&gt;=`(</del>index<del>,0),`&lt;`(index,array.length))) {</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>            array[index]</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">8</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        <del>} else {</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; <ins>if (`&amp;&amp;`(`&gt;=`(index,0),`&lt;`(index,array.length))) </ins>{</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        <ins>array[</ins>index<ins>]</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>    } else {</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1103,68 +1179,46 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b : Integer</span>
+            <span class="d2h-code-line-ctn">        <ins>-1</ins></span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">9</div>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">9</div>
+<div class="line-num2"></div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; add(a,b)</span>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">            -1</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">10</div>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">10</div>
+<div class="line-num2"></div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    combineFloat(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a : Float</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">12</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b : Float</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">13</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; add(a,b)</span>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        }</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">14</div>
+      <div class="line-num1">11</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">12</div>
+<div class="line-num2">10</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
@@ -1182,56 +1236,112 @@ combineFloat(a: Float, b: Float) => add(a, b)
                 </td>
             
                 <td>
-                    <header><span>removeSoloBlocks</span></header>
-                    <p>module test.sample {
-    add(
-        var a
-        var b
-    ) => `+`(a,b)
-    combineInteger(
-        var a : Integer
-        var b : Integer
-    ) => add(a,b)
-    combineFloat(
-        var a : Float
-        var b : Float
-    ) => add(a,b)
-}</p>
-                </td>
-            
-                <td>
                     <header><span>flattenSequencesAddMeta</span></header>
-                    <p>module test.sample {
-    add(
-        var a
-        var b
-    ) => `+`(a,b)
-    combineInteger(
-        var a : Integer
-        var b : Integer
-    ) => add(a,b)
-    combineFloat(
-        var a : Float
-        var b : Float
-    ) => add(a,b)
-}</p>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,5 +1,5 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module test.sample {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const foo = (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const foo = <ins>foo</ins>(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var index : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var array : Array &amp; (Integer : Number)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) =&gt; if (`&amp;&amp;`(`&gt;=`(index,0),`&lt;`(index,array.length))) {</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
                 </td>
             
                 <td>
                     <header><span>moveMetaToFunctions</span></header>
                     <p>module test.sample {
-    add(
-        var a
-        var b
-    ) => `+`(a,b)
-    combineInteger(
-        var a : Integer
-        var b : Integer
-    ) => add(a,b)
-    combineFloat(
-        var a : Float
-        var b : Float
-    ) => add(a,b)
+    const foo = foo(
+        var index : Integer
+        var array : Array & (Integer : Number)
+    ) => if (`&&`(`>=`(index,0),`<`(index,array.length))) {
+        array[index]
+    } else {
+        -1
+    }
 }</p>
                 </td>
             
@@ -1254,17 +1364,83 @@ combineFloat(a: Float, b: Float) => add(a, b)
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -4,11 +4,12 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,10 +1,11 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b</span>
+            <span class="d2h-code-line-ctn">module test.sample {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const foo = foo<del>(</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var index : Integer</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var array : Array &amp; <del>(</del>Integer : Number<del>)</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const <ins>`test.sample.</ins>foo<ins>`</ins> = <ins>`test.sample.</ins>foo<ins>`(</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var index : <ins>(</ins>Integer<ins>)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var array : Array &amp; <ins>((</ins>Integer<ins>)</ins> : <ins>(</ins>Number<ins>))</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1275,7 +1451,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; `+`(a,b)</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; if (`&amp;&amp;`(`&gt;=`(index,0),`&lt;`(index,array.length))) {</span>
         </div>
     </td>
 </tr><tr>
@@ -1286,51 +1462,29 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    combineInteger(</span>
+            <span class="d2h-code-line-ctn">        array[index]</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
+    <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">7</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var a : Integer</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">8</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var b : Integer</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
 <div class="line-num2">7</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a : <ins>(</ins>Integer<ins>)</ins></span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    } else {</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
 <div class="line-num2">8</div>
     </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b : <ins>(</ins>Integer<ins>)</ins></span>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        -1</span>
         </div>
     </td>
 </tr><tr>
@@ -1341,7 +1495,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; add(a,b)</span>
+            <span class="d2h-code-line-ctn">    }</span>
         </div>
     </td>
 </tr><tr>
@@ -1352,29 +1506,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    combineFloat(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">11</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var a : Float</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">12</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var b : Float</span>
+            <span class="d2h-code-line-ctn">}</span>
         </div>
     </td>
 </tr><tr>
@@ -1385,51 +1517,169 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a : <ins>(</ins>Float<ins>)</ins></span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Integer&quot;,&quot;Array&quot;,&quot;Number&quot;,&quot;&amp;&amp;&quot;,&quot;&gt;=&quot;,&quot;&lt;&quot;]</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>insertConditionalAssignments</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -3,8 +3,12 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var index : (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var array : Array &amp; ((Integer) : (Number))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) =&gt; if (`&amp;&amp;`(`&gt;=`(index,0),`&lt;`(index,array.length))) {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">12</div>
+<div class="line-num2">6</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b : <ins>(</ins>Float<ins>)</ins></span>
+            <span class="d2h-code-line-ctn">        array = cond array</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        index = cond index</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
+      <div class="line-num1">6</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        array[index]</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    } else {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        array = cond !array</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        index = cond !index</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        -1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
 <div class="line-num2">13</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; add(a,b)</span>
+            <span class="d2h-code-line-ctn">    }</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">14</div>
+      <div class="line-num1">10</div>
 <div class="line-num2">14</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
             <span class="d2h-code-line-ctn">}</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">15</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Integer&quot;,&quot;Float&quot;]</span>
         </div>
     </td>
 </tr>
@@ -1443,21 +1693,398 @@ combineFloat(a: Float, b: Float) => add(a, b)
             
                 <td>
                     <header><span>ssaForm</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,15 +1,21 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module test.sample {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    const `test.sample.foo` = `test.sample.foo`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var index : (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var array : Array &amp; ((Integer) : (Number))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; <del>if (`&amp;&amp;`(`&gt;=`(index,0),`&lt;`(index,array.length))) </del>{</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        <del>array = cond array</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>        </del>index <del>= cond index</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">8</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>        </del>array<del>[index]</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">9</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>    }</del> <del>else</del> <del>{</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">10</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>        </del>array<del> = cond !array</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">11</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>        index</del> <del>=</del> <del>cond !index</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">12</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>        -</del>1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var <ins>`</ins>index<ins>:1:0`</ins> : (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var <ins>`</ins>array<ins>:1:0`</ins> : Array &amp; ((Integer) : (Number))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        <ins>{</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>            if (`&amp;&amp;`(`&gt;=`(`</ins>index<ins>:1:0`,0),`&lt;`(`index:1:0`,`array:1:0`.length)))</ins> <ins>{</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>                var `</ins>array<ins>:1:1` : Array &amp; ((Integer) : (Number)) = cond `array:1:0`</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>                var</ins> <ins>`index:1:1`</ins> <ins>: (Integer) = cond `index:1:0`</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>                `</ins>array<ins>:1:1`[`index:1:1`]</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>            }</ins> <ins>else</ins> <ins>{</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>                var `array:</ins>1<ins>:2` : Array &amp; ((Integer) : (Number)) = cond !`array:1:0`</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">                var `index:1:2` : (Integer) = cond !`index:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">14</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">                -1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">15</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">16</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            var `array:1:3` : typeof `array:1:1` | typeof `array:1:2`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">17</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">18</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `index:1:3` : typeof `index:1:1` | typeof `index:1:2`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">13</div>
+<div class="line-num2">19</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">14</div>
+<div class="line-num2">20</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">15</div>
+<div class="line-num2">21</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Integer&quot;,&quot;Array&quot;,&quot;Number&quot;,&quot;&amp;&amp;&quot;,&quot;&gt;=&quot;,&quot;&lt;&quot;]</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>identity</span></header>
                     <p>module test.sample {
-    add(
-        var a
-        var b
-    ) => `+`(a,b)
-    combineInteger(
-        var a : (Integer)
-        var b : (Integer)
-    ) => add(a,b)
-    combineFloat(
-        var a : (Float)
-        var b : (Float)
-    ) => add(a,b)
+    const `test.sample.foo` = `test.sample.foo`(
+        var `index:1:0` : (Integer)
+        var `array:1:0` : Array & ((Integer) : (Number))
+    ) => {
+        {
+            if (`&&`(`>=`(`index:1:0`,0),`<`(`index:1:0`,`array:1:0`.length))) {
+                var `array:1:1` : Array & ((Integer) : (Number)) = cond `array:1:0`
+                var `index:1:1` : (Integer) = cond `index:1:0`
+                `array:1:1`[`index:1:1`]
+            } else {
+                var `array:1:2` : Array & ((Integer) : (Number)) = cond !`array:1:0`
+                var `index:1:2` : (Integer) = cond !`index:1:0`
+                -1
+            }
+            var `array:1:3` : typeof `array:1:1` | typeof `array:1:2`
+        }
+        var `index:1:3` : typeof `index:1:1` | typeof `index:1:2`
+    }
 }
-// externals: ["+","Integer","Float"]</p>
+// externals: ["Integer","Array","Number","&&",">=","<"]</p>
                 </td>
             
                 <td>
@@ -1479,7 +2106,51 @@ combineFloat(a: Float, b: Float) => add(a, b)
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -4,12 +4,12 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,6 +1,6 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module test.sample {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    const `test.sample.foo` = `test.sample.foo`(</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var `index:1:0` <del>:</del> (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `index:1:0` <ins>:::</ins> (Integer)</span>
+        </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -1489,7 +2160,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b</span>
+            <span class="d2h-code-line-ctn">        var `array:1:0` : Array &amp; ((Integer) : (Number))</span>
         </div>
     </td>
 </tr><tr>
@@ -1500,7 +2171,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; `+`(a,b)</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
@@ -1511,150 +2182,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    combineInteger(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">7</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var a <del>:</del> (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">8</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var b <del>:</del> (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">9</div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; add(a,b)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">10</div>
-<div class="line-num2">10</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    combineFloat(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">11</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var a <del>:</del> (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">12</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var b <del>:</del> (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">12</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
-<div class="line-num2">13</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; add(a,b)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">14</div>
-<div class="line-num2">14</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">15</div>
-<div class="line-num2">15</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Integer&quot;,&quot;Float&quot;]</span>
+            <span class="d2h-code-line-ctn">        {</span>
         </div>
     </td>
 </tr>
@@ -1685,149 +2213,138 @@ combineFloat(a: Float, b: Float) => add(a, b)
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -11,5 +11,13 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,10 +1,10 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
-<div class="line-num2">11</div>
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a ::: (Float)</span>
+            <span class="d2h-code-line-ctn">module test.sample {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.foo` = `test.sample.foo`(</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
-<div class="line-num2">13</div>
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; add(a,b)</span>
+            <span class="d2h-code-line-ctn">        var `index:1:0` ::: (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var `array:1:0` <del>:</del> Array &amp; ((Integer) : (Number))</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">14</div>
+<div class="line-num2">4</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    add(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">15</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a : (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">16</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b : (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">17</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; `+`(a,b)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">18</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    add(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">19</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a : (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">20</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b : (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">21</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; `+`(a,b)</span>
+            <span class="d2h-code-line-ctn">        var `array:1:0` <ins>:::</ins> Array &amp; ((Integer) : (Number))</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">14</div>
-<div class="line-num2">22</div>
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">15</div>
-<div class="line-num2">23</div>
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Integer&quot;,&quot;Float&quot;]</span>
+            <span class="d2h-code-line-ctn">        {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">            if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0<del>),`&lt;`(`</del>index:1:0`,`array:1:0`.length))) {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0<ins>) :: Boolean,`&lt;`(`</ins>index:1:0`,`array:1:0`.length))) {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">                var `array:1:1` : Array &amp; ((Integer) : (Number)) = cond `array:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">                var `index:1:1` : (Integer) = cond `index:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">                `array:1:1`[`index:1:1`]</span>
         </div>
     </td>
 </tr>
@@ -1858,182 +2375,94 @@ combineFloat(a: Float, b: Float) => add(a, b)
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -12,12 +12,12 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -4,7 +4,7 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
+            <span class="d2h-code-line-ctn">        var `array:1:0` ::: Array &amp; ((Integer) : (Number))</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
-<div class="line-num2">13</div>
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; add(a,b)</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">14</div>
-<div class="line-num2">14</div>
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    add(</span>
+            <span class="d2h-code-line-ctn">        {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">15</div>
+      <div class="line-num1">7</div>
 <div class="line-num2"></div>
     </td>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var a <del>:</del> (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">16</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var b <del>:</del> (Integer)</span>
+            <span class="d2h-code-line-ctn">            if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0) :: Boolean,`&lt;`(`index:1:0`,`array:1:0`.length<del>)))</del> {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-ins">
       <div class="line-num1"></div>
-<div class="line-num2">15</div>
+<div class="line-num2">7</div>
     </td>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">16</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Integer)</span>
+            <span class="d2h-code-line-ctn">            if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0) :: Boolean,`&lt;`(`index:1:0`,`array:1:0`.length<ins>)</ins> <ins>:: Boolean) :: Boolean) </ins>{</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">17</div>
-<div class="line-num2">17</div>
+      <div class="line-num1">8</div>
+<div class="line-num2">8</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; `+`(a,b)</span>
+            <span class="d2h-code-line-ctn">                var `array:1:1` : Array &amp; ((Integer) : (Number)) = cond `array:1:0`</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">18</div>
-<div class="line-num2">18</div>
+      <div class="line-num1">9</div>
+<div class="line-num2">9</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    add(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">19</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var a <del>:</del> (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">20</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var b <del>:</del> (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">19</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var a <ins>:::</ins> (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">20</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var b <ins>:::</ins> (Float)</span>
+            <span class="d2h-code-line-ctn">                var `index:1:1` : (Integer) = cond `index:1:0`</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">21</div>
-<div class="line-num2">21</div>
+      <div class="line-num1">10</div>
+<div class="line-num2">10</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; `+`(a,b)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">22</div>
-<div class="line-num2">22</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">23</div>
-<div class="line-num2">23</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Integer&quot;,&quot;Float&quot;]</span>
+            <span class="d2h-code-line-ctn">                `array:1:1`[`index:1:1`]</span>
         </div>
     </td>
 </tr>
@@ -2064,7 +2493,150 @@ combineFloat(a: Float, b: Float) => add(a, b)
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -14,10 +14,10 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -5,12 +5,12 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0) :: Boolean,`&lt;`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">8</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">                var `array:1:1` <del>:</del> Array &amp; ((Integer) : (Number)) = <del>cond </del>`array:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">9</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">                var `index:1:1` : (Integer) <del>=</del> <del>cond</del> `index:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">                var `array:1:1` <ins>:::</ins> Array &amp; ((Integer) : (Number)) = `array:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">                var `index:1:1` : (Integer) <ins>::</ins> <ins>(0</ins> <ins>.. &lt; </ins>`<ins>array:1:0`.length) = `</ins>index:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">                `array:1:1`[`index:1:1`]</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            } else {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">12</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">                var `array:1:2` <del>:</del> Array &amp; ((Integer) : (Number)) = <del>cond !`</del>array:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">13</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">                var `index:1:2` : (Integer) = <del>cond !`</del>index:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">                var `array:1:2` <ins>:::</ins> Array &amp; ((Integer) : (Number)) = <ins>`</ins>array:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">                var `index:1:2` : (Integer) <ins>:: (`array:1:0`.length .. &lt; 0) </ins>= <ins>`</ins>index:1:0`</span>
+        </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -2074,7 +2646,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    add(</span>
+            <span class="d2h-code-line-ctn">                -1</span>
         </div>
     </td>
 </tr><tr>
@@ -2085,7 +2657,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a ::: (Integer)</span>
+            <span class="d2h-code-line-ctn">            }</span>
         </div>
     </td>
 </tr><tr>
@@ -2096,106 +2668,7 @@ combineFloat(a: Float, b: Float) => add(a, b)
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">17</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; `+`(a,b)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">17</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) <ins>:: (Integer) </ins>=&gt; `+`(a,b)<ins> :: (Integer)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">18</div>
-<div class="line-num2">18</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    add(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">19</div>
-<div class="line-num2">19</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a ::: (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">20</div>
-<div class="line-num2">20</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">21</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; `+`(a,b)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">21</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) <ins>:: (Float) </ins>=&gt; `+`(a,b)<ins> :: (Float)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">22</div>
-<div class="line-num2">22</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">23</div>
-<div class="line-num2">23</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;+&quot;,&quot;Integer&quot;,&quot;Float&quot;]</span>
+            <span class="d2h-code-line-ctn">            var `array:1:3` : typeof `array:1:1` | typeof `array:1:2`</span>
         </div>
     </td>
 </tr>
@@ -2226,149 +2699,276 @@ combineFloat(a: Float, b: Float) => add(a, b)
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -6,11 +6,11 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,8 +1,11 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    combineInteger(</span>
+            <span class="d2h-code-line-ctn">module test.sample {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.foo` <del>=</del> <del>`test.sample.foo`(</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.foo` <ins>::</ins> <ins>(</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var `index:1:0` ::: (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var `array:1:0` ::: Array &amp; ((Integer) : (Number))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) <del>=&gt;</del> <del>{</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) <ins>::</ins> <ins>(0 .. &lt; `array:1:0`.length) | (`array:1:0`.length .. &lt; 0) = `test.sample.foo`(</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `index:1:0` ::: (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `array:1:0` ::: Array &amp; ((Integer) : (Number))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) :: (0 .. &lt; `array:1:0`.length) | (`array:1:0`.length .. &lt; 0) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
       <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a ::: (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">9</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; add(a,b)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) <ins>:: (Integer) </ins>=&gt; add(a,b)<ins> :: (Integer)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">10</div>
 <div class="line-num2">10</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    combineFloat(</span>
+            <span class="d2h-code-line-ctn">            if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0) :: Boolean,`&lt;`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
+      <div class="line-num1">8</div>
 <div class="line-num2">11</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a ::: (Float)</span>
+            <span class="d2h-code-line-ctn">                var `array:1:1` ::: Array &amp; ((Integer) : (Number)) = `array:1:0`</span>
         </div>
+    </td>
+</tr>
+<tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -13,9 +16,9 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Float)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
       <div class="line-num1">13</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; add(a,b)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">13</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) <ins>:: (Float) </ins>=&gt; add(a,b)<ins> :: (Float)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">14</div>
-<div class="line-num2">14</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    add(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">15</div>
-<div class="line-num2">15</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var a ::: (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">16</div>
 <div class="line-num2">16</div>
     </td>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var b ::: (Integer)</span>
+            <span class="d2h-code-line-ctn">                var `index:1:2` : (Integer) :: (`array:1:0`.length .. &lt; 0) = `index:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">14</div>
+<div class="line-num2">17</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">                -1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">15</div>
+<div class="line-num2">18</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">16</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">            var `array:1:3` <del>:</del> <del>typeof</del> <del>`array:1:1`</del> <del>|</del> <del>typeof</del> <del>`array:1:2`</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">19</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            var `array:1:3` <ins>::</ins> <ins>Array</ins> <ins>&amp;</ins> <ins>((Integer)</ins> <ins>:</ins> <ins>(Number))</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">17</div>
+<div class="line-num2">20</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">18</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var `index:1:3` <del>:</del> <del>typeof</del> `<del>index</del>:1:<del>1`</del> | <del>typeof `index</del>:1:<del>2`</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">21</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `index:1:3` <ins>::</ins> <ins>(0</ins> <ins>.. &lt; </ins>`<ins>array</ins>:1:<ins>0`.length)</ins> | <ins>(`array</ins>:1:<ins>0`.length .. &lt; 0)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">19</div>
+<div class="line-num2">22</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">20</div>
+<div class="line-num2">23</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">21</div>
+<div class="line-num2">24</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Integer&quot;,&quot;Array&quot;,&quot;Number&quot;,&quot;&amp;&amp;&quot;,&quot;&gt;=&quot;,&quot;&lt;&quot;]</span>
         </div>
     </td>
 </tr>
@@ -2383,136 +2983,141 @@ combineFloat(a: Float, b: Float) => add(a, b)
                 <td>
                     <header><span>typeInference (6)</span></header>
                     <p>module test.sample {
-    add(
-        var a
-        var b
-    ) => `+`(a,b)
-    combineInteger(
-        var a ::: (Integer)
-        var b ::: (Integer)
-    ) :: (Integer) => add(a,b) :: (Integer)
-    combineFloat(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Float) => add(a,b) :: (Float)
-    add(
-        var a ::: (Integer)
-        var b ::: (Integer)
-    ) :: (Integer) => `+`(a,b) :: (Integer)
-    add(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Float) => `+`(a,b) :: (Float)
+    const `test.sample.foo` :: (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) = `test.sample.foo`(
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) => {
+        {
+            if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {
+                var `array:1:1` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:1` : (Integer) :: (0 .. < `array:1:0`.length) = `index:1:0`
+                `array:1:1`[`index:1:1`]
+            } else {
+                var `array:1:2` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:2` : (Integer) :: (`array:1:0`.length .. < 0) = `index:1:0`
+                -1
+            }
+            var `array:1:3` :: Array & ((Integer) : (Number))
+        }
+        var `index:1:3` :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0)
+    }
 }
-// externals: ["+","Integer","Float"]</p>
+// externals: ["Integer","Array","Number","&&",">=","<"]</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (7)</span></header>
                     <p>module test.sample {
-    add(
-        var a
-        var b
-    ) => `+`(a,b)
-    combineInteger(
-        var a ::: (Integer)
-        var b ::: (Integer)
-    ) :: (Integer) => add(a,b) :: (Integer)
-    combineFloat(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Float) => add(a,b) :: (Float)
-    add(
-        var a ::: (Integer)
-        var b ::: (Integer)
-    ) :: (Integer) => `+`(a,b) :: (Integer)
-    add(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Float) => `+`(a,b) :: (Float)
+    const `test.sample.foo` :: (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) = `test.sample.foo`(
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) => {
+        {
+            if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {
+                var `array:1:1` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:1` : (Integer) :: (0 .. < `array:1:0`.length) = `index:1:0`
+                `array:1:1`[`index:1:1`]
+            } else {
+                var `array:1:2` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:2` : (Integer) :: (`array:1:0`.length .. < 0) = `index:1:0`
+                -1
+            }
+            var `array:1:3` :: Array & ((Integer) : (Number))
+        }
+        var `index:1:3` :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0)
+    }
 }
-// externals: ["+","Integer","Float"]</p>
+// externals: ["Integer","Array","Number","&&",">=","<"]</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (8)</span></header>
                     <p>module test.sample {
-    add(
-        var a
-        var b
-    ) => `+`(a,b)
-    combineInteger(
-        var a ::: (Integer)
-        var b ::: (Integer)
-    ) :: (Integer) => add(a,b) :: (Integer)
-    combineFloat(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Float) => add(a,b) :: (Float)
-    add(
-        var a ::: (Integer)
-        var b ::: (Integer)
-    ) :: (Integer) => `+`(a,b) :: (Integer)
-    add(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Float) => `+`(a,b) :: (Float)
+    const `test.sample.foo` :: (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) = `test.sample.foo`(
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) => {
+        {
+            if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {
+                var `array:1:1` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:1` : (Integer) :: (0 .. < `array:1:0`.length) = `index:1:0`
+                `array:1:1`[`index:1:1`]
+            } else {
+                var `array:1:2` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:2` : (Integer) :: (`array:1:0`.length .. < 0) = `index:1:0`
+                -1
+            }
+            var `array:1:3` :: Array & ((Integer) : (Number))
+        }
+        var `index:1:3` :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0)
+    }
 }
-// externals: ["+","Integer","Float"]</p>
+// externals: ["Integer","Array","Number","&&",">=","<"]</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (9)</span></header>
                     <p>module test.sample {
-    add(
-        var a
-        var b
-    ) => `+`(a,b)
-    combineInteger(
-        var a ::: (Integer)
-        var b ::: (Integer)
-    ) :: (Integer) => add(a,b) :: (Integer)
-    combineFloat(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Float) => add(a,b) :: (Float)
-    add(
-        var a ::: (Integer)
-        var b ::: (Integer)
-    ) :: (Integer) => `+`(a,b) :: (Integer)
-    add(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Float) => `+`(a,b) :: (Float)
+    const `test.sample.foo` :: (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) = `test.sample.foo`(
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) => {
+        {
+            if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {
+                var `array:1:1` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:1` : (Integer) :: (0 .. < `array:1:0`.length) = `index:1:0`
+                `array:1:1`[`index:1:1`]
+            } else {
+                var `array:1:2` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:2` : (Integer) :: (`array:1:0`.length .. < 0) = `index:1:0`
+                -1
+            }
+            var `array:1:3` :: Array & ((Integer) : (Number))
+        }
+        var `index:1:3` :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0)
+    }
 }
-// externals: ["+","Integer","Float"]</p>
+// externals: ["Integer","Array","Number","&&",">=","<"]</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (10)</span></header>
                     <p>module test.sample {
-    add(
-        var a
-        var b
-    ) => `+`(a,b)
-    combineInteger(
-        var a ::: (Integer)
-        var b ::: (Integer)
-    ) :: (Integer) => add(a,b) :: (Integer)
-    combineFloat(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Float) => add(a,b) :: (Float)
-    add(
-        var a ::: (Integer)
-        var b ::: (Integer)
-    ) :: (Integer) => `+`(a,b) :: (Integer)
-    add(
-        var a ::: (Float)
-        var b ::: (Float)
-    ) :: (Float) => `+`(a,b) :: (Float)
+    const `test.sample.foo` :: (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) = `test.sample.foo`(
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) => {
+        {
+            if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {
+                var `array:1:1` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:1` : (Integer) :: (0 .. < `array:1:0`.length) = `index:1:0`
+                `array:1:1`[`index:1:1`]
+            } else {
+                var `array:1:2` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:2` : (Integer) :: (`array:1:0`.length .. < 0) = `index:1:0`
+                -1
+            }
+            var `array:1:3` :: Array & ((Integer) : (Number))
+        }
+        var `index:1:3` :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0)
+    }
 }
-// externals: ["+","Integer","Float"]</p>
+// externals: ["Integer","Array","Number","&&",">=","<"]</p>
                 </td>
             </tr>
         </div>
