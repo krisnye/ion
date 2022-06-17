@@ -1,0 +1,5 @@
+
+add(a, b) => a + b
+
+combine(a: Integer, b: Integer) => add(a, b)
+combine(a: Number, b: Number) => add(a, b)

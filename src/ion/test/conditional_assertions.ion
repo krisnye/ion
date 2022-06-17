@@ -1,0 +1,10 @@
+
+//  This should correctly be typed as < 0 | >= 10
+functionLessThanZeroOrGreaterEqual10(a: Number) =>
+    if a < 10
+        a -= 10
+        a
+    else
+        a
+
+value: < 0 | >= 10 = functionLessThanZeroOrGreaterEqual10(5)
