@@ -6,8 +6,6 @@ import { Sequence } from "../pst/Sequence";
 import { tokenTypes } from "../tokenizer/TokenType";
 import { Phase } from "./Phase";
 import { traverse } from "../traverse";
-import { Variable } from "../ast/Variable";
-import { Function } from "../ast/Function";
 
 export function flattenSequencesAddMeta(moduleName, module): ReturnType<Phase> {
     let errors = [];
@@ -15,9 +13,9 @@ export function flattenSequencesAddMeta(moduleName, module): ReturnType<Phase> {
         leave(node, ancestors) {
             
             const parent = ancestors[ancestors.length - 1];
-            if (node instanceof Function && node.id == null && parent instanceof Variable) {
-                node = node.patch({ id: parent.id });
-            }
+            // if (node instanceof Function && node.id == null && parent instanceof Variable) {
+            //     node = node.patch({ id: parent.id });
+            // }
 
             if (node instanceof Group) {
                 if (node.open.type === tokenTypes.OpenBracket.name) {

@@ -1,6 +1,9 @@
 
+getValue(a: Number[], i: >= 0 & < a.length) => a[i]
+
 foo = (index: Integer, array: Number[]) =>
+    // getValue(array, index)
     if index >= 0 && index < array.length
-        array[index]
+        getValue(array, index)
     else
         -1

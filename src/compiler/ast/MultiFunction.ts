@@ -1,9 +1,5 @@
 import { EvaluationContext } from "../EvaluationContext";
-import { Node } from "../Node";
-import { AnyType } from "./AnyType";
-import { Callable } from "./Callable";
 import { Function } from "./Function";
-import { Container, ContainerProps } from "./Container";
 import { Type } from "./Type";
 import { UnionType } from "./UnionType";
 

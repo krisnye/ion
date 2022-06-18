@@ -33,13 +33,18 @@ export function getSSAVersionNumber(name: string) {
     return parseInt(name.slice(index + 1));
 }
 
-export function getSSAOriginalName(name: string) {
+export function getSSAUniqueName(name: string) {
     let lastIndex = name.lastIndexOf(ssaVersionSeparator);
     return lastIndex >= 0 ? name.slice(0, lastIndex) : name;
 }
 
+export function getSSAOriginalName(name: string) {
+    let lastIndex = name.indexOf(ssaVersionSeparator);
+    return lastIndex >= 0 ? name.slice(0, lastIndex) : name;
+}
+
 export function getSSANextVersion(name: string) {
-    return getSSAVersionName(getSSAOriginalName(name), getSSAVersionNumber(name) + 1);
+    return getSSAVersionName(getSSAUniqueName(name), getSSAVersionNumber(name) + 1);
 }
 
 export function getScope(ancestors: object[]): Scope {
@@ -84,6 +89,20 @@ export function getVariableIfWithinLoop(c: EvaluationContext, ref: Reference, an
     let commonAncestors = getAncestorsUpToFirstCommon(c, ancestors, variable);
     let withinLoop = commonAncestors.find(ancestor => ancestor instanceof Loop) != null;
     return withinLoop ? variable : null;
+}
+
+export function removeSSAVersions<T>(node: T): T {
+    return traverse(node, {
+        leave(node) {
+            if (node instanceof Reference || node instanceof Identifier) {
+                let originalName = getSSAOriginalName(node.name);
+                if (node.name !== originalName) {
+                    node = node.patch({ name: originalName });
+                }
+            }
+            return node;
+        }
+    }) as T;
 }
 
 class Converter {

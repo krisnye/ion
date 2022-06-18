@@ -22,6 +22,7 @@ export class Variable extends Expression implements Declaration {
     value!: Expression | null;
     meta!: MetaCall[];
     declaredType!: Type | null;
+    isDeclaration: true = true;
 
     constructor(props: VariableProps) { super(props); }
     patch(props: Partial<VariableProps>) { return super.patch(props); }

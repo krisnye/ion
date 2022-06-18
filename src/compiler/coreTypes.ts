@@ -5,9 +5,8 @@ export const coreTypes = {
     Number: getAbsolutePath("Number"),
     Integer: getAbsolutePath("Integer"),
     String: getAbsolutePath("String"),
-    MultiFunction: getAbsolutePath("@MultiFunction"),
     Native: getAbsolutePath("@Native"),
-    Type: getAbsolutePath("@Type"),
+    Type: getAbsolutePath("Type"),
     Any: getAbsolutePath("Any"),
     Infer: getAbsolutePath("Infer"),
 }

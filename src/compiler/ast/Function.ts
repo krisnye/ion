@@ -91,7 +91,6 @@ export class Function extends FunctionBase implements Callable {
             }
         }
         let returnType = this.returnType ?? inferredType;
-        //  may not need...
         // if (returnType instanceof Reference) {
         //     let returnTypeValue = c.getValue(returnType);
         //     if (returnTypeValue instanceof NumberType) {

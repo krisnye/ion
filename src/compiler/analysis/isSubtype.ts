@@ -8,6 +8,7 @@ import { TypeReference } from "../ast/TypeReference"
 import { UnionType } from "../ast/UnionType"
 import { VoidType } from "../ast/VoidType"
 import { EvaluationContext } from "../EvaluationContext"
+import { removeSSAVersions } from "../phases/ssaForm"
 
 /**
  * Returns true if all instances of type 'a' are instances of type 'b'

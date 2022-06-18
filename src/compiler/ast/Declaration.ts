@@ -7,9 +7,10 @@ export interface Declaration extends MetaContainer, Expression {
     id: Identifier;
     value: Expression | null;
     isGlobalScoped?: boolean;
+    isDeclaration: true;
 
 }
 
 export function isDeclaration(node: any): node is Declaration {
-    return node?.id != null && isMetaContainer(node);
+    return node.isDeclaration === true;
 }

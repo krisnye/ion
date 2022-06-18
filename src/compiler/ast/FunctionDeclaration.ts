@@ -15,6 +15,7 @@ export class FunctionDeclaration extends Function implements Declaration {
     // function declarations are scoped globally to allow overloading multimethods from anywhere
     isGlobalScoped = true;
     inferred!: boolean;
+    isDeclaration: true = true;
 
     constructor(props: FunctionDeclarationProps) { super({ inferred: false, ...props }); }
     patch(props: Partial<FunctionDeclarationProps>) { return super.patch(props); }

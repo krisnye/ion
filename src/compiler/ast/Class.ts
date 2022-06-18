@@ -11,15 +11,12 @@ import { TypeReference } from "./TypeReference";
 import { EvaluationContext } from "../EvaluationContext";
 import { FunctionType } from "./FunctionType";
 import { ObjectType } from "./ObjectType";
-import { StringType } from "./StringType";
 import { Pair } from "./Pair";
-import { UnionType } from "./UnionType";
 import { BinaryExpression } from "./BinaryExpression";
 import { Reference } from "./Reference";
 import { TypeOperators } from "../analysis/TypeOperators";
 import { Expression } from "./Expression";
 import { coreTypes } from "../coreTypes";
-import { IntersectionType } from "./IntersectionType";
 import { NumberType } from "./NumberType";
 import { SemanticError } from "../SemanticError";
 
@@ -38,6 +35,7 @@ export class Class extends Container implements Type, Declaration, Callable {
     nodes!: Variable[];
     meta!: MetaCall[];
     structure!: boolean;
+    isDeclaration: true = true;
 
     constructor(props: ClassProps) {
         super({ structure: false,  ...props });
@@ -122,8 +120,8 @@ export class Class extends Container implements Type, Declaration, Callable {
         });
     }
 
-    areArgumentsValid(argTypes: Type[], c: EvaluationContext) : boolean {
-        return (this.resolveType(c) as FunctionType).areArgumentsValid(argTypes, c);
+    areArgumentsValid(argTypes: Type[], c: EvaluationContext, errors = new Array<Error>()) : boolean {
+        return (this.resolveType(c) as FunctionType).areArgumentsValid(argTypes, c, errors);
     }
 
     protected resolveType(c: EvaluationContext): Type | null {

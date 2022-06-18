@@ -8,6 +8,8 @@ import { EvaluationContext } from "../EvaluationContext";
 import { isSubtype } from "../analysis/isSubtype";
 import { Scope } from "./Scope";
 import { Node } from "../Node";
+import { SemanticError } from "../SemanticError";
+import { removeSSAVersions } from "../phases/ssaForm";
 
 export interface FunctionBaseProps extends ExpressionProps {
     parameters: Variable[];
@@ -32,21 +34,22 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
         return this.parameters;
     }
 
-    areArgumentsValid(argTypes: Type[], c: EvaluationContext) : boolean {
+    areArgumentsValid(argTypes: Type[], c: EvaluationContext, errors = new Array<Error>()) : boolean {
         if (argTypes.length !== this.parameters.length) {
             return false;
         }
         for (let i = 0; i < argTypes.length; i++) {
-            let argType = argTypes[i];
-            let paramType = this.parameters[i].declaredType;
-            // if (!isType(paramType)) {
-            //     throw new Error("ParamType not known yet");
-            // }
-            if (paramType != null && !isSubtype(argType, paramType, c)) {
-                return false;
+            let argType = removeSSAVersions(argTypes[i]);
+            let paramType = removeSSAVersions(this.parameters[i].declaredType);
+            if (paramType != null) {
+                let result = isSubtype(argType, paramType, c);
+                if (!result) {
+                    // console.log({ argType, paramType });
+                    errors.push(new SemanticError(`Argument of type ${argType} ${result === false ? `is not` : `may not be`} a valid parameter type ${paramType}`, argType));
+                }
             }
         }
-        return true;
+        return errors.length === 0;
     }
 
     toString() {

@@ -37,13 +37,25 @@ export class EvaluationContext {
             let variable: Declaration | Declaration[] = value instanceof Variable ? value : this.getDeclarations(value);
             if (Array.isArray(variable)) {
                 if (variable.length > 1) {
-                    return variable.map(v => v.value!);
+                    return variable.map(v => {
+                        if (v == null) {
+                            debugger;
+                        }
+                        return v.value!;
+                    });
                 }
                 variable = variable[0]!;
+            }
+            if (variable == null) {
+                debugger;
             }
             value = this.getValue(variable.value!);
         }
         if (isDeclaration(value)) {
+            if (value == null) {
+                debugger;
+            }
+
             value = value.value!;
         }
         return [value];

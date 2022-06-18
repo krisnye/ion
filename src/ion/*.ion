@@ -14,4 +14,4 @@
 @Native("(a, b) => ({ ...a, value: a.map(e => e * b) })")
 `*`(a: Number[], b: Number): Number[] => []
 
-`*`(a: Number, b: Number[]) => b * a 
+`*`(a: Number, b: Number[]) => b * a

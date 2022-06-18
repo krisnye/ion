@@ -1,7 +1,7 @@
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { Literal, LiteralProps } from "./Literal";
-import { StringType } from "./StringType";
+import { TypeReference } from "./TypeReference";
 
 export interface StringLiteralProps extends LiteralProps {
     value: string;
@@ -17,7 +17,7 @@ export class StringLiteral extends Literal {
     }
 
     resolveType(c: EvaluationContext) {
-        return new StringType({ location: this.location, value: null });
+        return new TypeReference({ location: this.location, name: coreTypes.String });
     }
 
     toString() {
