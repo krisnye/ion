@@ -238,7 +238,6 @@ ul.jsondiffpatch-textdiff {
 getValue(a: Number[], i: >= 0 & < a.length) => a[i]
 
 foo = (index: Integer, array: Number[]) =>
-    // getValue(array, index)
     if index >= 0 && index < array.length
         getValue(array, index)
     else
@@ -248,7 +247,7 @@ foo = (index: Integer, array: Number[]) =>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>getValue(a: Number[], i: &gt;= 0 &amp; &lt; a.length) =&gt; a[i]<br><br>foo = (index: Integer, array: Number[]) =&gt;<br>    // getValue(array, index)<br>    if index &gt;= 0 &amp;&amp; index &lt; array.length<br>        getValue(array, index)<br>    else<br>        -1<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>getValue(a: Number[], i: &gt;= 0 &amp; &lt; a.length) =&gt; a[i]<br><br>foo = (index: Integer, array: Number[]) =&gt;<br>    if index &gt;= 0 &amp;&amp; index &lt; array.length<br>        getValue(array, index)<br>    else<br>        -1<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
@@ -476,14 +475,6 @@ foo = (index: Integer, array: Number[]) =>
   Token {
     &quot;type&quot;: &quot;Indent&quot;,
     &quot;source&quot;: &quot;    &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;// getValue(array, index)&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Eol&quot;,
-    &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
     &quot;type&quot;: &quot;If&quot;,
@@ -791,14 +782,14 @@ foo = (index: Integer, array: Number[]) =>
   &quot;type&quot;: &quot;Indent&quot;,
   &quot;source&quot;: &quot;    &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="57"><div class="jsondiffpatch-property-name">57</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;// getValue(array, index)&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="58"><div class="jsondiffpatch-property-name">58</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="59"><div class="jsondiffpatch-property-name">59</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;If&quot;,
   &quot;source&quot;: &quot;if&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="58"><div class="jsondiffpatch-property-name">58</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="59"><div class="jsondiffpatch-property-name">59</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;index&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="6"><div class="jsondiffpatch-property-name">6</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
   &quot;source&quot;: &quot;Number&quot;
@@ -806,32 +797,32 @@ foo = (index: Integer, array: Number[]) =>
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="61"><div class="jsondiffpatch-property-name">61</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;index&quot;
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;&gt;=&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="62"><div class="jsondiffpatch-property-name">62</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="63"><div class="jsondiffpatch-property-name">63</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;&gt;=&quot;
+  &quot;type&quot;: &quot;Integer&quot;,
+  &quot;source&quot;: &quot;0&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="64"><div class="jsondiffpatch-property-name">64</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="65"><div class="jsondiffpatch-property-name">65</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Integer&quot;,
-  &quot;source&quot;: &quot;0&quot;
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;&amp;&amp;&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="66"><div class="jsondiffpatch-property-name">66</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="67"><div class="jsondiffpatch-property-name">67</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;&amp;&amp;&quot;
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;index&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="68"><div class="jsondiffpatch-property-name">68</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="69"><div class="jsondiffpatch-property-name">69</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;index&quot;
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;&lt;&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="7"><div class="jsondiffpatch-property-name">7</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;OpenBracket&quot;,
   &quot;source&quot;: &quot;[&quot;
@@ -839,78 +830,72 @@ foo = (index: Integer, array: Number[]) =>
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="71"><div class="jsondiffpatch-property-name">71</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;&lt;&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="72"><div class="jsondiffpatch-property-name">72</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="73"><div class="jsondiffpatch-property-name">73</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
   &quot;source&quot;: &quot;array&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="74"><div class="jsondiffpatch-property-name">74</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="72"><div class="jsondiffpatch-property-name">72</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Operator&quot;,
   &quot;source&quot;: &quot;.&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="75"><div class="jsondiffpatch-property-name">75</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="73"><div class="jsondiffpatch-property-name">73</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
   &quot;source&quot;: &quot;length&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="76"><div class="jsondiffpatch-property-name">76</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="74"><div class="jsondiffpatch-property-name">74</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="77"><div class="jsondiffpatch-property-name">77</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="75"><div class="jsondiffpatch-property-name">75</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Indent&quot;,
   &quot;source&quot;: &quot;    &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="78"><div class="jsondiffpatch-property-name">78</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="76"><div class="jsondiffpatch-property-name">76</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
   &quot;source&quot;: &quot;getValue&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="79"><div class="jsondiffpatch-property-name">79</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="77"><div class="jsondiffpatch-property-name">77</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;OpenParen&quot;,
   &quot;source&quot;: &quot;(&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="78"><div class="jsondiffpatch-property-name">78</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;array&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="79"><div class="jsondiffpatch-property-name">79</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;,&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="8"><div class="jsondiffpatch-property-name">8</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;CloseBracket&quot;,
   &quot;source&quot;: &quot;]&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="80"><div class="jsondiffpatch-property-name">80</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;array&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="81"><div class="jsondiffpatch-property-name">81</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;,&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="82"><div class="jsondiffpatch-property-name">82</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="83"><div class="jsondiffpatch-property-name">83</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="81"><div class="jsondiffpatch-property-name">81</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
   &quot;source&quot;: &quot;index&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="84"><div class="jsondiffpatch-property-name">84</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="82"><div class="jsondiffpatch-property-name">82</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;CloseParen&quot;,
   &quot;source&quot;: &quot;)&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="85"><div class="jsondiffpatch-property-name">85</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="83"><div class="jsondiffpatch-property-name">83</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Outdent&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="84"><div class="jsondiffpatch-property-name">84</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="85"><div class="jsondiffpatch-property-name">85</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Else&quot;,
+  &quot;source&quot;: &quot;else&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="86"><div class="jsondiffpatch-property-name">86</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="87"><div class="jsondiffpatch-property-name">87</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Else&quot;,
-  &quot;source&quot;: &quot;else&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="88"><div class="jsondiffpatch-property-name">88</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="89"><div class="jsondiffpatch-property-name">89</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Indent&quot;,
   &quot;source&quot;: &quot;    &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="88"><div class="jsondiffpatch-property-name">88</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;-&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="89"><div class="jsondiffpatch-property-name">89</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Integer&quot;,
+  &quot;source&quot;: &quot;1&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="9"><div class="jsondiffpatch-property-name">9</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Operator&quot;,
   &quot;source&quot;: &quot;,&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="90"><div class="jsondiffpatch-property-name">90</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;-&quot;
+  &quot;type&quot;: &quot;Outdent&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="91"><div class="jsondiffpatch-property-name">91</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Integer&quot;,
-  &quot;source&quot;: &quot;1&quot;
+  &quot;type&quot;: &quot;Outdent&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="92"><div class="jsondiffpatch-property-name">92</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Outdent&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="93"><div class="jsondiffpatch-property-name">93</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Outdent&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="94"><div class="jsondiffpatch-property-name">94</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li></ul></div></p>
@@ -3325,6 +3310,537 @@ foo = (index: Integer, array: Number[]) =>
     </div>
 </div>
 </div></p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (5)</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -3,23 +3,26 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">3</div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var `a:1:0` ::: Array &amp; ((Integer) : (Number))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">4</div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var `i:1:0` ::: (0 .. &lt; `a:1:0`.length)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) :: (Number) =&gt; `a:1:0`[`i:1:0`]</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.foo` <del>=</del> (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.foo` <ins>::</ins> (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var `index:1:0` ::: (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var `array:1:0` ::: Array &amp; ((Integer) : (Number))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">9</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) <del>=&gt;</del> <del>{</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) <ins>::</ins> <ins>(0 .. &lt; `array:1:0`.length) | (`array:1:0`.length .. &lt; 0) = (</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `index:1:0` ::: (Integer)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `array:1:0` ::: Array &amp; ((Integer) : (Number))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) :: (0 .. &lt; `array:1:0`.length) | (`array:1:0`.length .. &lt; 0) =&gt; {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">14</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0) :: Boolean,`&lt;`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">12</div>
+<div class="line-num2">15</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">                var `array:1:1` ::: Array &amp; ((Integer) : (Number)) = `array:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">13</div>
+<div class="line-num2">16</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">                var `index:1:1` : (Integer) :: (0 .. &lt; `array:1:0`.length) = `index:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">14</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">                getValue(`array:1:1`,`index:1:1`)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">17</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">                getValue(`array:1:1`,`index:1:1`)<ins> :: (Number)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">15</div>
+<div class="line-num2">18</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            } else {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">16</div>
+<div class="line-num2">19</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">                var `array:1:2` ::: Array &amp; ((Integer) : (Number)) = `array:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">17</div>
+<div class="line-num2">20</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">                var `index:1:2` : (Integer) :: (`array:1:0`.length .. &lt; 0) = `index:1:0`</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">18</div>
+<div class="line-num2">21</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">                -1</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">19</div>
+<div class="line-num2">22</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">            }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">20</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">            var `array:1:3` <del>:</del> <del>typeof</del> <del>`array:1:1`</del> <del>|</del> <del>typeof</del> <del>`array:1:2`</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">23</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">            var `array:1:3` <ins>::</ins> <ins>Array</ins> <ins>&amp;</ins> <ins>((Integer)</ins> <ins>:</ins> <ins>(Number))</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">21</div>
+<div class="line-num2">24</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">22</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var `index:1:3` <del>:</del> <del>typeof</del> `<del>index</del>:1:<del>1`</del> | <del>typeof `index</del>:1:<del>2`</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">25</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `index:1:3` <ins>::</ins> <ins>(0</ins> <ins>.. &lt; </ins>`<ins>array</ins>:1:<ins>0`.length)</ins> | <ins>(`array</ins>:1:<ins>0`.length .. &lt; 0)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">23</div>
+<div class="line-num2">26</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    }</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">24</div>
+<div class="line-num2">27</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">25</div>
+<div class="line-num2">28</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Array&quot;,&quot;Integer&quot;,&quot;Number&quot;,&quot;&amp;&amp;&quot;,&quot;&gt;=&quot;,&quot;&lt;&quot;]</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (6)</span></header>
+                    <p>module test.sample {
+    getValue(
+        var `a:1:0` ::: Array & ((Integer) : (Number))
+        var `i:1:0` ::: (0 .. < `a:1:0`.length)
+    ) :: (Number) => `a:1:0`[`i:1:0`]
+    const `test.sample.foo` :: (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) = (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) => {
+        {
+            if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {
+                var `array:1:1` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:1` : (Integer) :: (0 .. < `array:1:0`.length) = `index:1:0`
+                getValue(`array:1:1`,`index:1:1`) :: (Number)
+            } else {
+                var `array:1:2` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:2` : (Integer) :: (`array:1:0`.length .. < 0) = `index:1:0`
+                -1
+            }
+            var `array:1:3` :: Array & ((Integer) : (Number))
+        }
+        var `index:1:3` :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0)
+    }
+}
+// externals: ["Array","Integer","Number","&&",">=","<"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (7)</span></header>
+                    <p>module test.sample {
+    getValue(
+        var `a:1:0` ::: Array & ((Integer) : (Number))
+        var `i:1:0` ::: (0 .. < `a:1:0`.length)
+    ) :: (Number) => `a:1:0`[`i:1:0`]
+    const `test.sample.foo` :: (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) = (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) => {
+        {
+            if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {
+                var `array:1:1` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:1` : (Integer) :: (0 .. < `array:1:0`.length) = `index:1:0`
+                getValue(`array:1:1`,`index:1:1`) :: (Number)
+            } else {
+                var `array:1:2` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:2` : (Integer) :: (`array:1:0`.length .. < 0) = `index:1:0`
+                -1
+            }
+            var `array:1:3` :: Array & ((Integer) : (Number))
+        }
+        var `index:1:3` :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0)
+    }
+}
+// externals: ["Array","Integer","Number","&&",">=","<"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (8)</span></header>
+                    <p>module test.sample {
+    getValue(
+        var `a:1:0` ::: Array & ((Integer) : (Number))
+        var `i:1:0` ::: (0 .. < `a:1:0`.length)
+    ) :: (Number) => `a:1:0`[`i:1:0`]
+    const `test.sample.foo` :: (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) = (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) => {
+        {
+            if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {
+                var `array:1:1` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:1` : (Integer) :: (0 .. < `array:1:0`.length) = `index:1:0`
+                getValue(`array:1:1`,`index:1:1`) :: (Number)
+            } else {
+                var `array:1:2` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:2` : (Integer) :: (`array:1:0`.length .. < 0) = `index:1:0`
+                -1
+            }
+            var `array:1:3` :: Array & ((Integer) : (Number))
+        }
+        var `index:1:3` :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0)
+    }
+}
+// externals: ["Array","Integer","Number","&&",">=","<"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (9)</span></header>
+                    <p>module test.sample {
+    getValue(
+        var `a:1:0` ::: Array & ((Integer) : (Number))
+        var `i:1:0` ::: (0 .. < `a:1:0`.length)
+    ) :: (Number) => `a:1:0`[`i:1:0`]
+    const `test.sample.foo` :: (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) = (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) => {
+        {
+            if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {
+                var `array:1:1` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:1` : (Integer) :: (0 .. < `array:1:0`.length) = `index:1:0`
+                getValue(`array:1:1`,`index:1:1`) :: (Number)
+            } else {
+                var `array:1:2` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:2` : (Integer) :: (`array:1:0`.length .. < 0) = `index:1:0`
+                -1
+            }
+            var `array:1:3` :: Array & ((Integer) : (Number))
+        }
+        var `index:1:3` :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0)
+    }
+}
+// externals: ["Array","Integer","Number","&&",">=","<"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (10)</span></header>
+                    <p>module test.sample {
+    getValue(
+        var `a:1:0` ::: Array & ((Integer) : (Number))
+        var `i:1:0` ::: (0 .. < `a:1:0`.length)
+    ) :: (Number) => `a:1:0`[`i:1:0`]
+    const `test.sample.foo` :: (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) = (
+        var `index:1:0` ::: (Integer)
+        var `array:1:0` ::: Array & ((Integer) : (Number))
+    ) :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0) => {
+        {
+            if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,`array:1:0`.length) :: Boolean) :: Boolean) {
+                var `array:1:1` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:1` : (Integer) :: (0 .. < `array:1:0`.length) = `index:1:0`
+                getValue(`array:1:1`,`index:1:1`) :: (Number)
+            } else {
+                var `array:1:2` ::: Array & ((Integer) : (Number)) = `array:1:0`
+                var `index:1:2` : (Integer) :: (`array:1:0`.length .. < 0) = `index:1:0`
+                -1
+            }
+            var `array:1:3` :: Array & ((Integer) : (Number))
+        }
+        var `index:1:3` :: (0 .. < `array:1:0`.length) | (`array:1:0`.length .. < 0)
+    }
+}
+// externals: ["Array","Integer","Number","&&",">=","<"]</p>
                 </td>
             </tr>
         </div>

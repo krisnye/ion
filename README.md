@@ -109,7 +109,10 @@ Cross platform modeling language
     - [x] Create Concrete Functions
     - [x] Resolve calls correctly. Next step.
     - [x] Fix DAG sharing nodes.
-  - [ ] Conditional Type Assertions
+  - [/] Conditional Type Assertions
+    - [ ] Inter-parameter checking
+      - [ ] Instead of renaming per function check, let's use a unified parameter naming
+        - _param_1, _param_2, _param_3, _param_4...
     - [ ] Array bounds checking
     - [ ] Chained Conditional Type, check property
   - [ ] UFCS conversion to static call.

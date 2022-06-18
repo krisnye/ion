@@ -1,4 +1,5 @@
 import { EvaluationContext } from "../EvaluationContext";
+import { Expression } from "./Expression";
 import { Function } from "./Function";
 import { Type } from "./Type";
 import { UnionType } from "./UnionType";
@@ -44,16 +45,16 @@ import { UnionType } from "./UnionType";
 
 // }
 
-export function getReturnType(funcs: Function[], argTypes: Type[], c: EvaluationContext): Type | null {
-    let possibleFunctionCalls = getPossibleFunctionCalls(funcs, argTypes, c);
+export function getReturnType(funcs: Function[], args: Expression[], argTypes: Type[], c: EvaluationContext): Type | null {
+    let possibleFunctionCalls = getPossibleFunctionCalls(funcs, args, argTypes, c);
     let returnTypes = possibleFunctionCalls.map(func => func.getReturnType(argTypes, c));
     return UnionType.join(...returnTypes);
 }
 
-export function getPossibleFunctionCalls(funcs: (Function | null)[], argTypes: Type[], c: EvaluationContext): Function[] {
+export function getPossibleFunctionCalls(funcs: (Function | null)[], args: Expression[], argTypes: Type[], c: EvaluationContext): Function[] {
     let functions = new Array<Function>();
     for (let func of funcs) {
-        if (func?.areArgumentsValid(argTypes, c)) {
+        if (func?.areArgumentsValid(args, argTypes, c)) {
             functions.push(func);
         }
     }

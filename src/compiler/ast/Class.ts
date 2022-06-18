@@ -120,8 +120,8 @@ export class Class extends Container implements Type, Declaration, Callable {
         });
     }
 
-    areArgumentsValid(argTypes: Type[], c: EvaluationContext, errors = new Array<Error>()) : boolean {
-        return (this.resolveType(c) as FunctionType).areArgumentsValid(argTypes, c, errors);
+    areArgumentsValid(args: Expression[], argTypes: Type[], c: EvaluationContext, errors = new Array<Error>()) : boolean {
+        return (this.resolveType(c) as FunctionType).areArgumentsValid(args, argTypes, c, errors);
     }
 
     protected resolveType(c: EvaluationContext): Type | null {
