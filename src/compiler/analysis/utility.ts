@@ -32,23 +32,25 @@ export function joinExpressions(operator: string, location: SourceLocation, expr
     return right;
 }
 
-export function splitFilterJoinMultiple(type: boolean, root: Expression, operators: string[], filter: (e: Expression) => Expression | null) {
-    let operator = operators[0];
-    let remainingOperators = operators.slice(1);
-    let useFilter = remainingOperators.length === 0
+export function splitFilterJoinMultiple(type: boolean, root: Expression, splitOperators: string[], joinOperators: string[], filter: (e: Expression) => Expression | null) {
+    let splitOperator = splitOperators[0];
+    let joinOperator = joinOperators[0];
+    let remainingSplitOperators = splitOperators.slice(1);
+    let remainingJoinOperators = joinOperators.slice(1);
+    let useFilter = remainingSplitOperators.length === 0
         ? filter
-        : (e => splitFilterJoinMultiple(type, e, remainingOperators, filter));
-    let expressions = [...splitExpression(operator, root)].map(useFilter).filter(Boolean) as Expression[]
+        : (e => splitFilterJoinMultiple(type, e, remainingSplitOperators, remainingJoinOperators, filter));
+    let expressions = [...splitExpression(splitOperator, root)].map(useFilter).filter(Boolean) as Expression[]
     if (type) {
-        if (operator === "&&") {
+        if (joinOperator === "&&") {
             return IntersectionType.join(...expressions as Type[]);
         }
-        if (operator === "||") {
+        if (joinOperator === "||") {
             return UnionType.join(...expressions as Type[]);
         }
-        throw new Error("Invalid operator for Types: " + operator);
+        throw new Error("Invalid operator for Types: " + joinOperator);
     }
-    return joinExpressions(operator, root.location, expressions);
+    return joinExpressions(joinOperator, root.location, expressions);
 }
 
 function isDot(e: Expression, dot: string): e is Reference & { name: typeof dot } {

@@ -14,7 +14,7 @@ export class Node extends Immutable implements Required<NodeProps> {
         super(props);
     }
 
-    simplify(): Node {
+    simplify(c?: EvaluationContext): Node {
         return this;
     }
 

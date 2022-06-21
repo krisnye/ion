@@ -24,6 +24,7 @@ export abstract class CompoundType extends BaseType {
         return null;
     }
 
+    abstract get isUnion(): boolean;
     abstract toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression;
 
     *getDependencies(c: EvaluationContext): Generator<Expression> {
@@ -33,17 +34,37 @@ export abstract class CompoundType extends BaseType {
 
     protected resolve(c: EvaluationContext): Expression {
         let resolved = super.resolve(c);
-        return resolved.simplify() as Type;
+        return resolved.simplify(c) as Type;
     }
 
-    protected simplifyInternal(union: boolean) {
-        let left = this.left.simplify();
-        let right = this.right.simplify();
+    simplify(c?: EvaluationContext) {
+        let left = this.left.simplify(c) as Type;
+        let right = this.right.simplify(c) as Type;
         if (left.toString() === right.toString()) {
             return left;
         }
         if (isType(left) && isType(right)) {
-            const combined = left.merge(right, union);
+            if (left instanceof CompoundType) {
+                [right, left] = [left, right];
+            }
+            if (right instanceof CompoundType) {
+                let rightLeft = left.merge(right.left, this.isUnion, c);
+                let rightRight = left.merge(right.right, this.isUnion, c);
+                if (rightLeft && rightRight) {
+                    let result = right.patch({ left: rightLeft, right: rightRight });
+                    return result;
+                }
+                if (rightLeft) {
+                    // merged with right.left, so use that and retain right.right
+                    return this.patch({ left: rightLeft, right: right.right });
+                }
+                if (rightRight) {
+                    // merged with right.right, so use that and retain right.left
+                    return this.patch({ left: right.left, right: rightRight });
+                }
+            }
+    
+            const combined = left.merge(right, this.isUnion);
             if (combined != null) {
                 return combined;
             }

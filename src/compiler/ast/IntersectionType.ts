@@ -7,6 +7,7 @@ import { Call } from "./Call";
 import { CompoundType, CompoundTypeProps } from "./CompoundType";
 import { Expression } from "./Expression";
 import { isType, Type } from "./Type";
+import { UnionType } from "./UnionType";
 
 export interface IntersectionTypeProps extends CompoundTypeProps {
 }
@@ -18,23 +19,36 @@ export class IntersectionType extends CompoundType {
         return super.patch(props);
     }
 
-    simplify() {
-        return this.simplifyInternal(false);
-    }
-
     getBasicTypes(c: EvaluationContext) {
         return this.left.getBasicTypes(c) & this.right.getBasicTypes(c);
     }
 
+    get isUnion() { return false; }
+
     toComparisonType(c: EvaluationContext) {
-        const left = c.getComparisonType(this.left);
-        const right = c.getComparisonType(this.right);
+        let left = c.getComparisonType(this.left);
+        let right = c.getComparisonType(this.right);
+        if (left instanceof CompoundType) {
+            [right, left] = [left, right];
+        }
+        if (right instanceof CompoundType) {
+            let rightLeft = left.merge(right.left, this instanceof UnionType, c);
+            let rightRight = left.merge(right.right, this instanceof UnionType, c);
+            if (rightLeft && rightRight) {
+                let result = right.patch({ left: rightLeft, right: rightRight });
+                console.log("MERGED: " + result);
+                return result;
+            }
+        }
         const merged = left.merge(right, false, c);
         if (merged == null) {
-            debugger;
+            // try to merge with the lef
+            console.log({ left: left.toString(), right: right.toString() });
             left.merge(right, false, c);
-            throw new SemanticError(`Types are incompatible`, this.left, this.right);
+            return this.patch({ left, right });
+            // throw new SemanticError(`Types are incompatible`, this.left, this.right);
         }
+
         return merged;
     }
 

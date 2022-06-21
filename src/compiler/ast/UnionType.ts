@@ -17,10 +17,6 @@ export class UnionType extends CompoundType {
         return super.patch(props);
     }
 
-    simplify() {
-        return this.simplifyInternal(true);
-    }
-
     getBasicTypes(c: EvaluationContext) {
         return this.left.getBasicTypes(c) | this.right.getBasicTypes(c);
     }
@@ -42,11 +38,26 @@ export class UnionType extends CompoundType {
         }
     }
 
-    toComparisonType(c: EvaluationContext) {
-        const left = c.getComparisonType(this.left);
-        const right = c.getComparisonType(this.right);
+    get isUnion() { return true; }
 
-        let type = this.patch({ left, right }).simplify() as Type;
+    toComparisonType(c: EvaluationContext) {
+        let left = c.getComparisonType(this.left);
+        let right = c.getComparisonType(this.right);
+
+        if (left instanceof CompoundType) {
+            [right, left] = [left, right];
+        }
+        if (right instanceof CompoundType) {
+            let rightLeft = left.merge(right.left, this instanceof UnionType, c);
+            let rightRight = left.merge(right.right, this instanceof UnionType, c);
+            if (rightLeft && rightRight) {
+                let result = right.patch({ left: rightLeft, right: rightRight });
+                console.log("MERGED: " + result);
+                return result;
+            }
+        }
+
+        let type = this.patch({ left, right }).simplify(c) as Type;
         if (!(type instanceof UnionType)) {
             type = type.toComparisonType?.(c) ?? type;
         }

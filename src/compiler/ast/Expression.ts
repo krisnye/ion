@@ -52,7 +52,7 @@ export class Expression extends Node implements Required<ExpressionProps> {
     protected resolve(c: EvaluationContext): Expression {
         let type = this.resolveType(c);
         if (type?.simplify) {
-            type = type.simplify() as Type;
+            type = type.simplify(c) as Type;
         }
         return this.patch({ type });
     }

@@ -36,15 +36,20 @@ export class ConditionalAssertion extends Expression {
 
     protected resolveType(c: EvaluationContext) {
         const { test } = this.getConditional(c);
+        let splitOps = ["||", "&&"];
+        let joinOps = splitOps.slice(0);
+        if (this.negate) {
+            joinOps.reverse();
+        }
         let { type } = this.value;
-        let assertedType = splitFilterJoinMultiple(true, test, ["||", "&&"], e => expressionToType(e, this.value.name, this.negate)) as Type | null;
+        let assertedType = splitFilterJoinMultiple(true, test, splitOps, joinOps, e => expressionToType(e, this.value.name, this.negate)) as Type | null;
         if (assertedType) {
             if (assertedType instanceof Call) {
                 debugger;
-                splitFilterJoinMultiple(true, test, ["||", "&&"], e => expressionToType(e, this.value.name, this.negate)) as Type | null;
+                splitFilterJoinMultiple(true, test, splitOps, joinOps, e => expressionToType(e, this.value.name, this.negate)) as Type | null;
             }
             // if this conditional lets us assert a more specific type then we add it.
-            type = IntersectionType.join(type, assertedType)?.simplify() as Type;
+            type = IntersectionType.join(type, assertedType)?.simplify(c) as Type;
         }
         return type;
     }

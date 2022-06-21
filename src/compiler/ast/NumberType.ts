@@ -1,11 +1,11 @@
 import { TypeOperators } from "../analysis/TypeOperators";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
-import { Node, NodeProps } from "../Node";
+import { Node } from "../Node";
 import { SourceLocation } from "../SourceLocation";
 import { BaseType, BaseTypeProps } from "./BaseType";
 import { BinaryExpression } from "./BinaryExpression";
-import { Expression, ExpressionProps } from "./Expression";
+import { Expression } from "./Expression";
 import { NumberLiteral } from "./NumberLiteral";
 import { Reference } from "./Reference";
 import { BasicType, Type } from "./Type";
@@ -20,13 +20,14 @@ export function isLiteralNumberType(type: Type): type is LiteralNumberType {
 }
 
 export function overlaps(max: Node | undefined, min: Node | undefined, exclusive: boolean): boolean | null {
-    if (max != null && min != null) {
-        if (max.toString() === min.toString()) {
-            return !exclusive
-        }
-        if (max instanceof NumberLiteral && min instanceof NumberLiteral) {
-            return exclusive ? max.value > min.value : max.value >= min.value
-        }
+    if (max == null || min == null) {
+        return true;
+    }
+    if (max.toString() === min.toString()) {
+        return !exclusive
+    }
+    if (max instanceof NumberLiteral && min instanceof NumberLiteral) {
+        return exclusive ? max.value > min.value : max.value >= min.value
     }
     return null
 }
@@ -131,9 +132,9 @@ export class NumberType extends BaseType {
         return null;
     }
 
-    simplify(): Node {
-        let min = this.min?.simplify();
-        let max = this.max?.simplify();
+    simplify(c?: EvaluationContext): Node {
+        let min = this.min?.simplify(c);
+        let max = this.max?.simplify(c);
         let minExclusive = this.minExclusive;
         let maxExclusive = this.maxExclusive;
         if (min instanceof NumberType && min.min) {
@@ -204,7 +205,7 @@ export class NumberType extends BaseType {
             ? {min: null, minExclusive: false }
             : (() => {
                 if (a.min.value === b.min.value) {
-                    return { min: a.min.value, minExclusive: Boolean(Math.min(a.minExclusive as any, b.minExclusive as any))}
+                    return { min: a.min, minExclusive: Boolean(Math.min(a.minExclusive as any, b.minExclusive as any))}
                 }
                 if (a.min.value < b.min.value) {
                     return a
@@ -217,7 +218,7 @@ export class NumberType extends BaseType {
             ? {max: null, maxExclusive: false }
             : (() => {
                 if (a.max.value === b.max.value) {
-                    return { max: a.max.value, maxExclusive: Boolean(Math.min(a.maxExclusive as any, b.maxExclusive as any))}
+                    return { max: a.max, maxExclusive: Boolean(Math.min(a.maxExclusive as any, b.maxExclusive as any))}
                 }
                 if (a.max.value > b.max.value) {
                     return a
