@@ -24,6 +24,7 @@ export class MemberParselet extends BinaryExpressionParselet {
         //  if it's computed we consume the closing operator "]" otherwise
         //  otherwise this is just implicitly closed by the property
         let close = p.consume(this.closeTokenType);
+        // don't even create Members, just convert to a get property?
         return new Member({
             location: SourceLocation.merge(object.location, close.location),
             object,

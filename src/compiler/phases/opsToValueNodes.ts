@@ -148,6 +148,16 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                     return new Block({ location: node.location, nodes: [ node ]});
                 }
             }
+            if (node instanceof Member) {
+                // convert to get
+                if (node.computed) {
+                    return new AstCall({
+                        location: node.location,
+                        callee: new Reference({ location: node.location, name: "get" }),
+                        nodes: [node.object, node.property as Expression ]
+                    })
+                }
+            }
             // check classes as well
             if (node instanceof PstFor) {
                 let { id, value, body } = node;

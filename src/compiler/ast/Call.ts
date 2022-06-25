@@ -85,7 +85,10 @@ export class Call extends Container {
         let callables = c.getValues(this.callee) as Function[];
         let args = this.nodes;
         let types = toUniformArgParameterTypes(args);
-        // console.log("Callables: " + callables.map(c => c?.toString() ?? "undefined").join(", "));
+        if (this.callee instanceof Reference && this.callee.name === "getValue") {
+            debugger;
+            console.log("Callables: " + callables.map(c => c?.toString() ?? "undefined").join(", "));
+        }
         if (callables.length > 1) {
             let returnType = getReturnType(callables, args, types, c);
             if (returnType === null) {

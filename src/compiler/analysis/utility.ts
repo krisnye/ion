@@ -2,7 +2,10 @@ import { traverse } from "@glas/traverse";
 import { Call } from "../ast/Call";
 import { Expression } from "../ast/Expression";
 import { IntersectionType } from "../ast/IntersectionType";
+import { Member } from "../ast/Member";
 import { NumberType } from "../ast/NumberType";
+import { ObjectType } from "../ast/ObjectType";
+import { Pair } from "../ast/Pair";
 import { Reference } from "../ast/Reference";
 import { Type } from "../ast/Type";
 import { UnionType } from "../ast/UnionType";
@@ -53,11 +56,11 @@ export function splitFilterJoinMultiple(type: boolean, root: Expression, splitOp
     return joinExpressions(joinOperator, root.location, expressions);
 }
 
-function isDot(e: Expression, dot: string): e is Reference & { name: typeof dot } {
-    return e instanceof Reference && e.name === dot;
+function isDot(e: Expression, dot: Expression): e is Reference & { name: typeof dot } {
+    return e.toString() === dot.toString();
 }
 
-export function hasDot(root: Expression, dot: string) {
+export function hasDot(root: Expression, dot: Expression) {
     if (isDot(root, dot)) {
         return true;
     }
@@ -75,7 +78,7 @@ export function hasDot(root: Expression, dot: string) {
     return found;
 }
 
-export function expressionToType(e: Expression, dot: string, negate: boolean): Expression | null {
+export function expressionToType(e: Expression, dot: Expression, negate: boolean): Expression | null {
     if (isComparisonOperation(e)) {
         let operator = e.callee.name;
         let [left, right] = e.nodes;
@@ -99,6 +102,29 @@ export function expressionToType(e: Expression, dot: string, negate: boolean): E
                 return type;
             }
             else {
+                //  TODO: This next
+                //  then figure out how to handle sample.ion thingy
+                if (left instanceof Member) {
+                    // console.log({
+                    //     leftObject: left.object.toString(),
+                    //     dot: dot.toString()
+                    // });
+                    if (left.object.toString() === dot.toString()) {
+                        // console.log("------------: " + left.object + " ?? " + dot);
+                        if (compareOperators[operator]) {
+                            let rightType = compareOperators[operator].toType(right);
+                            let newObjectType = new ObjectType({
+                                location: e.location,
+                                properties: [new Pair({
+                                    location: e.location,
+                                    key: left.property as Type,
+                                    value: rightType
+                                })]
+                            });
+                            return newObjectType;
+                        }
+                    }
+                }
                 console.log("Handle your nested shit here: ", { left: left.toString(), e: e.toString() } );
             }
         }

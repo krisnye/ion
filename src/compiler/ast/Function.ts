@@ -83,7 +83,7 @@ export class Function extends FunctionBase implements Callable {
     protected resolve(c: EvaluationContext): Expression {
         let finalExpressions = [...getFinalExpressions(this.body)];
         const finalTypes = finalExpressions.map(node => node.type!);
-        const inferredType = UnionType.join(...finalTypes)!.simplify(c) as Type;
+        const inferredType = UnionType.join(...finalTypes)?.simplify(c) as Type;
         if (this.returnType != null) {
             const result = isSubtype(inferredType, this.returnType, c);
             if (result !== true) {

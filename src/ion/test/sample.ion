@@ -1,16 +1,21 @@
 
+// foo = (array: Integer[]) =>
+//     if array.length > 0
+//         //  this should imply that 0 is fine since we know 0 < array.length
+//         array[0]
+
 // getValue(a: Number[], i: >= 0 & < a.length) => a[i]
 
 // foo = (index: Integer, array: Number[]) =>
 //     if index >= 0 && index < array.length
-//         getValue(array, index)
+//         array[index]
 //     else
 //         -1
 
-foo(index: Integer) =>
-    if index >= 0 && index < 10
-        index
-    else
-        index -= 10
-        index
+// foo(index: Integer) =>
+//     if index >= 0 && index < 10
+//         index
+//     else
+//         index -= 10
+//         index
 

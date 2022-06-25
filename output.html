@@ -235,27 +235,68 @@ ul.jsondiffpatch-textdiff {
                 <td>
                     <header><span>Source</span></header>
                     <p>
+// foo = (array: Integer[]) =>
+//     if array.length > 0
+//         //  this should imply that 0 is fine since we know 0 < array.length
+//         array[0]
+
 // getValue(a: Number[], i: >= 0 & < a.length) => a[i]
 
 // foo = (index: Integer, array: Number[]) =>
 //     if index >= 0 && index < array.length
-//         getValue(array, index)
+//         array[index]
 //     else
 //         -1
 
-foo(index: Integer) =>
-    if index >= 0 && index < 10
-        index
-    else
-        index -= 10
-        index
+// foo(index: Integer) =>
+//     if index >= 0 && index < 10
+//         index
+//     else
+//         index -= 10
+//         index
 
 </p>
                 </td>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>// getValue(a: Number[], i: &gt;= 0 &amp; &lt; a.length) =&gt; a[i]<br><br>// foo = (index: Integer, array: Number[]) =&gt;<br>//     if index &gt;= 0 &amp;&amp; index &lt; array.length<br>//         getValue(array, index)<br>//     else<br>//         -1<br><br>foo(index: Integer) =&gt;<br>    if index &gt;= 0 &amp;&amp; index &lt; 10<br>        index<br>    else<br>        index -= 10<br>        index<br><br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>// foo = (array: Integer[]) =&gt;<br>//     if array.length &gt; 0<br>//         //  this should imply that 0 is fine since we know 0 &lt; array.length<br>//         array[0]<br><br>// getValue(a: Number[], i: &gt;= 0 &amp; &lt; a.length) =&gt; a[i]<br><br>// foo = (index: Integer, array: Number[]) =&gt;<br>//     if index &gt;= 0 &amp;&amp; index &lt; array.length<br>//         array[index]<br>//     else<br>//         -1<br><br>// foo(index: Integer) =&gt;<br>//     if index &gt;= 0 &amp;&amp; index &lt; 10<br>//         index<br>//     else<br>//         index -= 10<br>//         index<br><br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;// foo = (array: Integer[]) =&gt;&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;//     if array.length &gt; 0&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;//         //  this should imply that 0 is fine since we know 0 &lt; array.length&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;//         array[0]&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
@@ -290,7 +331,7 @@ foo(index: Integer) =>
   },
   Token {
     &quot;type&quot;: &quot;Comment&quot;,
-    &quot;source&quot;: &quot;//         getValue(array, index)&quot;
+    &quot;source&quot;: &quot;//         array[index]&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
@@ -317,173 +358,48 @@ foo(index: Integer) =>
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;foo&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;OpenParen&quot;,
-    &quot;source&quot;: &quot;(&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;index&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;:&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Integer&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;CloseParen&quot;,
-    &quot;source&quot;: &quot;)&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;=&gt;&quot;
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;// foo(index: Integer) =&gt;&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Indent&quot;,
-    &quot;source&quot;: &quot;    &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;If&quot;,
-    &quot;source&quot;: &quot;if&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;index&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;&gt;=&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Integer&quot;,
-    &quot;source&quot;: &quot;0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;&amp;&amp;&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;index&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;&lt;&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Integer&quot;,
-    &quot;source&quot;: &quot;10&quot;
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;//     if index &gt;= 0 &amp;&amp; index &lt; 10&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Indent&quot;,
-    &quot;source&quot;: &quot;    &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;index&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Outdent&quot;
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;//         index&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Else&quot;,
-    &quot;source&quot;: &quot;else&quot;
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;//     else&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Indent&quot;,
-    &quot;source&quot;: &quot;    &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;index&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;-=&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Integer&quot;,
-    &quot;source&quot;: &quot;10&quot;
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;//         index -= 10&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;index&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Outdent&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Outdent&quot;
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;//         index&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
@@ -503,175 +419,109 @@ foo(index: Integer) =>
   &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="1"><div class="jsondiffpatch-property-name">1</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;// getValue(a: Number[], i: &gt;= 0 &amp; &lt; a.length) =&gt; a[i]&quot;
+  &quot;source&quot;: &quot;// foo = (array: Integer[]) =&gt;&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="10"><div class="jsondiffpatch-property-name">10</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;//     else&quot;
+  &quot;source&quot;: &quot;// getValue(a: Number[], i: &gt;= 0 &amp; &lt; a.length) =&gt; a[i]&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="11"><div class="jsondiffpatch-property-name">11</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="12"><div class="jsondiffpatch-property-name">12</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;//         -1&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="13"><div class="jsondiffpatch-property-name">13</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="13"><div class="jsondiffpatch-property-name">13</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;// foo = (index: Integer, array: Number[]) =&gt;&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="14"><div class="jsondiffpatch-property-name">14</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="15"><div class="jsondiffpatch-property-name">15</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;foo&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//     if index &gt;= 0 &amp;&amp; index &lt; array.length&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="16"><div class="jsondiffpatch-property-name">16</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;OpenParen&quot;,
-  &quot;source&quot;: &quot;(&quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="17"><div class="jsondiffpatch-property-name">17</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;index&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//         array[index]&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="18"><div class="jsondiffpatch-property-name">18</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;:&quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="19"><div class="jsondiffpatch-property-name">19</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//     else&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="2"><div class="jsondiffpatch-property-name">2</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="20"><div class="jsondiffpatch-property-name">20</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;Integer&quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="21"><div class="jsondiffpatch-property-name">21</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;CloseParen&quot;,
-  &quot;source&quot;: &quot;)&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//         -1&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="22"><div class="jsondiffpatch-property-name">22</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="23"><div class="jsondiffpatch-property-name">23</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;=&gt;&quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="24"><div class="jsondiffpatch-property-name">24</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;// foo(index: Integer) =&gt;&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="25"><div class="jsondiffpatch-property-name">25</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Indent&quot;,
-  &quot;source&quot;: &quot;    &quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="26"><div class="jsondiffpatch-property-name">26</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;If&quot;,
-  &quot;source&quot;: &quot;if&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//     if index &gt;= 0 &amp;&amp; index &lt; 10&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="27"><div class="jsondiffpatch-property-name">27</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="28"><div class="jsondiffpatch-property-name">28</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;index&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//         index&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="29"><div class="jsondiffpatch-property-name">29</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="3"><div class="jsondiffpatch-property-name">3</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//     if array.length &gt; 0&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="30"><div class="jsondiffpatch-property-name">30</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;&gt;=&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//     else&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="31"><div class="jsondiffpatch-property-name">31</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="32"><div class="jsondiffpatch-property-name">32</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Integer&quot;,
-  &quot;source&quot;: &quot;0&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//         index -= 10&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="33"><div class="jsondiffpatch-property-name">33</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="34"><div class="jsondiffpatch-property-name">34</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;&amp;&amp;&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//         index&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="35"><div class="jsondiffpatch-property-name">35</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="36"><div class="jsondiffpatch-property-name">36</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;index&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="37"><div class="jsondiffpatch-property-name">37</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="38"><div class="jsondiffpatch-property-name">38</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;&lt;&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="39"><div class="jsondiffpatch-property-name">39</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="4"><div class="jsondiffpatch-property-name">4</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;// foo = (index: Integer, array: Number[]) =&gt;&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="40"><div class="jsondiffpatch-property-name">40</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Integer&quot;,
-  &quot;source&quot;: &quot;10&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="41"><div class="jsondiffpatch-property-name">41</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="42"><div class="jsondiffpatch-property-name">42</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Indent&quot;,
-  &quot;source&quot;: &quot;    &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="43"><div class="jsondiffpatch-property-name">43</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;index&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="44"><div class="jsondiffpatch-property-name">44</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Outdent&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="45"><div class="jsondiffpatch-property-name">45</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="46"><div class="jsondiffpatch-property-name">46</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Else&quot;,
-  &quot;source&quot;: &quot;else&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="47"><div class="jsondiffpatch-property-name">47</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="48"><div class="jsondiffpatch-property-name">48</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Indent&quot;,
-  &quot;source&quot;: &quot;    &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="49"><div class="jsondiffpatch-property-name">49</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;index&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="5"><div class="jsondiffpatch-property-name">5</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="50"><div class="jsondiffpatch-property-name">50</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="51"><div class="jsondiffpatch-property-name">51</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;-=&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="52"><div class="jsondiffpatch-property-name">52</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="53"><div class="jsondiffpatch-property-name">53</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Integer&quot;,
-  &quot;source&quot;: &quot;10&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="54"><div class="jsondiffpatch-property-name">54</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="55"><div class="jsondiffpatch-property-name">55</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;index&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="56"><div class="jsondiffpatch-property-name">56</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Outdent&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="57"><div class="jsondiffpatch-property-name">57</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Outdent&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="58"><div class="jsondiffpatch-property-name">58</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="59"><div class="jsondiffpatch-property-name">59</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//         //  this should imply that 0 is fine since we know 0 &lt; array.length&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="6"><div class="jsondiffpatch-property-name">6</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;//     if index &gt;= 0 &amp;&amp; index &lt; array.length&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="7"><div class="jsondiffpatch-property-name">7</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="8"><div class="jsondiffpatch-property-name">8</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="7"><div class="jsondiffpatch-property-name">7</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Comment&quot;,
-  &quot;source&quot;: &quot;//         getValue(array, index)&quot;
+  &quot;source&quot;: &quot;//         array[0]&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="8"><div class="jsondiffpatch-property-name">8</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="9"><div class="jsondiffpatch-property-name">9</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
@@ -680,2125 +530,107 @@ foo(index: Integer) =>
             
                 <td>
                     <header><span>parsing</span></header>
-                    <p>module test.sample {
-    foo(index : Integer) => {
-        if (index >= 0 && index < 10) {
-            index
-        } else {
-            index -= 10
-            index
-        }
-    }
-}</p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>destructuringAndUnaryNumberLiterals</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,5 +1,5 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module test.sample {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">2</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    foo(index : Integer) =&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    foo<ins> = </ins>(index : Integer) =&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        if (index &gt;= 0 &amp;&amp; index &lt; 10) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        } else {</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>opsToTypeNodes</span></header>
-                    <p>module test.sample {
-    foo = (index : Integer) => {
-        if (index >= 0 && index < 10) {
-            index
-        } else {
-            index -= 10
-            index
-        }
-    }
-}</p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>opsToValueNodes</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,9 +1,11 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module test.sample {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">2</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    foo<del> = </del>(<del>index : Integer) =&gt; {</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">3</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        <del>if</del> <del>(</del>index <del>&gt;=</del> <del>0 &amp;&amp; index &lt; 10) {</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    foo(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>var</ins> index <ins>:</ins> <ins>Integer</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        if (`&amp;&amp;`(`&gt;=`(index,0),`&lt;`(index,10))) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        } else {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">            index <del>-=</del> 10</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            index <ins>=</ins> <ins>`-`(index,</ins>10<ins>)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">10</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">9</div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>removeSoloBlocks</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,12 +1,10 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module test.sample {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">2</div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    foo(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var index : Integer</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">4</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">5</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        <del>if (`&amp;&amp;`(`&gt;=`(</del>index<del>,0),`&lt;`(index,10))) {</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>            index</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">7</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        <del>}</del> <del>else</del> <del>{</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">8</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>            </del>index<del> = `-`(index,10)</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; <ins>if (`&amp;&amp;`(`&gt;=`(index,0),`&lt;`(index,10))) </ins>{</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>    } else {</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>index</ins> <ins>=</ins> <ins>`-`(index,10)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>        </ins>index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">9</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">            index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">10</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">10</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>flattenSequencesAddMeta</span></header>
-                    <p>module test.sample {
-    foo(
-        var index : Integer
-    ) => if (`&&`(`>=`(index,0),`<`(index,10))) {
-        index
-    } else {
-        index = `-`(index,10)
-        index
-    }
-}</p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>moveMetaToFunctions</span></header>
-                    <p>module test.sample {
-    foo(
-        var index : Integer
-    ) => if (`&&`(`>=`(index,0),`<`(index,10))) {
-        index
-    } else {
-        index = `-`(index,10)
-        index
-    }
-}</p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>resolveExternalReferences</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,6 +1,6 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module test.sample {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">2</div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    foo(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">3</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var index : Integer</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var index : <ins>(</ins>Integer<ins>)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; if (`&amp;&amp;`(`&gt;=`(index,0),`&lt;`(index,10))) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    } else {</span>
-        </div>
-    </td>
-</tr>
-<tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -8,3 +8,4 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">9</div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">10</div>
-<div class="line-num2">10</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Integer&quot;,&quot;&amp;&amp;&quot;,&quot;&gt;=&quot;,&quot;&lt;&quot;,&quot;-&quot;]</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>insertConditionalAssignments</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -2,8 +2,10 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">2</div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    foo(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var index : (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; if (`&amp;&amp;`(`&gt;=`(index,0),`&lt;`(index,10))) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        index = cond index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    } else {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        index = cond !index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        index = `-`(index,10)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">10</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">9</div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>ssaForm</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,13 +1,16 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module test.sample {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">2</div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    foo(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">3</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var index : (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">4</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; <del>if (`&amp;&amp;`(`&gt;=`(index,0),`&lt;`(index,10))) </del>{</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">5</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        index <del>= cond index</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>        </del>index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">7</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>    } else {</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">8</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        <del>index</del> <del>=</del> <del>cond !index</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">9</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>        </del>index = <del>`-`(</del>index<del>,10)</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">10</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn"><del>        </del>index</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var <ins>`</ins>index<ins>:1:0`</ins> : (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>if (`&amp;&amp;`(`&gt;=`(`</ins>index<ins>:1:0`,0),`&lt;`(`index:1:0`,10)))</ins> <ins>{</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>            var `</ins>index<ins>:1:1` : (Integer) = cond `index:1:0`</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>            `index:1:1`</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>}</ins> <ins>else</ins> <ins>{</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>            var `</ins>index<ins>:1:2`</ins> <ins>: (Integer) </ins>= <ins>cond !`</ins>index<ins>:1:0`</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">10</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn"><ins>            var `</ins>index<ins>:1:3` : (Integer) = `-`(`index:1:2`,10)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            `index:1:3`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">12</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">13</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var `index:1:4` : typeof `index:1:1` | typeof `index:1:3`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
-<div class="line-num2">14</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">15</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">13</div>
-<div class="line-num2">16</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Integer&quot;,&quot;&amp;&amp;&quot;,&quot;&gt;=&quot;,&quot;&lt;&quot;,&quot;-&quot;]</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>identity</span></header>
-                    <p>module test.sample {
-    foo(
-        var `index:1:0` : (Integer)
-    ) => {
-        if (`&&`(`>=`(`index:1:0`,0),`<`(`index:1:0`,10))) {
-            var `index:1:1` : (Integer) = cond `index:1:0`
-            `index:1:1`
-        } else {
-            var `index:1:2` : (Integer) = cond !`index:1:0`
-            var `index:1:3` : (Integer) = `-`(`index:1:2`,10)
-            `index:1:3`
-        }
-        var `index:1:4` : typeof `index:1:1` | typeof `index:1:3`
-    }
-}
-// externals: ["Integer","&&",">=","<","-"]</p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (1)</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,6 +1,6 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module test.sample {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">2</div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    foo(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">3</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var `index:1:0` <del>:</del> (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var `index:1:0` <ins>:::</ins> (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0),`&lt;`(`index:1:0`,10))) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            var `index:1:1` : (Integer) = cond `index:1:0`</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (2)</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -2,7 +2,7 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">2</div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    foo(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var `index:1:0` ::: (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">5</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0<del>),`&lt;`(`</del>index:1:0`,10<del>)))</del> {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0<ins>) :: Boolean,`&lt;`(`</ins>index:1:0`,10<ins>)</ins> <ins>:: Boolean)) </ins>{</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            var `index:1:1` : (Integer) = cond `index:1:0`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            `index:1:1`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        } else {</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (3)</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -2,7 +2,7 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">2</div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    foo(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var `index:1:0` ::: (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">5</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0) :: Boolean,`&lt;`(`index:1:0`,10) :: Boolean<del>))</del> {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0) :: Boolean,`&lt;`(`index:1:0`,10) :: Boolean<ins>)</ins> <ins>:: Boolean) </ins>{</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            var `index:1:1` : (Integer) = cond `index:1:0`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            `index:1:1`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        } else {</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (4)</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -3,10 +3,10 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var `index:1:0` ::: (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0) :: Boolean,`&lt;`(`index:1:0`,10) :: Boolean) :: Boolean) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">            var `index:1:1` : (Integer) = <del>cond </del>`index:1:0`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            var `index:1:1` : (Integer) <ins>:: (0 .. &lt; 10) </ins>= `index:1:0`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            `index:1:1`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        } else {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">9</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">            var `index:1:2` : (Integer) = <del>cond !`</del>index:1:0`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            var `index:1:2` : (Integer) <ins>:: (&lt; 0) | (&gt;= 10) </ins>= <ins>`</ins>index:1:0`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">10</div>
-<div class="line-num2">10</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            var `index:1:3` : (Integer) = `-`(`index:1:2`,10)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            `index:1:3`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        }</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (5)</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -7,10 +7,10 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            `index:1:1`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        } else {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">9</div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            var `index:1:2` : (Integer) :: (&lt; 0) | (&gt;= 10) = `index:1:0`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">10</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">            var `index:1:3` : (Integer) = `-`(`index:1:2`,10)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">10</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">            var `index:1:3` : (Integer) <ins>:: (&lt; -10) | (&gt;= 0) </ins>= `-`(`index:1:2`,10)<ins> :: (&lt; -10) | (&gt;= 0)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            `index:1:3`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">13</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var `index:1:4` : <del>typeof</del> <del>`index:1:1`</del> | typeof `index:1:3`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">13</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var `index:1:4` : <ins>(0</ins> <ins>..</ins> <ins>&lt; 10) </ins>| typeof `index:1:3`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">14</div>
-<div class="line-num2">14</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">15</div>
-<div class="line-num2">15</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">16</div>
-<div class="line-num2">16</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Integer&quot;,&quot;&amp;&amp;&quot;,&quot;&gt;=&quot;,&quot;&lt;&quot;,&quot;-&quot;]</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (6)</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,7 +1,7 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module test.sample {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">2</div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    foo(</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">3</div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var `index:1:0` ::: (Integer)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">4</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    ) =&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    ) <ins>:: (&lt; -10) | (&gt;= 0) </ins>=&gt; {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        if (`&amp;&amp;`(`&gt;=`(`index:1:0`,0) :: Boolean,`&lt;`(`index:1:0`,10) :: Boolean) :: Boolean) {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            var `index:1:1` : (Integer) :: (0 .. &lt; 10) = `index:1:0`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            `index:1:1`</span>
-        </div>
-    </td>
-</tr>
-<tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -10,7 +10,7 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">10</div>
-<div class="line-num2">10</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            var `index:1:3` : (Integer) :: (&lt; -10) | (&gt;= 0) = `-`(`index:1:2`,10) :: (&lt; -10) | (&gt;= 0)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">11</div>
-<div class="line-num2">11</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">            `index:1:3`</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">12</div>
-<div class="line-num2">12</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">13</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        var `index:1:4` <del>:</del> <del>(0</del> <del>.. &lt; </del>10) | <del>typeof</del> <del>`index:1:3`</del></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">13</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        var `index:1:4` <ins>::</ins> <ins>(&lt;</ins> <ins>-</ins>10) | <ins>(&gt;=</ins> <ins>0)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">14</div>
-<div class="line-num2">14</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">15</div>
-<div class="line-num2">15</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">16</div>
-<div class="line-num2">16</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Integer&quot;,&quot;&amp;&amp;&quot;,&quot;&gt;=&quot;,&quot;&lt;&quot;,&quot;-&quot;]</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (7)</span></header>
-                    <p>module test.sample {
-    foo(
-        var `index:1:0` ::: (Integer)
-    ) :: (< -10) | (>= 0) => {
-        if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,10) :: Boolean) :: Boolean) {
-            var `index:1:1` : (Integer) :: (0 .. < 10) = `index:1:0`
-            `index:1:1`
-        } else {
-            var `index:1:2` : (Integer) :: (< 0) | (>= 10) = `index:1:0`
-            var `index:1:3` : (Integer) :: (< -10) | (>= 0) = `-`(`index:1:2`,10) :: (< -10) | (>= 0)
-            `index:1:3`
-        }
-        var `index:1:4` :: (< -10) | (>= 0)
-    }
-}
-// externals: ["Integer","&&",">=","<","-"]</p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (8)</span></header>
-                    <p>module test.sample {
-    foo(
-        var `index:1:0` ::: (Integer)
-    ) :: (< -10) | (>= 0) => {
-        if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,10) :: Boolean) :: Boolean) {
-            var `index:1:1` : (Integer) :: (0 .. < 10) = `index:1:0`
-            `index:1:1`
-        } else {
-            var `index:1:2` : (Integer) :: (< 0) | (>= 10) = `index:1:0`
-            var `index:1:3` : (Integer) :: (< -10) | (>= 0) = `-`(`index:1:2`,10) :: (< -10) | (>= 0)
-            `index:1:3`
-        }
-        var `index:1:4` :: (< -10) | (>= 0)
-    }
-}
-// externals: ["Integer","&&",">=","<","-"]</p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (9)</span></header>
-                    <p>module test.sample {
-    foo(
-        var `index:1:0` ::: (Integer)
-    ) :: (< -10) | (>= 0) => {
-        if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,10) :: Boolean) :: Boolean) {
-            var `index:1:1` : (Integer) :: (0 .. < 10) = `index:1:0`
-            `index:1:1`
-        } else {
-            var `index:1:2` : (Integer) :: (< 0) | (>= 10) = `index:1:0`
-            var `index:1:3` : (Integer) :: (< -10) | (>= 0) = `-`(`index:1:2`,10) :: (< -10) | (>= 0)
-            `index:1:3`
-        }
-        var `index:1:4` :: (< -10) | (>= 0)
-    }
-}
-// externals: ["Integer","&&",">=","<","-"]</p>
+                    <p>module test.sample {}</p>
                 </td>
             
                 <td>
                     <header><span>typeInference (10)</span></header>
-                    <p>module test.sample {
-    foo(
-        var `index:1:0` ::: (Integer)
-    ) :: (< -10) | (>= 0) => {
-        if (`&&`(`>=`(`index:1:0`,0) :: Boolean,`<`(`index:1:0`,10) :: Boolean) :: Boolean) {
-            var `index:1:1` : (Integer) :: (0 .. < 10) = `index:1:0`
-            `index:1:1`
-        } else {
-            var `index:1:2` : (Integer) :: (< 0) | (>= 10) = `index:1:0`
-            var `index:1:3` : (Integer) :: (< -10) | (>= 0) = `-`(`index:1:2`,10) :: (< -10) | (>= 0)
-            `index:1:3`
-        }
-        var `index:1:4` :: (< -10) | (>= 0)
-    }
-}
-// externals: ["Integer","&&",">=","<","-"]</p>
+                    <p>module test.sample {}</p>
                 </td>
             </tr>
         </div>

@@ -1,0 +1,3 @@
+
+@Native("")
+get(a: Array, b: >= 0 & < a.length): Integer => 0

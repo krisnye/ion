@@ -44,6 +44,9 @@ export class Member extends Expression {
         throw new SemanticError(`Invalid key`, this.property);
     }
 
+    //  should a Member just be converted to a uniform get function?
+    //  if we do then array bounds checking can be enforced easily enough
+
     protected resolveType(c: EvaluationContext) {
         let objectType = c.getComparisonType(this.object.type!);
         let types = new Array<Type>();

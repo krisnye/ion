@@ -20,14 +20,13 @@ export function isLiteralNumberType(type: Type): type is LiteralNumberType {
 }
 
 export function overlaps(max: Node | undefined, min: Node | undefined, exclusive: boolean): boolean | null {
-    if (max == null || min == null) {
-        return true;
-    }
-    if (max.toString() === min.toString()) {
-        return !exclusive
-    }
-    if (max instanceof NumberLiteral && min instanceof NumberLiteral) {
-        return exclusive ? max.value > min.value : max.value >= min.value
+    if (max != null && min != null) {
+        if (max.toString() === min.toString()) {
+            return !exclusive
+        }
+        if (max instanceof NumberLiteral && min instanceof NumberLiteral) {
+            return exclusive ? max.value > min.value : max.value >= min.value
+        }
     }
     return null
 }

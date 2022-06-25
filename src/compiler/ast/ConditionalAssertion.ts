@@ -42,11 +42,11 @@ export class ConditionalAssertion extends Expression {
             joinOps.reverse();
         }
         let { type } = this.value;
-        let assertedType = splitFilterJoinMultiple(true, test, splitOps, joinOps, e => expressionToType(e, this.value.name, this.negate)) as Type | null;
+        let assertedType = splitFilterJoinMultiple(true, test, splitOps, joinOps, e => expressionToType(e, this.value, this.negate)) as Type | null;
         if (assertedType) {
             if (assertedType instanceof Call) {
                 debugger;
-                splitFilterJoinMultiple(true, test, splitOps, joinOps, e => expressionToType(e, this.value.name, this.negate)) as Type | null;
+                splitFilterJoinMultiple(true, test, splitOps, joinOps, e => expressionToType(e, this.value, this.negate)) as Type | null;
             }
             // if this conditional lets us assert a more specific type then we add it.
             type = IntersectionType.join(type, assertedType)?.simplify(c) as Type;
