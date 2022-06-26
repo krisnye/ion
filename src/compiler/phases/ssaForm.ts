@@ -154,6 +154,7 @@ class Converter {
                     //  otherwise we can infer a much more specific type
                     let type = withinLoop ? declaredType : undefined;
                     return track(new Variable({
+                        conditional: node.conditional,
                         meta: [],
                         location,
                         declaredType,

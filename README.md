@@ -113,17 +113,7 @@ Cross platform modeling language
     - [x] Inter-parameter checking
       - [x] Instead of renaming per function check, let's use a unified parameter naming
       - [x] _param_1, _param_2, _param_3, _param_4...
-      - [ ] What's the current problem?
-    - [ ] Array bounds checking
+    - [x] Array bounds checking
     - [ ] Chained Conditional Type, check property
   - [ ] UFCS conversion to static call.
   - [ ] MultiFunction runtime dispatch algorithm.
-
-  A reference to a Class is both a "Type" and a "value".
-    Variable
-      value:
-        TypeReference -> class Vector
-          .objectType => { properties: { [] } }
-      type:
-        TypeReference -> class Class
-      

@@ -36,17 +36,13 @@ export class IntersectionType extends CompoundType {
             let rightRight = left.merge(right.right, this instanceof UnionType, c);
             if (rightLeft && rightRight) {
                 let result = right.patch({ left: rightLeft, right: rightRight });
-                console.log("MERGED: " + result);
                 return result;
             }
         }
         const merged = left.merge(right, false, c);
         if (merged == null) {
-            // try to merge with the lef
-            console.log({ left: left.toString(), right: right.toString() });
             left.merge(right, false, c);
             return this.patch({ left, right });
-            // throw new SemanticError(`Types are incompatible`, this.left, this.right);
         }
 
         return merged;

@@ -136,13 +136,35 @@ export class NumberType extends BaseType {
         let max = this.max?.simplify(c);
         let minExclusive = this.minExclusive;
         let maxExclusive = this.maxExclusive;
-        if (min instanceof NumberType && min.min) {
-            minExclusive ||= min.minExclusive;
-            min = min.min;
+        if (min instanceof NumberType) {
+            if (min.min) {
+                minExclusive ||= min.minExclusive;
+                min = min.min;
+            }
+            else if (min.max) {
+                if (min.max instanceof NumberLiteral) {
+                    if (min.max.integer) {
+                        if (min.max instanceof NumberLiteral) {
+                            min = min.max.patch({ value: min.max.value - 1 });
+                        }
+                    }
+                }
+            }
         }
-        if (max instanceof NumberType && max.max) {
-            maxExclusive ||= max.maxExclusive;
-            max = max.max
+        if (max instanceof NumberType) {
+            if (max.max) {
+                maxExclusive ||= max.maxExclusive;
+                max = max.max
+            }
+            else if (max.min) {
+                if (max.min instanceof NumberLiteral) {
+                    if (max.min.integer) {
+                        if (max.min instanceof NumberLiteral) {
+                            max = max.min.patch({ value: max.min.value + 1 });
+                        }
+                    }
+                }
+            }
         }
         if ((min != null || max != null) && (min != this.min || max != this.max)) {
             return this.patch({ min, max, minExclusive, maxExclusive });

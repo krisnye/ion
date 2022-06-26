@@ -10,13 +10,15 @@ import { Type } from "./Type";
 export interface AssignmentProps extends ExpressionProps {
     id: Reference;
     value: Node;
+    conditional?: boolean;
 }
 export class Assignment extends Expression {
 
     id!: Reference;
     value!: Expression;
+    conditional!: boolean;
 
-    constructor(props: AssignmentProps) { super(props); }
+    constructor(props: AssignmentProps) { super({ conditional: false, ...props }); }
     patch(props: Partial<AssignmentProps>) { return super.patch(props); }
 
     *getDependencies(c: EvaluationContext) {

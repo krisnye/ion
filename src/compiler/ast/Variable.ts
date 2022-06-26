@@ -14,6 +14,7 @@ export interface VariableProps extends ExpressionProps {
     value: Expression | null;
     meta: MetaCall[];
     declaredType?: Type | null;
+    conditional?: boolean;
 }
 
 export class Variable extends Expression implements Declaration {
@@ -23,8 +24,9 @@ export class Variable extends Expression implements Declaration {
     meta!: MetaCall[];
     declaredType!: Type | null;
     isDeclaration: true = true;
+    conditional!: boolean;
 
-    constructor(props: VariableProps) { super(props); }
+    constructor(props: VariableProps) { super({ conditional: true, ...props }); }
     patch(props: Partial<VariableProps>) { return super.patch(props); }
 
     *getDependencies(c: EvaluationContext) {
@@ -42,7 +44,7 @@ export class Variable extends Expression implements Declaration {
     resolveType(c: EvaluationContext) {
         // console.log("------ " + this);
         const { value, declaredType } = this;
-        if (declaredType && value?.type) {
+        if (declaredType && value?.type && !this.conditional) {
             // check if value type is assignable to this.
             let isValueASubtype = isSubtype(value.type, declaredType, c);
             if (isValueASubtype === false) {

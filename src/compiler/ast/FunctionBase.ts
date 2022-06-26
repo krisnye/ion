@@ -1,15 +1,14 @@
 import { Variable } from "./Variable";
 import { Container } from "./Container";
 import { MetaContainer } from "./MetaContainer";
-import { MetaCall, toUniformArgParameterTypes } from "./Call";
-import { isType, Type } from "./Type";
+import { MetaCall, replaceParamReferencesWithArgumentTypes, toUniformArgParameterTypes } from "./Call";
+import { Type } from "./Type";
 import { Expression, ExpressionProps } from "./Expression";
 import { EvaluationContext } from "../EvaluationContext";
 import { isSubtype } from "../analysis/isSubtype";
 import { Scope } from "./Scope";
 import { Node } from "../Node";
 import { SemanticError } from "../SemanticError";
-import { removeSSAVersions } from "../phases/ssaForm";
 
 export interface FunctionBaseProps extends ExpressionProps {
     parameters: Variable[];
@@ -34,7 +33,7 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
         return this.parameters;
     }
 
-    areArgumentsValid(args: Expression[], argTypes: Type[], c: EvaluationContext, errors = new Array<Error>()) : boolean {
+    areArgumentsValid(args: Expression[], argTypes: Type[], c: EvaluationContext, errors = new Array<Error>(), secondTry = false) : boolean {
         if (argTypes.length !== this.parameters.length) {
             return false;
         }
@@ -43,10 +42,20 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
             let arg = args[i];
             let argType = argTypes[i];
             let paramType = paramTypes[i];
+            if (secondTry) {
+                paramType = replaceParamReferencesWithArgumentTypes(c, argTypes, paramType).simplify(c);
+            }
             if (paramType != null) {
                 let result = isSubtype(argType, paramType, c);
                 if (!result) {
-                    // console.log({ argType: argType.toString(), paramType: paramType.toString() });
+                    // let debug = paramType.toString() === "(0 .. < _param_0.length)";
+                    // if (debug) {
+                    //     console.log("PARAMTYPE!!!!!!!", {
+                    //         argType: argType.toString(),
+                    //         paramType: paramType.toString(),
+                    //         secondTry,
+                    //     });
+                    // }
                     errors.push(new SemanticError(`Argument of type ${argType} ${result === false ? `is not` : `may not be`} expected type ${paramType}`, arg));
                 }
             }

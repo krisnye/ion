@@ -55,6 +55,7 @@ function insertConditionalAssignment(node: Expression, ref: Reference, negate: b
         new Assignment({
             location: node.location,
             id: new Reference(ref),
+            conditional: true,
             value: new ConditionalAssertion({
                 location: node.location,
                 value: ref,

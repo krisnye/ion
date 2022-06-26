@@ -10,6 +10,40 @@ import { VoidType } from "../ast/VoidType"
 import { EvaluationContext } from "../EvaluationContext"
 import { removeSSAVersions } from "../phases/ssaForm"
 
+type Maybe = true | false | null
+//  a  \  b |  true   false   null
+//  --------------------------------
+//  true    |  true   true    true
+//  false   |  true   false   null
+//  null    |  true   null    null
+function max(a: Maybe, b: Maybe): Maybe {
+    if (a === true || b === true)
+        return true
+    if (a == null || b == null)
+        return null
+    return false
+}
+//  a  \  b |  true   false   null
+//  --------------------------------
+//  true    |  true   false   null
+//  false   |  false  false   false
+//  null    |  null   false   null
+function min(a: Maybe, b: Maybe): Maybe {
+    if (a === false || b === false)
+        return false
+    if (a == null || b == null)
+        return null
+    return true
+}
+//  a  \  b |  true   false   null
+//  --------------------------------
+//  true    |  true   null    null
+//  false   |  null   false   null
+//  null    |  null   null    null
+function same(a: Maybe, b: Maybe): Maybe {
+    return a === b ? a : null
+}
+
 /**
  * Returns true if all instances of type 'a' are instances of type 'b'
  * Returns false if all instances of type 'a' are not instances of type 'b'
@@ -27,29 +61,17 @@ import { removeSSAVersions } from "../phases/ssaForm"
     if (a instanceof VoidType || b instanceof VoidType) {
         return false;
     }
-    if (a instanceof CompoundType) {
-        const left = isSubtype(a.left, b, c);
-        const right = isSubtype(a.right, b, c);
-        if (left === true && right === true) {
-            return true;
-        }
-        if (a instanceof UnionType) {
-            if (left === false && right === false) {
-                return false;
-            }
-        }
-        else { // a instanceof IntersectionType
-            if (left === false || right === false) {
-                return false;
-            }
-        }
-        return null;
-    }
-    if (b instanceof UnionType) {
-        return isSubtype(a, b.left, c) || isSubtype(a, b.right, c);
+    if (a instanceof UnionType) {
+        return same(isSubtype(a.left, b, c), isSubtype(a.right, b, c))
     }
     if (b instanceof IntersectionType) {
-        return isSubtype(a, b.left, c) && isSubtype(a, b.right, c);
+        return min(isSubtype(a, b.left, c), isSubtype(a, b.right, c))
+    }
+    if (b instanceof UnionType) {
+        return max(isSubtype(a, b.left, c), isSubtype(a, b.right, c))
+    }
+    if (a instanceof IntersectionType) {
+        return max(isSubtype(a.left, b, c), isSubtype(a.right, b, c))
     }
 
     let baseA = a.getBasicTypes(c);

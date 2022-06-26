@@ -13,6 +13,9 @@ import { getSSAOriginalName } from "../phases/ssaForm";
 import { traverse } from "../traverse";
 import { Variable } from "./Variable";
 import { Identifier } from "./Identifier";
+import { Type } from "./Type";
+import { ObjectType } from "./ObjectType";
+import { Member } from "./Member";
 
 export interface CallProps extends ContainerProps {
     callee: Expression;
@@ -85,10 +88,10 @@ export class Call extends Container {
         let callables = c.getValues(this.callee) as Function[];
         let args = this.nodes;
         let types = toUniformArgParameterTypes(args);
-        if (this.callee instanceof Reference && this.callee.name === "getValue") {
-            debugger;
-            console.log("Callables: " + callables.map(c => c?.toString() ?? "undefined").join(", "));
-        }
+        // if (this.callee instanceof Reference && this.callee.name === "getValue") {
+        //     debugger;
+        //     console.log("Callables: " + callables.map(c => c?.toString() ?? "undefined").join(", "));
+        // }
         if (callables.length > 1) {
             let returnType = getReturnType(callables, args, types, c);
             if (returnType === null) {
@@ -101,10 +104,13 @@ export class Call extends Container {
             c.errors.push(new SemanticError(`${this.callee} is not callable`, this.callee));
             return null;
         }
-        let errors = new Array<Error>();
-        if (!callable.areArgumentsValid(args, types, c, errors)) {
-            c.errors.push(...errors);
-            return null;
+        let firstErrors = new Array<Error>();
+        if (!callable.areArgumentsValid(args, types, c, firstErrors, false)) {
+            let secondErrors = new Array<Error>();
+            if (!callable.areArgumentsValid(args, types, c, secondErrors, true)) {
+                c.errors.push(...firstErrors);
+                return null;
+            }
         }
 
         return callable.getReturnType(types, c);
@@ -116,8 +122,52 @@ export class Call extends Container {
 
 }
 
+const uniformParamPrefix = "_param_";
+
 function getUniformParamName(index: number) {
-    return `_param_${index + 1}`;
+    return `${uniformParamPrefix}${index}`;
+}
+
+function getUniformParamIndex(name: string): number {
+    if (name.startsWith(uniformParamPrefix)) {
+        return parseInt(name.slice(uniformParamPrefix.length));
+    }
+    return -1;
+}
+
+export function replaceParamReferencesWithArgumentTypes(c: EvaluationContext, argTypes: Type[], paramType: Type) {
+    function getObjectType(node): ObjectType | null {
+        if (node instanceof Reference) {
+            let paramIndex = getUniformParamIndex(node.name);
+            if (paramIndex >= 0) {
+                let argType = c.getComparisonType(argTypes[paramIndex]);
+                if (argType instanceof ObjectType) {
+                    return argType;
+                }
+            }
+        }
+        return null;
+    }
+
+    // try to traverse and find other parameter thingies.
+    return traverse(paramType, {
+        leave(node) {
+            if (node instanceof Member) {
+                // we will replace members with referenced type if present.
+                let objectType = getObjectType(node.object);
+                if (objectType) {
+                    let keyType = node.property instanceof Expression ? node.property.type : node.property;
+                    if (keyType) {
+                        let propertyType = objectType.getPropertyType(keyType, c);
+                        if (propertyType) {
+                            return propertyType;
+                        }
+                        // console.log("FOUND!!!!!!!!!!!!! " + node + " ====> " + objectType + " ???? " + propertyType);
+                    }
+                }
+            }
+        }
+    });
 }
 
 export function toUniformArgParameterTypes(params: Expression[]) {
