@@ -132,6 +132,7 @@ export class NumberType extends BaseType {
     }
 
     simplify(c?: EvaluationContext): Node {
+        let debug = "";
         let min = this.min?.simplify(c);
         let max = this.max?.simplify(c);
         let minExclusive = this.minExclusive;
@@ -144,8 +145,8 @@ export class NumberType extends BaseType {
             else if (min.max) {
                 if (min.max instanceof NumberLiteral) {
                     if (min.max.integer) {
-                        if (min.max instanceof NumberLiteral) {
-                            min = min.max.patch({ value: min.max.value - 1 });
+                        if (min.max instanceof NumberLiteral && (min.maxExclusive || !(max instanceof NumberLiteral && max.value === min.max.value))) {
+                            min = min.max.patch({ value: min.max.value - (min.maxExclusive ? 1 : 0) });
                         }
                     }
                 }
@@ -159,8 +160,8 @@ export class NumberType extends BaseType {
             else if (max.min) {
                 if (max.min instanceof NumberLiteral) {
                     if (max.min.integer) {
-                        if (max.min instanceof NumberLiteral) {
-                            max = max.min.patch({ value: max.min.value + 1 });
+                        if (max.min instanceof NumberLiteral && (max.minExclusive || !(min instanceof NumberLiteral && min.value === max.min.value))) {
+                            max = max.min.patch({ value: max.min.value + (max.minExclusive ? 1 : 0) });
                         }
                     }
                 }

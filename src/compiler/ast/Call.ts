@@ -104,13 +104,9 @@ export class Call extends Container {
             c.errors.push(new SemanticError(`${this.callee} is not callable`, this.callee));
             return null;
         }
-        let firstErrors = new Array<Error>();
-        if (!callable.areArgumentsValid(args, types, c, firstErrors, false)) {
-            let secondErrors = new Array<Error>();
-            if (!callable.areArgumentsValid(args, types, c, secondErrors, true)) {
-                c.errors.push(...firstErrors);
-                return null;
-            }
+        let errors = new Array<Error>();
+        if (!callable.areArgumentsValid(args, types, c, errors)) {
+            c.errors.push(...errors);
         }
 
         return callable.getReturnType(types, c);

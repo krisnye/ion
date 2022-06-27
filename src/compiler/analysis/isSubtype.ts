@@ -1,5 +1,4 @@
 import { AnyType } from "../ast/AnyType"
-import { CompoundType } from "../ast/CompoundType"
 import { IntersectionType } from "../ast/IntersectionType"
 import { NumberType, overlaps } from "../ast/NumberType"
 import { ObjectType } from "../ast/ObjectType"
@@ -23,6 +22,19 @@ function max(a: Maybe, b: Maybe): Maybe {
         return null
     return false
 }
+//  a  \  b |  true   false   null
+//  --------------------------------
+//  true    |  true   false    true
+//  false   |  false   false   false
+//  null    |  true   false    null
+function maxNoFalse(a: Maybe, b: Maybe): Maybe {
+    if (a === false || b === false)
+        return false
+    if (a === true || b === true)
+        return true
+    return null
+}
+
 //  a  \  b |  true   false   null
 //  --------------------------------
 //  true    |  true   false   null
@@ -71,7 +83,7 @@ function same(a: Maybe, b: Maybe): Maybe {
         return max(isSubtype(a, b.left, c), isSubtype(a, b.right, c))
     }
     if (a instanceof IntersectionType) {
-        return max(isSubtype(a.left, b, c), isSubtype(a.right, b, c))
+        return maxNoFalse(isSubtype(a.left, b, c), isSubtype(a.right, b, c))
     }
 
     let baseA = a.getBasicTypes(c);
@@ -86,7 +98,7 @@ function same(a: Maybe, b: Maybe): Maybe {
         if (b instanceof NumberType) {
             if (b.step && !a.step) {
                 // TODO: check that steps actually match.
-                return false;
+                return null;
             }
             if ((b.min == null || overlaps(a.min, b.min, a.minExclusive < b.minExclusive) === true) &&
                 (b.max == null || overlaps(b.max, a.max, a.maxExclusive < b.maxExclusive) === true)
@@ -97,6 +109,7 @@ function same(a: Maybe, b: Maybe): Maybe {
                 return false
             }
         }
+        return null;
     }
     // at this point, we should either be reference types or object types
     if (a instanceof TypeReference && b instanceof TypeReference) {

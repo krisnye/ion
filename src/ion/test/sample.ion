@@ -1,11 +1,2 @@
 
-foo = (array: Integer[]) =>
-    if array.length > 0
-        //  this should imply that 0 is fine since we know 0 < array.length
-        array[0]
-
-bar = (array: Number[], index: Integer) =>
-    if index >= 0 && index < array.length
-        array[index]
-    else
-        -1
+sample = 12

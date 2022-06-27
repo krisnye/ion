@@ -114,6 +114,8 @@ Cross platform modeling language
       - [x] Instead of renaming per function check, let's use a unified parameter naming
       - [x] _param_1, _param_2, _param_3, _param_4...
     - [x] Array bounds checking
-    - [ ] Chained Conditional Type, check property
+      - [ ] Why is accessing Array[0] working?
+      - [ ] Type && Array checking is not right yet... FFS.
+    - [?] Chained Conditional Type, check property
   - [ ] UFCS conversion to static call.
   - [ ] MultiFunction runtime dispatch algorithm.
