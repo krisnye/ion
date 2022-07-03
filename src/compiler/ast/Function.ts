@@ -2,11 +2,9 @@ import getFinalExpressions from "../analysis/getFinalExpressions";
 import { isSubtype } from "../analysis/isSubtype";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
-import { Node } from "../Node";
 import { nativeTypeFunctions, TypeFunction } from "../phases/nativeTypeFunctions";
-import { isInferFunction } from "../phases/typeInference";
 import { SemanticError } from "../SemanticError";
-import { AnyType } from "./AnyType";
+import { Node } from "../Node";
 import { Call } from "./Call";
 import { Callable } from "./Callable";
 import { CompoundType } from "./CompoundType";
@@ -16,8 +14,6 @@ import { FunctionType } from "./FunctionType";
 import { Identifier } from "./Identifier";
 import { IntersectionType } from "./IntersectionType";
 import { getMetaCall, toMetaString } from "./MetaContainer";
-import { NumberType } from "./NumberType";
-import { Reference } from "./Reference";
 import { isType, Type } from "./Type";
 import { UnionType } from "./UnionType";
 
@@ -59,7 +55,7 @@ export class Function extends FunctionBase implements Callable {
         }
     }
 
-    getReturnType(argTypes: Type[], c: EvaluationContext): Type | null {
+    getReturnType(source: Call, argTypes: Type[], c: EvaluationContext): Type | null {
         let native = getMetaCall(this, coreTypes.Native);
         if (native) {
             const types = this.parameters.map(node => node.type);
@@ -91,12 +87,6 @@ export class Function extends FunctionBase implements Callable {
             }
         }
         let returnType = this.returnType ?? inferredType;
-        // if (returnType instanceof Reference) {
-        //     let returnTypeValue = c.getValue(returnType);
-        //     if (returnTypeValue instanceof NumberType) {
-        //         returnType = returnTypeValue;
-        //     }
-        // }
         const type = new FunctionType({
             location: this.location,
             parameters: this.parameters,
@@ -105,22 +95,6 @@ export class Function extends FunctionBase implements Callable {
             resolved: true,
         });
         return this.patch({ returnType, type });
-    }
-
-    evaluate(c: EvaluationContext, call: Call): Expression {
-        // is a native javascript function
-        let native = getMetaCall(this, coreTypes.Native);
-        let args = call.nodes.map(arg => arg.toInterpreterInstance(c));
-
-        // let source = native.getValue("javascript");
-        // if (!(source instanceof StringLiteral)) {
-        //     return [new SemanticError(`Native function missing javascript source`, call)];
-        // }
-        // let javascriptFunction = eval(source.value);
-        // let interpreterResult = javascriptFunction(...args);
-
-        // return instanceToNode(interpreterResult, call.location);
-        throw new SemanticError("No Evaluate Yet", this);
     }
 
     toString() {

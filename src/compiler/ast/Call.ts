@@ -88,12 +88,8 @@ export class Call extends Container {
         let callables = c.getValues(this.callee) as Function[];
         let args = this.nodes;
         let types = toUniformArgParameterTypes(args);
-        // if (this.callee instanceof Reference && this.callee.name === "getValue") {
-        //     debugger;
-        //     console.log("Callables: " + callables.map(c => c?.toString() ?? "undefined").join(", "));
-        // }
         if (callables.length > 1) {
-            let returnType = getReturnType(callables, args, types, c);
+            let returnType = getReturnType(this, callables, args, types, c);
             if (returnType === null) {
                 throw new SemanticError(`No function ${this.callee.toString()} found with arg types ${types.join(`, `)}`, this.location);
             }
@@ -109,7 +105,7 @@ export class Call extends Container {
             c.errors.push(...errors);
         }
 
-        return callable.getReturnType(types, c);
+        return callable.getReturnType(this, types, c);
     }
 
     toString() {

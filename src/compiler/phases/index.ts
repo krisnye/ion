@@ -8,12 +8,12 @@ import { identity } from "./identity";
 import { resolveExternalReferences } from "./resolveExternalReferences";
 import { typeInference } from "./typeInference";
 import { opsToTypeNodes } from "./opsToTypeNodes";
-// import { createMultiFunctions } from "./createMultiFunctions";
 import { removeSoloBlocks } from "./removeSoloBlocks";
 import { moveMetaToFunctions } from "./moveMetaToFunctions";
 import { ssaForm } from "./ssaForm";
 import { removeInlineDents } from "./removeInlineDents";
 import { insertConditionalAssignments } from "./insertConditionalAssignments";
+import { checkCalls } from "./checkCalls";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -43,6 +43,8 @@ export const intermediatePhases: Phase[] = [
 //  the perform more typeInference with all phases merged up
 //  evaluation must happen in an assembled phase.
 export const assemblyPhases: Phase[] = [
+    //  before type inference, fix named function calls, check all args same name, reorder names
+    checkCalls,
     typeInference,
     identity,
 ];

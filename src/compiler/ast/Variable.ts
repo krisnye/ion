@@ -26,7 +26,7 @@ export class Variable extends Expression implements Declaration {
     isDeclaration: true = true;
     conditional!: boolean;
 
-    constructor(props: VariableProps) { super({ conditional: true, ...props }); }
+    constructor(props: VariableProps) { super({ conditional: false, ...props }); }
     patch(props: Partial<VariableProps>) { return super.patch(props); }
 
     *getDependencies(c: EvaluationContext) {
@@ -42,8 +42,17 @@ export class Variable extends Expression implements Declaration {
     }
 
     resolveType(c: EvaluationContext) {
-        // console.log("------ " + this);
+        let debug = this.id.name === "test.sample.value";
         const { value, declaredType } = this;
+        if (debug) {
+            console.log("------ ", {
+                this: this.toString(),
+                value: value?.toString(),
+                declaredType: declaredType?.toString(),
+                value_type: value?.type?.toString(),
+                conditional: this.conditional,
+            });
+        }
         if (declaredType && value?.type && !this.conditional) {
             // check if value type is assignable to this.
             let isValueASubtype = isSubtype(value.type, declaredType, c);

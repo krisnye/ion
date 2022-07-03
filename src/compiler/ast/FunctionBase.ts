@@ -34,6 +34,26 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
     }
 
     areArgumentsValid(args: Expression[], types: Type[], c: EvaluationContext, errors = new Array<Error>()) : boolean {
+        if (args.length !== this.parameters.length) {
+            errors.push(new SemanticError(`Expected ${this.parameters.length} arguments but received ${args.length}`, ...args));
+            return false;
+        }
+        //  semantic check that if we declare any root variables that their names must match
+        //  their function parameter names.
+        let semanticErrors = new Array<Error>();
+        for (let i = 0; i < args.length; i++) {
+            let arg = args[i];
+            let param = this.parameters[i];
+            if (arg instanceof Variable) {
+                if (arg.id.name !== param.id.name) {
+                    semanticErrors.push(new SemanticError(`Variable name in call scope did not match expected parameter name "${param.id.name}"`, arg.id));
+                }
+            }
+        }
+        if (semanticErrors.length > 0) {
+            errors.push(...semanticErrors);
+            return false;
+        }
         let firstErrors = new Array<Error>();
         if (!this.areArgumentsValid_internal(args, types, c, firstErrors, false)) {
             let secondErrors = new Array<Error>();
@@ -54,29 +74,13 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
             let arg = args[i];
             let argType = argTypes[i];
             let paramType = paramTypes[i];
-            let debug = arg.toString().startsWith("`bazzle");
+            // let debug = arg.toString().startsWith("`bazzle");
             if (secondTry) {
                 paramType = replaceParamReferencesWithArgumentTypes(c, argTypes, paramType).simplify(c);
             }
             if (paramType != null) {
-                if (debug) {
-                    debugger;
-                }
                 let result = isSubtype(argType, paramType, c);
-                // if (debug) {
-                //     console.log("RESULT!!!: " + result);
-                // }
                 if (result !== true) {
-                    if (debug) {
-                        console.log("PARAMTYPE!!!!!!!", {
-                            argType: argType.toString(),
-                            paramType: paramType.toString(),
-                            secondTry,
-                            result,
-                        });
-                        debugger;
-                        result = isSubtype(argType, paramType, c);
-                    }
                     errors.push(new SemanticError(`Argument of type ${argType} ${result === false ? `is not` : `may not be`} expected type ${paramType}`, arg));
                 }
             }

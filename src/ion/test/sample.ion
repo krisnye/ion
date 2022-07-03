@@ -1,2 +1,8 @@
 
-sample = 12
+class Foo
+    x: 0 .. 10
+
+class Bar extends Foo
+    y: 10 .. 20
+
+bar: Bar = Bar(x = 10, y = 20)

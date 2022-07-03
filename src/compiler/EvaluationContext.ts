@@ -4,7 +4,6 @@ import { Reference } from "./ast/Reference";
 import { Type } from "./ast/Type";
 import { Variable } from "./ast/Variable";
 import { GetVariableFunction as GetDeclarationsFunction } from "./phases/createScopeMaps";
-import { SemanticError } from "./SemanticError";
 import { Lookup } from "./traverse";
 
 export class EvaluationContext {
@@ -38,24 +37,14 @@ export class EvaluationContext {
             if (Array.isArray(variable)) {
                 if (variable.length > 1) {
                     return variable.map(v => {
-                        if (v == null) {
-                            debugger;
-                        }
                         return v.value!;
                     });
                 }
                 variable = variable[0]!;
             }
-            if (variable == null) {
-                debugger;
-            }
             value = this.getValue(variable.value!);
         }
         if (isDeclaration(value)) {
-            if (value == null) {
-                debugger;
-            }
-
             value = value.value!;
         }
         return [value];

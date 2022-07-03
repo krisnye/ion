@@ -64,9 +64,6 @@ export class IntersectionType extends CompoundType {
         let left = types[0] ?? null;
         for (let i = 1; i < types.length; i++) {
             let right = types[i];
-            if (right instanceof Call) {
-                debugger;
-            }
             left = new IntersectionType({
                 location: SourceLocation.merge(left.location, right.location),
                 left,

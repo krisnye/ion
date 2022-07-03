@@ -2,7 +2,7 @@ import { Identifier } from "../ast/Identifier";
 import { Container, ContainerProps } from "./Container";
 import { Variable } from "./Variable";
 import { Declaration } from "./Declaration";
-import { MetaCall } from "./Call";
+import { Call, MetaCall } from "./Call";
 import { toMetaString } from "./MetaContainer";
 import { Node } from "../Node";
 import { Callable } from "./Callable";
@@ -73,13 +73,13 @@ export class Class extends Container implements Type, Declaration, Callable {
     }
 
     toComparisonType(c: EvaluationContext) {
-        let type = this.getReturnType();
+        let type = this.getReturnType(this, undefined, c);
         for (let extendType of this.extends as Type[]) {
             let extendClass = c.getValue(extendType);
             if (!(extendClass instanceof Class)) {
                 throw new SemanticError(`Can only extend classes`, extendType);
             }
-            type = type.merge(extendClass.getReturnType(), false, c)!;
+            type = type.merge(extendClass.getReturnType(this, undefined, c), false, c)!;
         }
         return type;
     }
@@ -102,16 +102,45 @@ export class Class extends Container implements Type, Declaration, Callable {
         )
     }
 
-    getReturnType(args: Type[] = this.nodes.map(node => node.declaredType!)) {
+    *getAllBaseClassesAndThis(c: EvaluationContext): IterableIterator<Class> {
+        for (let base of this.extends) {
+            if (!(base instanceof Reference)) {
+                throw new SemanticError(`Expected reference`, base);
+            }
+            let baseClass = c.getValue(base as Reference);
+            if (!(baseClass instanceof Class)) {
+                throw new SemanticError(`Expected reference to a class`, base);
+            }
+            yield* baseClass.getAllBaseClassesAndThis(c);
+        }
+        yield this;
+    }
+
+    getReturnType(source: Node, args: Type[] | undefined, c: EvaluationContext) {
+        let parameters = this.getAllParameters(c);
+        if (!args) {
+            args = parameters.map(p => p.type!);
+        }
+        //  technically this sort of parameter checking ought to be present generally for all function calls.
+        if (args.length != parameters.length) {
+            if (args.length < parameters.length) {
+                let missing = parameters.slice(args.length).map(p => p.id.name);
+                throw new SemanticError(`Missing parameter${missing.length > 1 ? `s` : ``}: ${missing.join(", ")}`, source);
+            }
+            throw new SemanticError(`Expected ${parameters.length} arguments, actual: ${args.length}`, source);
+        }
+        let bases = [...this.getAllBaseClassesAndThis(c)];
         return new ObjectType({
             location: this.location,
             properties: [
-                new Pair({ location: this.id.location, key: this.id, value: NumberType.fromConstant(1, this.id.location) }),
+                ...bases.map(cls => 
+                    new Pair({ location: cls.id.location, key: cls.id, value: NumberType.fromConstant(1, cls.id.location) }),
+                ),
                 ...args.map(
                     (arg, index) => {
                         return new Pair({
                             location: arg.location,
-                            key: this.nodes[index].id,
+                            key: parameters[index].id,
                             value: arg
                         });
                     }
@@ -121,33 +150,43 @@ export class Class extends Container implements Type, Declaration, Callable {
     }
 
     areArgumentsValid(args: Expression[], argTypes: Type[], c: EvaluationContext, errors = new Array<Error>()) : boolean {
-        return (this.resolveType(c) as FunctionType).areArgumentsValid(args, argTypes, c, errors);
+        return this.getFunctionType(c).areArgumentsValid(args, argTypes, c, errors);
     }
 
-    protected resolveType(c: EvaluationContext): Type | null {
-        const { location } = this;
+    _cachedPreResolveFunctionType?: FunctionType
+
+    private getAllParameters(c: EvaluationContext): Variable[] {
+        return this.getFunctionType(c).parameters;
+    }
+
+    private getFunctionType(c: EvaluationContext): FunctionType {
+        const { location, type } = this;
+        if (type) {
+            return type as FunctionType;
+        }
+        if (this._cachedPreResolveFunctionType) {
+            return this._cachedPreResolveFunctionType;
+        }
         // Function Type
-        return new FunctionType({
+        let bases = [...this.getAllBaseClassesAndThis(c)];
+        let allVariables = [...bases.map(base => base.nodes)].flat();
+        return this._cachedPreResolveFunctionType = new FunctionType({
             location,
             meta: [],
-            parameters: this.nodes,
+            parameters: allVariables,
             returnType: new TypeReference({ ...this.id, resolved: true }),
             resolved: true,
         })
     }
 
-    // evaluate(call: Call, c: EvaluationContext): Instance | Error[] {
-    //     let properties = checkParameters(this, this.nodes, call.nodes, c);
-    //     if (properties[0] instanceof Error) {
-    //         return properties as Error[];
-    //     }
-    //     // not sure this needs to exist.
-    //     return new Instance({
-    //         location: call.location,
-    //         class: call.callee as Reference,
-    //         nodes: properties as Expression[],
-    //     })
-    // }
+    *getDependencies(c: EvaluationContext) {
+        yield* super.getDependencies(c);
+        yield* this.extends as Expression[];
+    }
+
+    protected resolveType(c: EvaluationContext): Type | null {
+        return this.getFunctionType(c);
+    }
 
     toString() {
         return `${toMetaString(this)}class ${this.id}${this.extends.length > 0 ? " extends " + this.extends : ""} ${ Container.toString([...this.meta, ...this.nodes]) }`;
